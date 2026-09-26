@@ -22,3 +22,12 @@ preserve per-principal publication IDs and exact preconditions across real
 loopback gRPC, and load explicitly pinned divergent operations in a bounded
 local async task. The RPC fixture is test-only and does not implement durable
 publication or policy.
+
+## Native codec boundary
+
+The integration crate owns explicit conversions for all pinned commit, tree,
+copy, view, and operation fields. File and symlink IDs hash raw bytes; the other
+kinds hash the full native value. Submodule IDs are preserved as opaque external
+links. Decoding validates structure before invoking native constructors that
+would otherwise panic. Physical integrity alone never establishes native
+semantic identity.

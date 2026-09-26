@@ -36,3 +36,11 @@ The second cold RustFS run adds an actual truncated HTTP upload; its object
 stays absent. [M0 cold evidence](../../docs/evidence/m0-rustfs-cold.json)
 retains all eight probe outcomes. All M0 prerequisites are now met for this
 initial topology.
+
+## M1 codec conformance
+
+The frozen M1 profile vectors cover all seven stored kinds. Native codec tests
+compare supported kinds against the pinned SimpleBackend and SimpleOpStore; copy
+and submodule coverage uses the audited native ContentHash profile because
+SimpleBackend cannot persist those variants. Codec conformance does not qualify
+the later storage transport or publication coordinator.

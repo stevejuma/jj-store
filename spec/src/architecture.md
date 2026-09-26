@@ -22,3 +22,9 @@ approved immutable report is retained with its exact image/topology.
 M0 introduces only CLI and JJ compatibility crates. The upstream example is a
 Git-backed test executable; it does not advertise a production backend. Both JJ
 crates now resolve together through the committed Cargo lockfile.
+
+## Object foundation
+
+The model crate owns typed IDs, object kinds and envelope framing without
+importing JJ. The JJ integration crate owns native schemas and identity checks.
+Version 1 metadata is bounded independently of the streaming file transport.

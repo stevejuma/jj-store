@@ -1,5 +1,6 @@
-//! Project-owned storage and wire contracts for native JJ repositories.
-//!
-//! This bootstrap crate deliberately advertises no implemented backend or wire
-//! capabilities. Versioned types enter with their codec and publication tests.
+//! Storage-independent identifiers and integrity framing for native JJ objects.
 #![forbid(unsafe_code)]
+
+pub mod envelope;
+pub mod ids;
+pub use ids::*;

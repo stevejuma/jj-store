@@ -30,3 +30,20 @@ fields.
 Pinned hash fixtures distinguish absent, empty, and intermediate predecessor
 maps, preserve timestamp offsets, and verify special roots and the empty-tree
 identity against upstream SimpleBackend/SimpleOpStore. Full codecs remain M1.
+
+## Version 1 persistence codec
+
+Metadata uses explicit project-owned, deny-unknown-field JSON schemas. Canonical
+compact serialization fixes field order; maps and sets serialize in native key
+order, while parents and merge terms retain their original order. Decoding
+rejects noncanonical bytes, duplicates, invalid ID widths, invalid paths,
+invalid merge arity, and unknown variants. Native structs are never serialized
+through their generic Serde implementation. File payloads remain raw binary
+bytes.
+
+The fixed envelope carries magic, envelope version, native profile, object kind,
+64-byte native ID, payload length, and SHA-256 of the preceding header and
+payload. Decoders check caller limits before allocating and check the expected
+kind and ID as well as semantic identity after decoding. Native roots are
+virtual zero IDs; ordinary stored objects use content hashes even when their
+contents equal a root value.

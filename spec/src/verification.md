@@ -8,9 +8,9 @@ passing concrete tests linked from the progress ledger.
 | JST-ARCH-001   | Planned     | [Architecture](architecture.md); [milestone gate](milestones.md)                                                              |
 | JST-ARCH-002   | Planned     | [Architecture](architecture.md); [milestone gate](milestones.md)                                                              |
 | JST-ARCH-003   | Planned     | [Architecture](architecture.md); [milestone gate](milestones.md)                                                              |
-| JST-ID-001     | Planned     | [Identity and native codecs](identity.md); [milestone gate](milestones.md)                                                    |
-| JST-ID-002     | Planned     | [Identity and native codecs](identity.md); [milestone gate](milestones.md)                                                    |
-| JST-ID-003     | Planned     | [Identity and native codecs](identity.md); [milestone gate](milestones.md)                                                    |
+| JST-ID-001     | Implemented | `crates/jj-store-jj/tests/native_codec.rs`; `crates/jj-store-model/tests/framing.rs`; [M1 codec evidence](milestones.md)      |
+| JST-ID-002     | Implemented | `crates/jj-store-jj/tests/native_codec.rs`; `crates/jj-store-model/tests/framing.rs`; [M1 codec evidence](milestones.md)      |
+| JST-ID-003     | Implemented | `crates/jj-store-jj/tests/native_codec.rs`; `crates/jj-store-model/tests/framing.rs`; [M1 codec evidence](milestones.md)      |
 | JST-ID-004     | Planned     | [Identity and native codecs](identity.md); [milestone gate](milestones.md)                                                    |
 | JST-ID-005     | Planned     | [Identity and native codecs](identity.md); [milestone gate](milestones.md)                                                    |
 | JST-OBJ-001    | Planned     | [Object storage](object-store.md); [milestone gate](milestones.md)                                                            |

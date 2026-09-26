@@ -2756,13 +2756,17 @@ name = "jj-store-jj"
 version = "0.1.0"
 dependencies = [
  "async-trait",
+ "blake2",
  "futures 0.3.34",
  "jj-lib",
+ "jj-store-model",
  "prost",
  "prost-build",
  "protoc-bin-vendored",
+ "serde",
  "serde_json",
  "tempfile",
+ "thiserror 2.0.21",
  "tokio",
  "tokio-stream",
  "tonic",
@@ -2773,6 +2777,12 @@ dependencies = [
 [[package]]
 name = "jj-store-model"
 version = "0.1.0"
+dependencies = [
+ "hex",
+ "serde",
+ "sha2 0.10.9",
+ "thiserror 2.0.21",
+]
 
 [[package]]
 name = "js-sys"
@@ -4038,6 +4048,7 @@ version = "1.0.151"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c841b55ecdae098c80dcae9cf767f6f8a0c2cdb3416bbef72181df4d0fe73f14"
 dependencies = [
+ "indexmap",
  "itoa",
  "memchr",
  "serde",
