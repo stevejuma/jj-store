@@ -4,4 +4,5 @@
 pub mod codec;
 pub mod dependencies;
 pub mod objects;
+pub mod operation_stores;
 pub mod roots;
