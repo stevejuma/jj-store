@@ -1,0 +1,30 @@
+{
+  "name": "@lapismd/jj-store",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Native JJ repository authority backed by RustFS",
+  "license": "Apache-2.0",
+  "packageManager": "pnpm@10.32.1",
+  "engines": {
+    "node": ">=22"
+  },
+  "type": "module",
+  "scripts": {
+    "build": "cargo build --workspace --locked",
+    "check": "pnpm spec:validate && pnpm check:boundaries && pnpm check:progress && cargo fmt --all -- --check && cargo clippy --workspace --all-targets --locked -- -D warnings",
+    "check:boundaries": "node scripts/check-boundaries.mjs",
+    "check:progress": "node scripts/check-progress.mjs",
+    "test:governance": "node --test scripts/governance.test.mjs",
+    "test": "pnpm test:governance && cargo test --workspace --locked",
+    "spec:build": "spec-validator build",
+    "spec:check": "spec-validator check",
+    "spec:first": "spec-validator first",
+    "spec:validate": "spec-validator validate",
+    "format:check": "prettier --check .",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "@lapismd/spec-validator": "^0.1.0",
+    "prettier": "^3.6.2"
+  }
+}

@@ -1,0 +1,21 @@
+[workspace]
+members = ["crates/jj-store-model"]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.97.1"
+license = "Apache-2.0"
+authors = ["LapisMD contributors"]
+
+[workspace.dependencies]
+jj-store-model = { path = "crates/jj-store-model" }
+jj-lib = "=0.45.1"
+jj-cli = "=0.45.1"
+
+[profile.dev]
+debug = 0
+
+[profile.test]
+debug = 0
