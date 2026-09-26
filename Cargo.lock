@@ -2935,6 +2935,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "jj-store-service"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "getrandom 0.4.3",
+ "hex",
+ "jj-store-model",
+ "jj-store-object",
+ "jj-store-wal",
+ "serde",
+ "serde_json",
+ "sha2 0.10.9",
+ "subtle",
+ "thiserror 2.0.21",
+ "tokio",
+ "zeroize",
+]
+
+[[package]]
 name = "jj-store-wal"
 version = "0.1.0"
 dependencies = [

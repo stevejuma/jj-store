@@ -97,8 +97,34 @@ pub struct ManifestSnapshot {
     version: VersionToken,
 }
 impl ManifestSnapshot {
+    /// Loads current authority. Historical read sessions must authenticate with
+    /// this current policy even when their content snapshot is older.
+    pub async fn load(store: Arc<dyn ObjectStore>, repository: RepositoryId) -> Result<Self> {
+        let key = Key::new(format!("repos/{repository}/manifest.json"))?;
+        let download = store.get(&key, None).await?;
+        let version = download.metadata.version.clone();
+        let bytes = download.read_bounded(MAX_MANIFEST).await?;
+        let manifest: Manifest = records::decode(&bytes)?;
+        manifest.validate(repository)?;
+        Ok(Self {
+            manifest,
+            digest: records::digest(&bytes),
+            version,
+        })
+    }
     pub fn manifest(&self) -> &Manifest {
         &self.manifest
+    }
+    /// Read the immutable settings selected by this checked snapshot.
+    pub async fn settings(&self, store: Arc<dyn ObjectStore>) -> Result<Vec<u8>> {
+        let records = Records::new(store, self.manifest.repository);
+        let settings: Settings = records
+            .get(self.manifest.settings, RecordKind::Settings)
+            .await?;
+        if settings.data.len() > 64 * 1024 {
+            return Err(Error::Limit("settings"));
+        }
+        Ok(settings.data)
     }
     pub fn digest(&self) -> RecordDigest {
         self.digest
@@ -277,17 +303,9 @@ impl Coordinator {
             .expect("typed repository key")
     }
     pub async fn read(&self) -> Result<ManifestSnapshot> {
-        let download = self.records.store.get(&self.manifest_key(), None).await?;
-        let version = download.metadata.version.clone();
-        let bytes = download.read_bounded(MAX_MANIFEST).await?;
-        let manifest: Manifest = records::decode(&bytes)?;
-        manifest.validate(self.records.repository)?;
-        Ok(ManifestSnapshot {
-            manifest,
-            digest: records::digest(&bytes),
-            version,
-        })
+        ManifestSnapshot::load(self.records.store.clone(), self.records.repository).await
     }
+
     pub async fn initialize(&self, epoch: EpochId, settings: Vec<u8>) -> Result<ManifestSnapshot> {
         if settings.len() > 64 * 1024 {
             return Err(Error::Limit("settings"));

@@ -52,3 +52,7 @@ Publication records use their own SHA-256 RecordDigest and IntentDigest types;
 epochs, principals and attempt IDs are distinct 128-bit types. Their
 serialization does not alter the frozen native envelope/profile. Typed object
 keys are encoded with an explicit kind tag in control records.
+
+Token IDs are distinct 128-bit identifiers, independent of principal IDs and
+publication/request identities. Bearer secrets and verifiers are service-owned
+credential types and never native object identities.

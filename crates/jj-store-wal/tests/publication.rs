@@ -702,15 +702,27 @@ async fn cancellation_preserves_unknown_identity_before_and_after_manifest_appli
             Arc::new(Source::new()),
             Arc::new(Permit),
             Limits {
-                timeout: Duration::from_millis(150),
+                timeout: Duration::from_secs(60),
                 ..Limits::default()
             },
         )
         .unwrap();
         store.arm("/manifest.json", fault);
         let request = request(1, &[0], 1);
+        let input = request.clone();
+        let pending = tokio::spawn(async move { c.publish(&input).await });
+        // Do not start the simulated timeout until the exact before/after
+        // manifest boundary is reached. Disk scheduling must not choose which
+        // failure point this test exercises.
+        tokio::time::timeout(Duration::from_secs(15), store.entered.notified())
+            .await
+            .unwrap();
+        tokio::time::pause();
+        tokio::time::advance(Duration::from_secs(61)).await;
+        let outcome = pending.await.unwrap().unwrap();
+        tokio::time::resume();
         assert_eq!(
-            c.publish(&request).await.unwrap(),
+            outcome,
             PublishOutcome::OutcomeUnknown {
                 request_id: request.request_id,
                 publication_id: request.publication_id

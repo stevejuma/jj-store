@@ -15,3 +15,9 @@ rebase/squash/undo are deferred; client capability evidence is separate.
 | JST-MUT-003 | Abandon MUST enforce protected/root policy, transform descendants, update bookmarks/workspaces, preserve history and evolution, and publish once without deleting objects.                   |
 | JST-MUT-004 | Conflict resolution MUST preserve ordered native terms, check fingerprints and authorized uploads, validate all selected paths atomically, rewrite descendants, and retain unresolved paths. |
 | JST-MUT-005 | Client-computed RPC publications MUST pass the same semantic protected-history checks as application mutations; no arbitrary shell or CLI argument endpoint MAY be exposed.                  |
+
+The service's publication guard binds the authenticated token principal to the
+WAL request actor, validates replacement settings and delegates native
+transition validation to an explicit semantic policy. A transport cannot select
+a caller's principal independently of its verified credential. No permissive
+semantic validator is provided by the service library.

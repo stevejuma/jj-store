@@ -15,3 +15,26 @@ not make authoritative storage unready.
 | JST-SEC-003 | Authorization MUST precede every object, historical, staging, search, preview, and publication request; knowledge of an object ID MUST NOT grant access.                                                 |
 | JST-SEC-004 | Shared deployments MUST use TLS; unauthenticated operation MUST require an explicit restricted-loopback development setting.                                                                             |
 | JST-SEC-005 | Server operations MUST NOT execute repository hooks, arbitrary programs, editors, or merge tools; paths, bodies, queries, and work queues MUST have explicit limits.                                     |
+
+## Repository token foundation
+
+Tokens contain a random public token ID and 256 bits of secret entropy.
+Versioned policy documents retain only a SHA-256 verifier bound to the token ID
+and exact repository (or separate operator scope), authenticated principal,
+permission and optional expiry. Verifier comparison is constant time. Read,
+write and admin are hierarchical repository permissions; repository creation is
+an independent operator capability. Credential types have redacted Debug output
+and do not implement serialization. Policy parsing and token counts are bounded.
+
+Repository policies are immutable settings selected by the publication manifest.
+Each request verifies its credential against the selected policy before reading
+repository data. Publication rechecks it immediately before CAS and after every
+CAS conflict, so a concurrent revocation prevents an older policy snapshot from
+committing. Receipt replay also requires current authorization. Settings changes
+require admin permission and cannot change the policy's repository scope. The
+service guard requires an explicit semantic validator; authentication alone does
+not permit client-computed history changes.
+
+Operator policies remain separate from repository state. The authentication
+library does not itself persist credentials or expose transports. CLI credential
+storage, HTTP/RPC wiring and server operator administration remain M3 gates.

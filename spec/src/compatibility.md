@@ -70,3 +70,8 @@ history, retained evolution dependencies and receipts without in-memory caches.
 records the extended 19-publication model, repeated checkpoints and
 original-result retries against the pinned image, then a fresh-process
 retained-data audit.
+
+The [M3 storage regression run](../../docs/evidence/m3-auth-storage-rustfs.json)
+retains the native publication/recovery gate after extracting the shared checked
+manifest reader for authentication. It does not claim deployed RPC/HTTP token
+acceptance, which remains a separate M3 integration gate.

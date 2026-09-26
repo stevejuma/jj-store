@@ -41,3 +41,8 @@ The WAL crate owns immutable publication records, persistent radix catalogs,
 manifest CAS, durable receipts, replay and checkpoints. Its catalogs depend only
 on owned model types and the object transport. Native dependency enumeration
 continues to enter through the verified-source interface.
+
+The service crate owns repository/operator token policies and request-bound
+authorization. Its publication guard uses owned WAL snapshots/settings and
+requires an explicit native semantic validator, keeping authentication shared
+between future HTTP and RPC adapters.

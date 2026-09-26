@@ -1,5 +1,5 @@
 [workspace]
-members = ["crates/jj-store-model", "crates/jj-store-jj", "crates/jj-store-cli", "crates/jj-store-object", "crates/jj-store-wal"]
+members = ["crates/jj-store-model", "crates/jj-store-jj", "crates/jj-store-cli", "crates/jj-store-object", "crates/jj-store-wal", "crates/jj-store-service"]
 resolver = "2"
 
 [workspace.package]
@@ -13,6 +13,7 @@ authors = ["LapisMD contributors"]
 jj-store-model = { path = "crates/jj-store-model" }
 jj-store-object = { path = "crates/jj-store-object" }
 jj-store-wal = { path = "crates/jj-store-wal" }
+jj-store-service = { path = "crates/jj-store-service" }
 jj-lib = "=0.45.1"
 jj-cli = "=0.45.1"
 

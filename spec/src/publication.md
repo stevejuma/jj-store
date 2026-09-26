@@ -81,3 +81,12 @@ in an old root is not hidden by a newer root. A shared bounded page audit avoids
 reading unchanged radix subtrees repeatedly. Ordinary startup may read the
 manifest's already folded state; the explicit integrity recovery performs a full
 retained-data audit and fails if its configured budget is insufficient.
+
+Selected settings are readable from a checked ManifestSnapshot using an owned
+storage accessor, so request-scoped guards can verify policy without
+constructing a second publication coordinator or using mutable global
+authentication state.
+
+Cancellation conformance synchronizes with the selected storage fault boundary
+before advancing a controlled test clock. A pre-staging deadline must not be
+misreported as evidence for a post-CAS lost acknowledgement.
