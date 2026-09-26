@@ -40,3 +40,7 @@ harness self-tests or a source audit.
 
 Native compatibility probes are normal Rust test targets. Their source/fixture
 updates require canonical chapter changes and same-change ledger evidence.
+
+The external compiled-storage lane is explicitly opt-in with the isolated RustFS
+harness. Its immutable report records the command and actual test output; normal
+test output must report this deployment test as ignored, not passed.

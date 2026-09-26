@@ -28,3 +28,7 @@ crates now resolve together through the committed Cargo lockfile.
 The model crate owns typed IDs, object kinds and envelope framing without
 importing JJ. The JJ integration crate owns native schemas and identity checks.
 Version 1 metadata is bounded independently of the streaming file transport.
+
+The object crate owns the S3 transport and deterministic fault store. It depends
+on the model and transport libraries without importing JJ. Upload preparation
+uses bounded temporary disk space rather than buffering unbounded file blobs.

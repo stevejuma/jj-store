@@ -31,3 +31,13 @@ kinds hash the full native value. Submodule IDs are preserved as opaque external
 links. Decoding validates structure before invoking native constructors that
 would otherwise panic. Physical integrity alone never establishes native
 semantic identity.
+
+## Checked native object access
+
+Native object access verifies the expected kind/ID, envelope checksum and
+decoded identity before returning metadata. Immutable-create collisions load and
+compare the complete existing native value. File staging and verification stream
+with 64 KiB buffers and configured disk limits. A file reader is exposed only
+after full checksum and BLAKE2b verification. Unknown upload outcomes remain
+explicit unless a subsequent read proves the identical immutable object is
+present.

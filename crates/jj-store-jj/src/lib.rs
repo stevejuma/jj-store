@@ -2,4 +2,5 @@
 #![forbid(unsafe_code)]
 
 pub mod codec;
+pub mod objects;
 pub mod roots;

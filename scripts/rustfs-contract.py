@@ -125,7 +125,7 @@ def race(s3, key, condition, contenders):
     require(read[1]["etag"] == results[winner][1]["etag"], "acknowledged token differs from read token")
 
 
-def run_contract(image, rounds, contenders, output):
+def run_contract(image, rounds, contenders, output, rust_client=False):
     require("@sha256:" in image, "use an immutable image digest")
     name = "jj-store-m0-" + uuid.uuid4().hex[:12]
     volume = name + "-data"
@@ -233,6 +233,16 @@ def run_contract(image, rounds, contenders, output):
             require(require_status(s3.request("GET", "conditional-delete"), {200})[2] == b"b", "stale delete removed new incarnation")
             require_status(s3.request("DELETE", "conditional-delete", headers={"If-Match":b[1]["etag"]}), {204})
         record("conditional_delete_cannot_remove_new_incarnation", conditional_delete)
+        if rust_client:
+            def compiled_client():
+                env = dict(os.environ, JST_TEST_ENDPOINT=s3.endpoint, JST_TEST_ACCESS_KEY=ACCESS,
+                           JST_TEST_SECRET_KEY=SECRET, DEVELOPER_DIR="/Library/Developer/CommandLineTools")
+                command = ["cargo", "test", "-p", "jj-store-jj", "--test", "rustfs", "--locked", "--", "--ignored", "--nocapture"]
+                result = subprocess.run(command, env=env, capture_output=True, text=True, timeout=180)
+                report["rust_client"] = {"command": command, "exit_code": result.returncode,
+                                         "output": (result.stdout + result.stderr)[-8000:]}
+                require(result.returncode == 0, "compiled Rust client failed: " + report["rust_client"]["output"])
+            record("compiled_rust_native_transport", compiled_client)
     except Exception as error:
         report["startup_error"] = str(error)
     finally:
@@ -241,7 +251,7 @@ def run_contract(image, rounds, contenders, output):
             result = subprocess.run(["docker", *args], capture_output=True, text=True)
             if result.returncode and "No such" not in result.stderr: report.setdefault("cleanup_errors", []).append(result.stderr.strip())
         report["failures"] = sum(t["failures"] for t in report["tests"]) + int("startup_error" in report) + len(report.get("cleanup_errors", []))
-        report["result"] = "pass" if report["failures"] == 0 and len(report["tests"]) == 8 else "fail"
+        report["result"] = "pass" if report["failures"] == 0 and len(report["tests"]) == (9 if rust_client else 8) else "fail"
         output.parent.mkdir(parents=True, exist_ok=True)
         output.write_text(json.dumps(report, indent=2) + "\n")
         print(f"report={output} result={report['result']} failures={report['failures']}", flush=True)
@@ -253,6 +263,7 @@ if __name__ == "__main__":
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--self-test", action="store_true")
     mode.add_argument("--run", action="store_true")
+    parser.add_argument("--rust-client", action="store_true", help="Also qualify the compiled native object transport")
     parser.add_argument("--image", default=IMAGE)
     parser.add_argument("--rounds", type=int, default=20)
     parser.add_argument("--contenders", type=int, default=16)
@@ -262,4 +273,4 @@ if __name__ == "__main__":
         unittest.main(argv=[__file__])
     else:
         require(1 <= options.rounds <= 1000 and 2 <= options.contenders <= 64, "invalid concurrency limits")
-        raise SystemExit(run_contract(options.image, options.rounds, options.contenders, options.output))
+        raise SystemExit(run_contract(options.image, options.rounds, options.contenders, options.output, options.rust_client))

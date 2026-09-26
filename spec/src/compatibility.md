@@ -44,3 +44,12 @@ compare supported kinds against the pinned SimpleBackend and SimpleOpStore; copy
 and submodule coverage uses the audited native ContentHash profile because
 SimpleBackend cannot persist those variants. Codec conformance does not qualify
 the later storage transport or publication coordinator.
+
+## Compiled storage client qualification
+
+The disposable RustFS harness accepts `--rust-client` to qualify the Rust
+transport as well as the independent HTTP probes. The compiled lane covers
+conditional-create/CAS races over independent clients, stale tokens, range
+reads, 8 MiB native file upload/read/duplicate verification, metadata objects
+and a proxy that drops a real successful write acknowledgement. Default unit
+lanes leave this external test explicitly ignored.
