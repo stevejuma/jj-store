@@ -1,5 +1,6 @@
 //! Bounded closure verification with an incrementally reusable verified base.
 use jj_store_model::{EnvelopeDigest, ObjectKey, RepositoryId};
+use serde::{Deserialize, Serialize};
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::{
     collections::{BTreeMap, BTreeSet},
@@ -14,6 +15,9 @@ pub struct SourceScope {
     instance: u64,
 }
 impl SourceScope {
+    pub fn repository(self) -> RepositoryId {
+        self.repository
+    }
     pub fn new(repository: RepositoryId) -> Self {
         static NEXT: AtomicU64 = AtomicU64::new(0);
         let instance = NEXT
@@ -26,7 +30,8 @@ impl SourceScope {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(tag = "type", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Representation {
     Virtual,
     Stored {
@@ -34,7 +39,8 @@ pub enum Representation {
         bytes: u64,
     },
 }
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct VerifiedNode {
     pub key: ObjectKey,
     pub representation: Representation,

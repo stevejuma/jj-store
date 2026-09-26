@@ -44,3 +44,7 @@ updates require canonical chapter changes and same-change ledger evidence.
 The external compiled-storage lane is explicitly opt-in with the isolated RustFS
 harness. Its immutable report records the command and actual test output; normal
 test output must report this deployment test as ignored, not passed.
+
+Publication faults are exercised in the normal WAL tests. The opt-in deployment
+lane records both the initial compiled native publication run and a separate
+post-kill recovery process; neither is inferred from normal ignored tests.

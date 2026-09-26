@@ -6,39 +6,39 @@ adds evidence here in its enclosing Jujutsu change.
 
 ## Tasks and gates
 
-| ID          | Status      | Depends   | Requirements                                                | Gate                                                                | Next                                                        | Evidence          |
-| ----------- | ----------- | --------- | ----------------------------------------------------------- | ------------------------------------------------------------------- | ----------------------------------------------------------- | ----------------- |
-| Bootstrap   | Done        | -         | JST-GOV-001,JST-GOV-002,JST-GOV-003,JST-GOV-004,JST-GOV-005 | Spec, ledger, skeleton, gates and independent commit                | Maintain governance each slice                              | E-BOOT-001        |
-| Bootstrap.1 | Done        | -         | JST-GOV-001,JST-GOV-004                                     | Reference checksum, requirements, progress checker negative tests   | Governance maintained each slice                            | E-BOOT-001        |
-| M0          | Done        | Bootstrap | JST-COMPAT-001,JST-COMPAT-002                               | Compiled extension and exact RustFS contract qualified              | Maintain pinned compatibility probes                        | E-M0-001,E-M0-002 |
-| M0.1        | Done        | Bootstrap | JST-COMPAT-001                                              | Pin references/licenses and complete trait/codec matrix             | Re-audit on upstream upgrades                               | E-M0-001          |
-| M0.2        | Done        | M0.1      | JST-JJ-001,JST-JJ-002,JST-ID-002                            | Compile custom CLI/RPC context and query spikes; golden IDs         | Retain probes across upstream changes                       | E-M0-002          |
-| M0.3        | Done        | M0.1      | JST-OBJ-002                                                 | Real image create/CAS/range/restart/fault qualification             | Requalify topology or image changes                         | E-M0-001          |
-| M1          | Done        | M0        | JST-ID-001,JST-ID-003,JST-OBJ-001,JST-OBJ-003               | Complete lossless objects and streamed storage                      | Maintain codec and storage conformance                      | E-M1-001,E-M1-002 |
-| M1.1        | Done        | M0        | JST-ID-003,JST-ID-004,JST-ID-005                            | All native variants and golden identities                           | Retain V1 fixtures across codec changes                     | E-M1-001          |
-| M1.2        | Done        | M0        | JST-OBJ-001,JST-OBJ-003,JST-OBJ-004                         | Fault fake and real streamed immutable object transport             | Retain real RustFS and fault-store conformance              | E-M1-002          |
-| M2          | In progress | M1        | JST-PUB-001,JST-PUB-006                                     | Publication fault matrix and cold replay pass                       | Implement manifest publication and recovery                 | E-M2-001          |
-| M2.1        | Partial     | M1        | JST-PUB-001,JST-PUB-002                                     | Complete inventory and unique candidate CAS                         | Persist inventories and unique candidates then CAS manifest | E-M2-001          |
-| M2.2        | Planned     | M2.1      | JST-PUB-003,JST-PUB-004,JST-PUB-005                         | Retry receipts and unknown outcome recovery                         | Inject late/unknown races                                   | -                 |
-| M2.3        | Planned     | M2.2      | JST-PUB-006                                                 | Checkpoint equivalence and cache-free restart                       | Verify retained history                                     | -                 |
-| M3          | Planned     | M2        | JST-JJ-001,JST-JJ-002,JST-CLI-001,JST-SEC-001               | Native CLI/server vertical slice with authentication                | Integrate native stores                                     | -                 |
-| M3.1        | Planned     | M2        | JST-SEC-001,JST-SEC-002,JST-SEC-003,JST-SEC-004             | Revocable tokens and transport authorization                        | Implement auth boundaries                                   | -                 |
-| M3.2        | Planned     | M3.1      | JST-JJ-001,JST-JJ-004,JST-JJ-005                            | Create edit describe log restart op-log evolog; multi-workspace     | Implement factories and RPC                                 | -                 |
-| M3.3        | Planned     | M3.2      | JST-CLI-001,JST-CLI-002,JST-CLI-003,JST-CLI-004             | Custom command presentation and capability parity                   | Exercise CLI family matrix                                  | -                 |
-| M4          | Planned     | M3        | JST-API-001,JST-API-005                                     | Structured reads and basic served UI match native semantics         | Implement read surface                                      | -                 |
-| M4.1        | Planned     | M3        | JST-API-001,JST-API-002,JST-JJ-003                          | Pinned three-graph reads with zero GET publications                 | Implement bounded graph sessions                            | -                 |
-| M4.2        | Planned     | M4.1      | JST-API-003,JST-API-004,JST-API-005                         | SSE, safe UI, generated contracts and cold interaction tests        | Build Svelte UI                                             | -                 |
-| M5          | Planned     | M4        | JST-MUT-001,JST-MUT-002,JST-MUT-005                         | Authenticated typed commands and shared RPC policy                  | Implement commands                                          | -                 |
-| M5.1        | Planned     | M4        | JST-MUT-001,JST-MUT-002,JST-MUT-005                         | Basic changes/refs/reconcile; preview receipt and semantic policy   | Implement command transaction facade                        | -                 |
-| M5.2        | Planned     | M5.1      | JST-MUT-003                                                 | Full abandon descendant bookmark workspace/evolution parity         | Implement abandon                                           | -                 |
-| M5.3        | Planned     | M5.1      | JST-MUT-004                                                 | Atomic stale-safe resolution with native conflict variants          | Implement resolve                                           | -                 |
-| M6          | Planned     | M5        | JST-ADAPT-001,JST-ADAPT-002,JST-ADAPT-003,JST-ADAPT-004     | Replay-equivalent searchable projection with freshness              | Implement adapters and search                               | -                 |
-| M6.1        | Planned     | M5        | JST-ADAPT-001,JST-ADAPT-002                                 | Ordered committed reader and durable replay-safe checkpoints        | Implement runner                                            | -                 |
-| M6.2        | Planned     | M6.1      | JST-ADAPT-003,JST-ADAPT-004                                 | Tantivy crash/rebuild/generation and revocation tests               | Implement projection and UI                                 | -                 |
-| M8a         | Planned     | M6        | JST-COMPAT-003,JST-SEC-005                                  | Pinned release, restore, security, performance and cold UI evidence | Harden first release                                        | -                 |
-| M8a.1       | Planned     | M6        | JST-COMPAT-003                                              | Local/shared examples, diagnostics, restore and request budgets     | Run release acceptance                                      | -                 |
-| M7          | Deferred    | M8a       | JST-ADAPT-005                                               | Complete read-only replica through applied position                 | After first release                                         | -                 |
-| M8b         | Deferred    | M8a       | JST-COMPAT-004                                              | Verified lossless import with source safety                         | Separate migration release                                  | -                 |
+| ID          | Status   | Depends   | Requirements                                                | Gate                                                                | Next                                             | Evidence          |
+| ----------- | -------- | --------- | ----------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------ | ----------------- |
+| Bootstrap   | Done     | -         | JST-GOV-001,JST-GOV-002,JST-GOV-003,JST-GOV-004,JST-GOV-005 | Spec, ledger, skeleton, gates and independent commit                | Maintain governance each slice                   | E-BOOT-001        |
+| Bootstrap.1 | Done     | -         | JST-GOV-001,JST-GOV-004                                     | Reference checksum, requirements, progress checker negative tests   | Governance maintained each slice                 | E-BOOT-001        |
+| M0          | Done     | Bootstrap | JST-COMPAT-001,JST-COMPAT-002                               | Compiled extension and exact RustFS contract qualified              | Maintain pinned compatibility probes             | E-M0-001,E-M0-002 |
+| M0.1        | Done     | Bootstrap | JST-COMPAT-001                                              | Pin references/licenses and complete trait/codec matrix             | Re-audit on upstream upgrades                    | E-M0-001          |
+| M0.2        | Done     | M0.1      | JST-JJ-001,JST-JJ-002,JST-ID-002                            | Compile custom CLI/RPC context and query spikes; golden IDs         | Retain probes across upstream changes            | E-M0-002          |
+| M0.3        | Done     | M0.1      | JST-OBJ-002                                                 | Real image create/CAS/range/restart/fault qualification             | Requalify topology or image changes              | E-M0-001          |
+| M1          | Done     | M0        | JST-ID-001,JST-ID-003,JST-OBJ-001,JST-OBJ-003               | Complete lossless objects and streamed storage                      | Maintain codec and storage conformance           | E-M1-001,E-M1-002 |
+| M1.1        | Done     | M0        | JST-ID-003,JST-ID-004,JST-ID-005                            | All native variants and golden identities                           | Retain V1 fixtures across codec changes          | E-M1-001          |
+| M1.2        | Done     | M0        | JST-OBJ-001,JST-OBJ-003,JST-OBJ-004                         | Fault fake and real streamed immutable object transport             | Retain real RustFS and fault-store conformance   | E-M1-002          |
+| M2          | Done     | M1        | JST-PUB-001,JST-PUB-006                                     | Publication fault matrix and cold replay pass                       | Retain publication and cold recovery conformance | E-M2-001,E-M2-002 |
+| M2.1        | Done     | M1        | JST-PUB-001,JST-PUB-002                                     | Complete inventory and unique candidate CAS                         | Retain publication and cold recovery conformance | E-M2-001,E-M2-002 |
+| M2.2        | Done     | M2.1      | JST-PUB-003,JST-PUB-004,JST-PUB-005                         | Retry receipts and unknown outcome recovery                         | Retain publication and cold recovery conformance | E-M2-002          |
+| M2.3        | Done     | M2.2      | JST-PUB-006                                                 | Checkpoint equivalence and cache-free restart                       | Retain publication and cold recovery conformance | E-M2-002          |
+| M3          | Planned  | M2        | JST-JJ-001,JST-JJ-002,JST-CLI-001,JST-SEC-001               | Native CLI/server vertical slice with authentication                | Integrate native stores                          | -                 |
+| M3.1        | Planned  | M2        | JST-SEC-001,JST-SEC-002,JST-SEC-003,JST-SEC-004             | Revocable tokens and transport authorization                        | Implement auth boundaries                        | -                 |
+| M3.2        | Planned  | M3.1      | JST-JJ-001,JST-JJ-004,JST-JJ-005                            | Create edit describe log restart op-log evolog; multi-workspace     | Implement factories and RPC                      | -                 |
+| M3.3        | Planned  | M3.2      | JST-CLI-001,JST-CLI-002,JST-CLI-003,JST-CLI-004             | Custom command presentation and capability parity                   | Exercise CLI family matrix                       | -                 |
+| M4          | Planned  | M3        | JST-API-001,JST-API-005                                     | Structured reads and basic served UI match native semantics         | Implement read surface                           | -                 |
+| M4.1        | Planned  | M3        | JST-API-001,JST-API-002,JST-JJ-003                          | Pinned three-graph reads with zero GET publications                 | Implement bounded graph sessions                 | -                 |
+| M4.2        | Planned  | M4.1      | JST-API-003,JST-API-004,JST-API-005                         | SSE, safe UI, generated contracts and cold interaction tests        | Build Svelte UI                                  | -                 |
+| M5          | Planned  | M4        | JST-MUT-001,JST-MUT-002,JST-MUT-005                         | Authenticated typed commands and shared RPC policy                  | Implement commands                               | -                 |
+| M5.1        | Planned  | M4        | JST-MUT-001,JST-MUT-002,JST-MUT-005                         | Basic changes/refs/reconcile; preview receipt and semantic policy   | Implement command transaction facade             | -                 |
+| M5.2        | Planned  | M5.1      | JST-MUT-003                                                 | Full abandon descendant bookmark workspace/evolution parity         | Implement abandon                                | -                 |
+| M5.3        | Planned  | M5.1      | JST-MUT-004                                                 | Atomic stale-safe resolution with native conflict variants          | Implement resolve                                | -                 |
+| M6          | Planned  | M5        | JST-ADAPT-001,JST-ADAPT-002,JST-ADAPT-003,JST-ADAPT-004     | Replay-equivalent searchable projection with freshness              | Implement adapters and search                    | -                 |
+| M6.1        | Planned  | M5        | JST-ADAPT-001,JST-ADAPT-002                                 | Ordered committed reader and durable replay-safe checkpoints        | Implement runner                                 | -                 |
+| M6.2        | Planned  | M6.1      | JST-ADAPT-003,JST-ADAPT-004                                 | Tantivy crash/rebuild/generation and revocation tests               | Implement projection and UI                      | -                 |
+| M8a         | Planned  | M6        | JST-COMPAT-003,JST-SEC-005                                  | Pinned release, restore, security, performance and cold UI evidence | Harden first release                             | -                 |
+| M8a.1       | Planned  | M6        | JST-COMPAT-003                                              | Local/shared examples, diagnostics, restore and request budgets     | Run release acceptance                           | -                 |
+| M7          | Deferred | M8a       | JST-ADAPT-005                                               | Complete read-only replica through applied position                 | After first release                              | -                 |
+| M8b         | Deferred | M8a       | JST-COMPAT-004                                              | Verified lossless import with source safety                         | Separate migration release                       | -                 |
 
 ## Evidence ledger
 
@@ -537,6 +537,123 @@ and named tests are checked by the progress gate.
     ],
     "versions": "jj-lib 0.45.1; Rust 1.97.1",
     "formats": "No persisted format change. Process-local verified inventories retain the full dependency closure; source capabilities are not serialized or used as publication authority."
+  },
+  {
+    "id": "E-M2-002",
+    "tasks": ["M2", "M2.1", "M2.2", "M2.3"],
+    "date": "2026-09-27",
+    "kind": "manifest-publication-recovery",
+    "files": [
+      "Cargo.lock",
+      "crates/jj-store-jj/tests/rustfs.rs",
+      "crates/jj-store-model/src/ids.rs",
+      "crates/jj-store-wal/Cargo.toml",
+      "crates/jj-store-wal/src/catalog.rs",
+      "crates/jj-store-wal/src/inventory.rs",
+      "crates/jj-store-wal/src/lib.rs",
+      "crates/jj-store-wal/src/publication.rs",
+      "crates/jj-store-wal/src/records.rs",
+      "crates/jj-store-wal/tests/publication.rs",
+      "scripts/rustfs-contract.py",
+      "docs/evidence/m2-publication-rustfs.json",
+      "spec/src/verification.md"
+    ],
+    "tests": [
+      "crates/jj-store-wal/tests/publication.rs#atomic_publication_retains_receipts_through_restart_and_checkpoint",
+      "crates/jj-store-wal/tests/publication.rs#every_staging_or_manifest_fault_preserves_atomic_visibility_and_retry_identity",
+      "crates/jj-store-wal/tests/publication.rs#competing_candidates_preserve_siblings_and_only_selected_records_are_committed",
+      "crates/jj-store-wal/tests/publication.rs#delayed_duplicate_cannot_resurrect_superseded_heads",
+      "crates/jj-store-wal/tests/publication.rs#lost_acknowledgement_resolves_from_history_after_another_publication",
+      "crates/jj-store-wal/tests/publication.rs#strict_stale_intent_reuse_and_missing_dependencies_publish_nothing",
+      "crates/jj-store-wal/tests/publication.rs#checkpoint_race_preserves_newer_tail_receipts_and_inventory",
+      "crates/jj-store-wal/tests/publication.rs#settings_are_selected_atomically_and_initialization_is_idempotent",
+      "crates/jj-store-wal/tests/publication.rs#persistent_catalog_splits_are_bounded_and_old_roots_remain_readable",
+      "crates/jj-store-wal/tests/publication.rs#cold_recovery_rejects_missing_native_data_and_control_corruption",
+      "crates/jj-store-wal/tests/publication.rs#deterministic_publication_sequences_replay_with_original_results",
+      "crates/jj-store-wal/tests/publication.rs#authorization_is_rechecked_after_cas_conflict_and_before_receipt_replay",
+      "crates/jj-store-wal/tests/publication.rs#semantic_denial_stages_no_publication_records",
+      "crates/jj-store-wal/tests/publication.rs#cold_recovery_verifies_retained_historical_roots_and_settings",
+      "crates/jj-store-wal/tests/publication.rs#cancellation_preserves_unknown_identity_before_and_after_manifest_application",
+      "crates/jj-store-jj/tests/rustfs.rs#real_rustfs_manifest_publication_and_cold_recovery"
+    ],
+    "runs": [
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-wal --test publication",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before implementation: publication target absent."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-wal --test publication cold_recovery_verifies_retained_historical_roots_and_settings",
+        "result": "fail",
+        "failures": 1,
+        "note": "Review regression reproduced accepted corruption in a retained historical inventory root."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-wal --test publication",
+        "result": "pass",
+        "failures": 0,
+        "note": "15 publication, fault, race, randomized replay, cancellation, guard and recovery tests. Historical-root regression now passes."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools python3 scripts/rustfs-contract.py --run --rust-client --output .scratch/m2-publication-rustfs-final.json",
+        "result": "pass",
+        "failures": 0,
+        "note": "10 real probes; 19 accepted native publications with concurrent siblings, randomized head updates, unknown acknowledgements, late receipts and checkpoints. A fresh process after container kill/restart verifies all retained native and control data. Owned services cleaned up."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:check",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm check",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test",
+        "result": "pass",
+        "failures": 0,
+        "note": "45 Rust tests, 14 governance tests and 3 harness self-tests; 2 external RustFS tests run separately by the real harness."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm build",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "pnpm format:check",
+        "result": "fail",
+        "failures": 2,
+        "note": "Two canonical Markdown files required formatting; corrected."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "fail",
+        "failures": 4,
+        "note": "Ledger status-edit script matched four dependency cells; restored original requirement IDs before commit."
+      },
+      {
+        "command": "pnpm format:check",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:build",
+        "result": "pass",
+        "failures": 0
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "versions": "jj 0.45.1 / 7c41cdeb16b6b321c64e789a966b6adf723816a5; Rust 1.97.1; pinned single-node RustFS.",
+    "formats": "New V1 canonical repository-bound JSON control envelopes, SHA-256 references; attempt-unique WAL keys; bounded radix catalogs; manifest revision distinct from publication sequence; native V1 envelope unchanged."
   }
 ]
 ```

@@ -47,3 +47,8 @@ payload. Decoders check caller limits before allocating and check the expected
 kind and ID as well as semantic identity after decoding. Native roots are
 virtual zero IDs; ordinary stored objects use content hashes even when their
 contents equal a root value.
+
+Publication records use their own SHA-256 RecordDigest and IntentDigest types;
+epochs, principals and attempt IDs are distinct 128-bit types. Their
+serialization does not alter the frozen native envelope/profile. Typed object
+keys are encoded with an explicit kind tag in control records.

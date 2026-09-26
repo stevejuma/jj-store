@@ -58,3 +58,15 @@ The inventory-source integration is also checked by a fresh
 [compiled native storage run](../../docs/evidence/m2-inventory-native-rustfs.json).
 This confirms the checked metadata/file reader remains compatible; it does not
 establish WAL publication or recovery correctness.
+
+The compiled RustFS lane also publishes native operations through the manifest
+coordinator. It tests independent-client sibling races, an intentionally lost
+manifest acknowledgement, checkpoint/receipt persistence, missing dependency
+rejection and explicit corruption detection. The harness then kills/restarts its
+owned RustFS container and launches a fresh Rust process to recover selected
+history, retained evolution dependencies and receipts without in-memory caches.
+
+[M2 publication evidence](../../docs/evidence/m2-publication-rustfs.json)
+records the extended 19-publication model, repeated checkpoints and
+original-result retries against the pinned image, then a fresh-process
+retained-data audit.

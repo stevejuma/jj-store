@@ -42,3 +42,42 @@ repository identity. A different accessor, replica or restarted process must
 recover certification from selected persistent records; it cannot reuse an
 arbitrary in-memory base to skip required reads. The source receives the
 remaining byte budget before starting a new object read.
+
+## V1 control records and catalogs
+
+Control records are canonical, versioned JSON envelopes containing repository
+identity and record kind. SHA-256 references bind their exact bytes. WAL paths
+include a cryptographically random attempt ID as well as the record digest.
+Catalogs use immutable bounded radix pages (32 entries per leaf, 16 children per
+branch, at most 64 nibbles of depth). Separate selected roots index retained
+object descriptors, receipts and committed sequence positions. Reads follow
+those roots without bucket enumeration; incremental updates copy only changed
+paths. Old roots and records remain readable and are never deleted.
+
+A bounded manifest selects the catalog roots, exact tail, nonempty operation
+heads and immutable settings together. Strict requests bind the logical snapshot
+(epoch, published sequence and heads), independent of checkpoint-only manifest
+revisions. Canonical intent covers the complete publication request; request and
+publication identity indexes share a durable result receipt. Duplicate lookup
+precedes stale-snapshot checks and head changes.
+
+A checkpoint stores the folded state and selected catalog roots at its captured
+position. Selecting it changes only manifest representation/revision and keeps
+any newer publication tail, heads, settings and catalog roots from the
+successful CAS base. It cannot prune receipts, evolution history or committed
+log records.
+
+The coordinator requires a publication guard with separate authorization and
+semantic-validation methods; no production allow-all implementation exists. It
+authorizes before receipt lookup and dependency reads, validates new transitions
+before staging, and repeats both checks against a fresh base after CAS conflict.
+Receipt replay repeats authorization but never reruns the original mutation.
+Transport/service integration supplies the shared policy in M3/M5.
+
+Cold integrity recovery verifies retained historical inventory and settings
+records as well as the current roots. Checkpoint catalogs and predecessor
+checkpoints must remain readable and agree with the selected history; corruption
+in an old root is not hidden by a newer root. A shared bounded page audit avoids
+reading unchanged radix subtrees repeatedly. Ordinary startup may read the
+manifest's already folded state; the explicit integrity recovery performs a full
+retained-data audit and fails if its configured budget is insufficient.

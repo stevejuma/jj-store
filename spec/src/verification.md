@@ -17,12 +17,12 @@ passing concrete tests linked from the progress ledger.
 | JST-OBJ-002    | Implemented | `docs/evidence/m0-rustfs-cold.json` (single-node topology only); [M0](milestones.md)                                                                 |
 | JST-OBJ-003    | Implemented | `crates/jj-store-object/tests/contract.rs`; `crates/jj-store-jj/tests/native_objects.rs`; `docs/evidence/m1-native-rustfs.json`; [M1](milestones.md) |
 | JST-OBJ-004    | Implemented | `crates/jj-store-object/tests/contract.rs`; `crates/jj-store-jj/tests/native_objects.rs`; `docs/evidence/m1-native-rustfs.json`; [M1](milestones.md) |
-| JST-PUB-001    | Planned     | [Publication and recovery](publication.md); [milestone gate](milestones.md)                                                                          |
-| JST-PUB-002    | Planned     | [Publication and recovery](publication.md); [milestone gate](milestones.md)                                                                          |
-| JST-PUB-003    | Planned     | [Publication and recovery](publication.md); [milestone gate](milestones.md)                                                                          |
-| JST-PUB-004    | Planned     | [Publication and recovery](publication.md); [milestone gate](milestones.md)                                                                          |
-| JST-PUB-005    | Planned     | [Publication and recovery](publication.md); [milestone gate](milestones.md)                                                                          |
-| JST-PUB-006    | Planned     | [Publication and recovery](publication.md); [milestone gate](milestones.md)                                                                          |
+| JST-PUB-001    | Implemented | `crates/jj-store-wal/tests/publication.rs`; `docs/evidence/m2-publication-rustfs.json`; [M2](milestones.md)                                          |
+| JST-PUB-002    | Implemented | `crates/jj-store-wal/tests/publication.rs`; `docs/evidence/m2-publication-rustfs.json`; [M2](milestones.md)                                          |
+| JST-PUB-003    | Implemented | `crates/jj-store-wal/tests/publication.rs`; `docs/evidence/m2-publication-rustfs.json`; [M2](milestones.md)                                          |
+| JST-PUB-004    | Implemented | `crates/jj-store-wal/tests/publication.rs`; `docs/evidence/m2-publication-rustfs.json`; [M2](milestones.md)                                          |
+| JST-PUB-005    | Implemented | `crates/jj-store-wal/tests/publication.rs`; `docs/evidence/m2-publication-rustfs.json`; [M2](milestones.md)                                          |
+| JST-PUB-006    | Implemented | `crates/jj-store-wal/tests/publication.rs`; `docs/evidence/m2-publication-rustfs.json`; [M2](milestones.md)                                          |
 | JST-JJ-001     | Planned     | [Native JJ integration](jj-integration.md); [milestone gate](milestones.md)                                                                          |
 | JST-JJ-002     | Planned     | [Native JJ integration](jj-integration.md); [milestone gate](milestones.md)                                                                          |
 | JST-JJ-003     | Planned     | [Native JJ integration](jj-integration.md); [milestone gate](milestones.md)                                                                          |

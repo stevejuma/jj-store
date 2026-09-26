@@ -2939,7 +2939,13 @@ name = "jj-store-wal"
 version = "0.1.0"
 dependencies = [
  "async-trait",
+ "futures 0.3.34",
+ "getrandom 0.4.3",
  "jj-store-model",
+ "jj-store-object",
+ "serde",
+ "serde_json",
+ "sha2 0.10.9",
  "thiserror 2.0.21",
  "tokio",
 ]

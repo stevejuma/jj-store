@@ -129,7 +129,7 @@ def run_contract(image, rounds, contenders, output, rust_client=False):
     require("@sha256:" in image, "use an immutable image digest")
     name = "jj-store-m0-" + uuid.uuid4().hex[:12]
     volume = name + "-data"
-    report = {"schema": 1, "image": image, "topology": "single container, one data volume, independent HTTP client connections", "rounds": rounds, "contenders": contenders, "started_at": datetime.datetime.now(datetime.timezone.utc).isoformat(), "tests": [], "limitations": ["No multi-node/load-balancer qualification", "Discarded acknowledgement simulates an unknown client outcome, not a faulty RustFS network", "Publication/ACL enforcement belongs to later project adapters"]}
+    report = {"schema": 1, "image": image, "topology": "single container, one data volume, independent HTTP client connections", "rounds": rounds, "contenders": contenders, "started_at": datetime.datetime.now(datetime.timezone.utc).isoformat(), "tests": [], "limitations": ["No multi-node/load-balancer qualification", "Discarded acknowledgement simulates an unknown client outcome, not a faulty RustFS network", "Production token and semantic-policy integration remains M3/M5; test principals explicitly permitted"]}
     def docker(*args):
         return subprocess.check_output(["docker", *args], text=True, stderr=subprocess.STDOUT).strip()
     def record(test, action):
@@ -243,6 +243,27 @@ def run_contract(image, rounds, contenders, output, rust_client=False):
                                          "output": (result.stdout + result.stderr)[-8000:]}
                 require(result.returncode == 0, "compiled Rust client failed: " + report["rust_client"]["output"])
             record("compiled_rust_native_transport", compiled_client)
+            def cold_publication():
+                docker("kill", name)
+                docker("start", name)
+                new_port = docker("port", name, "9000/tcp").rsplit(":", 1)[1]
+                s3.endpoint = f"http://127.0.0.1:{new_port}"
+                for _ in range(100):
+                    try:
+                        if s3.request("GET", "restart")[0] == 200: break
+                    except (OSError, http.client.HTTPException): pass
+                    time.sleep(0.2)
+                else: raise AssertionError("publication restart failed readiness")
+                env = dict(os.environ, JST_TEST_ENDPOINT=s3.endpoint, JST_TEST_ACCESS_KEY=ACCESS,
+                           JST_TEST_SECRET_KEY=SECRET, JST_TEST_RECOVER_ONLY="1",
+                           DEVELOPER_DIR="/Library/Developer/CommandLineTools")
+                command = ["cargo", "test", "-p", "jj-store-jj", "--test", "rustfs", "--locked",
+                           "real_rustfs_manifest_publication_and_cold_recovery", "--", "--ignored", "--nocapture"]
+                result = subprocess.run(command, env=env, capture_output=True, text=True, timeout=180)
+                report["cold_publication"] = {"command": command, "exit_code": result.returncode,
+                                               "output": (result.stdout + result.stderr)[-8000:]}
+                require(result.returncode == 0, "cold publication recovery failed: " + report["cold_publication"]["output"])
+            record("native_publication_survives_process_kill_and_empty_caches", cold_publication)
     except Exception as error:
         report["startup_error"] = str(error)
     finally:
@@ -251,7 +272,7 @@ def run_contract(image, rounds, contenders, output, rust_client=False):
             result = subprocess.run(["docker", *args], capture_output=True, text=True)
             if result.returncode and "No such" not in result.stderr: report.setdefault("cleanup_errors", []).append(result.stderr.strip())
         report["failures"] = sum(t["failures"] for t in report["tests"]) + int("startup_error" in report) + len(report.get("cleanup_errors", []))
-        report["result"] = "pass" if report["failures"] == 0 and len(report["tests"]) == (9 if rust_client else 8) else "fail"
+        report["result"] = "pass" if report["failures"] == 0 and len(report["tests"]) == (10 if rust_client else 8) else "fail"
         output.parent.mkdir(parents=True, exist_ok=True)
         output.write_text(json.dumps(report, indent=2) + "\n")
         print(f"report={output} result={report['result']} failures={report['failures']}", flush=True)

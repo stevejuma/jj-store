@@ -81,6 +81,11 @@ id!(RepositoryId, 16);
 id!(RequestId, 16);
 id!(PublicationId, 16);
 id!(EnvelopeDigest, 32);
+id!(RecordDigest, 32);
+id!(IntentDigest, 32);
+id!(AttemptId, 16);
+id!(EpochId, 16);
+id!(PrincipalId, 16);
 
 /// A copy placeholder is not a content-addressed object or dependency.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -112,7 +117,13 @@ pub enum ObjectKind {
     Operation = 7,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+#[serde(
+    tag = "kind",
+    content = "id",
+    rename_all = "snake_case",
+    deny_unknown_fields
+)]
 pub enum ObjectKey {
     Commit(CommitId),
     Tree(TreeId),

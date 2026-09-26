@@ -36,3 +36,8 @@ uses bounded temporary disk space rather than buffering unbounded file blobs.
 The WAL crate starts with a storage-independent bounded dependency walker. Its
 source interface returns owned keys and verified descriptors; the JJ crate
 implements native edge enumeration. No native JJ type crosses into the WAL.
+
+The WAL crate owns immutable publication records, persistent radix catalogs,
+manifest CAS, durable receipts, replay and checkpoints. Its catalogs depend only
+on owned model types and the object transport. Native dependency enumeration
+continues to enter through the verified-source interface.
