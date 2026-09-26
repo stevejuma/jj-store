@@ -31,3 +31,7 @@ status; reports hold immutable evidence rather than competing status summaries.
 | `^(?:crates/jj-store-testkit/ | fixtures/           | schemas/                     | proto/           | docs/upstream-lock | docs/codec   | docs/compatibility   | docs/licenses/                | docs/evidence/    | scripts/.*(?:rustfs | spike | upstream) | deploy/)` | `compatibility.md` |
 | `^(?:scripts/                 | AGENTS\.md$         | spec-validator\.config\.mjs$ | spec/book\.toml$ | \.gitignore$       | \.prettier)` | `spec-governance.md` |
 | `^(?:Cargo\.(?:toml           | lock)$              | rust-toolchain\.toml$        | package\.json$   | pnpm-lock\.yaml$   | README\.md$  | LICENSE\.md$         | docs/implementation-plan\.md$ | docs/reference/)` | `architecture.md`   |
+
+The M0 contract harness is validated in both normal tests and spec checks. Real
+storage qualification remains an explicit lane and cannot be inferred from the
+harness self-tests or a source audit.

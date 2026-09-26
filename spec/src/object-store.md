@@ -14,3 +14,11 @@ rollout; GET followed by unconditional PUT is not a substitute.
 | JST-OBJ-002 | Acknowledged writes MUST satisfy tested cross-route read-after-write and conditional-write semantics for the exact pinned RustFS image and topology.                |
 | JST-OBJ-003 | Immutable uploads MUST enforce size and checksum limits and verify existing native content on collisions; large blobs MUST stream with bounded memory.              |
 | JST-OBJ-004 | Normal graph reads MUST NOT rely on bucket LIST; destructive delete MUST remain disabled for core v1.                                                               |
+
+## Qualified primitive probe
+
+The initial single-node candidate passed
+[seven probes](../../docs/evidence/m0-rustfs-single-node.json). The probe
+discards one acknowledgement deliberately; it does not claim to inject a failure
+inside RustFS. Production publication, IAM enforcement, streamed upload limits,
+and multi-node routes require their own later acceptance evidence.

@@ -122,6 +122,11 @@ export default defineConfig(tableRequirements(), {
         args: ["--test", "scripts/governance.test.mjs"],
       },
       {
+        name: "storage-harness",
+        command: "python3",
+        args: ["scripts/rustfs-contract.py", "--self-test"],
+      },
+      {
         name: "rust-tests",
         command: "cargo",
         args: ["test", "--workspace", "--locked"],

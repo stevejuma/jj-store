@@ -15,13 +15,15 @@
     "check:boundaries": "node scripts/check-boundaries.mjs",
     "check:progress": "node scripts/check-progress.mjs",
     "test:governance": "node --test scripts/governance.test.mjs",
-    "test": "pnpm test:governance && cargo test --workspace --locked",
+    "test": "pnpm test:governance && pnpm test:storage-harness && cargo test --workspace --locked",
     "spec:build": "spec-validator build",
     "spec:check": "spec-validator check",
     "spec:first": "spec-validator first",
     "spec:validate": "spec-validator validate",
     "format:check": "prettier --check .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "test:storage-harness": "python3 scripts/rustfs-contract.py --self-test",
+    "test:rustfs": "python3 scripts/rustfs-contract.py --run"
   },
   "devDependencies": {
     "@lapismd/spec-validator": "^0.1.0",
