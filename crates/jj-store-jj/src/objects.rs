@@ -35,6 +35,7 @@ pub struct NativeObjects {
     store: Arc<dyn ObjectStore>,
     repository: m::RepositoryId,
     max_blob: u64,
+    inventory_scope: jj_store_wal::inventory::SourceScope,
 }
 impl NativeObjects {
     pub fn new(
@@ -49,19 +50,32 @@ impl NativeObjects {
             store,
             repository,
             max_blob,
+            inventory_scope: jj_store_wal::inventory::SourceScope::new(repository),
         })
     }
     fn path(&self, key: m::ObjectKey) -> Key {
         Key::new(key.storage_path(self.repository)).expect("owned IDs generate canonical keys")
     }
     pub async fn get<T: NativeCodec>(&self, key: m::ObjectKey) -> Result<T> {
+        Ok(self
+            .get_verified(key, MAX_METADATA_BYTES + HEADER_LEN as u64)
+            .await?
+            .0)
+    }
+    async fn get_verified<T: NativeCodec>(
+        &self,
+        key: m::ObjectKey,
+        max_bytes: u64,
+    ) -> Result<(T, Header, u64)> {
         let bytes = self
             .store
             .get(&self.path(key), None)
             .await?
-            .read_bounded(MAX_METADATA_BYTES + HEADER_LEN as u64)
+            .read_bounded(max_bytes.min(MAX_METADATA_BYTES + HEADER_LEN as u64))
             .await?;
-        Ok(codec::decode(key, &bytes, MAX_METADATA_BYTES)?)
+        let value = codec::decode(key, &bytes, MAX_METADATA_BYTES)?;
+        let header = Header::decode(&bytes[..HEADER_LEN], key, MAX_METADATA_BYTES)?;
+        Ok((value, header, bytes.len() as u64))
     }
     pub async fn put<T: NativeCodec>(&self, value: &T) -> Result<(m::ObjectKey, UploadStatus)> {
         let (key, bytes) = codec::encode(value, MAX_METADATA_BYTES)?;
@@ -140,9 +154,19 @@ impl NativeObjects {
     /// Returns a private verified spool. Unverified remote bytes are never
     /// exposed as successful native content, including late stream failures.
     pub async fn get_file(&self, id: m::FileId) -> Result<StagedUpload> {
+        Ok(self
+            .get_file_verified(id, self.max_blob + HEADER_LEN as u64)
+            .await?
+            .0)
+    }
+    async fn get_file_verified(
+        &self,
+        id: m::FileId,
+        max_bytes: u64,
+    ) -> Result<(StagedUpload, Header)> {
         let key = m::ObjectKey::File(id);
         let mut download = self.store.get(&self.path(key), None).await?;
-        if download.metadata.len > self.max_blob + HEADER_LEN as u64 {
+        if download.metadata.len > max_bytes.min(self.max_blob + HEADER_LEN as u64) {
             return Err(jj_store_object::Error::Limit.into());
         }
         let mut bytes = [0; HEADER_LEN];
@@ -172,7 +196,7 @@ impl NativeObjects {
         {
             return Err(Error::Integrity);
         }
-        Ok(raw)
+        Ok((raw, header))
     }
 }
 async fn hash_envelope(key: m::ObjectKey, raw: &StagedUpload) -> Result<m::EnvelopeDigest> {
@@ -205,5 +229,80 @@ async fn equal_streams(a: &StagedUpload, b: &StagedUpload) -> Result<bool> {
         if left[..n] != right[..n] {
             return Ok(false);
         }
+    }
+}
+
+#[async_trait::async_trait]
+impl jj_store_wal::inventory::DependencySource for NativeObjects {
+    fn scope(&self) -> jj_store_wal::inventory::SourceScope {
+        self.inventory_scope
+    }
+    async fn load_verified(
+        &self,
+        key: m::ObjectKey,
+        max_bytes: u64,
+    ) -> jj_store_wal::inventory::Result<jj_store_wal::inventory::VerifiedNode> {
+        use crate::{dependencies::NativeDependencies as _, roots};
+        use jj_lib::{backend as b, op_store as o};
+        use jj_store_wal::inventory::{InventoryError, Representation, VerifiedNode};
+        let source = |e: Error| InventoryError::Source(e.to_string());
+        let virtual_deps = match key {
+            m::ObjectKey::Commit(id) if id == roots::ROOT_COMMIT => {
+                Some(roots::commit().dependencies())
+            }
+            m::ObjectKey::View(id) if id == roots::ROOT_VIEW => Some(roots::view().dependencies()),
+            m::ObjectKey::Operation(id) if id == roots::ROOT_OPERATION => {
+                Some(roots::operation().dependencies())
+            }
+            m::ObjectKey::Tree(_) if key == b::Tree::default().key() => {
+                Some(b::Tree::default().dependencies())
+            }
+            _ => None,
+        };
+        if let Some(dependencies) = virtual_deps {
+            return Ok(VerifiedNode {
+                key,
+                representation: Representation::Virtual,
+                dependencies: dependencies.map_err(|e| source(e.into()))?,
+            });
+        }
+        macro_rules! metadata {
+            ($type:ty) => {{
+                let (value, header, bytes) = self
+                    .get_verified::<$type>(key, max_bytes)
+                    .await
+                    .map_err(source)?;
+                VerifiedNode {
+                    key,
+                    representation: Representation::Stored {
+                        envelope_digest: header.digest,
+                        bytes,
+                    },
+                    dependencies: value.dependencies().map_err(|e| source(e.into()))?,
+                }
+            }};
+        }
+        Ok(match key {
+            m::ObjectKey::Commit(_) => metadata!(b::Commit),
+            m::ObjectKey::Tree(_) => metadata!(b::Tree),
+            m::ObjectKey::Copy(_) => metadata!(b::CopyHistory),
+            m::ObjectKey::View(_) => metadata!(o::View),
+            m::ObjectKey::Operation(_) => metadata!(o::Operation),
+            m::ObjectKey::Symlink(_) => metadata!(codec::NativeSymlink),
+            m::ObjectKey::File(id) => {
+                let (raw, header) = self
+                    .get_file_verified(id, max_bytes)
+                    .await
+                    .map_err(source)?;
+                VerifiedNode {
+                    key,
+                    representation: Representation::Stored {
+                        envelope_digest: header.digest,
+                        bytes: raw.len() + HEADER_LEN as u64,
+                    },
+                    dependencies: Default::default(),
+                }
+            }
+        })
     }
 }

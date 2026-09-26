@@ -41,3 +41,8 @@ with 64 KiB buffers and configured disk limits. A file reader is exposed only
 after full checksum and BLAKE2b verification. Unknown upload outcomes remain
 explicit unless a subsequent read proves the identical immutable object is
 present.
+
+Dependency enumeration covers all conflict terms, nested remote tags/bookmarks,
+per-workspace Git heads, logical working-copy commits and both predecessor
+representations. The native object accessor implements the WAL inventory source
+using checked reads and explicit virtual-root values, including the empty tree.

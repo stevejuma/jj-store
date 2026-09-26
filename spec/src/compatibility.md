@@ -53,3 +53,8 @@ conditional-create/CAS races over independent clients, stale tokens, range
 reads, 8 MiB native file upload/read/duplicate verification, metadata objects
 and a proxy that drops a real successful write acknowledgement. Default unit
 lanes leave this external test explicitly ignored.
+
+The inventory-source integration is also checked by a fresh
+[compiled native storage run](../../docs/evidence/m2-inventory-native-rustfs.json).
+This confirms the checked metadata/file reader remains compatible; it does not
+establish WAL publication or recovery correctness.

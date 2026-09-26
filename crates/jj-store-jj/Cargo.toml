@@ -10,6 +10,8 @@ publish = false
 jj-lib.workspace = true
 jj-store-model.workspace = true
 jj-store-object.workspace = true
+jj-store-wal.workspace = true
+async-trait = "0.1"
 tokio = { version = "1", features = ["fs", "io-util"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = { version = "1", features = ["preserve_order"] }
@@ -17,7 +19,6 @@ blake2 = "0.10"
 thiserror = "2"
 
 [dev-dependencies]
-async-trait = "0.1"
 futures = "0.3"
 tempfile = "3"
 tokio = { version = "1", features = ["macros", "rt-multi-thread", "net", "sync", "time"] }

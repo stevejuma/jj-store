@@ -2889,6 +2889,7 @@ dependencies = [
  "jj-lib",
  "jj-store-model",
  "jj-store-object",
+ "jj-store-wal",
  "prost",
  "prost-build",
  "protoc-bin-vendored",
@@ -2931,6 +2932,16 @@ dependencies = [
  "thiserror 2.0.21",
  "tokio",
  "tokio-util 0.7.19",
+]
+
+[[package]]
+name = "jj-store-wal"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "jj-store-model",
+ "thiserror 2.0.21",
+ "tokio",
 ]
 
 [[package]]

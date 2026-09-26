@@ -32,3 +32,7 @@ Version 1 metadata is bounded independently of the streaming file transport.
 The object crate owns the S3 transport and deterministic fault store. It depends
 on the model and transport libraries without importing JJ. Upload preparation
 uses bounded temporary disk space rather than buffering unbounded file blobs.
+
+The WAL crate starts with a storage-independent bounded dependency walker. Its
+source interface returns owned keys and verified descriptors; the JJ crate
+implements native edge enumeration. No native JJ type crosses into the WAL.
