@@ -14,3 +14,11 @@ submodule data need full coverage beyond the reference SimpleBackend.
 | JST-JJ-003 | Read sessions MUST pin explicit operations through load_at and MUST NOT reconcile heads; authorized mutation sessions MUST use native transactions and finish descendant rewrites.   |
 | JST-JJ-004 | Physical checkout bookkeeping MUST stay client-local; logical workspace IDs MUST be distinct across unrelated clients and stale-workspace updates MUST preserve unsnapshotted edits. |
 | JST-JJ-005 | Indexes and prefix lookup MUST be bounded, rebuildable, and versioned by native profile; normal required methods MUST NOT contain silent stubs.                                      |
+
+## M0 extension qualification
+
+M0 probes register a request-scoped OpHeadsStore through StoreFactories,
+preserve per-principal publication IDs and exact preconditions across real
+loopback gRPC, and load explicitly pinned divergent operations in a bounded
+local async task. The RPC fixture is test-only and does not implement durable
+publication or policy.

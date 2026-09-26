@@ -22,3 +22,7 @@ The initial single-node candidate passed
 discards one acknowledgement deliberately; it does not claim to inject a failure
 inside RustFS. Production publication, IAM enforcement, streamed upload limits,
 and multi-node routes require their own later acceptance evidence.
+
+A [second cold run](../../docs/evidence/m0-rustfs-cold.json) confirms incomplete
+request bodies never become readable objects. This evidence supplements the
+first report without replacing its recorded outcomes.

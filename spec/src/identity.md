@@ -24,3 +24,9 @@ and required methods. Copy IDs use the pinned CopyHistory content hash in their
 own kind namespace. Submodule links are native IDs, not transitive dependencies
 on another repository. Generic native JSON omits several identity-bearing
 fields.
+
+## M0 extension qualification
+
+Pinned hash fixtures distinguish absent, empty, and intermediate predecessor
+maps, preserve timestamp offsets, and verify special roots and the empty-tree
+identity against upstream SimpleBackend/SimpleOpStore. Full codecs remain M1.

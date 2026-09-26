@@ -35,3 +35,8 @@ status; reports hold immutable evidence rather than competing status summaries.
 The M0 contract harness is validated in both normal tests and spec checks. Real
 storage qualification remains an explicit lane and cannot be inferred from the
 harness self-tests or a source audit.
+
+## M0 extension qualification
+
+Native compatibility probes are normal Rust test targets. Their source/fixture
+updates require canonical chapter changes and same-change ledger evidence.

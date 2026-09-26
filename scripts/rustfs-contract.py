@@ -187,6 +187,21 @@ def run_contract(image, rounds, contenders, output):
             require_status(s3.request("PUT", "bad-checksum", b"value", {"If-None-Match":"*", "x-amz-checksum-sha256":invalid}), {400})
             require_status(s3.request("GET", "bad-checksum"), {404})
         record("size_range_checksum_and_partial_rejection", reads)
+        def truncated_upload():
+            body = b"must-not-publish-partial-content" * 65536
+            url = s3.endpoint + "/jj-store-contract/truncated"
+            parsed = urllib.parse.urlsplit(url)
+            headers = signed_headers("PUT", url, body, {"If-None-Match": "*"})
+            headers["content-length"] = str(len(body))
+            headers["connection"] = "close"
+            request = f"PUT {parsed.path} HTTP/1.1\r\n" + "".join(f"{k}: {v}\r\n" for k, v in headers.items()) + "\r\n"
+            with socket.create_connection((parsed.hostname, parsed.port), timeout=10) as conn:
+                conn.sendall(request.encode() + body[:1024])
+                conn.shutdown(socket.SHUT_WR)
+                while conn.recv(4096):
+                    pass
+            require_status(s3.request("GET", "truncated"), {404})
+        record("interrupted_upload_is_not_published", truncated_upload)
         def unknown():
             outcome = s3.request("PUT", "lost-ack", b"durable", {"If-None-Match":"*"}, drop_response=True)
             require(outcome[0] == "Unknown", "discarded acknowledgement classified as known")
@@ -226,7 +241,7 @@ def run_contract(image, rounds, contenders, output):
             result = subprocess.run(["docker", *args], capture_output=True, text=True)
             if result.returncode and "No such" not in result.stderr: report.setdefault("cleanup_errors", []).append(result.stderr.strip())
         report["failures"] = sum(t["failures"] for t in report["tests"]) + int("startup_error" in report) + len(report.get("cleanup_errors", []))
-        report["result"] = "pass" if report["failures"] == 0 and len(report["tests"]) == 7 else "fail"
+        report["result"] = "pass" if report["failures"] == 0 and len(report["tests"]) == 8 else "fail"
         output.parent.mkdir(parents=True, exist_ok=True)
         output.write_text(json.dumps(report, indent=2) + "\n")
         print(f"report={output} result={report['result']} failures={report['failures']}", flush=True)

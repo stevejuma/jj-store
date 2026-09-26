@@ -1,0 +1,15 @@
+[package]
+name = "jj-store-cli"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+jj-cli.workspace = true
+jj-lib.workspace = true
+async-trait = "0.1"
+clap = { version = "4", features = ["derive"] }
+futures = "0.3"
+gix = "0.87.1"

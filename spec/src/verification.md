@@ -14,7 +14,7 @@ passing concrete tests linked from the progress ledger.
 | JST-ID-004     | Planned     | [Identity and native codecs](identity.md); [milestone gate](milestones.md)                                                    |
 | JST-ID-005     | Planned     | [Identity and native codecs](identity.md); [milestone gate](milestones.md)                                                    |
 | JST-OBJ-001    | Planned     | [Object storage](object-store.md); [milestone gate](milestones.md)                                                            |
-| JST-OBJ-002    | Planned     | [Object storage](object-store.md); [milestone gate](milestones.md)                                                            |
+| JST-OBJ-002    | Implemented | `docs/evidence/m0-rustfs-cold.json` (single-node topology only); [M0](milestones.md)                                          |
 | JST-OBJ-003    | Planned     | [Object storage](object-store.md); [milestone gate](milestones.md)                                                            |
 | JST-OBJ-004    | Planned     | [Object storage](object-store.md); [milestone gate](milestones.md)                                                            |
 | JST-PUB-001    | Planned     | [Publication and recovery](publication.md); [milestone gate](milestones.md)                                                   |
@@ -52,8 +52,8 @@ passing concrete tests linked from the progress ledger.
 | JST-ADAPT-003  | Planned     | [Adapters and Tantivy](adapters.md); [milestone gate](milestones.md)                                                          |
 | JST-ADAPT-004  | Planned     | [Adapters and Tantivy](adapters.md); [milestone gate](milestones.md)                                                          |
 | JST-ADAPT-005  | Planned     | [Adapters and Tantivy](adapters.md); [milestone gate](milestones.md)                                                          |
-| JST-COMPAT-001 | Planned     | [Compatibility and release](compatibility.md); [milestone gate](milestones.md)                                                |
-| JST-COMPAT-002 | Planned     | [Compatibility and release](compatibility.md); [milestone gate](milestones.md)                                                |
+| JST-COMPAT-001 | Implemented | `docs/upstream-lock.md`; `docs/codec-coverage.md`; `fixtures/native-profile/m0-hashes.json`; [M0](milestones.md)              |
+| JST-COMPAT-002 | Implemented | `crates/jj-store-jj/tests/compatibility.rs`; `docs/evidence/m0-rustfs-cold.json`; [M0](milestones.md)                         |
 | JST-COMPAT-003 | Planned     | [Compatibility and release](compatibility.md); [milestone gate](milestones.md)                                                |
 | JST-COMPAT-004 | Planned     | [Compatibility and release](compatibility.md); [milestone gate](milestones.md)                                                |
 | JST-GOV-001    | Implemented | `scripts/governance.test.mjs`; `scripts/check-progress.mjs`; `spec-validator.config.mjs`; [bootstrap evidence](milestones.md) |
