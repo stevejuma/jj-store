@@ -59,3 +59,22 @@ verifies repository access, then saves to the OS store. Logout cannot remove a
 process environment variable and reports when an environment override remains.
 Local connection metadata is bounded and rejects embedded URL credentials,
 unknown fields and profile mismatches before connecting.
+
+## Provisioning and token administration
+
+Repository creation authenticates against a fresh operator policy before any
+repository storage access. The client retains the repository ID, epoch and
+initial admin credential across retries; the server persists only its verifier.
+The operator principal owns the initial grant. An identical creation request
+recovers the same initialized repository even after later policy changes;
+conflicting epochs or initial grants never overwrite existing authority.
+
+Repository token list/grant/revoke require current admin permission. Grants
+accept a client-generated credential over the authenticated channel so loss of
+an acknowledgement does not lose a server-generated secret. The service derives
+the policy change from the exact committed expected snapshot and preserves all
+other grants. It never accepts a replacement policy from a transport. Admin
+results and durable receipts contain token metadata, never bearer secrets or
+verifiers. A revoked credential cannot read old receipts. In-flight creation is
+authorized against the operator policy loaded for that request; later requests
+load it again. No operator privilege implies repository read access.

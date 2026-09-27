@@ -54,3 +54,11 @@ and accepts only native removed-head/added-operation transitions. It does not
 expose settings mutations or an unguarded coordinator. RPC head updates
 therefore use the same protected-history checks and durable retry receipts as
 local sessions.
+
+Token administration uses strict snapshot preconditions and a stable request ID.
+Grant and revoke reconstruct their exact original intent from the retained
+policy at the expected committed snapshot, allowing receipt lookup after later
+publications or checkpointing. Different actions under the same identity
+conflict, including revoking different already-absent token IDs. Concurrent
+administrators cannot overwrite each other's accepted policy changes. This typed
+administration boundary does not expose raw settings publication.

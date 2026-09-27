@@ -647,6 +647,40 @@ impl Coordinator {
             .await?;
         Ok(settings.data)
     }
+    /// Exact selected historical policy, never an arbitrary control-record read.
+    /// Like `settings`, this is an internal storage API; the service authorizes
+    /// the current principal before invoking it.
+    pub async fn settings_at(
+        &self,
+        current: &ManifestSnapshot,
+        expected: &Snapshot,
+    ) -> Result<Vec<u8>> {
+        let manifest = current.manifest();
+        manifest.validate(self.records.repository)?;
+        if expected.epoch != manifest.epoch || expected.position > manifest.published {
+            return Err(Error::Stale);
+        }
+        let reference = if expected.position.0 == 0 {
+            if expected.heads != BTreeSet::from([OperationId::new([0; 64])]) {
+                return Err(Error::Stale);
+            }
+            manifest.initial_settings
+        } else {
+            let mut transactions = self
+                .committed(current, WalPosition(expected.position.0 - 1), 1)
+                .await?;
+            let transaction = transactions.pop().ok_or(Error::Stale)?;
+            if transaction.after != *expected {
+                return Err(Error::Stale);
+            }
+            transaction.settings
+        };
+        let settings: Settings = self.records.get(reference, RecordKind::Settings).await?;
+        if settings.data.len() > 64 * 1024 {
+            return Err(Error::Limit("settings"));
+        }
+        Ok(settings.data)
+    }
     async fn verify_delta(
         &self,
         base: Option<RecordRef>,

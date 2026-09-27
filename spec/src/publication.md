@@ -95,3 +95,9 @@ Checked manifest snapshots expose the same bounded committed-inventory reader
 used by the coordinator. Native semantic validation and authenticated
 prefix/copy enumeration use this selected inventory; the reader does not publish
 state or introduce a second commitment test.
+
+Historical settings lookup binds epoch, publication position and exact heads to
+manifest-selected history. Position zero selects the immutable initial policy;
+later positions select their committed WAL record. Callers authorize against
+current policy before this bounded lookup. It cannot load an orphan candidate or
+accept caller-supplied record references, and remains valid after checkpointing.

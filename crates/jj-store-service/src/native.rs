@@ -64,10 +64,10 @@ impl SemanticPolicy for NativeSemantic {
 /// No caller-authored actor and no permissive semantic-policy parameter. Trusted
 /// server construction supplies object access and configured protection rules.
 pub struct NativeSession {
-    repository: m::RepositoryId,
+    pub(crate) repository: m::RepositoryId,
     access: Arc<RepositoryAccess>,
-    coordinator: Coordinator,
-    limits: SessionLimits,
+    pub(crate) coordinator: Coordinator,
+    pub(crate) limits: SessionLimits,
 }
 impl NativeSession {
     pub fn new(

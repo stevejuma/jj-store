@@ -745,3 +745,83 @@ async fn cancellation_preserves_unknown_identity_before_and_after_manifest_appli
         );
     }
 }
+
+#[tokio::test]
+async fn historical_settings_bind_selected_snapshot_and_survive_checkpoint() {
+    let (store, c) = fixture().await;
+    let initial = c.read().await.unwrap();
+    let initial_settings = c.settings(&initial).await.unwrap();
+    let mut update = request(91, &[0], 1);
+    update.kind = SemanticKind::SettingsChanged;
+    update.settings = Some(b"policy-one".to_vec());
+    let first = committed(c.publish(&update).await.unwrap());
+    let mut next = request(92, &[1], 2);
+    next.kind = SemanticKind::SettingsChanged;
+    next.settings = Some(b"policy-two".to_vec());
+    let second = committed(c.publish(&next).await.unwrap());
+    c.checkpoint().await.unwrap();
+    let restarted = coordinator(store.clone());
+    let current = restarted.read().await.unwrap();
+    assert_eq!(
+        restarted
+            .settings_at(&current, &initial.manifest().snapshot())
+            .await
+            .unwrap(),
+        initial_settings
+    );
+    assert_eq!(
+        restarted
+            .settings_at(&current, &first.accepted)
+            .await
+            .unwrap(),
+        b"policy-one"
+    );
+    assert_eq!(
+        restarted
+            .settings_at(&current, &second.accepted)
+            .await
+            .unwrap(),
+        b"policy-two"
+    );
+    for bad in [
+        Snapshot {
+            epoch: EpochId::new([77; 16]),
+            ..first.accepted.clone()
+        },
+        Snapshot {
+            heads: BTreeSet::from([op(9)]),
+            ..first.accepted.clone()
+        },
+        Snapshot {
+            position: WalPosition(999),
+            ..first.accepted.clone()
+        },
+        Snapshot {
+            heads: BTreeSet::from([op(9)]),
+            ..initial.manifest().snapshot()
+        },
+    ] {
+        assert!(matches!(
+            restarted.settings_at(&current, &bad).await,
+            Err(wal::Error::Stale)
+        ));
+    }
+    // A selected settings record's corruption is an error, never an empty policy.
+    let transaction = restarted
+        .committed(&current, WalPosition(0), 1)
+        .await
+        .unwrap()
+        .pop()
+        .unwrap();
+    let key = transaction.settings.key(REPO).unwrap();
+    let version = store.head(&key).await.unwrap().version;
+    let corrupt = StagedUpload::from_bytes(b"corrupt", 1024).await.unwrap();
+    store
+        .put(&key, Condition::Matches(version), &corrupt)
+        .await
+        .unwrap();
+    assert!(matches!(
+        restarted.settings_at(&current, &first.accepted).await,
+        Err(wal::Error::Corrupt(_))
+    ));
+}
