@@ -24,7 +24,7 @@ pub fn identity() -> Identity {
     Identity {
         name: "tantivy".into(),
         implementation: IMPLEMENTATION.into(),
-        schema: 1,
+        schema: jj_store_tantivy::SCHEMA_VERSION,
         config: m::RecordDigest::new([3; 32]),
     }
 }

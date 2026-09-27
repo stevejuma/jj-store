@@ -335,3 +335,9 @@ checks current repository read permission and authority epoch through the same
 token policy as reads and mutations; a saved adapter checkpoint grants no
 access. Adapter cursor writes use a dedicated non-authoritative namespace and
 cannot change repository heads, receipts, settings or manifest authority.
+
+The service's adapter projection reader reuses the native content engine over
+verified snapshot objects. It restricts paths to that inventory, verifies
+framing and native identity, and repeats current authorization at storage/read
+boundaries. Neither raw object storage nor publication methods are exposed to
+extraction.

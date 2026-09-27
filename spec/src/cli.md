@@ -266,3 +266,8 @@ prove the pending upload owns the permit before issuing the competing request. A
 polling competitor must not win admission and accidentally reject the upload
 under test. The original transport deadline and failure/release assertions
 remain unchanged.
+
+Native adapter acceptance reads complete metadata, trees and files through the
+service projection reader, including virtual roots and non-file native entries.
+These fixtures exercise pinned JJ codecs without moving upstream imports into
+Tantivy, adapters or service contracts.

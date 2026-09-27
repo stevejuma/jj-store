@@ -279,3 +279,9 @@ fixtures use real index files plus the production adapter runner and selected
 WAL reader. Synthetic extraction in these fixtures proves destination
 durability, not native extraction, view visibility, HTTP search or RustFS
 deployment.
+
+Native projection acceptance additionally uses real JJ metadata, valid copy
+lineages, configured bookmark/workspace scopes, retained predecessors and native
+tree diffs. Incremental updates and full rebuilds must produce equivalent hits.
+The generic codec fixture contains a deliberately inconsistent shared copy path;
+it remains rejected by diff execution, and search uses a valid scope fixture.

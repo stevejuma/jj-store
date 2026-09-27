@@ -377,6 +377,7 @@ pub(crate) fn commit(
         for name in previous.payload.scopes.keys().chain(update.scopes.keys()) {
             if previous.payload.scopes.get(name) != update.scopes.get(name)
                 && !update.replace_scopes.contains(name)
+                && !matches!((previous.payload.scopes.get(name), update.scopes.get(name)), (Some(a), Some(b)) if a.state == ScopeState::Ready && b.state == ScopeState::Ready)
             {
                 return Err(Error::Invalid);
             }

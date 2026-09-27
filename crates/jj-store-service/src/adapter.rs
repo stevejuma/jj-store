@@ -2,6 +2,9 @@
 use crate::{auth::Permission, native::NativeSession};
 use jj_store_adapters::{Authorizer, Error, Source};
 use std::sync::Arc;
+mod read;
+pub use jj_store_jj::{native_dto, roots::ROOT_COMMIT};
+pub use read::ProjectionRead;
 struct Access(Arc<NativeSession>);
 #[async_trait::async_trait]
 impl Authorizer for Access {

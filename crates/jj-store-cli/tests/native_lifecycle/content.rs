@@ -879,3 +879,6 @@ mod index_task_acceptance;
 
 #[path = "http_reads.rs"]
 mod http_acceptance;
+
+#[path = "adapter_projection.rs"]
+mod adapter_projection;

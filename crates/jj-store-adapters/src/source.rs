@@ -59,6 +59,16 @@ impl Source {
         Ok(captured)
     }
 }
+#[async_trait]
+impl Authorizer for Source {
+    fn repository(&self) -> m::RepositoryId {
+        self.repository()
+    }
+    async fn authorize(&self) -> Result<m::EpochId> {
+        self.access.authorize().await
+    }
+}
+#[derive(Clone)]
 pub(crate) struct Captured {
     pub(crate) manifest: ManifestSnapshot,
     pub(crate) store: Arc<CheckedStore>,
@@ -151,6 +161,8 @@ impl Captured {
         nodes: Vec<VerifiedNode>,
     ) -> Snapshot {
         Snapshot {
+            captured: self.clone(),
+            bound: position.clone(),
             position,
             heads,
             objects: Objects {
@@ -161,9 +173,97 @@ impl Captured {
     }
 }
 pub struct Snapshot {
+    captured: Captured,
+    bound: Position,
     pub position: Position,
     pub heads: BTreeSet<m::OperationId>,
     pub objects: Objects,
+}
+impl Snapshot {
+    pub fn selected_position(&self) -> &Position {
+        &self.bound
+    }
+    pub fn history_page_size(&self) -> usize {
+        self.captured.store.context.limits().page
+    }
+    /// Bounded bootstrap history, never extending beyond this delivered batch.
+    pub async fn history(
+        &self,
+        after: m::WalPosition,
+        limit: usize,
+    ) -> Result<Vec<SelectedRecord>> {
+        if after.0 > self.bound.position.0 {
+            return Err(Error::Denied);
+        }
+        if limit == 0 || limit > self.captured.store.context.limits().page {
+            return Err(Error::Limit);
+        }
+        let limit = (limit as u64).min(self.bound.position.0 - after.0) as usize;
+        self.captured.records(after, limit).await
+    }
+    /// Prior complete inventory and heads selected by this same lineage. This
+    /// capability cannot read a later publication from the captured manifest.
+    pub async fn at(&self, position: m::WalPosition) -> Result<Self> {
+        self.objects.authorize().await?;
+        if position.0 > self.bound.position.0 {
+            return Err(Error::Denied);
+        }
+        if position == self.bound.position {
+            return Ok(Self {
+                captured: self.captured.clone(),
+                bound: self.bound.clone(),
+                position: self.bound.clone(),
+                heads: self.heads.clone(),
+                objects: self.objects.clone(),
+            });
+        }
+        let (segment, heads, nodes) = if position.0 == 0 {
+            let root = m::ObjectKey::Operation(m::OperationId::new([0; 64]));
+            let mut pending = vec![root];
+            let mut seen = BTreeSet::new();
+            let mut nodes = Vec::new();
+            // Genesis is the immutable root operation's verified closure, not
+            // every virtual object or every object from the current inventory.
+            while let Some(key) = pending.pop() {
+                self.captured.store.context.check()?;
+                if !seen.insert(key) {
+                    continue;
+                }
+                let node = self.objects.nodes.get(&key).ok_or(Error::Corrupt)?;
+                pending.extend(node.dependencies.iter().copied());
+                nodes.push(node.clone());
+            }
+            (None, BTreeSet::from([m::OperationId::new([0; 64])]), nodes)
+        } else {
+            let mut records = self
+                .captured
+                .records(m::WalPosition(position.0 - 1), 1)
+                .await?;
+            let record = records.pop().ok_or(Error::Corrupt)?;
+            let nodes = record
+                .inventory(
+                    self.captured.store.clone(),
+                    self.captured.store.context.limits().inventory_nodes,
+                )
+                .await
+                .map_err(|e| self.captured.store.failure(e.into()))?;
+            (
+                Some(record.reference()),
+                record.transaction().after.heads.clone(),
+                nodes,
+            )
+        };
+        self.objects.authorize().await?;
+        Ok(self.captured.snapshot(
+            Position {
+                position,
+                segment,
+                ..self.bound.clone()
+            },
+            heads,
+            nodes,
+        ))
+    }
 }
 pub struct Batch {
     pub before: Position,
@@ -176,6 +276,15 @@ pub struct Objects {
     nodes: Arc<BTreeMap<m::ObjectKey, VerifiedNode>>,
 }
 impl Objects {
+    pub async fn authorize(&self) -> Result<()> {
+        self.store.authorize().await
+    }
+    pub fn repository(&self) -> m::RepositoryId {
+        self.store.access.repository()
+    }
+    pub fn epoch(&self) -> m::EpochId {
+        self.store.epoch
+    }
     pub fn entries(&self) -> &BTreeMap<m::ObjectKey, VerifiedNode> {
         &self.nodes
     }

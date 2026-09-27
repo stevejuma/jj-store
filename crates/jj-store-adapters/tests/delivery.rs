@@ -499,3 +499,101 @@ async fn adapter_bootstrap_rejects_corrupt_selected_tail_before_destination_effe
     assert_eq!(control.lock().unwrap().bootstraps, 0);
     assert!(f.remote().await.is_none());
 }
+
+struct HistoryInspect(Option<Checkpoint>);
+#[async_trait::async_trait]
+impl Projection for HistoryInspect {
+    async fn recover(&mut self, _: Context) -> Result<Option<Checkpoint>> {
+        Ok(self.0.clone())
+    }
+    async fn bootstrap(
+        &mut self,
+        snapshot: Snapshot,
+        identity: &Identity,
+        _: Context,
+    ) -> Result<Checkpoint> {
+        let records = snapshot.history(m::WalPosition(0), 1).await?;
+        let mut records = records;
+        while records.len() < snapshot.position.position.0 as usize {
+            records.extend(
+                snapshot
+                    .history(m::WalPosition(records.len() as u64), 1)
+                    .await?,
+            );
+        }
+        assert_eq!(records.len() as u64, snapshot.position.position.0);
+        assert!(
+            records
+                .iter()
+                .all(|r| r.principal() == m::PrincipalId::new([3; 16]))
+        );
+        let initial = snapshot.at(m::WalPosition(0)).await?;
+        assert_eq!(initial.position.segment, None);
+        assert_eq!(initial.objects.entries().len(), 1);
+        assert!(
+            initial
+                .objects
+                .entries()
+                .contains_key(&m::ObjectKey::Operation(op(0)))
+        );
+        assert!(matches!(
+            snapshot
+                .at(m::WalPosition(snapshot.position.position.0 + 1))
+                .await,
+            Err(Error::Denied)
+        ));
+        if let Some(record) = records.last() {
+            let same = snapshot.at(record.transaction().after.position).await?;
+            assert_eq!(same.position, snapshot.position);
+            assert_eq!(same.objects.entries(), snapshot.objects.entries());
+        }
+        let checkpoint = Checkpoint {
+            version: 1,
+            identity: identity.clone(),
+            source: snapshot.position,
+            artifact: m::RecordDigest::new([9; 32]),
+        };
+        self.0 = Some(checkpoint.clone());
+        Ok(checkpoint)
+    }
+    async fn apply(
+        &mut self,
+        batch: Batch,
+        identity: &Identity,
+        context: Context,
+    ) -> Result<Checkpoint> {
+        self.bootstrap(batch.snapshot, identity, context).await
+    }
+}
+#[tokio::test]
+async fn adapter_history_and_prior_inventory_stop_at_the_delivered_snapshot() {
+    let f = Fixture::new().await;
+    let root = tempfile::tempdir().unwrap();
+    let mut runner = Runner::new(
+        f.source(),
+        identity(),
+        HistoryInspect(None),
+        root.path(),
+        limits(),
+    )
+    .unwrap();
+    runner.step(token()).await.unwrap();
+    f.publish(1).await;
+    f.publish(2).await;
+    f.publish(3).await;
+    f.coordinator.checkpoint().await.unwrap();
+    for position in 1..=3 {
+        assert_eq!(
+            runner
+                .step(token())
+                .await
+                .unwrap()
+                .applied
+                .unwrap()
+                .source
+                .position
+                .0,
+            position
+        );
+    }
+}

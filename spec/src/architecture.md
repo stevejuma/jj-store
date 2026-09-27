@@ -153,3 +153,7 @@ The Tantivy crate owns local projection generations and indexed documents. It
 consumes the committed adapter contract, with no upstream JJ imports or
 publication capability. Native extraction and transport composition remain
 separate boundaries. Tantivy is locked to 0.26.2 for its initial index schema.
+
+Tantivy native extraction consumes only service-owned projection readers and
+DTOs. Service adapts verified snapshot objects to native read-only storage;
+upstream JJ imports remain confined to the JJ integration and CLI crates.

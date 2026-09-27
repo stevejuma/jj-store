@@ -171,7 +171,17 @@ impl PinnedReader {
                     if bytes > limits.output_bytes {
                         return Err(Error::Limit);
                     }
-                    hits.push(serde_json::from_str(value).map_err(|_| Error::Corrupt)?);
+                    let mut document: Document =
+                        serde_json::from_str(value).map_err(|_| Error::Corrupt)?;
+                    if let DocumentKey::File { scope, .. } = &document.key {
+                        let scope = generation.payload.scopes.get(scope).ok_or(Error::Corrupt)?;
+                        if scope.state != ScopeState::Ready {
+                            return Err(Error::Corrupt);
+                        }
+                        document.operation = scope.operation;
+                        document.commit = scope.commits.first().copied();
+                    }
+                    hits.push(document);
                 }
                 let page = Page {
                     checkpoint: generation.checkpoint.clone(),
@@ -207,7 +217,16 @@ fn literal_query(generation: &Generation, input: &str) -> Result<Box<dyn Query>>
             .bytes()
             .all(|b| b.is_ascii_hexdigit() && !b.is_ascii_uppercase())
     {
-        return Ok(term(fields.id, input));
+        let mut clauses = vec![(Occur::Should, term(fields.id, input))];
+        for (name, scope) in &generation.payload.scopes {
+            if scope.state == ScopeState::Ready
+                && (scope.operation.is_some_and(|id| id.to_string() == input)
+                    || scope.commits.iter().any(|id| id.to_string() == input))
+            {
+                clauses.push((Occur::Should, term(fields.scope, name)));
+            }
+        }
+        return Ok(Box::new(BooleanQuery::new(clauses)));
     }
     let index = generation.reader.searcher().index().clone();
     let mut tokenizer = index.tokenizers().get("default").ok_or(Error::Corrupt)?;

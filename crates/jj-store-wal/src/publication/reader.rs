@@ -6,6 +6,7 @@ use super::*;
 pub struct SelectedRecord {
     reference: RecordRef,
     transaction: PublishedTransaction,
+    principal: PrincipalId,
 }
 impl SelectedRecord {
     pub fn reference(&self) -> RecordRef {
@@ -13,6 +14,10 @@ impl SelectedRecord {
     }
     pub fn transaction(&self) -> &PublishedTransaction {
         &self.transaction
+    }
+    /// Authenticated publication actor from the selected, verified receipt.
+    pub fn principal(&self) -> PrincipalId {
+        self.principal
     }
     pub(super) fn into_transaction(self) -> PublishedTransaction {
         self.transaction
@@ -135,6 +140,7 @@ pub(super) async fn selected(
         out.push(SelectedRecord {
             reference,
             transaction,
+            principal: receipt.principal,
         });
     }
     if after.0 + count == manifest.published.0

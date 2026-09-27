@@ -2,6 +2,7 @@
 #![forbid(unsafe_code)]
 mod disk;
 mod document;
+pub mod native;
 mod projection;
 mod search;
 pub use document::{Document, DocumentKey, ScopeSnapshot, ScopeState, Update};
@@ -13,7 +14,7 @@ use serde::{Deserialize, Serialize};
 use sha2::{Digest as _, Sha256};
 use std::collections::BTreeMap;
 
-pub const SCHEMA_VERSION: u32 = 1;
+pub const SCHEMA_VERSION: u32 = 2;
 pub const IMPLEMENTATION: &str = "tantivy-0.26.2-v1";
 
 #[derive(Clone, Copy, Debug)]

@@ -33,9 +33,9 @@ adds evidence here in its enclosing Jujutsu change.
 | M5.1        | Done        | M4.1       | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Basic changes/refs/reconcile; preview receipt and semantic policy                     | Retain basic mutation acceptance                    | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004                                                                                                                      |
 | M5.2        | Done        | M5.1       | JST-MUT-003                                                             | Full abandon descendant bookmark workspace/evolution parity                           | Retain abandon acceptance                           | E-M5-005                                                                                                                                                             |
 | M5.3        | Done        | M5.1       | JST-MUT-004                                                             | Atomic stale-safe resolution with native conflict variants                            | Retain mutation conformance; proceed to M6          | E-M5-006,E-M5-007,E-M5-008                                                                                                                                           |
-| M6          | In progress | M5         | JST-ADAPT-001,JST-ADAPT-002,JST-ADAPT-003,JST-ADAPT-004                 | Replay-equivalent searchable projection with freshness                                | Complete native extraction and search integration   | E-M6-001,E-M6-002                                                                                                                                                    |
+| M6          | In progress | M5         | JST-ADAPT-001,JST-ADAPT-002,JST-ADAPT-003,JST-ADAPT-004                 | Replay-equivalent searchable projection with freshness                                | Implement search visibility and serving integration | E-M6-001,E-M6-002,E-M6-003                                                                                                                                           |
 | M6.1        | Done        | M5         | JST-ADAPT-001,JST-ADAPT-002                                             | Ordered committed reader and durable replay-safe checkpoints                          | Implement Tantivy projection and search             | E-M6-001                                                                                                                                                             |
-| M6.2        | In progress | M6.1       | JST-ADAPT-003,JST-ADAPT-004                                             | Tantivy crash/rebuild/generation and revocation tests                                 | Complete native extraction and search integration   | E-SCOPE-001,E-M6-002                                                                                                                                                 |
+| M6.2        | In progress | M6.1       | JST-ADAPT-003,JST-ADAPT-004                                             | Tantivy crash/rebuild/generation and revocation tests                                 | Implement search visibility and serving integration | E-SCOPE-001,E-M6-002,E-M6-003                                                                                                                                        |
 | M8a         | Planned     | M6,M4.3    | JST-COMPAT-003,JST-SEC-005                                              | Pinned release, restore, security, performance and cold UI evidence                   | Complete backend hardening; retain deferred UI gate | E-SCOPE-001                                                                                                                                                          |
 | M8a.1       | Planned     | M6         | JST-COMPAT-003,JST-SEC-005                                              | Local/shared examples, diagnostics, restore and request budgets                       | Run non-UI release acceptance                       | E-SCOPE-001                                                                                                                                                          |
 | M7          | Deferred    | M8a        | JST-ADAPT-005                                                           | Complete read-only replica through applied position                                   | After first release                                 | -                                                                                                                                                                    |
@@ -6547,6 +6547,181 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Rust 1.97.1 with rustfmt; jj-cli/jj-lib 0.45.1 at 7c41cdeb16b6b321c64e789a966b6adf723816a5; Tantivy 0.26.2 with mmap/LZ4 locked from crates.io. Tantivy source revision from released .cargo_vcs_info.json: 72d1ef9a6468aa68bbc69dcc80cdf60aaf64364d.",
     "formats": "New disposable local Tantivy schema V1, canonical commit payload and checksummed generation descriptor plus atomic local active pointer. Uses existing adapter checkpoint V1; native/WAL/RPC/HTTP formats unchanged. Enclosing Jujutsu change is the revision reference; no UI changes."
+  },
+  {
+    "id": "E-M6-003",
+    "tasks": ["M6", "M6.2"],
+    "date": "2026-09-27",
+    "kind": "native-tantivy-extraction",
+    "files": [
+      "Cargo.lock",
+      "crates/jj-store-adapters/src/source.rs",
+      "crates/jj-store-adapters/tests/delivery.rs",
+      "crates/jj-store-cli/Cargo.toml",
+      "crates/jj-store-cli/tests/native_lifecycle/adapter_projection.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/content.rs",
+      "crates/jj-store-service/src/adapter.rs",
+      "crates/jj-store-service/src/adapter/read.rs",
+      "crates/jj-store-tantivy/Cargo.toml",
+      "crates/jj-store-tantivy/src/disk.rs",
+      "crates/jj-store-tantivy/src/document.rs",
+      "crates/jj-store-tantivy/src/lib.rs",
+      "crates/jj-store-tantivy/src/native.rs",
+      "crates/jj-store-tantivy/src/search.rs",
+      "crates/jj-store-tantivy/tests/support/mod.rs",
+      "crates/jj-store-wal/src/publication/reader.rs",
+      "docs/evidence/m6-native-extraction.md",
+      "spec/src/adapters.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/compatibility.md",
+      "spec/src/milestones.md",
+      "spec/src/mutations.md",
+      "spec/src/publication.md",
+      "spec/src/security.md"
+    ],
+    "tests": [
+      "crates/jj-store-adapters/tests/delivery.rs#adapter_history_and_prior_inventory_stop_at_the_delivered_snapshot",
+      "crates/jj-store-cli/tests/native_lifecycle/adapter_projection.rs#native_adapter_projection_reader_decodes_committed_trees_and_files",
+      "crates/jj-store-cli/tests/native_lifecycle/adapter_projection.rs#native_tantivy_extracts_committed_metadata_and_explicit_source_scopes",
+      "crates/jj-store-cli/tests/native_lifecycle/adapter_projection.rs#native_tantivy_diffs_replay_equivalently_and_keep_exact_scope_context",
+      "crates/jj-store-cli/tests/native_lifecycle/adapter_projection.rs#native_tantivy_clears_ambiguous_scopes_and_respects_source_disable"
+    ],
+    "runs": [
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-adapters --test delivery adapter_history_and_prior_inventory_stop_at_the_delivered_snapshot --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before implementation: compile failure with four missing history/at method diagnostics."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle native_adapter_projection_reader_decodes_committed_trees_and_files --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before implementation: missing ProjectionRead and inaccessible fixture; four compiler diagnostics. An intermediate filtered run after moving the fixture matched zero tests and is not acceptance evidence."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle native_adapter_projection_reader_decodes_committed_trees_and_files --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Named reader fixture passes after placement under content_acceptance; committed trees/files, virtual roots and authorization bridge."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle native_tantivy_extracts_committed_metadata_and_explicit_source_scopes --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before implementation: native extractor module absent."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle native_tantivy_extracts_committed_metadata_and_explicit_source_scopes --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "One runtime failure: native tree diff rejects inconsistent copy history in the codec fixture. Diagnostic rerun confirms the same failure. The shared codec fixture remains unchanged; search publishes a valid nested copy lineage."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle native_tantivy_extracts_committed_metadata_and_explicit_source_scopes --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "Valid fixture helper initially failed compilation: nonexistent Tree::set and collection type mismatch; two diagnostics. Fixed sorted tree entry construction."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle native_tantivy_extracts_committed_metadata_and_explicit_source_scopes --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Real native metadata, invisible predecessor, actor and explicit source scopes pass with the valid search fixture."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle native_tantivy_diffs_replay_equivalently_and_keep_exact_scope_context --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "Exact operation-ID query returned one file instead of two after a scope update: unchanged file terms retained stale context."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle native_tantivy_diffs_replay_equivalently_and_keep_exact_scope_context --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Schema 2 derives file context and exact commit/operation-ID scope matches from the pinned payload. The original two-file assertion passes; incremental hits equal rebuild."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle native_tantivy --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "Two tests passed; multi-head fixture failed because its sibling publication provided an empty removed-head set. Service correctly returned native transition heads."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle native_tantivy_clears_ambiguous_scopes_and_respects_source_disable --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Named multi-head fixture passes after using the original parent operation as removed head; no service guard relaxation."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-adapters --test delivery --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All ten delivery fixtures pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-tantivy --test durability --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All ten real local Tantivy durability fixtures pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle native_adapter_projection_reader_decodes_committed_trees_and_files --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Original named native read bridge target passes after final changes."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-adapters --test delivery adapter_history_and_prior_inventory_stop_at_the_delivered_snapshot --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Original selected-history boundary target passes after final changes."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle native_tantivy --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All three native extraction/replay/context/multi-head fixtures pass, zero failures."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Normal checks pass, including all-target Clippy, rustfmt, package boundaries, ledger/spec, generated contracts and existing Svelte analysis."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test",
+        "result": "pass",
+        "failures": 0,
+        "note": "327 Rust tests pass, zero failures; six opt-in external tests ignored. Governance, contracts, storage harness and existing browser unit lanes pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Locked workspace and existing browser assets build successfully."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 13 lanes pass, including existing cold browser interaction/accessibility, Rust tests, rustfmt, mdBook and spec-first."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm format:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rustfmt and repository Prettier checks pass."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Implement current-visible versus historical search, server lifecycle and configuration, HTTP signed generation cursors, freshness/minimum-position waits and generated API contracts.",
+      "Implement immutable remote snapshots and restore; qualify cold process/deployment and measured indexing/rebuild performance. Real RustFS/TLS remains externally blocked; UI stays deferred."
+    ],
+    "versions": "Rust 1.97.1 with rustfmt; jj-cli/jj-lib 0.45.1 at 7c41cdeb16b6b321c64e789a966b6adf723816a5; jj-native-0.45.1-v1; Tantivy 0.26.2 at 72d1ef9a6468aa68bbc69dcc80cdf60aaf64364d.",
+    "formats": "Disposable local Tantivy schema advances to 2: unchanged file context is bound to scope payload and exact-ID scope terms. Schema-1 generations rebuild. Native extraction config identity is domain-separated native-extraction-v1. Native/WAL/receipt/adapter cursor and HTTP formats unchanged. Enclosing Jujutsu change is the revision reference; no UI changes."
   }
 ]
 ```

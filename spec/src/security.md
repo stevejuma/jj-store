@@ -188,3 +188,9 @@ indexed but omitted from hits; native content retrieval remains separately
 authorized. Search text uses a bounded literal token conjunction and exact
 canonical native IDs, without accepting regular-expression or query-language
 programs. Local index roots have private permissions and exclusive ownership.
+
+Search extraction binds authenticated actors to selected receipt principals,
+without treating native usernames or attributes as authentication. Explicit
+source scopes and prefix exclusions precede file-content reads. Native
+projection readers accept only the selected inventory and expose no write
+capability.

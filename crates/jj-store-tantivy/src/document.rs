@@ -18,7 +18,7 @@ impl DocumentKey {
                 if !valid_scope(scope)
                     || path.is_empty()
                     || path.len() > 4096
-                    || path.contains(['\0', '\\'])
+                    || path.contains('\0')
                     || path
                         .split('/')
                         .any(|p| p.is_empty() || p == "." || p == "..")
@@ -190,16 +190,19 @@ impl Fields {
     pub fn document(&self, value: &Document) -> Result<TantivyDocument> {
         let mut doc = TantivyDocument::new();
         doc.add_text(self.key, value.key.exact()?);
-        for id in [
-            value.operation.map(|id| id.to_string()),
-            value.commit.map(|id| id.to_string()),
-            value.change.map(|id| id.to_string()),
-            value.file.map(|id| id.to_string()),
-        ]
-        .into_iter()
-        .flatten()
-        {
-            doc.add_text(self.id, id);
+        if matches!(value.key, DocumentKey::File { .. }) {
+            doc.add_text(self.id, value.file.ok_or(Error::Invalid)?.to_string());
+        } else {
+            for id in [
+                value.operation.map(|id| id.to_string()),
+                value.commit.map(|id| id.to_string()),
+                value.change.map(|id| id.to_string()),
+            ]
+            .into_iter()
+            .flatten()
+            {
+                doc.add_text(self.id, id);
+            }
         }
         doc.add_text(self.title, &value.title);
         doc.add_text(self.body, &value.body);
