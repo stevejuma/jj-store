@@ -70,3 +70,7 @@ The CLI crate now builds the development executable named jj and owns local
 connection discovery, credential-facility access and command presentation. The
 installed system jj remains untouched. Connection records and derived JJ caches
 are physical-client state and do not become server authority.
+
+Typed provisioning and token administration extend the existing native RPC V1.
+Service-owned snapshots and secret-free results cross the transport boundary;
+RPC does not import native JJ types or gain raw storage-publication access.

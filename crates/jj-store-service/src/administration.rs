@@ -8,6 +8,7 @@ use crate::{
 use jj_store_jj::{objects::NativeObjects, policy::Protection};
 use jj_store_model as m;
 use jj_store_object::ObjectStore;
+pub use jj_store_wal::publication::Snapshot as AdministrationSnapshot;
 use jj_store_wal::{self as wal, publication::*};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest as _, Sha256};
@@ -148,6 +149,26 @@ pub enum TokenResult {
 pub struct TokenListing {
     pub snapshot: Snapshot,
     pub tokens: Vec<TokenDescription>,
+}
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct TokenReceipt {
+    pub request_id: m::RequestId,
+    pub publication_id: m::PublicationId,
+    pub accepted: AdministrationSnapshot,
+    pub result: TokenResult,
+}
+impl TryFrom<Receipt> for TokenReceipt {
+    type Error = crate::transport::Error;
+    fn try_from(receipt: Receipt) -> Result<Self, Self::Error> {
+        Ok(Self {
+            request_id: receipt.request_id,
+            publication_id: receipt.publication_id,
+            accepted: receipt.accepted,
+            result: serde_json::from_slice(&receipt.result)
+                .map_err(|_| Self::Error::Unavailable)?,
+        })
+    }
 }
 impl NativeSession {
     pub async fn tokens(&self) -> wal::Result<TokenListing> {

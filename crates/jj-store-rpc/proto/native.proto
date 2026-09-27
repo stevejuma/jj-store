@@ -4,6 +4,10 @@ package jj_store.native.v1;
 // Bearer authorization is required on every request. Only typed immutable
 // native objects and guarded head transitions cross this boundary.
 service NativeStore {
+  rpc CreateRepository(CreateRepositoryRequest) returns (Snapshot);
+  rpc Tokens(Repository) returns (TokenListing);
+  rpc ChangeToken(TokenRequest) returns (TokenReply);
+  rpc TokenStatus(TokenRequest) returns (TokenReply);
   rpc Authorize(AccessRequest) returns (Empty);
   rpc Heads(Repository) returns (Ids);
   rpc Inventory(InventoryRequest) returns (Ids);
@@ -12,6 +16,25 @@ service NativeStore {
   rpc ReadObject(ObjectRequest) returns (stream ObjectChunk);
   rpc WriteObject(stream UploadChunk) returns (UploadResult);
 }
+// The caller retains all three creation values across uncertain outcomes.
+message CreateRepositoryRequest { bytes repository = 1; bytes epoch = 2; string admin_credential = 3; }
+message Snapshot { bytes epoch = 1; uint64 position = 2; repeated bytes heads = 3; }
+enum TokenPermission { PERMISSION_UNSPECIFIED = 0; READ = 1; WRITE = 2; ADMIN = 3; }
+message TokenDescription { bytes id = 1; bytes principal = 2; TokenPermission permission = 3; optional uint64 expires_at = 4; }
+message TokenListing { Snapshot snapshot = 1; repeated TokenDescription tokens = 2; }
+message TokenGrant { string credential = 1; bytes principal = 2; TokenPermission permission = 3; optional uint64 expires_at = 4; }
+message TokenRequest {
+  bytes repository = 1;
+  bytes request_id = 2;
+  Snapshot expected = 3;
+  oneof change { TokenGrant grant = 4; bytes revoke = 5; }
+}
+message TokenReceipt {
+  bytes request_id = 1; bytes publication_id = 2; Snapshot accepted = 3;
+  oneof result { TokenDescription granted = 4; bytes revoked = 5; }
+}
+// An absent receipt means pending/unknown, never a confirmed rejection.
+message TokenReply { TokenReceipt receipt = 1; }
 message Empty {}
 message Repository { bytes repository = 1; }
 message AccessRequest { bytes repository = 1; bool write = 2; }

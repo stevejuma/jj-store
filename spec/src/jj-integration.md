@@ -154,3 +154,18 @@ resolved independently. The shared factory instance within one invocation keeps
 staged object inventories consistent across backend/operation/head stores.
 Ordinary Git-backed workspaces continue to use upstream factories without
 resolving native credentials or connecting to the server.
+
+## RPC administration
+
+The native V1 service includes typed repository creation and token list/apply/
+status methods. Creation uses the separate operator policy; all token methods
+require current repository admin access. Hosted routing binds repository IDs
+lazily against the configured storage namespace, without a mutable in-memory
+repository catalog or bucket listing. Unknown and unauthorized repository
+bindings both deny access. The native object/head surface remains independently
+guarded and cannot mutate settings.
+
+Administration requests and responses bound snapshot heads, token counts,
+message sizes, deadlines and concurrent work. Credential-bearing protobuf
+messages use redacted Debug output; decoded secrets are cleared after parsing.
+TLS and explicit loopback transport rules are identical to ordinary native RPC.

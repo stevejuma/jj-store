@@ -1,5 +1,6 @@
 use crate::{
-    CHUNK_BYTES, MAX_IDS, REQUEST_BYTES, RESPONSE_BYTES, object, service_error,
+    CHUNK_BYTES, MAX_IDS, REQUEST_BYTES, RESPONSE_BYTES, administration as admin, object,
+    service_error,
     wire::{
         self,
         native_store_server::{NativeStore, NativeStoreServer},
@@ -9,6 +10,7 @@ use futures::{Stream, StreamExt as _};
 use jj_store_model as m;
 use jj_store_object::{StagedUpload, WriteOutcome};
 use jj_store_service::{
+    administration::RepositoryHost,
     auth::BearerToken,
     transport::{NativeEndpoint, NativeRequest},
 };
@@ -44,6 +46,7 @@ impl Default for Limits {
 #[derive(Clone)]
 pub struct NativeRpc {
     repositories: Arc<BTreeMap<m::RepositoryId, NativeEndpoint>>,
+    host: Option<RepositoryHost>,
     slots: Arc<Semaphore>,
     limits: Limits,
 }
@@ -66,9 +69,15 @@ impl NativeRpc {
         }
         Ok(Self {
             repositories: Arc::new(registry),
+            host: None,
             slots: Arc::new(Semaphore::new(limits.concurrent)),
             limits,
         })
+    }
+    pub fn hosted(host: RepositoryHost, limits: Limits) -> Result<Self, Status> {
+        let mut rpc = Self::new(Vec::new(), limits)?;
+        rpc.host = Some(host);
+        Ok(rpc)
     }
     pub fn service(self) -> NativeStoreServer<Self> {
         NativeStoreServer::new(self)
@@ -121,11 +130,15 @@ impl NativeRpc {
     fn bind(&self, repository: &[u8], credential: BearerToken) -> Result<NativeRequest, Status> {
         let repository = m::RepositoryId::from_slice(repository)
             .map_err(|_| Status::invalid_argument("repository ID length"))?;
-        self.repositories
-            .get(&repository)
-            .ok_or_else(|| Status::permission_denied("repository access denied"))?
-            .bind(credential)
-            .map_err(service_error)
+        let endpoint = match &self.host {
+            Some(host) => host.endpoint(repository).map_err(service_error)?,
+            None => self
+                .repositories
+                .get(&repository)
+                .cloned()
+                .ok_or_else(|| Status::permission_denied("repository access denied"))?,
+        };
+        endpoint.bind(credential).map_err(service_error)
     }
     async fn bounded<T>(
         &self,
@@ -144,6 +157,79 @@ impl NativeRpc {
 }
 #[tonic::async_trait]
 impl NativeStore for NativeRpc {
+    async fn create_repository(
+        &self,
+        request: Request<wire::CreateRepositoryRequest>,
+    ) -> Result<Response<wire::Snapshot>, Status> {
+        let token = Self::credential(request.metadata())?;
+        let mut request = request.into_inner();
+        let repository = m::RepositoryId::from_slice(&request.repository)
+            .map_err(|_| Status::invalid_argument("repository ID length"))?;
+        let epoch = m::EpochId::from_slice(&request.epoch)
+            .map_err(|_| Status::invalid_argument("epoch ID length"))?;
+        let credential = admin::parse_secret(&mut request.admin_credential)?;
+        let host = self
+            .host
+            .as_ref()
+            .ok_or_else(|| Status::unimplemented("repository creation unavailable"))?;
+        self.bounded(async {
+            let snapshot = host
+                .create(&token, repository, epoch, &credential)
+                .await
+                .map_err(|error| service_error(error.into()))?;
+            Ok(admin::wire_snapshot(snapshot))
+        })
+        .await
+    }
+    async fn tokens(
+        &self,
+        request: Request<wire::Repository>,
+    ) -> Result<Response<wire::TokenListing>, Status> {
+        let session = self.bind(
+            &request.get_ref().repository,
+            Self::credential(request.metadata())?,
+        )?;
+        self.bounded(async { admin::wire_listing(session.tokens().await.map_err(service_error)?) })
+            .await
+    }
+    async fn change_token(
+        &self,
+        request: Request<wire::TokenRequest>,
+    ) -> Result<Response<wire::TokenReply>, Status> {
+        let session = self.bind(
+            &request.get_ref().repository,
+            Self::credential(request.metadata())?,
+        )?;
+        let request = admin::request(request.into_inner())?;
+        self.bounded(async {
+            admin::wire_reply(
+                session
+                    .change_token(&request)
+                    .await
+                    .map_err(service_error)?,
+            )
+        })
+        .await
+    }
+    async fn token_status(
+        &self,
+        request: Request<wire::TokenRequest>,
+    ) -> Result<Response<wire::TokenReply>, Status> {
+        let session = self.bind(
+            &request.get_ref().repository,
+            Self::credential(request.metadata())?,
+        )?;
+        let request = admin::request(request.into_inner())?;
+        self.bounded(async {
+            admin::wire_reply(
+                session
+                    .token_status(&request)
+                    .await
+                    .map_err(service_error)?,
+            )
+        })
+        .await
+    }
     async fn authorize(
         &self,
         request: Request<wire::AccessRequest>,

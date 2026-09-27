@@ -52,3 +52,9 @@ deletes only the selected endpoint/repository credential. `JJ_STORE_TOKEN`
 overrides stored credentials for automation and is never persisted. Custom text
 results and authored help follow jj-nostr paging, Markdown and color
 conventions; JSON results are plain, newline-terminated and never paged.
+
+A hosted-RPC acceptance fixture creates a repository through the operator API,
+then attaches and describes history with the actual custom jj executable. It
+reopens the host with no in-memory repository directory. This qualifies dynamic
+routing; init/serve-local and standalone server command presentation remain
+separate gates.

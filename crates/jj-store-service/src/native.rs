@@ -103,7 +103,10 @@ impl NativeSession {
         })
     }
     pub async fn principal(&self, permission: Permission) -> wal::Result<Principal> {
-        self.access.authorize_current(permission).await
+        match self.access.authorize_current(permission).await {
+            Err(wal::Error::Storage(jj_store_object::Error::NotFound)) => Err(wal::Error::Denied),
+            result => result,
+        }
     }
     pub async fn snapshot(&self) -> wal::Result<ManifestSnapshot> {
         self.principal(Permission::Read).await?;

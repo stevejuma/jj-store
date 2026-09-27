@@ -1,6 +1,7 @@
 //! Typed native transport facade. No upstream JJ types or mutable storage keys
 //! cross this interface. Object staging cannot advance publication authority.
 use crate::{
+    administration::{TokenListing, TokenReceipt, TokenRequest},
     auth::{BearerToken, Clock, Permission},
     native::{NativeSession, SessionLimits},
 };
@@ -39,9 +40,10 @@ impl From<wal::Error> for Error {
             wal::Error::Denied => Self::Denied,
             wal::Error::Limit(_) => Self::Limit,
             wal::Error::OutcomeUnknown => Self::Unknown,
-            wal::Error::Stale | wal::Error::IntentConflict | wal::Error::Contended => {
-                Self::Conflict
-            }
+            wal::Error::Stale
+            | wal::Error::IntentConflict
+            | wal::Error::Contended
+            | wal::Error::AlreadyExists => Self::Conflict,
             wal::Error::Storage(error) => error.into(),
             _ => Self::Unavailable,
         }
@@ -113,6 +115,22 @@ pub struct NativeRequest {
     session: NativeSession,
 }
 impl NativeRequest {
+    pub async fn tokens(&self) -> Result<TokenListing> {
+        Ok(self.session.tokens().await?)
+    }
+    pub async fn change_token(&self, request: &TokenRequest) -> Result<Option<TokenReceipt>> {
+        match self.session.change_token(request).await? {
+            PublishOutcome::Committed(receipt) => Ok(Some(receipt.try_into()?)),
+            PublishOutcome::OutcomeUnknown { .. } => Ok(None),
+        }
+    }
+    pub async fn token_status(&self, request: &TokenRequest) -> Result<Option<TokenReceipt>> {
+        self.session
+            .token_status(request)
+            .await?
+            .map(TokenReceipt::try_from)
+            .transpose()
+    }
     pub async fn authorize(&self, write: bool) -> Result<()> {
         self.session
             .principal(if write {

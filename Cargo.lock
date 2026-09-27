@@ -3368,6 +3368,7 @@ dependencies = [
  "tonic-prost",
  "tonic-prost-build",
  "url",
+ "zeroize",
 ]
 
 [[package]]

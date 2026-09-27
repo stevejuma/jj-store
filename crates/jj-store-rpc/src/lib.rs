@@ -1,5 +1,6 @@
 //! Bounded native gRPC V1; no upstream JJ types or storage control records.
 #![forbid(unsafe_code)]
+pub mod administration;
 pub mod client;
 pub mod server;
 pub mod wire {

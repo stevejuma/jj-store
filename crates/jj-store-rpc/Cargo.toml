@@ -21,6 +21,7 @@ tokio = { version = "1", features = ["net", "time", "sync", "io-util"] }
 tokio-stream = { version = "0.1", features = ["net"] }
 tokio-util = { version = "0.7", features = ["io"] }
 url = "2"
+zeroize = "1"
 
 [build-dependencies]
 prost-build = "0.14"

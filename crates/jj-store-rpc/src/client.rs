@@ -1,5 +1,5 @@
 use crate::{
-    CHUNK_BYTES, MAX_IDS, REQUEST_BYTES, RESPONSE_BYTES,
+    CHUNK_BYTES, MAX_IDS, REQUEST_BYTES, RESPONSE_BYTES, administration as admin,
     wire::{self, native_store_client::NativeStoreClient},
     wire_object,
 };
@@ -7,6 +7,9 @@ use jj_store_model as m;
 use jj_store_object::{
     self as storage, ByteRange, Condition, Download, Key, Metadata, ObjectStore, StagedUpload,
     VersionToken, WriteOutcome,
+};
+use jj_store_service::administration::{
+    AdministrationSnapshot, TokenListing, TokenReceipt, TokenRequest,
 };
 use jj_store_service::auth::BearerToken;
 use std::{collections::BTreeSet, sync::Arc, time::Duration};
@@ -100,6 +103,64 @@ impl NativeClient {
     }
     pub fn repository(&self) -> m::RepositoryId {
         self.repository
+    }
+    /// This client's bearer token must have the separate operator capability.
+    /// Retain the exact repository, epoch and admin credential for retries.
+    pub async fn create_repository(
+        &self,
+        epoch: m::EpochId,
+        credential: &BearerToken,
+    ) -> Result<AdministrationSnapshot, Status> {
+        let response = self
+            .wire()
+            .create_repository(self.request(wire::CreateRepositoryRequest {
+                repository: self.repository.as_bytes().to_vec(),
+                epoch: epoch.as_bytes().to_vec(),
+                admin_credential: credential.expose().to_string(),
+            }))
+            .await?
+            .into_inner();
+        let snapshot = admin::snapshot(Some(response)).map_err(admin::bad_response)?;
+        if snapshot.epoch != epoch {
+            return Err(Status::data_loss("creation epoch mismatch"));
+        }
+        Ok(snapshot)
+    }
+    pub async fn tokens(&self) -> Result<TokenListing, Status> {
+        let response = self
+            .wire()
+            .tokens(self.request(wire::Repository {
+                repository: self.repository.as_bytes().to_vec(),
+            }))
+            .await?
+            .into_inner();
+        admin::listing(response).map_err(admin::bad_response)
+    }
+    /// None denotes an unknown outcome. Retry this exact request or ask status.
+    pub async fn change_token(
+        &self,
+        request: &TokenRequest,
+    ) -> Result<Option<TokenReceipt>, Status> {
+        let body = admin::wire_request(self.repository, request)?;
+        let response = self
+            .wire()
+            .change_token(self.request(body))
+            .await?
+            .into_inner();
+        admin::reply(response, request).map_err(admin::bad_response)
+    }
+    /// None means no committed receipt observed; it does not confirm rejection.
+    pub async fn token_status(
+        &self,
+        request: &TokenRequest,
+    ) -> Result<Option<TokenReceipt>, Status> {
+        let body = admin::wire_request(self.repository, request)?;
+        let response = self
+            .wire()
+            .token_status(self.request(body))
+            .await?
+            .into_inner();
+        admin::reply(response, request).map_err(admin::bad_response)
     }
     fn wire(&self) -> NativeStoreClient<Channel> {
         NativeStoreClient::new(self.channel.clone())

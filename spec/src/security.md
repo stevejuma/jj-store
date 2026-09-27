@@ -78,3 +78,9 @@ results and durable receipts contain token metadata, never bearer secrets or
 verifiers. A revoked credential cannot read old receipts. In-flight creation is
 authorized against the operator policy loaded for that request; later requests
 load it again. No operator privilege implies repository read access.
+
+Hosted RPC resolves a repository only through current manifest authorization.
+Missing manifests and incorrect credentials return the same access-denied
+category. Credential-bearing creation/grant messages redact Debug and erase
+decoded plaintext after parsing. Request limits and permits apply to
+administration as well as object transfers.

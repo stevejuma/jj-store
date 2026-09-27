@@ -62,3 +62,10 @@ publications or checkpointing. Different actions under the same identity
 conflict, including revoking different already-absent token IDs. Concurrent
 administrators cannot overwrite each other's accepted policy changes. This typed
 administration boundary does not expose raw settings publication.
+
+Native RPC administration exposes only typed grant/revoke requests and exact
+snapshot metadata. The facade returns secret-free token receipts, or an unknown
+outcome retaining the caller's request identity. No receipt observed by status
+means pending/unknown, never proof of rejection. Clients validate receipt
+request identity and action against the submitted intent before reporting
+success.
