@@ -8,7 +8,7 @@ use jj_cli::{
 use jj_store_model::RepositoryId;
 use jj_store_service::auth::BearerToken;
 use serde_json::json;
-use std::{fs, io::Read as _, path::PathBuf};
+use std::{io::Read as _, path::PathBuf};
 use zeroize::Zeroizing;
 
 #[derive(Clone, Debug, Subcommand)]
@@ -73,6 +73,9 @@ pub enum StoreCommand {
         workspace: Option<String>,
         #[arg(long)]
         cache: Option<PathBuf>,
+        /// Durable attachment journal outside the checkout
+        #[arg(long)]
+        state_dir: Option<PathBuf>,
     },
     /// Inspect remote heads without snapshotting or reconciling
     #[command(long_about = include_str!("../../../docs/cli/status.md"))]
@@ -112,11 +115,6 @@ pub fn error(error: impl std::fmt::Display) -> CommandError {
         "Use 'jj store help -k commands'; verify the endpoint, repository ID and credentials.",
     )
 }
-fn random_name() -> Result<String, CommandError> {
-    let mut bytes = [0; 16];
-    getrandom::fill(&mut bytes).map_err(|_| user_error("Secure identity generation failed"))?;
-    Ok(hex::encode(bytes))
-}
 pub async fn run(
     ui: &mut Ui,
     helper: &CommandHelper,
@@ -136,71 +134,42 @@ pub async fn run(
             connection,
             workspace,
             cache,
+            state_dir,
         } => {
             let connection = connection.connection()?;
-            let destination = helper.cwd().join(destination);
-            if destination.exists() && fs::read_dir(&destination).map_err(error)?.next().is_some() {
-                return Err(user_error("Native attachment requires an empty destination").hinted("Choose a new directory; existing Git/JJ repositories are not migrated by attach."));
-            }
-            let workspace = workspace.unwrap_or(format!("client-{}", random_name()?));
-            if workspace.is_empty()
-                || workspace.len() > 128
-                || workspace
-                    .bytes()
-                    .any(|c| !c.is_ascii_alphanumeric() && !b"-_".contains(&c))
-            {
-                return Err(user_error("Invalid workspace name")
-                    .hinted("Use 1–128 ASCII letters, digits, hyphens or underscores."));
-            }
-            let cache = match cache {
-                Some(path) => helper.cwd().join(path),
-                None => dirs::data_local_dir()
-                    .ok_or_else(|| user_error("No local client data directory"))?
-                    .join("jj-store/workspaces")
-                    .join(random_name()?),
-            };
-            // A read-only or revoked credential must fail before creating any
-            // physical checkout or cache state.
-            let client = connection.connect().await.map_err(error)?;
-            client.authorize(true).await.map_err(error)?;
-            let stores = crate::remote::stores(
-                client,
-                connection.max_blob_bytes,
-                jj_store_jj::backend::BackendLimits::default(),
-                jj_store_jj::operation_stores::OperationLimits::default(),
+            let token = credentials::resolve(&connection).map_err(error)?;
+            let mut attachment = crate::attachment::Attachment::open(
+                connection,
+                token,
+                helper.cwd().join(destination),
+                cache.map(|p| helper.cwd().join(p)),
+                workspace,
+                state_dir.map(|p| helper.cwd().join(p)),
             )
+            .await
             .map_err(error)?;
-            fs::create_dir_all(&destination).map_err(error)?;
-            fs::create_dir_all(&cache).map_err(error)?;
-            let destination = destination.canonicalize().map_err(error)?;
-            let cache = cache.canonicalize().map_err(error)?;
-            if cache.starts_with(&destination) || destination.starts_with(&cache) {
-                return Err(
-                    user_error("Client cache must be outside the physical checkout")
-                        .hinted("Choose a separate empty --cache directory."),
-                );
-            }
-            let settings = helper.settings_for_new_workspace(ui, &destination)?.0;
-            stores
-                .initialize_cache(&settings, &cache)
-                .await
-                .map_err(error)?;
-            connection.write(&cache).map_err(error)?;
-            let (_, repo) = stores
-                .attach_workspace(&settings, &destination, &cache, workspace.clone().into())
-                .await
-                .map_err(error)?;
-            use jj_lib::object_id::ObjectId as _;
-            let result = json!({"version":1,"repository":connection.repository,"workspace":workspace,"path":destination,"cache":cache,"operation":repo.op_id().hex()});
+            // The upstream new-workspace helper assumes .jj/repo is a directory.
+            // A completed native attachment uses a pointer file instead. Its
+            // retry creates no new operation and can use the current settings.
+            let settings = if attachment.destination().join(".jj").exists() {
+                helper.settings().clone()
+            } else {
+                helper
+                    .settings_for_new_workspace(ui, attachment.destination())?
+                    .0
+            };
+            attachment.prepare(&settings).await.map_err(error)?;
+            let result = attachment.finish(&settings).await.map_err(error)?;
             presentation::result(
                 ui,
                 helper,
                 args.format,
-                &result,
+                &serde_json::to_value(&result).map_err(error)?,
                 &format!(
-                    "Attached native repository {} at {}\nWorkspace: {workspace}\n",
-                    connection.repository,
-                    destination.display()
+                    "Attached native repository {} at {}\nWorkspace: {}\n",
+                    result.repository,
+                    result.path.display(),
+                    result.workspace
                 ),
             )
         }

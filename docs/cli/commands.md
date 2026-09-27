@@ -10,5 +10,10 @@
 - `jj util completion`: upstream completions including the store command family.
 - `jj util markdown-help`: raw authored command help in Markdown.
 
-Repository creation, standalone server commands and serve-local remain under
-implementation; the milestone ledger is the authority for completion.
+- `jj store serve-local --server-config PATH`: run the paired foreground server.
+- `jj-store run --config PATH`: run the standalone server.
+- `jj-store config`, `doctor`, and `operator`: configure, inspect and administer
+  it.
+
+Repository creation commands remain under implementation; the milestone ledger
+is the authority for completion.

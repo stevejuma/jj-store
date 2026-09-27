@@ -103,3 +103,10 @@ This qualifies explicit loopback deployment; valid shared TLS, complete ordinary
 command semantics, recoverable init/attach and other release platforms remain
 separate gates. Standalone PTY tests cover paging, color, JSON and missing-pager
 hints independently of this storage run.
+
+The
+[attachment regression report](../../docs/evidence/m3-attachment-rustfs.json)
+retains the standalone cold server gate after durable attachment journals and
+metadata staging. Lost-acknowledgement attachment and cache-loss retry tests use
+a hosted loopback service with memory storage; they remain distinct from this
+real-storage lifecycle run.

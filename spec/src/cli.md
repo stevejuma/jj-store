@@ -81,3 +81,11 @@ the paired jj-store binary from the same executable directory. This resets the
 upstream CLI's immediate-exit signal handler so the server owns graceful
 shutdown. Other platforms fail explicitly and direct users to jj-store run;
 platform handoff qualification remains a release gate.
+
+Attachment records a bounded, secret-free local journal outside the checkout.
+Before publishing it durably retains the exact operation and parent IDs; retries
+use that identity through the native receipt path. Connection, credential ID,
+workspace and path changes on retry fail explicitly. Cache initialization stages
+complete bindings before rename. Physical metadata appears only after
+publication is acknowledged; resuming never snapshots or overwrites source
+files.

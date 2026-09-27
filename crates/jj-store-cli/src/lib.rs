@@ -1,5 +1,6 @@
 //! Custom JJ command and authenticated remote native workspace integration.
 #![forbid(unsafe_code)]
+pub mod attachment;
 pub mod binding;
 pub mod commands;
 pub mod credentials;

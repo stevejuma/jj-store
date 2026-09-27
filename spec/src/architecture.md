@@ -79,3 +79,7 @@ The server composition crate owns bounded TOML configuration, operator-policy
 files, RustFS construction, process exclusivity and the foreground listener.
 Both executable entry points live in the CLI crate to share presentation and OS
 credentials; server composition never depends on command presentation.
+
+The CLI owns resumable physical attachment journals and atomic metadata staging.
+They retain no credentials and are not authority; publication acknowledgements
+continue to come from the native service's manifest-selected receipts.
