@@ -56,3 +56,8 @@ keys are encoded with an explicit kind tag in control records.
 Token IDs are distinct 128-bit identifiers, independent of principal IDs and
 publication/request identities. Bearer secrets and verifiers are service-owned
 credential types and never native object identities.
+
+The native V1 payload types are also exported as complete owned read DTOs. Their
+field ordering, serialization and identity conversions remain frozen and covered
+by the existing codec fixtures. API wrappers version their use of this native
+profile; exposing fields does not permit generic upstream serialization.

@@ -6,6 +6,7 @@ pub mod codec;
 mod copy_query;
 pub mod dependencies;
 pub mod factories;
+pub mod native_dto;
 pub mod objects;
 pub mod operation_stores;
 pub mod policy;

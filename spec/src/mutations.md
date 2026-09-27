@@ -85,3 +85,7 @@ Graph continuation pins retain only checked snapshot data and object membership.
 They contain no native session or credential. A new currently authenticated
 session is required to resume, and epoch checks remain mandatory. Continuations
 cannot create a mutation session or select an uncommitted inventory.
+
+Committed reads can request owned object DTOs, directory pages and verified file
+streams. These operations share the same captured membership and current policy
+checks as graph reads and expose no publication or staging method.

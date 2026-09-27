@@ -271,3 +271,43 @@ impl jj_store_jj::query::ReadAccess for CommittedRead {
         self.authorize().await.map_err(query_error)
     }
 }
+
+impl CommittedRead {
+    pub async fn object(
+        self: &Arc<Self>,
+        reader: &jj_store_jj::query::content::ContentReader,
+        key: m::ObjectKey,
+    ) -> jj_store_jj::query::Result<jj_store_jj::query::content::Object> {
+        self.authorize().await.map_err(query_error)?;
+        let value = reader
+            .object(self.session.object_store.clone(), self.clone(), key)
+            .await?;
+        self.authorize().await.map_err(query_error)?;
+        Ok(value)
+    }
+    pub async fn file(
+        self: &Arc<Self>,
+        reader: &jj_store_jj::query::content::ContentReader,
+        id: m::FileId,
+        range: Option<jj_store_object::ByteRange>,
+    ) -> jj_store_jj::query::Result<jj_store_jj::query::content::VerifiedFile> {
+        self.authorize().await.map_err(query_error)?;
+        let file = reader
+            .file(self.session.object_store.clone(), self.clone(), id, range)
+            .await?;
+        self.authorize().await.map_err(query_error)?;
+        Ok(file)
+    }
+    pub async fn tree(
+        self: &Arc<Self>,
+        reader: &jj_store_jj::query::content::ContentReader,
+        request: jj_store_jj::query::content::TreeRequest,
+    ) -> jj_store_jj::query::Result<jj_store_jj::query::content::TreePage> {
+        self.authorize().await.map_err(query_error)?;
+        let value = reader
+            .tree(self.session.object_store.clone(), self.clone(), request)
+            .await?;
+        self.authorize().await.map_err(query_error)?;
+        Ok(value)
+    }
+}

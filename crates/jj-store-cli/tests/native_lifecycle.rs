@@ -1093,3 +1093,6 @@ mod graph_acceptance;
 
 #[path = "native_lifecycle/pagination.rs"]
 mod pagination_acceptance;
+
+#[path = "native_lifecycle/content.rs"]
+mod content_acceptance;

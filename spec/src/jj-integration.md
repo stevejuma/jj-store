@@ -198,3 +198,10 @@ The current work/deadline checks bound admission, I/O and returned rows. Native
 synchronous CPU algorithms cannot be preempted by a Tokio timeout; these limits
 do not yet establish production CPU/memory qualification. That qualification and
 cache retention limits must precede shared HTTP query exposure.
+
+Native object DTOs reuse the explicit frozen V1 field schema after native
+integrity verification. Exporting those owned types does not change persisted
+bytes. Content readers apply committed membership and current authorization
+before root handling, metadata reads and stream preparation. Native directory
+queries run with read-only backend authority and no signer or physical checkout;
+trivial merge semantics are delegated to the pinned library.

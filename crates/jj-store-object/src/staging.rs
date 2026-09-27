@@ -60,4 +60,14 @@ impl StagedUpload {
     pub fn reader(&self) -> Result<Reader> {
         Ok(Box::pin(tokio::fs::File::from_std(self.file.reopen()?)))
     }
+    /// Seek within an immutable private spool without exposing its local path.
+    pub async fn reader_range(&self, range: crate::ByteRange) -> Result<Reader> {
+        use tokio::io::AsyncSeekExt as _;
+        if range.end() > self.len {
+            return Err(Error::Range);
+        }
+        let mut file = tokio::fs::File::from_std(self.file.reopen()?);
+        file.seek(std::io::SeekFrom::Start(range.start())).await?;
+        Ok(Box::pin(file.take(range.len())))
+    }
 }

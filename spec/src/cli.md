@@ -142,3 +142,8 @@ application services consume only owned graph requests and responses.
 Native transaction fixtures also qualify service continuation cursors across
 publication, checkpointing, revocation and expiry. These are library acceptance
 tests; HTTP and browser pagination require their own later transport coverage.
+
+Native content fixtures qualify all object variants, merged directory entries,
+binary file ranges, revocation during streaming and unchanged manifest state.
+These library fixtures complement CLI parity; media headers and safe rendering
+still require HTTP/browser acceptance.

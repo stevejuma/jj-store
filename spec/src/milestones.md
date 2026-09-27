@@ -25,8 +25,8 @@ adds evidence here in its enclosing Jujutsu change.
 | M3.1        | Done        | M2        | JST-SEC-001,JST-SEC-002,JST-SEC-003,JST-SEC-004                         | Revocable tokens and transport authorization                        | Retain native slice acceptance                   | E-M3-001,E-M3-004,E-M3-005,E-M3-006,E-M3-007,E-M3-008,E-M3-009,E-M3-011,E-M3-012,E-M3-014                                     |
 | M3.2        | Done        | M3.1      | JST-JJ-001,JST-JJ-004,JST-JJ-005                                        | Create edit describe log restart op-log evolog; multi-workspace     | Retain native slice acceptance                   | E-M3-002,E-M3-003,E-M3-004,E-M3-005,E-M3-006,E-M3-008,E-M3-009,E-M3-010,E-M3-011,E-M3-013,E-M3-014                            |
 | M3.3        | Done        | M3.2      | JST-CLI-001,JST-CLI-002,JST-CLI-003,JST-CLI-004                         | Custom command presentation and capability parity                   | Retain native slice acceptance                   | E-M3-006,E-M3-009,E-M3-010,E-M3-011,E-M3-012,E-M3-013,E-M3-014                                                                |
-| M4          | In progress | M3        | JST-API-001,JST-API-005                                                 | Structured reads and basic served UI match native semantics         | Implement object reads and query qualification   | E-M4-001,E-M4-002,E-M4-003                                                                                                    |
-| M4.1        | In progress | M3        | JST-API-001,JST-API-002,JST-JJ-003                                      | Pinned three-graph reads with zero GET publications                 | Implement object reads and query qualification   | E-M4-001,E-M4-002,E-M4-003                                                                                                    |
+| M4          | In progress | M3        | JST-API-001,JST-API-005                                                 | Structured reads and basic served UI match native semantics         | Implement diffs and qualify query resources      | E-M4-001,E-M4-002,E-M4-003,E-M4-004                                                                                           |
+| M4.1        | In progress | M3        | JST-API-001,JST-API-002,JST-JJ-003                                      | Pinned three-graph reads with zero GET publications                 | Implement diffs and qualify query resources      | E-M4-001,E-M4-002,E-M4-003,E-M4-004                                                                                           |
 | M4.2        | Planned     | M4.1      | JST-API-003,JST-API-004,JST-API-005                                     | SSE, safe UI, generated contracts and cold interaction tests        | Build Svelte UI                                  | -                                                                                                                             |
 | M5          | Planned     | M4        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Authenticated typed commands and shared RPC policy                  | Implement commands                               | -                                                                                                                             |
 | M5.1        | Planned     | M4        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Basic changes/refs/reconcile; preview receipt and semantic policy   | Implement command transaction facade             | -                                                                                                                             |
@@ -2800,6 +2800,145 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Rust 1.97.1; jj-cli/jj-lib 0.45.1 / 7c41cdeb16b6b321c64e789a966b6adf723816a5; HMAC-SHA256 and base64url; native in-memory transaction fixtures, not deployment evidence.",
     "formats": "Application graph cursor V1 binds process instance, pin, repo/epoch, op, publication position/revision, native sort profile, full query context, page size and last node. Registry holds immutable snapshot/inventory pins without credentials; current authorization and epoch are checked on resume. No native object, authority or RPC format change."
+  },
+  {
+    "id": "E-M4-004",
+    "tasks": ["M4", "M4.1"],
+    "date": "2026-09-27",
+    "kind": "native-object-tree-and-verified-content-reads",
+    "files": [
+      "crates/jj-store-cli/tests/native_lifecycle/content.rs",
+      "crates/jj-store-cli/tests/native_lifecycle.rs",
+      "crates/jj-store-jj/src/codec.rs",
+      "crates/jj-store-jj/src/lib.rs",
+      "crates/jj-store-jj/src/native_dto.rs",
+      "crates/jj-store-jj/src/query/content/trees.rs",
+      "crates/jj-store-jj/src/query/content.rs",
+      "crates/jj-store-jj/src/query/mod.rs",
+      "crates/jj-store-object/src/staging.rs",
+      "crates/jj-store-object/tests/contract.rs",
+      "crates/jj-store-service/src/reads.rs",
+      "spec/src/api.md",
+      "spec/src/cli.md",
+      "spec/src/identity.md",
+      "spec/src/jj-integration.md",
+      "spec/src/mutations.md",
+      "spec/src/object-store.md"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/native_lifecycle/content.rs#content_read_preserves_every_native_object_field_and_virtual_roots",
+      "crates/jj-store-cli/tests/native_lifecycle/content.rs#content_read_lists_native_directory_entries_with_paths_and_pagination",
+      "crates/jj-store-cli/tests/native_lifecycle/content.rs#content_read_verifies_binary_ranges_before_streaming_and_retains_permits",
+      "crates/jj-store-cli/tests/native_lifecycle/content.rs#content_read_rechecks_revocation_and_limits_and_rejects_staged_objects",
+      "crates/jj-store-cli/tests/native_lifecycle/content.rs#content_read_rejects_corruption_outside_requested_range_and_missing_committed_objects",
+      "crates/jj-store-cli/tests/native_lifecycle/content.rs#content_read_stream_deadline_and_merged_tree_conflicts_preserve_native_terms",
+      "crates/jj-store-cli/tests/native_lifecycle/content.rs#content_read_canceled_chunk_cannot_resume_with_skipped_bytes",
+      "crates/jj-store-object/tests/contract.rs#private_spool_ranges_seek_and_end_at_exact_boundaries",
+      "crates/jj-store-jj/tests/native_codec.rs#all_native_fields_roundtrip_without_identity_loss"
+    ],
+    "runs": [
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle content_read_",
+        "result": "pass",
+        "failures": 0,
+        "note": "Before implementation: zero matching cases, not acceptance evidence."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo check -p jj-store-cli",
+        "result": "fail",
+        "failures": 1,
+        "note": "Compile error: ConflictLabels does not implement From<Merge<String>>. Used the pinned Commit::tree() facade; removed one obsolete Deserialize import warning."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo check -p jj-store-cli",
+        "result": "fail",
+        "failures": 1,
+        "note": "Compile error: native merged value borrowed the current tree across reassignment. Dropped the inspected value before loading the next directory."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle content_read_",
+        "result": "fail",
+        "failures": 2,
+        "note": "Fixture compilation produced 2 type-inference diagnostics for redundant Into on a generic path constructor; no cases ran. Imports reserved for expanded fixtures initially emitted 3 warnings."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle content_read_",
+        "result": "fail",
+        "failures": 3,
+        "note": "All 3 fixtures were denied publication because they named protected root as a legacy predecessor. The fixture now stages a real invisible predecessor; production root protection is unchanged."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle content_read_",
+        "result": "fail",
+        "failures": 1,
+        "note": "2 cases pass / 1 path-validation failure: upstream internal RepoPath permits parent components as object names. Application traversal now explicitly rejects dot, parent and NUL components without normalization."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle content_read_",
+        "result": "pass",
+        "failures": 0,
+        "note": "Expanded 6 cases pass: all native metadata and roots, binary ranges and permits, native five-term merge/deletion/directory semantics, staged/later-publication rejection, limits, deadlines, current revocation, corruption beyond the requested range and missing committed history."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle content_read_",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 7 cases pass including cancellation after chunk I/O but before final authorization. Reusing a canceled stream fails explicitly rather than skipping bytes."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-object --test contract private_spool_",
+        "result": "pass",
+        "failures": 0,
+        "note": "Before range fixture: zero matching cases, not acceptance evidence."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-object --test contract private_spool_",
+        "result": "pass",
+        "failures": 0,
+        "note": "1 range fixture passes, covering first/last bytes, 64 KiB crossings, whole file, exact EOF and invalid ranges."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-jj --test native_codec",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 8 codec fixtures pass, including frozen V1 envelopes and upstream identities."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "57 requirements, boundaries, progress, rustfmt and all-target Clippy pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test",
+        "result": "pass",
+        "failures": 0,
+        "note": "158 Rust tests pass; 6 external acceptance cases intentionally ignored by the default lane. 15 governance and 3 storage-harness tests pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm build",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 9 lanes pass, including rustfmt, repeated Rust tests, mdBook and mapped spec-first checks."
+      },
+      {
+        "command": "pnpm format:check",
+        "result": "pass",
+        "failures": 0
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "M4 retains signed directory continuations, structured diffs/conflict descriptors and operation diffs, HTTP JSON/media/SSE, generated contracts and browser integration.",
+      "Production query CPU/memory/index/cache qualification and cold rebuild task/status remain open. Current content bounds are library acceptance evidence, not a deployment performance claim."
+    ],
+    "versions": "Rust 1.97.1; jj-cli/jj-lib 0.45.1 / 7c41cdeb16b6b321c64e789a966b6adf723816a5; production native/service code over disposable in-memory storage, not RustFS conformance.",
+    "formats": "Owned native metadata V1 schemas exported without changing persisted field order, payload bytes or native identity. Object wrappers carry version/profile/key; directory pages expose native terms and internal name continuations. Files use complete native/envelope verification into bounded private spools and authorized 64 KiB chunks; ranges seek within verified spools. No authority or native RPC format change."
   }
 ]
 ```

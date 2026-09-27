@@ -1,5 +1,6 @@
 //! Complete, explicitly owned V1 schemas. Native Serde implementations are not
 //! persistence contracts. Native hashes are computed over decoded JJ values.
+use crate::native_dto::*;
 use std::collections::{BTreeMap, HashSet};
 
 use blake2::{Blake2b512, Digest as _};
@@ -9,7 +10,7 @@ use jj_lib::object_id::ObjectId as _;
 use jj_lib::repo_path::{RepoPathBuf, RepoPathComponentBuf};
 use jj_lib::{backend as b, op_store as o};
 use jj_store_model::{self as m, ObjectKey, ObjectKind, envelope};
-use serde::{Deserialize, Serialize, de::DeserializeOwned};
+use serde::{Serialize, de::DeserializeOwned};
 
 /// Independent metadata budget; blobs use the streaming object transport.
 pub const MAX_METADATA_BYTES: u64 = 16 * 1024 * 1024;
@@ -182,12 +183,6 @@ fn sorted_unique<T: Ord>(items: &[T]) -> Result<()> {
     Ok(())
 }
 
-#[derive(Clone, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-struct Timestamp {
-    millis: i64,
-    offset_minutes: i32,
-}
 impl From<b::Timestamp> for Timestamp {
     fn from(t: b::Timestamp) -> Self {
         Self {
@@ -204,13 +199,7 @@ impl From<Timestamp> for b::Timestamp {
         }
     }
 }
-#[derive(Clone, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-struct Signature {
-    name: String,
-    email: String,
-    timestamp: Timestamp,
-}
+
 impl From<&b::Signature> for Signature {
     fn from(s: &b::Signature) -> Self {
         Self {
@@ -229,25 +218,7 @@ impl From<Signature> for b::Signature {
         }
     }
 }
-#[derive(Clone, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-struct SecureSig {
-    data: Vec<u8>,
-    sig: Vec<u8>,
-}
-#[derive(Clone, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-struct Commit {
-    parents: Vec<m::CommitId>,
-    predecessors: Vec<m::CommitId>,
-    root_tree: Vec<m::TreeId>,
-    conflict_labels: Vec<String>,
-    change_id: m::ChangeId,
-    description: String,
-    author: Signature,
-    committer: Signature,
-    secure_sig: Option<SecureSig>,
-}
+
 impl TryFrom<&b::Commit> for Commit {
     type Error = CodecError;
     fn try_from(c: &b::Commit) -> Result<Self> {
@@ -299,30 +270,6 @@ impl TryFrom<Commit> for b::Commit {
 }
 metadata_codec!(b::Commit, Commit, Commit, CommitId);
 
-#[derive(Clone, Serialize, Deserialize)]
-#[serde(tag = "type", rename_all = "snake_case", deny_unknown_fields)]
-enum TreeValue {
-    File {
-        id: m::FileId,
-        executable: bool,
-        copy: m::CopyReference,
-    },
-    Symlink {
-        id: m::SymlinkId,
-    },
-    Tree {
-        id: m::TreeId,
-    },
-    // External IDs (e.g. Git SHA-1) do not have the repository's native width.
-    Submodule {
-        id: Vec<u8>,
-    },
-}
-#[derive(Clone, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-struct Tree {
-    entries: Vec<(String, TreeValue)>,
-}
 impl TryFrom<&b::Tree> for Tree {
     type Error = CodecError;
     fn try_from(tree: &b::Tree) -> Result<Self> {
@@ -330,24 +277,7 @@ impl TryFrom<&b::Tree> for Tree {
             entries: tree
                 .entries()
                 .map(|e| {
-                    let value = match e.value() {
-                        b::TreeValue::File {
-                            id,
-                            executable,
-                            copy_id,
-                        } => TreeValue::File {
-                            id: file_id(id)?,
-                            executable: *executable,
-                            copy: copies(copy_id)?,
-                        },
-                        b::TreeValue::Symlink(id) => TreeValue::Symlink {
-                            id: symlink_id(id)?,
-                        },
-                        b::TreeValue::Tree(id) => TreeValue::Tree { id: tree_id(id)? },
-                        b::TreeValue::GitSubmodule(id) => TreeValue::Submodule {
-                            id: id.as_bytes().to_vec(),
-                        },
-                    };
+                    let value = TreeValue::try_from(e.value())?;
                     Ok((e.name().as_internal_str().to_owned(), value))
                 })
                 .collect::<Result<_>>()?,
@@ -391,13 +321,6 @@ impl TryFrom<Tree> for b::Tree {
 }
 metadata_codec!(b::Tree, Tree, Tree, TreeId);
 
-#[derive(Clone, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-struct CopyHistory {
-    current_path: String,
-    parents: Vec<m::CopyReference>,
-    salt: Vec<u8>,
-}
 impl TryFrom<&b::CopyHistory> for CopyHistory {
     type Error = CodecError;
     fn try_from(c: &b::CopyHistory) -> Result<Self> {
@@ -425,9 +348,6 @@ impl TryFrom<CopyHistory> for b::CopyHistory {
 }
 metadata_codec!(b::CopyHistory, CopyHistory, Copy, CopyId);
 
-#[derive(Clone, Serialize, Deserialize)]
-#[serde(transparent)]
-struct RefTarget(Vec<Option<m::CommitId>>);
 impl TryFrom<&o::RefTarget> for RefTarget {
     type Error = CodecError;
     fn try_from(r: &o::RefTarget) -> Result<Self> {
@@ -447,18 +367,7 @@ impl TryFrom<RefTarget> for o::RefTarget {
         )?))
     }
 }
-#[derive(Clone, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-enum RemoteState {
-    New,
-    Tracked,
-}
-#[derive(Clone, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-struct RemoteRef {
-    target: RefTarget,
-    state: RemoteState,
-}
+
 impl TryFrom<&o::RemoteRef> for RemoteRef {
     type Error = CodecError;
     fn try_from(r: &o::RemoteRef) -> Result<Self> {
@@ -483,23 +392,7 @@ impl TryFrom<RemoteRef> for o::RemoteRef {
         })
     }
 }
-#[derive(Clone, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-struct RemoteView {
-    bookmarks: BTreeMap<String, RemoteRef>,
-    tags: BTreeMap<String, RemoteRef>,
-}
-#[derive(Clone, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-struct View {
-    head_ids: Vec<m::CommitId>,
-    local_bookmarks: BTreeMap<String, RefTarget>,
-    local_tags: BTreeMap<String, RefTarget>,
-    remote_views: BTreeMap<String, RemoteView>,
-    git_refs: BTreeMap<String, RefTarget>,
-    git_heads: BTreeMap<String, RefTarget>,
-    wc_commit_ids: BTreeMap<String, m::CommitId>,
-}
+
 // Map keys are native string wrappers. Convert explicitly; ordering is preserved.
 macro_rules! wire_map {
     ($map:expr, $convert:expr) => {
@@ -587,26 +480,6 @@ impl TryFrom<View> for o::View {
 }
 metadata_codec!(o::View, View, View, ViewId);
 
-#[derive(Clone, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-struct Metadata {
-    start: Timestamp,
-    end: Timestamp,
-    description: String,
-    hostname: String,
-    username: String,
-    is_snapshot: bool,
-    workspace_name: Option<String>,
-    attributes: BTreeMap<String, String>,
-}
-#[derive(Clone, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-struct Operation {
-    view_id: m::ViewId,
-    parents: Vec<m::OperationId>,
-    metadata: Metadata,
-    commit_predecessors: Option<BTreeMap<m::CommitId, Vec<m::CommitId>>>,
-}
 impl TryFrom<&o::Operation> for Operation {
     type Error = CodecError;
     fn try_from(op: &o::Operation) -> Result<Self> {
@@ -674,3 +547,27 @@ impl TryFrom<Operation> for o::Operation {
     }
 }
 metadata_codec!(o::Operation, Operation, Operation, OperationId);
+
+impl TryFrom<&b::TreeValue> for TreeValue {
+    type Error = CodecError;
+    fn try_from(value: &b::TreeValue) -> Result<Self> {
+        Ok(match value {
+            b::TreeValue::File {
+                id,
+                executable,
+                copy_id,
+            } => TreeValue::File {
+                id: file_id(id)?,
+                executable: *executable,
+                copy: copies(copy_id)?,
+            },
+            b::TreeValue::Symlink(id) => TreeValue::Symlink {
+                id: symlink_id(id)?,
+            },
+            b::TreeValue::Tree(id) => TreeValue::Tree { id: tree_id(id)? },
+            b::TreeValue::GitSubmodule(id) => TreeValue::Submodule {
+                id: id.as_bytes().to_vec(),
+            },
+        })
+    }
+}

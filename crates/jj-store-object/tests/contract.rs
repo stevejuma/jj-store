@@ -172,3 +172,32 @@ fn storage_credentials_and_endpoint_policy_fail_closed() {
         assert_eq!(S3Store::new(config).is_ok(), valid, "{endpoint}");
     }
 }
+
+#[tokio::test]
+async fn private_spool_ranges_seek_and_end_at_exact_boundaries() {
+    let bytes: Vec<u8> = (0..200_000).map(|n| n as u8).collect();
+    let spool = StagedUpload::from_bytes(&bytes, bytes.len() as u64)
+        .await
+        .unwrap();
+    for (start, end) in [(0, 1), (65_535, 65_537), (199_999, 200_000), (0, 200_000)] {
+        let mut reader = spool
+            .reader_range(ByteRange::new(start, end).unwrap())
+            .await
+            .unwrap();
+        let mut actual = vec![];
+        reader.read_to_end(&mut actual).await.unwrap();
+        assert_eq!(actual, bytes[start as usize..end as usize]);
+        assert_eq!(reader.read(&mut [0; 1]).await.unwrap(), 0);
+    }
+    assert!(matches!(
+        spool
+            .reader_range(ByteRange::new(1, 200_001).unwrap())
+            .await,
+        Err(Error::Range)
+    ));
+    let empty = StagedUpload::from_bytes(&[], 0).await.unwrap();
+    assert!(matches!(
+        empty.reader_range(ByteRange::new(0, 1).unwrap()).await,
+        Err(Error::Range)
+    ));
+}

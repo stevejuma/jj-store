@@ -1,5 +1,6 @@
 //! Owned, bounded native graph queries. Upstream objects never cross this API.
 mod access;
+pub mod content;
 mod graphs;
 use crate::{
     backend::BackendLimits,
@@ -33,6 +34,16 @@ pub enum Error {
     Invalid,
     #[error("native query or cache is unavailable")]
     Unavailable,
+    #[error("committed native object is corrupt")]
+    Corrupt,
+    #[error("committed native history is incomplete")]
+    Incomplete,
+    #[error("repository path is absent")]
+    NotFound,
+    #[error("repository path is not an unambiguous directory")]
+    NotDirectory,
+    #[error("file range is invalid or unsatisfiable")]
+    Range,
 }
 pub type Result<T> = std::result::Result<T, Error>;
 /// Implemented by a private service capability, not by request-deserialized data.
