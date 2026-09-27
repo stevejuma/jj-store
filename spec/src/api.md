@@ -176,3 +176,11 @@ inputs; limits return explicit errors without publishing or truncating results.
 Implicit graph/content tree walks use the same 64-component, 4096-byte path
 limits as explicit content paths. Repeated subtree objects at different paths
 still require admission at each native cache key.
+
+Graph, object, directory, diff, conflict and file reads share one native worker
+capacity in the serving composition. Saturated reads return an explicit
+retryable Busy result. A client cannot gain extra capacity by switching routes
+or snapshot repositories. A dropped request releases capacity after its worker
+exits; an open file handle keeps capacity until its verified spool is released.
+Transport admission also bounds snapshot capture and response delivery, which
+are separate from native worker execution.

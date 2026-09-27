@@ -25,8 +25,8 @@ adds evidence here in its enclosing Jujutsu change.
 | M3.1        | Done        | M2        | JST-SEC-001,JST-SEC-002,JST-SEC-003,JST-SEC-004                         | Revocable tokens and transport authorization                        | Retain native slice acceptance                   | E-M3-001,E-M3-004,E-M3-005,E-M3-006,E-M3-007,E-M3-008,E-M3-009,E-M3-011,E-M3-012,E-M3-014                                     |
 | M3.2        | Done        | M3.1      | JST-JJ-001,JST-JJ-004,JST-JJ-005                                        | Create edit describe log restart op-log evolog; multi-workspace     | Retain native slice acceptance                   | E-M3-002,E-M3-003,E-M3-004,E-M3-005,E-M3-006,E-M3-008,E-M3-009,E-M3-010,E-M3-011,E-M3-013,E-M3-014                            |
 | M3.3        | Done        | M3.2      | JST-CLI-001,JST-CLI-002,JST-CLI-003,JST-CLI-004                         | Custom command presentation and capability parity                   | Retain native slice acceptance                   | E-M3-006,E-M3-009,E-M3-010,E-M3-011,E-M3-012,E-M3-013,E-M3-014                                                                |
-| M4          | In progress | M3        | JST-API-001,JST-API-005                                                 | Structured reads and basic served UI match native semantics         | Qualify resources then expose HTTP               | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010,E-M4-011                            |
-| M4.1        | In progress | M3        | JST-API-001,JST-API-002,JST-JJ-003                                      | Pinned three-graph reads with zero GET publications                 | Qualify resources then expose HTTP               | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010,E-M4-011                            |
+| M4          | In progress | M3        | JST-API-001,JST-API-005                                                 | Structured reads and basic served UI match native semantics         | Qualify resources then expose HTTP               | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010,E-M4-011,E-M4-012                   |
+| M4.1        | In progress | M3        | JST-API-001,JST-API-002,JST-JJ-003                                      | Pinned three-graph reads with zero GET publications                 | Qualify resources then expose HTTP               | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010,E-M4-011,E-M4-012                   |
 | M4.2        | Planned     | M4.1      | JST-API-003,JST-API-004,JST-API-005                                     | SSE, safe UI, generated contracts and cold interaction tests        | Build Svelte UI                                  | -                                                                                                                             |
 | M5          | Planned     | M4        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Authenticated typed commands and shared RPC policy                  | Implement commands                               | -                                                                                                                             |
 | M5.1        | Planned     | M4        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Basic changes/refs/reconcile; preview receipt and semantic policy   | Implement command transaction facade             | -                                                                                                                             |
@@ -4004,6 +4004,85 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Rust 1.97.1; jj-cli/jj-lib 0.45.1 at 7c41cdeb16b6b321c64e789a966b6adf723816a5. Predicate ancestry accounting mirrors the pinned recursive merge ordering without constructing merges; admitted evaluation remains upstream.",
     "formats": "Additive owned graph predicate limits and file-byte/line statistics. Optional native authority tree-path admission defaults to existing session permission. No native identity, envelope, publication or RPC format changes."
+  },
+  {
+    "id": "E-M4-012",
+    "tasks": ["M4", "M4.1"],
+    "date": "2026-09-27",
+    "kind": "shared-native-query-workers",
+    "files": [
+      "crates/jj-store-cli/tests/native_lifecycle/content.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/graphs.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/query_workers.rs",
+      "crates/jj-store-jj/src/query/content.rs",
+      "crates/jj-store-jj/src/query/mod.rs",
+      "crates/jj-store-jj/src/query/workers.rs",
+      "spec/src/api.md",
+      "spec/src/cli.md",
+      "spec/src/jj-integration.md"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/native_lifecycle/query_workers.rs#query_workers_file_lifetime_limits_graphs_and_content_together",
+      "crates/jj-store-cli/tests/native_lifecycle/query_workers.rs#query_workers_graph_and_content_cancel_release_shared_capacity",
+      "crates/jj-store-cli/tests/native_lifecycle/query_workers.rs#query_workers_mixed_capacity_clones_and_errors_release_slots",
+      "crates/jj-store-cli/tests/native_lifecycle/graphs.rs#graph_query_cancellation_retains_worker_permit_until_exit_and_deadlines_bound_waits"
+    ],
+    "runs": [
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle query_workers_",
+        "result": "fail",
+        "failures": 2,
+        "note": "Before: independent graph/content pools admit a competing route while a worker or file handle occupies the intended shared capacity. Both tests failed; no compile errors."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle query_workers_",
+        "result": "pass",
+        "failures": 0,
+        "note": "Original 2 regressions pass after shared composition. Final expanded suite passes all 3 cases, including mixed capacity, clones, alternate cache roots and error cleanup."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle graph_query_cancellation_retains_worker_permit_until_exit_and_deadlines_bound_waits",
+        "result": "pass",
+        "failures": 0,
+        "note": "Synchronous canceled graph worker retains both shared content capacity and its cache lock until actual exit."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "57 requirements, boundaries, progress, rustfmt and all-target Clippy pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test",
+        "result": "pass",
+        "failures": 0,
+        "note": "209 Rust tests pass / 6 external cases intentionally ignored; all 71 native lifecycle cases, 15 governance tests and 3 storage-harness self-tests pass. No unresolved failures."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Locked workspace build passes."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 9 lanes pass, including Rust tests, rustfmt, mdBook and mapped spec-first checks."
+      },
+      {
+        "command": "pnpm format:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rustfmt and Prettier pass."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Controlled long cold-index tasks/status; HTTP admission for snapshot capture and response delivery, JSON/media/SSE, generated contracts and browser integration. Shared native pool is a tested composition interface; whole-server concurrent resource qualification remains M8a."
+    ],
+    "versions": "Rust 1.97.1; jj-cli/jj-lib 0.45.1 at 7c41cdeb16b6b321c64e789a966b6adf723816a5. Existing per-query shape/byte/work/deadline policies unchanged.",
+    "formats": "Additive shared query worker composition and capacity/in-use diagnostics. No native identity, envelope, publication, HTTP or RPC format changes."
   }
 ]
 ```

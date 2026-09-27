@@ -481,7 +481,15 @@ async fn graph_query_cancellation_retains_worker_permit_until_exit_and_deadlines
     let graphs = tempfile::tempdir().unwrap();
     let read = pin(&f, roots::ROOT_OPERATION).await;
     let paused = resource_acceptance::BlockingAccess::new(read);
-    let exec = q::GraphExecutor::new(graphs.path().to_owned(), q::Limits::default(), 1).unwrap();
+    let shared = q::workers::Executors::new(
+        graphs.path().to_owned(),
+        q::Limits::default(),
+        q::content::Limits::default(),
+        q::cache::Policy::default(),
+        1,
+    )
+    .unwrap();
+    let exec = shared.graph().clone();
     let task = {
         let exec = exec.clone();
         let access = paused.clone();
@@ -507,6 +515,20 @@ async fn graph_query_cancellation_retains_worker_permit_until_exit_and_deadlines
         .unwrap_err(),
         q::Error::Busy
     );
+    assert_eq!(
+        shared
+            .content()
+            .object(
+                f.store.clone(),
+                paused.clone(),
+                m::ObjectKey::Commit(roots::ROOT_COMMIT)
+            )
+            .await
+            .unwrap_err(),
+        q::Error::Busy,
+        "synchronous canceled worker must retain shared content capacity until exit"
+    );
+    assert_eq!(shared.workers().status().in_use, 1);
     let independent =
         q::GraphExecutor::new(graphs.path().to_owned(), q::Limits::default(), 1).unwrap();
     assert_eq!(

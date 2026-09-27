@@ -294,3 +294,17 @@ Returned native file readers also cross the caller-owned runtime adapter on
 every poll. The foreign-executor cooperative-budget rule applies after file
 preparation as well as during backend futures and copy streams; genuine pending
 local I/O remains Pending.
+
+A serving instance composes its graph executor and content reader with one
+shared worker pool, retained across repositories, routes and clones. Admission
+is non-queuing and returns Busy when the aggregate count is exhausted. A worker
+retains its slot through native execution, including canceled synchronous steps.
+A verified file retains its slot with its spool until the handle is dropped,
+including after EOF. Validation, authorization and worker failures return their
+slots without weakening current permission or snapshot membership checks.
+
+The composed executor exposes capacity and active-slot diagnostics without
+credentials or repository data. This bounds simultaneous native jobs/streams;
+per-query byte/work/shape limits remain independent. It is not an OS memory
+reservation. Snapshot admission, response delivery, native RPC and background
+jobs also need explicit composition at the serving boundary.

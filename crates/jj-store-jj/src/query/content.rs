@@ -8,6 +8,7 @@ mod trees;
 use super::{
     Error, ReadAccess, Result, Stats,
     access::{Budget, ReadStore},
+    workers::Workers,
 };
 use crate::{
     codec::{NativeCodec as _, NativeSymlink},
@@ -20,10 +21,7 @@ use jj_store_model as m;
 use jj_store_object::{ByteRange, ObjectStore, StagedUpload};
 use serde::Serialize;
 use std::{sync::Arc, time::Duration};
-use tokio::{
-    io::AsyncReadExt as _,
-    sync::{OwnedSemaphorePermit, Semaphore},
-};
+use tokio::{io::AsyncReadExt as _, sync::OwnedSemaphorePermit};
 
 pub use trees::{TreeEntry, TreePage, TreeRequest};
 const CHUNK: usize = 64 * 1024;
@@ -134,7 +132,7 @@ impl VerifiedFile {
 #[derive(Clone)]
 pub struct ContentReader {
     limits: Limits,
-    permits: Arc<Semaphore>,
+    workers: Workers,
 }
 struct Context {
     limits: Limits,
@@ -145,9 +143,11 @@ struct Context {
 }
 impl ContentReader {
     pub fn new(limits: Limits, concurrency: usize) -> Result<Self> {
+        Self::with_workers(limits, Workers::new(concurrency)?)
+    }
+    pub fn with_workers(limits: Limits, workers: Workers) -> Result<Self> {
         limits.metadata.validate()?;
-        if !(1..=64).contains(&concurrency)
-            || limits.max_read_bytes == 0
+        if limits.max_read_bytes == 0
             || limits.max_blob_bytes
                 > jj_store_object::staging::MAX_SINGLE_PUT - m::envelope::HEADER_LEN as u64
             || limits.max_output_bytes == 0
@@ -162,10 +162,7 @@ impl ContentReader {
         {
             return Err(Error::Limit);
         }
-        Ok(Self {
-            limits,
-            permits: Arc::new(Semaphore::new(concurrency)),
-        })
+        Ok(Self { limits, workers })
     }
     async fn execute<T: Send + 'static>(
         &self,
@@ -175,11 +172,7 @@ impl ContentReader {
         + Send
         + 'static,
     ) -> Result<T> {
-        let permit = self
-            .permits
-            .clone()
-            .try_acquire_owned()
-            .map_err(|_| Error::Busy)?;
+        let permit = self.workers.acquire()?;
         let limits = self.limits;
         let budget = Arc::new(Budget::new(super::Limits {
             metadata: limits.metadata,

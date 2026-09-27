@@ -870,3 +870,6 @@ mod admission_acceptance;
 
 #[path = "query_predicates.rs"]
 mod predicate_acceptance;
+
+#[path = "query_workers.rs"]
+mod worker_acceptance;

@@ -5,6 +5,7 @@ pub mod cache;
 pub mod content;
 mod graphs;
 pub mod predicates;
+pub mod workers;
 use crate::{
     backend::BackendLimits,
     factories::{NativeStores, PROFILE},
@@ -17,7 +18,7 @@ use jj_store_model as m;
 use jj_store_object::ObjectStore;
 use serde::{Deserialize, Serialize};
 use std::{collections::BTreeSet, path::PathBuf, sync::Arc, time::Duration};
-use tokio::sync::Semaphore;
+use workers::Workers;
 
 #[derive(Clone, Debug, PartialEq, Eq, thiserror::Error)]
 pub enum Error {
@@ -210,7 +211,7 @@ pub struct GraphPage {
 pub struct GraphExecutor {
     root: PathBuf,
     limits: Limits,
-    permits: Arc<Semaphore>,
+    workers: Workers,
     cache_policy: cache::Policy,
 }
 impl GraphExecutor {
@@ -223,11 +224,18 @@ impl GraphExecutor {
         concurrency: usize,
         cache_policy: cache::Policy,
     ) -> Result<Self> {
+        Self::with_workers(root, limits, cache_policy, Workers::new(concurrency)?)
+    }
+    pub fn with_workers(
+        root: PathBuf,
+        limits: Limits,
+        cache_policy: cache::Policy,
+        workers: Workers,
+    ) -> Result<Self> {
         cache_policy.validate()?;
         limits.metadata.validate()?;
         limits.predicates.validate()?;
         if !root.is_absolute()
-            || !(1..=64).contains(&concurrency)
             || limits.max_page == 0
             || limits.max_page > 10_000
             || limits.max_index_commits == 0
@@ -244,7 +252,7 @@ impl GraphExecutor {
         Ok(Self {
             root,
             limits,
-            permits: Arc::new(Semaphore::new(concurrency)),
+            workers,
             cache_policy,
         })
     }
@@ -256,11 +264,7 @@ impl GraphExecutor {
         page: Page,
     ) -> Result<GraphPage> {
         let budget = Arc::new(Budget::new(self.limits)?);
-        let permit = self
-            .permits
-            .clone()
-            .try_acquire_owned()
-            .map_err(|_| Error::Busy)?;
+        let permit = self.workers.acquire()?;
         budget.authorize(access.as_ref()).await?;
         if page.limit == 0 || page.limit > self.limits.max_page {
             return Err(Error::Limit);

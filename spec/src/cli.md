@@ -179,3 +179,8 @@ narrow ordinary CLI persistence or alter native hashes.
 File-predicate acceptance distinguishes native log parity from resource-limit
 rejection. Large downloads remain streamed under content budgets; ordinary CLI
 commands retain upstream semantics.
+
+Native lifecycle acceptance checks aggregate graph/content admission, including
+pending worker cancellation and the lifetime of verified file handles. These
+fixtures exercise owned native query interfaces; HTTP serving qualification is
+recorded separately.
