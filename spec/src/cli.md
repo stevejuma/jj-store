@@ -4,6 +4,10 @@ Native search acceptance compares selected-view commit visibility with retained
 historical metadata, including invisible predecessors and pagination after
 hidden-hit filtering. These fixtures do not introduce CLI search commands.
 
+Search serving fixtures additionally cover signed continuations, freshness
+waits, scope selection, request admission, cursor expiry/restart and current
+repository authorization through native service sessions.
+
 First custom commands: init, attach, status, capabilities, doctor, serve-local,
 and credential login/logout. JSON is never paged. Custom standalone no-command
 invocation prints help successfully; ordinary upstream jj defaults stay intact.

@@ -7,6 +7,7 @@ license.workspace = true
 publish = false
 
 [dependencies]
+schemars.workspace = true
 jj-store-model.workspace = true
 jj-store-adapters.workspace = true
 jj-store-service.workspace = true
@@ -14,6 +15,11 @@ async-trait = "0.1"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 sha2 = "0.10"
+base64 = "0.22"
+hmac = "0.12"
+getrandom = "0.4"
+zeroize = "1"
+thiserror = "2"
 tantivy = { version = "=0.26.2", default-features = false, features = ["mmap", "lz4-compression"] }
 tempfile = "3"
 tokio = { version = "1", features = ["rt", "sync", "time"] }

@@ -116,6 +116,7 @@ pub struct SearchRequest<'a> {
     pub offset: usize,
     pub limit: usize,
     pub view: SearchView,
+    pub scope: Option<&'a str>,
 }
 impl<'a> SearchRequest<'a> {
     pub fn historical(text: &'a str, offset: usize, limit: usize) -> Self {
@@ -124,6 +125,7 @@ impl<'a> SearchRequest<'a> {
             offset,
             limit,
             view: SearchView::Historical,
+            scope: None,
         }
     }
     pub fn visible(text: &'a str, offset: usize, limit: usize, view: VisibleView) -> Self {
@@ -132,6 +134,7 @@ impl<'a> SearchRequest<'a> {
             offset,
             limit,
             view: SearchView::VisibleCommits(view),
+            scope: None,
         }
     }
 }
@@ -144,6 +147,9 @@ pub struct Page {
     pub next_offset: Option<usize>,
 }
 impl PinnedReader {
+    pub(crate) fn checkpoint(&self) -> &Checkpoint {
+        &self.generation.checkpoint
+    }
     /// Each page must reauthorize; possession of this handle is not permission.
     pub async fn query(
         &self,
@@ -156,6 +162,7 @@ impl PinnedReader {
             offset,
             limit,
             view,
+            scope,
         } = request;
         if limits.max_offset > 100_000
             || limits.max_page > 1000
@@ -185,6 +192,10 @@ impl PinnedReader {
                 return Err(Error::Limit);
             }
         }
+        if scope.is_some_and(|name| !self.generation.payload.scopes.contains_key(name)) {
+            return Err(Error::Invalid);
+        }
+        let scope = scope.map(str::to_owned);
         let permit = self
             .slots
             .clone()
@@ -199,6 +210,18 @@ impl PinnedReader {
                 let searcher = generation.reader.searcher();
                 let fields = &generation.fields;
                 let mut query = literal_query(&generation, &query)?;
+                if let Some(scope) = scope {
+                    query = Box::new(BooleanQuery::intersection(vec![
+                        query,
+                        Box::new(ConstScoreQuery::new(
+                            Box::new(TermQuery::new(
+                                Term::from_field_text(fields.scope, &scope),
+                                IndexRecordOption::Basic,
+                            )),
+                            0.0,
+                        )),
+                    ]));
+                }
                 let selected_view = match view {
                     SearchView::Historical => None,
                     SearchView::VisibleCommits(view) => {

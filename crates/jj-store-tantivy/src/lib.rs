@@ -3,6 +3,7 @@
 mod disk;
 mod document;
 pub mod native;
+pub mod paging;
 mod projection;
 mod search;
 pub use document::{Document, DocumentKey, ScopeSnapshot, ScopeState, Update};

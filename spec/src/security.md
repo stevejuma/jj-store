@@ -199,3 +199,10 @@ Selected-view search filters retain no credential or live session. Their checked
 repository and epoch must match the pinned index, and a new request must supply
 current repository authorization before and after execution. Neither a filter
 nor a historical search mode bypasses token revocation.
+
+Search cursors contain signed identity/position/query digests and retain no
+bearer credential. Serving-instance keys are generated securely, kept in memory
+and zeroized on drop. Authentication precedes cursor parsing and lookup; a valid
+cursor cannot bypass repository or epoch checks. Bounded waits reauthorize while
+polling, and expiry maintenance releases idle generation pins independently of
+further requests. Response-size failures release any newly retained pin.

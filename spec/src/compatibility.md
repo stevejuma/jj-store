@@ -292,3 +292,12 @@ visible commits, verify filtering before pagination, and keep both selected view
 and index generation stable across later writes. Foreign repository/epoch
 filters and revoked tokens fail explicitly. This is native/local-index evidence,
 separate from HTTP pagination and RustFS deployment qualification.
+
+Search serving qualification uses real native service sessions, selected WAL
+history and local Tantivy files. It verifies signed pagination, scope filters,
+current-view ambiguity, bounded freshness waits, admission, revocation, expiry,
+serving restart, output/retention budgets and durable-versus-visible
+degradation. Reader catch-up tests prepare durable artifacts separately; an
+invented one-second index-build expectation is not a release performance
+requirement. HTTP routes, cold server wiring and real RustFS remain separate
+gates.

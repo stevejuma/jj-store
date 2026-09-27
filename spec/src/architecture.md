@@ -1,5 +1,9 @@
 # Architecture
 
+The Tantivy boundary owns credential-free search sessions and generation
+continuations over service-authorized native snapshots. HTTP and server
+composition consume these owned contracts; publication remains independent.
+
 Crates are added as milestones begin, not as empty placeholders. Native codecs
 initially live with JJ integration. The server uses in-process stores rather
 than calling its own RPC. Local indexes are derived and rebuildable. The source

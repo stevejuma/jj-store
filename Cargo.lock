@@ -3577,18 +3577,24 @@ name = "jj-store-tantivy"
 version = "0.1.0"
 dependencies = [
  "async-trait",
+ "base64 0.22.1",
+ "getrandom 0.4.3",
+ "hmac",
  "jj-store-adapters",
  "jj-store-model",
  "jj-store-object",
  "jj-store-service",
  "jj-store-wal",
+ "schemars",
  "serde",
  "serde_json",
  "sha2 0.10.9",
  "tantivy",
  "tempfile",
+ "thiserror 2.0.21",
  "tokio",
  "uuid",
+ "zeroize",
 ]
 
 [[package]]

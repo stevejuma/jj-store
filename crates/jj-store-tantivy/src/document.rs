@@ -2,8 +2,11 @@ use crate::*;
 use std::collections::BTreeSet;
 use tantivy::schema::{Field, STORED, STRING, Schema, TEXT, TantivyDocument};
 
-#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[derive(
+    Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize, schemars::JsonSchema,
+)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
+#[schemars(rename = "SearchDocumentKey")]
 pub enum DocumentKey {
     Operation { id: m::OperationId },
     Commit { id: m::CommitId },
@@ -37,8 +40,9 @@ fn valid_scope(scope: &str) -> bool {
             .bytes()
             .all(|b| b.is_ascii_alphanumeric() || b"-_:.".contains(&b))
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(rename_all = "snake_case")]
+#[schemars(rename = "SearchScopeState")]
 pub enum ScopeState {
     Ready,
     Conflicted,
@@ -46,8 +50,9 @@ pub enum ScopeState {
     AmbiguousHeads,
     Disabled,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
+#[schemars(rename = "SearchScopeSnapshot")]
 pub struct ScopeSnapshot {
     pub state: ScopeState,
     pub operation: Option<m::OperationId>,
@@ -66,8 +71,9 @@ impl ScopeSnapshot {
 }
 /// Owned extraction output. Native identity fields are stored exactly; the body
 /// is indexed but never stored in query hits. Fetch source via an authorized ID.
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
+#[schemars(rename = "SearchDocument")]
 pub struct Document {
     pub key: DocumentKey,
     pub title: String,
@@ -86,7 +92,7 @@ pub struct Document {
     pub has_conflict: bool,
     pub timestamp_millis: i64,
 }
-#[derive(Clone, Debug, Default, Serialize, Deserialize)]
+#[derive(Clone, Debug, Default, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct Update {
     pub upsert: Vec<Document>,

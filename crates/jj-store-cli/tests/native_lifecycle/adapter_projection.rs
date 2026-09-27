@@ -1,6 +1,8 @@
 use super::*;
 use jj_store_adapters as a;
 use jj_store_service::adapter::ProjectionRead;
+#[path = "search_paging.rs"]
+mod search_paging;
 #[path = "search_visibility.rs"]
 mod search_visibility;
 struct ReadNative {
