@@ -10,3 +10,7 @@
 
 Use the explicit development paths `target/debug/jj-store` and
 `target/debug/jj`.
+
+Use `jj-store token` to list repository grants and apply, inspect or retry typed
+grant/revoke requests through the authenticated API. See
+`jj-store token --help`.

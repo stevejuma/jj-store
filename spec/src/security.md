@@ -103,3 +103,9 @@ Repository initialization saves a generated initial admin credential to its
 endpoint/repository OS account before sending any creation request. Its local
 journal stores only the public credential ID. Neither a missing OS facility nor
 a changed retry credential permits a plaintext fallback or new secret identity.
+
+Token administration separates the authenticating admin credential from the
+grant credential. Local journals retain only the grant ID and a domain-separated
+fingerprint of its high-entropy bytes. They never retain bearer secrets. Grant
+status/retry requires the original credential through the same protected input
+channels and authenticates the admin before reading server policy or receipts.

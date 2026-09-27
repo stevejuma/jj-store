@@ -116,3 +116,9 @@ creates the repository with the actual `jj store init` command, repeats it with
 the same durable identities, and retains the nine-probe cold server/revocation
 gate. The OS-facility initial-admin provisioning fixture separately generates,
 reuses, reads and deletes a randomly scoped credential account.
+
+The
+[token-command deployment report](../../docs/evidence/m3-token-cli-rustfs.json)
+retains nine real-storage probes while granting through custom `jj`, revoking
+through standalone `jj-store`, and retrying the original grant after revocation.
+The retry returns the original receipt without restoring revoked access.

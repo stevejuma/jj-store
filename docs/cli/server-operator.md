@@ -13,3 +13,7 @@ Policy files retain only verifiers and are reloaded for each creation request.
 
 Repository credentials remain separate: `JJ_STORE_TOKEN` or `jj store login`. No
 plaintext credential fallback is available.
+
+Use `jj-store token` for repository grants and revocations. Those requests
+require a current repository admin credential; the creation operator cannot
+authorize them.

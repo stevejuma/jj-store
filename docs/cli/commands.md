@@ -16,5 +16,7 @@
 - `jj-store config`, `doctor`, and `operator`: configure, inspect and administer
   it.
 
-Repository token administration commands remain under implementation; the
-milestone ledger is the authority for completion.
+- `jj store token` and `jj-store token`: list grants and apply or recover typed
+  grant/revoke requests.
+
+The milestone ledger records remaining command parity and release gates.

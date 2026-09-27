@@ -409,3 +409,488 @@ async fn rpc_rejects_malformed_admin_requests_without_publication_and_redacts_se
         initial
     );
 }
+
+fn token_command(
+    f: &Fixture,
+    root: &std::path::Path,
+    server: bool,
+    admin: &BearerToken,
+    grant: Option<&BearerToken>,
+    args: &[&str],
+) -> Command {
+    let mut command = Command::new(if server {
+        env!("CARGO_BIN_EXE_jj-store")
+    } else {
+        env!("CARGO_BIN_EXE_jj")
+    });
+    command
+        .current_dir(root)
+        .env("JJ_CONFIG", "")
+        .env_remove("JJ_STORE_PAGER")
+        .env_remove("JJ_STORE_OPERATOR_TOKEN")
+        .env_remove("JJ_STORE_GRANT_TOKEN")
+        .env("JJ_STORE_TOKEN", admin.expose().as_str())
+        .args(["--no-pager", "--color=never"]);
+    if let Some(grant) = grant {
+        command.env("JJ_STORE_GRANT_TOKEN", grant.expose().as_str());
+    }
+    if !server {
+        command.arg("store");
+    }
+    command
+        .args([
+            "token",
+            "--endpoint",
+            &f.endpoint(),
+            "--repo-id",
+            &REPO.to_string(),
+            "--insecure-loopback",
+            "--format=json",
+        ])
+        .args(args);
+    command
+}
+fn token_success(output: std::process::Output) -> serde_json::Value {
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    serde_json::from_slice(&output.stdout).unwrap()
+}
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn executable_token_commands_share_receipts_and_never_expose_credentials() {
+    let f = Fixture::new().await;
+    f.create().await;
+    let root = tempfile::tempdir().unwrap();
+    let reader = BearerToken::generate().unwrap();
+    let args = [
+        "grant",
+        "--principal",
+        &ACTOR.to_string(),
+        "--permission",
+        "read",
+        "--request",
+        "grant.json",
+    ];
+    let output = token_command(&f, root.path(), false, &f.admin, Some(&reader), &args)
+        .output()
+        .unwrap();
+    assert!(!String::from_utf8_lossy(&output.stdout).contains(reader.expose().as_str()));
+    assert!(!String::from_utf8_lossy(&output.stderr).contains(f.admin.expose().as_str()));
+    let granted = token_success(output);
+    assert_eq!(granted["state"], "committed");
+    assert_eq!(
+        granted["receipt"]["result"]["token"]["id"],
+        reader.id().to_string()
+    );
+    let current = f.client(&f.admin).await.tokens().await.unwrap().snapshot;
+    let status = token_success(
+        token_command(
+            &f,
+            root.path(),
+            true,
+            &f.admin,
+            Some(&reader),
+            &["status", "--request", "grant.json"],
+        )
+        .output()
+        .unwrap(),
+    );
+    assert_eq!(status, granted);
+    let repeated = token_success(
+        token_command(&f, root.path(), false, &f.admin, Some(&reader), &args)
+            .output()
+            .unwrap(),
+    );
+    assert_eq!(repeated, granted);
+    assert_eq!(
+        f.client(&f.admin).await.tokens().await.unwrap().snapshot,
+        current
+    );
+    f.client(&reader).await.authorize(false).await.unwrap();
+    assert!(f.client(&reader).await.authorize(true).await.is_err());
+    let listing = token_success(
+        token_command(&f, root.path(), true, &f.admin, None, &["list"])
+            .output()
+            .unwrap(),
+    );
+    assert_eq!(listing["tokens"].as_array().unwrap().len(), 2);
+    let revoked = token_success(
+        token_command(
+            &f,
+            root.path(),
+            true,
+            &f.admin,
+            None,
+            &[
+                "revoke",
+                "--token-id",
+                &reader.id().to_string(),
+                "--request",
+                "revoke.json",
+            ],
+        )
+        .output()
+        .unwrap(),
+    );
+    assert_eq!(revoked["state"], "committed");
+    assert!(f.client(&reader).await.heads().await.is_err());
+    let current = f.client(&f.admin).await.tokens().await.unwrap().snapshot;
+    let late = token_success(
+        token_command(
+            &f,
+            root.path(),
+            true,
+            &f.admin,
+            Some(&reader),
+            &["retry", "--request", "grant.json"],
+        )
+        .output()
+        .unwrap(),
+    );
+    assert_eq!(late, granted);
+    assert_eq!(
+        f.client(&f.admin).await.tokens().await.unwrap().snapshot,
+        current
+    );
+    assert!(f.client(&reader).await.heads().await.is_err());
+    let bytes = std::fs::read_to_string(root.path().join("grant.json")).unwrap();
+    assert!(
+        !bytes.contains(reader.expose().as_str()) && !bytes.contains(f.admin.expose().as_str())
+    );
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt as _;
+        assert_eq!(
+            std::fs::metadata(root.path().join("grant.json"))
+                .unwrap()
+                .permissions()
+                .mode()
+                & 0o077,
+            0
+        );
+    }
+}
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn executable_token_retry_rejects_changed_intent_stale_snapshot_and_wrong_authority() {
+    let f = Fixture::new().await;
+    f.create().await;
+    let root = tempfile::tempdir().unwrap();
+    let reader = BearerToken::generate().unwrap();
+    token_success(
+        token_command(
+            &f,
+            root.path(),
+            false,
+            &f.admin,
+            Some(&reader),
+            &[
+                "grant",
+                "--principal",
+                &ACTOR.to_string(),
+                "--permission",
+                "read",
+                "--request",
+                "grant.json",
+            ],
+        )
+        .output()
+        .unwrap(),
+    );
+    let snapshot = f.client(&f.admin).await.tokens().await.unwrap().snapshot;
+    assert!(
+        !token_command(
+            &f,
+            root.path(),
+            false,
+            &f.admin,
+            Some(&reader),
+            &[
+                "grant",
+                "--principal",
+                &ACTOR.to_string(),
+                "--permission",
+                "write",
+                "--request",
+                "grant.json"
+            ]
+        )
+        .output()
+        .unwrap()
+        .status
+        .success()
+    );
+    let wrong = BearerToken::generate().unwrap();
+    assert!(
+        !token_command(
+            &f,
+            root.path(),
+            true,
+            &f.admin,
+            Some(&wrong),
+            &["status", "--request", "grant.json"]
+        )
+        .output()
+        .unwrap()
+        .status
+        .success()
+    );
+    assert!(
+        !token_command(&f, root.path(), false, &f.operator, None, &["list"])
+            .output()
+            .unwrap()
+            .status
+            .success()
+    );
+    assert!(
+        !token_command(&f, root.path(), true, &reader, None, &["list"])
+            .output()
+            .unwrap()
+            .status
+            .success()
+    );
+    assert_eq!(
+        f.client(&f.admin).await.tokens().await.unwrap().snapshot,
+        snapshot
+    );
+    let path = root.path().join("grant.json");
+    let mut journal: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(&path).unwrap()).unwrap();
+    journal["request"] = m::RequestId::new([190; 16]).to_string().into();
+    std::fs::write(
+        root.path().join("stale.json"),
+        serde_json::to_vec(&journal).unwrap(),
+    )
+    .unwrap();
+    assert!(
+        !token_command(
+            &f,
+            root.path(),
+            false,
+            &f.admin,
+            Some(&reader),
+            &["retry", "--request", "stale.json"]
+        )
+        .output()
+        .unwrap()
+        .status
+        .success()
+    );
+    let status = token_success(
+        token_command(
+            &f,
+            root.path(),
+            true,
+            &f.admin,
+            Some(&reader),
+            &["status", "--request", "stale.json"],
+        )
+        .output()
+        .unwrap(),
+    );
+    assert_eq!(status["state"], "unknown");
+    assert!(status["receipt"].is_null());
+    assert_eq!(
+        f.client(&f.admin).await.tokens().await.unwrap().snapshot,
+        snapshot
+    );
+    let other = BearerToken::generate().unwrap();
+    let grant = TokenRequest {
+        request_id: m::RequestId::new([191; 16]),
+        expected: snapshot,
+        change: TokenChange::Grant {
+            credential: other.clone(),
+            principal: m::PrincipalId::new([192; 16]),
+            permission: Permission::Admin,
+            expires_at: None,
+        },
+    };
+    f.client(&f.admin)
+        .await
+        .change_token(&grant)
+        .await
+        .unwrap()
+        .unwrap();
+    assert!(
+        !token_command(
+            &f,
+            root.path(),
+            true,
+            &other,
+            Some(&reader),
+            &["status", "--request", "grant.json"]
+        )
+        .output()
+        .unwrap()
+        .status
+        .success()
+    );
+}
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn executable_token_admin_rotation_and_bounded_stdin_preserve_request_identity() {
+    use std::{io::Write as _, process::Stdio};
+    let f = Fixture::new().await;
+    f.create().await;
+    let root = tempfile::tempdir().unwrap();
+    let reader = BearerToken::generate().unwrap();
+    let mut child = token_command(
+        &f,
+        root.path(),
+        true,
+        &f.admin,
+        None,
+        &[
+            "grant",
+            "--principal",
+            &ACTOR.to_string(),
+            "--permission",
+            "read",
+            "--request",
+            "grant.json",
+            "--token-stdin",
+        ],
+    )
+    .stdin(Stdio::piped())
+    .stdout(Stdio::piped())
+    .stderr(Stdio::piped())
+    .spawn()
+    .unwrap();
+    child
+        .stdin
+        .take()
+        .unwrap()
+        .write_all(reader.expose().as_bytes())
+        .unwrap();
+    let original = token_success(child.wait_with_output().unwrap());
+    let rotated = BearerToken::generate().unwrap();
+    let snapshot = f.client(&f.admin).await.tokens().await.unwrap().snapshot;
+    let receipt = f
+        .client(&f.admin)
+        .await
+        .change_token(&f.grant(193, snapshot, &rotated, Permission::Admin))
+        .await
+        .unwrap()
+        .unwrap();
+    f.client(&rotated)
+        .await
+        .change_token(&TokenRequest {
+            request_id: m::RequestId::new([194; 16]),
+            expected: receipt.accepted,
+            change: TokenChange::Revoke {
+                token: f.admin.id(),
+            },
+        })
+        .await
+        .unwrap()
+        .unwrap();
+    assert!(
+        !token_command(
+            &f,
+            root.path(),
+            true,
+            &f.admin,
+            Some(&reader),
+            &["status", "--request", "grant.json"]
+        )
+        .output()
+        .unwrap()
+        .status
+        .success()
+    );
+    let repeated = token_success(
+        token_command(
+            &f,
+            root.path(),
+            false,
+            &rotated,
+            Some(&reader),
+            &["retry", "--request", "grant.json"],
+        )
+        .output()
+        .unwrap(),
+    );
+    assert_eq!(repeated, original);
+    let snapshot = f.client(&rotated).await.tokens().await.unwrap().snapshot;
+    let mut child = token_command(
+        &f,
+        root.path(),
+        false,
+        &rotated,
+        None,
+        &[
+            "grant",
+            "--principal",
+            &ACTOR.to_string(),
+            "--permission",
+            "write",
+            "--request",
+            "oversize.json",
+            "--token-stdin",
+        ],
+    )
+    .stdin(Stdio::piped())
+    .stdout(Stdio::piped())
+    .stderr(Stdio::piped())
+    .spawn()
+    .unwrap();
+    child.stdin.take().unwrap().write_all(&[b'x'; 105]).unwrap();
+    let output = child.wait_with_output().unwrap();
+    assert!(!output.status.success());
+    assert!(!String::from_utf8_lossy(&output.stderr).contains(&"x".repeat(105)));
+    assert!(!root.path().join("oversize.json").exists());
+    assert_eq!(
+        f.client(&rotated).await.tokens().await.unwrap().snapshot,
+        snapshot
+    );
+    let repo = root.path().join("checkout");
+    std::fs::create_dir(&repo).unwrap();
+    std::fs::create_dir(repo.join(".jj")).unwrap();
+    assert!(
+        !token_command(
+            &f,
+            root.path(),
+            false,
+            &rotated,
+            None,
+            &[
+                "revoke",
+                "--token-id",
+                &reader.id().to_string(),
+                "--request",
+                "checkout/request.json"
+            ]
+        )
+        .output()
+        .unwrap()
+        .status
+        .success()
+    );
+    assert_eq!(
+        f.client(&rotated).await.tokens().await.unwrap().snapshot,
+        snapshot
+    );
+}
+#[test]
+fn executable_token_help_is_authored_for_both_families() {
+    for (binary, prefix) in [
+        (env!("CARGO_BIN_EXE_jj"), vec!["store"]),
+        (env!("CARGO_BIN_EXE_jj-store"), vec![]),
+    ] {
+        let run = |flag: &str| {
+            Command::new(binary)
+                .env("JJ_CONFIG", "")
+                .args(["--no-pager", "--color=never"])
+                .args(&prefix)
+                .args(["token", "grant", flag])
+                .output()
+                .unwrap()
+        };
+        let short = run("-h");
+        let long = run("--help");
+        assert!(short.status.success() && long.status.success());
+        assert!(long.stdout.len() > short.stdout.len());
+        let text = String::from_utf8(long.stdout).unwrap();
+        assert!(text.contains("secret") && text.contains("snapshot") && !text.contains('`'));
+    }
+}

@@ -31,6 +31,9 @@ pub struct ServerCli {
 }
 #[derive(Debug, Subcommand)]
 pub enum ServerCommand {
+    /// List, grant, revoke and recover repository token requests
+    #[command(long_about=include_str!("../../../docs/cli/tokens.md"))]
+    Token(crate::token_commands::TokenArgs),
     /// Run the configured service in the foreground
     #[command(long_about=include_str!("../../../docs/cli/server-run.md"))]
     Run {
@@ -266,6 +269,10 @@ async fn run(ui: &Ui, cli: ServerCli) -> AuthorityResult<()> {
             config,
             loopback_only,
         } => serve(ui, &config, format, loopback_only).await,
+        ServerCommand::Token(args) => {
+            let (value, text) = crate::token_commands::run(ui, args).await?;
+            emit(ui, format, no_pager, value, &text)
+        }
         ServerCommand::Config {
             command: ConfigCommand::Example,
         } => emit(

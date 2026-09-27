@@ -97,3 +97,13 @@ through the automation environment. It reuses recoverable attachment; repeating
 an acknowledged initialization cannot create another repository or workspace.
 Current admin access with the exact retained epoch can resolve a lost creation
 acknowledgement after operator revocation.
+
+Both executables expose the same typed repository
+`token list/grant/revoke/ status/retry` implementation over authenticated native
+RPC. Grant credentials enter through hidden input, bounded stdin or a dedicated
+environment variable. Before applying, the CLI writes an exclusive, bounded,
+secret-free request file outside checkouts with its snapshot, principal, request
+ID and intent. Retries never refresh the snapshot. Status queries publish
+nothing; absent receipts remain unknown. Current admin access and the original
+principal are required; credential rotation for that principal does not change
+request identity.

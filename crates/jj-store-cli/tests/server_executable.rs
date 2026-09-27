@@ -369,6 +369,9 @@ fn server_rejects_missing_credentials_invalid_tls_and_shared_plaintext_before_li
 }
 
 fn native(f: &Fixture, token: &BearerToken, args: &[&str]) -> Output {
+    native_command(f, token, args).output().unwrap()
+}
+fn native_command(f: &Fixture, token: &BearerToken, args: &[&str]) -> Command {
     let config = f.root.path().join("native.toml");
     if !config.exists() {
         fs::write(
@@ -382,15 +385,13 @@ fn native(f: &Fixture, token: &BearerToken, args: &[&str]) -> Output {
         .current_dir(f.root.path())
         .env("JJ_CONFIG", config)
         .env("JJ_STORE_TOKEN", token.expose().as_str())
-        .env_remove("JJ_STORE_OPERATOR_TOKEN");
+        .env_remove("JJ_STORE_OPERATOR_TOKEN")
+        .env_remove("JJ_STORE_GRANT_TOKEN");
     if args.starts_with(&["store", "init"]) {
         command.env("JJ_STORE_OPERATOR_TOKEN", f.operator.expose().as_str());
     }
+    command.args(["--no-pager", "--color=never"]).args(args);
     command
-        .args(["--no-pager", "--color=never"])
-        .args(args)
-        .output()
-        .unwrap()
 }
 fn clear_index(path: &Path) {
     for entry in fs::read_dir(path).unwrap() {
@@ -411,7 +412,6 @@ fn clear_index(path: &Path) {
 async fn real_rustfs_server_cli_restart_and_revocation() {
     use jj_store_model as m;
     use jj_store_rpc::client::{NativeClient, Options};
-    use jj_store_service::administration::{TokenChange, TokenRequest};
     let storage_endpoint =
         std::env::var("JST_TEST_ENDPOINT").expect("run through isolated RustFS harness");
     let container = std::env::var("JST_TEST_CONTAINER").expect("owned test container required");
@@ -666,28 +666,88 @@ async fn real_rustfs_server_cli_restart_and_revocation() {
         .await
         .unwrap();
     let reader = BearerToken::generate().unwrap();
-    let expected = client.tokens().await.unwrap().snapshot;
-    let grant = TokenRequest {
-        request_id: m::RequestId::new([71; 16]),
-        expected,
-        change: TokenChange::Grant {
-            credential: reader.clone(),
-            principal: PrincipalId::new([72; 16]),
-            permission: Permission::Read,
-            expires_at: None,
-        },
-    };
-    let receipt = client.change_token(&grant).await.unwrap().unwrap();
+    let granted: serde_json::Value = serde_json::from_str(&success(
+        native_command(
+            &f,
+            &admin,
+            &[
+                "store",
+                "token",
+                "--endpoint",
+                &endpoint,
+                "--repo-id",
+                &repository.to_string(),
+                "--insecure-loopback",
+                "--format=json",
+                "grant",
+                "--principal",
+                &PrincipalId::new([72; 16]).to_string(),
+                "--permission",
+                "read",
+                "--request",
+                "reader-grant.json",
+            ],
+        )
+        .env("JJ_STORE_GRANT_TOKEN", reader.expose().as_str())
+        .output()
+        .unwrap(),
+    ))
+    .unwrap();
+    assert_eq!(granted["state"], "committed");
     let reader_client = NativeClient::connect(&endpoint, repository, reader.clone(), options)
         .await
         .unwrap();
     reader_client.heads().await.unwrap();
-    let revoke = TokenRequest {
-        request_id: m::RequestId::new([73; 16]),
-        expected: receipt.accepted,
-        change: TokenChange::Revoke { token: reader.id() },
-    };
-    client.change_token(&revoke).await.unwrap().unwrap();
+    let revoked: serde_json::Value = serde_json::from_str(&success(
+        f.command()
+            .env("JJ_STORE_TOKEN", admin.expose().as_str())
+            .args([
+                "token",
+                "--endpoint",
+                &endpoint,
+                "--repo-id",
+                &repository.to_string(),
+                "--insecure-loopback",
+                "--format=json",
+                "revoke",
+                "--token-id",
+                &reader.id().to_string(),
+                "--request",
+                "reader-revoke.json",
+            ])
+            .output()
+            .unwrap(),
+    ))
+    .unwrap();
+    assert_eq!(revoked["state"], "committed");
+    let replay: serde_json::Value = serde_json::from_str(&success(
+        native_command(
+            &f,
+            &admin,
+            &[
+                "store",
+                "token",
+                "--endpoint",
+                &endpoint,
+                "--repo-id",
+                &repository.to_string(),
+                "--insecure-loopback",
+                "--format=json",
+                "retry",
+                "--request",
+                "reader-grant.json",
+            ],
+        )
+        .env("JJ_STORE_GRANT_TOKEN", reader.expose().as_str())
+        .output()
+        .unwrap(),
+    ))
+    .unwrap();
+    assert_eq!(replay["receipt"], granted["receipt"]);
+    assert_eq!(
+        client.tokens().await.unwrap().snapshot.position.0,
+        revoked["receipt"]["accepted"]["position"].as_u64().unwrap()
+    );
     assert_eq!(
         reader_client.heads().await.unwrap_err().code(),
         tonic::Code::PermissionDenied

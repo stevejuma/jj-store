@@ -45,18 +45,26 @@ pub struct ConnectionArgs {
     ca_certificate: Option<PathBuf>,
 }
 impl ConnectionArgs {
-    fn connection(&self) -> Result<Connection, CommandError> {
+    pub(crate) fn connection_raw(
+        &self,
+    ) -> jj_store_jj::operation_stores::AuthorityResult<Connection> {
         let ca = self
             .ca_certificate
             .as_ref()
             .map(|path| path.canonicalize())
             .transpose()
-            .map_err(|_| user_error("Could not read deployment CA path"))?;
-        Connection::new(&self.endpoint, self.repo_id, self.insecure_loopback, ca).map_err(error)
+            .map_err(|_| "Could not read deployment CA path")?;
+        Connection::new(&self.endpoint, self.repo_id, self.insecure_loopback, ca)
+    }
+    fn connection(&self) -> Result<Connection, CommandError> {
+        self.connection_raw().map_err(error)
     }
 }
 #[derive(Clone, Debug, Subcommand)]
 pub enum StoreCommand {
+    /// List, grant, revoke and recover repository token requests
+    #[command(long_about=include_str!("../../../docs/cli/tokens.md"))]
+    Token(crate::token_commands::TokenArgs),
     /// Create a new native repository and its first physical workspace
     #[command(long_about = include_str!("../../../docs/cli/init.md"))]
     Init {
@@ -173,6 +181,12 @@ pub async fn run(
         return presentation::help(ui, helper, &[]);
     };
     match command {
+        StoreCommand::Token(token_args) => {
+            let (value, text) = crate::token_commands::run(ui, token_args)
+                .await
+                .map_err(error)?;
+            presentation::result(ui, helper, args.format, &value, &text)
+        }
         StoreCommand::Init {
             destination,
             endpoint,
