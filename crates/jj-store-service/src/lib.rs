@@ -7,4 +7,5 @@ pub mod native;
 
 pub mod transport;
 
+pub mod pagination;
 pub mod reads;

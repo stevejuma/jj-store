@@ -138,3 +138,7 @@ Graph acceptance compares library results with native transaction histories,
 including filtered edges, hidden predecessors, sibling operations and cache
 rebuilds. Upstream types and transaction fixtures stay in the CLI/JJ boundary;
 application services consume only owned graph requests and responses.
+
+Native transaction fixtures also qualify service continuation cursors across
+publication, checkpointing, revocation and expiry. These are library acceptance
+tests; HTTP and browser pagination require their own later transport coverage.

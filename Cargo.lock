@@ -3399,8 +3399,10 @@ name = "jj-store-service"
 version = "0.1.0"
 dependencies = [
  "async-trait",
+ "base64 0.22.1",
  "getrandom 0.4.3",
  "hex",
+ "hmac",
  "jj-store-jj",
  "jj-store-model",
  "jj-store-object",

@@ -1090,3 +1090,6 @@ async fn read_session_rejects_replaced_epoch_without_rebinding() {
 
 #[path = "native_lifecycle/graphs.rs"]
 mod graph_acceptance;
+
+#[path = "native_lifecycle/pagination.rs"]
+mod pagination_acceptance;

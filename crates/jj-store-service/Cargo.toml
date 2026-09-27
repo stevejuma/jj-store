@@ -11,11 +11,13 @@ jj-store-model.workspace = true
 jj-store-object.workspace = true
 jj-store-wal.workspace = true
 jj-store-jj.workspace = true
-tokio = { version = "1", features = ["time"] }
+tokio = { version = "1", features = ["time", "sync"] }
 async-trait = "0.1"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 sha2 = "0.10"
+hmac = "0.12"
+base64 = "0.22"
 subtle = "2"
 zeroize = "1"
 getrandom = "0.4"

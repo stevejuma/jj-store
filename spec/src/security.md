@@ -116,3 +116,9 @@ fixture uses a generated localhost certificate and explicit trust file; it
 qualifies the production TLS path on an isolated loopback interface, not
 external DNS, certificate automation, load balancers or additional serving
 topologies.
+
+Graph cursor signatures bind traversal inputs and retained read snapshots; they
+do not grant repository access. Continuation requests authenticate before cursor
+lookup or historical reads, including cached pages. The signing key is generated
+for the serving process, remains outside serialized DTOs and has redacted Debug
+output. Restart or expiry requires explicit snapshot reselection.

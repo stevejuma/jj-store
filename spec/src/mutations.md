@@ -80,3 +80,8 @@ authorization and its immutable object membership. The executor's backend denies
 every write and head transition, even when the originating credential has admin
 permission. Derived index writes are local cache maintenance, not repository
 publication.
+
+Graph continuation pins retain only checked snapshot data and object membership.
+They contain no native session or credential. A new currently authenticated
+session is required to resume, and epoch checks remain mandatory. Continuations
+cannot create a mutation session or select an uncommitted inventory.

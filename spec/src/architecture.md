@@ -92,3 +92,7 @@ The JJ integration crate owns graph DTOs and a bounded executor for native
 queries. Its explicit time-context dependency and temporary cache staging remain
 inside that boundary. Service read capabilities implement the executor's owned
 authorization interface; upstream JJ types do not enter transport or services.
+
+The service owns graph continuation signing and a bounded process-local snapshot
+registry. It retains immutable read pins without retaining session credentials;
+native query execution remains in the JJ integration crate.

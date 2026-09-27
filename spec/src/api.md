@@ -29,9 +29,10 @@ The owned read capability has no publication methods and cannot be reconstructed
 from its informational DTO. Inventory count and elapsed time are capped by
 trusted server limits. Each later access rechecks current permission and epoch
 while retaining the original snapshot. Epoch changes require reselection; later
-publications in the same epoch do not silently replace the selected view.
-Graph/index budgets, workspace-dependent revsets, signed continuation cursors,
-HTTP routes and browser integration are separate M4 slices.
+publications in the same epoch do not silently replace the selected view. The
+graph layer owns index/query budgets and workspace-dependent revsets; the
+pagination layer binds continuations. HTTP and browser integration consume these
+owned service interfaces.
 
 Elapsed-time guards check before and after polling an operation as well as
 applying asynchronous timeouts. An immediately ready in-memory or cached result
@@ -42,4 +43,20 @@ email for identity-relative expressions, and a fixed time anchor). It uses no
 user configuration, physical checkout, shell command or CLI output parser.
 Continuation is a native graph-node identity in the same query traversal;
 missing continuation nodes fail explicitly. Signing and binding these internal
-continuations to transport requests remains the HTTP pagination slice.
+continuations to transport requests is owned by the service pagination layer.
+
+## Graph continuations
+
+The service signs opaque V1 graph cursors with a process-local HMAC key and
+retains a bounded, expiring snapshot pin without credentials. The signature
+binds repository, epoch, operation, publication position, manifest revision,
+query (including workspace/time context), native traversal ordering, page size
+and last node ID. Every page authenticates its current request independently.
+Resuming renews only the request deadline; the captured inventory and snapshot
+remain identical even after publication or checkpointing.
+
+Expired pins and server restarts return an explicit cursor-reset result. They
+never fall back to latest. Invalid signatures or changed query bindings fail
+explicitly. Pin count, retained inventory nodes, request concurrency and token
+size are bounded. The process-local registry requires sticky routing in any
+future multi-instance deployment; the first release serves one instance.

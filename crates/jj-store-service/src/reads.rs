@@ -80,15 +80,41 @@ pub enum OpenRead {
 pub struct CommittedRead {
     session: Arc<NativeSession>,
     snapshot: ReadSnapshot,
-    inventory: BTreeSet<m::ObjectKey>,
+    inventory: Arc<BTreeSet<m::ObjectKey>>,
     deadline: Instant,
 }
-impl NativeSession {
-    pub async fn open_read(
-        self: &Arc<Self>,
-        operation: Option<m::OperationId>,
+/// Only checked read sessions create these; no public or deserializable wire API.
+/// A retained pin is credential-free and must be rebound to a fresh session.
+#[derive(Clone)]
+pub(crate) struct ReadPin {
+    pub snapshot: ReadSnapshot,
+    pub inventory: Arc<BTreeSet<m::ObjectKey>>,
+}
+impl ReadPin {
+    pub async fn resume(
+        &self,
+        session: Arc<NativeSession>,
         limits: ReadLimits,
-    ) -> Result<OpenRead> {
+    ) -> Result<Arc<CommittedRead>> {
+        if session.repository != self.snapshot.authority.repo_id {
+            return Err(Error::Denied);
+        }
+        if self.inventory.len() > limits.max_objects {
+            return Err(Error::Limit);
+        }
+        let deadline = session.read_deadline(limits)?;
+        let read = Arc::new(CommittedRead {
+            session,
+            snapshot: self.snapshot.clone(),
+            inventory: self.inventory.clone(),
+            deadline,
+        });
+        read.authorize().await?;
+        Ok(read)
+    }
+}
+impl NativeSession {
+    fn read_deadline(&self, limits: ReadLimits) -> Result<Instant> {
         if limits.max_objects == 0
             || limits.max_objects > self.limits.inventory_nodes
             || limits.timeout.is_zero()
@@ -96,9 +122,16 @@ impl NativeSession {
         {
             return Err(Error::Limit);
         }
-        let deadline = Instant::now()
+        Instant::now()
             .checked_add(limits.timeout)
-            .ok_or(Error::Limit)?;
+            .ok_or(Error::Limit)
+    }
+    pub async fn open_read(
+        self: &Arc<Self>,
+        operation: Option<m::OperationId>,
+        limits: ReadLimits,
+    ) -> Result<OpenRead> {
+        let deadline = self.read_deadline(limits)?;
         within_deadline(deadline, async {
             // snapshot() verifies current permission both before and after
             // reading the manifest; no object/catalog read precedes it.
@@ -122,7 +155,7 @@ impl NativeSession {
                     authority: manifest.into(),
                     operation_id: selected,
                 },
-                inventory,
+                inventory: Arc::new(inventory),
                 deadline,
             };
             read.authorize_object(m::ObjectKey::Operation(selected))
@@ -133,6 +166,13 @@ impl NativeSession {
     }
 }
 impl CommittedRead {
+    pub(crate) async fn pin(&self) -> Result<ReadPin> {
+        self.authorize().await?;
+        Ok(ReadPin {
+            snapshot: self.snapshot.clone(),
+            inventory: self.inventory.clone(),
+        })
+    }
     /// Check current policy and epoch without replacing the captured snapshot.
     /// Later publications in the same epoch do not change this read's view.
     pub async fn authorize(&self) -> Result<()> {
