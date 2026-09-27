@@ -20,6 +20,7 @@ status; reports hold immutable evidence rather than competing status summaries.
 
 | Protected area                                                                                                                                                                                   | Required chapter     |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------- |
+| `^(?:catalog/\|\.storybook/\|docs/catalog\.md$)`                                                                                                                                                 | `ui.md`              |
 | `^rustfmt\.toml$`                                                                                                                                                                                | `spec-governance.md` |
 | `^crates/jj-store-model/`                                                                                                                                                                        | `identity.md`        |
 | `^crates/jj-store-object/`                                                                                                                                                                       | `object-store.md`    |
@@ -149,3 +150,10 @@ deferral.
 Server composition may depend on owned adapter and Tantivy interfaces. The layer
 checker continues to reject upstream JJ imports in server code and all search or
 transport dependencies in authoritative storage/publication layers.
+
+## Catalog validation
+
+Catalog source, stories, tooling and provenance require the UI chapter and
+same-change ledger evidence. Normal and specification lanes include catalog
+types, unit tests, Storybook interactions/accessibility and cold static builds.
+The progress checker recognizes catalog and Storybook paths.

@@ -1,0 +1,24 @@
+@import "../catalog/components/community-typography.css";
+html,
+body,
+#storybook-root {
+  min-height: 100%;
+  background: var(--background);
+  color: var(--foreground);
+  color-scheme: light;
+  font-family: var(--font-sans, sans-serif);
+}
+
+html.dark,
+html.dark body,
+html.dark #storybook-root {
+  color-scheme: dark;
+}
+
+#storybook-root {
+  min-width: 0;
+}
+
+body {
+  font-size: var(--community-text-body);
+}

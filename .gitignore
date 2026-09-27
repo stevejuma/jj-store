@@ -12,3 +12,5 @@
 .DS_Store
 /web/test-results/
 /web/playwright-report/
+/storybook-static/
+/catalog/test-results/

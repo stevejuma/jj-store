@@ -9,3 +9,5 @@ spec/book
 web/dist
 web/test-results
 web/playwright-report
+
+storybook-static

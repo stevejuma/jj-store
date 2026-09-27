@@ -64,11 +64,12 @@ browser/lifecycle changes. Visual baselines require explicit approval.
 
 ## Current execution scope
 
-The user deferred further UI changes on 27 September 2026. Preserve the existing
-browser implementation and continue non-UI backend, API, CLI, storage, search
-and operational work. UI features and browser deployment acceptance resume only
-when requested. Track that deferred scope in M4.3 of the single progress ledger;
-existing functional checks remain enabled.
+The user reopened a Storybook-only presentation slice on 27 September 2026.
+Copy/adapt Community compositions and use public released Design Core exports;
+keep fixtures and local interaction state separate from production wiring.
+M4.4–M4.6 track the catalog. M4.3 live browser features/deployment remain
+deferred. Existing browser checks stay enabled. Stories remain visual-pending;
+baseline approval is separate from interaction/accessibility acceptance.
 
 ## Local execution
 

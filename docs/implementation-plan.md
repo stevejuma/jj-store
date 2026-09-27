@@ -21,18 +21,13 @@ use native JJ storage without requiring Git, SQL, or Nostr.
 
 ## Execution scope update — 27 September 2026
 
-The user deferred any further UI changes and requested continuing all other
-tasks. Preserve the implemented read browser. Defer mutation/conflict/search UI,
-visual work and remaining browser deployment acceptance until the user returns
-to UI work. Backend mutation and search APIs, native/CLI behavior, storage
-recovery, authentication, SSE, generated API contracts and operational
-acceptance continue independently. Do not disable existing browser checks.
-
-M4.3 in the progress ledger owns the remaining deferred UI work. M4.2 retains
-SSE/API contract qualification. Backend M5 tasks depend on the completed read
-foundation M4.1, so deferred browser work does not block them. The original full
-release UI requirements remain recorded and are not marked complete by backend
-acceptance.
+The user reopened Storybook-only work: directly adapt Community's shell,
+navigation, graphs, branch rows, files and diffs. Branches (JJ bookmarks), JJ
+Log and Op Log are separate pages; fixture state demonstrates drill-down to
+diffs. M4.4 owns tooling/provenance, M4.5 shell mechanics, M4.6 repository
+views. Production UI integration, mutations/search wiring and deployed
+acceptance remain deferred under M4.3. The existing browser and backend work
+remain preserved.
 
 ## Repository foundation and progress tracking
 

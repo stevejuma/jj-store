@@ -211,3 +211,12 @@ test("http_consumes_owned_service_contracts_without_storage_or_upstream", () => 
     [],
   );
 });
+
+test("requires_catalog_evidence", () => {
+  for (const path of [
+    "catalog/components/Example.svelte",
+    ".storybook/main.ts",
+  ]) {
+    assert.equal(needsEvidence(path), true);
+  }
+});

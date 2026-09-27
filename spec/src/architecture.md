@@ -170,3 +170,9 @@ search transport dependency; the server starts configured writers separately.
 The server composes owned adapter/Tantivy interfaces for configured background
 search. Indexers and their cancellation guards are owned by the foreground
 server lifecycle. Publication and native storage do not depend on these workers.
+
+## Presentation catalog
+
+The isolated catalog adapts Community compositions using released Design Core.
+It has no service, transport or publication dependency; the existing served
+browser remains independent. See [catalog requirements](ui.md).

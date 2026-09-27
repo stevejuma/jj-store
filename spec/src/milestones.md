@@ -29,6 +29,9 @@ adds evidence here in its enclosing Jujutsu change.
 | M4.1        | Done        | M3         | JST-API-001,JST-API-002,JST-JJ-003                                      | Pinned three-graph reads with zero GET publications                                   | Retain pinned read conformance                           | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010,E-M4-011,E-M4-012,E-M4-013,E-M4-014                                        |
 | M4.2        | In progress | M4.1       | JST-API-003,JST-API-006                                                 | Committed SSE and generated API contract deployment qualification                     | Qualify real RustFS/TLS SSE                              | E-M4-015,E-M4-016,E-M4-017,E-SCOPE-001                                                                                                                               |
 | M4.3        | Deferred    | M4.1,M5,M6 | JST-API-004,JST-API-005                                                 | Complete browser mutations/conflicts/search/freshness and deployed browser acceptance | Resume UI only when requested                            | E-SCOPE-001                                                                                                                                                          |
+| M4.4        | Done        | Bootstrap  | JST-UI-001                                                              | Isolated catalog types, interaction/a11y and static build                             | Implement shell stories                                  | E-UI-001                                                                                                                                                             |
+| M4.5        | Planned     | M4.4       | JST-UI-002                                                              | Community shell mechanics and navigation acceptance                                   | Copy shell and navigation                                | -                                                                                                                                                                    |
+| M4.6        | Planned     | M4.5       | JST-UI-003                                                              | Native fixture graph/file/diff drill-down and accessibility                           | Copy repository compositions                             | -                                                                                                                                                                    |
 | M5          | Done        | M4.1       | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Authenticated typed commands and shared RPC policy                                    | Retain mutation conformance; proceed to M6               | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-M5-005,E-M5-006,E-M5-007,E-M5-008                                                                                  |
 | M5.1        | Done        | M4.1       | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Basic changes/refs/reconcile; preview receipt and semantic policy                     | Retain basic mutation acceptance                         | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004                                                                                                                      |
 | M5.2        | Done        | M5.1       | JST-MUT-003                                                             | Full abandon descendant bookmark workspace/evolution parity                           | Retain abandon acceptance                                | E-M5-005                                                                                                                                                             |
@@ -41,10 +44,11 @@ adds evidence here in its enclosing Jujutsu change.
 | M7          | Deferred    | M8a        | JST-ADAPT-005                                                           | Complete read-only replica through applied position                                   | After first release                                      | -                                                                                                                                                                    |
 | M8b         | Deferred    | M8a        | JST-COMPAT-004                                                          | Verified lossless import with source safety                                           | Separate migration release                               | -                                                                                                                                                                    |
 
-The user deferred further UI changes on 27 September 2026. M4.3 retains those
-requirements and existing browser evidence; backend gates proceed independently.
-M4 and full first-release browser acceptance remain incomplete while M4.3 is
-Deferred. Existing browser functional checks remain enabled.
+The user reopened Storybook-only M4.4–M4.6 on 27 September 2026. Live UI remains
+deferred. M4.3 retains those requirements and existing browser evidence; backend
+gates proceed independently. M4 and full first-release browser acceptance remain
+incomplete while M4.3 is Deferred. Existing browser functional checks remain
+enabled.
 
 ## Evidence ledger
 
@@ -7526,6 +7530,100 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Rust 1.97.1 with rustfmt; jj-cli/jj-lib 0.45.1 at 7c41cdeb16b6b321c64e789a966b6adf723816a5; jj-native-0.45.1-v1; Tantivy 0.26.2 at 72d1ef9a6468aa68bbc69dcc80cdf60aaf64364d.",
     "formats": "Additive optional adapter snapshot namespace v1: SHA-256 blobs, canonical V1 bundle descriptors and conditional snapshot.json pointers scoped to repository/epoch/full adapter identity. No native, WAL, receipt, replay cursor, local Tantivy schema 2 or HTTP format changes. Enclosing Jujutsu change is the revision reference."
+  },
+  {
+    "id": "E-UI-001",
+    "tasks": ["M4.4"],
+    "date": "2026-09-27",
+    "kind": "storybook-foundation",
+    "files": [
+      "catalog/foundation.test.ts",
+      ".storybook/main.ts",
+      "docs/catalog.md",
+      "package.json",
+      "catalog/components/community-chip/model.ts",
+      "scripts/governance.test.mjs",
+      "scripts/check-progress.mjs",
+      "scripts/check-catalog.mjs",
+      "spec-validator.config.mjs"
+    ],
+    "tests": [
+      "catalog/foundation.test.ts#recognizes_svelte_diagnostics",
+      "catalog/foundation.test.ts#portable_canvas_is_scoped",
+      "scripts/governance.test.mjs#requires_catalog_evidence"
+    ],
+    "runs": [
+      {
+        "command": "pnpm test:storybook",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before implementation: command absent; no stories executed."
+      },
+      {
+        "command": "pnpm build-storybook",
+        "result": "fail",
+        "failures": 3,
+        "note": "Initial static build lacked an explicit Svelte Vite config; three raw Svelte parse errors. Corrected catalog builder config."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero Svelte errors or warnings; presentation boundary passes."
+      },
+      {
+        "command": "pnpm catalog:test",
+        "result": "pass",
+        "failures": 0,
+        "note": "2 tests pass."
+      },
+      {
+        "command": "pnpm test:storybook",
+        "result": "pass",
+        "failures": 0,
+        "note": "1 story passes, including blocking axe checks."
+      },
+      {
+        "command": "pnpm build-storybook",
+        "result": "pass",
+        "failures": 0,
+        "note": "Cold static build passes."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All normal checks pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test",
+        "result": "pass",
+        "failures": 0,
+        "note": "Governance, web, catalog and native suites pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Storybook, existing browser and Rust builds pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 17 lanes pass, including cold existing browser acceptance and rustfmt."
+      },
+      {
+        "command": "pnpm format:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Pinned rustfmt and Prettier pass."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "versions": "Storybook 10.5.7; Svelte CSF 5.1.2; Vitest 4.1.11; Design Core ^0.2.0; Community d859f33a484a9238bb11f974f4ead8e9be729ec6.",
+    "formats": "No production formats or APIs changed. Enclosing Jujutsu change is evidence reference."
   }
 ]
 ```

@@ -48,6 +48,10 @@ export default defineConfig(tableRequirements(), {
       ],
       rules: [
         {
+          pattern: "^(?:catalog/|\\.storybook/|docs/catalog\\.md$)",
+          chapters: ["spec/src/ui.md"],
+        },
+        {
           pattern: "^rustfmt\\.toml$",
           chapters: ["spec/src/spec-governance.md"],
         },
@@ -108,12 +112,20 @@ export default defineConfig(tableRequirements(), {
         },
       ],
       protected: [
-        "^(?:rustfmt\\.toml$|crates/|bins/|web/|schemas/|fixtures/|proto/|scripts/|deploy/|docs/|Cargo\\.(?:toml|lock)$|rust-toolchain\\.toml$|package\\.json$|pnpm-lock\\.yaml$|README\\.md$|LICENSE\\.md$|AGENTS\\.md$|spec-validator\\.config\\.mjs$|spec/book\\.toml$|\\.gitignore$|\\.prettier)",
+        "^(?:rustfmt\\.toml$|catalog/|\\.storybook/|crates/|bins/|web/|schemas/|fixtures/|proto/|scripts/|deploy/|docs/|Cargo\\.(?:toml|lock)$|rust-toolchain\\.toml$|package\\.json$|pnpm-lock\\.yaml$|README\\.md$|LICENSE\\.md$|AGENTS\\.md$|spec-validator\\.config\\.mjs$|spec/book\\.toml$|\\.gitignore$|\\.prettier)",
       ],
     },
   },
   check: {
     lanes: [
+      { name: "catalog-check", command: "pnpm", args: ["catalog:check"] },
+      { name: "catalog-unit", command: "pnpm", args: ["catalog:test"] },
+      {
+        name: "catalog-interaction",
+        command: "pnpm",
+        args: ["test:storybook"],
+      },
+      { name: "catalog-build", command: "pnpm", args: ["build-storybook"] },
       { name: "browser-check", command: "pnpm", args: ["web:check"] },
       { name: "browser-unit", command: "pnpm", args: ["web:test"] },
       {

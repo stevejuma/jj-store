@@ -13,7 +13,7 @@ const statuses = new Set([
   "Deferred",
 ]);
 export const needsEvidence = (path) =>
-  /^(?:rustfmt\.toml$|crates\/|bins\/|web\/|schemas\/|fixtures\/|proto\/|scripts\/|deploy\/|Cargo\.(?:toml|lock)$|package\.json$|pnpm-lock\.yaml$|rust-toolchain\.toml$|AGENTS\.md$|spec-validator\.config\.mjs$|docs\/(?:implementation-plan|upstream-lock)|spec\/src\/verification\.md$)/.test(
+  /^(?:rustfmt\.toml$|catalog\/|\.storybook\/|crates\/|bins\/|web\/|schemas\/|fixtures\/|proto\/|scripts\/|deploy\/|Cargo\.(?:toml|lock)$|package\.json$|pnpm-lock\.yaml$|rust-toolchain\.toml$|AGENTS\.md$|spec-validator\.config\.mjs$|docs\/(?:implementation-plan|upstream-lock)|spec\/src\/verification\.md$)/.test(
     path,
   );
 const list = (s) => (s === "-" ? [] : s.split(",").map((v) => v.trim()));
