@@ -25,8 +25,8 @@ adds evidence here in its enclosing Jujutsu change.
 | M3.1        | Done        | M2        | JST-SEC-001,JST-SEC-002,JST-SEC-003,JST-SEC-004                         | Revocable tokens and transport authorization                        | Retain native slice acceptance                   | E-M3-001,E-M3-004,E-M3-005,E-M3-006,E-M3-007,E-M3-008,E-M3-009,E-M3-011,E-M3-012,E-M3-014                                     |
 | M3.2        | Done        | M3.1      | JST-JJ-001,JST-JJ-004,JST-JJ-005                                        | Create edit describe log restart op-log evolog; multi-workspace     | Retain native slice acceptance                   | E-M3-002,E-M3-003,E-M3-004,E-M3-005,E-M3-006,E-M3-008,E-M3-009,E-M3-010,E-M3-011,E-M3-013,E-M3-014                            |
 | M3.3        | Done        | M3.2      | JST-CLI-001,JST-CLI-002,JST-CLI-003,JST-CLI-004                         | Custom command presentation and capability parity                   | Retain native slice acceptance                   | E-M3-006,E-M3-009,E-M3-010,E-M3-011,E-M3-012,E-M3-013,E-M3-014                                                                |
-| M4          | In progress | M3        | JST-API-001,JST-API-005                                                 | Structured reads and basic served UI match native semantics         | Implement diffs and qualify query resources      | E-M4-001,E-M4-002,E-M4-003,E-M4-004                                                                                           |
-| M4.1        | In progress | M3        | JST-API-001,JST-API-002,JST-JJ-003                                      | Pinned three-graph reads with zero GET publications                 | Implement diffs and qualify query resources      | E-M4-001,E-M4-002,E-M4-003,E-M4-004                                                                                           |
+| M4          | In progress | M3        | JST-API-001,JST-API-005                                                 | Structured reads and basic served UI match native semantics         | Implement diffs and qualify query resources      | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005                                                                                  |
+| M4.1        | In progress | M3        | JST-API-001,JST-API-002,JST-JJ-003                                      | Pinned three-graph reads with zero GET publications                 | Implement diffs and qualify query resources      | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005                                                                                  |
 | M4.2        | Planned     | M4.1      | JST-API-003,JST-API-004,JST-API-005                                     | SSE, safe UI, generated contracts and cold interaction tests        | Build Svelte UI                                  | -                                                                                                                             |
 | M5          | Planned     | M4        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Authenticated typed commands and shared RPC policy                  | Implement commands                               | -                                                                                                                             |
 | M5.1        | Planned     | M4        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Basic changes/refs/reconcile; preview receipt and semantic policy   | Implement command transaction facade             | -                                                                                                                             |
@@ -2939,6 +2939,102 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Rust 1.97.1; jj-cli/jj-lib 0.45.1 / 7c41cdeb16b6b321c64e789a966b6adf723816a5; production native/service code over disposable in-memory storage, not RustFS conformance.",
     "formats": "Owned native metadata V1 schemas exported without changing persisted field order, payload bytes or native identity. Object wrappers carry version/profile/key; directory pages expose native terms and internal name continuations. Files use complete native/envelope verification into bounded private spools and authorized 64 KiB chunks; ranges seek within verified spools. No authority or native RPC format change."
+  },
+  {
+    "id": "E-M4-005",
+    "tasks": ["M4", "M4.1"],
+    "date": "2026-09-27",
+    "kind": "signed-directory-snapshot-pagination",
+    "files": [
+      "crates/jj-store-service/src/pagination.rs",
+      "crates/jj-store-service/src/pagination/cursors.rs",
+      "crates/jj-store-service/src/pagination/directory.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/content.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/directory.rs",
+      "spec/src/api.md",
+      "spec/src/mutations.md",
+      "spec/src/cli.md",
+      "spec/src/security.md"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/native_lifecycle/directory.rs#directory_cursor_retains_snapshot_through_writes_checkpoint_and_retries",
+      "crates/jj-store-cli/tests/native_lifecycle/directory.rs#directory_cursor_binds_all_inputs_and_rechecks_revocation_before_lookup",
+      "crates/jj-store-cli/tests/native_lifecycle/directory.rs#directory_cursor_shares_graph_capacity_and_rejects_cross_query_restart_and_expiry",
+      "crates/jj-store-cli/tests/native_lifecycle/directory.rs#directory_cursor_keeps_head_selection_explicit_and_rejects_invalid_paths",
+      "crates/jj-store-cli/tests/native_lifecycle/directory.rs#directory_cursor_oversized_name_fails_without_consuming_snapshot_capacity",
+      "crates/jj-store-cli/tests/native_lifecycle/pagination.rs#graph_cursor_rejects_tampering_changed_context_and_current_revocation"
+    ],
+    "runs": [
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle directory_cursor_",
+        "result": "pass",
+        "failures": 0,
+        "note": "Before implementation: zero matching cases, not acceptance evidence."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo check -p jj-store-service",
+        "result": "fail",
+        "failures": 1,
+        "note": "Compile diagnostic: GraphExecutor has no Debug implementation. The graph pager now explicitly formats only its redacted cursor registry."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo check -p jj-store-service",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle directory_cursor_",
+        "result": "pass",
+        "failures": 0,
+        "note": "First 4 cases pass: exact snapshot and retry through writes/checkpoint, input tampering and revocation, shared graph capacity and cross-query rejection, expiry/restart/epoch, explicit multi-head selection and invalid paths."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle directory_cursor_",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 5 cases pass including oversized continuation rejection without leaked snapshot capacity."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle graph_cursor_",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 4 existing graph cursor regressions pass after shared registry extraction."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "57 requirements, boundaries, ledger, rustfmt and all-target Clippy pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test",
+        "result": "pass",
+        "failures": 0,
+        "note": "163 Rust tests pass / 6 external cases intentionally ignored. 15 governance and 3 storage-harness tests pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm build",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 9 lanes pass including 163 Rust tests, rustfmt, mdBook and spec-first."
+      },
+      {
+        "command": "pnpm format:check",
+        "result": "pass",
+        "failures": 0
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Structured diffs/conflict descriptors and operation diffs, resource qualification, HTTP JSON/media/SSE, generated contracts and browser integration remain M4 work."
+    ],
+    "versions": "Rust 1.97.1; jj-cli/jj-lib 0.45.1. Production service/native queries over disposable in-memory stores, not RustFS or browser evidence.",
+    "formats": "Shared process-local V1 read cursor prefix jsr1 and domain bind traversal kind, snapshot, query, page size and typed continuation. Replaces unreleased jsg1 graph tokens; retained pins remain ephemeral across restarts. No native object, authority or RPC format change."
   }
 ]
 ```

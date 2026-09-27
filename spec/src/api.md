@@ -45,15 +45,16 @@ Continuation is a native graph-node identity in the same query traversal;
 missing continuation nodes fail explicitly. Signing and binding these internal
 continuations to transport requests is owned by the service pagination layer.
 
-## Graph continuations
+## Graph and directory continuations
 
-The service signs opaque V1 graph cursors with a process-local HMAC key and
+The service signs opaque V1 read cursors with a process-local HMAC key and
 retains a bounded, expiring snapshot pin without credentials. The signature
 binds repository, epoch, operation, publication position, manifest revision,
-query (including workspace/time context), native traversal ordering, page size
-and last node ID. Every page authenticates its current request independently.
-Resuming renews only the request deadline; the captured inventory and snapshot
-remain identical even after publication or checkpointing.
+query kind and inputs (including workspace/time context or commit/directory
+path), native traversal ordering, page size and last node ID or directory entry
+name. Every page authenticates its current request independently. Resuming
+renews only the request deadline; the captured inventory and snapshot remain
+identical even after publication or checkpointing.
 
 Expired pins and server restarts return an explicit cursor-reset result. They
 never fall back to latest. Invalid signatures or changed query bindings fail
@@ -74,8 +75,13 @@ Tree listing uses pinned native merge semantics without resolving or writing
 objects. Paths are canonical repository paths; symlinks and submodules are never
 followed. Dot, parent and NUL path components are rejected without
 normalization. File/tree conflicts remain explicit terms. Directory pagination
-uses the last existing native entry name; transport signing is required before
-this internal continuation becomes an HTTP cursor.
+uses the last existing native entry name internally. The service removes raw
+continuations from responses and exposes only signed cursors. Graph and
+directory requests share bounded snapshot retention and concurrency when
+composed with the same cursor registry; changing query kind, commit, path or
+page size is rejected. Oversized continuation tokens fail explicitly instead of
+returning an unsigned name. Cursor registries retain neither credentials nor
+mutable native sessions.
 
 File responses verify the complete envelope and native identity into a bounded
 private spool before exposing any bytes, including for ranges. The stream checks

@@ -855,3 +855,6 @@ async fn content_read_canceled_chunk_cannot_resume_with_skipped_bytes() {
     drop(stream);
     assert!(f.read.object(&reader, f.tree.key()).await.is_ok());
 }
+
+#[path = "directory.rs"]
+mod directory_acceptance;

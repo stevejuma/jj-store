@@ -147,3 +147,7 @@ Native content fixtures qualify all object variants, merged directory entries,
 binary file ranges, revocation during streaming and unchanged manifest state.
 These library fixtures complement CLI parity; media headers and safe rendering
 still require HTTP/browser acceptance.
+
+Directory cursor fixtures verify exact committed snapshots through later writes,
+checkpointing and retries, alongside graph cursor cross-query rejection and
+shared capacity. HTTP/browser integration remains separate acceptance.

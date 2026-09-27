@@ -89,3 +89,7 @@ cannot create a mutation session or select an uncommitted inventory.
 Committed reads can request owned object DTOs, directory pages and verified file
 streams. These operations share the same captured membership and current policy
 checks as graph reads and expose no publication or staging method.
+
+Directory continuation pins share the graph cursor authority boundary. A fresh
+currently authenticated session is required on every page, and no cursor can
+switch between graph and directory queries or acquire publication capability.
