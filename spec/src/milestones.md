@@ -30,7 +30,7 @@ adds evidence here in its enclosing Jujutsu change.
 | M4.2        | In progress | M4.1       | JST-API-003,JST-API-006                                                 | Committed SSE and generated API contract deployment qualification                     | Qualify real RustFS/TLS SSE                              | E-M4-015,E-M4-016,E-M4-017,E-SCOPE-001                                                                                                                               |
 | M4.3        | Deferred    | M4.1,M5,M6 | JST-API-004,JST-API-005                                                 | Complete browser mutations/conflicts/search/freshness and deployed browser acceptance | Resume UI only when requested                            | E-SCOPE-001                                                                                                                                                          |
 | M4.4        | Done        | Bootstrap  | JST-UI-001                                                              | Isolated catalog types, interaction/a11y and static build                             | Implement shell stories                                  | E-UI-001                                                                                                                                                             |
-| M4.5        | Planned     | M4.4       | JST-UI-002                                                              | Community shell mechanics and navigation acceptance                                   | Copy shell and navigation                                | -                                                                                                                                                                    |
+| M4.5        | Done        | M4.4       | JST-UI-002                                                              | Community shell mechanics and navigation acceptance                                   | Implement repository fixture views                       | E-UI-002                                                                                                                                                             |
 | M4.6        | Planned     | M4.5       | JST-UI-003                                                              | Native fixture graph/file/diff drill-down and accessibility                           | Copy repository compositions                             | -                                                                                                                                                                    |
 | M5          | Done        | M4.1       | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Authenticated typed commands and shared RPC policy                                    | Retain mutation conformance; proceed to M6               | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-M5-005,E-M5-006,E-M5-007,E-M5-008                                                                                  |
 | M5.1        | Done        | M4.1       | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Basic changes/refs/reconcile; preview receipt and semantic policy                     | Retain basic mutation acceptance                         | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004                                                                                                                      |
@@ -7624,6 +7624,125 @@ and named tests are checked by the progress gate.
     "remaining": [],
     "versions": "Storybook 10.5.7; Svelte CSF 5.1.2; Vitest 4.1.11; Design Core ^0.2.0; Community d859f33a484a9238bb11f974f4ead8e9be729ec6.",
     "formats": "No production formats or APIs changed. Enclosing Jujutsu change is evidence reference."
+  },
+  {
+    "id": "E-UI-002",
+    "tasks": ["M4.5"],
+    "date": "2026-09-27",
+    "kind": "storybook-shell",
+    "files": [
+      "catalog/components/store-application/StoreApplication.svelte",
+      "catalog/components/store-application/StoreApplication.stories.svelte",
+      "docs/catalog.md",
+      ".storybook/vite.config.ts",
+      "catalog/vitest.config.ts",
+      "catalog/components/community-app-shell/shell-header-geometry.test.ts"
+    ],
+    "tests": [
+      "catalog/components/community-app-shell/shell-header-geometry.test.ts#coalesces_and_cancels_header_measurement"
+    ],
+    "runs": [
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreApplication.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before implementation: no matching story file; shell acceptance absent."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "fail",
+        "failures": 8,
+        "note": "Initial adaptation: unsupported Close side prop and invalid test query exact options; fixed."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreApplication.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Suite import failed with four dependency optimizer errors. Reused Community source-package exclusions for rune compilation."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreApplication.stories.svelte",
+        "result": "fail",
+        "failures": 2,
+        "note": "Expanded selector and compact-picker keyboard setup mismatch; corrected control queries and actual opening interaction."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreApplication.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Expanded story asserted before collapse animation settled; added waitFor."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreApplication.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Expanded details correctly dismissed on focus leaving constrained overlay; test now closes details before resizing navigation."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreApplication.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "5 shell stories pass: Default, Expanded, CompactRepositoryPicker, Mobile, HoverReveal; blocking axe passes."
+      },
+      {
+        "command": "pnpm catalog:test",
+        "result": "pass",
+        "failures": 0,
+        "note": "3 tests pass, including copied header geometry cancellation."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero errors or warnings; presentation boundaries pass."
+      },
+      {
+        "command": "pnpm test:storybook",
+        "result": "pass",
+        "failures": 0,
+        "note": "6 stories pass including Chip; final cold process after optimizer configuration."
+      },
+      {
+        "command": "pnpm build-storybook",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final cold static shell build passes."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "17 lanes pass, including existing browser acceptance."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Normal checks pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test",
+        "result": "pass",
+        "failures": 0,
+        "note": "All suites pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Catalog, served browser and Rust builds pass."
+      },
+      {
+        "command": "pnpm format:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rustfmt and Prettier pass."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "versions": "Same pinned catalog dependencies and Community source as E-UI-001.",
+    "formats": "Presentation props only; no storage or API changes. Enclosing Jujutsu change is the evidence reference."
   }
 ]
 ```

@@ -18,3 +18,10 @@ Design Core ^0.2.0 with the existing Svelte 5/Vite 8 toolchain. Direct
 adaptations retain provenance and Apache-2.0 attribution. Shared primitives
 remain public Design Core imports. Stories are visual-pending until human
 review.
+
+## Shell composition
+
+The shell defaults to Branches, a collapsed left sidebar and closed 320px right
+sidebar. Per-instance history, selection and controllers never persist across
+stories. Repository compact popovers retain focus restoration; mobile navigation
+uses the same public shell stages. Community-only room actions are omitted.

@@ -5,6 +5,13 @@ import { playwright } from "@vitest/browser-playwright";
 import { defineConfig } from "vitest/config";
 export default defineConfig({
   plugins: [svelte()],
+  optimizeDeps: {
+    exclude: [
+      "@lapismd/design-core",
+      "@lapismd/design-core/shell",
+      "@lapismd/design-core/shadcn/column-canvas",
+    ],
+  },
   test: {
     projects: [
       {
