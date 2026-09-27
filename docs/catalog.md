@@ -119,3 +119,27 @@ PR integration. Graph paths are unchanged; row endpoints follow measured native
 bookmark content height and IDs wrap beneath text in narrow columns. Copied
 graph and header-geometry regressions remain catalog unit tests. New native
 identity, divergence, controller and cold-browser tests qualify the adaptations.
+
+## Review refinements
+
+The same source revision also supplies:
+
+| Community source                                                                               | jj-store destination                                                                | Adaptation                                                                                                  |
+| ---------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `src/components/community-projects/CommunityProjectsRepositoryDirectory.svelte`                | `catalog/components/community-projects/CommunityProjectsRepositoryDirectory.svelte` | Native revision fields, deterministic dates and local controller callbacks replace forge operations.        |
+| `src/components/community-projects/CommunityProjects.css` (directory table and commit summary) | `catalog/components/community-projects/repository-directory.css`                    | Copied directory table and summary styles.                                                                  |
+| `src/components/community-application/CommunityApplication.svelte` (project breadcrumb styles) | `catalog/components/store-application/repository-breadcrumb.css`                    | Same geometry and muted colors. Compose the public breadcrumb list inside the existing navigation landmark. |
+| `src/components/community-application/CommunityApplication.svelte` (project overview sidebar)  | `catalog/components/store-application/StoreApplication.svelte`                      | Public rail variant, transparent border and resize indicator copied from Community.                         |
+
+The in-memory route records directory navigation as well as file selection.
+Opening Files or returning from a file displays the copied directory table.
+Branch card dividers apply to populated command wrappers so filtered final rows
+have no trailing divider. All Column Canvas headers share the theme secondary
+surface and bottom border. The three history pages omit duplicate body titles;
+mobile sidebar/history controls remain available. Graph content reserves the
+widest graph lane to keep author avatars aligned. These are requested native
+presentation adaptations; no shared package implementation is patched.
+
+**Review refinements** stories exercise the requested presentation and directory
+navigation; branch-card stories cover separators before and after filtering. All
+changed stories remain visual-pending.

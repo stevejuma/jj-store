@@ -48,7 +48,7 @@
       await body.findByRole("option", { name: "feature/native-objects" }),
     );
     await expect(
-      canvas.getByText("Select a file to preview it."),
+      canvas.getByRole("table", { name: "Repository files" }),
     ).toBeVisible();
     await userEvent.click(canvas.getByRole("button", { name: "src/lib.rs" }));
     await waitFor(() =>
@@ -81,7 +81,7 @@
     );
     await userEvent.click(canvas.getByRole("button", { name: "Back" }));
     await expect(
-      canvas.getByText("Select a file to preview it."),
+      canvas.getByRole("table", { name: "Repository files" }),
     ).toBeVisible();
     await userEvent.click(canvas.getByRole("button", { name: "Back" }));
     await waitFor(() =>

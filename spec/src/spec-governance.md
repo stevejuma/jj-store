@@ -162,3 +162,9 @@ Cold catalog acceptance builds static assets and serves them on an owned
 ephemeral loopback port. Browser tests reject API, external HTTP and WebSocket
 requests, verify responsive navigation and fresh-instance state, and retain
 unapproved screenshots only as local review artifacts.
+
+M4.8 review acceptance covers populated and filtered branch dividers, the
+absence of duplicate history-page titles, shared column header styling, and
+directory navigation history. Cold acceptance locates the persistent column
+controls after the redundant title bars are removed. Screenshots remain
+visual-pending and cannot substitute for interaction/accessibility checks.

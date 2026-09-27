@@ -33,3 +33,19 @@ test("controller_isolates_instances_and_conflicts", () => {
   expect(a.state.route.path).toBeNull();
   expect(a.state.repository.id).toBe("native-demo");
 });
+
+test("controller_restores_directory_history", () => {
+  const controller = createInMemoryStoreController("files");
+  controller.actions.selectDirectory("src");
+  controller.actions.selectFile("src/lib.rs");
+  controller.actions.navigate(-1);
+  expect(controller.state.route.directory).toBe("src");
+  expect(controller.state.route.path).toBeNull();
+  controller.actions.navigate(1);
+  expect(controller.state.route.path).toBe("src/lib.rs");
+  controller.actions.selectBookmark("main");
+  expect(controller.state.route.directory).toBe("");
+  expect(() => controller.actions.selectDirectory("missing")).toThrow(
+    "Directory absent",
+  );
+});

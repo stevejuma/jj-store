@@ -122,9 +122,11 @@
 {#snippet itemIcon(item: CommunityNavigationItemModel)}
   {@const Icon = iconFor(item)}<Icon aria-hidden="true" />
 {/snippet}
-<AppShell.Sidebar.Header class="lc-community-navigation__header">
-  {@render headerStart?.()}
-</AppShell.Sidebar.Header>
+{#if headerStart}<AppShell.Sidebar.Header
+    class="lc-community-navigation__header"
+  >
+    {@render headerStart()}
+  </AppShell.Sidebar.Header>{/if}
 <AppShell.Sidebar.Body class="lc-community-navigation__body">
   <Tooltip.Provider>
     <nav aria-label="Repository navigation" data-compact={compact || undefined}>

@@ -6,8 +6,10 @@
     type AppShellDisplayMode,
   } from "@lapismd/design-core/shell";
   import { Button } from "@lapismd/design-core/shadcn/button";
+  import * as Breadcrumb from "@lapismd/design-core/shadcn/breadcrumb";
   import { untrack, type Snippet } from "svelte";
-  import PanelRightIcon from "@lucide/svelte/icons/panel-right";
+  import CommunitySidebarToggleIcon from "../community-app-shell/CommunitySidebarToggleIcon.svelte";
+  import "./repository-breadcrumb.css";
   import CommunityAppShell from "../community-app-shell/CommunityAppShell.svelte";
   import CommunityNavigation from "../community-navigation/CommunityNavigation.svelte";
   import CommunityApplicationMobileNavigation from "../community-application/CommunityApplicationMobileNavigation.svelte";
@@ -90,7 +92,26 @@
   onNavigateBack={() => navigate(-1)}
   onNavigateForward={() => navigate(1)}
 >
-  {#snippet headerCenter()}<span>{current.repository} / {title}</span>{/snippet}
+  {#snippet headerCenter()}
+    <div class="community-application__project-breadcrumb">
+      <Breadcrumb.List aria-label="Repository breadcrumb">
+        <Breadcrumb.Item
+          ><Breadcrumb.Link
+            href="#"
+            onclick={(event) => {
+              event.preventDefault();
+              controller.actions.openRepository(current.repository);
+            }}><span>{current.repository}</span></Breadcrumb.Link
+          ></Breadcrumb.Item
+        >
+        <Breadcrumb.Separator />
+        <Breadcrumb.Item
+          ><Breadcrumb.Page><span>{title}</span></Breadcrumb.Page
+          ></Breadcrumb.Item
+        >
+      </Breadcrumb.List>
+    </div>
+  {/snippet}
   {#snippet headerEnd()}<Button
       variant="ghost"
       size="icon-sm"
@@ -98,7 +119,10 @@
       aria-expanded={!shell.right.closed}
       onclick={() =>
         shell.right.closed ? shell.right.open() : shell.right.close()}
-      ><PanelRightIcon aria-hidden="true" /></Button
+      ><CommunitySidebarToggleIcon
+        side="right"
+        expanded={!shell.right.closed}
+      /></Button
     >{/snippet}
   <AppShell.Sidebar
     side="left"
@@ -117,9 +141,6 @@
       {compact}
       onSelect={select}
     >
-      {#snippet headerStart()}<strong aria-label="jj-store"
-          >{compact ? "JJ" : "jj-store"}</strong
-        >{/snippet}
       {#snippet footer()}<CommunityProfileMenu
           member={controller.state.member}
           authenticated={controller.state.authenticated}
@@ -132,16 +153,18 @@
     </CommunityNavigation>
   </AppShell.Sidebar>
   <AppShell.Main>
-    <AppShell.Toolbar>
-      {#if shell.mobile.resolvedMode === "mobile"}<CommunityApplicationMobileNavigation
-          model={{ canNavigateBack, canNavigateForward, navigate }}
-        />{/if}
-      <h1>{title}</h1>
-      {#if shell.mobile.resolvedMode === "mobile"}<AppShell.Sidebar.Toggle
-          side="right"
-          sidebarName="details"
-        />{/if}
-    </AppShell.Toolbar>
+    {#if current.page === "files" || shell.mobile.resolvedMode === "mobile"}
+      <AppShell.Toolbar>
+        {#if shell.mobile.resolvedMode === "mobile"}<CommunityApplicationMobileNavigation
+            model={{ canNavigateBack, canNavigateForward, navigate }}
+          />{/if}
+        {#if current.page === "files"}<h1>{title}</h1>{/if}
+        {#if shell.mobile.resolvedMode === "mobile"}<AppShell.Sidebar.Toggle
+            side="right"
+            sidebarName="details"
+          />{/if}
+      </AppShell.Toolbar>
+    {/if}
     <AppShell.Body>
       {#key current.repository + current.page}
         {#if children}{@render children(
@@ -155,6 +178,8 @@
   </AppShell.Main>
   <AppShell.Sidebar
     side="right"
+    variant="rail"
+    class="community-application__project-overview-sidebar"
     label="Repository details"
     resizeLabel="Resize repository details"
     closeable
@@ -181,6 +206,15 @@
 </CommunityAppShell>
 
 <style>
+  :global(.community-application__project-overview-sidebar[data-side="right"]) {
+    border-inline-start-color: transparent !important;
+  }
+  :global(
+    .community-application__project-overview-sidebar
+      [data-ui-part="sidebar-resize-indicator"]
+  ) {
+    background: transparent !important;
+  }
   h1 {
     margin: 0;
     font-size: var(--community-text-body);

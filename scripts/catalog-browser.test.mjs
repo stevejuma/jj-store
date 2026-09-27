@@ -111,7 +111,10 @@ test("cold_catalog_contract", { timeout: 60000 }, async () => {
     const url = `${origin}/iframe.html?id=jj-store-application--expanded-workspace&viewMode=story`;
     await page.goto(url);
     await expect(
-      page.getByRole("heading", { name: "Branches", exact: true }),
+      page.getByRole("button", {
+        name: "Collapse Branches column",
+        exact: true,
+      }),
     ).toBeVisible();
     await expect(
       page.locator('[data-ui-component="community-app-shell"]'),
@@ -168,7 +171,7 @@ test("cold_catalog_contract", { timeout: 60000 }, async () => {
     await page.getByRole("button", { name: "Open navigation sidebar" }).click();
     await page.getByRole("button", { name: "JJ Log", exact: true }).click();
     await expect(
-      page.getByRole("heading", { name: "JJ Log", exact: true }),
+      page.getByRole("button", { name: "Collapse JJ Log column", exact: true }),
     ).toBeVisible();
     await page
       .getByRole("button", {
@@ -185,7 +188,10 @@ test("cold_catalog_contract", { timeout: 60000 }, async () => {
     await page.setViewportSize({ width: 1440, height: 1000 });
     await page.reload();
     await expect(
-      page.getByRole("heading", { name: "Branches", exact: true }),
+      page.getByRole("button", {
+        name: "Collapse Branches column",
+        exact: true,
+      }),
     ).toBeVisible();
     await expect(
       page.getByRole("region", { name: "Changed files", exact: true }),
@@ -217,7 +223,10 @@ test("cold_catalog_contract", { timeout: 60000 }, async () => {
       `${origin}/iframe.html?id=jj-store-application--full-app&viewMode=story`,
     );
     await expect(
-      page.getByRole("heading", { name: "Branches", exact: true }),
+      page.getByRole("button", {
+        name: "Collapse Branches column",
+        exact: true,
+      }),
     ).toBeVisible();
     await expect(
       page.getByRole("option", { name: "main", exact: true }),

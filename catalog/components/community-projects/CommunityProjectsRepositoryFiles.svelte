@@ -4,14 +4,36 @@
   import type { StoreController } from "../../controller/contracts.js";
   import CommunityProjectsRepositoryFileTree from "./CommunityProjectsRepositoryFileTree.svelte";
   import CommunityProjectsRepositoryFilePanel from "./CommunityProjectsRepositoryFilePanel.svelte";
+  import CommunityProjectsRepositoryDirectory from "./CommunityProjectsRepositoryDirectory.svelte";
   import {
     repositoryBreadcrumbSegments,
     repositoryParentPath,
+    repositoryBrowserEntries,
   } from "./repository-browser.js";
   import "./repository-files.css";
-  let { controller }: { controller: StoreController } = $props();
+  import "./repository-directory.css";
+  let { controller, now }: { controller: StoreController; now: number } =
+    $props();
   let fileTreeOpen = $state(true);
   const view = $derived(controller.state);
+  const entries = $derived(
+    repositoryBrowserEntries(
+      (view.snapshot?.files ?? []).map((file) => ({
+        ...file,
+        name: file.path,
+        type: "blob" as const,
+      })),
+      view.route.directory,
+    ),
+  );
+  const latestCommit = $derived(
+    view.graph.revisions.find(
+      (revision) => revision.eventId === view.snapshot?.id,
+    ),
+  );
+  const pathCommits = $derived(
+    Object.fromEntries(entries.map((entry) => [entry.path, latestCommit])),
+  );
   const branch = $derived(
     view.route.revisionId
       ? `commit:${view.route.revisionId}`
@@ -50,21 +72,36 @@
         onSelectBranch={selectBranch}
         onSelectPath={controller.actions.selectFile}
       />{/if}
-    <CommunityProjectsRepositoryFilePanel
-      bind:fileTreeOpen
-      {branch}
-      branches={view.choices}
-      blob={view.blob}
-      selectedPath={view.route.path ?? ""}
-      isMarkdown={false}
-      breadcrumbs={repositoryBreadcrumbSegments(
-        repositoryParentPath(view.route.path ?? ""),
-      )}
-      onSelectBranch={selectBranch}
-      onOpenDirectory={() => {
-        fileTreeOpen = true;
-        controller.actions.selectFile(null);
-      }}
-    />
+    {#if view.route.path}<CommunityProjectsRepositoryFilePanel
+        bind:fileTreeOpen
+        {branch}
+        branches={view.choices}
+        blob={view.blob}
+        selectedPath={view.route.path ?? ""}
+        isMarkdown={false}
+        breadcrumbs={repositoryBreadcrumbSegments(
+          repositoryParentPath(view.route.path ?? ""),
+        )}
+        onSelectBranch={selectBranch}
+        onOpenDirectory={controller.actions.selectDirectory}
+      />{:else}<CommunityProjectsRepositoryDirectory
+        bind:fileTreeOpen
+        repositoryName={view.repository.name}
+        currentPath={view.route.directory}
+        breadcrumbs={repositoryBreadcrumbSegments(view.route.directory)}
+        {branch}
+        branches={view.choices}
+        {entries}
+        {latestCommit}
+        {pathCommits}
+        {now}
+        onSelectBranch={selectBranch}
+        onOpenDirectory={controller.actions.selectDirectory}
+        onOpenFile={controller.actions.selectFile}
+        onSelectCommit={(revision) => {
+          controller.actions.selectPage("log");
+          controller.actions.selectRevision(revision.eventId);
+        }}
+      />{/if}
   </div>
 </section>

@@ -24,7 +24,10 @@
 
 <StoreApplication {controller} {initiallyCollapsed} {displayMode}>
   {#snippet children(page)}
-    {#if page === "files"}<CommunityProjectsRepositoryFiles {controller} />
+    {#if page === "files"}<CommunityProjectsRepositoryFiles
+        {controller}
+        now={NOW}
+      />
     {:else}<CommunityProjectsRepositoryLog
         {page}
         graph={state.graph}

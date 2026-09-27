@@ -23,6 +23,7 @@ export function createInMemoryStoreController(
       bookmark: initialPage === "files" ? "main" : "",
       revisionId: null,
       path: null,
+      directory: "",
     },
   ]);
   let index = $state(0);
@@ -55,6 +56,7 @@ export function createInMemoryStoreController(
         bookmark: "main",
         revisionId: null,
         path: null,
+        directory: "",
       });
     },
     selectPage(page) {
@@ -64,6 +66,7 @@ export function createInMemoryStoreController(
         bookmark: page === "files" ? "main" : "",
         revisionId: null,
         path: null,
+        directory: "",
       });
     },
     navigate(delta) {
@@ -72,7 +75,13 @@ export function createInMemoryStoreController(
     selectBookmark(name) {
       if (!bookmarks.some((bookmark) => bookmark.name === name))
         throw new Error("Unknown fixture bookmark");
-      push({ ...route, bookmark: name, revisionId: null, path: null });
+      push({
+        ...route,
+        bookmark: name,
+        revisionId: null,
+        path: null,
+        directory: "",
+      });
     },
     selectRevision(id) {
       if (
@@ -82,12 +91,26 @@ export function createInMemoryStoreController(
         )
       )
         throw new Error("Unknown fixture revision");
-      push({ ...route, revisionId: id, path: null });
+      push({ ...route, revisionId: id, path: null, directory: "" });
     },
     selectFile(path) {
       if (path && !snapshot?.files.some((file) => file.path === path))
         throw new Error("File absent from selected snapshot");
-      push({ ...route, path });
+      push({
+        ...route,
+        path,
+        directory: path
+          ? path.split("/").slice(0, -1).join("/")
+          : route.directory,
+      });
+    },
+    selectDirectory(directory) {
+      if (
+        directory &&
+        !snapshot?.files.some((file) => file.path.startsWith(`${directory}/`))
+      )
+        throw new Error("Directory absent from selected snapshot");
+      push({ ...route, directory, path: null });
     },
     selectRef(value) {
       const choice = choices.find((choice) => choice.value === value);
@@ -99,6 +122,7 @@ export function createInMemoryStoreController(
           bookmark: "",
           revisionId: choice.targets[0]!,
           path: null,
+          directory: "",
         });
     },
     signIn() {

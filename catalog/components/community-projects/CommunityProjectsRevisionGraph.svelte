@@ -15,7 +15,6 @@
     REPOSITORY_LOG_ROW_HEIGHT,
     REPOSITORY_LOG_STROKE_WIDTH,
     buildRepositoryLogGraph,
-    repositoryLogContentLeft,
     repositoryLogConvergePath,
     repositoryLogLaneStem,
     repositoryLogLaneX,
@@ -102,7 +101,7 @@
       <div
         class="community-revision-graph__row"
         class:community-revision-graph__row--tip={row.isTip}
-        style:padding-left="{repositoryLogContentLeft(row)}px"
+        style:padding-left="{svgWidth}px"
         style:min-height="{REPOSITORY_LOG_ROW_HEIGHT}px"
         style:--community-revision-graph-row-height="{rowHeight}px"
         data-revision-id={row.revision.eventId}

@@ -20,17 +20,28 @@
   name="Bookmark cards"
   play={async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
+    const expectSeparators = async () => {
+      const cards = canvas.getAllByRole("option");
+      for (const [index, card] of cards.entries()) {
+        await expect(getComputedStyle(card).borderBottomWidth).toBe(
+          index === cards.length - 1 ? "0px" : "1px",
+        );
+      }
+    };
+    await expectSeparators();
     await expect(
       canvas.getByText("Stream immutable native objects"),
     ).toBeVisible();
     await userEvent.click(canvas.getByRole("tab", { name: "Workspace" }));
     await expect(canvas.getAllByRole("option")).toHaveLength(1);
+    await expectSeparators();
     await expect(canvas.getByRole("option", { name: "main" })).toBeVisible();
     await expect(
       canvas.getByRole("option", { name: "main" }),
     ).toHaveTextContent("just now by Maya Chen");
     await userEvent.click(canvas.getByRole("tab", { name: "Conflicted" }));
     await expect(canvas.getAllByRole("option")).toHaveLength(1);
+    await expectSeparators();
     await userEvent.click(canvas.getByRole("option", { name: "conflicted" }));
     await expect(args.onSelect).toHaveBeenLastCalledWith("conflicted");
     await userEvent.click(canvas.getByRole("tab", { name: "All" }));
@@ -39,6 +50,7 @@
       "native-objects",
     );
     await expect(canvas.getAllByRole("option")).toHaveLength(1);
+    await expectSeparators();
     await expect(
       canvas.getByRole("option", {
         name: "feature/native-objects",

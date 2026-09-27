@@ -1,0 +1,131 @@
+/* Copied Community repository directory table and revision summary. */
+.community-projects__file-browser-commit {
+  display: grid;
+  min-height: 2.8rem;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  box-sizing: border-box;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.55rem 0.8rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--muted-foreground);
+  font-size: var(--community-text-secondary);
+}
+
+.community-projects__file-browser-commit [data-ui-part="git-author"] {
+  flex: none;
+}
+
+.community-projects__file-browser-commit > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.community-projects__file-browser-commit strong {
+  color: var(--foreground);
+  font-weight: 550;
+}
+
+.community-projects__file-browser-commit-link {
+  display: inline;
+  min-width: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  padding: 0;
+  color: var(--foreground);
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
+}
+
+.community-projects__file-browser-commit-link:hover {
+  color: var(--foreground);
+  background: var(--muted);
+}
+
+.community-projects__file-browser-commit-link:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.community-projects__file-browser-commit code {
+  color: inherit;
+  font-size: var(--community-text-secondary);
+}
+
+.community-projects__file-browser-table {
+  table-layout: fixed;
+}
+
+.community-projects__file-browser-table [data-ui-part="table-head"]:first-child,
+.community-projects__file-browser-table
+  [data-ui-part="table-cell"]:first-child {
+  width: 40%;
+}
+
+.community-projects__file-browser-table
+  [data-ui-part="table-head"]:nth-child(2),
+.community-projects__file-browser-table
+  [data-ui-part="table-cell"]:nth-child(2) {
+  width: 43%;
+}
+
+.community-projects__file-browser-table [data-ui-part="table-head"]:last-child,
+.community-projects__file-browser-table [data-ui-part="table-cell"]:last-child {
+  width: 17%;
+  text-align: end;
+}
+
+.community-projects__file-browser-table [data-ui-part="table-head"] {
+  height: 2.35rem;
+  color: var(--muted-foreground);
+  font-size: var(--community-text-secondary);
+  font-weight: 500;
+}
+
+.community-projects__file-browser-table [data-ui-part="table-cell"] {
+  height: 2.7rem;
+  color: var(--muted-foreground);
+  font-size: var(--community-text-secondary);
+}
+
+.community-projects__file-entry {
+  width: 100%;
+  min-width: 0;
+  justify-content: flex-start;
+  padding-inline: 0.25rem;
+  color: var(--foreground);
+}
+
+.community-projects__file-entry > svg {
+  width: 1rem;
+  height: 1rem;
+  flex: none;
+  color: var(--muted-foreground);
+}
+
+.community-projects__file-entry > strong,
+.community-projects__file-commit-message {
+  min-width: 0;
+  overflow: hidden;
+  font-size: var(--community-text-secondary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.community-projects__file-entry > strong {
+  font-weight: 550;
+}
+
+.community-projects__file-entry:hover > strong,
+.community-projects__file-entry:focus-visible > strong {
+  color: var(--primary);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.community-projects__file-commit-message {
+  display: block;
+}

@@ -180,3 +180,10 @@ picker, file-content viewer and left-sidebar profile/login footer. Match
 Community fonts and icon geometry through the same shared stylesheet build
 setup. All actions remain local; production integration and authentication
 remain deferred.
+
+M4.8 applies catalog review feedback: full-width bookmark cards with dividers
+except the final visible card, sticky secondary headers, aligned graph avatars,
+Community breadcrumbs/sidebar icons/transparent details rail, and copied
+directory navigation when no file is selected. Branches, JJ Log and Op Log use
+column titles instead of redundant body titles; mobile navigation remains
+available. Production UI scope stays deferred.

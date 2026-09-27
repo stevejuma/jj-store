@@ -23,6 +23,7 @@ export default defineConfig({
       "@lucide/svelte/icons/log-out",
       "@lucide/svelte/icons/x",
       "@lucide/svelte/icons/file",
+      "@lucide/svelte/icons/folder",
       "@lucide/svelte/icons/chevron-down",
       "@tanstack/svelte-virtual",
     ],

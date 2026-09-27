@@ -67,10 +67,10 @@ browser/lifecycle changes. Visual baselines require explicit approval.
 The user reopened a Storybook-only presentation slice on 27 September 2026.
 Copy/adapt Community compositions and use public released Design Core exports;
 keep fixtures and local interaction state separate from production wiring.
-M4.4–M4.7 track the catalog, including the in-memory full application, native
-snapshot file browser and copied profile footer. M4.3 live browser
-features/deployment remain deferred. Existing browser checks stay enabled.
-Stories remain visual-pending; baseline approval is separate from
+M4.4–M4.8 track the catalog, including the in-memory full application, native
+snapshot file browser, copied profile footer and review refinements. M4.3 live
+browser features/deployment remain deferred. Existing browser checks stay
+enabled. Stories remain visual-pending; baseline approval is separate from
 interaction/accessibility acceptance.
 
 ## Local execution

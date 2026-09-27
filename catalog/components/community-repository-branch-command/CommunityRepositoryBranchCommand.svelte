@@ -99,8 +99,20 @@
 
 <style>
   :global(.community-bookmark-cards) {
-    --ui-command-view-list-max-height: none;
+    --ui-command-view-list-max-height: max(12rem, calc(100dvh - 16rem));
     --ui-command-view-list-padding: 0;
+  }
+  :global(.community-bookmark-cards [data-ui-part="command-group"]) {
+    padding: 0;
+    overflow: visible;
+  }
+  :global(.community-bookmark-cards [data-ui-part="command-group-heading"]) {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    padding: 0.5rem 0.9rem;
+    background: var(--secondary);
+    border-bottom: 1px solid var(--border);
   }
   :global(.community-bookmark-card[data-ui-part="item"]) {
     position: relative;
@@ -115,6 +127,16 @@
   }
   :global(.community-bookmark-card[data-current="true"]) {
     background: var(--accent);
+  }
+  /* Command items have individual wrappers; ignore empty filtered wrappers. */
+  :global(
+    .community-bookmark-cards
+      [data-item-wrapper]:has(.community-bookmark-card):not(
+        :has(~ [data-item-wrapper] .community-bookmark-card)
+      )
+      > .community-bookmark-card
+  ) {
+    border-bottom: 0;
   }
   :global(.community-bookmark-card[data-current="true"])::before {
     content: "";

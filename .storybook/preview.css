@@ -22,3 +22,8 @@ html.dark #storybook-root {
 body {
   font-size: var(--community-text-body);
 }
+
+[data-ui-component="column-canvas"][data-ui-part="column-header"] {
+  background: var(--secondary);
+  border-bottom: 1px solid var(--border);
+}

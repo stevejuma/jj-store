@@ -59,3 +59,18 @@ reflecting native JJ state. The full-app story creates a fresh controller and
 has no autoplay actions. The measured graph retains Community paths while
 allowing native bookmark labels and ID controls to wrap in narrow columns
 without overlapping subsequent rows.
+
+The catalog shell omits a redundant sidebar brand header and uses Community's
+muted breadcrumb and stateful sidebar glyphs. Branch cards span their list
+width; bookmark headings remain sticky during list scrolling. All Column Canvas
+headers and operation-head status rows use the theme's secondary background and
+bottom border. Graph content reserves the full graph lane width so author
+avatars align across forks and merges. Files opens the copied Community
+directory table until a file is selected; directory, file and snapshot
+navigation participate in the in-memory Back/Forward history.
+
+Branch cards retain themed bottom dividers except for the final visible card,
+including filtered lists. Branches, JJ Log and Op Log omit the redundant body
+title bar; their Column Canvas headers identify the views. Mobile retains
+navigation/history/sidebar controls without duplicating the page title. The
+right details rail inherits the shell background with no visible border.

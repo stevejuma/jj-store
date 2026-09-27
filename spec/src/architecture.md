@@ -180,3 +180,8 @@ browser remains independent. See [catalog requirements](ui.md).
 The catalog has independent cold static-browser acceptance; production serving
 and API integration remain unchanged. Storybook framework/renderer/builder
 versions are aligned in the registry lockfile.
+
+M4.8 extends only the local catalog route with a directory path and reuses
+Community directory tables and shell styling. Controller callbacks own file and
+directory history; reusable presentation components receive explicit data. The
+production browser milestone remains deferred.

@@ -177,7 +177,10 @@
 
 <style>
   .store-operation-heads {
+    margin: 0;
     padding: 0.5rem;
+    background: var(--secondary);
+    border-bottom: 1px solid var(--border);
     font-size: var(--community-text-secondary);
     color: var(--muted-foreground);
   }

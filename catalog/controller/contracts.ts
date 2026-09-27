@@ -25,6 +25,7 @@ export interface StoreRoute {
   bookmark: string;
   revisionId: string | null;
   path: string | null;
+  directory: string;
 }
 export interface StoreControllerState {
   readonly route: StoreRoute;
@@ -51,6 +52,7 @@ export interface StoreController {
     selectBookmark(name: string): void;
     selectRevision(id: string | null): void;
     selectFile(path: string | null): void;
+    selectDirectory(path: string): void;
     selectRef(value: string): void;
     signIn(): void;
     signOut(): void;
