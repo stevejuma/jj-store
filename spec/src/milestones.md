@@ -25,8 +25,8 @@ adds evidence here in its enclosing Jujutsu change.
 | M3.1        | Done        | M2        | JST-SEC-001,JST-SEC-002,JST-SEC-003,JST-SEC-004                         | Revocable tokens and transport authorization                        | Retain native slice acceptance                   | E-M3-001,E-M3-004,E-M3-005,E-M3-006,E-M3-007,E-M3-008,E-M3-009,E-M3-011,E-M3-012,E-M3-014                                     |
 | M3.2        | Done        | M3.1      | JST-JJ-001,JST-JJ-004,JST-JJ-005                                        | Create edit describe log restart op-log evolog; multi-workspace     | Retain native slice acceptance                   | E-M3-002,E-M3-003,E-M3-004,E-M3-005,E-M3-006,E-M3-008,E-M3-009,E-M3-010,E-M3-011,E-M3-013,E-M3-014                            |
 | M3.3        | Done        | M3.2      | JST-CLI-001,JST-CLI-002,JST-CLI-003,JST-CLI-004                         | Custom command presentation and capability parity                   | Retain native slice acceptance                   | E-M3-006,E-M3-009,E-M3-010,E-M3-011,E-M3-012,E-M3-013,E-M3-014                                                                |
-| M4          | In progress | M3        | JST-API-001,JST-API-005                                                 | Structured reads and basic served UI match native semantics         | Implement content diffs and qualify resources    | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006                                                                         |
-| M4.1        | In progress | M3        | JST-API-001,JST-API-002,JST-JJ-003                                      | Pinned three-graph reads with zero GET publications                 | Implement content diffs and qualify resources    | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006                                                                         |
+| M4          | In progress | M3        | JST-API-001,JST-API-005                                                 | Structured reads and basic served UI match native semantics         | Qualify resources then expose HTTP               | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007                                                                |
+| M4.1        | In progress | M3        | JST-API-001,JST-API-002,JST-JJ-003                                      | Pinned three-graph reads with zero GET publications                 | Qualify resources then expose HTTP               | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007                                                                |
 | M4.2        | Planned     | M4.1      | JST-API-003,JST-API-004,JST-API-005                                     | SSE, safe UI, generated contracts and cold interaction tests        | Build Svelte UI                                  | -                                                                                                                             |
 | M5          | Planned     | M4        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Authenticated typed commands and shared RPC policy                  | Implement commands                               | -                                                                                                                             |
 | M5.1        | Planned     | M4        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Basic changes/refs/reconcile; preview receipt and semantic policy   | Implement command transaction facade             | -                                                                                                                             |
@@ -3130,6 +3130,212 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Rust 1.97.1; jj-cli/jj-lib 0.45.1. Native transactions and production reads over disposable in-memory stores; no deployment/performance claim.",
     "formats": "Version 1 operation-diff DTO distinguishes root/parent-selection/difference, complete view-field deltas, deterministic native-ID visibility deltas and absent-versus-empty predecessor maps. No authority, persistence or native RPC format change."
+  },
+  {
+    "id": "E-M4-007",
+    "tasks": ["M4", "M4.1"],
+    "date": "2026-09-27",
+    "kind": "native-content-diffs-and-conflict-descriptors",
+    "files": [
+      "crates/jj-store-cli/tests/native_lifecycle/conflicts.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/content.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/diff.rs",
+      "crates/jj-store-jj/src/copy_query.rs",
+      "crates/jj-store-jj/src/query/content/conflicts.rs",
+      "crates/jj-store-jj/src/query/content/diff.rs",
+      "crates/jj-store-jj/src/query/content/diff_copies.rs",
+      "crates/jj-store-jj/src/query/content/native.rs",
+      "crates/jj-store-jj/src/query/content/trees.rs",
+      "crates/jj-store-jj/src/query/content.rs",
+      "crates/jj-store-jj/tests/native_backend.rs",
+      "crates/jj-store-model/src/ids.rs",
+      "crates/jj-store-service/src/reads.rs",
+      "spec/src/api.md",
+      "spec/src/cli.md",
+      "spec/src/identity.md",
+      "spec/src/jj-integration.md",
+      "spec/src/mutations.md"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/native_lifecycle/diff.rs#content_diff_native_lines_modes_binary_symlinks_submodules_and_prefixes",
+      "crates/jj-store-cli/tests/native_lifecycle/diff.rs#content_diff_copy_and_rename_sources_match_pinned_native_stream",
+      "crates/jj-store-cli/tests/native_lifecycle/diff.rs#content_diff_bounds_stale_membership_corruption_and_revocation",
+      "crates/jj-store-cli/tests/native_lifecycle/diff.rs#content_diff_multiple_copy_lineages_are_explicit_without_guessing_one_source",
+      "crates/jj-store-cli/tests/native_lifecycle/diff.rs#content_diff_canceled_copy_terms_cannot_reappear_as_sources",
+      "crates/jj-store-cli/tests/native_lifecycle/conflicts.rs#conflict_descriptor_preserves_native_terms_labels_paths_and_editor_capabilities",
+      "crates/jj-store-cli/tests/native_lifecycle/conflicts.rs#conflict_descriptor_multisided_and_fingerprints_bind_every_input",
+      "crates/jj-store-cli/tests/native_lifecycle/conflicts.rs#conflict_descriptor_limits_revocation_and_verified_content_fail_closed",
+      "crates/jj-store-jj/src/query/content/conflicts.rs#conflict_fingerprint_v1_matches_independent_canonical_vector",
+      "crates/jj-store-jj/tests/native_backend.rs#copy_placeholder_parents_are_boundaries_not_stored_history"
+    ],
+    "runs": [
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle content_diff_",
+        "result": "pass",
+        "failures": 0,
+        "note": "Before implementation: zero matching cases; not acceptance evidence."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle conflict_descriptor_",
+        "result": "pass",
+        "failures": 0,
+        "note": "Before implementation: zero matching cases; not acceptance evidence."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo check -p jj-store-service",
+        "result": "fail",
+        "failures": 1,
+        "note": "Label mapping returned Option<&str> instead of owned Option<String>; fixed explicit dereference and owned conversion."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo check -p jj-store-service",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "cargo fmt --all",
+        "result": "fail",
+        "failures": 1,
+        "note": "New fixture module declared before its file was created. Created the file before rerunning."
+      },
+      {
+        "command": "cargo fmt --all",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle content_diff_",
+        "result": "fail",
+        "failures": 5,
+        "note": "Fixture compile diagnostics: generic collect and ambiguous BStr::as_ref; fixed explicit Vec and byte-slice types."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle content_diff_",
+        "result": "fail",
+        "failures": 3,
+        "note": "First executable run: 0 passed / 3 failed with Unavailable."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle content_diff_native_lines -- --nocapture",
+        "result": "fail",
+        "failures": 1,
+        "note": "Pinned experimental copy-history diff helper rejects valid placeholder copy IDs. Replaced with raw native tree deltas plus bounded owned lineage annotations; no synthetic history objects."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-jj --test native_backend copy_placeholder_parents_are_boundaries_not_stored_history",
+        "result": "fail",
+        "failures": 2,
+        "note": "Initial fixture compile diagnostics: missing helper label argument."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-jj --test native_backend copy_placeholder_parents_are_boundaries_not_stored_history",
+        "result": "fail",
+        "failures": 1,
+        "note": "Backend tried to read a placeholder parent as a stored object. Keep placeholder parents in returned histories while stopping traversal at these boundaries."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-jj --test native_backend copy_placeholder_parents_are_boundaries_not_stored_history",
+        "result": "pass",
+        "failures": 0,
+        "note": "1 case passes; direct placeholder object lookup still explicitly errors."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle conflict_descriptor_",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial 3 descriptor cases pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle content_diff_",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial 3 diff cases pass after placeholder handling and lineage lookup changes."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle content_diff_canceled_copy_terms_",
+        "result": "fail",
+        "failures": 1,
+        "note": "Canceled positive tree term incorrectly reappeared as a copy source. Lookup now simplifies signed terms before testing source membership and charges quadratic comparison work."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle content_diff_canceled_copy_terms_",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact regression passes: canceled signed term cannot become a source."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle content_diff_",
+        "result": "fail",
+        "failures": 1,
+        "note": "Expanded cases: 4 passed / 1 failed because expected sorted path list omitted the newly added non-UTF8 fixture. Added its expected path; preserved Binary assertion."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle content_diff_",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 5 cases pass: native line parity, Unicode/CRLF/no-final-newline, empty/non-UTF8/binary, modes/symlinks/submodules, copy/rename and reverse parity, multiple lineages, canceled terms, limits, membership, corruption and revocation."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle conflict_descriptor_",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 3 cases pass: native term/label parity, typed editor capabilities, 5-term merges, fingerprint binding, limits/revocation and verified content failure."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-jj conflict_fingerprint_v1_matches_independent_canonical_vector",
+        "result": "pass",
+        "failures": 0,
+        "note": "1 golden case passes against independent Python canonical JSON/hashlib BLAKE2b digest."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-jj --test native_backend",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 12 backend cases pass after shared copy-query changes."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle content_read_",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 7 existing content-read cases pass after shared native helper extraction."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "57 requirements, boundaries, ledger, rustfmt and all-target Clippy pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test",
+        "result": "pass",
+        "failures": 0,
+        "note": "178 Rust tests pass / 6 external cases intentionally ignored. 15 governance and 3 storage-harness tests pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Locked workspace build passes."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 9 lanes pass, including 178 Rust tests, rustfmt, mdBook and mapped spec-first checks."
+      },
+      {
+        "command": "pnpm format:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rustfmt and Prettier pass."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Production query CPU/memory/index/cache qualification, HTTP JSON/media/SSE, generated contracts and browser integration remain M4 work. Typed conflict resolution is M5."
+    ],
+    "versions": "Rust 1.97.1; jj-cli/jj-lib 0.45.1 at 7c41cdeb16b6b321c64e789a966b6adf723816a5. Native production reads over disposable in-memory storage; no deployment or performance claim.",
+    "formats": "V1 structural diff DTO retains raw target terms separately from complete source annotations and optional native line hunks. V1 conflict descriptor carries ordered labeled terms, explicit editor support and a domain-separated ConflictFingerprint. No native object, authority or RPC persistence format change."
   }
 ]
 ```

@@ -114,3 +114,35 @@ ordering or publication order. Commit visits, storage reads, work, response
 bytes and elapsed time are bounded. A difference is complete or fails
 explicitly; it never silently truncates history. Equal head sets need no
 ancestry traversal.
+
+## File differences and conflicts
+
+Structured file differences use the pinned native merged-tree diff stream. Each
+change retains both ordered before/after terms at the target path. Copy ancestry
+adds explicit normal/copy/rename source paths and values without suppressing
+structural deletions. Multiple source lineages remain explicit. Placeholders
+mean no recorded history and never become synthetic objects or shared ancestors.
+Bounded source lookup selects the nearest available ancestor on each lineage;
+when none is present, descendant lookup supports reverse comparisons. Paths
+filter target files by canonical repository prefix.
+
+Optional content uses exact native line diffing on bounded UTF-8 text,
+preserving CRLF and missing final newlines. Every blob is fully verified before
+reading. Binary, oversized, structural, conflicted or multiple-source content
+returns an explicit unavailability reason while keeping its structural delta.
+Traversal, change count, text bytes, estimated line-comparison work, output and
+time are bounded; complete structured responses fail rather than silently
+truncating.
+
+Conflict descriptors preserve ordered add/remove terms, absent terms, native
+values, labels, executable flags, copies and external submodules. A distinct V1
+fingerprint binds repository, epoch, native profile, exact commit/change IDs,
+path and the ordered labeled terms. A term ID is its zero-based position within
+that fingerprinted descriptor, never an object capability. Fingerprints grant no
+authority and are recomputed during eventual resolution.
+
+The text editor is supported only for three present, verified UTF-8 file terms
+with identical executable mode and copy history, within the configured text
+budget. Other conflicts return a typed reason; term selection/deletion remain
+separate mutation capabilities. Conflict reads never materialize conflict
+markers, write merged trees or invoke a merge tool.

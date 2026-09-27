@@ -87,6 +87,7 @@ id!(AttemptId, 16);
 id!(EpochId, 16);
 id!(PrincipalId, 16);
 id!(TokenId, 16);
+id!(ConflictFingerprint, 64);
 
 /// A copy placeholder is not a content-addressed object or dependency.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]

@@ -211,3 +211,15 @@ commit-parent links for visible-set changes. They do not infer visibility from
 predecessor retention, bookmarks or storage inventories. Immediate
 operation-parent selection is explicit; read capabilities and bounded workers
 remain mandatory.
+
+The application content layer uses native merged-tree diff streams and conflict
+traversal. It shares a read-only Store and native merge options with directory
+reads. Copy sources and unresolved terms are preserved without heuristic renames
+or writes. Native line diffing runs only after conservative text/line-work
+admission checks in the bounded query worker.
+
+Copy ancestry queries preserve placeholder parent fields but never attempt to
+load a placeholder object. The application diff layer treats placeholders as
+lineage boundaries, retaining complete structural deltas and all source choices.
+It does not invoke the pinned experimental copy-history diff helper, whose graph
+walker requires every parent (including placeholders) to be a stored history.

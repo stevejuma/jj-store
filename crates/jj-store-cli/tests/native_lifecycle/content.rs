@@ -861,3 +861,6 @@ mod directory_acceptance;
 
 #[path = "operation_diff.rs"]
 mod operation_diff_acceptance;
+
+#[path = "diff.rs"]
+mod diff_acceptance;

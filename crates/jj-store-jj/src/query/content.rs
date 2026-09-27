@@ -1,4 +1,8 @@
 //! Complete native metadata and verified binary reads through committed pins.
+pub mod conflicts;
+pub mod diff;
+mod diff_copies;
+mod native;
 pub mod operations;
 mod trees;
 use super::{
@@ -30,6 +34,9 @@ pub struct Limits {
     pub max_output_bytes: usize,
     pub max_work: usize,
     pub max_history_visits: usize,
+    pub max_changes: usize,
+    pub max_text_bytes: usize,
+    pub max_diff_cells: usize,
     pub max_page: usize,
     pub timeout: Duration,
 }
@@ -41,6 +48,9 @@ impl Default for Limits {
             max_output_bytes: 16 * 1024 * 1024,
             max_work: 1_000_000,
             max_history_visits: 50_000,
+            max_changes: 1_000,
+            max_text_bytes: 256 * 1024,
+            max_diff_cells: 250_000,
             max_page: 500,
             timeout: Duration::from_secs(30),
         }
@@ -140,6 +150,9 @@ impl ContentReader {
             || limits.max_output_bytes == 0
             || limits.max_work == 0
             || !(1..=1_000_000).contains(&limits.max_history_visits)
+            || !(1..=10_000).contains(&limits.max_changes)
+            || !(1..=1024 * 1024).contains(&limits.max_text_bytes)
+            || !(1..=1_000_000).contains(&limits.max_diff_cells)
             || !(1..=10_000).contains(&limits.max_page)
             || limits.timeout.is_zero()
             || limits.timeout > Duration::from_secs(300)
@@ -221,6 +234,28 @@ impl ContentReader {
     ) -> Result<VerifiedFile> {
         self.execute(store, access, move |context| {
             Box::pin(async move { context.file(id, range).await })
+        })
+        .await
+    }
+    pub async fn diff(
+        &self,
+        store: Arc<dyn ObjectStore>,
+        access: Arc<dyn ReadAccess>,
+        request: diff::Request,
+    ) -> Result<diff::Response> {
+        self.execute(store, access, move |context| {
+            Box::pin(async move { diff::read(context, request).await })
+        })
+        .await
+    }
+    pub async fn conflicts(
+        &self,
+        store: Arc<dyn ObjectStore>,
+        access: Arc<dyn ReadAccess>,
+        request: conflicts::Request,
+    ) -> Result<conflicts::Response> {
+        self.execute(store, access, move |context| {
+            Box::pin(async move { conflicts::read(context, request).await })
         })
         .await
     }

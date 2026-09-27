@@ -298,6 +298,30 @@ impl CommittedRead {
         self.authorize().await.map_err(query_error)?;
         Ok(file)
     }
+    pub async fn diff(
+        self: &Arc<Self>,
+        reader: &jj_store_jj::query::content::ContentReader,
+        request: jj_store_jj::query::content::diff::Request,
+    ) -> jj_store_jj::query::Result<jj_store_jj::query::content::diff::Response> {
+        self.authorize().await.map_err(query_error)?;
+        let result = reader
+            .diff(self.session.object_store.clone(), self.clone(), request)
+            .await?;
+        self.authorize().await.map_err(query_error)?;
+        Ok(result)
+    }
+    pub async fn conflicts(
+        self: &Arc<Self>,
+        reader: &jj_store_jj::query::content::ContentReader,
+        request: jj_store_jj::query::content::conflicts::Request,
+    ) -> jj_store_jj::query::Result<jj_store_jj::query::content::conflicts::Response> {
+        self.authorize().await.map_err(query_error)?;
+        let result = reader
+            .conflicts(self.session.object_store.clone(), self.clone(), request)
+            .await?;
+        self.authorize().await.map_err(query_error)?;
+        Ok(result)
+    }
     pub async fn operation_diff(
         self: &Arc<Self>,
         reader: &jj_store_jj::query::content::ContentReader,

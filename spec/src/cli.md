@@ -155,3 +155,7 @@ shared capacity. HTTP/browser integration remains separate acceptance.
 Operation-diff fixtures compare complete view changes and native commit-parent
 visibility, including abandonment, hidden predecessors and operation merges.
 Parent-selection responses cannot trigger CLI-style reconciliation.
+
+Structured content fixtures compare copy-aware file deltas and exact text hunks
+with pinned native helpers. Conflict fixtures cover multiple sides, binary
+content, delete/modify, file/tree and mode/copy conflicts without publication.

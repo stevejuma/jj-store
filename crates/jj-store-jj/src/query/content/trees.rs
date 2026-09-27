@@ -1,17 +1,7 @@
+use super::native::{map_backend, path};
 use super::*;
-use crate::{
-    backend::{BackendLimits, NativeBackend},
-    query::access::ReadOnlyAuthority,
-};
 use jj_lib::{
-    backend::MergedTreeValueExt as _,
-    config::StackedConfig,
-    repo_path::{RepoPathBuf, RepoPathComponentBuf},
-    settings::UserSettings,
-    signing::Signer,
-    store::Store,
-    tree::TreeMergeExt as _,
-    tree_merge::MergeOptions,
+    backend::MergedTreeValueExt as _, repo_path::RepoPathComponentBuf, tree::TreeMergeExt as _,
 };
 use serde::Deserialize;
 use std::collections::BTreeSet;
@@ -48,21 +38,7 @@ pub(super) async fn read(context: Context, request: TreeRequest) -> Result<TreeP
     if request.limit == 0 || request.limit > context.limits.max_page || request.path.len() > 4096 {
         return Err(Error::Limit);
     }
-    let path =
-        RepoPathBuf::from_internal_string(request.path.clone()).map_err(|_| Error::Invalid)?;
-    // Native storage can represent these names, but they are not navigable
-    // application paths. Never normalize them into another repository path.
-    if request.path.contains('\0')
-        || request
-            .path
-            .split('/')
-            .any(|name| matches!(name, "." | ".."))
-    {
-        return Err(Error::Invalid);
-    }
-    if path.components().count() > 64 {
-        return Err(Error::Limit);
-    }
+    let path = path(&request.path)?;
     let after = request
         .after
         .as_ref()
@@ -73,23 +49,8 @@ pub(super) async fn read(context: Context, request: TreeRequest) -> Result<TreeP
             RepoPathComponentBuf::new(name.clone()).map_err(|_| Error::Invalid)
         })
         .transpose()?;
-    let authority = Arc::new(ReadOnlyAuthority {
-        access: context.access.clone(),
-        budget: context.budget.clone(),
-    });
-    let backend = NativeBackend::new(context.objects.clone(), authority, BackendLimits::default())
-        .map_err(|_| Error::Unavailable)?;
-    let settings = UserSettings::from_config(StackedConfig::with_defaults())
-        .map_err(|_| Error::Unavailable)?;
-    let store = Store::new(
-        Box::new(backend),
-        Signer::new(None, vec![]),
-        MergeOptions::from_settings(&settings).map_err(|_| Error::Unavailable)?,
-    );
-    let commit = store
-        .get_commit_async(&b::CommitId::from_bytes(request.commit.as_bytes()))
-        .await
-        .map_err(map_backend)?;
+    let store = context.native_store()?;
+    let commit = context.commit(&store, request.commit).await?;
     let merged = commit.tree();
     let mut trees = merged.trees().await.map_err(map_backend)?;
     for name in path.components() {
@@ -163,14 +124,4 @@ pub(super) async fn read(context: Context, request: TreeRequest) -> Result<TreeP
     };
     context.budget.complete_output(&result)?;
     Ok(result)
-}
-fn map_backend(error: b::BackendError) -> Error {
-    match error {
-        b::BackendError::ObjectNotFound { .. } => Error::Incomplete,
-        b::BackendError::ReadObject { source, .. } => source
-            .downcast::<objects::Error>()
-            .map(|e| map_object(*e))
-            .unwrap_or(Error::Unavailable),
-        _ => Error::Unavailable,
-    }
 }

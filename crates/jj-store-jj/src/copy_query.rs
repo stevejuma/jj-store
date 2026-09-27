@@ -127,7 +127,7 @@ pub(crate) async fn related(
         budget.object(&copy).await?;
         for parent in &copy.parents {
             budget.spend(0, 1, 64).await?;
-            if !copies.contains_key(parent) {
+            if !parent.as_bytes().is_empty() && !copies.contains_key(parent) {
                 pending.insert(parent.clone());
             }
         }
@@ -334,7 +334,7 @@ impl<'a> Query<'a> {
             let mut pending = history.parents;
             let mut visited = BTreeSet::new();
             while let Some(source_id) = pending.pop() {
-                if !visited.insert(source_id.clone()) {
+                if source_id.as_bytes().is_empty() || !visited.insert(source_id.clone()) {
                     continue;
                 }
                 let source = self.copy(&source_id).await?;

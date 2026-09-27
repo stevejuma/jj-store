@@ -702,3 +702,50 @@ async fn canceled_tree_terms_do_not_emit_deleted_copy_records() {
         "b was deleted by cancellation"
     );
 }
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn copy_placeholder_parents_are_boundaries_not_stored_history() {
+    let f = Fixture::new();
+    let b = &f.backend;
+    let file = file(b, b"content").await;
+    let base = copy(b, "source", vec![CopyId::placeholder()]).await;
+    let root = commit(
+        b,
+        vec![b.root_commit_id().clone()],
+        tree(b, vec![("source", value(&file, &base))]).await,
+        "source",
+    )
+    .await;
+    let copied = copy(b, "target", vec![CopyId::placeholder(), base.clone()]).await;
+    let head = commit(
+        b,
+        vec![root.clone()],
+        tree(
+            b,
+            vec![
+                ("source", value(&file, &base)),
+                ("target", value(&file, &copied)),
+            ],
+        )
+        .await,
+        "copy",
+    )
+    .await;
+    let related = b.get_related_copies(&copied).await.unwrap();
+    assert_eq!(related.len(), 2);
+    assert_eq!(
+        related[0].history.parents,
+        vec![CopyId::placeholder(), base]
+    );
+    assert!(related.iter().all(|r| !r.id.as_bytes().is_empty()));
+    let records: Vec<_> = b
+        .get_copy_records(None, &root, &head)
+        .unwrap()
+        .try_collect()
+        .await
+        .unwrap();
+    assert_eq!(records.len(), 1);
+    assert_eq!(records[0].source, path("source"));
+    assert_eq!(records[0].target, path("target"));
+    assert!(b.get_related_copies(&CopyId::placeholder()).await.is_err());
+}

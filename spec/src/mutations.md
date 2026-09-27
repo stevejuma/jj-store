@@ -97,3 +97,8 @@ switch between graph and directory queries or acquire publication capability.
 Operation differences use the same committed read capability and expose no
 transaction or publication method. A selected comparison parent is validated
 against the native operation before loading its view.
+
+Conflict descriptors bind ordered native terms and labels to repository, epoch,
+commit, change and path through a domain-separated fingerprint. The read-side
+term position and fingerprint are data for later atomic resolution validation;
+neither a fingerprint nor an editor-support result authorizes a mutation.
