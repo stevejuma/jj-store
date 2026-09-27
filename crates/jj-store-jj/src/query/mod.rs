@@ -1,5 +1,6 @@
 //! Owned, bounded native graph queries. Upstream objects never cross this API.
 mod access;
+pub mod admission;
 pub mod cache;
 pub mod content;
 mod graphs;
@@ -60,6 +61,7 @@ pub trait ReadAccess: Send + Sync {
 }
 #[derive(Clone, Copy)]
 pub struct Limits {
+    pub metadata: admission::Limits,
     pub max_page: usize,
     pub max_index_commits: usize,
     pub max_work: usize,
@@ -71,6 +73,7 @@ pub struct Limits {
 impl Default for Limits {
     fn default() -> Self {
         Self {
+            metadata: admission::Limits::default(),
             max_page: 500,
             max_index_commits: 50_000,
             max_work: 1_000_000,
@@ -183,6 +186,7 @@ pub enum Nodes {
 }
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize)]
 pub struct Stats {
+    pub metadata_nodes: u64,
     pub object_reads: u64,
     pub object_bytes: u64,
     pub work: u64,
@@ -215,6 +219,7 @@ impl GraphExecutor {
         cache_policy: cache::Policy,
     ) -> Result<Self> {
         cache_policy.validate()?;
+        limits.metadata.validate()?;
         if !root.is_absolute()
             || !(1..=64).contains(&concurrency)
             || limits.max_page == 0

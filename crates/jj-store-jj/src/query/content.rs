@@ -29,6 +29,7 @@ pub use trees::{TreeEntry, TreePage, TreeRequest};
 const CHUNK: usize = 64 * 1024;
 #[derive(Clone, Copy)]
 pub struct Limits {
+    pub metadata: super::admission::Limits,
     pub max_blob_bytes: u64,
     pub max_read_bytes: u64,
     pub max_output_bytes: usize,
@@ -43,6 +44,7 @@ pub struct Limits {
 impl Default for Limits {
     fn default() -> Self {
         Self {
+            metadata: super::admission::Limits::default(),
             max_blob_bytes: 256 * 1024 * 1024,
             max_read_bytes: 512 * 1024 * 1024,
             max_output_bytes: 16 * 1024 * 1024,
@@ -143,6 +145,7 @@ struct Context {
 }
 impl ContentReader {
     pub fn new(limits: Limits, concurrency: usize) -> Result<Self> {
+        limits.metadata.validate()?;
         if !(1..=64).contains(&concurrency)
             || limits.max_read_bytes == 0
             || limits.max_blob_bytes
@@ -179,6 +182,7 @@ impl ContentReader {
             .map_err(|_| Error::Busy)?;
         let limits = self.limits;
         let budget = Arc::new(Budget::new(super::Limits {
+            metadata: limits.metadata,
             max_object_bytes: limits.max_read_bytes,
             max_output_bytes: limits.max_output_bytes,
             max_work: limits.max_work,

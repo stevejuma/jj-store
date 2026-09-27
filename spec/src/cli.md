@@ -171,3 +171,7 @@ same ephemeral port or silently switch its endpoint.
 Read-worker acceptance verifies prompt cancellation of pending graph/content
 I/O, retention of worker permits during synchronous work, and continued use of
 successfully prepared binary streams.
+
+Native application-read acceptance includes oversized persisted merge terms,
+reference conflicts and dense trees. Rejection at this read boundary must not
+narrow ordinary CLI persistence or alter native hashes.

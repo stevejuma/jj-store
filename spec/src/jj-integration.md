@@ -267,3 +267,12 @@ through pollster; that executor cannot replenish Tokio's task-local budget.
 Project work/byte limits, real deadlines and cancellation remain enforced by the
 owned boundaries. Real pending I/O remains pending. This rule prevents a
 cooperative-yield spin during metadata-filtered native revsets.
+
+Application query stores preflight V1 metadata with an allocation-free
+collection visitor before native decoding. Default admission permits 4,000,000
+JSON values and map keys cumulatively, 65 terms per persisted merge, 256
+parent/predecessor edges per value, and 50,000 entries per tree. JSON nesting is
+bounded separately. Native graph/content limits carry this policy and report the
+cumulative scanned node count. The native persistence codec remains lossless for
+shapes outside these query budgets. Derived native merge expansion and aggregate
+memory still require separate qualification before shared HTTP exposure.

@@ -25,8 +25,8 @@ adds evidence here in its enclosing Jujutsu change.
 | M3.1        | Done        | M2        | JST-SEC-001,JST-SEC-002,JST-SEC-003,JST-SEC-004                         | Revocable tokens and transport authorization                        | Retain native slice acceptance                   | E-M3-001,E-M3-004,E-M3-005,E-M3-006,E-M3-007,E-M3-008,E-M3-009,E-M3-011,E-M3-012,E-M3-014                                     |
 | M3.2        | Done        | M3.1      | JST-JJ-001,JST-JJ-004,JST-JJ-005                                        | Create edit describe log restart op-log evolog; multi-workspace     | Retain native slice acceptance                   | E-M3-002,E-M3-003,E-M3-004,E-M3-005,E-M3-006,E-M3-008,E-M3-009,E-M3-010,E-M3-011,E-M3-013,E-M3-014                            |
 | M3.3        | Done        | M3.2      | JST-CLI-001,JST-CLI-002,JST-CLI-003,JST-CLI-004                         | Custom command presentation and capability parity                   | Retain native slice acceptance                   | E-M3-006,E-M3-009,E-M3-010,E-M3-011,E-M3-012,E-M3-013,E-M3-014                                                                |
-| M4          | In progress | M3        | JST-API-001,JST-API-005                                                 | Structured reads and basic served UI match native semantics         | Qualify resources then expose HTTP               | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009                                              |
-| M4.1        | In progress | M3        | JST-API-001,JST-API-002,JST-JJ-003                                      | Pinned three-graph reads with zero GET publications                 | Qualify resources then expose HTTP               | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009                                              |
+| M4          | In progress | M3        | JST-API-001,JST-API-005                                                 | Structured reads and basic served UI match native semantics         | Qualify resources then expose HTTP               | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010                                     |
+| M4.1        | In progress | M3        | JST-API-001,JST-API-002,JST-JJ-003                                      | Pinned three-graph reads with zero GET publications                 | Qualify resources then expose HTTP               | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010                                     |
 | M4.2        | Planned     | M4.1      | JST-API-003,JST-API-004,JST-API-005                                     | SSE, safe UI, generated contracts and cold interaction tests        | Build Svelte UI                                  | -                                                                                                                             |
 | M5          | Planned     | M4        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Authenticated typed commands and shared RPC policy                  | Implement commands                               | -                                                                                                                             |
 | M5.1        | Planned     | M4        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Basic changes/refs/reconcile; preview receipt and semantic policy   | Implement command transaction facade             | -                                                                                                                             |
@@ -3679,6 +3679,141 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Rust 1.97.1; jj-cli/jj-lib 0.45.1 at 7c41cdeb16b6b321c64e789a966b6adf723816a5; Tokio 1.53.1; release measurement host and binary/lock checksums recorded in linked evidence.",
     "formats": "New owned Canceled query error; no native identity, envelope, publication, RPC or persisted authority format change. Qualification JSON is evidence only."
+  },
+  {
+    "id": "E-M4-010",
+    "tasks": ["M4", "M4.1"],
+    "date": "2026-09-27",
+    "kind": "native-query-metadata-shape-admission",
+    "files": [
+      "crates/jj-store-cli/tests/native_lifecycle/content.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/content_admission.rs",
+      "crates/jj-store-jj/src/query/admission.rs",
+      "crates/jj-store-jj/src/query/access.rs",
+      "crates/jj-store-jj/src/query/content.rs",
+      "crates/jj-store-jj/src/query/mod.rs",
+      "crates/jj-store-jj/examples/query_qualification.rs",
+      "crates/jj-store-jj/examples/content_qualification.rs",
+      "scripts/qualify-query-resources.py",
+      "docs/evidence/m4-query-metadata-budget.json",
+      "docs/evidence/m4-content-shape-budget.json",
+      "docs/evidence/m4-query-admission-audit.md",
+      "spec/src/api.md",
+      "spec/src/cli.md",
+      "spec/src/compatibility.md",
+      "spec/src/jj-integration.md",
+      "spec/src/spec-governance.md"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/native_lifecycle/content_admission.rs#query_shape_rejects_commit_merge_amplification_without_narrowing_persistence",
+      "crates/jj-store-cli/tests/native_lifecycle/content_admission.rs#query_shape_rejects_reference_merge_amplification",
+      "crates/jj-store-cli/tests/native_lifecycle/content_admission.rs#query_shape_rejects_dense_trees_before_native_expansion",
+      "crates/jj-store-cli/tests/native_lifecycle/content_admission.rs#query_shape_node_admission_is_request_local_and_preserves_file_streaming",
+      "crates/jj-store-jj/src/query/admission.rs#query_shape_bounds_every_persisted_reference_and_edge_collection",
+      "crates/jj-store-jj/src/query/admission.rs#query_shape_node_limit_is_cumulative_and_counts_keys_nulls_and_empty_values",
+      "crates/jj-store-jj/src/query/admission.rs#query_shape_rejects_corruption_depth_and_cancellation_without_collections",
+      "crates/jj-store-jj/src/query/admission.rs#query_shape_recognizes_escaped_fields_and_rejects_trailing_input",
+      "crates/jj-store-jj/examples/content_qualification.rs#main",
+      "crates/jj-store-jj/examples/query_qualification.rs#main"
+    ],
+    "runs": [
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle query_shape_",
+        "result": "fail",
+        "failures": 3,
+        "note": "Before: all 3 regressions fail because oversized merges, reference conflicts and dense trees are accepted."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle query_shape_",
+        "result": "pass",
+        "failures": 0,
+        "note": "After admission: original 3 regressions pass; published native objects still round-trip losslessly."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-jj query_shape_",
+        "result": "fail",
+        "failures": 1,
+        "note": "One unit-fixture compile error: ObjectKey::from_parts needs the kind byte, not ObjectKind. Fixed explicit conversion."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-jj query_shape_",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 4 scanner cases pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo build --release --locked -p jj-store-jj --example query_qualification",
+        "result": "pass",
+        "failures": 0,
+        "note": "Release graph fixture builds with explicit metadata limits/counters."
+      },
+      {
+        "command": "python3 scripts/qualify-query-resources.py --binary target/release/examples/query_qualification --commits 50000 --output .scratch/m4-shape-graph-budget.json",
+        "result": "pass",
+        "failures": 0,
+        "note": "8 queries plus 4 negative admission cases; 5.88 seconds elapsed, 5.16 CPU seconds, 278675456 peak RSS bytes; at most 2221020 metadata nodes."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo build --release --locked -p jj-store-jj --example content_qualification",
+        "result": "pass",
+        "failures": 0,
+        "note": "Release content fixture builds."
+      },
+      {
+        "command": "python3 scripts/qualify-query-resources.py --scenario content --binary target/release/examples/content_qualification --output .scratch/m4-shape-content-budget.json",
+        "result": "pass",
+        "failures": 0,
+        "note": "8 content boundary cases pass; 7.70 seconds elapsed, 7.36 CPU seconds, 111181824 peak RSS bytes. Dense/merge pages, 256 MiB complete verification and bounded streams/ranges, negative shape/blob budgets."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle",
+        "result": "pass",
+        "failures": 0,
+        "note": "60 native lifecycle cases passed before adding the request-local node/file-streaming case."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle query_shape_",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 4 final shape acceptance cases pass; original 3 regressions plus request-local node accounting/file streaming."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "57 requirements, package boundaries, progress ledger, rustfmt and all-target Clippy pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test",
+        "result": "pass",
+        "failures": 0,
+        "note": "198 Rust tests pass / 6 external cases intentionally ignored; includes all 61 native lifecycle cases. 15 governance and 3 storage-harness tests pass. No unresolved failures."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Locked workspace build passes."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 9 lanes pass, including 198 Rust tests, rustfmt, mdBook and mapped spec-first checks."
+      },
+      {
+        "command": "pnpm format:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rustfmt and Prettier pass."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Derived merge and recursive tree amplification, native file-content predicates and aggregate worker budgets; controlled long rebuild tasks/status, HTTP JSON/media/SSE, generated contracts and browser integration."
+    ],
+    "versions": "Rust 1.97.1; jj-cli/jj-lib 0.45.1 at 7c41cdeb16b6b321c64e789a966b6adf723816a5; release host and binary/lock hashes recorded in linked evidence.",
+    "formats": "Additive owned query metadata-node statistics and trusted configuration limits. No native identity, envelope, authority or RPC format change."
   }
 ]
 ```

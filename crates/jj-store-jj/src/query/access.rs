@@ -29,6 +29,7 @@ pub(super) struct Budget {
     pub limits: Limits,
     pub deadline: Instant,
     reads: AtomicU64,
+    metadata_nodes: AtomicU64,
     bytes: AtomicU64,
     work: AtomicU64,
     output: AtomicU64,
@@ -43,6 +44,7 @@ impl Budget {
                 .checked_add(limits.timeout)
                 .ok_or(Error::Limit)?,
             reads: AtomicU64::new(0),
+            metadata_nodes: AtomicU64::new(0),
             bytes: AtomicU64::new(0),
             work: AtomicU64::new(0),
             output: AtomicU64::new(0),
@@ -76,6 +78,9 @@ impl Budget {
             })
             .map_err(|_| self.fail(Error::Limit))?;
         Ok(())
+    }
+    pub fn metadata_node(&self) -> Result<()> {
+        self.charge(&self.metadata_nodes, 1, self.limits.metadata.max_nodes)
     }
     pub fn work(&self, amount: usize) -> Result<()> {
         self.charge(&self.work, amount as u64, self.limits.max_work as u64)
@@ -126,6 +131,7 @@ impl Budget {
     }
     pub fn stats(&self) -> Stats {
         Stats {
+            metadata_nodes: self.metadata_nodes.load(Ordering::Relaxed),
             object_reads: self.reads.load(Ordering::Relaxed),
             object_bytes: self.bytes.load(Ordering::Relaxed),
             work: self.work.load(Ordering::Relaxed),
@@ -221,7 +227,7 @@ impl ReadStore {
             budget,
         }
     }
-    async fn validate(&self, key: &Key) -> storage::Result<()> {
+    async fn validate(&self, key: &Key) -> storage::Result<m::ObjectKey> {
         self.budget
             .authorize(self.access.as_ref())
             .await
@@ -238,11 +244,10 @@ impl ReadStore {
             id.storage_path(self.access.repository()) == key.as_str()
                 && self.access.inventory().contains(id)
         });
-        if object.is_none() {
+        object.ok_or_else(|| {
             self.budget.fail(Error::NotCommitted);
-            return Err(storage::Error::Invalid("query inventory"));
-        }
-        Ok(())
+            storage::Error::Invalid("query inventory")
+        })
     }
 }
 #[async_trait::async_trait]
@@ -258,7 +263,7 @@ impl ObjectStore for ReadStore {
         Ok(metadata)
     }
     async fn get(&self, key: &Key, range: Option<ByteRange>) -> storage::Result<Download> {
-        self.validate(key).await?;
+        let object = self.validate(key).await?;
         if range.is_some() {
             return Err(storage::Error::Range);
         }
@@ -286,9 +291,29 @@ impl ObjectStore for ReadStore {
             cancelled: Box::pin(self.budget.cancellation.clone().cancelled_owned()),
             budget: self.budget.clone(),
         };
-        Ok(Download {
+        let download = Download {
             metadata: download.metadata,
             reader: Box::pin(reader),
+        };
+        if matches!(object, m::ObjectKey::File(_)) {
+            return Ok(download);
+        }
+        // Buffer bounded metadata once for a non-allocating collection scan.
+        // NativeObjects still verifies the full canonical native identity.
+        let metadata = download.metadata.clone();
+        let bytes = download
+            .read_bounded(crate::codec::MAX_METADATA_BYTES + m::envelope::HEADER_LEN as u64)
+            .await?;
+        super::admission::check(object, &bytes, &self.budget).map_err(|error| {
+            if error == Error::Limit {
+                storage::Error::Limit
+            } else {
+                storage::Error::Response("native metadata admission")
+            }
+        })?;
+        Ok(Download {
+            metadata,
+            reader: Box::pin(std::io::Cursor::new(bytes)),
         })
     }
     async fn put(&self, _: &Key, _: Condition, _: &StagedUpload) -> storage::Result<WriteOutcome> {

@@ -241,7 +241,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!(
         "{}",
         serde_json::to_string(
-            &json!({"profile":jj_store_jj::factories::PROFILE,"revision":"7c41cdeb16b6b321c64e789a966b6adf723816a5","build":"release","limits":{"max_index_commits":q::Limits::default().max_index_commits,"max_work":q::Limits::default().max_work,"max_object_bytes":q::Limits::default().max_object_bytes,"max_output_bytes":q::Limits::default().max_output_bytes,"timeout_millis":q::Limits::default().timeout.as_millis()},"scenarios":scenarios})
+            &json!({"profile":jj_store_jj::factories::PROFILE,"revision":"7c41cdeb16b6b321c64e789a966b6adf723816a5","build":"release","limits":{"max_metadata_nodes":q::Limits::default().metadata.max_nodes,"max_merge_terms":q::Limits::default().metadata.max_merge_terms,"max_tree_entries":q::Limits::default().metadata.max_tree_entries,"max_parent_edges":q::Limits::default().metadata.max_parent_edges,"max_index_commits":q::Limits::default().max_index_commits,"max_work":q::Limits::default().max_work,"max_object_bytes":q::Limits::default().max_object_bytes,"max_output_bytes":q::Limits::default().max_output_bytes,"timeout_millis":q::Limits::default().timeout.as_millis()},"scenarios":scenarios})
         )?
     );
     Ok(())

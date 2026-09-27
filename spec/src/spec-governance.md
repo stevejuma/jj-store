@@ -79,3 +79,7 @@ Query resource measurements run through `scripts/qualify-query-resources.py`
 against an explicitly built release fixture binary. Reports retain the actual
 process result and scope, including resource/admission failures. Ordinary green
 unit checks do not imply a successful release resource run.
+
+The resource harness supports separate graph and content fixture processes.
+Content evidence includes positive boundary inputs and explicit oversized-input
+rejections, preserving checksums, exact commands, CPU, elapsed time and RSS.

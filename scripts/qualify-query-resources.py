@@ -16,12 +16,13 @@ def main():
     parser.add_argument("--binary", type=pathlib.Path, required=True)
     parser.add_argument("--output", type=pathlib.Path, required=True)
     parser.add_argument("--commits", type=int, default=50000)
+    parser.add_argument("--scenario", choices=["graphs", "content"], default="graphs")
     args = parser.parse_args()
     if not 100 <= args.commits <= 50000:
         parser.error("commit count must be 100..=50000")
     before = resource.getrusage(resource.RUSAGE_CHILDREN)
     started = time.monotonic()
-    command = [str(args.binary.resolve()), str(args.commits)]
+    command = [str(args.binary.resolve())] + ([str(args.commits)] if args.scenario == "graphs" else [])
     try:
         child = subprocess.run(command, text=True, capture_output=True, timeout=180)
         status = child.returncode
@@ -50,6 +51,13 @@ def main():
         and peak <= 1024 * 1024 * 1024
         and cpu <= 60
     )
+    if args.scenario == "content":
+        expected_content = {"dense_tree_at_limit", "dense_tree_over_limit", "merge_at_limit", "merge_over_limit", "cumulative_nodes_over_limit", "stream_blob_at_limit", "verified_tail_range", "blob_over_limit"}
+        runs = (payload or {}).get("runs", [])
+        passed = (status == 0 and len(runs) == 8
+                  and {run["name"] for run in runs} == expected_content
+                  and all(run["result"] == "pass" for run in runs)
+                  and peak <= 1024 * 1024 * 1024 and cpu <= 60)
     with args.binary.open("rb") as binary:
         binary_hash = hashlib.file_digest(binary, "sha256").hexdigest()
     report = {
@@ -58,7 +66,8 @@ def main():
         "command": command,
         "binary_sha256": binary_hash,
         "cargo_lock_sha256": hashlib.sha256(pathlib.Path("Cargo.lock").read_bytes()).hexdigest(),
-        "scope": "Encoded immutable fixture storage and production native query executor; no service authorization, network, RustFS or browser cost. Whole-process memory includes fixture generation and encoded source objects.",
+        "scenario": args.scenario,
+        "scope": "Encoded immutable fixture storage (large content uses disk spools) and production native query executor; no service authorization, network, RustFS or browser cost. Whole-process memory includes fixture generation and encoded source objects.",
         "ceilings": {"peak_process_bytes": 1024 * 1024 * 1024, "cpu_seconds": 60, "wall_seconds": 180},
         "process": {"exit_code": status, "wall_seconds": time.monotonic() - started, "cpu_seconds": cpu, "peak_rss_bytes": peak},
         "native": payload,

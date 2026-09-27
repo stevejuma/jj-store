@@ -158,3 +158,11 @@ Pending authorization and storage waits terminate promptly; synchronous native
 steps observe cancellation at their next bounded checkpoint. An already returned
 verified file stream remains usable until it is dropped, expires or loses
 access.
+
+Query metadata admission scans the verified envelope payload before allocating
+native DTOs. It bounds cumulative JSON value/key count, persisted merge arity,
+parent/predecessor edges and entries in a tree object. These are request limits:
+exceeding them returns a resource-limit error without changing native codecs,
+identities or stored data. The scan retains no metadata collections and checks
+cancellation/deadlines as it visits input. Native shape and identity validation
+still follow admission; admission alone never makes an object trustworthy.

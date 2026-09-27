@@ -147,3 +147,10 @@ The query runtime adapter is requalified by the
 cases pass, including native transport, cold publication recovery and TLS
 server/CLI restart and token revocation. This is storage/lifecycle evidence,
 separate from the native query resource measurement.
+
+The [metadata admission audit](../../docs/evidence/m4-query-admission-audit.md)
+records release graph and content runs after predecode shape admission,
+including 50,000-entry trees, 65-term merges and 256 MiB verified file
+streams/ranges. Immutable fixture measurements remain separate from
+RustFS/network and browser qualification. Native synthesized merges and
+aggregate worker budgets remain explicit follow-on qualification.

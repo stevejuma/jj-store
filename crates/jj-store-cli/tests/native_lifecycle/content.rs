@@ -864,3 +864,6 @@ mod operation_diff_acceptance;
 
 #[path = "diff.rs"]
 mod diff_acceptance;
+
+#[path = "content_admission.rs"]
+mod admission_acceptance;
