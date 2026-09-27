@@ -11,10 +11,11 @@
   "type": "module",
   "scripts": {
     "build": "pnpm build-storybook && pnpm web:build && cargo build --workspace --locked",
-    "check": "pnpm spec:validate && pnpm check:boundaries && pnpm check:progress && pnpm format:rust:check && pnpm contracts:check && pnpm web:check && pnpm catalog:check && cargo clippy --workspace --all-targets --locked -- -D warnings",
+    "check": "pnpm spec:validate && pnpm check:boundaries && pnpm check:architecture && pnpm check:progress && pnpm format:rust:check && pnpm contracts:check && pnpm web:check && pnpm catalog:check && cargo clippy --workspace --all-targets --locked -- -D warnings",
+    "check:architecture": "node scripts/web-architecture.mjs",
     "check:boundaries": "node scripts/check-boundaries.mjs",
     "check:progress": "node scripts/check-progress.mjs",
-    "test:governance": "node --test scripts/governance.test.mjs",
+    "test:governance": "node --test scripts/governance.test.mjs scripts/web-architecture.test.mjs",
     "test": "pnpm test:governance && pnpm test:storage-harness && pnpm test:contracts && pnpm web:test && pnpm catalog:test && pnpm test:storybook && pnpm catalog:test:browser && cargo test --workspace --locked",
     "spec:build": "spec-validator build",
     "spec:check": "spec-validator check",

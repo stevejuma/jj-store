@@ -163,6 +163,12 @@ ephemeral loopback port. Browser tests reject API, external HTTP and WebSocket
 requests, verify responsive navigation and fresh-instance state, and retain
 unapproved screenshots only as local review artifacts.
 
+Normal checks also run the Community-derived browser architecture audit. It
+enforces counted-line limits and exact no-growth budgets for existing hotspots,
+rejects production imports from catalog fixtures, and keeps reusable
+presentation modules independent of API/controller ownership. Its focused
+negative tests run in the governance lane.
+
 M4.8 review acceptance covers populated and filtered branch dividers, the
 absence of duplicate history-page titles, shared column header styling, and
 directory navigation history. It also covers the Files page navigation

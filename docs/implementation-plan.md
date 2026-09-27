@@ -29,6 +29,12 @@ views. Production UI integration, mutations/search wiring and deployed
 acceptance remain deferred under M4.3. The existing browser and backend work
 remain preserved.
 
+The user subsequently reopened production browsing integration. M4.9–M4.14
+promote the reviewed Storybook application into the served browser, add missing
+bounded read contracts, typed hash restoration, explicit SSE refresh,
+virtualized collections and persistent layout. Mutation, conflict-editing and
+search controls remain deferred within M4.3.
+
 ## Repository foundation and progress tracking
 
 Create a tracked agent guide, unchanged attachment archive, this execution plan,

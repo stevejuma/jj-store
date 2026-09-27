@@ -64,14 +64,23 @@ browser/lifecycle changes. Visual baselines require explicit approval.
 
 ## Current execution scope
 
-The user reopened a Storybook-only presentation slice on 27 September 2026.
-Copy/adapt Community compositions and use public released Design Core exports;
-keep fixtures and local interaction state separate from production wiring.
-M4.4–M4.8 track the catalog, including the in-memory full application, native
-snapshot file browser, copied profile footer and review refinements. M4.3 live
-browser features/deployment remain deferred. Existing browser checks stay
-enabled. Stories remain visual-pending; baseline approval is separate from
-interaction/accessibility acceptance.
+The user reopened production browser integration on 27 September 2026.
+M4.9–M4.14 promote the reviewed catalog application into the served browser, add
+the bounded native read contracts it needs, connect an authenticated
+asynchronous controller, restore typed hash routes, consume explicit SSE
+freshness, and qualify virtualized persistent layouts against an isolated real
+repository. Browsing is first: files, bookmarks, JJ log, Op Log, evolution and
+existing read surfaces. Mutation controls, conflict editing and search UI remain
+deferred.
+
+Production components live under `web/src/lib`; catalog fixtures and harnesses
+may import them, while production MUST remain independent of catalog state.
+Inspect Community first and Design Core second before introducing presentation
+components. Fix a shared-library deficiency in its owning repository and consume
+only a released registry version in jj-store. Credentials stay memory-only; SSE
+announces freshness and displayed snapshots change only on explicit refresh.
+Stories remain visual-pending; baseline approval is separate from interaction
+and accessibility acceptance.
 
 ## Local execution
 

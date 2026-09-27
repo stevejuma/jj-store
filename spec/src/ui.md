@@ -1,9 +1,11 @@
 # Storybook presentation catalog
 
-This slice reopens presentation work only. Production integration and deployment
-acceptance remain deferred in M4.3. Catalog components receive presentation data
-and callbacks; deterministic fixtures own interaction state. Existing browser
-entrypoints and API acceptance remain separate.
+The reviewed catalog application is the presentation authority for the served
+browser. Production integration is reopened for the browsing portion of M4.3;
+typed mutation, conflict-editing and search controls remain deferred. Reusable
+components receive presentation data and callbacks, while HTTP and in-memory
+controllers supply the same asynchronous contract. Deterministic fixtures remain
+catalog-only.
 
 ## Requirements
 
@@ -13,6 +15,8 @@ entrypoints and API acceptance remain separate.
 | JST-UI-002 | The shell MUST directly adapt Community shell/navigation composition and preserve desktop/mobile, sidebar, header, focus and navigation mechanics using public Design Core exports.                                                                               |
 | JST-UI-003 | Branches, JJ Log and Op Log MUST reuse Community graph/row/file/diff compositions, preserve native identities and conflicting targets, and support fixture-only drill-down without transport or mutation capabilities.                                            |
 | JST-UI-004 | The complete catalog application MUST expose a typed state/actions controller with independent in-memory navigation, repository snapshots, file contents and profile actions, using copied Community file-browser and footer compositions without backend access. |
+| JST-UI-005 | The served browser MUST use the reviewed shell and repository components through an authenticated asynchronous controller with cursor paging, explicit snapshot refresh and typed hash restoration.                                                               |
+| JST-UI-006 | Large repository collections MUST use bounded virtual rows, all resizable shell/canvas regions MUST persist versioned layout state, and catalog stories MUST exercise the production components.                                                                  |
 
 The catalog uses Storybook 10.5.7, Svelte CSF 5.1.2, Vitest browser 4.1.11 and
 Design Core ^0.2.0 with the existing Svelte 5/Vite 8 toolchain. Direct

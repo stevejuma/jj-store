@@ -16,6 +16,7 @@ repo is colocated for development; product storage has no Git carrier.
 | JST-ARCH-001 | The repository MUST provide a Rust workspace with independently owned native storage, publication, JJ integration, services, transports, adapters, and presentation boundaries. |
 | JST-ARCH-002 | Model, object storage, and WAL MUST NOT depend on UI, Tantivy, Git transport, SQL, Nostr, or agent runtimes; upstream JJ integration MUST stay behind owned adapters.           |
 | JST-ARCH-003 | First release MUST serve new native repositories locally and on an authenticated shared server using the same storage format, with no required Git, SQL, or relay authority.    |
+| JST-ARCH-004 | Browser and catalog source MUST enforce counted-line budgets, keep production independent of fixtures, and separate presentation from API and controller ownership.             |
 
 Storage harness self-tests are part of normal validation. `pnpm test:rustfs`
 executes only isolated disposable Docker probes and writes a scratch report. An
@@ -54,6 +55,14 @@ between future HTTP and RPC adapters.
 The development toolchain includes rustfmt with a tracked edition-2024 policy.
 Rust formatting is part of the shared formatting commands, normal checks and
 canonical specification checks.
+
+Browser architecture uses Community's counted-line metric: blank and
+comment-only lines are excluded; complete Svelte markup and styles count. New
+production modules and scripts are limited to 300 lines, stories to 400 and
+tests to 500. Existing larger files have exact no-growth baselines and must be
+extracted when integration changes their responsibilities. Production web
+modules cannot import catalog fixtures, and presentation modules cannot import
+the API or controller layers.
 
 The native backend adapts JJ's futures file streams to the owned Tokio
 transport. Its query engine derives bounded copy records from native history;
