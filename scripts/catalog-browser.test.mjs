@@ -211,6 +211,15 @@ test("cold_catalog_contract", { timeout: 60000 }, async () => {
     await page.goto(url);
     await page.getByRole("button", { name: "jj-store", exact: true }).click();
     await page.getByRole("button", { name: "README.md", exact: true }).click();
+    const markdownPreview = page.getByRole("region", {
+      name: "Markdown preview for README.md",
+    });
+    await expect(markdownPreview).toContainText("jj-store");
+    await expect(markdownPreview).toContainText(
+      "<script>alert('source')</script>",
+    );
+    await expect(markdownPreview.locator("script")).toHaveCount(0);
+    await page.getByRole("button", { name: "Source", exact: true }).click();
     const code = page.locator('[data-ui-component="code-block"]').first();
     await expect(code).toContainText("# jj-store");
     await expect(code).toHaveCSS("font-family", /Source Code Pro/);

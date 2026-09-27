@@ -111,7 +111,7 @@
     top: 0;
     z-index: 2;
     padding: 0.5rem 0.9rem;
-    background: var(--secondary);
+    background: var(--jj-store-row-background);
     border-bottom: 1px solid var(--border);
   }
   :global(.community-bookmark-card[data-ui-part="item"]) {
@@ -127,16 +127,6 @@
   }
   :global(.community-bookmark-card[data-current="true"]) {
     background: var(--accent);
-  }
-  /* Command items have individual wrappers; ignore empty filtered wrappers. */
-  :global(
-    .community-bookmark-cards
-      [data-item-wrapper]:has(.community-bookmark-card):not(
-        :has(~ [data-item-wrapper] .community-bookmark-card)
-      )
-      > .community-bookmark-card
-  ) {
-    border-bottom: 0;
   }
   :global(.community-bookmark-card[data-current="true"])::before {
     content: "";

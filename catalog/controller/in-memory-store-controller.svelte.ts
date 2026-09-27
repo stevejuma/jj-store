@@ -94,7 +94,11 @@ export function createInMemoryStoreController(
       push({ ...route, revisionId: id, path: null, directory: "" });
     },
     selectFile(path) {
-      if (path && !snapshot?.files.some((file) => file.path === path))
+      if (
+        path &&
+        route.page !== "oplog" &&
+        !snapshot?.files.some((file) => file.path === path)
+      )
         throw new Error("File absent from selected snapshot");
       push({
         ...route,

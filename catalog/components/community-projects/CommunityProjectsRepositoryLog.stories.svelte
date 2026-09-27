@@ -138,21 +138,107 @@
         name: "describe: native object history",
       }),
     );
+    const files = await canvas.findByRole("region", {
+      name: "Changed files in operation",
+    });
+    await expect(files).toBeVisible();
     const details = canvas.getByRole("region", { name: "Selected operation" });
+    const diffColumn = details.closest<HTMLElement>('[data-ui-part="column"]')!;
+    const closeButton = within(diffColumn).getByRole("button", {
+      name: "Close Diff column",
+    });
+    await expect(closeButton).toBeVisible();
+    await expect(getComputedStyle(closeButton).backgroundColor).not.toBe(
+      "rgba(0, 0, 0, 0)",
+    );
     await expect(
-      within(details).getByRole("button", {
-        name: `Copy full operation ID: ${IDS.opLeft}`,
-      }),
+      canvas.queryByText("Operation details"),
+    ).not.toBeInTheDocument();
+    const metadata = canvas.getByRole("region", {
+      name: "Selected operation metadata",
+    });
+    await expect(getComputedStyle(metadata).borderBottomWidth).toBe("0px");
+    const copyButton = within(details).getByRole("button", {
+      name: `Copy full operation ID: ${IDS.opLeft}`,
+    });
+    await expect(copyButton).toBeVisible();
+    const parentButton = within(details).getByRole("button", {
+      name: /Parent/,
+    });
+    await expect(getComputedStyle(copyButton).backgroundColor).not.toBe(
+      "rgba(0, 0, 0, 0)",
+    );
+    await expect(getComputedStyle(parentButton).backgroundColor).toBe(
+      getComputedStyle(copyButton).backgroundColor,
+    );
+    await expect(
+      within(diffColumn).getByText("No file selected"),
+    ).toBeVisible();
+    await expect(within(diffColumn).getByRole("status")).toHaveTextContent(
+      "Select a changed file to preview the operation diff.",
+    );
+    await expect(
+      diffColumn.querySelector('[data-ui-part="empty-media"] svg'),
+    ).not.toBeNull();
+    const operationToggle = within(diffColumn).getByRole("button", {
+      name: "describe: native object history",
+    });
+    await expect(operationToggle).toHaveAttribute("aria-expanded", "true");
+    await userEvent.click(operationToggle);
+    await expect(
+      canvas.queryByRole("region", { name: "Selected operation metadata" }),
+    ).not.toBeInTheDocument();
+    await expect(
+      canvas.getByRole("region", { name: "Selected operation" }),
+    ).toBeVisible();
+    await userEvent.click(operationToggle);
+    await expect(
+      canvas.getByRole("region", { name: "Selected operation metadata" }),
     ).toBeVisible();
     await userEvent.click(
-      within(details).getByRole("button", { name: /Parent/ }),
+      within(files).getByRole("radio", { name: "Show files as list" }),
+    );
+    await userEvent.click(
+      within(files).getByRole("button", { name: "assets/logo.bin" }),
+    );
+    await expect(
+      within(diffColumn).getByText("Binary diff unavailable"),
+    ).toBeVisible();
+    await expect(within(diffColumn).getByRole("status")).toHaveTextContent(
+      "Binary or unavailable text diff for assets/logo.bin.",
+    );
+    await userEvent.click(
+      within(files).getByRole("button", { name: "src/lib.rs" }),
+    );
+    await waitFor(() =>
+      expect(
+        canvasElement.querySelector('[data-ui-component="file-diff"]'),
+      ).not.toBeNull(),
+    );
+    await expect(
+      canvasElement.querySelector('[data-ui-component="file-diff"]'),
+    ).toHaveTextContent("publish_native_objects()?");
+    const selectedFileDiff = canvas.getByRole("region", {
+      name: "Selected file diff",
+    });
+    await expect(details.getBoundingClientRect().left).toBeCloseTo(
+      selectedFileDiff.getBoundingClientRect().left,
+      0,
+    );
+    await expect(details.getBoundingClientRect().right).toBeCloseTo(
+      selectedFileDiff.getBoundingClientRect().right,
+      0,
+    );
+    const expandedDetails = canvas.getByRole("region", {
+      name: "Selected operation",
+    });
+    await userEvent.click(
+      within(expandedDetails).getByRole("button", { name: /Parent/ }),
     );
     await expect(
       canvas.getByRole("region", { name: "Selected operation" }),
     ).toHaveTextContent("Root operation");
-    await expect(canvas.getByRole("status")).toHaveTextContent(
-      "2 operation heads",
-    );
+    await expect(canvas.getByText(/2 operation heads/)).toBeVisible();
   }}
   >{#snippet template()}<div class="repository-story">
       <RepositoryFixture page="oplog" />

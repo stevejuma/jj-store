@@ -3,13 +3,15 @@
   import { expect, fn, userEvent, within } from "storybook/test";
   import CommunityProjectsRevisionGraphIds from "./CommunityProjectsRevisionGraphIds.svelte";
   import { IDS } from "../../fixtures/repository.js";
+  const demoCommitId = `c1346134${"a".repeat(56)}`;
+  const demoChangeId = `yrlvqtlmolyz${"b".repeat(20)}`;
   const { Story } = defineMeta({
     title: "JJ Store/Components/Native IDs",
     component: CommunityProjectsRevisionGraphIds,
     tags: ["visual-pending"],
     args: {
-      commitId: IDS.merge,
-      changeId: "ab".repeat(16),
+      commitId: demoCommitId,
+      changeId: demoChangeId,
       placement: "inline",
     },
     parameters: {
@@ -26,6 +28,7 @@
   name="Copy complete identity"
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
     const descriptor = Object.getOwnPropertyDescriptor(navigator, "clipboard");
     const writeText = fn(async (_value: string) => {});
     Object.defineProperty(navigator, "clipboard", {
@@ -34,20 +37,32 @@
     });
     try {
       const commit = canvas.getByRole("button", {
-        name: `Copy full commit ID: ${IDS.merge}`,
+        name: `Copy full commit ID: ${demoCommitId}`,
       });
-      await expect(commit).toHaveTextContent(
-        `${IDS.merge.slice(0, 8)}…${IDS.merge.slice(-4)}`,
-      );
-      await userEvent.click(commit);
-      await expect(writeText).toHaveBeenLastCalledWith(IDS.merge);
-      await expect(commit).toHaveAttribute("data-copied", "true");
-      await userEvent.click(
+      const split = canvas.getByRole("group", {
+        name: "Native revision identifiers",
+      });
+      await expect(split).toBeVisible();
+      await expect(commit).toHaveTextContent("c1346134");
+      await expect(
         canvas.getByRole("button", {
-          name: `Copy full change ID: ${"ab".repeat(16)}`,
+          name: `Copy full change ID: ${demoChangeId}`,
         }),
-      );
-      await expect(writeText).toHaveBeenLastCalledWith("ab".repeat(16));
+      ).toHaveTextContent("yrlvqtlmolyz");
+      await expect(split.querySelectorAll("svg")).toHaveLength(2);
+      await userEvent.hover(commit);
+      await expect(await body.findByText(demoCommitId)).toBeVisible();
+      await userEvent.unhover(commit);
+      await userEvent.click(commit);
+      await expect(writeText).toHaveBeenLastCalledWith(demoCommitId);
+      await expect(commit).toHaveAttribute("data-copied", "true");
+      const change = canvas.getByRole("button", {
+        name: `Copy full change ID: ${demoChangeId}`,
+      });
+      await userEvent.hover(change);
+      await expect(await body.findByText(demoChangeId)).toBeVisible();
+      await userEvent.click(change);
+      await expect(writeText).toHaveBeenLastCalledWith(demoChangeId);
     } finally {
       if (descriptor) Object.defineProperty(navigator, "clipboard", descriptor);
       else Reflect.deleteProperty(navigator, "clipboard");

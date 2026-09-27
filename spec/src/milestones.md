@@ -33,7 +33,7 @@ adds evidence here in its enclosing Jujutsu change.
 | M4.5        | Done        | M4.4       | JST-UI-002                                                              | Community shell mechanics and navigation acceptance                                                                 | Implement repository fixture views                       | E-UI-002                                                                                                                                                             |
 | M4.6        | Done        | M4.5       | JST-UI-003                                                              | Native fixture graph/file/diff drill-down and accessibility                                                         | Visual review; live UI remains deferred                  | E-UI-003                                                                                                                                                             |
 | M4.7        | Done        | M4.6       | JST-UI-004                                                              | Complete in-memory application, snapshot file browser and profile footer                                            | Retain fixture acceptance; live UI remains deferred      | E-UI-004                                                                                                                                                             |
-| M4.8        | Done        | M4.7       | JST-UI-002,JST-UI-003,JST-UI-004                                        | Reviewed shell/card/header styling and directory navigation pass interaction, accessibility and cold catalog checks | Visual review pending; live UI remains deferred          | E-UI-005                                                                                                                                                             |
+| M4.8        | Done        | M4.7       | JST-UI-002,JST-UI-003,JST-UI-004                                        | Reviewed shell/card/header styling and directory navigation pass interaction, accessibility and cold catalog checks | Visual review pending; live UI remains deferred          | E-UI-005,E-UI-006                                                                                                                                                    |
 | M5          | Done        | M4.1       | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Authenticated typed commands and shared RPC policy                                                                  | Retain mutation conformance; proceed to M6               | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-M5-005,E-M5-006,E-M5-007,E-M5-008                                                                                  |
 | M5.1        | Done        | M4.1       | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Basic changes/refs/reconcile; preview receipt and semantic policy                                                   | Retain basic mutation acceptance                         | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004                                                                                                                      |
 | M5.2        | Done        | M5.1       | JST-MUT-003                                                             | Full abandon descendant bookmark workspace/evolution parity                                                         | Retain abandon acceptance                                | E-M5-005                                                                                                                                                             |
@@ -7770,6 +7770,8 @@ and named tests are checked by the progress gate.
       "catalog/components/community-projects/CommunityProjectsRepositoryFiles.svelte",
       "catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte",
       "catalog/components/community-projects/CommunityProjectsRepositoryLog.svelte",
+      "catalog/components/community-projects/CommunityProjectsRepositoryLogDiff.svelte",
+      "catalog/components/community-projects/CommunityProjectsRepositoryLogRail.svelte",
       "catalog/components/community-projects/CommunityProjectsRepositoryLogDiff.stories.svelte",
       "catalog/components/community-projects/CommunityProjectsRepositoryLogDiff.svelte",
       "catalog/components/community-projects/CommunityProjectsRepositoryLogEmpty.svelte",
@@ -7787,6 +7789,7 @@ and named tests are checked by the progress gate.
       "catalog/components/community-projects/repository-browser.test.ts",
       "catalog/components/community-projects/repository-browser.ts",
       "catalog/components/community-projects/repository-files.css",
+      "catalog/projects/repository-log-canvas.ts",
       "catalog/components/community-projects/virtual-project-row-estimates.ts",
       "catalog/components/community-relative-time/CommunityRelativeTime.svelte",
       "catalog/components/community-relative-time/model.ts",
@@ -8219,6 +8222,7 @@ and named tests are checked by the progress gate.
     "files": [
       ".storybook/preview.css",
       ".storybook/vite.config.ts",
+      ".storybook/vite.config.ts",
       "AGENTS.md",
       "catalog/components/community-navigation/CommunityNavigation.svelte",
       "catalog/components/community-projects/CommunityProjectsRepositoryDirectory.svelte",
@@ -8365,6 +8369,442 @@ and named tests are checked by the progress gate.
     "remaining": [],
     "versions": "Community d859f33a484a9238bb11f974f4ead8e9be729ec6; released Design Core 0.2.0 via ^0.2.0; Storybook 10.5.7; Svelte CSF 5.1.2; Vitest 4.1.11.",
     "formats": "Local in-memory presentation route adds directory. No API, storage or credential changes. Enclosing Jujutsu change is the version-control evidence reference."
+  },
+  {
+    "id": "E-UI-006",
+    "tasks": ["M4.8"],
+    "date": "2026-09-27",
+    "kind": "catalog-log-and-files-navigation-polish",
+    "files": [
+      ".storybook/preview.css",
+      ".storybook/vite.config.ts",
+      "catalog/components/community-app-shell/CommunityAppShell.svelte",
+      "catalog/components/community-projects/CommunityProjectsMarkdownPreview.svelte",
+      "catalog/components/community-projects/CommunityProjectsRepositoryDirectory.svelte",
+      "catalog/components/community-projects/CommunityProjectsRepositoryFilePanel.svelte",
+      "catalog/components/community-projects/CommunityProjectsRepositoryFileTree.svelte",
+      "catalog/components/community-projects/CommunityProjectsRepositoryFiles.svelte",
+      "catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte",
+      "catalog/components/community-projects/CommunityProjectsRepositoryLog.svelte",
+      "catalog/components/community-projects/CommunityProjectsRepositoryLogDiff.svelte",
+      "catalog/components/community-projects/CommunityProjectsRepositoryLogRail.svelte",
+      "catalog/components/community-projects/CommunityProjectsRevisionGraph.svelte",
+      "catalog/components/community-projects/CommunityProjectsRevisionGraphIds.stories.svelte",
+      "catalog/components/community-projects/CommunityProjectsRevisionGraphIds.svelte",
+      "catalog/components/community-projects/repository-browser.ts",
+      "catalog/components/community-projects/repository-directory.css",
+      "catalog/components/community-projects/repository-files.css",
+      "catalog/components/community-projects/repository-source-tokenizer.ts",
+      "catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte",
+      "catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.svelte",
+      "catalog/components/store-application/RepositoryReview.stories.svelte",
+      "catalog/components/store-application/StoreApplication.svelte",
+      "catalog/components/store-application/StoreRepositoryApplication.stories.svelte",
+      "catalog/components/store-application/StoreRepositoryApplication.svelte",
+      "catalog/controller/in-memory-store-controller.svelte.ts",
+      "catalog/projects/repository-log-canvas.ts",
+      "scripts/catalog-browser.test.mjs",
+      "spec/src/milestones.md",
+      "spec/src/spec-governance.md",
+      "spec/src/ui.md"
+    ],
+    "tests": ["scripts/catalog-browser.test.mjs#cold_catalog_contract"],
+    "runs": [
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/RepositoryReview.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before fix: malformed StoreApplication style block caused Svelte unexpected_eof before interaction tests loaded."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/RepositoryReview.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Three review stories passed after moving Files breadcrumb/snapshot selector into the page nav, using the body file-tree sidebar, moving the tree toggle next to the avatar row and removing file-browser card borders."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreRepositoryApplication.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Connected application story still asserted the removed Files heading. The rendered app exposed Files through the body breadcrumb and toolbar instead."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/RepositoryReview.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final focused review pass: verifies toolbar branch selector, Files-rooted breadcrumb, toolbar bottom divider matching the sidebar border, padded file-tree body sidebar, full-height divider, moved tree toggle, borderless directory surface and directory drill-down."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreRepositoryApplication.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Four connected app stories pass with the Files breadcrumb replacing the removed heading and the snapshot picker remaining in the page nav."
+      },
+      {
+        "command": "pnpm format:check",
+        "result": "fail",
+        "failures": 3,
+        "note": "Rustfmt passed; Prettier reported three Svelte files after the initial Files layout edit. Ran targeted Prettier over touched source/spec files."
+      },
+      {
+        "command": "pnpm format:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rustfmt and Prettier pass after formatting the touched Svelte files."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/RepositoryReview.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "File action-row assertion found left sidebar padding remained on the inner listing instead of the body-sidebar container."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/RepositoryReview.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Action-row/header alignment assertion found the shared header height variable only existed in the right content subtree, leaving the left action row shorter."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/RepositoryReview.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Three review stories pass with action-row toggles, aligned file-tree/commit row height and bottom edge, compact table header and reduced commit row left padding."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreRepositoryApplication.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Four connected app stories still pass after adding the action row, shared file-listing mode toggle and compact header density."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/RepositoryReview.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Three review stories pass after increasing action-row left padding; Files in the body file-tree action row aligns with the page navigation Files label."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreRepositoryApplication.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Four connected app stories still pass after the final action-row left padding alignment."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test:storybook catalog/components/store-application/RepositoryReview.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte",
+        "result": "fail",
+        "failures": 3,
+        "note": "Extended review reproduced two failed assertions plus one unhandled operation file-selection error: op-log changed files rendered but route validation rejected non-snapshot operation paths, and collapsed-column assertions used the internal revisions id after restoring body padding."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test:storybook catalog/components/store-application/RepositoryReview.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "15 focused stories pass: body padding restored, collapsed columns fill the padded content box, operation-head rows use muted grey, log graphs remove internal top inset, Op Log opens changed files and file diffs, and connected Files navigation still passes."
+      },
+      {
+        "command": "pnpm format:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "Rustfmt passed; Prettier reported spec/src/spec-governance.md after the spec wording edits."
+      },
+      {
+        "command": "pnpm format:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rustfmt and Prettier pass after formatting spec/src/spec-governance.md."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:check",
+        "result": "fail",
+        "failures": 6,
+        "note": "Executable spec lanes passed through browser, contracts, rustfmt and boundaries, then progress bookkeeping rejected five Storybook story-name references in the tests field plus the partial result token."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Focused progress-blocker rerun after HTMLElement typing fixes: 0 Svelte diagnostics and catalog boundaries ok for 73 modules."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test:storybook catalog/components/store-application/RepositoryReview.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "15 focused stories still pass after sharing --jj-store-row-background across Bookmarks, Column Canvas headers and the Op Log info row for neutral theme-grey surfaces."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "Run was intentionally interrupted during the long spec lane after a new review request required Column Canvas full-height behavior; no validation failure had been reported before interruption."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test:storybook catalog/components/store-application/RepositoryReview.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "15 focused stories pass with Column Canvas filling the available body viewport on Branches, JJ Log and Op Log while preserving padded canvas content and collapsed rail height."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test:storybook catalog/components/store-application/RepositoryReview.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "15 focused stories pass after graph rows keep bottom dividers through the final item, final graph rows stay square, and the Op Log info row uses a neutral grey distinct from Column Canvas headers."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm format:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "Rustfmt passed; Prettier reported CommunityProjectsRevisionGraph.svelte after removing the final-row divider exception. Ran targeted Prettier over touched source and spec files."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm format:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rustfmt and Prettier pass after formatting the graph component and touched specification files."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 18 specification lanes pass, including cold Storybook/browser contract, 20 catalog unit tests, 37 Storybook interaction/axe cases, catalog type/boundary checks, browser contracts, rustfmt, Rust tests, mdBook and mapped spec-first coverage."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Normal check passed before the follow-up Op Log details relocation: spec validation, boundaries, progress, rustfmt, contracts, web/catalog Svelte checks and workspace Clippy."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test:storybook catalog/components/store-application/RepositoryReview.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "15 focused stories pass after moving selected Op Log operation details into a collapsible card at the top of the diff column, preserving parent navigation and removing the standalone Operation details column."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test:storybook catalog/components/store-application/RepositoryReview.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "First unified-column rerun failed only the Op Log story: the test clicked a stale detached operation details region after collapse/re-expand before asserting parent navigation. Re-queried the live region."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test:storybook catalog/components/store-application/RepositoryReview.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "15 focused stories pass with Op Log operation summary, metadata and selected file diff acting as stacked sections in one Column Canvas column; file diff controls remain in the file header and no standalone Operation details column renders."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm format:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rustfmt and Prettier pass after the unified Op Log column layout updates."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "Cold static Storybook/browser contract passed, then catalog:check failed because the fileHeaderTrailing snippet was declared as a direct ColumnCanvas.Body child and Svelte typed it as an unsupported Body prop."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test:storybook catalog/components/store-application/RepositoryReview.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "15 focused stories still pass after moving the fileHeaderTrailing snippet inside the diff component invocation."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 18 specification lanes pass with the unified Op Log column: cold static Storybook/browser contract, 20 catalog unit tests, 37 Storybook interaction/axe cases, catalog type/boundary checks, browser contracts, rustfmt, Rust tests, mdBook and mapped spec-first coverage."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Normal check passed before the final equal-width stacked-card adjustment: spec validation, boundaries, progress, rustfmt, contracts, web/catalog Svelte checks and workspace Clippy."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test:storybook catalog/components/store-application/RepositoryReview.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte",
+        "result": "fail",
+        "failures": 2,
+        "note": "First equal-width card rerun failed because the operation card and metadata subcomponent shared the Selected operation region name, and the old collapse assertion expected the whole operation component to disappear."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test:storybook catalog/components/store-application/RepositoryReview.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Second equal-width card rerun failed only the old collapse assertion. The operation card correctly stayed visible while the metadata row collapsed."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test:storybook catalog/components/store-application/RepositoryReview.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "15 focused stories pass with Op Log operation and file diff rendered as equal-width stacked cards in one Column Canvas column; collapse hides metadata only, parent navigation remains available, and no standalone Operation details column renders."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm format:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rustfmt and Prettier pass after the equal-width Op Log stacked-card adjustment."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test:storybook catalog/components/store-application/RepositoryReview.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte",
+        "result": "fail",
+        "failures": 2,
+        "note": "First empty-state polish rerun loaded 7 tests before Vite reoptimized the new file-search/file-warning icon imports, causing one dynamic-import suite failure; the card close-button hover assertion also stayed unchanged because the test runner did not expose CSS :hover through userEvent.hover."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test:storybook catalog/components/store-application/RepositoryReview.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte",
+        "result": "fail",
+        "failures": 2,
+        "note": "After prebundling the new Lucide icons and retargeting global data-attribute styles, all 15 stories loaded; both Op Log stories still failed only the computed-style hover comparison, so the hover CSS stayed in product code and the regression assertion changed to visible themed close-action styling."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test:storybook catalog/components/store-application/RepositoryReview.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "15 focused stories pass with shadcn Empty icon states for no selected Op Log file and binary/unavailable diffs, single-border operation metadata, themed copy/parent pills, styled close action and stable full-app drill-down."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm format:check",
+        "result": "fail",
+        "failures": 4,
+        "note": "Rustfmt passed; Prettier reported four touched Svelte files after the Empty and operation metadata styling edits. Ran targeted Prettier over touched source/spec/config files."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm format:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rustfmt and Prettier pass after formatting the touched Storybook and repository-log Svelte files."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "Run was intentionally interrupted after the cold spec lane started because new review comments changed the branch-card divider, operation-card radius and split native-ID copy contract."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test:storybook catalog/components/store-application/RepositoryReview.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte catalog/components/community-projects/CommunityProjectsRevisionGraphIds.stories.svelte catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "19 focused stories pass with final bookmark-card dividers and square lower corners, Column Canvas radius on stacked Op Log cards, split commit/change copy controls for revisions, operation-only ID buttons unchanged, Empty icon states and connected full-app drill-down intact."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm format:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rustfmt and Prettier pass after the branch-card, stacked-card radius and split-ID copy control updates."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 18 specification lanes pass after the latest Storybook shell polish: cold Storybook/browser contract, catalog check, 20 catalog unit tests, 37 Storybook interaction/axe cases, static build, browser contracts, rustfmt, Rust tests, mdBook and mapped spec-first coverage."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test:storybook catalog/components/community-projects/CommunityProjectsRevisionGraphIds.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Two native-ID stories pass after wrapping each split copy target in shadcn Tooltip; hovering each half exposes the full commit or change value before copy."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test:storybook catalog/components/store-application/RepositoryReview.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte catalog/components/community-projects/CommunityProjectsRevisionGraphIds.stories.svelte catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "19 focused stories still pass with the split ID shadcn tooltip contract plus full app, repository log and branch-card refinements."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm format:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rustfmt and Prettier pass after adding shadcn tooltips to split ID copy controls."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test:storybook catalog/components/store-application/RepositoryReview.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte",
+        "result": "fail",
+        "failures": 2,
+        "note": "First selected-file source preview rerun failed because forcing CodeBlock span mode for all files exposed duplicate plain-space keys in Design Core CodeBlock, and the source preview story could not complete while the Svelte error was unhandled."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test:storybook catalog/components/store-application/RepositoryReview.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Second selected-file source preview rerun passed rendering but kept a stale exact three-line stats assertion for the merged Rust fixture, which correctly has four non-empty lines."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test:storybook catalog/components/store-application/RepositoryReview.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Seven focused stories pass with selected-file metadata, deterministic file statistics, filename source headers, theme-background source body, Rust source tokens via the public CodeBlock custom tokenizer, and existing Files navigation preserved."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test:storybook catalog/components/store-application/RepositoryReview.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Landing-page rerun after moving the snapshot selector into the directory card failed one review assertion: the new summary row height no longer matched the file-tree action row exactly; the removed toolbar-controls CSS also emitted an unused-selector warning."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test:storybook catalog/components/store-application/RepositoryReview.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Second landing-page rerun failed only the README tab styling assertion because Design Core tab triggers still computed centered content after adding the document icon and table-header background split."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test:storybook catalog/components/store-application/RepositoryReview.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Seven focused stories pass with the branch picker inside the directory commit/action row, bordered/radiused file table, distinct table-header grey, GitHub-style README preview tabs, safe markdown preview and markdown source toggle."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test:storybook catalog/components/store-application/RepositoryReview.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte catalog/components/community-projects/CommunityProjectsRevisionGraphIds.stories.svelte catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Nineteen focused stories pass after the repository landing updates, including review refinements, repository log interactions, connected application files, split native-ID controls and branch cards."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm format:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rustfmt and Prettier pass after the repository landing table, tabs, markdown preview and ledger/spec updates."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "Cold catalog browser lane failed because its README flow still expected clicking README.md to render a CodeBlock immediately; markdown files now open safe preview mode first."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm catalog:test:browser",
+        "result": "pass",
+        "failures": 0,
+        "note": "Cold catalog browser contract passes after checking README markdown preview, verifying script text is inert, switching to Source mode and then asserting the CodeBlock and font contract."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 18 specification lanes pass after the repository landing markdown/table updates: cold catalog browser, catalog check, 20 catalog unit tests, 37 Storybook interaction/axe stories, static catalog build, Rust tests, mdBook and mapped spec-first coverage."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Normal check passes after repository landing updates: spec validation, boundaries, progress bookkeeping, rustfmt, contracts, web/catalog Svelte checks and workspace Clippy."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test",
+        "result": "pass",
+        "failures": 0,
+        "note": "Aggregate test passes after repository landing updates: governance, RustFS harness self-test, contract tests, 8 web tests, 20 catalog unit tests, 37 Storybook interaction/axe stories, cold catalog browser and the locked Rust workspace tests. Six external-service/credential cases remain intentionally ignored."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Static Storybook, existing web bundle/manifest and locked Rust workspace build pass after repository landing markdown/table updates."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "versions": "Community d859f33a484a9238bb11f974f4ead8e9be729ec6; released Design Core 0.2.0 via ^0.2.0; Storybook 10.5.7; Svelte CSF 5.1.2; Vitest 4.1.11.",
+    "formats": "Storybook-only presentation layout change. Selected-file Rust highlighting uses CodeBlock custom-tokenizer presentation data only; markdown previews render deterministic fixture text without executing HTML. No API, storage, native object, credential or backend format changes. Enclosing Jujutsu change is the version-control evidence reference."
   }
 ]
 ```

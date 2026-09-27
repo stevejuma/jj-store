@@ -181,7 +181,9 @@
         />
         <CommunityProjectsRevisionGraphIds
           changeId={row.changeIdEncoded}
+          changeDisplay={row.changeIdEncoded.slice(0, 12)}
           commitId={row.revision.eventId}
+          commitDisplay={row.commitIdShort}
           {commitLabel}
           placement="inline"
         />
@@ -209,7 +211,7 @@
     min-width: 0;
     list-style: none;
     margin: 0;
-    padding: 0.5rem 0;
+    padding: 0;
   }
 
   .community-revision-graph__item {
@@ -222,6 +224,7 @@
   .community-revision-graph__item:not(:last-child)::after {
     content: "";
     position: absolute;
+    z-index: 2;
     inset-inline: 0;
     bottom: 0;
     height: 1px;
@@ -246,6 +249,8 @@
     padding-right: 0.5rem;
     padding-block: 0.5rem;
     border: 0;
+    border-bottom: 1px solid var(--border);
+    border-radius: 0;
     color: inherit;
     background: transparent;
     font: inherit;

@@ -10,6 +10,7 @@
   import { untrack, type Snippet } from "svelte";
   import CommunitySidebarToggleIcon from "../community-app-shell/CommunitySidebarToggleIcon.svelte";
   import "./repository-breadcrumb.css";
+  import { repositoryBreadcrumbSegments } from "../community-projects/repository-browser.js";
   import CommunityAppShell from "../community-app-shell/CommunityAppShell.svelte";
   import CommunityNavigation from "../community-navigation/CommunityNavigation.svelte";
   import CommunityApplicationMobileNavigation from "../community-application/CommunityApplicationMobileNavigation.svelte";
@@ -46,6 +47,10 @@
   const current = $derived(controller.state.route);
   const canNavigateBack = $derived(controller.state.canNavigateBack);
   const canNavigateForward = $derived(controller.state.canNavigateForward);
+  const filesBreadcrumbPath = $derived(current.path ?? current.directory);
+  const filesBreadcrumbSegments = $derived(
+    repositoryBreadcrumbSegments(filesBreadcrumbPath),
+  );
   const compact = $derived(
     shell.mobile.resolvedMode === "desktop" &&
       shell.left.collapsed &&
@@ -154,18 +159,66 @@
   </AppShell.Sidebar>
   <AppShell.Main>
     {#if current.page === "files" || shell.mobile.resolvedMode === "mobile"}
-      <AppShell.Toolbar>
+      <AppShell.Toolbar
+        class={current.page === "files"
+          ? "store-application__page-nav"
+          : undefined}
+      >
         {#if shell.mobile.resolvedMode === "mobile"}<CommunityApplicationMobileNavigation
             model={{ canNavigateBack, canNavigateForward, navigate }}
           />{/if}
-        {#if current.page === "files"}<h1>{title}</h1>{/if}
+        {#if current.page === "files"}<div
+            class="store-application__files-toolbar"
+          >
+            <Breadcrumb.List aria-label="Files breadcrumb">
+              <Breadcrumb.Item>
+                {#if filesBreadcrumbSegments.length === 0}
+                  <Breadcrumb.Page><span>Files</span></Breadcrumb.Page>
+                {:else}
+                  <Breadcrumb.Link
+                    href="#"
+                    onclick={(event) => {
+                      event.preventDefault();
+                      controller.actions.selectDirectory("");
+                    }}><span>Files</span></Breadcrumb.Link
+                  >
+                {/if}
+              </Breadcrumb.Item>
+              {#each filesBreadcrumbSegments as segment, index (segment.path)}
+                <Breadcrumb.Separator />
+                <Breadcrumb.Item>
+                  {#if index === filesBreadcrumbSegments.length - 1}
+                    <Breadcrumb.Page
+                      ><span>{segment.name}</span></Breadcrumb.Page
+                    >
+                  {:else}
+                    <Breadcrumb.Link
+                      href="#"
+                      onclick={(event) => {
+                        event.preventDefault();
+                        controller.actions.selectDirectory(segment.path);
+                      }}><span>{segment.name}</span></Breadcrumb.Link
+                    >
+                  {/if}
+                </Breadcrumb.Item>
+              {/each}
+            </Breadcrumb.List>
+          </div>{/if}
         {#if shell.mobile.resolvedMode === "mobile"}<AppShell.Sidebar.Toggle
             side="right"
             sidebarName="details"
           />{/if}
       </AppShell.Toolbar>
     {/if}
-    <AppShell.Body>
+    <AppShell.Body
+      layout={current.page === "files" ? "regions" : "scroll"}
+      label={current.page === "files"
+        ? "Repository files workspace"
+        : undefined}
+      class={current.page === "files"
+        ? "store-application__files-body"
+        : undefined}
+    >
       {#key current.repository + current.page}
         {#if children}{@render children(
             current.page,
@@ -215,11 +268,48 @@
   ) {
     background: transparent !important;
   }
-  h1 {
-    margin: 0;
-    font-size: var(--community-text-body);
-    font-weight: 600;
+  .store-application__files-toolbar {
+    display: flex;
+    min-width: 0;
+    flex: 1;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
   }
+  :global(.store-application__files-toolbar [data-slot="breadcrumb-list"]) {
+    min-width: 0;
+    flex-wrap: nowrap;
+    overflow: hidden;
+  }
+  :global(
+    .store-application__files-toolbar
+      :is([data-slot="breadcrumb-link"], [data-slot="breadcrumb-page"])
+  ) {
+    max-width: 18rem;
+    overflow: hidden;
+    color: var(--foreground);
+    font-size: var(--community-text-secondary);
+    font-weight: 550;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  :global(
+    .store-application__files-toolbar [data-slot="breadcrumb-link"]:hover
+  ) {
+    color: var(--foreground);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+  :global(.store-application__files-body[data-layout="regions"]) {
+    --ui-shell-body-sidebar-width: 16rem;
+  }
+  :global(
+    .community-app-shell__surface
+      .store-application__page-nav[data-ui-part="toolbar"]
+  ) {
+    border-block-end: 1px solid var(--border);
+  }
+
   .store-application__placeholder {
     padding: 1rem;
   }

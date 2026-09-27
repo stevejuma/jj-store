@@ -13,7 +13,6 @@
   import CommunityProjectsRepositoryLogEmpty from "./CommunityProjectsRepositoryLogEmpty.svelte";
   import CommunityProjectsRepositoryLogDiff from "./CommunityProjectsRepositoryLogDiff.svelte";
   import CommunityProjectsRepositoryLogFiles from "./CommunityProjectsRepositoryLogFiles.svelte";
-  import CommunityProjectsRepositoryLogRail from "./CommunityProjectsRepositoryLogRail.svelte";
   import CommunityRepositoryBranchCommand from "../community-repository-branch-command/CommunityRepositoryBranchCommand.svelte";
   let {
     page = "log",
@@ -53,6 +52,9 @@
       ? graph.revisions.find((r) => r.eventId === selectedId)
       : undefined,
   );
+  const changedFilesTitle = $derived(
+    page === "oplog" ? "Changed files in operation" : "Changed files",
+  );
   const title = $derived(page === "oplog" ? "Op Log" : "JJ Log");
   const selectedBookmark = $derived(
     bookmarks.find((b) => b.name === selectedBranch),
@@ -67,7 +69,7 @@
       if (depth === 1 && branch) canvas.select(0, branch);
       if (revision) {
         canvas.select(depth, revision);
-        canvas.open("operation");
+        if (page === "oplog") canvas.open("diff");
       }
       if (path) {
         canvas.select(depth + 1, path);
@@ -146,31 +148,24 @@
               commitLabel={page === "oplog" ? "operation ID" : "commit ID"}
               onSelect={(revision) => selectRevision(revision.eventId)}
             >
-              {#snippet selectedFiles()}{#if page !== "oplog"}<CommunityProjectsRepositoryLogFiles
-                    compact
-                    {files}
-                    {selectedPath}
-                    onSelectPath={selectFile}
-                  />{/if}{/snippet}
+              {#snippet selectedFiles()}<CommunityProjectsRepositoryLogFiles
+                  compact
+                  title={changedFilesTitle}
+                  {files}
+                  {selectedPath}
+                  onSelectPath={selectFile}
+                />{/snippet}
             </CommunityProjectsRevisionGraph>{/if}
         </ColumnCanvas.Body>
       </ColumnCanvas.Column>
-      {#if selectedOperation}<ColumnCanvas.Column
-          id="operation"
-          title="Operation details"
-          ><ColumnCanvas.Body
-            ><CommunityProjectsRepositoryLogRail
-              operation={selectedOperation}
-              {now}
-              onSelect={onSelectRevision}
-            /></ColumnCanvas.Body
-          ></ColumnCanvas.Column
-        >{/if}
-      {#if page !== "oplog"}<CommunityProjectsRepositoryLogDiff
-          path={selectedPath}
-          {patch}
-          {files}
-        />{/if}
+      <CommunityProjectsRepositoryLogDiff
+        path={selectedPath}
+        {patch}
+        {files}
+        operation={selectedOperation}
+        {now}
+        onSelectOperation={onSelectRevision}
+      />
     </ColumnCanvas.Root>
   {/if}
 </section>
@@ -179,7 +174,7 @@
   .store-operation-heads {
     margin: 0;
     padding: 0.5rem;
-    background: var(--secondary);
+    background: var(--jj-store-info-row-background);
     border-bottom: 1px solid var(--border);
     font-size: var(--community-text-secondary);
     color: var(--muted-foreground);
@@ -188,6 +183,7 @@
   .community-projects-repository-log {
     display: flex;
     min-height: 0;
+    height: 100%;
     flex: 1 1 auto;
     flex-direction: column;
     width: 100%;
@@ -197,6 +193,7 @@
   .community-projects-repository-log
     :global([data-ui-component="column-canvas"][data-ui-part="root"]) {
     min-height: 0;
+    height: 100%;
     flex: 1 1 auto;
   }
 

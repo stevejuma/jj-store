@@ -115,6 +115,20 @@ export function isMarkdownRepositoryPath(path: string): boolean {
   return /\.(?:md|markdown|mdown|mkd|mdx)$/iu.test(path);
 }
 
+export function repositoryLandingDocumentLabel(path: string): string | null {
+  const [name, ...rest] = normalizeRepositoryPath(
+    path.replace(/^\.\//u, ""),
+  ).split("/");
+  if (!name || rest.length > 0) return null;
+  if (/^readme(?:\.|$)/iu.test(name)) return "README";
+  if (/^licen[cs]e(?:\.|$)/iu.test(name)) return "LICENSE";
+  return null;
+}
+
+export function isRepositoryLandingDocumentPath(path: string): boolean {
+  return repositoryLandingDocumentLabel(path) !== null;
+}
+
 export function isOwnersDocumentPath(path: string): boolean {
   return normalizeRepositoryPath(path.replace(/^\.\//u, "")) === "OWNERS.md";
 }

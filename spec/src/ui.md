@@ -62,15 +62,49 @@ without overlapping subsequent rows.
 
 The catalog shell omits a redundant sidebar brand header and uses Community's
 muted breadcrumb and stateful sidebar glyphs. Branch cards span their list
-width; bookmark headings remain sticky during list scrolling. All Column Canvas
-headers and operation-head status rows use the theme's secondary background and
-bottom border. Graph content reserves the full graph lane width so author
-avatars align across forks and merges. Files opens the copied Community
-directory table until a file is selected; directory, file and snapshot
-navigation participate in the in-memory Back/Forward history.
+width; bookmark headings remain sticky during list scrolling. Column Canvas
+headers use the theme-derived neutral grey background and bottom border;
+operation-head status rows use a neighboring neutral grey so the information bar
+reads separately from the header. Shell bodies retain padded content insets, and
+collapsed columns span the usable padded body area. Graph content reserves the
+full graph lane width so author avatars align across forks and merges. JJ Log
+and Op Log rows are square-edged and retain bottom dividers through the final
+visible row. Revision rows with both a commit ID and JJ change ID use a shared
+split copy control: commit SHA and copy icon on the left, friendly JJ change ID
+and copy icon on the right, with shadcn tooltips exposing the full copied value
+on hover and focus. JJ Log and Op Log rows open their changed files inline, and
+selecting a changed file opens the diff column. Op Log operation details and the
+selected file diff render as equal-width stacked cards in the same Column Canvas
+column: the operation card owns its title, collapse control, metadata and close
+action, while the file-diff card keeps its file header and view controls
+underneath. Parent operation navigation remains available without opening a
+standalone details column. Missing selected-file diffs and binary or unavailable
+diffs use the shared shadcn Empty composition with icon media rather than plain
+status text. Files opens the copied Community directory table until a file is
+selected; directory, file and snapshot navigation participate in the in-memory
+Back/Forward history.
 
-Branch cards retain themed bottom dividers except for the final visible card,
-including filtered lists. Branches, JJ Log and Op Log omit the redundant body
-title bar; their Column Canvas headers identify the views. Mobile retains
-navigation/history/sidebar controls without duplicating the page title. The
-right details rail inherits the shell background with no visible border.
+Branch cards retain themed bottom dividers, including the final visible card in
+filtered lists, and keep square lower corners. Branches, JJ Log and Op Log omit
+the redundant body title bar; their Column Canvas headers identify the views.
+Mobile retains navigation/history/sidebar controls without duplicating the page
+title. The right details rail inherits the shell background with no visible
+border.
+
+Files places its directory breadcrumb in the body page navigation, rooted at
+`Files`. The repository file tree is a shell body-left sidebar with a
+full-height divider, small inner padding, keyboard-resizable width and the
+shared file listing view-mode toggle. The copied directory table is a bordered,
+radiused card with a commit/action summary as the first row; the file-tree
+toggle remains beside the author avatar and the snapshot selector is aligned on
+the right side of the same row. The table column-header row uses a neighboring
+theme grey distinct from the summary row. Root directory views show a
+GitHub-style README/LICENSE preview card only when those files exist in the
+selected fixture snapshot; its tabs are left aligned with document icons and an
+active underline. Selecting a file renders a stacked source preview: copied
+commit metadata, deterministic file statistics, then the selected content.
+Markdown files open in safe preview mode with a Preview/Source toggle; source
+mode uses the public Design Core CodeBlock with the filename/source body on the
+theme background. Rust source previews use CodeBlock's public custom-tokenizer
+extension point so `.rs` files highlight in the catalog while retaining the
+shared code component.

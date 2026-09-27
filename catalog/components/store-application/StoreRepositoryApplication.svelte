@@ -39,9 +39,7 @@
           (revision) => revision.eventId === state.route.revisionId,
         )?.empty
           ? []
-          : sampleDetail.files.filter((file) =>
-              state.snapshot?.files.some((entry) => entry.path === file.path),
-            )}
+          : sampleDetail.files}
         patch={state.route.path
           ? sampleDetail.patches[state.route.path]
           : undefined}

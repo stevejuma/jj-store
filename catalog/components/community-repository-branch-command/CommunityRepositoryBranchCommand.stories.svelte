@@ -22,9 +22,11 @@
     const canvas = within(canvasElement);
     const expectSeparators = async () => {
       const cards = canvas.getAllByRole("option");
-      for (const [index, card] of cards.entries()) {
-        await expect(getComputedStyle(card).borderBottomWidth).toBe(
-          index === cards.length - 1 ? "0px" : "1px",
+      for (const card of cards) {
+        await expect(getComputedStyle(card).borderBottomWidth).toBe("1px");
+        await expect(getComputedStyle(card).borderBottomLeftRadius).toBe("0px");
+        await expect(getComputedStyle(card).borderBottomRightRadius).toBe(
+          "0px",
         );
       }
     };

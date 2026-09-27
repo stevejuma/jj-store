@@ -165,6 +165,13 @@ unapproved screenshots only as local review artifacts.
 
 M4.8 review acceptance covers populated and filtered branch dividers, the
 absence of duplicate history-page titles, shared column header styling, and
-directory navigation history. Cold acceptance locates the persistent column
-controls after the redundant title bars are removed. Screenshots remain
-visual-pending and cannot substitute for interaction/accessibility checks.
+directory navigation history. It also covers the Files page navigation
+breadcrumb, body-left file-tree sidebar padding, full-height divider, file
+action row, bordered directory table card, commit/action summary row, in-card
+snapshot selector, distinct table-header grey and root README/LICENSE preview
+tabs. Selected file acceptance covers copied metadata, file statistics, filename
+source headers, theme-background source bodies, markdown preview/source toggling
+and `.rs` source highlighting through the public CodeBlock tokenizer prop. Cold
+acceptance locates the persistent column controls after the redundant title bars
+are removed. Screenshots remain visual-pending and cannot substitute for
+interaction/accessibility checks.

@@ -28,8 +28,39 @@
     const canvas = within(canvasElement),
       body = within(canvasElement.ownerDocument.body);
     await userEvent.click(canvas.getByRole("button", { name: "jj-store" }));
-    await expect(canvas.getByRole("heading", { name: "Files" })).toBeVisible();
+    await expect(
+      canvas.getByRole("list", { name: "Files breadcrumb" }),
+    ).toBeVisible();
+    const landingPreview = canvas.getByRole("region", {
+      name: "Repository document preview",
+    });
+    await expect(
+      within(landingPreview).getByRole("tab", { name: "README" }),
+    ).toBeVisible();
+    const readmePreview = within(landingPreview).getByRole("region", {
+      name: "README preview",
+    });
+    await expect(
+      within(readmePreview).getByRole("heading", {
+        name: "jj-store",
+        level: 1,
+      }),
+    ).toBeVisible();
+    await expect(readmePreview).toHaveTextContent(SOURCE_TEXT);
+    await expect(readmePreview.querySelector("script")).toBeNull();
     await userEvent.click(canvas.getByRole("button", { name: "README.md" }));
+    const selectedMarkdownPreview = await canvas.findByRole("region", {
+      name: "Markdown preview for README.md",
+    });
+    await expect(selectedMarkdownPreview).toHaveTextContent(
+      "Native JJ snapshot",
+    );
+    await expect(selectedMarkdownPreview).toHaveTextContent(SOURCE_TEXT);
+    await expect(selectedMarkdownPreview.querySelector("script")).toBeNull();
+    await expect(
+      canvas.getByRole("button", { name: "Preview" }),
+    ).toHaveAttribute("aria-pressed", "true");
+    await userEvent.click(canvas.getByRole("button", { name: "Source" }));
     await waitFor(() =>
       expect(
         canvasElement.querySelector('[data-ui-component="code-block"]'),
@@ -41,6 +72,10 @@
     await expect(
       canvasElement.querySelector('[data-ui-component="code-block"] script'),
     ).toBeNull();
+    await userEvent.click(canvas.getByRole("button", { name: "Back" }));
+    await expect(
+      canvas.getByRole("table", { name: "Repository files" }),
+    ).toBeVisible();
     await userEvent.click(
       canvas.getByRole("combobox", { name: "Repository bookmark or change" }),
     );
@@ -56,9 +91,26 @@
         canvasElement.querySelector('[data-ui-component="code-block"]'),
       ).toHaveTextContent("stream_native_objects"),
     );
+    const rustSourceBlock = canvasElement.querySelector<HTMLElement>(
+      '[data-ui-component="code-block"]',
+    )!;
+    await expect(rustSourceBlock).toHaveAttribute("data-language", "rust");
     await expect(
-      canvasElement.querySelector('[data-ui-component="code-block"]'),
-    ).not.toHaveTextContent("preserve_publication_history");
+      within(rustSourceBlock).getByText("src/lib.rs — rust"),
+    ).toBeVisible();
+    await expect(
+      rustSourceBlock.querySelector(".ui-code-token-keyword"),
+    ).toHaveTextContent(/pub|fn/);
+    await expect(
+      canvas.getByRole("region", { name: "Selected file metadata" }),
+    ).toBeVisible();
+    await expect(
+      canvas.getByRole("status", { name: "File statistics" }),
+    ).toHaveTextContent(/\d+ lines \(\d+ loc\) · \d+ Bytes/);
+    await expect(rustSourceBlock).not.toHaveTextContent(
+      "preserve_publication_history",
+    );
+    await userEvent.click(canvas.getByRole("button", { name: "Back" }));
     await userEvent.click(
       canvas.getByRole("combobox", { name: "Repository bookmark or change" }),
     );
@@ -83,12 +135,6 @@
     await expect(
       canvas.getByRole("table", { name: "Repository files" }),
     ).toBeVisible();
-    await userEvent.click(canvas.getByRole("button", { name: "Back" }));
-    await waitFor(() =>
-      expect(
-        canvasElement.querySelector('[data-ui-component="code-block"]'),
-      ).toHaveTextContent("stream_native_objects"),
-    );
   }}
 />
 <Story
