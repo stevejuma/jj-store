@@ -350,9 +350,11 @@ pub async fn run(
     }
 }
 pub fn capabilities() -> serde_json::Value {
-    json!({"version":1,"native_profile":jj_store_jj::factories::PROFILE,"transport":"jj_store.native.v1","qualification":"loopback RPC and pinned single-node RustFS cold recovery; shared deployment and full semantic matrix remain gated","commands":{
+    json!({"version":1,"native_profile":jj_store_jj::factories::PROFILE,"transport":"jj_store.native.v1","qualification":"loopback RPC and pinned single-node RustFS cold recovery; shared deployment and remaining release platforms remain gated","commands":{
         "edit":"verified","describe":"verified","log":"verified","op log":"verified","evolog":"verified",
         "new":"verified","diff":"verified","bookmark create":"verified","bookmark set":"verified","bookmark delete":"verified","bookmark list":"verified",
-        "abandon":"unqualified","rebase":"unqualified","squash":"unqualified",
+        "abandon":"verified","rebase":"verified","squash":"verified","split":"verified","undo":"verified",
+        "resolve --list":"verified","file show":"verified","file list":"verified","file chmod":"verified",
+        "sign":"verified (SSH)","unsign":"verified (SSH)","operation reconciliation":"verified",
         "git":"unsupported","util gc":"unsupported"},"creation":"jj store init with durable retries","physical_state":"client-local","ordinary_commands":"upstream jj 0.45.1"})
 }

@@ -107,3 +107,19 @@ ID and intent. Retries never refresh the snapshot. Status queries publish
 nothing; absent receipts remain unknown. Current admin access and the original
 principal are required; credential rotation for that principal does not change
 request identity.
+
+Executable semantic parity compares native RPC repositories with the pinned
+upstream Git backend at equivalent histories. Comparisons retain descriptions,
+parent counts, local bookmark names, conflict state, file content and evolution
+while excluding backend-specific IDs and timestamps. Rewrites,
+split/squash/abandon, three-way conflicts, divergent changes and operation
+reconciliation require explicit acceptance before the capability matrix
+advertises them as verified.
+
+The verified capability matrix includes rebase, squash, split, abandon, undo,
+manual conflict snapshotting, divergent operations and conflicted local
+bookmarks. Separate Unix fixtures qualify binary/symlink/executable checkout
+state and SSH sign/re-sign/unsign behavior. Native Git transport and destructive
+GC commands fail without publication. Other external merge tools, signers and
+release platforms remain separately qualified; file-copy snapshot evidence does
+not replace native copy-history codec/query evidence.

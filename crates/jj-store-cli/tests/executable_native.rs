@@ -21,6 +21,7 @@ struct Fixture {
     token: BearerToken,
     reader: BearerToken,
     address: SocketAddr,
+    listener: std::net::TcpListener,
     server: Option<tokio::task::JoinHandle<()>>,
     shutdown: Option<tokio::sync::oneshot::Sender<()>>,
     root: tempfile::TempDir,
@@ -57,11 +58,17 @@ impl Fixture {
         )
         .await
         .unwrap();
+        // Retain the socket reservation across service restarts. Dropping and
+        // rebinding an ephemeral port races with other parallel test clients.
+        // Standalone-process acceptance separately qualifies cold TCP startup.
+        let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+        listener.set_nonblocking(true).unwrap();
         let mut f = Self {
             store,
             token,
             reader,
-            address: "127.0.0.1:0".parse().unwrap(),
+            address: listener.local_addr().unwrap(),
+            listener,
             server: None,
             shutdown: None,
             root: tempfile::tempdir().unwrap(),
@@ -85,8 +92,8 @@ impl Fixture {
         )
         .unwrap();
         let rpc = NativeRpc::new(vec![endpoint], RpcLimits::default()).unwrap();
-        let listener = tokio::net::TcpListener::bind(self.address).await.unwrap();
-        self.address = listener.local_addr().unwrap();
+        let listener =
+            tokio::net::TcpListener::from_std(self.listener.try_clone().unwrap()).unwrap();
         let (tx, rx) = tokio::sync::oneshot::channel();
         self.shutdown = Some(tx);
         self.server = Some(tokio::spawn(async move {
@@ -430,7 +437,7 @@ fn custom_color_json_and_metadata_validation_do_not_contact_or_leak_credentials(
     assert!(json.ends_with('\n'));
     let capabilities: serde_json::Value = serde_json::from_str(&json).unwrap();
     assert_eq!(capabilities["commands"]["describe"], "verified");
-    assert_eq!(capabilities["commands"]["rebase"], "unqualified");
+    assert_eq!(capabilities["commands"]["rebase"], "verified");
     let error = command(
         temp.path(),
         &[
@@ -659,4 +666,392 @@ fn os_credential_initial_admin_provisioning_is_repeatable() {
         credentials::resolve(&connection).unwrap().expose(),
         first.expose()
     );
+}
+
+/// The reference uses the pinned upstream Git backend through the same CliRunner.
+/// IDs, timestamps and backend-specific signatures are intentionally excluded
+/// from semantic graph comparisons; content and native relationships are not.
+struct SemanticPair<'a> {
+    fixture: &'a Fixture,
+    native: std::path::PathBuf,
+    reference: std::path::PathBuf,
+}
+impl<'a> SemanticPair<'a> {
+    fn new(fixture: &'a Fixture) -> Self {
+        fixture.attach("semantic-native");
+        fixture.run(
+            fixture.root.path(),
+            &["git", "init", "semantic-reference", "--colocate"],
+        );
+        Self {
+            fixture,
+            native: fixture.root.path().join("semantic-native"),
+            reference: fixture.root.path().join("semantic-reference"),
+        }
+    }
+    fn roots(&self) -> [&Path; 2] {
+        [&self.native, &self.reference]
+    }
+    fn both(&self, args: &[&str]) -> [String; 2] {
+        self.roots().map(|path| {
+            let output = self.fixture.command(path, args).output().unwrap();
+            assert!(
+                output.status.success(),
+                "{} {args:?}: {}",
+                path.display(),
+                String::from_utf8_lossy(&output.stderr)
+            );
+            String::from_utf8(output.stdout).unwrap()
+        })
+    }
+    fn write(&self, path: &str, bytes: impl AsRef<[u8]>) {
+        for root in self.roots() {
+            fs::write(root.join(path), bytes.as_ref()).unwrap();
+        }
+    }
+    fn graph(&self) {
+        let outputs=self.both(&["log","--no-graph","-r","all() & ~root()","-T","description.trim_end() ++ '|' ++ parents.len() ++ ':' ++ parents.map(|p| p.description().trim_end()).join(',') ++ '|' ++ local_bookmarks ++ '|' ++ conflict ++ '\n'"]);
+        let sorted = outputs.map(|s| {
+            let mut lines = s.lines().map(str::to_owned).collect::<Vec<_>>();
+            lines.sort();
+            lines
+        });
+        assert_eq!(
+            sorted[0], sorted[1],
+            "native and upstream semantic graphs differ"
+        );
+    }
+    fn same(&self, args: &[&str]) -> String {
+        let [native, reference] = self.both(args);
+        assert_eq!(native, reference, "{args:?}");
+        native
+    }
+}
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn native_cli_semantic_rebase_squash_split_abandon_and_undo_match_upstream() {
+    let f = Fixture::new().await;
+    let p = SemanticPair::new(&f);
+    p.write("base.txt", "base\n");
+    p.both(&["describe", "-m", "base"]);
+    p.both(&["bookmark", "create", "base"]);
+    p.both(&["new", "base", "-m", "left"]);
+    p.write("left.txt", "left\n");
+    p.both(&["describe", "-m", "left"]);
+    p.both(&["bookmark", "create", "left"]);
+    p.both(&["new", "base", "-m", "right"]);
+    p.write("right.txt", "right\n");
+    p.both(&["describe", "-m", "right"]);
+    p.both(&["bookmark", "create", "right"]);
+    p.both(&["new", "left", "right", "-m", "merge"]);
+    p.both(&["bookmark", "create", "merged"]);
+    p.graph();
+    assert_eq!(p.same(&["file", "show", "left.txt"]), "left\n");
+    assert_eq!(p.same(&["file", "show", "right.txt"]), "right\n");
+    p.both(&["new", "base", "-m", "target"]);
+    p.both(&["bookmark", "create", "target"]);
+    p.both(&["rebase", "-s", "left", "-d", "target"]);
+    p.graph();
+    p.both(&["new", "merged", "-m", "tail"]);
+    p.write("tail.txt", "tail\n");
+    p.both(&["describe", "-m", "tail"]);
+    p.both(&["squash", "-m", "combined"]);
+    p.graph();
+    assert_eq!(p.same(&["file", "show", "tail.txt"]), "tail\n");
+    p.both(&["new", "base", "-m", ""]);
+    p.write("a.txt", "selected\n");
+    p.write("b.txt", "remainder\n");
+    p.both(&["split", "a.txt", "-m", "selected"]);
+    assert_eq!(
+        p.same(&[
+            "log",
+            "--no-graph",
+            "-r",
+            "subject(\"selected\")",
+            "-T",
+            "description"
+        ])
+        .trim(),
+        "selected"
+    );
+    p.both(&["edit", "children(subject(\"selected\"))"]);
+    p.both(&["describe", "-m", "remainder"]);
+    p.both(&["bookmark", "create", "child"]);
+    p.graph();
+    p.both(&["abandon", "-r", "subject(\"selected\")"]);
+    p.graph();
+    for root in p.roots() {
+        assert!(!root.join("a.txt").exists());
+        assert_eq!(fs::read(root.join("b.txt")).unwrap(), b"remainder\n");
+    }
+    p.same(&[
+        "evolog",
+        "--no-graph",
+        "-r",
+        "@",
+        "-T",
+        "commit.description()",
+    ]);
+    p.both(&["undo"]);
+    p.graph();
+    for root in p.roots() {
+        assert_eq!(fs::read(root.join("a.txt")).unwrap(), b"selected\n");
+    }
+    assert!(!p.native.join(".git").exists());
+}
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn native_cli_semantic_multiway_conflict_snapshot_resolution_matches_upstream() {
+    let f = Fixture::new().await;
+    let p = SemanticPair::new(&f);
+    p.write("conflict.txt", "base\n");
+    p.both(&["describe", "-m", "base"]);
+    p.both(&["bookmark", "create", "base"]);
+    for name in ["left", "right", "third"] {
+        p.both(&["new", "base", "-m", name]);
+        p.write("conflict.txt", format!("{name}\n"));
+        p.both(&["describe", "-m", name]);
+        p.both(&["bookmark", "create", name]);
+    }
+    p.both(&["new", "left", "right", "third", "-m", "multiway"]);
+    p.graph();
+    let conflicts = p.same(&["resolve", "--list"]);
+    assert!(conflicts.contains("conflict.txt"));
+    p.same(&["diff", "--summary"]);
+    p.write("conflict.txt", "resolved content\n");
+    p.both(&["describe", "-m", "resolved"]);
+    p.graph();
+    assert_eq!(
+        p.same(&["file", "show", "conflict.txt"]),
+        "resolved content\n"
+    );
+    assert_eq!(
+        p.same(&["log", "--no-graph", "-r", "@", "-T", "conflict"]),
+        "false"
+    );
+    let evolution = p.same(&["evolog", "--no-graph", "-T", "commit.description()"]);
+    assert!(evolution.contains("multiway"));
+}
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn native_cli_semantic_divergence_conflicted_bookmarks_and_operation_reconciliation() {
+    let f = Fixture::new().await;
+    let p = SemanticPair::new(&f);
+    p.write("file.txt", "common\n");
+    p.both(&["describe", "-m", "base"]);
+    p.both(&["bookmark", "create", "branch"]);
+    let before = p.both(&["op", "log", "--no-graph", "--limit", "1", "-T", "id"]);
+    p.both(&["describe", "-m", "first divergence"]);
+    for (root, id) in p.roots().into_iter().zip(&before) {
+        let output = f
+            .command(
+                root,
+                &[
+                    "--ignore-working-copy",
+                    "--at-op",
+                    id.trim(),
+                    "describe",
+                    "-m",
+                    "second divergence",
+                ],
+            )
+            .output()
+            .unwrap();
+        assert!(
+            output.status.success(),
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+    }
+    assert_eq!(f.snapshot().await.heads.len(), 2);
+    p.graph(); // ordinary upstream loading reconciles operation siblings
+    assert_eq!(f.snapshot().await.heads.len(), 1);
+    let divergent = p.both(&[
+        "log",
+        "--no-graph",
+        "-r",
+        "divergent()",
+        "-T",
+        "description",
+    ]);
+    for output in divergent {
+        assert!(output.contains("first divergence") && output.contains("second divergence"));
+    }
+    for output in p.both(&["bookmark", "list"]) {
+        assert!(output.contains("conflicted"), "{output}");
+    }
+    p.both(&[
+        "bookmark",
+        "set",
+        "branch",
+        "-r",
+        "subject(\"first divergence\")",
+    ]);
+    p.graph();
+    for output in p.both(&["bookmark", "list"]) {
+        assert!(!output.contains("conflicted"));
+    }
+}
+
+#[cfg(unix)]
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn native_cli_semantic_binary_symlink_executable_and_copied_files_match_upstream() {
+    use std::os::unix::fs::{PermissionsExt as _, symlink};
+    let f = Fixture::new().await;
+    let p = SemanticPair::new(&f);
+    let binary = [0, 255, 128, 0, 10, 13];
+    p.write("binary.bin", binary);
+    p.write("source.txt", "source bytes\n");
+    p.write("executable.sh", "#!/bin/sh\nexit 0\n");
+    for root in p.roots() {
+        fs::set_permissions(
+            root.join("executable.sh"),
+            fs::Permissions::from_mode(0o755),
+        )
+        .unwrap();
+        symlink("source.txt", root.join("link")).unwrap();
+    }
+    p.both(&["describe", "-m", "file variants"]);
+    p.both(&["bookmark", "create", "files"]);
+    p.graph();
+    p.both(&["new", "root()", "-m", "empty checkout"]);
+    for root in p.roots() {
+        assert!(fs::symlink_metadata(root.join("link")).is_err());
+        assert!(!root.join("binary.bin").exists());
+    }
+    p.both(&["new", "files", "-m", "restored checkout"]);
+    for root in p.roots() {
+        assert_eq!(
+            fs::read_link(root.join("link")).unwrap(),
+            Path::new("source.txt")
+        );
+        assert_eq!(
+            fs::metadata(root.join("executable.sh"))
+                .unwrap()
+                .permissions()
+                .mode()
+                & 0o111,
+            0o111
+        );
+        assert_eq!(fs::read(root.join("binary.bin")).unwrap(), binary);
+        let output = f
+            .command(root, &["file", "show", "binary.bin"])
+            .output()
+            .unwrap();
+        assert!(output.status.success());
+        assert_eq!(output.stdout, binary);
+        fs::copy(root.join("source.txt"), root.join("copied.txt")).unwrap();
+        fs::rename(root.join("source.txt"), root.join("renamed.txt")).unwrap();
+    }
+    p.both(&["describe", "-m", "filesystem copy and rename"]);
+    p.graph();
+    p.same(&["file", "list"]);
+    assert_eq!(p.same(&["file", "show", "copied.txt"]), "source bytes\n");
+    assert_eq!(p.same(&["file", "show", "renamed.txt"]), "source bytes\n");
+    p.both(&["file", "chmod", "n", "executable.sh"]);
+    p.graph();
+    for root in p.roots() {
+        assert_eq!(
+            fs::metadata(root.join("executable.sh"))
+                .unwrap()
+                .permissions()
+                .mode()
+                & 0o111,
+            0
+        );
+    }
+}
+#[cfg(unix)]
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn native_cli_semantic_ssh_sign_resign_and_unsign_preserve_verification() {
+    let f = Fixture::new().await;
+    let p = SemanticPair::new(&f);
+    let key = f.root.path().join("disposable-signing-key");
+    let output = Command::new("ssh-keygen")
+        .args([
+            "-q",
+            "-t",
+            "ed25519",
+            "-N",
+            "",
+            "-C",
+            "native-parity-test",
+            "-f",
+        ])
+        .arg(&key)
+        .output()
+        .unwrap();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let allowed = f.root.path().join("allowed-signers");
+    fs::write(
+        &allowed,
+        format!(
+            "native@example.invalid {}",
+            fs::read_to_string(key.with_extension("pub")).unwrap()
+        ),
+    )
+    .unwrap();
+    use std::io::Write as _;
+    writeln!(
+        fs::OpenOptions::new()
+            .append(true)
+            .open(f.root.path().join("jj.toml"))
+            .unwrap(),
+        "\n[signing]\nbackend = 'ssh'\nkey = {}\n[signing.backends.ssh]\nallowed-signers = {}",
+        serde_json::to_string(key.to_str().unwrap()).unwrap(),
+        serde_json::to_string(allowed.to_str().unwrap()).unwrap()
+    )
+    .unwrap();
+    p.write("signed.txt", "signed native bytes\n");
+    p.both(&["describe", "-m", "signed change"]);
+    p.both(&["sign", "-r", "@"]);
+    assert_eq!(
+        p.same(&["log", "--no-graph", "-r", "@", "-T", "signature.status()"]),
+        "good"
+    );
+    p.both(&["sign", "-r", "@"]);
+    assert_eq!(
+        p.same(&["log", "--no-graph", "-r", "@", "-T", "signature.status()"]),
+        "good"
+    );
+    p.graph();
+    p.both(&["unsign", "-r", "@"]);
+    assert_eq!(
+        p.same(&[
+            "log",
+            "--no-graph",
+            "-r",
+            "@",
+            "-T",
+            "if(signature, 'signed', 'unsigned')"
+        ]),
+        "unsigned"
+    );
+    p.graph();
+    assert_eq!(
+        p.same(&["file", "show", "signed.txt"]),
+        "signed native bytes\n"
+    );
+}
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn native_cli_semantic_git_transport_and_gc_fail_without_publication() {
+    let f = Fixture::new().await;
+    f.attach("unsupported");
+    let root = f.root.path().join("unsupported");
+    let before = f.snapshot().await;
+    for args in [
+        vec!["git", "export"],
+        vec!["git", "fetch", "--remote", "nonexistent"],
+        vec!["util", "gc"],
+    ] {
+        let output = f.command(&root, &args).output().unwrap();
+        assert!(!output.status.success(), "{args:?}");
+        assert_eq!(
+            f.snapshot().await,
+            before,
+            "unsupported command published {args:?}"
+        );
+    }
+    assert!(!root.join(".git").exists());
 }
