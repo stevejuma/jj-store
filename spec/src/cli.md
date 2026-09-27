@@ -200,3 +200,8 @@ native bookmark operation, resumes from the same event ID after server/storage
 restart and cache deletion, and checks live stream termination on token
 revocation. SSE and RPC share the production TLS listener and scoped native
 sessions.
+
+The CLI-owned native lifecycle fixtures also exercise every HTTP read route for
+generated contract conformance. An opt-in capture path receives only disposable
+response bodies and route metadata, never request credentials. This fixture does
+not alter CLI presentation or publication semantics.

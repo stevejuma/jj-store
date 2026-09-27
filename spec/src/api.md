@@ -15,6 +15,7 @@ attachment section 10 is implemented under /v1/repos/{repo}.
 | JST-API-003 | SSE MUST resume from committed positions and detect writes from other serving processes; slow consumers MUST NOT block repository publication.                                      |
 | JST-API-004 | Queries MUST enforce authorization and resource budgets, safely render untrusted source content, and expose incomplete history or rebuild tasks explicitly.                         |
 | JST-API-005 | The Svelte UI MUST show repository selection, snapshot state, three graph views, object/diff inspection, conflict editing, mutation previews/results, and search freshness.         |
+| JST-API-006 | HTTP routes and owned DTOs MUST generate OpenAPI and TypeScript contracts; normal and specification checks MUST reject drift and validate representative actual responses.          |
 
 ## Read-session foundation
 
@@ -268,3 +269,26 @@ bounded replay pages/window and storage-read deadlines. Consumers that stop
 polling cannot retain resources indefinitely or block publication. Errors after
 headers terminate the stream; clients resume with the last fully parsed ID. The
 browser uses authenticated fetch streaming because credentials stay in memory.
+
+## Generated application contracts
+
+The HTTP route inventory also generates OpenAPI 3.1. JSON schemas derive from
+the exact owned Rust request and response types, using deserialization rules for
+requests and serialization rules for responses. Optional request fields are
+distinct from required nullable response fields. Native metadata schema names
+are separate from graph presentation names. IDs remain canonical lowercase hex
+with their exact widths; tuple arrays and tagged unions retain their wire form.
+
+The generated document includes Bearer security, explicit snapshot selection,
+query defaults, index-task bodies, errors, binary ranges, HEAD semantics and SSE
+framing. Event data schemas describe JSON inside SSE frames, not the stream as a
+JSON response. Heartbeats are comments. TypeScript types derive from this
+document and are checked for drift together with it. Generation is offline once
+locked build dependencies have been installed and requires no credentials or
+server. Generated files are not edited by hand.
+
+Contract shape validation does not establish runtime authorization or native
+semantics; the existing transport/lifecycle tests remain required. Rust numeric
+widths are retained in JSON schemas. Browser clients must reject unsafe integer
+conversion or use lossless parsing when native values exceed JavaScript's exact
+integer range; generated TypeScript number types alone do not guarantee this.

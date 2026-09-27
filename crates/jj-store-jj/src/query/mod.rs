@@ -20,7 +20,8 @@ use serde::{Deserialize, Serialize};
 use std::{collections::BTreeSet, path::PathBuf, sync::Arc, time::Duration};
 use workers::Workers;
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, thiserror::Error)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, thiserror::Error, schemars::JsonSchema)]
+#[schemars(rename = "GraphError")]
 #[serde(rename_all = "snake_case")]
 pub enum Error {
     #[error("query request was canceled")]
@@ -93,7 +94,8 @@ impl Default for Limits {
         }
     }
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
+#[schemars(rename = "GraphRequest")]
 #[serde(tag = "graph", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Request {
     Log {
@@ -107,43 +109,50 @@ pub enum Request {
         commit: m::CommitId,
     },
 }
-#[derive(Clone, Debug, Default, Serialize, Deserialize)]
+#[derive(Clone, Debug, Default, Serialize, Deserialize, schemars::JsonSchema)]
+#[schemars(rename = "GraphPageRequest")]
 #[serde(deny_unknown_fields)]
 pub struct Page {
     pub limit: usize,
     pub after: Option<m::ObjectKey>,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "GraphTimestamp")]
 pub struct Timestamp {
     pub millis: i64,
     pub offset_minutes: i32,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "GraphSignature")]
 pub struct Signature {
     pub name: String,
     pub email: String,
     pub timestamp: Timestamp,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "GraphBookmark")]
 pub struct Bookmark {
     pub name: String,
     pub added: bool,
     pub removed: bool,
     pub conflicted: bool,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "GraphEdgeKind")]
 #[serde(rename_all = "snake_case")]
 pub enum EdgeKind {
     Direct,
     Indirect,
     Missing,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "GraphEdge")]
 pub struct Edge {
     pub target: m::CommitId,
     pub kind: EdgeKind,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "GraphCommit")]
 pub struct Commit {
     pub id: m::CommitId,
     pub change_id: m::ChangeId,
@@ -158,12 +167,14 @@ pub struct Commit {
     pub visible: bool,
     pub divergent: bool,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "GraphCommitNode")]
 pub struct CommitNode {
     pub commit: Commit,
     pub edges: Vec<Edge>,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "GraphOperationNode")]
 pub struct OperationNode {
     pub id: m::OperationId,
     pub parents: Vec<m::OperationId>,
@@ -178,7 +189,8 @@ pub struct OperationNode {
     pub attributes: std::collections::BTreeMap<String, String>,
     pub predecessor_data_present: bool,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "GraphEvolutionNode")]
 pub struct EvolutionNode {
     pub commit: Commit,
     pub operation: Option<m::OperationId>,
@@ -186,14 +198,16 @@ pub struct EvolutionNode {
     pub predecessors_known: bool,
     pub legacy_predecessors: Vec<m::CommitId>,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "GraphNodes")]
 #[serde(tag = "graph", content = "nodes", rename_all = "snake_case")]
 pub enum Nodes {
     Log(Vec<CommitNode>),
     Operations(Vec<OperationNode>),
     Evolution(Vec<EvolutionNode>),
 }
-#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "GraphStats")]
 pub struct Stats {
     pub metadata_nodes: u64,
     pub predicate_file_bytes: u64,
@@ -202,7 +216,8 @@ pub struct Stats {
     pub object_bytes: u64,
     pub work: u64,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "GraphPage")]
 pub struct GraphPage {
     pub version: u32,
     pub cache: cache::Report,
@@ -220,7 +235,8 @@ impl Cancellation {
         self.0.cancel();
     }
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "IndexReport")]
 pub struct IndexReport {
     pub version: u32,
     pub operation: m::OperationId,

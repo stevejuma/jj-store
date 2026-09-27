@@ -49,7 +49,8 @@ impl Default for Limits {
         }
     }
 }
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "IndexState")]
 #[serde(tag = "status", rename_all = "snake_case")]
 pub enum State {
     Running,
@@ -63,7 +64,8 @@ impl State {
         matches!(self, Self::Running | Self::Canceling)
     }
 }
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "IndexTask")]
 pub struct Task {
     pub version: u32,
     pub id: String,

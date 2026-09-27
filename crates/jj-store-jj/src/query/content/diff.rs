@@ -8,7 +8,8 @@ use jj_lib::{
 };
 use serde::Deserialize;
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, schemars::JsonSchema)]
+#[schemars(rename = "FileDiffRequest")]
 #[serde(deny_unknown_fields)]
 pub struct Request {
     pub from: m::CommitId,
@@ -16,20 +17,23 @@ pub struct Request {
     pub path: String,
     pub content: bool,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "FileDiffSourceKind")]
 #[serde(rename_all = "snake_case")]
 pub enum SourceKind {
     Normal,
     Copy,
     Rename,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "FileDiffSource")]
 pub struct Source {
     pub kind: SourceKind,
     pub path: String,
     pub terms: Vec<Option<dto::TreeValue>>,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "FileDiffUnavailable")]
 #[serde(rename_all = "snake_case")]
 pub enum Unavailable {
     NotRequested,
@@ -40,13 +44,15 @@ pub enum Unavailable {
     TooLarge,
     Complexity,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "FileDiffHunkKind")]
 #[serde(rename_all = "snake_case")]
 pub enum HunkKind {
     Matching,
     Different,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "FileDiffHunk")]
 pub struct Hunk {
     pub kind: HunkKind,
     pub before_start: usize,
@@ -54,13 +60,15 @@ pub struct Hunk {
     pub before: String,
     pub after: String,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "FileDiffContent")]
 #[serde(tag = "status", rename_all = "snake_case")]
 pub enum Content {
     Text { hunks: Vec<Hunk> },
     Unavailable { reason: Unavailable },
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "FileDiffChange")]
 pub struct Change {
     pub path: String,
     /// Native values at the target; source annotations never replace these.
@@ -69,7 +77,8 @@ pub struct Change {
     pub sources: Vec<Source>,
     pub content: Content,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "FileDiffResponse")]
 pub struct Response {
     pub version: u32,
     pub from: m::CommitId,

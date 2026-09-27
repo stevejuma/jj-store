@@ -330,3 +330,9 @@ A verified file may select one exact byte range before its first chunk.
 Selection uses the already-verified spool, retains authorization/deadline/worker
 ownership, and cannot seek again or reset a consumed stream. HTTP range
 normalization stays in the transport; native content verification is unchanged.
+
+Owned native metadata and graph/content DTOs supply schema traits to the HTTP
+contract generator through service exports. Native metadata schema names are
+prefixed to distinguish them from query presentation types. Schema derives do
+not reorder fields, change Serde attributes or modify native payload identity.
+No upstream JJ type enters generated application contracts.

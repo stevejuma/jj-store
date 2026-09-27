@@ -40,6 +40,156 @@ fn request(token: &BearerToken, path: &str) -> Request<Body> {
         .body(Body::empty())
         .unwrap()
 }
+
+/// Captures real handler serialization for the offline JSON Schema acceptance lane.
+/// Normal Rust runs exercise the same fixture without writing an artifact.
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn http_contract_capture_matches_registered_routes() {
+    let f = ContentFixture::new().await;
+    let cache = tempfile::tempdir().unwrap();
+    let router = api(&f, cache.path(), Config::default());
+    let before = f.f.session.snapshot().await.unwrap().manifest().clone();
+    let operation = f.read.snapshot().await.unwrap().operation_id;
+    let id = m::CommitId::from_slice(f.commit.key().as_bytes()).unwrap();
+    let mut samples = vec![];
+    let mut record = |path: &str, method: &str, status: u16, media: &str, data: Value| {
+        samples.push(serde_json::json!({"path":format!("/v1/repos/{{repo}}/{path}"),"method":method,"status":status,"media":media,"data":data}));
+    };
+    for (template, path) in [
+        ("capabilities", "capabilities".into()),
+        ("snapshot", "snapshot".into()),
+        (
+            "log",
+            format!("log?at_time_millis=1790000000000&at_op={operation}"),
+        ),
+        ("operations", format!("operations?heads={operation}")),
+        ("operations/{operation}", format!("operations/{operation}")),
+        (
+            "operations/{operation}/diff",
+            format!("operations/{operation}/diff"),
+        ),
+        (
+            "evolution",
+            format!("evolution?commit={id}&at_op={operation}"),
+        ),
+        ("commits/{commit}", format!("commits/{id}")),
+        (
+            "commits/{commit}/tree",
+            format!("commits/{id}/tree?limit=2"),
+        ),
+        (
+            "commits/{commit}/conflicts",
+            format!("commits/{id}/conflicts"),
+        ),
+        ("diff", format!("diff?from={id}&to={id}&content=true")),
+    ] {
+        let (status, body) = json(&router, &f.f.reader, &path).await;
+        assert_eq!(status, StatusCode::OK, "{path}: {body}");
+        record(template, "get", status.as_u16(), "application/json", body);
+    }
+    for (kind, key) in [
+        ("commit", f.commit.key()),
+        ("tree", f.tree.key()),
+        ("copy", f.copy.key()),
+        ("view", f.view.key()),
+        ("operation", f.operation.key()),
+        ("file", m::ObjectKey::File(f.file)),
+        ("symlink", f.symlink),
+    ] {
+        let id = m::CommitId::from_slice(key.as_bytes()).unwrap();
+        let (status, body) = json(&router, &f.f.reader, &format!("objects/{kind}/{id}")).await;
+        assert_eq!(status, StatusCode::OK, "{kind}: {body}");
+        record("objects/{kind}/{id}", "get", 200, "application/json", body);
+    }
+    let mut prepare = request(&f.f.reader, "index/tasks");
+    *prepare.method_mut() = axum::http::Method::POST;
+    prepare
+        .headers_mut()
+        .insert("content-type", "application/json".parse().unwrap());
+    *prepare.body_mut() =
+        Body::from(serde_json::to_vec(&serde_json::json!({"operation":operation})).unwrap());
+    let response = router.clone().oneshot(prepare).await.unwrap();
+    assert_eq!(response.status(), StatusCode::ACCEPTED);
+    let task: Value =
+        serde_json::from_slice(&to_bytes(response.into_body(), 64 * 1024).await.unwrap()).unwrap();
+    let task_id = task["id"].as_str().unwrap().to_owned();
+    record("index/tasks", "post", 202, "application/json", task);
+    let mut done = false;
+    for _ in 0..100 {
+        let (status, task) = json(&router, &f.f.reader, &format!("index/tasks/{task_id}")).await;
+        assert_eq!(status, StatusCode::OK);
+        if task["status"] == "ready" {
+            record("index/tasks/{task}", "get", 200, "application/json", task);
+            done = true;
+            break;
+        }
+        tokio::time::sleep(Duration::from_millis(10)).await;
+    }
+    assert!(done, "small index fixture did not complete");
+    let mut cancel = request(&f.f.reader, &format!("index/tasks/{task_id}/cancel"));
+    *cancel.method_mut() = axum::http::Method::POST;
+    let response = router.clone().oneshot(cancel).await.unwrap();
+    assert_eq!(response.status(), StatusCode::OK);
+    let task =
+        serde_json::from_slice(&to_bytes(response.into_body(), 64 * 1024).await.unwrap()).unwrap();
+    record(
+        "index/tasks/{task}/cancel",
+        "post",
+        200,
+        "application/json",
+        task,
+    );
+    for path in [
+        "events".into(),
+        format!("events?after=v1:{REPO}:{}:{}", before.epoch, u64::MAX),
+    ] {
+        let response = router
+            .clone()
+            .oneshot(request(&f.f.reader, &path))
+            .await
+            .unwrap();
+        assert_eq!(response.status(), StatusCode::OK);
+        let mut stream = response.into_body().into_data_stream();
+        let chunk = tokio::time::timeout(Duration::from_secs(2), stream.next())
+            .await
+            .unwrap()
+            .unwrap()
+            .unwrap();
+        let text = std::str::from_utf8(&chunk).unwrap();
+        let data = text
+            .lines()
+            .find_map(|line| line.strip_prefix("data: "))
+            .unwrap();
+        record(
+            "events",
+            "get",
+            200,
+            "text/event-stream",
+            serde_json::from_str(data).unwrap(),
+        );
+    }
+    let (status, error) = json(&router, &f.f.reader, "snapshot?unknown=1").await;
+    assert_eq!(status, StatusCode::BAD_REQUEST);
+    record("snapshot", "get", 400, "application/json", error);
+    // Range media itself is binary. Capture a real range error's JSON contract.
+    let mut range = request(&f.f.reader, &format!("files/{}", f.empty));
+    range
+        .headers_mut()
+        .insert("range", "bytes=0-1".parse().unwrap());
+    let response = router.clone().oneshot(range).await.unwrap();
+    assert_eq!(response.status(), StatusCode::RANGE_NOT_SATISFIABLE);
+    record(
+        "files/{file}",
+        "get",
+        416,
+        "application/json",
+        serde_json::from_slice(&to_bytes(response.into_body(), 64 * 1024).await.unwrap()).unwrap(),
+    );
+    assert_eq!(*f.f.session.snapshot().await.unwrap().manifest(), before);
+    if let Some(path) = std::env::var_os("JJ_STORE_CONTRACT_CAPTURE") {
+        std::fs::write(path, serde_json::to_vec(&samples).unwrap()).unwrap();
+    }
+}
 async fn json(router: &Router, token: &BearerToken, path: &str) -> (StatusCode, Value) {
     let response = router.clone().oneshot(request(token, path)).await.unwrap();
     assert_eq!(response.headers()["cache-control"], "no-store");

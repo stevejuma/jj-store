@@ -6,7 +6,8 @@ use serde::Serialize;
 use std::{collections::VecDeque, fmt, future::Future, str::FromStr, sync::Arc, time::Duration};
 use tokio::{sync::broadcast, time::Instant};
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "EventCursor")]
 pub struct Cursor {
     pub repository: RepositoryId,
     pub epoch: EpochId,
@@ -51,14 +52,16 @@ impl FromStr for Cursor {
         Ok(cursor)
     }
 }
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "EventResetReason")]
 #[serde(rename_all = "snake_case")]
 pub enum ResetReason {
     EpochChanged,
     FuturePosition,
     ReplayWindow,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "EventKind")]
 #[serde(tag = "type", rename_all = "snake_case")]
 pub enum EventKind {
     Ready {
@@ -69,9 +72,12 @@ pub enum EventKind {
         reason: ResetReason,
         snapshot: Box<HeadSnapshot>,
     },
+    /// HTTP encodes this internal wake as a comment, never JSON event data.
+    #[schemars(skip)]
     Heartbeat,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "CommittedEvent")]
 pub struct Event {
     pub version: u32,
     pub cursor: Cursor,

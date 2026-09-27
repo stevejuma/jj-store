@@ -59,20 +59,11 @@ impl Error {
 }
 impl IntoResponse for Error {
     fn into_response(self) -> Response {
-        #[derive(Serialize)]
-        struct Body<'a> {
-            version: u32,
-            code: &'static str,
-            #[serde(skip_serializing_if = "Option::is_none")]
-            snapshot: &'a Option<Box<reads::ReadSnapshot>>,
-            #[serde(skip_serializing_if = "Option::is_none")]
-            heads: &'a Option<Box<reads::HeadSnapshot>>,
-        }
-        let value = Body {
+        let value = crate::dto::ErrorBody {
             version: 1,
             code: self.code,
-            snapshot: &self.snapshot,
-            heads: &self.heads,
+            snapshot: self.snapshot,
+            heads: self.heads,
         };
         let (status, bytes) = match encode(&value, 64 * 1024) {
             Ok(bytes) => (self.status, bytes),

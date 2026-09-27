@@ -10,6 +10,7 @@ license = "Apache-2.0"
 authors = ["LapisMD contributors"]
 
 [workspace.dependencies]
+schemars = "1.2.1"
 jj-store-model = { path = "crates/jj-store-model" }
 jj-store-object = { path = "crates/jj-store-object" }
 jj-store-wal = { path = "crates/jj-store-wal" }

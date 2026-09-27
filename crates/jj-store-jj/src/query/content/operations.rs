@@ -4,24 +4,28 @@ use jj_lib::object_id::ObjectId as _;
 use serde::Deserialize;
 use std::collections::{BTreeMap, BTreeSet};
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, schemars::JsonSchema)]
+#[schemars(rename = "OperationDiffRequest")]
 #[serde(deny_unknown_fields)]
 pub struct Request {
     pub operation: m::OperationId,
     pub parent: Option<m::OperationId>,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "SetDelta_{T}")]
 pub struct SetDelta<T> {
     pub added: Vec<T>,
     pub removed: Vec<T>,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "NamedChange_{T}")]
 pub struct NamedChange<T> {
     pub name: String,
     pub before: Option<T>,
     pub after: Option<T>,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "OperationDiffViewDelta")]
 pub struct ViewDelta {
     pub heads: SetDelta<m::CommitId>,
     pub local_bookmarks: Vec<NamedChange<dto::RefTarget>>,
@@ -31,7 +35,8 @@ pub struct ViewDelta {
     pub git_heads: Vec<NamedChange<dto::RefTarget>>,
     pub workspaces: Vec<NamedChange<m::CommitId>>,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "OperationDiffDifference")]
 pub struct Difference {
     pub operation: m::OperationId,
     pub parent: m::OperationId,
@@ -41,7 +46,8 @@ pub struct Difference {
     pub visible_commits: SetDelta<m::CommitId>,
     pub commit_predecessors: Option<BTreeMap<m::CommitId, Vec<m::CommitId>>>,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "OperationDiffData")]
 #[serde(tag = "status", rename_all = "snake_case")]
 pub enum Data {
     Root {
@@ -54,7 +60,8 @@ pub enum Data {
     },
     Difference(Box<Difference>),
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "OperationDiffResponse")]
 pub struct Response {
     pub version: u32,
     pub data: Data,

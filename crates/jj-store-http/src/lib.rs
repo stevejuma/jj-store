@@ -1,6 +1,8 @@
 //! Versioned authenticated application reads; no direct storage or native JJ types.
 #![forbid(unsafe_code)]
 mod body;
+pub mod contract;
+mod dto;
 mod error;
 mod routes;
 use axum::{
@@ -348,7 +350,8 @@ impl State {
             .into_response())
     }
 }
-#[derive(Serialize)]
+#[derive(Serialize, schemars::JsonSchema)]
+#[schemars(rename = "Envelope_{T}")]
 struct Envelope<T> {
     snapshot: reads::ReadSnapshot,
     data: T,

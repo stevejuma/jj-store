@@ -186,3 +186,9 @@ The committed-event contract and admission defaults are documented in
 in the ledger distinguishes focused service/HTTP evidence from the production
 TLS and real RustFS deployment fixture. A Docker availability failure cannot be
 reported as a passing deployment run.
+
+Generated read contracts live in schemas/openapi.json and
+web/src/lib/api/generated.ts. Contract checks regenerate both into memory and
+reject drift. Serialization fixtures verify native ID widths, tagged enums,
+ordered tuple entries and nullable predecessor fields independently of browser
+rendering. Existing native golden fixtures continue to qualify persistence.

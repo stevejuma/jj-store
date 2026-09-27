@@ -37,6 +37,7 @@ passing concrete tests linked from the progress ledger.
 | JST-API-003    | Planned     | [Read APIs and browser](api.md); [milestone gate](milestones.md)                                                                                     |
 | JST-API-004    | Planned     | [Read APIs and browser](api.md); [milestone gate](milestones.md)                                                                                     |
 | JST-API-005    | Planned     | [Read APIs and browser](api.md); [milestone gate](milestones.md)                                                                                     |
+| JST-API-006    | Implemented | [Generated contract evidence](../../docs/evidence/m4-generated-contracts.md); [commands and results](milestones.md)                                  |
 | JST-MUT-001    | Planned     | [Typed mutations](mutations.md); [milestone gate](milestones.md)                                                                                     |
 | JST-MUT-002    | Planned     | [Typed mutations](mutations.md); [milestone gate](milestones.md)                                                                                     |
 | JST-MUT-003    | Planned     | [Typed mutations](mutations.md); [milestone gate](milestones.md)                                                                                     |

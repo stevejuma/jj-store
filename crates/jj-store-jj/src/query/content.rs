@@ -56,7 +56,8 @@ impl Default for Limits {
         }
     }
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "ContentObjectData")]
 #[serde(tag = "kind", content = "data", rename_all = "snake_case")]
 pub enum ObjectData {
     Commit(dto::Commit),
@@ -67,7 +68,8 @@ pub enum ObjectData {
     Symlink { target: String },
     File { bytes: u64 },
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "ContentObject")]
 pub struct Object {
     pub version: u32,
     pub profile: &'static str,
@@ -76,7 +78,8 @@ pub struct Object {
     pub data: ObjectData,
     pub stats: Stats,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "ContentFileInfo")]
 pub struct FileInfo {
     pub version: u32,
     pub id: m::FileId,

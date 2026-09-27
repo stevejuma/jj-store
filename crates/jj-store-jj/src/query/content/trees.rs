@@ -6,7 +6,7 @@ use jj_lib::{
 use serde::Deserialize;
 use std::collections::BTreeSet;
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct TreeRequest {
     pub commit: m::CommitId,
@@ -16,7 +16,7 @@ pub struct TreeRequest {
     /// Internal traversal continuation, not an HTTP cursor.
     pub after: Option<String>,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
 pub struct TreeEntry {
     pub name: String,
     /// Native alternating add/remove terms. A sole None means absence and is
@@ -24,7 +24,7 @@ pub struct TreeEntry {
     pub terms: Vec<Option<dto::TreeValue>>,
     pub conflicted: bool,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
 pub struct TreePage {
     pub version: u32,
     pub commit: m::CommitId,

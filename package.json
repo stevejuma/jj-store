@@ -11,11 +11,11 @@
   "type": "module",
   "scripts": {
     "build": "cargo build --workspace --locked",
-    "check": "pnpm spec:validate && pnpm check:boundaries && pnpm check:progress && pnpm format:rust:check && cargo clippy --workspace --all-targets --locked -- -D warnings",
+    "check": "pnpm spec:validate && pnpm check:boundaries && pnpm check:progress && pnpm format:rust:check && pnpm contracts:check && cargo clippy --workspace --all-targets --locked -- -D warnings",
     "check:boundaries": "node scripts/check-boundaries.mjs",
     "check:progress": "node scripts/check-progress.mjs",
     "test:governance": "node --test scripts/governance.test.mjs",
-    "test": "pnpm test:governance && pnpm test:storage-harness && cargo test --workspace --locked",
+    "test": "pnpm test:governance && pnpm test:storage-harness && pnpm test:contracts && cargo test --workspace --locked",
     "spec:build": "spec-validator build",
     "spec:check": "spec-validator check",
     "spec:first": "spec-validator first",
@@ -25,10 +25,17 @@
     "test:storage-harness": "python3 scripts/rustfs-contract.py --self-test",
     "test:rustfs": "python3 scripts/rustfs-contract.py --run",
     "format:rust": "cargo fmt --all",
-    "format:rust:check": "cargo fmt --all -- --check"
+    "format:rust:check": "cargo fmt --all -- --check",
+    "contracts:generate": "node scripts/contracts.mjs --write",
+    "contracts:check": "node scripts/contracts.mjs --check && pnpm test:contracts",
+    "test:contracts": "node --test scripts/contracts.test.mjs && tsc -p scripts/tsconfig.contracts.json"
   },
   "devDependencies": {
+    "@apidevtools/swagger-parser": "^13.1.0",
     "@lapismd/spec-validator": "^0.1.0",
-    "prettier": "^3.6.2"
+    "ajv": "^8.20.0",
+    "openapi-typescript": "^7.13.0",
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.3"
   }
 }

@@ -56,6 +56,19 @@ macro_rules! id {
                 Ok(Self(bytes))
             }
         }
+        impl schemars::JsonSchema for $name {
+            fn schema_name() -> std::borrow::Cow<'static, str> {
+                stringify!($name).into()
+            }
+            fn json_schema(_: &mut schemars::SchemaGenerator) -> schemars::Schema {
+                schemars::json_schema!({
+                    "type": "string",
+                    "pattern": format!("^[0-9a-f]{{{}}}$", $size * 2),
+                    "minLength": $size * 2,
+                    "maxLength": $size * 2
+                })
+            }
+        }
         impl Serialize for $name {
             fn serialize<S: Serializer>(&self, s: S) -> Result<S::Ok, S::Error> {
                 s.serialize_str(&self.to_string())
@@ -90,7 +103,7 @@ id!(TokenId, 16);
 id!(ConflictFingerprint, 64);
 
 /// A copy placeholder is not a content-addressed object or dependency.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(
     tag = "type",
     content = "id",
@@ -103,7 +116,9 @@ pub enum CopyReference {
 }
 
 /// Publication order is distinct from native operation ancestry.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[derive(
+    Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize, schemars::JsonSchema,
+)]
 #[serde(transparent)]
 pub struct WalPosition(pub u64);
 
@@ -119,7 +134,19 @@ pub enum ObjectKind {
     Operation = 7,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+#[derive(
+    Clone,
+    Copy,
+    Debug,
+    PartialEq,
+    Eq,
+    PartialOrd,
+    Ord,
+    Hash,
+    Serialize,
+    Deserialize,
+    schemars::JsonSchema,
+)]
 #[serde(
     tag = "kind",
     content = "id",

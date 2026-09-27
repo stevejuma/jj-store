@@ -65,3 +65,8 @@ profile; exposing fields does not permit generic upstream serialization.
 ConflictFingerprint is a distinct 64-byte BLAKE2b digest of the versioned,
 domain-separated conflict descriptor input. It is neither a native object ID nor
 an envelope checksum. Native identity and persistence formats are unchanged.
+
+API schema traits describe the existing canonical hex serialization for owned
+IDs, object keys, copy references and publication positions. They do not alter
+native IDs, codecs or persisted payloads. Schema validation does not replace
+codec integrity and semantic checks.

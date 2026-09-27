@@ -108,3 +108,9 @@ and a fixed-capacity process-local notification channel shared by hosted
 sessions. The HTTP transport owns SSE framing and independent stream admission.
 Publication never awaits consumers; polling selected manifests supplies
 cross-process delivery.
+
+The HTTP crate generates the OpenAPI document from its registered route
+inventory and project-owned schema traits. Released openapi-typescript tooling
+generates browser types from that document. Schema traits add no storage, search
+or presentation dependency to lower layers; transport generation stays in the
+HTTP crate and the Node build scripts.

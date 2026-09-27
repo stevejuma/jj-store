@@ -5,26 +5,30 @@ use blake2::{Blake2b512, Digest as _};
 use jj_lib::{matchers::PrefixMatcher, object_id::ObjectId as _};
 use serde::Deserialize;
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, schemars::JsonSchema)]
+#[schemars(rename = "ConflictRequest")]
 #[serde(deny_unknown_fields)]
 pub struct Request {
     pub commit: m::CommitId,
     pub path: String,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "ConflictRole")]
 #[serde(rename_all = "snake_case")]
 pub enum Role {
     Add,
     Remove,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "ConflictTerm")]
 pub struct Term {
     pub id: u32,
     pub role: Role,
     pub label: Option<String>,
     pub value: Option<dto::TreeValue>,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "ConflictUnsupported")]
 #[serde(rename_all = "snake_case")]
 pub enum Unsupported {
     MultipleSides,
@@ -36,7 +40,8 @@ pub enum Unsupported {
     TooLarge,
     InvalidPath,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "ConflictEditor")]
 #[serde(tag = "status", rename_all = "snake_case")]
 pub enum Editor {
     Text {
@@ -47,14 +52,16 @@ pub enum Editor {
         reason: Unsupported,
     },
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "ConflictDescriptor")]
 pub struct Descriptor {
     pub path: String,
     pub fingerprint: m::ConflictFingerprint,
     pub terms: Vec<Term>,
     pub editor: Editor,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "ConflictResponse")]
 pub struct Response {
     pub version: u32,
     pub commit: m::CommitId,

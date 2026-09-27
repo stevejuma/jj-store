@@ -100,3 +100,8 @@ The server may depend on the HTTP transport for listener composition. HTTP keeps
 its existing service/model dependency boundary and consumes only owned
 contracts; it cannot depend directly on storage, CLI presentation or upstream JJ
 libraries.
+
+Generated OpenAPI and TypeScript contracts have a drift check in both normal and
+specification checks. The generator uses the compiled HTTP route inventory;
+request and response schema modes preserve Serde's optionality rules. Contract
+tests validate the OpenAPI document and representative serialized native DTOs.

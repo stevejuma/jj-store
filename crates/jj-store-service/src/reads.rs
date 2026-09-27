@@ -46,7 +46,7 @@ impl Default for ReadLimits {
         }
     }
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
 pub struct HeadSnapshot {
     pub version: u32,
     pub repo_id: m::RepositoryId,
@@ -67,7 +67,7 @@ impl From<&Manifest> for HeadSnapshot {
         }
     }
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
 pub struct ReadSnapshot {
     #[serde(flatten)]
     pub authority: HeadSnapshot,

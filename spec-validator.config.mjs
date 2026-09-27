@@ -114,6 +114,7 @@ export default defineConfig(tableRequirements(), {
   },
   check: {
     lanes: [
+      { name: "contracts", command: "pnpm", args: ["contracts:check"] },
       {
         name: "rustfmt",
         command: "cargo",

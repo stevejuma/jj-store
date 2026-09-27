@@ -4,14 +4,16 @@ use jj_store_model as m;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
+#[schemars(rename = "NativeTimestamp")]
 #[serde(deny_unknown_fields)]
 pub struct Timestamp {
     pub millis: i64,
     pub offset_minutes: i32,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
+#[schemars(rename = "NativeSignature")]
 #[serde(deny_unknown_fields)]
 pub struct Signature {
     pub name: String,
@@ -19,14 +21,16 @@ pub struct Signature {
     pub timestamp: Timestamp,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
+#[schemars(rename = "NativeSecureSig")]
 #[serde(deny_unknown_fields)]
 pub struct SecureSig {
     pub data: Vec<u8>,
     pub sig: Vec<u8>,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
+#[schemars(rename = "NativeCommit")]
 #[serde(deny_unknown_fields)]
 pub struct Commit {
     pub parents: Vec<m::CommitId>,
@@ -40,7 +44,8 @@ pub struct Commit {
     pub secure_sig: Option<SecureSig>,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
+#[schemars(rename = "NativeTreeValue")]
 #[serde(tag = "type", rename_all = "snake_case", deny_unknown_fields)]
 pub enum TreeValue {
     File {
@@ -60,13 +65,15 @@ pub enum TreeValue {
     },
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
+#[schemars(rename = "NativeTree")]
 #[serde(deny_unknown_fields)]
 pub struct Tree {
     pub entries: Vec<(String, TreeValue)>,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
+#[schemars(rename = "NativeCopyHistory")]
 #[serde(deny_unknown_fields)]
 pub struct CopyHistory {
     pub current_path: String,
@@ -74,32 +81,37 @@ pub struct CopyHistory {
     pub salt: Vec<u8>,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
+#[schemars(rename = "NativeRefTarget")]
 #[serde(transparent)]
 pub struct RefTarget(pub Vec<Option<m::CommitId>>);
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
+#[schemars(rename = "NativeRemoteState")]
 #[serde(rename_all = "snake_case")]
 pub enum RemoteState {
     New,
     Tracked,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
+#[schemars(rename = "NativeRemoteRef")]
 #[serde(deny_unknown_fields)]
 pub struct RemoteRef {
     pub target: RefTarget,
     pub state: RemoteState,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
+#[schemars(rename = "NativeRemoteView")]
 #[serde(deny_unknown_fields)]
 pub struct RemoteView {
     pub bookmarks: BTreeMap<String, RemoteRef>,
     pub tags: BTreeMap<String, RemoteRef>,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
+#[schemars(rename = "NativeView")]
 #[serde(deny_unknown_fields)]
 pub struct View {
     pub head_ids: Vec<m::CommitId>,
@@ -111,7 +123,8 @@ pub struct View {
     pub wc_commit_ids: BTreeMap<String, m::CommitId>,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
+#[schemars(rename = "NativeMetadata")]
 #[serde(deny_unknown_fields)]
 pub struct Metadata {
     pub start: Timestamp,
@@ -124,7 +137,8 @@ pub struct Metadata {
     pub attributes: BTreeMap<String, String>,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
+#[schemars(rename = "NativeOperation")]
 #[serde(deny_unknown_fields)]
 pub struct Operation {
     pub view_id: m::ViewId,

@@ -42,14 +42,16 @@ impl Policy {
         Ok(())
     }
 }
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "CacheState")]
 #[serde(rename_all = "snake_case")]
 pub enum State {
     Built,
     Reused,
     Rebuilt,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[schemars(rename = "CacheReport")]
 pub struct Report {
     pub state: State,
     pub evicted: usize,

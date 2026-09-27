@@ -1,4 +1,8 @@
 use super::*;
+use crate::{
+    contract::{Document, Reply},
+    dto::*,
+};
 use axum::{
     Json,
     extract::{DefaultBodyLimit, Query, rejection::QueryRejection},
@@ -15,15 +19,15 @@ fn limit() -> usize {
 fn all() -> String {
     "all()".into()
 }
-#[derive(Deserialize)]
+#[derive(Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
 struct Empty {}
-#[derive(Deserialize)]
+#[derive(Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
 struct Selection {
     at_op: Option<m::OperationId>,
 }
-#[derive(Deserialize)]
+#[derive(Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
 struct Log {
     at_op: Option<m::OperationId>,
@@ -37,7 +41,7 @@ struct Log {
     user_email: String,
     at_time_millis: i64,
 }
-#[derive(Deserialize)]
+#[derive(Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
 struct Operations {
     at_op: Option<m::OperationId>,
@@ -46,7 +50,7 @@ struct Operations {
     #[serde(default = "limit")]
     limit: usize,
 }
-#[derive(Deserialize)]
+#[derive(Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
 struct Evolution {
     at_op: Option<m::OperationId>,
@@ -55,7 +59,7 @@ struct Evolution {
     #[serde(default = "limit")]
     limit: usize,
 }
-#[derive(Deserialize)]
+#[derive(Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
 struct Directory {
     at_op: Option<m::OperationId>,
@@ -65,7 +69,7 @@ struct Directory {
     #[serde(default = "limit")]
     limit: usize,
 }
-#[derive(Deserialize)]
+#[derive(Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
 struct Difference {
     at_op: Option<m::OperationId>,
@@ -76,46 +80,64 @@ struct Difference {
     #[serde(default)]
     content: bool,
 }
-#[derive(Deserialize)]
+#[derive(Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
 struct Conflicts {
     at_op: Option<m::OperationId>,
     #[serde(default)]
     path: String,
 }
-#[derive(Deserialize)]
+#[derive(Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
 struct OperationDiff {
     parent: Option<m::OperationId>,
 }
-#[derive(Deserialize)]
+#[derive(Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
 struct Prepare {
     operation: m::OperationId,
 }
 
+// One declaration registers both executable routes and their generated contracts.
+macro_rules! endpoints {
+    ($register:ident) => {
+        $register! {
+            (get, "/repos/{repo}/capabilities", capabilities, Empty, Capabilities, Reply::Json(200)),
+            (get, "/repos/{repo}/snapshot", snapshot, Empty, reads::HeadSnapshot, Reply::Json(200)),
+            (get, "/repos/{repo}/events", events, Events, events::Event, Reply::Events),
+            (get, "/repos/{repo}/objects/{kind}/{id}", object, Selection, Envelope<c::Object>, Reply::Json(200)),
+            (get, "/repos/{repo}/log", log, Log, Envelope<q::GraphPage>, Reply::Json(200)),
+            (get, "/repos/{repo}/operations", operations, Operations, Envelope<q::GraphPage>, Reply::Json(200)),
+            (get, "/repos/{repo}/operations/{operation}", operation, Empty, Envelope<OperationDetail>, Reply::Json(200)),
+            (get, "/repos/{repo}/operations/{operation}/diff", operation_diff, OperationDiff, Envelope<c::operations::Response>, Reply::Json(200)),
+            (get, "/repos/{repo}/evolution", evolution, Evolution, Envelope<q::GraphPage>, Reply::Json(200)),
+            (get, "/repos/{repo}/commits/{commit}", commit, Selection, Envelope<CommitDetail>, Reply::Json(200)),
+            (get, "/repos/{repo}/commits/{commit}/tree", tree, Directory, Envelope<c::TreePage>, Reply::Json(200)),
+            (get, "/repos/{repo}/commits/{commit}/conflicts", conflicts, Conflicts, Envelope<c::conflicts::Response>, Reply::Json(200)),
+            (get, "/repos/{repo}/files/{file}", file, Selection, String, Reply::Binary),
+            (get, "/repos/{repo}/diff", diff, Difference, Envelope<c::diff::Response>, Reply::Json(200)),
+            (post, "/repos/{repo}/index/tasks", prepare, Empty, index_tasks::Task, Reply::Json(202)),
+            (get, "/repos/{repo}/index/tasks/{task}", task, Empty, index_tasks::Task, Reply::Json(200)),
+            (post, "/repos/{repo}/index/tasks/{task}/cancel", cancel, Empty, index_tasks::Task, Reply::Json(200))
+        }
+    };
+}
+pub(super) fn document(doc: &mut Document) {
+    macro_rules! register {
+        ($(($method:ident, $path:literal, $handler:ident, $query:ty, $response:ty, $reply:expr)),* ) => {
+            $(doc.endpoint::<$query, $response>(stringify!($method), $path, stringify!($handler), $reply);)*
+        };
+    }
+    endpoints!(register);
+    doc.body::<Prepare>("/v1/repos/{repo}/index/tasks", "post");
+}
 pub(super) fn router() -> Router<Arc<State>> {
-    Router::new()
-        .route("/repos/{repo}/capabilities", get(capabilities))
-        .route("/repos/{repo}/snapshot", get(snapshot))
-        .route("/repos/{repo}/events", get(events))
-        .route("/repos/{repo}/objects/{kind}/{id}", get(object))
-        .route("/repos/{repo}/log", get(log))
-        .route("/repos/{repo}/operations", get(operations))
-        .route("/repos/{repo}/operations/{operation}", get(operation))
-        .route(
-            "/repos/{repo}/operations/{operation}/diff",
-            get(operation_diff),
-        )
-        .route("/repos/{repo}/evolution", get(evolution))
-        .route("/repos/{repo}/commits/{commit}", get(commit))
-        .route("/repos/{repo}/commits/{commit}/tree", get(tree))
-        .route("/repos/{repo}/commits/{commit}/conflicts", get(conflicts))
-        .route("/repos/{repo}/files/{file}", get(file))
-        .route("/repos/{repo}/diff", get(diff))
-        .route("/repos/{repo}/index/tasks", post(prepare))
-        .route("/repos/{repo}/index/tasks/{task}", get(task))
-        .route("/repos/{repo}/index/tasks/{task}/cancel", post(cancel))
+    macro_rules! register {
+        ($(($method:ident, $path:literal, $handler:ident, $query:ty, $response:ty, $reply:expr)),* ) => {
+            Router::new()$(.route($path, $method($handler)))*
+        };
+    }
+    endpoints!(register)
         .fallback(|| async { Error::new(StatusCode::NOT_FOUND, "unknown_route") })
         .method_not_allowed_fallback(|| async {
             Error::new(StatusCode::METHOD_NOT_ALLOWED, "unsupported_method")
@@ -128,11 +150,7 @@ async fn capabilities(
     args: Input<Empty>,
 ) -> Result<Response> {
     input(args)?;
-    state.json(&serde_json::json!({"version":1,"native_profile":reads::NATIVE_PROFILE,
-        "authentication":"repository_bearer", "read_api":true,"index_tasks":true,"events":true,"search":false,"typed_mutations":[],
-        "event_limits":{"streams":state.config.event_concurrency,"replay_window":state.config.events.replay_window,"page":state.config.events.page_size,"poll_millis":state.config.events.poll_interval.as_millis()},
-        "limits":{"requests":state.config.concurrency,"workers":state.config.workers,"deadline_millis":state.config.timeout.as_millis(),"json_bytes":state.config.max_json_bytes,"page":state.config.graph.max_page,"index_commits":state.config.graph.max_index_commits,"inline_index_commits":state.config.graph.max_inline_rebuild_commits,"file_bytes":state.config.content.max_blob_bytes},
-        "log_context":{"at_time_millis":"required","workspace":"explicit when needed","user_email":"explicit for identity-relative expressions"}}))
+    state.json(&Capabilities::from(&state.config))
 }
 async fn snapshot(
     ExtractState(state): ExtractState<Arc<State>>,
@@ -271,12 +289,7 @@ async fn operation(
     let view = read
         .object(state.queries.content(), m::ObjectKey::View(data.view_id))
         .await?;
-    #[derive(Serialize)]
-    struct Detail {
-        operation: c::Object,
-        view: c::Object,
-    }
-    envelope(&state, &read, Detail { operation, view }).await
+    envelope(&state, &read, OperationDetail { operation, view }).await
 }
 async fn commit(
     ExtractState(state): ExtractState<Arc<State>>,
@@ -313,12 +326,7 @@ async fn commit(
         .next()
         .ok_or_else(Error::unavailable)?
         .commit;
-    #[derive(Serialize)]
-    struct Detail {
-        object: c::Object,
-        commit: q::Commit,
-    }
-    envelope(&state, &read, Detail { object, commit }).await
+    envelope(&state, &read, CommitDetail { object, commit }).await
 }
 async fn tree(
     ExtractState(state): ExtractState<Arc<State>>,
@@ -561,7 +569,7 @@ async fn cancel(
     state.json(&task)
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
 struct Events {
     after: Option<String>,

@@ -125,3 +125,7 @@ subscribers. Wake hints contain only repository identity and do not establish
 commitment. Event readers reauthorize and follow selected WAL records; unknown
 outcomes and writes by another process are recovered by periodic manifest reads.
 No subscriber callback is awaited by publication.
+
+Read snapshots, index-task outcomes and committed events export schema traits
+for generated HTTP contracts. Schema descriptions are informational and cannot
+construct read capabilities, restore credentials or grant publication access.
