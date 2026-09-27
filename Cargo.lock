@@ -2877,6 +2877,13 @@ dependencies = [
  "gix",
  "jj-cli",
  "jj-lib",
+ "jj-store-jj",
+ "jj-store-model",
+ "jj-store-object",
+ "jj-store-service",
+ "jj-store-wal",
+ "tempfile",
+ "tokio",
 ]
 
 [[package]]
@@ -2942,6 +2949,7 @@ dependencies = [
  "async-trait",
  "getrandom 0.4.3",
  "hex",
+ "jj-store-jj",
  "jj-store-model",
  "jj-store-object",
  "jj-store-wal",

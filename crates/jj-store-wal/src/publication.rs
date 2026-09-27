@@ -126,6 +126,38 @@ impl ManifestSnapshot {
         }
         Ok(settings.data)
     }
+    /// Complete bounded committed inventory. Callers authorize the request
+    /// before invoking this read-only traversal of selected catalog references.
+    pub async fn inventory(
+        &self,
+        store: Arc<dyn ObjectStore>,
+        limit: usize,
+    ) -> Result<Vec<VerifiedNode>> {
+        let manifest = &self.manifest;
+        let records = Records::new(store, manifest.repository);
+        let catalog = Catalog::new(records.clone());
+        let entries = catalog.entries(manifest.inventory, limit).await?;
+        let mut out = Vec::new();
+        for (key, reference) in entries {
+            let node: VerifiedNode = records.get(reference, RecordKind::Inventory).await?;
+            if object_key(node.key) != key {
+                return Err(Error::Corrupt("inventory catalog key"));
+            }
+            out.push(node);
+        }
+        let keys = out.iter().map(|n| n.key).collect::<BTreeSet<_>>();
+        if manifest
+            .heads
+            .iter()
+            .any(|id| !keys.contains(&ObjectKey::Operation(*id)))
+            || out
+                .iter()
+                .any(|n| n.dependencies.iter().any(|k| !keys.contains(k)))
+        {
+            return Err(Error::Corrupt("incomplete committed inventory"));
+        }
+        Ok(out)
+    }
     pub fn digest(&self) -> RecordDigest {
         self.digest
     }
@@ -1009,29 +1041,10 @@ impl Coordinator {
         snapshot: &ManifestSnapshot,
         limit: usize,
     ) -> Result<Vec<VerifiedNode>> {
-        let manifest = &snapshot.manifest;
-        manifest.validate(self.records.repository)?;
-        let entries = self.catalog.entries(manifest.inventory, limit).await?;
-        let mut out = Vec::new();
-        for (key, reference) in entries {
-            let node: VerifiedNode = self.records.get(reference, RecordKind::Inventory).await?;
-            if object_key(node.key) != key {
-                return Err(Error::Corrupt("inventory catalog key"));
-            }
-            out.push(node);
+        if snapshot.manifest.repository != self.records.repository {
+            return Err(Error::Corrupt("inventory repository"));
         }
-        let keys = out.iter().map(|n| n.key).collect::<BTreeSet<_>>();
-        if manifest
-            .heads
-            .iter()
-            .any(|id| !keys.contains(&ObjectKey::Operation(*id)))
-            || out
-                .iter()
-                .any(|n| n.dependencies.iter().any(|k| !keys.contains(k)))
-        {
-            return Err(Error::Corrupt("incomplete committed inventory"));
-        }
-        Ok(out)
+        snapshot.inventory(self.records.store.clone(), limit).await
     }
 }
 fn object_key(key: ObjectKey) -> RecordDigest {

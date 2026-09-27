@@ -12,7 +12,7 @@ jj-store-model.workspace = true
 jj-store-object.workspace = true
 jj-store-wal.workspace = true
 async-trait = "0.1"
-tokio = { version = "1", features = ["fs", "io-util", "sync", "time"] }
+tokio = { version = "1", features = ["fs", "io-util", "sync", "time", "rt"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = { version = "1", features = ["preserve_order"] }
 blake2 = "0.10"

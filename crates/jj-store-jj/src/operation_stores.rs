@@ -51,6 +51,7 @@ impl Default for OperationLimits {
     }
 }
 pub struct NativeOpStore {
+    runtime: crate::runtime::RuntimeContext,
     objects: Arc<NativeObjects>,
     authority: Arc<dyn OperationAuthority>,
     root: o::OperationId,
@@ -72,6 +73,7 @@ impl NativeOpStore {
             return Err("invalid operation limits".into());
         }
         Ok(Self {
+            runtime: crate::runtime::RuntimeContext::current()?,
             objects,
             authority,
             root: o::OperationId::from_bytes(roots::ROOT_OPERATION.as_bytes()),
@@ -137,99 +139,126 @@ impl OpStore for NativeOpStore {
         &self.root
     }
     async fn read_view(&self, id: &o::ViewId) -> OpStoreResult<o::View> {
-        self.authority
-            .authorize_read()
+        self.runtime
+            .run(async {
+                self.authority
+                    .authorize_read()
+                    .await
+                    .map_err(OpStoreError::Other)?;
+                let id = m::ViewId::from_slice(id.as_bytes())
+                    .map_err(|e| OpStoreError::Other(e.into()))?;
+                if id == roots::ROOT_VIEW {
+                    return Ok(roots::view());
+                }
+                self.objects
+                    .get(m::ObjectKey::View(id))
+                    .await
+                    .map_err(|e| OpStoreError::Other(e.into()))
+            })
             .await
-            .map_err(OpStoreError::Other)?;
-        let id = m::ViewId::from_slice(id.as_bytes()).map_err(|e| OpStoreError::Other(e.into()))?;
-        if id == roots::ROOT_VIEW {
-            return Ok(roots::view());
-        }
-        self.objects
-            .get(m::ObjectKey::View(id))
-            .await
-            .map_err(|e| OpStoreError::Other(e.into()))
     }
     async fn write_view(&self, contents: &o::View) -> OpStoreResult<o::ViewId> {
-        self.authority
-            .authorize_write()
+        self.runtime
+            .run(async {
+                self.authority
+                    .authorize_write()
+                    .await
+                    .map_err(OpStoreError::Other)?;
+                let (key, status) = self
+                    .objects
+                    .put(contents)
+                    .await
+                    .map_err(|e| OpStoreError::Other(e.into()))?;
+                stored(status)?;
+                Ok(o::ViewId::from_bytes(key.as_bytes()))
+            })
             .await
-            .map_err(OpStoreError::Other)?;
-        let (key, status) = self
-            .objects
-            .put(contents)
-            .await
-            .map_err(|e| OpStoreError::Other(e.into()))?;
-        stored(status)?;
-        Ok(o::ViewId::from_bytes(key.as_bytes()))
     }
     async fn read_operation(&self, id: &o::OperationId) -> OpStoreResult<o::Operation> {
-        self.authority
-            .authorize_read()
+        self.runtime
+            .run(async {
+                self.authority
+                    .authorize_read()
+                    .await
+                    .map_err(OpStoreError::Other)?;
+                let id = m::OperationId::from_slice(id.as_bytes())
+                    .map_err(|e| OpStoreError::Other(e.into()))?;
+                if id == roots::ROOT_OPERATION {
+                    return Ok(roots::operation());
+                }
+                self.objects
+                    .get(m::ObjectKey::Operation(id))
+                    .await
+                    .map_err(|e| OpStoreError::Other(e.into()))
+            })
             .await
-            .map_err(OpStoreError::Other)?;
-        let id =
-            m::OperationId::from_slice(id.as_bytes()).map_err(|e| OpStoreError::Other(e.into()))?;
-        if id == roots::ROOT_OPERATION {
-            return Ok(roots::operation());
-        }
-        self.objects
-            .get(m::ObjectKey::Operation(id))
-            .await
-            .map_err(|e| OpStoreError::Other(e.into()))
     }
     async fn write_operation(&self, contents: &o::Operation) -> OpStoreResult<o::OperationId> {
-        self.authority
-            .authorize_write()
+        self.runtime
+            .run(async {
+                self.authority
+                    .authorize_write()
+                    .await
+                    .map_err(OpStoreError::Other)?;
+                {
+                    let staged = self
+                        .staged
+                        .lock()
+                        .map_err(|_| op_error("staged operation lock poisoned"))?;
+                    let id = m::OperationId::from_slice(contents.key().as_bytes())
+                        .map_err(|e| OpStoreError::Other(e.into()))?;
+                    if staged.len() >= self.limits.max_operations && !staged.contains(&id) {
+                        return Err(op_error("staged operation limit"));
+                    }
+                }
+                let (key, status) = self
+                    .objects
+                    .put(contents)
+                    .await
+                    .map_err(|e| OpStoreError::Other(e.into()))?;
+                stored(status)?;
+                let id = m::OperationId::from_slice(key.as_bytes())
+                    .map_err(|e| OpStoreError::Other(e.into()))?;
+                let mut staged = self
+                    .staged
+                    .lock()
+                    .map_err(|_| op_error("staged operation lock poisoned"))?;
+                if staged.len() >= self.limits.max_operations && !staged.contains(&id) {
+                    return Err(op_error("staged operation limit"));
+                }
+                staged.insert(id);
+                Ok(o::OperationId::from_bytes(id.as_bytes()))
+            })
             .await
-            .map_err(OpStoreError::Other)?;
-        {
-            let staged = self
-                .staged
-                .lock()
-                .map_err(|_| op_error("staged operation lock poisoned"))?;
-            let id = m::OperationId::from_slice(contents.key().as_bytes())
-                .map_err(|e| OpStoreError::Other(e.into()))?;
-            if staged.len() >= self.limits.max_operations && !staged.contains(&id) {
-                return Err(op_error("staged operation limit"));
-            }
-        }
-        let (key, status) = self
-            .objects
-            .put(contents)
-            .await
-            .map_err(|e| OpStoreError::Other(e.into()))?;
-        stored(status)?;
-        let id = m::OperationId::from_slice(key.as_bytes())
-            .map_err(|e| OpStoreError::Other(e.into()))?;
-        let mut staged = self
-            .staged
-            .lock()
-            .map_err(|_| op_error("staged operation lock poisoned"))?;
-        if staged.len() >= self.limits.max_operations && !staged.contains(&id) {
-            return Err(op_error("staged operation limit"));
-        }
-        staged.insert(id);
-        Ok(o::OperationId::from_bytes(id.as_bytes()))
     }
     async fn resolve_operation_id_prefix(
         &self,
         prefix: &HexPrefix,
     ) -> OpStoreResult<PrefixResolution<o::OperationId>> {
-        tokio::time::timeout(self.limits.timeout, self.resolve_prefix(prefix))
+        self.runtime
+            .run(async {
+                tokio::time::timeout(self.limits.timeout, self.resolve_prefix(prefix))
+                    .await
+                    .map_err(|_| op_error("operation prefix query deadline"))?
+            })
             .await
-            .map_err(|_| op_error("operation prefix query deadline"))?
     }
     async fn gc(&self, _: &[o::OperationId], _: SystemTime) -> OpStoreResult<()> {
-        Err(op_error("destructive native operation GC is disabled"))
+        self.runtime
+            .run(async { Err(op_error("destructive native operation GC is disabled")) })
+            .await
     }
 }
 pub struct NativeOpHeadsStore {
+    runtime: crate::runtime::RuntimeContext,
     authority: Arc<dyn OperationAuthority>,
 }
 impl NativeOpHeadsStore {
-    pub fn new(authority: Arc<dyn OperationAuthority>) -> Self {
-        Self { authority }
+    pub fn new(authority: Arc<dyn OperationAuthority>) -> AuthorityResult<Self> {
+        Ok(Self {
+            authority,
+            runtime: crate::runtime::RuntimeContext::current()?,
+        })
     }
 }
 impl fmt::Debug for NativeOpHeadsStore {
@@ -245,47 +274,57 @@ impl OpHeadsStore for NativeOpHeadsStore {
         "jj-store"
     }
     async fn get_op_heads(&self) -> Result<Vec<o::OperationId>, OpHeadsStoreError> {
-        self.authority
-            .authorize_read()
+        self.runtime
+            .run(async {
+                self.authority
+                    .authorize_read()
+                    .await
+                    .map_err(OpHeadsStoreError::Read)?;
+                let ids = self
+                    .authority
+                    .heads()
+                    .await
+                    .map_err(OpHeadsStoreError::Read)?;
+                if ids.is_empty() || ids.len() > 256 {
+                    return Err(OpHeadsStoreError::Read(
+                        "invalid native operation heads".into(),
+                    ));
+                }
+                Ok(ids
+                    .into_iter()
+                    .map(|id| o::OperationId::from_bytes(id.as_bytes()))
+                    .collect())
+            })
             .await
-            .map_err(OpHeadsStoreError::Read)?;
-        let ids = self
-            .authority
-            .heads()
-            .await
-            .map_err(OpHeadsStoreError::Read)?;
-        if ids.is_empty() || ids.len() > 256 {
-            return Err(OpHeadsStoreError::Read(
-                "invalid native operation heads".into(),
-            ));
-        }
-        Ok(ids
-            .into_iter()
-            .map(|id| o::OperationId::from_bytes(id.as_bytes()))
-            .collect())
     }
     async fn update_op_heads(
         &self,
         old: &[o::OperationId],
         new: &o::OperationId,
     ) -> Result<(), OpHeadsStoreError> {
-        let error = |source| OpHeadsStoreError::Write {
-            new_op_id: new.clone(),
-            source,
-        };
-        self.authority.authorize_write().await.map_err(error)?;
-        if old.len() > 256 {
-            return Err(error("native head limit".into()));
-        }
-        let old = old
-            .iter()
-            .map(|id| m::OperationId::from_slice(id.as_bytes()))
-            .collect::<Result<BTreeSet<_>, _>>()
-            .map_err(|e| error(e.into()))?;
-        let id = m::OperationId::from_slice(new.as_bytes()).map_err(|e| error(e.into()))?;
-        self.authority.publish(old, id).await.map_err(error)
+        self.runtime
+            .run(async {
+                let error = |source| OpHeadsStoreError::Write {
+                    new_op_id: new.clone(),
+                    source,
+                };
+                self.authority.authorize_write().await.map_err(error)?;
+                if old.len() > 256 {
+                    return Err(error("native head limit".into()));
+                }
+                let old = old
+                    .iter()
+                    .map(|id| m::OperationId::from_slice(id.as_bytes()))
+                    .collect::<Result<BTreeSet<_>, _>>()
+                    .map_err(|e| error(e.into()))?;
+                let id = m::OperationId::from_slice(new.as_bytes()).map_err(|e| error(e.into()))?;
+                self.authority.publish(old, id).await.map_err(error)
+            })
+            .await
     }
     async fn lock(&self) -> Result<Box<dyn OpHeadsStoreLock + '_>, OpHeadsStoreError> {
-        Ok(Box::new(CasCoordination))
+        self.runtime
+            .run(async { Ok(Box::new(CasCoordination) as Box<dyn OpHeadsStoreLock>) })
+            .await
     }
 }

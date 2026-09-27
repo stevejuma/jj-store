@@ -75,12 +75,18 @@ pub trait SemanticPolicy: Send + Sync {
     ) -> wal::Result<()>;
 }
 pub struct AuthenticatedGuard {
-    access: RepositoryAccess,
+    access: Arc<RepositoryAccess>,
     semantic: Arc<dyn SemanticPolicy>,
 }
 impl AuthenticatedGuard {
-    pub fn new(access: RepositoryAccess, semantic: Arc<dyn SemanticPolicy>) -> Self {
-        Self { access, semantic }
+    pub fn new(
+        access: impl Into<Arc<RepositoryAccess>>,
+        semantic: Arc<dyn SemanticPolicy>,
+    ) -> Self {
+        Self {
+            access: access.into(),
+            semantic,
+        }
     }
     async fn actor(
         &self,

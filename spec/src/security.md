@@ -38,3 +38,9 @@ not permit client-computed history changes.
 Operator policies remain separate from repository state. The authentication
 library does not itself persist credentials or expose transports. CLI credential
 storage, HTTP/RPC wiring and server operator administration remain M3 gates.
+
+Repository initialization requires an operator policy and a credential with the
+creation capability before storage access. Its coordinator guard rejects all
+ordinary publications. Once initialized, the native service session enforces
+current repository credentials and the shared native semantic policy; no
+permissive policy constructor is exposed by that session.

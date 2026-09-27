@@ -126,7 +126,7 @@ impl Fixture {
         NativeOpStore::new(self.objects.clone(), self.authority.clone(), limits).unwrap()
     }
     fn heads(&self) -> NativeOpHeadsStore {
-        NativeOpHeadsStore::new(self.authority.clone())
+        NativeOpHeadsStore::new(self.authority.clone()).unwrap()
     }
 }
 async fn fixture() -> Fixture {

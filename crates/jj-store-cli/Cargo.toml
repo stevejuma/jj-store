@@ -13,3 +13,12 @@ async-trait = "0.1"
 clap = { version = "4", features = ["derive"] }
 futures = "0.3"
 gix = "0.87.1"
+
+[dev-dependencies]
+jj-store-jj.workspace = true
+jj-store-model.workspace = true
+jj-store-object.workspace = true
+jj-store-service.workspace = true
+jj-store-wal.workspace = true
+tempfile = "3"
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "time", "sync"] }

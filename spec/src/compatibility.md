@@ -75,3 +75,15 @@ The [M3 storage regression run](../../docs/evidence/m3-auth-storage-rustfs.json)
 retains the native publication/recovery gate after extracting the shared checked
 manifest reader for authentication. It does not claim deployed RPC/HTTP token
 acceptance, which remains a separate M3 integration gate.
+
+The M3 native lifecycle fixture found that physical file snapshotting invokes
+backend I/O on upstream worker threads without an inherited Tokio reactor.
+Native factories now require a caller-owned multithread runtime and enter it per
+poll on those threads. Library lifecycle, cache rebuild and policy regression
+coverage is in `crates/jj-store-cli/tests/native_lifecycle.rs`.
+
+The
+[native session storage regression](../../docs/evidence/m3-native-session-rustfs.json)
+retains all ten RustFS storage/publication probes after sharing the committed
+inventory reader. It uses the storage harness's test principals and does not
+replace authenticated RPC/HTTP or executable CLI acceptance.

@@ -90,3 +90,8 @@ authentication state.
 Cancellation conformance synchronizes with the selected storage fault boundary
 before advancing a controlled test clock. A pre-staging deadline must not be
 misreported as evidence for a post-CAS lost acknowledgement.
+
+Checked manifest snapshots expose the same bounded committed-inventory reader
+used by the coordinator. Native semantic validation and authenticated
+prefix/copy enumeration use this selected inventory; the reader does not publish
+state or introduce a second commitment test.

@@ -55,3 +55,8 @@ The native backend adapts JJ's futures file streams to the owned Tokio
 transport. Its query engine derives bounded copy records from native history;
 those derived results never become publication authority or require a listing
 API.
+
+The service implements the owned native-store authority interfaces through the
+shared guarded coordinator. JJ factories and semantic object inspection remain
+in the JJ integration crate. CLI-package integration fixtures exercise the full
+native library lifecycle without moving upstream types into service code.

@@ -52,6 +52,7 @@ impl Default for BackendLimits {
     }
 }
 pub struct NativeBackend {
+    runtime: crate::runtime::RuntimeContext,
     objects: Arc<NativeObjects>,
     pub(crate) authority: Arc<dyn BackendAuthority>,
     pub(crate) limits: BackendLimits,
@@ -82,6 +83,7 @@ impl NativeBackend {
             return Err("invalid backend limits".into());
         }
         Ok(Self {
+            runtime: crate::runtime::RuntimeContext::current()?,
             objects,
             authority,
             limits,
@@ -147,6 +149,7 @@ fn acknowledged(status: UploadStatus) -> BackendResult<()> {
 }
 /// Keep the private spool alive until the caller drops the stream, on all OSes.
 struct FileReader {
+    runtime: crate::runtime::RuntimeContext,
     reader: Pin<Box<dyn AsyncRead + Send>>,
     _spool: jj_store_object::StagedUpload,
 }
@@ -156,6 +159,8 @@ impl AsyncRead for FileReader {
         cx: &mut Context<'_>,
         buf: &mut [u8],
     ) -> Poll<std::io::Result<usize>> {
+        let runtime = self.runtime.clone();
+        let _guard = runtime.enter();
         self.reader.as_mut().poll_read(cx, buf)
     }
 }
@@ -189,132 +194,177 @@ impl Backend for NativeBackend {
         _path: &RepoPath,
         id: &FileId,
     ) -> BackendResult<Pin<Box<dyn AsyncRead + Send>>> {
-        let _permit = self.permits.acquire().await.map_err(other)?;
-        self.authority.authorize_read().await.map_err(other)?;
-        let spool = self
-            .objects
-            .get_file(m::FileId::new(id_bytes(id, "file")?))
+        self.runtime
+            .run(async {
+                let _permit = self.permits.acquire().await.map_err(other)?;
+                self.authority.authorize_read().await.map_err(other)?;
+                let spool = self
+                    .objects
+                    .get_file(m::FileId::new(id_bytes(id, "file")?))
+                    .await
+                    .map_err(other)?;
+                let reader = Box::pin(spool.reader().map_err(other)?.compat());
+                Ok(Box::pin(FileReader {
+                    runtime: self.runtime.clone(),
+                    reader,
+                    _spool: spool,
+                }) as Pin<Box<dyn AsyncRead + Send>>)
+            })
             .await
-            .map_err(other)?;
-        let reader = Box::pin(spool.reader().map_err(other)?.compat());
-        Ok(Box::pin(FileReader {
-            reader,
-            _spool: spool,
-        }))
     }
     async fn write_file(
         &self,
         _path: &RepoPath,
         contents: &mut (dyn AsyncRead + Send + Unpin),
     ) -> BackendResult<FileId> {
-        let _permit = self.permits.acquire().await.map_err(other)?;
-        self.authority.authorize_write().await.map_err(other)?;
-        let (id, status) = self
-            .objects
-            .put_file(contents.compat())
+        self.runtime
+            .run(async {
+                let _permit = self.permits.acquire().await.map_err(other)?;
+                self.authority.authorize_write().await.map_err(other)?;
+                let (id, status) = self
+                    .objects
+                    .put_file(contents.compat())
+                    .await
+                    .map_err(other)?;
+                acknowledged(status)?;
+                Ok(FileId::from_bytes(id.as_bytes()))
+            })
             .await
-            .map_err(other)?;
-        acknowledged(status)?;
-        Ok(FileId::from_bytes(id.as_bytes()))
     }
     async fn read_symlink(&self, _path: &RepoPath, id: &SymlinkId) -> BackendResult<String> {
-        let _permit = self.permits.acquire().await.map_err(other)?;
-        self.authority.authorize_read().await.map_err(other)?;
-        Ok(self
-            .read::<NativeSymlink>(m::ObjectKey::Symlink(m::SymlinkId::new(id_bytes(
-                id, "symlink",
-            )?)))
-            .await?
-            .0)
+        self.runtime
+            .run(async {
+                let _permit = self.permits.acquire().await.map_err(other)?;
+                self.authority.authorize_read().await.map_err(other)?;
+                Ok(self
+                    .read::<NativeSymlink>(m::ObjectKey::Symlink(m::SymlinkId::new(id_bytes(
+                        id, "symlink",
+                    )?)))
+                    .await?
+                    .0)
+            })
+            .await
     }
     async fn write_symlink(&self, _path: &RepoPath, target: &str) -> BackendResult<SymlinkId> {
-        let _permit = self.permits.acquire().await.map_err(other)?;
-        self.authority.authorize_write().await.map_err(other)?;
-        Ok(SymlinkId::from_bytes(
-            self.write(&NativeSymlink(target.to_owned()))
-                .await?
-                .as_bytes(),
-        ))
+        self.runtime
+            .run(async {
+                let _permit = self.permits.acquire().await.map_err(other)?;
+                self.authority.authorize_write().await.map_err(other)?;
+                Ok(SymlinkId::from_bytes(
+                    self.write(&NativeSymlink(target.to_owned()))
+                        .await?
+                        .as_bytes(),
+                ))
+            })
+            .await
     }
     async fn read_copy(&self, id: &CopyId) -> BackendResult<CopyHistory> {
-        let _permit = self.permits.acquire().await.map_err(other)?;
-        self.authority.authorize_read().await.map_err(other)?;
-        self.read(m::ObjectKey::Copy(m::CopyId::new(id_bytes(id, "copy")?)))
+        self.runtime
+            .run(async {
+                let _permit = self.permits.acquire().await.map_err(other)?;
+                self.authority.authorize_read().await.map_err(other)?;
+                self.read(m::ObjectKey::Copy(m::CopyId::new(id_bytes(id, "copy")?)))
+                    .await
+            })
             .await
     }
     async fn write_copy(&self, copy: &CopyHistory) -> BackendResult<CopyId> {
-        let _permit = self.permits.acquire().await.map_err(other)?;
-        self.authority.authorize_write().await.map_err(other)?;
-        let id = m::CopyId::from_slice(copy.key().as_bytes()).map_err(other)?;
-        {
-            let staged = self
-                .staged_copies
-                .lock()
-                .map_err(|_| other("copy lock poisoned"))?;
-            if staged.len() >= self.limits.max_nodes && !staged.contains(&id) {
-                return Err(other("staged copy limit"));
-            }
-        }
-        let key = self.write(copy).await?;
-        let mut staged = self
-            .staged_copies
-            .lock()
-            .map_err(|_| other("copy lock poisoned"))?;
-        if staged.len() >= self.limits.max_nodes && !staged.contains(&id) {
-            return Err(other("staged copy limit"));
-        }
-        staged.insert(id);
-        Ok(CopyId::from_bytes(key.as_bytes()))
+        self.runtime
+            .run(async {
+                let _permit = self.permits.acquire().await.map_err(other)?;
+                self.authority.authorize_write().await.map_err(other)?;
+                let id = m::CopyId::from_slice(copy.key().as_bytes()).map_err(other)?;
+                {
+                    let staged = self
+                        .staged_copies
+                        .lock()
+                        .map_err(|_| other("copy lock poisoned"))?;
+                    if staged.len() >= self.limits.max_nodes && !staged.contains(&id) {
+                        return Err(other("staged copy limit"));
+                    }
+                }
+                let key = self.write(copy).await?;
+                let mut staged = self
+                    .staged_copies
+                    .lock()
+                    .map_err(|_| other("copy lock poisoned"))?;
+                if staged.len() >= self.limits.max_nodes && !staged.contains(&id) {
+                    return Err(other("staged copy limit"));
+                }
+                staged.insert(id);
+                Ok(CopyId::from_bytes(key.as_bytes()))
+            })
+            .await
     }
     async fn get_related_copies(&self, id: &CopyId) -> BackendResult<Vec<RelatedCopy>> {
-        tokio::time::timeout(self.limits.timeout, crate::copy_query::related(self, id))
+        self.runtime
+            .run(async {
+                tokio::time::timeout(self.limits.timeout, crate::copy_query::related(self, id))
+                    .await
+                    .map_err(|_| other("copy query deadline exceeded"))?
+            })
             .await
-            .map_err(|_| other("copy query deadline exceeded"))?
     }
     async fn read_tree(&self, _path: &RepoPath, id: &TreeId) -> BackendResult<Tree> {
-        let _permit = self.permits.acquire().await.map_err(other)?;
-        self.authority.authorize_read().await.map_err(other)?;
-        let key = m::ObjectKey::Tree(m::TreeId::new(id_bytes(id, "tree")?));
-        if *id == self.empty {
-            return Ok(Tree::default());
-        }
-        self.read(key).await
+        self.runtime
+            .run(async {
+                let _permit = self.permits.acquire().await.map_err(other)?;
+                self.authority.authorize_read().await.map_err(other)?;
+                let key = m::ObjectKey::Tree(m::TreeId::new(id_bytes(id, "tree")?));
+                if *id == self.empty {
+                    return Ok(Tree::default());
+                }
+                self.read(key).await
+            })
+            .await
     }
     async fn write_tree(&self, _path: &RepoPath, contents: &Tree) -> BackendResult<TreeId> {
-        let _permit = self.permits.acquire().await.map_err(other)?;
-        self.authority.authorize_write().await.map_err(other)?;
-        Ok(TreeId::from_bytes(self.write(contents).await?.as_bytes()))
+        self.runtime
+            .run(async {
+                let _permit = self.permits.acquire().await.map_err(other)?;
+                self.authority.authorize_write().await.map_err(other)?;
+                Ok(TreeId::from_bytes(self.write(contents).await?.as_bytes()))
+            })
+            .await
     }
     async fn read_commit(&self, id: &CommitId) -> BackendResult<Commit> {
-        let _permit = self.permits.acquire().await.map_err(other)?;
-        self.authority.authorize_read().await.map_err(other)?;
-        let key = m::ObjectKey::Commit(m::CommitId::new(id_bytes(id, "commit")?));
-        if *id == self.root {
-            return Ok(roots::commit());
-        }
-        self.read(key).await
+        self.runtime
+            .run(async {
+                let _permit = self.permits.acquire().await.map_err(other)?;
+                self.authority.authorize_read().await.map_err(other)?;
+                let key = m::ObjectKey::Commit(m::CommitId::new(id_bytes(id, "commit")?));
+                if *id == self.root {
+                    return Ok(roots::commit());
+                }
+                self.read(key).await
+            })
+            .await
     }
     async fn write_commit(
         &self,
         mut contents: Commit,
         sign_with: Option<&mut SigningFn>,
     ) -> BackendResult<(CommitId, Commit)> {
-        let _permit = self.permits.acquire().await.map_err(other)?;
-        self.authority.authorize_write().await.map_err(other)?;
-        if contents.parents.is_empty() {
-            return Err(other("only the virtual root may have no parents"));
-        }
-        if let Some(sign) = sign_with {
-            if contents.secure_sig.is_some() {
-                return Err(other("commit already has a signature"));
-            }
-            let mut data = b"jj-store/native-commit-signature/v1\0".to_vec();
-            data.extend(contents.encode_payload().map_err(other)?);
-            let sig = sign(&data).map_err(other)?;
-            contents.secure_sig = Some(SecureSig { data, sig });
-        }
-        let key = self.write(&contents).await?;
-        Ok((CommitId::from_bytes(key.as_bytes()), contents))
+        self.runtime
+            .run(async {
+                let _permit = self.permits.acquire().await.map_err(other)?;
+                self.authority.authorize_write().await.map_err(other)?;
+                if contents.parents.is_empty() {
+                    return Err(other("only the virtual root may have no parents"));
+                }
+                if let Some(sign) = sign_with {
+                    if contents.secure_sig.is_some() {
+                        return Err(other("commit already has a signature"));
+                    }
+                    let mut data = b"jj-store/native-commit-signature/v1\0".to_vec();
+                    data.extend(contents.encode_payload().map_err(other)?);
+                    let sig = sign(&data).map_err(other)?;
+                    contents.secure_sig = Some(SecureSig { data, sig });
+                }
+                let key = self.write(&contents).await?;
+                Ok((CommitId::from_bytes(key.as_bytes()), contents))
+            })
+            .await
     }
     fn get_copy_records(
         &self,
@@ -325,6 +375,7 @@ impl Backend for NativeBackend {
         id_bytes(root, "commit")?;
         id_bytes(head, "commit")?;
         crate::copy_query::records(self, paths, root, head)
+            .map(|stream| self.runtime.stream(stream))
     }
     fn gc(&self, _index: &dyn Index, _keep_newer: SystemTime) -> BackendResult<()> {
         Err(BackendError::Unsupported(
