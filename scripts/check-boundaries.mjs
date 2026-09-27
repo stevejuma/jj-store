@@ -20,6 +20,8 @@ export function dependencyErrors(packages) {
     ],
     "jj-store-rpc": ["jj-store-model", "jj-store-object", "jj-store-service"],
     "jj-store-server": [
+      "jj-store-adapters",
+      "jj-store-tantivy",
       "jj-store-http",
       "jj-store-model",
       "jj-store-object",

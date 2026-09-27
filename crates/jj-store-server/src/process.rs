@@ -24,6 +24,7 @@ pub struct PreparedServer {
     tls: Option<tokio_rustls::TlsAcceptor>,
     concurrent: usize,
     timeout: Duration,
+    search: crate::search::PreparedSearch,
     _lock: File,
 }
 impl PreparedServer {
@@ -58,7 +59,14 @@ impl PreparedServer {
         fs::create_dir_all(&state)?;
         let lock = policy::exclusive_lock(&state.join("server.lock"))?;
         let timeout = Duration::from_secs(config.limits.request_seconds);
-        let http = HttpApi::new(
+        let (search, indexes) = crate::search::PreparedSearch::new(
+            &host,
+            &state,
+            &config.search,
+            &config.limits,
+            crate::search::environment,
+        )?;
+        let http = HttpApi::with_search(
             host,
             state.join("native-reads"),
             HttpConfig {
@@ -87,6 +95,7 @@ impl PreparedServer {
                 },
                 ..Default::default()
             },
+            indexes,
         )
         .map_err(Error::Config)?;
         let browser = config
@@ -104,6 +113,7 @@ impl PreparedServer {
             tls,
             concurrent: config.limits.concurrent_requests,
             timeout,
+            search,
             _lock: lock,
         })
     }
@@ -111,6 +121,7 @@ impl PreparedServer {
         Ok(self.listener.local_addr()?)
     }
     pub async fn run(self, shutdown: impl Future<Output = ()> + Send + 'static) -> Result<()> {
+        let search = self.search.start();
         let (tx, rx) = tokio::sync::oneshot::channel();
         let mut router = Routes::new(self.rpc.service())
             .into_axum_router()
@@ -133,13 +144,17 @@ impl PreparedServer {
                 let _ = rx.await;
             });
         tokio::pin!(serve);
-        tokio::select! {
+        let result = tokio::select! {
             result=&mut serve=>result.map_err(|_|Error::Service("native listener failed")),
             _=shutdown=>{
                 let _=tx.send(());
-                tokio::time::timeout(Duration::from_secs(5),serve).await.map_err(|_|Error::Service("graceful shutdown exceeded five seconds; in-flight outcomes may be unknown"))?.map_err(|_|Error::Service("native listener shutdown failed"))
+                tokio::time::timeout(Duration::from_secs(5),serve).await
+                    .map_err(|_|Error::Service("graceful shutdown exceeded five seconds; in-flight outcomes may be unknown"))
+                    .and_then(|result|result.map_err(|_|Error::Service("native listener shutdown failed")))
             }
-        }
+        };
+        let stopped = search.shutdown().await;
+        result.and(stopped)
     }
 }
 pub async fn shutdown_signal() {
@@ -160,6 +175,7 @@ pub struct Diagnosis {
     pub storage_ready: bool,
     pub heads: std::collections::BTreeSet<jj_store_model::OperationId>,
     pub adapters: &'static str,
+    pub search: crate::search::Diagnosis,
 }
 pub async fn doctor(
     config: &Config,
@@ -171,7 +187,7 @@ pub async fn doctor(
         .host()?
         .endpoint(repository)
         .map_err(|_| Error::Service("native endpoint"))?
-        .bind(token)
+        .bind(token.clone())
         .map_err(|_| Error::Service("native authorization"))?;
     let heads = tokio::time::timeout(
         Duration::from_secs(config.limits.request_seconds),
@@ -180,12 +196,18 @@ pub async fn doctor(
     .await
     .map_err(|_| Error::Service("storage readiness deadline"))?
     .map_err(|_| Error::Service("repository access or authoritative storage unavailable"))?;
+    let search = crate::search::diagnose(config, repository, &token).await;
     Ok(Diagnosis {
         version: 1,
         repository,
         storage_ready: true,
         heads,
-        adapters: "not configured",
+        adapters: if search.configured {
+            "search configured"
+        } else {
+            "not configured"
+        },
+        search,
     })
 }
 

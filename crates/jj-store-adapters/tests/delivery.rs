@@ -597,3 +597,48 @@ async fn adapter_history_and_prior_inventory_stop_at_the_delivered_snapshot() {
         );
     }
 }
+
+#[tokio::test]
+async fn adapter_shutdown_waits_for_retained_worker_contexts() {
+    let f = Fixture::new().await;
+    let root = tempfile::tempdir().unwrap();
+    let release = Arc::new(tokio::sync::Notify::new());
+    let (done, wait) = tokio::sync::oneshot::channel();
+    let mut runner = Runner::new(
+        f.source(),
+        identity(),
+        HoldingProjection {
+            release: release.clone(),
+            done: Some(done),
+        },
+        root.path(),
+        Limits {
+            timeout: Duration::from_millis(100),
+            ..limits()
+        },
+    )
+    .unwrap();
+    assert_eq!(runner.step(token()).await.unwrap_err(), Error::Limit);
+    assert!(
+        tokio::time::timeout(Duration::from_millis(20), runner.wait_idle())
+            .await
+            .is_err()
+    );
+    release.notify_one();
+    tokio::time::timeout(Duration::from_secs(1), runner.wait_idle())
+        .await
+        .unwrap()
+        .unwrap();
+    wait.await.unwrap();
+    drop(runner);
+    assert!(
+        Runner::new(
+            f.source(),
+            identity(),
+            FileProjection::new(root.path().join("artifact.json")),
+            root.path(),
+            limits()
+        )
+        .is_ok()
+    );
+}

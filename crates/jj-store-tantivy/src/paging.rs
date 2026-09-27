@@ -118,7 +118,7 @@ impl Default for Limits {
         }
     }
 }
-#[derive(Clone, Debug, Serialize, schemars::JsonSchema)]
+#[derive(Clone, Debug, Serialize, Deserialize, schemars::JsonSchema)]
 #[schemars(rename = "SearchStatus")]
 pub struct Status {
     pub version: u32,
@@ -253,7 +253,7 @@ impl Pager {
             indexed_position,
             index_generation: state.visible.as_ref().map(|c| c.artifact),
             is_stale: indexed_position != Some(current.published_seq),
-            degraded: state.degraded || health.degraded,
+            degraded: state.degraded || health.degraded || self.health.has_changed().is_err(),
         })
     }
     pub async fn status(&self, session: Arc<NativeSession>) -> Result<Status> {

@@ -165,3 +165,42 @@ fn programmatic_configuration_cannot_bypass_private_path_validation() {
     config.state_dir = repo.join("state");
     assert!(config.validate().is_err());
 }
+
+#[test]
+fn search_configuration_is_explicit_bounded_and_contains_no_credentials() {
+    let root = tempfile::tempdir().unwrap();
+    let search = format!(
+        r#"
+[[search]]
+repository = "{}"
+token_environment = "JJ_STORE_SEARCH_TOKEN_EXAMPLE"
+poll_millis = 100
+[search.source.scopes.main]
+kind = "bookmark"
+name = "main"
+"#,
+        RepositoryId::new([71; 16])
+    );
+    let config = load(root.path(), &format!("{EXAMPLE}{search}")).unwrap();
+    assert_eq!(config.search.len(), 1);
+    assert_eq!(config.search[0].source.scopes.len(), 1);
+    assert_eq!(config.search[0].index_bytes, 512 * 1024 * 1024);
+    assert!(!config.state_dir.exists());
+    for bad in [
+        search.replace("JJ_STORE_SEARCH_TOKEN_EXAMPLE", "JJ_STORE_TOKEN"),
+        search.replace("poll_millis = 100", "poll_millis = 0"),
+        search.replace("poll_millis = 100", "index_bytes = 0"),
+        search.replace("poll_millis = 100", "timeout_seconds = 301"),
+        search.replace("poll_millis = 100", "token = 'must-not-echo-secret'"),
+        search.replace(
+            "[search.source.scopes.main]",
+            "[search.source]\nunknown = true\n[search.source.scopes.main]",
+        ),
+        format!("{search}{search}"),
+    ] {
+        let error = load(root.path(), &format!("{EXAMPLE}{bad}"))
+            .unwrap_err()
+            .to_string();
+        assert!(!error.contains("must-not-echo-secret"));
+    }
+}

@@ -311,3 +311,9 @@ Search configuration recovery is qualified with native source content, local
 index reopen and a failed replacement commit. The evidence distinguishes
 rebuildable index configuration from unchanged repository IDs and committed
 positions; a restart must not activate incompatible source projections.
+
+Server-search acceptance combines strict configuration and cold executable
+checks with native repositories, real local Tantivy files and background-runner
+HTTP fixtures. Cache loss/reopen and token revocation require observed status
+transitions, not sleeps alone. Real RustFS/TLS search deployment remains a
+separate qualification from these local lifecycle fixtures.

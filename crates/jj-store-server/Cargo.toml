@@ -13,6 +13,10 @@ jj-store-jj.workspace = true
 jj-store-service.workspace = true
 jj-store-rpc.workspace = true
 jj-store-http.workspace = true
+jj-store-adapters.workspace = true
+jj-store-tantivy.workspace = true
+zeroize = "1"
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "stream"] }
 futures = "0.3"
 tokio-stream = { version = "0.1", features = ["net"] }
 tokio-rustls = { version = "0.26", default-features = false, features = ["ring", "tls12"] }

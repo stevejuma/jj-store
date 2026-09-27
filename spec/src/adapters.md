@@ -167,3 +167,21 @@ including when the replacement build fails. Rebuilding at the same native
 position produces an artifact for the new configuration. Existing compatible
 pins retain their immutable generation; native repository data and IDs do not
 change when source projection exclusions change.
+
+Server composition creates one runner per explicitly configured repository and
+uses the canonical native extraction identity. Active index paths are derived
+from full repository IDs beneath private server state; users cannot supply paths
+from repository content. Configuring no source scopes indexes metadata only.
+Runners hold their repository token only in memory and reauthorize on every
+batch. Configuration reload is an explicit server restart. Local cache loss
+rebuilds from selected history regardless of an advanced remote adapter cursor.
+
+A graceful runner shutdown waits until retained callback contexts release native
+and blocking work before releasing writer ownership. A forced task drop still
+cancels workers; their context clones retain ownership until actual exit.
+Rebuild equivalence compares document contents and native source positions;
+equal-score ordering may differ in a newly built index. Pages within one pinned
+generation retain their exact ordering.
+
+A closed runner health channel marks search degraded even when its last index
+remains readable. A terminated worker cannot leave a permanently healthy status.

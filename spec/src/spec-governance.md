@@ -145,3 +145,7 @@ error responses through a real native fixture. The capture must execute its
 exact named test and produce samples; a zero-test invocation cannot count as
 contract evidence. Generated API declarations remain permitted during UI
 deferral.
+
+Server composition may depend on owned adapter and Tantivy interfaces. The layer
+checker continues to reject upstream JJ imports in server code and all search or
+transport dependencies in authoritative storage/publication layers.

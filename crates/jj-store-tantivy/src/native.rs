@@ -17,7 +17,7 @@ pub enum Scope {
     Workspace { name: String },
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
+#[serde(default, deny_unknown_fields)]
 pub struct Config {
     pub scopes: BTreeMap<String, Scope>,
     pub index_source: bool,

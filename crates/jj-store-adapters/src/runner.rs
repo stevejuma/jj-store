@@ -67,6 +67,12 @@ impl<P: Projection> Runner<P> {
             health: watch::channel(Health::default()).0,
         })
     }
+    /// Wait for work retained by canceled/timed-out callbacks to release its
+    /// context. The caller stops run/step first and supplies a shutdown deadline.
+    pub async fn wait_idle(&self) -> Result<()> {
+        let _permit = self.slots.acquire().await.map_err(|_| Error::Unavailable)?;
+        Ok(())
+    }
     pub fn subscribe(&self) -> watch::Receiver<Health> {
         self.health.subscribe()
     }

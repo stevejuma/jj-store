@@ -211,3 +211,10 @@ A restart with changed search source exclusions cannot temporarily serve the
 previous configuration's files during recovery. A configured extractor rejects
 mislabeled identities before runner startup, and incompatible recovered
 artifacts remain unserved until a compatible rebuild succeeds.
+
+Configured search runners use dedicated repository tokens supplied through named
+environment variables. Config output includes variable names, never their
+values; missing/invalid secrets produce fixed errors. Index files inherit
+private state directory access. A revoked runner credential degrades indexing
+without changing repository serving permission or bypassing fresh authorization
+for search users.

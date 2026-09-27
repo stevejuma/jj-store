@@ -564,3 +564,6 @@ async fn native_tantivy_clears_ambiguous_scopes_and_respects_source_disable() {
 
 #[path = "search_identity.rs"]
 mod search_identity;
+
+#[path = "server_search.rs"]
+mod server_search;

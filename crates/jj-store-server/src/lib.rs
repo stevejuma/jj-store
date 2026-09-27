@@ -4,6 +4,7 @@ pub mod config;
 mod listener;
 pub mod policy;
 pub mod process;
+pub mod search;
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
     #[error("invalid server configuration: {0}")]

@@ -33,9 +33,9 @@ adds evidence here in its enclosing Jujutsu change.
 | M5.1        | Done        | M4.1       | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Basic changes/refs/reconcile; preview receipt and semantic policy                     | Retain basic mutation acceptance                    | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004                                                                                                                      |
 | M5.2        | Done        | M5.1       | JST-MUT-003                                                             | Full abandon descendant bookmark workspace/evolution parity                           | Retain abandon acceptance                           | E-M5-005                                                                                                                                                             |
 | M5.3        | Done        | M5.1       | JST-MUT-004                                                             | Atomic stale-safe resolution with native conflict variants                            | Retain mutation conformance; proceed to M6          | E-M5-006,E-M5-007,E-M5-008                                                                                                                                           |
-| M6          | In progress | M5         | JST-ADAPT-001,JST-ADAPT-002,JST-ADAPT-003,JST-ADAPT-004                 | Replay-equivalent searchable projection with freshness                                | Configure server search and remote snapshots        | E-M6-001,E-M6-002,E-M6-003,E-M6-004,E-M6-005,E-M6-006,E-M6-007                                                                                                       |
+| M6          | In progress | M5         | JST-ADAPT-001,JST-ADAPT-002,JST-ADAPT-003,JST-ADAPT-004                 | Replay-equivalent searchable projection with freshness                                | Implement remote snapshots and qualify deployment   | E-M6-001,E-M6-002,E-M6-003,E-M6-004,E-M6-005,E-M6-006,E-M6-007,E-M6-008                                                                                              |
 | M6.1        | Done        | M5         | JST-ADAPT-001,JST-ADAPT-002                                             | Ordered committed reader and durable replay-safe checkpoints                          | Implement Tantivy projection and search             | E-M6-001                                                                                                                                                             |
-| M6.2        | In progress | M6.1       | JST-ADAPT-003,JST-ADAPT-004                                             | Tantivy crash/rebuild/generation and revocation tests                                 | Configure server search and remote snapshots        | E-SCOPE-001,E-M6-002,E-M6-003,E-M6-004,E-M6-005,E-M6-006,E-M6-007                                                                                                    |
+| M6.2        | In progress | M6.1       | JST-ADAPT-003,JST-ADAPT-004                                             | Tantivy crash/rebuild/generation and revocation tests                                 | Implement remote snapshots and qualify deployment   | E-SCOPE-001,E-M6-002,E-M6-003,E-M6-004,E-M6-005,E-M6-006,E-M6-007,E-M6-008                                                                                           |
 | M8a         | Planned     | M6,M4.3    | JST-COMPAT-003,JST-SEC-005                                              | Pinned release, restore, security, performance and cold UI evidence                   | Complete backend hardening; retain deferred UI gate | E-SCOPE-001                                                                                                                                                          |
 | M8a.1       | Planned     | M6         | JST-COMPAT-003,JST-SEC-005                                              | Local/shared examples, diagnostics, restore and request budgets                       | Run non-UI release acceptance                       | E-SCOPE-001                                                                                                                                                          |
 | M7          | Deferred    | M8a        | JST-ADAPT-005                                                           | Complete read-only replica through applied position                                   | After first release                                 | -                                                                                                                                                                    |
@@ -7212,6 +7212,215 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Rust 1.97.1 with rustfmt; jj-cli/jj-lib 0.45.1 at 7c41cdeb16b6b321c64e789a966b6adf723816a5; jj-native-0.45.1-v1; Tantivy 0.26.2 at 72d1ef9a6468aa68bbc69dcc80cdf60aaf64364d.",
     "formats": "Projection/Extractor owned interfaces add identity validation. No native, WAL, receipt, adapter checkpoint, local index schema 2 or HTTP format changes. Enclosing Jujutsu change is the revision reference."
+  },
+  {
+    "id": "E-M6-008",
+    "tasks": ["M6", "M6.2"],
+    "date": "2026-09-27",
+    "kind": "server-search-lifecycle",
+    "files": [
+      "Cargo.lock",
+      "crates/jj-store-adapters/src/runner.rs",
+      "crates/jj-store-adapters/tests/delivery.rs",
+      "crates/jj-store-cli/src/server_commands.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/adapter_projection.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/server_search.rs",
+      "crates/jj-store-cli/tests/server_executable.rs",
+      "crates/jj-store-server/Cargo.toml",
+      "crates/jj-store-server/src/config.rs",
+      "crates/jj-store-server/src/lib.rs",
+      "crates/jj-store-server/src/process.rs",
+      "crates/jj-store-server/src/search.rs",
+      "crates/jj-store-server/tests/configuration.rs",
+      "crates/jj-store-server/tests/search_diagnostics.rs",
+      "crates/jj-store-tantivy/src/native.rs",
+      "crates/jj-store-tantivy/src/paging.rs",
+      "docs/cli/server-config.md",
+      "docs/cli/server-doctor.md",
+      "docs/evidence/m6-server-search.md",
+      "scripts/check-boundaries.mjs",
+      "scripts/governance.test.mjs",
+      "spec/src/adapters.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/compatibility.md",
+      "spec/src/milestones.md",
+      "spec/src/security.md",
+      "spec/src/spec-governance.md"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/native_lifecycle/server_search.rs#server_search_runs_recovers_and_rebuilds_after_cache_loss",
+      "crates/jj-store-cli/tests/native_lifecycle/server_search.rs#server_search_revoked_worker_degrades_without_revoking_other_readers",
+      "crates/jj-store-cli/tests/native_lifecycle/server_search.rs#server_search_diagnostics_use_authorized_live_status_and_handle_unavailability",
+      "crates/jj-store-cli/tests/native_lifecycle/server_search.rs#server_search_drop_cancels_workers_and_releases_owned_state",
+      "crates/jj-store-cli/tests/native_lifecycle/server_search.rs#server_search_rejects_state_symlink_escape_and_invalid_programmatic_limits",
+      "crates/jj-store-server/tests/search_diagnostics.rs#search_diagnostics_bound_streams_and_reject_foreign_or_invalid_status",
+      "crates/jj-store-server/tests/search_diagnostics.rs#search_diagnostics_do_not_forward_credentials_through_redirects",
+      "crates/jj-store-cli/tests/server_executable.rs#cold_search_server_requires_injected_credentials_without_echoing_secrets",
+      "crates/jj-store-cli/tests/server_executable.rs#cold_search_worker_polls_failed_storage_and_stops_with_foreground_server",
+      "crates/jj-store-server/tests/configuration.rs#search_configuration_is_explicit_bounded_and_contains_no_credentials",
+      "crates/jj-store-adapters/tests/delivery.rs#adapter_shutdown_waits_for_retained_worker_contexts",
+      "scripts/governance.test.mjs#server_composition_cannot_depend_on_cli_or_native_upstream"
+    ],
+    "runs": [
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-server --test configuration search_configuration_is_explicit_bounded_and_contains_no_credentials --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "Initial named acceptance cannot compile: server search configuration absent (three diagnostics)."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-server --test configuration search_configuration_is_explicit_bounded_and_contains_no_credentials",
+        "result": "pass",
+        "failures": 0,
+        "note": "Original configuration fixture passes after implementation and lockfile update."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle server_search --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "First lifecycle fixture expansion cannot compile: wrong fixture token field (two diagnostics), plus one unused import warning."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle server_search --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "One passed, one failed: exact ordering was assumed across rebuilt generations with equal-score ties. Corrected comparison preserves all document fields and exact same-generation ordering."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-adapters --test delivery adapter_shutdown_waits_for_retained_worker_contexts --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "Required idle-drain API absent; two compiler diagnostics."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle server_search_drop_cancels_workers_and_releases_owned_state --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "Stopped runner retained an apparently healthy last watch value. Pager now marks closed health channels degraded."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle server_search --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Five lifecycle fixtures pass, including closed health, symlink escape and invalid programmatic limits."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-adapters --test delivery adapter_shutdown_waits_for_retained_worker_contexts --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Original idle-drain target passes; outstanding callback context delays idle completion."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-server --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Seven server configuration tests and two diagnostic transport tests pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test server_executable cold_search --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both cold executable fixtures pass, including standalone and serve-local background requests against isolated failing storage."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle server_search --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "Four passed, one failed after adding source verification: fixture expected source body in search response, but the existing owned contract indexes body terms and stores file IDs. Replaced with unique term matching and exact native HTTP file readback, preserving source-content verification."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle server_search_runs_recovers_and_rebuilds_after_cache_loss --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Original rebuild target passes with complete document equivalence, exact same-generation order and native source readback."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle server_search_drop_cancels_workers_and_releases_owned_state --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Original closed-health/drop target passes; stopped runner degrades and releases owned state."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle server_search --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All five final server-search lifecycle fixtures pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-server --test configuration search_configuration_is_explicit_bounded_and_contains_no_credentials --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Original configuration acceptance passes again with locked dependencies."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-server --test search_diagnostics --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both diagnostic transport fixtures pass, including foreign/invalid/oversized streamed responses and redirect rejection."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle adapter_projection --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 27 native extraction/visibility/paging/HTTP/configuration/server projection fixtures pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test server_executable --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All ten regular cold executable fixtures pass; one real RustFS qualification remains ignored."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-adapters --test delivery --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All eleven delivery/recovery/shutdown fixtures pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-tantivy --test durability --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All ten local Tantivy durability fixtures pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All normal checks pass, including rustfmt, Clippy, boundaries, progress, generated contracts and existing Svelte checks."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test",
+        "result": "pass",
+        "failures": 0,
+        "note": "All normal tests pass: 357 Rust tests, zero failures, six external fixtures ignored; governance, storage harness, contracts and existing client unit tests pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Workspace binaries and existing browser assets build successfully."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 13 specification lanes pass, including existing cold browser interactions/accessibility, contracts, rustfmt, governance, native tests, mdBook and mapped spec-first."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm format:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rustfmt and all matched Prettier files pass."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Implement immutable remote index snapshots/restore and measured indexing/rebuild performance.",
+      "Qualify real RustFS/TLS server search and SSE. The original Docker volume-create harness is still live and stalled; UI remains deferred."
+    ],
+    "versions": "Rust 1.97.1 with rustfmt; jj-cli/jj-lib 0.45.1 at 7c41cdeb16b6b321c64e789a966b6adf723816a5; jj-native-0.45.1-v1; Tantivy 0.26.2 at 72d1ef9a6468aa68bbc69dcc80cdf60aaf64364d.",
+    "formats": "TOML format 1 adds explicit search entries; doctor JSON adds structured live search diagnosis. Owned adapter API adds idle drain; search status treats closed runner channels as degraded. No native/WAL/receipt/adapter cursor/local index schema 2 or registered HTTP format changes. Enclosing Jujutsu change is the revision reference."
   }
 ]
 ```

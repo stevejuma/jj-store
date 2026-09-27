@@ -42,6 +42,20 @@ inventory_nodes = 100000
 [protection]
 bookmarks = []
 commits = []
+
+# Optional background search. Repeat for each repository (maximum eight).
+# [[search]]
+# repository = "<full repository ID>"
+# token_environment = "JJ_STORE_SEARCH_TOKEN_EXAMPLE"
+# poll_millis = 1000
+# timeout_seconds = 60
+# index_bytes = 536870912
+# [search.source]
+# index_source = true
+# exclude_prefixes = ["private"]
+# [search.source.scopes.main]
+# kind = "bookmark"
+# name = "main"
 "#;
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -60,6 +74,8 @@ pub struct Config {
     pub limits: Limits,
     #[serde(default)]
     pub protection: Protected,
+    #[serde(default)]
+    pub search: Vec<crate::search::Repository>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -173,6 +189,7 @@ impl Config {
                 "public URL must match transport security and contain no credentials or path",
             ));
         }
+        crate::search::validate(&self.search)?;
         // Constructor validation is pure; this dummy credential never reaches I/O.
         S3Store::new(self.storage_config(s3::Credentials {
             access_key: "validation".into(),

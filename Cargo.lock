@@ -3532,12 +3532,15 @@ dependencies = [
  "async-trait",
  "axum",
  "futures 0.3.34",
+ "jj-store-adapters",
  "jj-store-http",
  "jj-store-jj",
  "jj-store-model",
  "jj-store-object",
  "jj-store-rpc",
  "jj-store-service",
+ "jj-store-tantivy",
+ "reqwest",
  "serde",
  "serde_json",
  "tempfile",
@@ -3548,6 +3551,7 @@ dependencies = [
  "toml",
  "tonic",
  "url",
+ "zeroize",
 ]
 
 [[package]]

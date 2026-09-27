@@ -287,3 +287,25 @@ CLI replacement and make no browser feature changes.
 Native integration fixtures verify configured search identity at runner startup
 and same-position restart after source exclusions change. Failed rebuilds must
 not expose an incompatible prior generation to newly authorized reads.
+
+## Configured search lifecycle
+
+Server TOML may contain up to eight explicit search entries. Each binds a full
+repository ID, a dedicated JJ_STORE_SEARCH_TOKEN_ environment-variable name,
+source scopes/exclusions and bounded polling, batch duration and per-generation
+disk capacity. Tokens are never accepted in TOML or command arguments. Config
+checks validate settings without reading credentials or starting indexers.
+
+The foreground server prepares private local indexes beneath its state
+directory, then starts their committed-log runners alongside the listener.
+Preparation fails for missing/malformed credentials or invalid local
+configuration. Runtime storage/authorization/indexing failures degrade search
+and retry with bounded backoff without taking down authoritative serving.
+Shutdown cancels and joins runners; dropping the server aborts their async tasks
+and signals retained native workers. Writer leases remain held until those
+workers exit.
+
+Search status reports durable, served and repository positions through the
+current authenticated HTTP endpoint. Doctor keeps authoritative readiness
+separate from configured search health and explicitly reports an unavailable
+serving endpoint. It does not start a replacement writer to inspect status.

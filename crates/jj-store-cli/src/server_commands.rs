@@ -300,13 +300,11 @@ async fn run(ui: &Ui, cli: ServerCli) -> AuthorityResult<()> {
                 Connection::new(&config.public_url, repo_id, config.insecure_loopback, None)?;
             let report =
                 process::doctor(&config, repo_id, credentials::resolve(&connection)?).await?;
-            emit(
-                ui,
-                format,
-                no_pager,
-                serde_json::to_value(report)?,
-                "Authoritative repository metadata is accessible. Adapters: not configured.\n",
-            )
+            let text = format!(
+                "Authoritative repository metadata is accessible. Search: {}.\n",
+                report.search.state.replace('_', " ")
+            );
+            emit(ui, format, no_pager, serde_json::to_value(report)?, &text)
         }
         ServerCommand::Operator { command } => {
             let initialize = matches!(&command, OperatorCommand::Init { .. });

@@ -166,3 +166,7 @@ HTTP search consumes the Tantivy pager and adapter health contracts through an
 explicit repository registry. It constructs search pagers using the existing
 native content worker pool. Lower storage/publication/service layers gain no
 search transport dependency; the server starts configured writers separately.
+
+The server composes owned adapter/Tantivy interfaces for configured background
+search. Indexers and their cancellation guards are owned by the foreground
+server lifecycle. Publication and native storage do not depend on these workers.

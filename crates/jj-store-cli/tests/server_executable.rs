@@ -14,6 +14,7 @@ struct Fixture {
     config: PathBuf,
     operator: BearerToken,
     real: bool,
+    search: Option<BearerToken>,
 }
 fn command() -> Command {
     let mut cmd = Command::new(env!("CARGO_BIN_EXE_jj-store"));
@@ -57,6 +58,7 @@ impl Fixture {
             config,
             operator,
             real: false,
+            search: None,
         }
     }
     fn enable_tls(&self) -> Vec<u8> {
@@ -112,6 +114,10 @@ impl Fixture {
             cmd.arg("run");
             cmd
         };
+        cmd.env_remove("JJ_STORE_SEARCH_TOKEN_FIXTURE");
+        if let Some(token) = &self.search {
+            cmd.env("JJ_STORE_SEARCH_TOKEN_FIXTURE", token.expose().as_str());
+        }
         cmd.args([
             if local { "--server-config" } else { "--config" },
             self.config.to_str().unwrap(),
@@ -1255,4 +1261,122 @@ async fn next_server_event(
     })
     .await
     .map_err(|_| ())?
+}
+
+#[test]
+fn cold_search_server_requires_injected_credentials_without_echoing_secrets() {
+    let f = Fixture::new();
+    let entry = format!(
+        "\n[[search]]\nrepository = \"{}\"\ntoken_environment = \"JJ_STORE_SEARCH_TOKEN_FIXTURE\"\n",
+        jj_store_model::RepositoryId::new([75; 16])
+    );
+    let config = fs::read_to_string(&f.config).unwrap() + &entry;
+    fs::write(&f.config, config).unwrap();
+    // A configuration check neither resolves credentials nor starts a writer.
+    success(
+        f.command()
+            .env_remove("JJ_STORE_SEARCH_TOKEN_FIXTURE")
+            .args(["config", "check", "--config", f.config.to_str().unwrap()])
+            .output()
+            .unwrap(),
+    );
+    for value in [None, Some("must-not-echo-search-secret")] {
+        let mut command = f.command();
+        command.env_remove("JJ_STORE_SEARCH_TOKEN_FIXTURE");
+        if let Some(value) = value {
+            command.env("JJ_STORE_SEARCH_TOKEN_FIXTURE", value);
+        }
+        let result = command
+            .args(["run", "--config", f.config.to_str().unwrap()])
+            .output()
+            .unwrap();
+        assert!(!result.status.success());
+        assert!(result.stdout.is_empty());
+        let error = String::from_utf8_lossy(&result.stderr);
+        assert!(error.contains("Hint:"));
+        assert!(!error.contains("must-not-echo-search-secret"));
+    }
+}
+
+#[cfg(unix)]
+#[test]
+fn cold_search_worker_polls_failed_storage_and_stops_with_foreground_server() {
+    use std::io::{Read as _, Write as _};
+    use std::sync::{
+        Arc,
+        atomic::{AtomicBool, AtomicUsize, Ordering},
+    };
+    struct FailureEndpoint {
+        stop: Arc<AtomicBool>,
+        worker: Option<std::thread::JoinHandle<()>>,
+    }
+    impl Drop for FailureEndpoint {
+        fn drop(&mut self) {
+            self.stop.store(true, Ordering::SeqCst);
+            if let Some(worker) = self.worker.take() {
+                worker.join().unwrap();
+            }
+        }
+    }
+    let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+    let address = listener.local_addr().unwrap();
+    listener.set_nonblocking(true).unwrap();
+    let stop = Arc::new(AtomicBool::new(false));
+    let count = Arc::new(AtomicUsize::new(0));
+    let worker_stop = stop.clone();
+    let worker_count = count.clone();
+    let _endpoint = FailureEndpoint {
+        stop,
+        worker: Some(std::thread::spawn(move || {
+            while !worker_stop.load(Ordering::SeqCst) {
+                match listener.accept() {
+                    Ok((mut socket, _)) => {
+                        socket
+                            .set_read_timeout(Some(Duration::from_millis(100)))
+                            .unwrap();
+                        let mut buffer = [0; 16384];
+                        if socket.read(&mut buffer).is_ok_and(|n| {
+                            n > 0
+                                && (buffer[..n].starts_with(b"GET ")
+                                    || buffer[..n].starts_with(b"HEAD "))
+                        }) {
+                            worker_count.fetch_add(1, Ordering::SeqCst);
+                        }
+                        let _=socket.write_all(b"HTTP/1.1 503 Service Unavailable\r\nContent-Length: 0\r\nConnection: close\r\n\r\n");
+                    }
+                    Err(e) if e.kind() == std::io::ErrorKind::WouldBlock => {
+                        std::thread::sleep(Duration::from_millis(5))
+                    }
+                    Err(_) => break,
+                }
+            }
+        })),
+    };
+    let mut f = Fixture::new();
+    f.search = Some(BearerToken::generate().unwrap());
+    let text = fs::read_to_string(&f.config)
+        .unwrap()
+        .replace("http://127.0.0.1:9000/", &format!("http://{address}/"))
+        + &format!(
+            "\n[[search]]\nrepository = \"{}\"\ntoken_environment = \"JJ_STORE_SEARCH_TOKEN_FIXTURE\"\npoll_millis = 10\ntimeout_seconds = 1\n",
+            jj_store_model::RepositoryId::new([76; 16])
+        );
+    fs::write(&f.config, text).unwrap();
+    for local in [false, true] {
+        let before = count.load(Ordering::SeqCst);
+        let mut server = f.start(local);
+        let deadline = Instant::now() + Duration::from_secs(5);
+        while count.load(Ordering::SeqCst) == before {
+            assert!(
+                server.child.try_wait().unwrap().is_none(),
+                "index failure stopped server"
+            );
+            assert!(
+                Instant::now() < deadline,
+                "configured worker made no storage request"
+            );
+            std::thread::sleep(Duration::from_millis(10));
+        }
+        server.terminate();
+    }
 }

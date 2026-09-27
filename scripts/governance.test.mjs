@@ -175,6 +175,8 @@ test("server_composition_cannot_depend_on_cli_or_native_upstream", () => {
           { name: "jj-store-rpc" },
           { name: "jj-store-service" },
           { name: "jj-store-http" },
+          { name: "jj-store-adapters" },
+          { name: "jj-store-tantivy" },
         ],
       },
     ]),
