@@ -52,6 +52,12 @@ pub enum Command {
         expected: crate::native_dto::RefTarget,
     },
 }
+impl Command {
+    /// Shared shape admission for execution and canonical application intent.
+    pub fn validate(&self) -> Result<()> {
+        execute::validate(self)
+    }
+}
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 pub struct Rewrite {
     pub commit: m::CommitId,
@@ -63,7 +69,7 @@ pub struct Change<T> {
     pub before: T,
     pub after: T,
 }
-#[derive(Clone, Debug, Serialize, schemars::JsonSchema)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 pub struct Prepared {
     pub version: u32,
     pub operation: m::OperationId,

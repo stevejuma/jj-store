@@ -1102,3 +1102,6 @@ mod event_acceptance;
 
 #[path = "native_lifecycle/commands.rs"]
 mod command_acceptance;
+
+#[path = "native_lifecycle/mutations.rs"]
+mod mutation_acceptance;

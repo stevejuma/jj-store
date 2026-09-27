@@ -206,7 +206,7 @@ pub enum Nodes {
     Operations(Vec<OperationNode>),
     Evolution(Vec<EvolutionNode>),
 }
-#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[schemars(rename = "GraphStats")]
 pub struct Stats {
     pub metadata_nodes: u64,

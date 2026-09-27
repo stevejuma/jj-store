@@ -38,11 +38,11 @@ passing concrete tests linked from the progress ledger.
 | JST-API-004    | Planned     | [Browser read acceptance](../../docs/evidence/m4-browser.md); [mutation/search and deployment gaps](milestones.md)                                   |
 | JST-API-005    | Planned     | [Browser read acceptance](../../docs/evidence/m4-browser.md); [mutation/search and deployment gaps](milestones.md)                                   |
 | JST-API-006    | Implemented | [Generated contract evidence](../../docs/evidence/m4-generated-contracts.md); [commands and results](milestones.md)                                  |
-| JST-MUT-001    | Planned     | [Internal preparation evidence](../../docs/evidence/m5-command-preparation.md); [remaining public mutation gates](milestones.md)                     |
-| JST-MUT-002    | Planned     | [Internal preparation evidence](../../docs/evidence/m5-command-preparation.md); [remaining public mutation gates](milestones.md)                     |
+| JST-MUT-001    | Planned     | [Durable command service evidence](../../docs/evidence/m5-durable-commands.md); [remaining mutation API/command gates](milestones.md)                |
+| JST-MUT-002    | Planned     | [Durable command service evidence](../../docs/evidence/m5-durable-commands.md); [remaining mutation API/command gates](milestones.md)                |
 | JST-MUT-003    | Planned     | [Typed mutations](mutations.md); [milestone gate](milestones.md)                                                                                     |
 | JST-MUT-004    | Planned     | [Typed mutations](mutations.md); [milestone gate](milestones.md)                                                                                     |
-| JST-MUT-005    | Planned     | [Internal preparation evidence](../../docs/evidence/m5-command-preparation.md); [remaining public mutation gates](milestones.md)                     |
+| JST-MUT-005    | Planned     | [Durable command service evidence](../../docs/evidence/m5-durable-commands.md); [remaining mutation API/command gates](milestones.md)                |
 | JST-SEC-001    | Planned     | [Security and deployment](security.md); [milestone gate](milestones.md)                                                                              |
 | JST-SEC-002    | Planned     | [Security and deployment](security.md); [milestone gate](milestones.md)                                                                              |
 | JST-SEC-003    | Planned     | [Security and deployment](security.md); [milestone gate](milestones.md)                                                                              |

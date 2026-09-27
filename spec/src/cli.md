@@ -216,3 +216,8 @@ CLI-owned native lifecycle fixtures compare internal typed command preparation
 with the pinned native repository model, including descendant, bookmark,
 workspace and evolution effects. The command preparation library does not add a
 new CLI command or advertise HTTP mutation support by itself.
+
+Native lifecycle tests also exercise the typed command service's provisional
+preview, strict apply and principal-scoped durable status. Retry evidence checks
+native result identity after later publications/restart; it does not advertise a
+new CLI extension or imply browser mutation support.

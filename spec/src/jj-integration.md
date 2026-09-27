@@ -344,3 +344,9 @@ and logical workspace/bookmark effects are reported from the resulting view and
 operation predecessor map. Physical working copies and user configuration do not
 participate. Read-only query stores retain their unconditional write denial;
 command staging adds only its own immutable native objects to read membership.
+
+Prepared command reports can be decoded from manifest-selected result receipts;
+these DTOs carry no native session or publication capability. Command shape
+validation is shared with canonical intent construction before serialization.
+Native execution still runs anew for a noncommitted apply and stages only
+immutable objects until guarded publication.

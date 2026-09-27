@@ -825,3 +825,6 @@ async fn historical_settings_bind_selected_snapshot_and_survive_checkpoint() {
         Err(wal::Error::Corrupt(_))
     ));
 }
+
+#[path = "publication/application.rs"]
+mod application_acceptance;

@@ -214,3 +214,10 @@ Typed native command preparation is qualified by
 Native merge/rewrite/reporting fixtures and in-flight authorization/cancellation
 checks use test storage; they do not qualify durable public mutation endpoints
 or deployed RustFS/browser behavior.
+
+[Durable typed command evidence](../../docs/evidence/m5-durable-commands.md)
+qualifies the application intent V1 digest and selected result profile while
+retaining existing native/token request digests and WAL envelope versions.
+Fault-store and authenticated native tests cover duplicate races, checkpoint
+recovery, lost acknowledgements, authorization and selected receipt corruption;
+real deployment qualification remains a separate gate. UI work is deferred.

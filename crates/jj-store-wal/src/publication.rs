@@ -1,4 +1,7 @@
 //! One manifest CAS selects immutable native inventory, history and receipts.
+mod application;
+pub use application::ApplicationIntent;
+
 use crate::{
     Error, Result,
     catalog::{Catalog, CatalogAudit},
@@ -393,18 +396,24 @@ impl Coordinator {
     /// performed before any head transformation, including after checkpointing.
     pub async fn publish(&self, request: &Request) -> Result<PublishOutcome> {
         request.validate()?;
+        self.publish_with_intent(request, request.intent()?).await
+    }
+    async fn publish_with_intent(
+        &self,
+        request: &Request,
+        intent: IntentDigest,
+    ) -> Result<PublishOutcome> {
         let unknown = || PublishOutcome::OutcomeUnknown {
             request_id: request.request_id,
             publication_id: request.publication_id,
         };
-        match tokio::time::timeout(self.limits.timeout, self.publish_inner(request)).await {
+        match tokio::time::timeout(self.limits.timeout, self.publish_inner(request, intent)).await {
             Ok(Ok(receipt)) => Ok(PublishOutcome::Committed(receipt)),
             Ok(Err(Error::OutcomeUnknown)) | Err(_) => Ok(unknown()),
             Ok(Err(err)) => Err(err),
         }
     }
-    async fn publish_inner(&self, request: &Request) -> Result<Receipt> {
-        let intent = request.intent()?;
+    async fn publish_inner(&self, request: &Request, intent: IntentDigest) -> Result<Receipt> {
         for _ in 0..self.limits.cas_attempts {
             let base = self.read().await?;
             self.guard.authorize(&base, request).await?;
@@ -580,17 +589,23 @@ impl Coordinator {
         request: RequestId,
         publication: PublicationId,
     ) -> (RecordDigest, RecordDigest) {
+        (
+            self.request_key(principal, request),
+            self.publication_key(publication),
+        )
+    }
+    fn request_key(&self, principal: PrincipalId, request: RequestId) -> RecordDigest {
         let mut req = Sha256::new_with_prefix(b"jj-store/request/v1");
         req.update(self.records.repository.as_bytes());
         req.update(principal.as_bytes());
         req.update(request.as_bytes());
+        RecordDigest::new(req.finalize().into())
+    }
+    fn publication_key(&self, publication: PublicationId) -> RecordDigest {
         let mut pub_id = Sha256::new_with_prefix(b"jj-store/publication/v1");
         pub_id.update(self.records.repository.as_bytes());
         pub_id.update(publication.as_bytes());
-        (
-            RecordDigest::new(req.finalize().into()),
-            RecordDigest::new(pub_id.finalize().into()),
-        )
+        RecordDigest::new(pub_id.finalize().into())
     }
     async fn lookup(
         &self,
@@ -619,16 +634,21 @@ impl Coordinator {
         {
             return Err(Error::IntentConflict);
         }
-        if receipt.accepted.epoch != manifest.epoch
+        self.validate_receipt_position(manifest, &receipt)?;
+        if a != b {
+            return Err(Error::Corrupt("receipt companion index missing"));
+        }
+        Ok(Some(receipt))
+    }
+    fn validate_receipt_position(&self, manifest: &Manifest, receipt: &Receipt) -> Result<()> {
+        if receipt.result.len() > 1024 * 1024
+            || receipt.accepted.epoch != manifest.epoch
             || receipt.accepted.position.0 > manifest.published.0
             || receipt.accepted.position.0 == 0
         {
             return Err(Error::Corrupt("receipt position"));
         }
-        if a != b {
-            return Err(Error::Corrupt("receipt companion index missing"));
-        }
-        Ok(Some(receipt))
+        Ok(())
     }
     /// None means no selected receipt was observed, never proof of rejection.
     pub async fn status(&self, request: &Request) -> Result<Option<Receipt>> {
