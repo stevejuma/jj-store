@@ -16,12 +16,15 @@
   import type { RepositoryLogRevision } from "../../projects/repository-log.js";
   import { repositoryLogFileStats } from "../../projects/repository-log-files.js";
   import CommunityProjectsRepositoryLogRail from "./CommunityProjectsRepositoryLogRail.svelte";
+  import CommunityProjectsRepositorySkeleton from "./CommunityProjectsRepositorySkeleton.svelte";
+  import "./repository-log-diff.css";
 
   let {
     path,
     patch,
     files,
     operation,
+    loading = false,
     now,
     onSelectOperation,
   }: {
@@ -29,6 +32,7 @@
     patch: string | undefined;
     files: readonly FileListingFile[];
     operation?: RepositoryLogRevision | undefined;
+    loading?: boolean | undefined;
     now?: number | undefined;
     onSelectOperation?: ((id: string) => void) | undefined;
   } = $props();
@@ -83,7 +87,17 @@
             </div>
           {/if}
         </section>
-        {#if path && patch}
+        {#if loading}
+          <section
+            class="community-projects-repository-log-diff__file-card"
+            aria-label="Loading selected operation comparison"
+          >
+            <CommunityProjectsRepositorySkeleton
+              layout="diff"
+              label="Loading selected operation comparison"
+            />
+          </section>
+        {:else if path && patch}
           <section
             class="community-projects-repository-log-diff__file-card"
             aria-label="Selected file diff"
@@ -160,7 +174,10 @@
       </ColumnCanvas.HeaderActions>
     </ColumnCanvas.Header>
     <ColumnCanvas.Body>
-      {#if path && patch}
+      {#if loading}<CommunityProjectsRepositorySkeleton
+          layout="diff"
+          label="Loading selected comparison"
+        />{:else if path && patch}
         <CommunityCommitDiff
           single
           files={[{ path, patch }]}
@@ -184,169 +201,3 @@
     </ColumnCanvas.Body>
   {/if}
 </ColumnCanvas.Column>
-
-<style>
-  :global(.community-projects-repository-log-diff__column--stacked) {
-    border: 0 !important;
-    border-radius: 0 !important;
-    background: transparent !important;
-  }
-
-  :global(.community-projects-repository-log-diff__column--stacked)
-    :global([data-ui-part="column-body"]) {
-    overflow: hidden;
-  }
-
-  .community-projects-repository-log-diff__stack {
-    display: flex;
-    box-sizing: border-box;
-    min-height: 0;
-    width: 100%;
-    flex: 1 1 auto;
-    flex-direction: column;
-    gap: 0.75rem;
-    overflow: auto;
-  }
-
-  .community-projects-repository-log-diff__operation-card,
-  .community-projects-repository-log-diff__file-card {
-    box-sizing: border-box;
-    overflow: hidden;
-    width: 100%;
-    flex: 0 0 auto;
-    border: 1px solid var(--border);
-    border-radius: var(--ui-column-canvas-radius, var(--radius));
-    background: var(--background);
-  }
-
-  .community-projects-repository-log-diff__file-card {
-    min-height: 0;
-  }
-
-  .community-projects-repository-log-diff__card-header {
-    display: flex;
-    min-width: 0;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-    min-height: var(--ui-column-canvas-header-height, 2.5rem);
-    padding-inline: 0.75rem;
-    border-bottom: 1px solid var(--border);
-    background: var(--jj-store-row-background);
-  }
-
-  .community-projects-repository-log-diff__operation-toggle {
-    display: flex;
-    min-width: 0;
-    flex: 1 1 auto;
-    align-items: center;
-    gap: 0.5rem;
-    border: 0;
-    color: inherit;
-    background: transparent;
-    font: inherit;
-    font-size: var(--text-sm, 0.875rem);
-    font-weight: var(--font-weight-semibold, 600);
-    text-align: left;
-    cursor: pointer;
-  }
-
-  .community-projects-repository-log-diff__operation-toggle :global(svg) {
-    width: 1rem;
-    height: 1rem;
-    flex: 0 0 auto;
-    color: var(--muted-foreground);
-    transition: transform 120ms ease;
-  }
-
-  .community-projects-repository-log-diff__operation-toggle[aria-expanded="false"]
-    :global(svg) {
-    transform: rotate(-90deg);
-  }
-
-  .community-projects-repository-log-diff__operation-toggle span {
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .community-projects-repository-log-diff__card-actions {
-    display: inline-flex;
-    flex: 0 0 auto;
-    align-items: center;
-    gap: 0.35rem;
-  }
-
-  :global(
-    .community-projects-repository-log-diff__card-actions
-      [data-ui-part="column-close"]
-  ) {
-    color: var(--muted-foreground);
-    background: color-mix(in srgb, var(--foreground) 4%, transparent);
-  }
-
-  :global(
-    .community-projects-repository-log-diff__card-actions
-      [data-ui-part="column-close"]:hover
-  ) {
-    background: color-mix(
-      in srgb,
-      var(--foreground) 18%,
-      var(--background)
-    ) !important;
-    color: var(--ui-column-canvas-header-action-hover-foreground, inherit);
-  }
-
-  :global(
-    .community-projects-repository-log-diff__card-actions
-      [data-ui-part="column-close"]:focus-visible
-  ) {
-    background: color-mix(
-      in srgb,
-      var(--foreground) 18%,
-      var(--background)
-    ) !important;
-    color: var(--ui-column-canvas-header-action-hover-foreground, inherit);
-  }
-
-  .community-projects-repository-log-diff__file-card
-    :global(.ui-diff-file-diff-composer__file) {
-    border: 0;
-    border-radius: 0;
-    background: transparent;
-  }
-
-  .community-projects-repository-log-diff__file-card
-    :global(.ui-diff-file-diff-composer__header) {
-    border-bottom: 1px solid var(--border);
-    background: var(--jj-store-row-background);
-  }
-
-  .community-projects-repository-log-diff__file-card
-    :global(.ui-diff-file-diff) {
-    min-height: 0;
-    height: auto;
-  }
-
-  :global(.community-projects-repository-log-diff__empty) {
-    min-height: 12rem;
-    padding: 1.5rem;
-    color: var(--muted-foreground);
-  }
-
-  :global(
-    .community-projects-repository-log-diff__empty [data-ui-part="empty-title"]
-  ) {
-    color: var(--foreground);
-    font-size: var(--community-text-body);
-  }
-
-  :global(
-    .community-projects-repository-log-diff__empty
-      [data-ui-part="empty-description"]
-  ) {
-    max-width: 28rem;
-    font-size: var(--community-text-secondary);
-  }
-</style>

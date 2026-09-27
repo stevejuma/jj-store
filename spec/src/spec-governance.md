@@ -169,7 +169,10 @@ fixtures. The progress checker recognizes catalog and Storybook paths.
 Cold catalog acceptance builds static assets and serves them on an owned
 ephemeral loopback port. Browser tests reject API, external HTTP and WebSocket
 requests, verify responsive navigation and fresh-instance state, and retain
-unapproved screenshots only as local review artifacts.
+unapproved screenshots only as local review artifacts. Virtual-row geometry is
+compared within each component's directly owned row container and in rendered
+vertical order, so nested listings and independent columns cannot produce false
+overlap failures.
 
 Normal checks also run the Community-derived browser architecture audit. It
 enforces counted-line limits and exact no-growth budgets for existing hotspots,

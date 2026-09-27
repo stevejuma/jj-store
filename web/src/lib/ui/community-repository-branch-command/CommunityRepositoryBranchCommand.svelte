@@ -3,33 +3,96 @@
   import GitBranchIcon from "@lucide/svelte/icons/git-branch";
   import CommunityChip from "../community-chip/CommunityChip.svelte";
   import CommunityProjectsGitAuthorAvatar from "../community-projects/CommunityProjectsGitAuthorAvatar.svelte";
+  import CommunityProjectsVirtualRows from "../community-projects/CommunityProjectsVirtualRows.svelte";
   import CommunityRelativeTime from "../community-relative-time/CommunityRelativeTime.svelte";
   import type { Bookmark } from "../../projects/presentation.js";
   let {
     bookmarks,
     selected = "",
     now,
+    hasMore = false,
+    loading = false,
     onSelect,
+    onLoadMore,
   }: {
     bookmarks: readonly Bookmark[];
     selected?: string;
     now?: number;
+    hasMore?: boolean;
+    loading?: boolean;
     onSelect: (name: string) => void;
+    onLoadMore?: () => void;
   } = $props();
   let query = $state(""),
     filter = $state("all");
-  const visible = $derived(
-    bookmarks.filter(
-      (bookmark) =>
+  const visible = $derived.by(() => {
+    const search = query.trim().toLocaleLowerCase();
+    return bookmarks.filter((bookmark) => {
+      const inFilter =
         filter === "all" ||
         (filter === "workspace"
           ? bookmark.workspace
-          : bookmark.targets.length > 1),
-    ),
-  );
+          : bookmark.targets.length > 1);
+      const searchable = [bookmark.name, bookmark.description, bookmark.author]
+        .filter(Boolean)
+        .join(" ")
+        .toLocaleLowerCase();
+      return inFilter && (!search || searchable.includes(search));
+    });
+  });
 </script>
 
-<CommandView.Root label="Bookmarks" class="community-bookmark-cards">
+{#snippet bookmarkRow(bookmark: Bookmark)}
+  <CommandView.Item
+    value={bookmark.name}
+    aria-label={bookmark.name}
+    class="community-bookmark-card"
+    data-current={bookmark.name === selected || undefined}
+    onSelect={() => onSelect(bookmark.name)}
+  >
+    <span class="community-bookmark-card__heading"
+      ><GitBranchIcon aria-hidden="true" /><CommandView.ItemLabel
+        >{bookmark.name}</CommandView.ItemLabel
+      >
+      {#if bookmark.workspace}<CommunityChip size="compact" tone="success"
+          >Workspace</CommunityChip
+        >{:else if bookmark.default}<CommunityChip
+          size="compact"
+          variant="muted">default</CommunityChip
+        >{/if}
+    </span>
+    <CommandView.ItemDescription
+      >{bookmark.description ?? "No description"}</CommandView.ItemDescription
+    >
+    {#if bookmark.targets.length > 1}<span
+        ><CommunityChip tone="warning" size="compact"
+          >Conflicted · {bookmark.targets.length} targets</CommunityChip
+        ></span
+      >{:else if bookmark.targets.length === 0}<span
+        ><CommunityChip size="compact">deleted</CommunityChip></span
+      >{/if}
+    <span class="community-bookmark-card__footer">
+      <CommunityProjectsGitAuthorAvatar
+        name={bookmark.author ?? "Unknown author"}
+        email={bookmark.authorEmail}
+        size="xsmall"
+      />
+      <span>local</span><span class="community-bookmark-card__author"
+        >{#if bookmark.updatedAt}<CommunityRelativeTime
+            timestamp={bookmark.updatedAt}
+            {now}
+          />{" by "}
+        {/if}{bookmark.author ?? "Unknown author"}</span
+      >
+    </span>
+  </CommandView.Item>
+{/snippet}
+
+<CommandView.Root
+  label="Bookmarks"
+  class="community-bookmark-cards"
+  shouldFilter={false}
+>
   <CommandView.Filters
     bind:value={filter}
     label="Bookmark filters"
@@ -45,55 +108,22 @@
     aria-label="Search branches"
   />
   <CommandView.List>
-    <CommandView.Empty>No matching bookmarks</CommandView.Empty>
-    <CommandView.Group heading="Bookmarks">
-      {#each visible as bookmark (bookmark.name)}
-        <CommandView.Item
-          value={bookmark.name}
-          aria-label={bookmark.name}
-          class="community-bookmark-card"
-          data-current={bookmark.name === selected || undefined}
-          onSelect={() => onSelect(bookmark.name)}
-        >
-          <span class="community-bookmark-card__heading"
-            ><GitBranchIcon aria-hidden="true" /><CommandView.ItemLabel
-              >{bookmark.name}</CommandView.ItemLabel
-            >
-            {#if bookmark.workspace}<CommunityChip size="compact" tone="success"
-                >Workspace</CommunityChip
-              >{:else if bookmark.default}<CommunityChip
-                size="compact"
-                variant="muted">default</CommunityChip
-              >{/if}
-          </span>
-          <CommandView.ItemDescription
-            >{bookmark.description ??
-              "No description"}</CommandView.ItemDescription
-          >
-          {#if bookmark.targets.length > 1}<span
-              ><CommunityChip tone="warning" size="compact"
-                >Conflicted · {bookmark.targets.length} targets</CommunityChip
-              ></span
-            >{:else if bookmark.targets.length === 0}<span
-              ><CommunityChip size="compact">deleted</CommunityChip></span
-            >{/if}
-          <span class="community-bookmark-card__footer">
-            <CommunityProjectsGitAuthorAvatar
-              name={bookmark.author ?? "Unknown author"}
-              email={bookmark.authorEmail}
-              size="xsmall"
-            />
-            <span>local</span><span class="community-bookmark-card__author"
-              >{#if bookmark.updatedAt}<CommunityRelativeTime
-                  timestamp={bookmark.updatedAt}
-                  {now}
-                />{" by "}
-              {/if}{bookmark.author ?? "Unknown author"}</span
-            >
-          </span>
-        </CommandView.Item>
-      {/each}
-    </CommandView.Group>
+    {#if visible.length === 0}
+      <CommandView.Empty>No matching bookmarks</CommandView.Empty>
+    {:else}
+      <CommandView.Group heading="Bookmarks">
+        <CommunityProjectsVirtualRows
+          rows={visible}
+          row={bookmarkRow}
+          getKey={(bookmark) => bookmark.name}
+          estimateSize={() => 132}
+          {hasMore}
+          {loading}
+          loadingLabel="Loading more bookmarks"
+          {onLoadMore}
+        />
+      </CommandView.Group>
+    {/if}
   </CommandView.List>
 </CommandView.Root>
 

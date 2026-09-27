@@ -3,13 +3,15 @@
   import {
     AppShell,
     AppShellController,
+    createLocalStorageAppShellLayoutPersistence,
     type AppShellDisplayMode,
   } from "@lapismd/design-core/shell";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as Breadcrumb from "@lapismd/design-core/shadcn/breadcrumb";
-  import { untrack, type Snippet } from "svelte";
+  import { onDestroy, untrack, type Snippet } from "svelte";
   import CommunitySidebarToggleIcon from "../community-app-shell/CommunitySidebarToggleIcon.svelte";
   import "./repository-breadcrumb.css";
+  import "./store-application.css";
   import { repositoryBreadcrumbSegments } from "../community-projects/repository-browser.js";
   import CommunityAppShell from "../community-app-shell/CommunityAppShell.svelte";
   import CommunityNavigation from "../community-navigation/CommunityNavigation.svelte";
@@ -23,26 +25,50 @@
   import CommunityProfileMenu from "../community-profile-menu/CommunityProfileMenu.svelte";
   import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
   import StoreRepositoryDetails from "./StoreRepositoryDetails.svelte";
+  import {
+    loadRepositoryShellLayout,
+    repositoryShellStorageKey,
+    resolveLayoutStorage,
+  } from "../layout-storage.js";
   let {
     controller,
     initiallyCollapsed = true,
     displayMode = "auto",
+    layoutStorage,
     children,
     details,
   }: {
     controller: StoreController;
     initiallyCollapsed?: boolean;
     displayMode?: AppShellDisplayMode;
+    layoutStorage?: Storage;
     children?: Snippet<[StorePage, string]>;
     details?: Snippet<[StorePage, string]>;
   } = $props();
+  const storage = untrack(() => resolveLayoutStorage(layoutStorage));
+  const initialLayout = untrack(() => loadRepositoryShellLayout(storage));
   const shell = new AppShellController({
-    leftCollapsed: untrack(() => initiallyCollapsed),
-    rightClosed: true,
-    rightWidth: 320,
+    leftCollapsed:
+      initialLayout.left?.collapsed ?? untrack(() => initiallyCollapsed),
+    leftClosed: initialLayout.left?.closed ?? false,
+    ...(initialLayout.left?.width === undefined
+      ? {}
+      : { leftWidth: initialLayout.left.width }),
+    rightCollapsed: initialLayout.right?.collapsed ?? false,
+    rightClosed: initialLayout.right?.closed ?? true,
+    rightWidth: initialLayout.right?.width ?? 320,
     sidebarMinWidth: 48,
     sidebarMaxWidth: 440,
+    ...(storage
+      ? {
+          persistence: createLocalStorageAppShellLayoutPersistence(
+            repositoryShellStorageKey,
+            storage,
+          ),
+        }
+      : {}),
   });
+  onDestroy(() => void shell.dispose());
   const current = $derived(controller.state.route);
   const canNavigateBack = $derived(controller.state.canNavigateBack);
   const canNavigateForward = $derived(controller.state.canNavigateForward);
@@ -99,22 +125,24 @@
 >
   {#snippet headerCenter()}
     <div class="community-application__project-breadcrumb">
-      <Breadcrumb.List aria-label="Repository breadcrumb">
-        <Breadcrumb.Item
-          ><Breadcrumb.Link
-            href="#"
-            onclick={(event) => {
-              event.preventDefault();
-              controller.actions.openRepository(current.repository);
-            }}><span>{current.repository}</span></Breadcrumb.Link
-          ></Breadcrumb.Item
-        >
-        <Breadcrumb.Separator />
-        <Breadcrumb.Item
-          ><Breadcrumb.Page><span>{title}</span></Breadcrumb.Page
-          ></Breadcrumb.Item
-        >
-      </Breadcrumb.List>
+      <Breadcrumb.Root>
+        <Breadcrumb.List aria-label="Repository breadcrumb">
+          <Breadcrumb.Item
+            ><Breadcrumb.Link
+              href="#"
+              onclick={(event) => {
+                event.preventDefault();
+                controller.actions.openRepository(current.repository);
+              }}><span>{current.repository}</span></Breadcrumb.Link
+            ></Breadcrumb.Item
+          >
+          <Breadcrumb.Separator />
+          <Breadcrumb.Item
+            ><Breadcrumb.Page><span>{title}</span></Breadcrumb.Page
+            ></Breadcrumb.Item
+          >
+        </Breadcrumb.List>
+      </Breadcrumb.Root>
     </div>
   {/snippet}
   {#snippet headerEnd()}<Button
@@ -264,60 +292,3 @@
     >
   </AppShell.Sidebar>
 </CommunityAppShell>
-
-<style>
-  :global(.community-application__project-overview-sidebar[data-side="right"]) {
-    border-inline-start-color: transparent !important;
-  }
-  :global(
-    .community-application__project-overview-sidebar
-      [data-ui-part="sidebar-resize-indicator"]
-  ) {
-    background: transparent !important;
-  }
-  .store-application__files-toolbar {
-    display: flex;
-    min-width: 0;
-    flex: 1;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-  }
-  :global(.store-application__files-toolbar [data-slot="breadcrumb-list"]) {
-    min-width: 0;
-    flex-wrap: nowrap;
-    overflow: hidden;
-  }
-  :global(
-    .store-application__files-toolbar
-      :is([data-slot="breadcrumb-link"], [data-slot="breadcrumb-page"])
-  ) {
-    max-width: 18rem;
-    overflow: hidden;
-    color: var(--foreground);
-    font-size: var(--community-text-secondary);
-    font-weight: 550;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  :global(
-    .store-application__files-toolbar [data-slot="breadcrumb-link"]:hover
-  ) {
-    color: var(--foreground);
-    text-decoration: underline;
-    text-underline-offset: 0.15em;
-  }
-  :global(.store-application__files-body[data-layout="regions"]) {
-    --ui-shell-body-sidebar-width: 16rem;
-  }
-  :global(
-    .community-app-shell__surface
-      .store-application__page-nav[data-ui-part="toolbar"]
-  ) {
-    border-block-end: 1px solid var(--border);
-  }
-
-  .store-application__placeholder {
-    padding: 1rem;
-  }
-</style>

@@ -4,6 +4,7 @@
   import StoreApplication from "../../web/src/lib/ui/store-application/StoreApplication.svelte";
   import type { StorePage } from "../../web/src/lib/ui/community-navigation/model.js";
   import { createInMemoryStoreController } from "../controller/in-memory-store-controller.svelte.js";
+  import { createMemoryStoryStorage } from "./memory-storage.js";
 
   let {
     initialPage = "branches",
@@ -16,6 +17,12 @@
   } = $props();
 
   const controller = untrack(() => createInMemoryStoreController(initialPage));
+  const layoutStorage = untrack(createMemoryStoryStorage);
 </script>
 
-<StoreApplication {controller} {initiallyCollapsed} {displayMode} />
+<StoreApplication
+  {controller}
+  {initiallyCollapsed}
+  {displayMode}
+  {layoutStorage}
+/>

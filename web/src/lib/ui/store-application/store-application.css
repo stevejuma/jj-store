@@ -1,0 +1,53 @@
+.community-application__project-overview-sidebar[data-side="right"] {
+  border-inline-start-color: transparent !important;
+}
+
+.community-application__project-overview-sidebar
+  [data-ui-part="sidebar-resize-indicator"] {
+  background: transparent !important;
+}
+
+.store-application__files-toolbar {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.store-application__files-toolbar [data-slot="breadcrumb-list"] {
+  min-width: 0;
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+
+.store-application__files-toolbar
+  :is([data-slot="breadcrumb-link"], [data-slot="breadcrumb-page"]) {
+  max-width: 18rem;
+  overflow: hidden;
+  color: var(--foreground);
+  font-size: var(--community-text-secondary);
+  font-weight: 550;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.store-application__files-toolbar [data-slot="breadcrumb-link"]:hover {
+  color: var(--foreground);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.store-application__files-body[data-layout="regions"] {
+  --ui-shell-body-sidebar-width: 16rem;
+}
+
+.community-app-shell__surface
+  .store-application__page-nav[data-ui-part="toolbar"] {
+  border-block-end: 1px solid var(--border);
+}
+
+.store-application__placeholder {
+  padding: 1rem;
+}

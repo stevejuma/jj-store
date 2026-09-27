@@ -10,10 +10,12 @@
     controller,
     initiallyCollapsed = true,
     displayMode = "auto",
+    layoutStorage,
   }: {
     controller: StoreController;
     initiallyCollapsed?: boolean;
     displayMode?: AppShellDisplayMode;
+    layoutStorage?: Storage;
   } = $props();
   const state = $derived(controller.state);
   const selectedId = $derived(
@@ -28,7 +30,12 @@
   );
 </script>
 
-<StoreApplication {controller} {initiallyCollapsed} {displayMode}>
+<StoreApplication
+  {controller}
+  {initiallyCollapsed}
+  {displayMode}
+  {layoutStorage}
+>
   {#snippet children(page)}
     {#if needsOperation}<section class="store-repository-application__state">
         <Alert.Root>
@@ -49,6 +56,7 @@
     {:else if page === "files"}<CommunityProjectsRepositoryFiles
         {controller}
         now={state.now}
+        {layoutStorage}
       />
     {:else}<CommunityProjectsRepositoryLog
         {page}
@@ -68,7 +76,13 @@
         hasMoreBookmarks={state.canLoadMoreBookmarks}
         hasMoreGraph={state.canLoadMoreGraph}
         unavailableComparisonCount={state.unavailableComparisonCount}
+        loading={state.status.graph === "loading" ||
+          state.status.graph === "refreshing" ||
+          state.status.bookmarks === "loading" ||
+          state.status.bookmarks === "refreshing"}
+        detailLoading={state.status.detail === "loading"}
         now={state.now}
+        {layoutStorage}
         onSelectBranch={controller.actions.selectBookmark}
         onSelectRevision={controller.actions.selectRevision}
         onSelectPath={controller.actions.selectFile}

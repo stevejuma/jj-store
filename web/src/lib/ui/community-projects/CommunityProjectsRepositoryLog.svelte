@@ -1,9 +1,7 @@
 <script lang="ts">
-  import { Skeleton } from "@lapismd/design-core/shadcn/skeleton";
   import * as Alert from "@lapismd/design-core/shadcn/alert";
-  import { Button } from "@lapismd/design-core/shadcn/button";
   import * as ColumnCanvas from "@lapismd/design-core/shadcn/column-canvas";
-  import { untrack } from "svelte";
+  import { onDestroy, untrack } from "svelte";
   import type { FileListingFile } from "@lapismd/design-core/diff";
   import type { RepositoryLogGraph } from "../../projects/repository-log.js";
   import type { Bookmark } from "../../projects/presentation.js";
@@ -14,7 +12,9 @@
   import CommunityProjectsRepositoryLogEmpty from "./CommunityProjectsRepositoryLogEmpty.svelte";
   import CommunityProjectsRepositoryLogDiff from "./CommunityProjectsRepositoryLogDiff.svelte";
   import CommunityProjectsRepositoryLogFiles from "./CommunityProjectsRepositoryLogFiles.svelte";
+  import CommunityProjectsRepositorySkeleton from "./CommunityProjectsRepositorySkeleton.svelte";
   import CommunityRepositoryBranchCommand from "../community-repository-branch-command/CommunityRepositoryBranchCommand.svelte";
+  import { resolveLayoutStorage } from "../layout-storage.js";
   let {
     page = "log",
     graph,
@@ -28,8 +28,10 @@
     hasMoreGraph = false,
     unavailableComparisonCount = 0,
     loading = false,
+    detailLoading = false,
     error = "",
     now,
+    layoutStorage,
     onSelectBranch,
     onSelectRevision,
     onSelectPath,
@@ -48,15 +50,22 @@
     hasMoreGraph?: boolean;
     unavailableComparisonCount?: number;
     loading?: boolean;
+    detailLoading?: boolean;
     error?: string;
     now: number;
+    layoutStorage?: Storage;
     onSelectBranch: (name: string) => void;
     onSelectRevision: (id: string | null) => void;
     onSelectPath: (path: string | null) => void;
     onLoadMoreBookmarks?: () => void | Promise<void>;
     onLoadMoreGraph?: () => void | Promise<void>;
   } = $props();
-  const canvas = createRepositoryLogCanvas(untrack(() => page === "branches"));
+  const storage = untrack(() => resolveLayoutStorage(layoutStorage));
+  const canvas = createRepositoryLogCanvas(
+    untrack(() => page),
+    storage,
+  );
+  onDestroy(() => void canvas.dispose());
   const revisionDepth = $derived(page === "branches" ? 1 : 0);
   const selectedOperation = $derived(
     page === "oplog"
@@ -70,7 +79,9 @@
   const selectedBookmark = $derived(
     bookmarks.find((b) => b.name === selectedBranch),
   );
+  const showInitialSkeleton = $derived(loading && graph.revisions.length === 0);
   $effect(() => {
+    canvas.layoutReady;
     const branch = selectedBranch,
       revision = selectedId,
       path = selectedPath,
@@ -107,36 +118,40 @@
         >{error}</Alert.Description
       ></Alert.Root
     >{/if}
-  {#if loading && graph.revisions.length === 0}
-    <div class="community-projects-repository-log__skeleton" aria-busy="true">
-      <span class="sr-only">Loading repository log</span><Skeleton /><Skeleton
-      /><Skeleton />
-    </div>
-  {:else}
-    <ColumnCanvas.Root controller={canvas}>
-      {#if page === "branches"}<ColumnCanvas.Column
-          id="branches"
-          title="Branches"
-          count={bookmarks.length}
-        >
-          <ColumnCanvas.Body
-            ><CommunityRepositoryBranchCommand
+  <ColumnCanvas.Root controller={canvas}>
+    {#if page === "branches"}<ColumnCanvas.Column
+        id="branches"
+        title="Branches"
+        count={bookmarks.length}
+      >
+        <ColumnCanvas.Body>
+          {#if showInitialSkeleton}<CommunityProjectsRepositorySkeleton
+              layout="bookmarks"
+              label="Loading branches"
+            />{:else}<CommunityRepositoryBranchCommand
               {bookmarks}
               {now}
               selected={selectedBranch}
+              hasMore={hasMoreBookmarks}
+              {loading}
               onSelect={onSelectBranch}
-            />{#if hasMoreBookmarks}<Button
-                variant="ghost"
-                onclick={() => onLoadMoreBookmarks()}>More branches</Button
-              >{/if}</ColumnCanvas.Body
-          >
-        </ColumnCanvas.Column>{/if}
-      <ColumnCanvas.Column id="revisions">
-        <CommunityProjectsRepositoryLogHeader
-          {title}
-          count={graph.revisions.length}
-        />
-        <ColumnCanvas.Body>
+              onLoadMore={() => void onLoadMoreBookmarks()}
+            />{/if}
+        </ColumnCanvas.Body>
+      </ColumnCanvas.Column>{/if}
+    <ColumnCanvas.Column id="revisions">
+      <CommunityProjectsRepositoryLogHeader
+        {title}
+        count={graph.revisions.length}
+      />
+      <ColumnCanvas.Body>
+        {#if showInitialSkeleton}<CommunityProjectsRepositorySkeleton
+            layout="graph"
+            label={page === "oplog"
+              ? "Loading operation log"
+              : "Loading JJ log"}
+            showStatus={page === "oplog"}
+          />{:else}
           {#if selectedBookmark && selectedBookmark.targets.length > 1}<Alert.Root
               ><Alert.Title>Conflicted bookmark</Alert.Title><Alert.Description
                 >All {selectedBookmark.targets.length} targets are shown. No target
@@ -171,31 +186,39 @@
                 : "Revision graph"}
               commitLabel={page === "oplog" ? "operation ID" : "commit ID"}
               onSelect={(revision) => selectRevision(revision.eventId)}
+              hasMore={hasMoreGraph}
+              {loading}
+              onLoadMore={() => void onLoadMoreGraph()}
             >
-              {#snippet selectedFiles()}<CommunityProjectsRepositoryLogFiles
-                  compact
-                  title={changedFilesTitle}
-                  {files}
-                  {selectedPath}
-                  onSelectPath={selectFile}
-                />{/snippet}
+              {#snippet selectedFiles()}
+                {#if detailLoading}<CommunityProjectsRepositorySkeleton
+                    layout="changed-files"
+                    label={page === "oplog"
+                      ? "Loading changed files in operation"
+                      : "Loading changed files"}
+                    count={4}
+                  />{:else}<CommunityProjectsRepositoryLogFiles
+                    compact
+                    title={changedFilesTitle}
+                    {files}
+                    {selectedPath}
+                    onSelectPath={selectFile}
+                  />{/if}
+              {/snippet}
             </CommunityProjectsRevisionGraph>{/if}
-          {#if hasMoreGraph}<Button
-              variant="ghost"
-              onclick={() => onLoadMoreGraph()}>More history</Button
-            >{/if}
-        </ColumnCanvas.Body>
-      </ColumnCanvas.Column>
-      <CommunityProjectsRepositoryLogDiff
-        path={selectedPath}
-        {patch}
-        {files}
-        operation={selectedOperation}
-        {now}
-        onSelectOperation={onSelectRevision}
-      />
-    </ColumnCanvas.Root>
-  {/if}
+        {/if}
+      </ColumnCanvas.Body>
+    </ColumnCanvas.Column>
+    <CommunityProjectsRepositoryLogDiff
+      path={selectedPath}
+      {patch}
+      {files}
+      operation={selectedOperation}
+      loading={detailLoading}
+      {now}
+      onSelectOperation={onSelectRevision}
+    />
+  </ColumnCanvas.Root>
 </section>
 
 <style>
@@ -223,11 +246,5 @@
     min-height: 0;
     height: 100%;
     flex: 1 1 auto;
-  }
-
-  .community-projects-repository-log__skeleton {
-    display: grid;
-    gap: 0.75rem;
-    padding: 1rem;
   }
 </style>

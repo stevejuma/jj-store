@@ -29,9 +29,12 @@
     var(--foreground) 12%,
     var(--background)
   );
+  display: flex;
   min-width: 0;
-  min-height: 100%;
+  min-height: 0;
+  height: 100%;
   box-sizing: border-box;
+  flex-direction: column;
   padding: 0 0.5rem 0.5rem;
   background: var(--background);
 }
@@ -74,6 +77,8 @@
 }
 
 .community-projects__file-tree [data-ui-component="file-listing"] {
+  min-height: 0;
+  flex: 1 1 auto;
   padding-block: 0.35rem 0;
 }
 
@@ -81,47 +86,6 @@
 .community-projects__file-tree [data-ui-part="directory-row"] {
   min-height: 2rem;
   font-size: var(--community-text-secondary);
-}
-
-.community-projects__file-tree-resize {
-  position: relative;
-  z-index: 3;
-  order: 0;
-  width: 1px;
-  flex: none;
-  margin-inline-start: -1px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  cursor: col-resize;
-  touch-action: none;
-}
-
-.community-projects__file-tree-resize > span {
-  position: absolute;
-  inset-block: 0;
-  inset-inline-start: -0.25rem;
-  width: 0.5rem;
-}
-
-.community-projects__file-tree-resize > span::after {
-  position: absolute;
-  inset-block: 0;
-  inset-inline-start: calc(50% - 0.5px);
-  width: 1px;
-  background: transparent;
-  content: "";
-  transition: background-color 120ms ease;
-}
-
-.community-projects__file-tree-resize:hover > span::after,
-.community-projects__file-tree-resize:focus-visible > span::after,
-.community-projects__file-tree-resize[data-resizing] > span::after {
-  background: var(--ring);
-}
-
-.community-projects__file-tree-resize:focus-visible {
-  outline: none;
 }
 
 .community-projects__file-browser,
@@ -291,12 +255,6 @@
   gap: 0.8rem;
   padding: clamp(1.5rem, 4vw, 3rem);
 }
-@media (max-width: 760px) {
-  .community-projects__file-tree-resize {
-    display: none;
-  }
-}
-
 .community-projects__file-panel-stack {
   display: flex;
   min-width: 0;

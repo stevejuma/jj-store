@@ -372,6 +372,14 @@ not reset the time anchor. Explicit refresh after an event reset starts a new
 subscription. Browser graph rendering admits at most 1000 nodes and 4096 edges;
 exceeding the display budget fails explicitly before layout.
 
+Collection controllers retain server cursors independently for every bounded
+resource. Directory navigation requests only the selected directory until a tree
+node is expanded; list/package modes use the recursive path route without
+forcing tree requests to become recursive. Commit inspection continues changed
+path pages separately from commit detail. Operation inspection continues
+affected-change groups and each selected group's changed paths separately, while
+preserving the explicit comparison parent and exact before/after identities.
+
 ## Browsing UI execution
 
 Production browsing resumed on 27 September 2026 through M4.9-M4.14. The served

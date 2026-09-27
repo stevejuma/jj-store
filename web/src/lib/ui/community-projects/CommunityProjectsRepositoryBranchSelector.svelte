@@ -7,24 +7,37 @@
   import GitBranchIcon from "@lucide/svelte/icons/git-branch";
   import XIcon from "@lucide/svelte/icons/x";
   import CommunityChip from "../community-chip/CommunityChip.svelte";
+  import CommunityProjectsVirtualRows from "./CommunityProjectsVirtualRows.svelte";
   import type { RepositoryChoice } from "../../controller/contracts.js";
   let {
     branch,
     branches = [],
+    hasMore = false,
+    loading = false,
     onSelectBranch,
+    onLoadMore,
   }: {
     branch: string;
     branches?: readonly RepositoryChoice[];
+    hasMore?: boolean;
+    loading?: boolean;
     onSelectBranch: (value: string | undefined) => void;
+    onLoadMore?: () => void;
   } = $props();
   let open = $state(false),
     tab = $state("bookmark"),
     query = $state("");
   const label = "Repository bookmark or change";
   const heading = "Switch snapshot";
-  const visibleRefs = $derived(
-    branches.filter((choice) => choice.kind === tab),
-  );
+  const visibleRefs = $derived.by(() => {
+    const search = query.trim().toLocaleLowerCase();
+    return branches.filter((choice) => {
+      const searchable = [choice.label, ...(choice.searchTerms ?? [])]
+        .join(" ")
+        .toLocaleLowerCase();
+      return choice.kind === tab && (!search || searchable.includes(search));
+    });
+  });
   const selected = $derived(branches.find((choice) => choice.value === branch));
   function handleOpen(next: boolean) {
     open = next;
@@ -38,6 +51,30 @@
     onSelectBranch(value);
   }
 </script>
+
+{#snippet referenceOption(option: RepositoryChoice)}
+  <CommandView.Item
+    value={option.value}
+    keywords={[option.label, ...(option.searchTerms ?? [])]}
+    onSelect={() => choose(option.value)}
+  >
+    <CommandView.ItemIcon>
+      {#if option.value === branch}
+        <CheckIcon aria-hidden="true" />
+      {/if}
+    </CommandView.ItemIcon>
+    <CommandView.ItemLabel>{option.label}</CommandView.ItemLabel>
+    {#if option.kind === "bookmark" && option.targets.length !== 1}
+      <span data-ui-component="command-view" data-ui-part="trailing">
+        <CommunityChip variant="muted" size="compact" ariaHidden
+          >{option.targets.length
+            ? `${option.targets.length} targets`
+            : "deleted"}</CommunityChip
+        >
+      </span>
+    {/if}
+  </CommandView.Item>
+{/snippet}
 
 <Popover.Root {open} onOpenChange={handleOpen}>
   <Popover.Trigger>
@@ -87,7 +124,7 @@
         {/snippet}
       </Popover.Close>
     </Popover.Header>
-    <CommandView.Root label={heading}>
+    <CommandView.Root label={heading} shouldFilter={false}>
       <CommandView.Input
         bind:value={query}
         placeholder={"Find bookmark or change"}
@@ -104,34 +141,24 @@
         />
       {/if}
       <CommandView.List>
-        <CommandView.Empty>No matching snapshots</CommandView.Empty>
-        <CommandView.Group
-          heading={tab === "bookmark" ? "Bookmarks" : "Changes"}
-        >
-          {#each visibleRefs as option (option.value)}
-            <CommandView.Item
-              value={option.value}
-              keywords={[option.label, ...(option.searchTerms ?? [])]}
-              onSelect={() => choose(option.value)}
-            >
-              <CommandView.ItemIcon>
-                {#if option.value === branch}
-                  <CheckIcon aria-hidden="true" />
-                {/if}
-              </CommandView.ItemIcon>
-              <CommandView.ItemLabel>{option.label}</CommandView.ItemLabel>
-              {#if option.kind === "bookmark" && option.targets.length !== 1}
-                <span data-ui-component="command-view" data-ui-part="trailing">
-                  <CommunityChip variant="muted" size="compact" ariaHidden
-                    >{option.targets.length
-                      ? `${option.targets.length} targets`
-                      : "deleted"}</CommunityChip
-                  >
-                </span>
-              {/if}
-            </CommandView.Item>
-          {/each}
-        </CommandView.Group>
+        {#if visibleRefs.length === 0}
+          <CommandView.Empty>No matching snapshots</CommandView.Empty>
+        {:else}
+          <CommandView.Group
+            heading={tab === "bookmark" ? "Bookmarks" : "Changes"}
+          >
+            <CommunityProjectsVirtualRows
+              rows={visibleRefs}
+              row={referenceOption}
+              getKey={(option) => option.value}
+              estimateSize={() => 36}
+              {hasMore}
+              {loading}
+              loadingLabel="Loading more references"
+              {onLoadMore}
+            />
+          </CommandView.Group>
+        {/if}
       </CommandView.List>
     </CommandView.Root>
   </Popover.Content>

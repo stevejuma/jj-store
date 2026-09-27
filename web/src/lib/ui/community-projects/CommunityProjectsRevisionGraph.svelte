@@ -35,6 +35,9 @@
     onSelect,
     selectedFiles,
     revisionHref,
+    hasMore = false,
+    loading = false,
+    onLoadMore,
   }: {
     revisions: RepositoryLogRevision[];
     members?: readonly CommunityMemberModel[];
@@ -47,6 +50,9 @@
     selectedFiles?: Snippet | undefined;
     revisionHref?:
       ((revision: RepositoryLogRevision) => string | undefined) | undefined;
+    hasMore?: boolean | undefined;
+    loading?: boolean | undefined;
+    onLoadMore?: (() => void) | undefined;
   } = $props();
 
   const rows = $derived(buildRepositoryLogGraph(revisions, devices));
@@ -199,6 +205,11 @@
     getKey={(row) => row.revision.eventId}
     estimateSize={revisionEstimate}
     scrollToKey={selectedId}
+    {hasMore}
+    {loading}
+    loadingLabel="Loading more history"
+    loadingAsListItem
+    {onLoadMore}
     class="community-revision-graph__virtual"
   />
 </div>

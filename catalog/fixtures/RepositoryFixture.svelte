@@ -8,6 +8,8 @@
     operations,
     sampleDetail,
   } from "./repository.js";
+  import { createMemoryStoryStorage } from "./memory-storage.js";
+  import { untrack } from "svelte";
   let {
     page = "branches",
     state: fixtureState = "populated",
@@ -18,6 +20,7 @@
   let branch = $state("");
   let selectedId = $state<string | null>(null);
   let selectedPath = $state<string | null>(null);
+  const layoutStorage = untrack(createMemoryStoryStorage);
   const graph = $derived(
     fixtureState === "empty" ||
       fixtureState === "loading" ||
@@ -51,6 +54,7 @@
     : sampleDetail.files}
   patch={selectedPath ? sampleDetail.patches[selectedPath] : undefined}
   now={NOW}
+  {layoutStorage}
   loading={fixtureState === "loading" || fixtureState === "refreshing"}
   error={fixtureState === "error" ? "Fixture history is unavailable." : ""}
   onSelectBranch={selectBranch}

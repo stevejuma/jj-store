@@ -50,13 +50,28 @@ test("native_graphs_files_and_source_rendering_are_accessible", async ({
     page.getByRole("region", { name: "Changed files in operation" }),
   ).toBeVisible();
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+  const browserStorage = await page.evaluate(() => ({
+    local: Object.fromEntries(
+      Array.from({ length: localStorage.length }, (_, index) => {
+        const key = localStorage.key(index)!;
+        return [key, localStorage.getItem(key)];
+      }),
+    ),
+    sessionLength: sessionStorage.length,
+    cookie: document.cookie,
+  }));
+  expect(Object.keys(browserStorage.local)).not.toHaveLength(0);
   expect(
-    await page.evaluate(() => [
-      localStorage.length,
-      sessionStorage.length,
-      document.cookie,
-    ]),
-  ).toEqual([0, 0, ""]);
+    Object.keys(browserStorage.local).every((key) =>
+      key.startsWith("jj-store/layout/v1/"),
+    ),
+  ).toBe(true);
+  expect(JSON.stringify(browserStorage.local)).not.toContain(repo);
+  expect(JSON.stringify(browserStorage.local)).not.toContain(token);
+  expect([browserStorage.sessionLength, browserStorage.cookie]).toEqual([
+    0,
+    "",
+  ]);
   expect(page.url()).not.toContain(token);
   expect(errors).toEqual([]);
   await page.screenshot({
@@ -170,7 +185,7 @@ test("graph_and_directory_pages_retain_exact_snapshots_and_query_context", async
   await page.getByRole("option", { name: "main", exact: true }).click();
   const revisionGraph = page.getByRole("list", { name: "Revision graph" });
   await expect(revisionGraph.getByRole("listitem")).toHaveCount(1);
-  await page.getByRole("button", { name: "More history" }).click();
+  await expect.poll(() => queries.length).toBe(2);
   await page.getByRole("button", { name: "Toggle details" }).click();
   await expect(page.getByRole("alert")).toContainText(
     "pagination snapshot mismatch",
@@ -194,7 +209,7 @@ test("graph_and_directory_pages_retain_exact_snapshots_and_query_context", async
   await expect(
     page.getByRole("table", { name: "Repository files" }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "More files", exact: true }).click();
+  await expect.poll(() => pages).toBe(2);
   await expect(page.getByRole("alert")).toContainText(
     "pagination snapshot mismatch",
   );

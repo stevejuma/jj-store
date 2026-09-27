@@ -187,6 +187,13 @@ under `web/src/lib`. The isolated catalog imports those modules and supplies
 only fixtures, in-memory transport-free state and story harnesses. Production
 source cannot import the catalog. See [browser requirements](ui.md).
 
+Repository layouts keep versioned shell, file-tree and per-page Column Canvas
+state behind an injected storage boundary. Production resolves browser storage
+defensively, while catalog stories receive isolated memory storage. Bookmark,
+directory, revision, operation and changed-file collections use shared bounded
+virtual-row contracts; storage never contains repository identities, cursors,
+credentials, selections or content.
+
 The catalog retains independent cold static-browser acceptance. Its framework,
 renderer and builder versions are aligned in the registry lockfile. The served
 browser composes the same production modules through an authenticated

@@ -28,6 +28,7 @@
 }
 
 .community-application__project-breadcrumb [data-ui-part="breadcrumb-list"] {
+  display: flex;
   width: 100%;
   flex-wrap: nowrap;
   justify-content: center;
@@ -35,11 +36,26 @@
   margin: 0;
   padding: 0;
   overflow: hidden;
+  overflow-wrap: normal;
+  white-space: nowrap;
 }
 
 .community-application__project-breadcrumb [data-ui-part="breadcrumb-item"] {
+  display: inline-flex;
   min-width: 0;
   flex: 0 1 auto;
+  overflow: hidden;
+}
+
+.community-application__project-breadcrumb
+  [data-ui-part="breadcrumb-item"]:last-child {
+  max-width: calc(100% - 1.25rem);
+  flex-shrink: 0;
+}
+
+.community-application__project-breadcrumb
+  [data-ui-part="breadcrumb-separator"] {
+  flex: none;
 }
 
 .community-application__project-breadcrumb [data-ui-part="breadcrumb-link"],

@@ -48,6 +48,14 @@ history.
 
 ## Development acceptance
 
+For local interactive review, `pnpm dev:restart` builds and starts the complete
+loopback stack: an owned pinned RustFS container, the native server, the built
+browser and a fresh native demo repository. It prints the repository ID and
+one-time admin token needed by the in-memory browser session. Runtime files and
+credentials stay outside the checkout under the operating system temporary
+directory. The command refuses an unowned listener or Docker container rather
+than stopping it. `pnpm dev:stop` removes only the stack it owns.
+
 `pnpm web:check` checks Svelte/TypeScript; `pnpm web:test` covers bounded
 parsing, credentials and graph layout. Install the matching test browser with
 `pnpm exec playwright install chromium --only-shell`, then run

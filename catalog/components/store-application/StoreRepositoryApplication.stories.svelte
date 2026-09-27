@@ -3,6 +3,7 @@
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import StoreRepositoryApplication from "../../fixtures/StoreRepositoryApplicationFixture.svelte";
+  import LayoutPersistenceFixture from "../../fixtures/LayoutPersistenceFixture.svelte";
   import { IDS } from "../../fixtures/repository.js";
   const { Story } = defineMeta({
     title: "JJ Store/Connected application",
@@ -21,6 +22,98 @@
     },
   });
 </script>
+
+<Story
+  name="Persistent layout"
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const shellResize = canvas.getByRole("slider", {
+      name: "Resize repository navigation sidebar",
+    });
+    await new Promise<void>((resolve) => setTimeout(resolve, 0));
+    const shellWidth = Number(shellResize.getAttribute("aria-valuenow"));
+    shellResize.focus();
+    await userEvent.keyboard("{ArrowRight}{ArrowRight}");
+    await waitFor(() =>
+      expect(Number(shellResize.getAttribute("aria-valuenow"))).toBeGreaterThan(
+        shellWidth,
+      ),
+    );
+    const persistedShellWidth = Number(
+      shellResize.getAttribute("aria-valuenow"),
+    );
+
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Collapse Branches column" }),
+    );
+    await userEvent.click(canvas.getByRole("button", { name: "jj-store" }));
+    const treeResize = canvas.getByRole("button", {
+      name: "Resize repository file tree",
+    });
+    const treeWidth = Number(treeResize.getAttribute("data-current-width"));
+    treeResize.focus();
+    await userEvent.keyboard("{ArrowRight}{ArrowRight}");
+    const persistedTreeWidth = Number(
+      treeResize.getAttribute("data-current-width"),
+    );
+    await expect(persistedTreeWidth).toBeGreaterThan(treeWidth);
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Hide repository file tree" }),
+    );
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Remount application" }),
+    );
+    await waitFor(() =>
+      expect(
+        canvasElement.querySelector(".layout-persistence-fixture"),
+      ).toHaveAttribute("data-mount-version", "1"),
+    );
+    await expect(
+      canvasElement.querySelector(".layout-persistence-fixture"),
+    ).toHaveAttribute(
+      "data-saved-shell-layout",
+      expect.stringContaining(`\"width\":${persistedShellWidth}`),
+    );
+    await waitFor(() =>
+      expect(
+        canvas.getByRole("button", { name: "Show repository file tree" }),
+      ).toBeVisible(),
+    );
+    const restoredShellResize = canvas.getByRole("slider", {
+      name: "Resize repository navigation sidebar",
+    });
+    await waitFor(() =>
+      expect(Number(restoredShellResize.getAttribute("aria-valuenow"))).toBe(
+        persistedShellWidth,
+      ),
+    );
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Show repository file tree" }),
+    );
+    await expect(
+      Number(
+        canvas
+          .getByRole("button", { name: "Resize repository file tree" })
+          .getAttribute("data-current-width"),
+      ),
+    ).toBe(persistedTreeWidth);
+
+    await userEvent.click(canvas.getByRole("button", { name: "Branches" }));
+    await expect(
+      canvas.getByRole("button", { name: "Expand Branches column" }),
+    ).toBeVisible();
+    await userEvent.click(canvas.getByRole("button", { name: "JJ Log" }));
+    await expect(
+      canvas.getByRole("button", { name: "Collapse JJ Log column" }),
+    ).toBeVisible();
+    await userEvent.click(canvas.getByRole("button", { name: "Branches" }));
+    await expect(
+      canvas.getByRole("button", { name: "Expand Branches column" }),
+    ).toBeVisible();
+  }}
+>
+  {#snippet template()}<LayoutPersistenceFixture />{/snippet}
+</Story>
 
 <Story
   name="Repository files"
@@ -207,4 +300,64 @@
 <Story
   name="Mobile files"
   args={{ initialPage: "files", displayMode: "mobile" }}
+/>
+
+<Story
+  name="Large virtualized repository"
+  args={{ large: true }}
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement),
+      body = within(canvasElement.ownerDocument.body);
+    await waitFor(() =>
+      expect(
+        canvasElement.querySelectorAll(".community-bookmark-card").length,
+      ).toBeGreaterThan(0),
+    );
+    await expect(
+      canvasElement.querySelectorAll(".community-bookmark-card").length,
+    ).toBeLessThan(40);
+
+    await userEvent.click(canvas.getByRole("button", { name: "JJ Log" }));
+    await waitFor(() =>
+      expect(
+        canvasElement.querySelectorAll("[data-revision-id]").length,
+      ).toBeGreaterThan(0),
+    );
+    await expect(
+      canvasElement.querySelectorAll("[data-revision-id]").length,
+    ).toBeLessThan(80);
+    await userEvent.click(
+      canvasElement.querySelector<HTMLElement>("[data-revision-id]")!,
+    );
+    await waitFor(() =>
+      expect(
+        canvasElement.querySelectorAll('[data-ui-part="file-row"]').length,
+      ).toBeGreaterThan(0),
+    );
+    await expect(
+      canvasElement.querySelectorAll('[data-ui-part="file-row"]').length,
+    ).toBeLessThan(80);
+
+    await userEvent.click(canvas.getByRole("button", { name: "jj-store" }));
+    await waitFor(() =>
+      expect(
+        canvas.getByRole("table", { name: "Repository files" }),
+      ).toBeVisible(),
+    );
+    await new Promise<void>((resolve) => setTimeout(resolve, 500));
+    await expect(
+      canvasElement.querySelectorAll('[data-ui-part="file-row"]').length,
+    ).toBeLessThan(80);
+    await expect(
+      canvasElement.querySelectorAll("[data-row-index]").length,
+    ).toBeLessThan(80);
+    await userEvent.click(
+      canvas.getByRole("combobox", { name: "Repository bookmark or change" }),
+    );
+    await waitFor(() =>
+      expect(body.getAllByRole("option").length).toBeGreaterThan(0),
+    );
+    await new Promise<void>((resolve) => setTimeout(resolve, 500));
+    await expect(body.getAllByRole("option").length).toBeLessThan(80);
+  }}
 />

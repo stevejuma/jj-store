@@ -4,7 +4,6 @@
   import * as Tabs from "@lapismd/design-core/shadcn/tabs";
   import BookOpenIcon from "@lucide/svelte/icons/book-open";
   import FileIcon from "@lucide/svelte/icons/file";
-  import FolderIcon from "@lucide/svelte/icons/folder";
 
   import type {
     RepositoryBlob,
@@ -15,13 +14,11 @@
   import CommunityRelativeTime from "../community-relative-time/CommunityRelativeTime.svelte";
   import type { CommunityMemberModel } from "../community-workspace/model.js";
   import type { RepositoryBrowserEntry } from "./repository-browser.js";
-  import {
-    repositoryLandingDocumentLabel,
-    repositoryParentPath,
-  } from "./repository-browser.js";
+  import { repositoryLandingDocumentLabel } from "./repository-browser.js";
   import CommunityProjectsGitAuthorAvatar from "./CommunityProjectsGitAuthorAvatar.svelte";
   import CommunityProjectsMarkdownPreview from "./CommunityProjectsMarkdownPreview.svelte";
   import CommunityProjectsRepositoryBranchSelector from "./CommunityProjectsRepositoryBranchSelector.svelte";
+  import CommunityProjectsRepositoryDirectoryRows from "./CommunityProjectsRepositoryDirectoryRows.svelte";
   import CommunityProjectsRevisionGraphIds from "./CommunityProjectsRevisionGraphIds.svelte";
 
   let {
@@ -41,7 +38,11 @@
     onSelectCommit,
     onSelectBranch,
     hasMore = false,
+    loading = false,
+    hasMoreReferences = false,
+    loadingReferences = false,
     onLoadMore = () => {},
+    onLoadMoreReferences,
   }: {
     fileTreeOpen?: boolean | undefined;
     now: number;
@@ -59,7 +60,11 @@
     onSelectCommit?: ((commit: ProjectForgeCommit) => void) | undefined;
     onSelectBranch: (value: string | undefined) => void;
     hasMore?: boolean;
+    loading?: boolean;
+    hasMoreReferences?: boolean;
+    loadingReferences?: boolean;
     onLoadMore?: () => void | Promise<void>;
+    onLoadMoreReferences?: () => void;
   } = $props();
 
   const latestCommitDate = $derived(latestCommit?.createdAt);
@@ -159,7 +164,10 @@
         <CommunityProjectsRepositoryBranchSelector
           {branch}
           {branches}
+          hasMore={hasMoreReferences}
+          loading={loadingReferences}
           {onSelectBranch}
+          onLoadMore={onLoadMoreReferences}
         />
       </div>
     </div>
@@ -175,88 +183,19 @@
           <Table.Head>Updated</Table.Head>
         </Table.Row>
       </Table.Header>
-      <Table.Body>
-        {#if currentPath}
-          <Table.Row>
-            <Table.Cell>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                class="community-projects__file-entry"
-                aria-label="Go to parent directory"
-                onclick={() =>
-                  onOpenDirectory(repositoryParentPath(currentPath))}
-              >
-                <FolderIcon data-icon="inline-start" aria-hidden="true" />
-                <strong>..</strong>
-              </Button>
-            </Table.Cell>
-            <Table.Cell><span aria-hidden="true">—</span></Table.Cell>
-            <Table.Cell><span aria-hidden="true">—</span></Table.Cell>
-          </Table.Row>
-        {/if}
-        {#each entries as entry (entry.path)}
-          {@const entryCommit = pathCommits[entry.path]}
-          {@const entryCommitDate = entryCommit?.createdAt}
-          {@const commitLoaded = Object.prototype.hasOwnProperty.call(
-            pathCommits,
-            entry.path,
-          )}
-          <Table.Row>
-            <Table.Cell>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                class="community-projects__file-entry"
-                aria-label={`${entry.type === "tree" ? "Open directory" : "Open file"} ${entry.name}`}
-                onclick={() =>
-                  entry.type === "tree"
-                    ? onOpenDirectory(entry.path)
-                    : onOpenFile(entry.path)}
-              >
-                {#if entry.type === "tree"}
-                  <FolderIcon data-icon="inline-start" aria-hidden="true" />
-                {:else}
-                  <FileIcon data-icon="inline-start" aria-hidden="true" />
-                {/if}
-                <strong>{entry.name}</strong>
-              </Button>
-            </Table.Cell>
-            <Table.Cell>
-              <span
-                class="community-projects__file-commit-message"
-                title={entryCommit?.message}
-              >
-                {entryCommit?.message ??
-                  (canLoadPathCommit && !commitLoaded ? "Loading…" : "—")}
-              </span>
-            </Table.Cell>
-            <Table.Cell>
-              {#if entryCommitDate}
-                <CommunityRelativeTime timestamp={entryCommitDate} {now} />
-              {:else}
-                <span aria-hidden="true">—</span>
-              {/if}
-            </Table.Cell>
-          </Table.Row>
-        {:else}
-          <Table.Row>
-            <Table.Cell colspan={3}>
-              <p class="community-projects__status">
-                This directory does not contain any files.
-              </p>
-            </Table.Cell>
-          </Table.Row>
-        {/each}
-      </Table.Body>
+      <CommunityProjectsRepositoryDirectoryRows
+        {currentPath}
+        {entries}
+        {pathCommits}
+        {canLoadPathCommit}
+        {now}
+        {hasMore}
+        {loading}
+        {onOpenDirectory}
+        {onOpenFile}
+        onLoadMore={() => void onLoadMore()}
+      />
     </Table.Root>
-    {#if hasMore}<footer class="community-projects__file-browser-more">
-        <Button type="button" variant="ghost" onclick={() => onLoadMore()}
-          >More files</Button
-        >
-      </footer>{/if}
   </div>
 
   {#if landingDocuments.length > 0}

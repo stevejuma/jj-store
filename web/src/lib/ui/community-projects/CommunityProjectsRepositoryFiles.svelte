@@ -6,23 +6,46 @@
   import CommunityProjectsRepositoryFileTree from "./CommunityProjectsRepositoryFileTree.svelte";
   import CommunityProjectsRepositoryFilePanel from "./CommunityProjectsRepositoryFilePanel.svelte";
   import CommunityProjectsRepositoryDirectory from "./CommunityProjectsRepositoryDirectory.svelte";
+  import CommunityProjectsRepositorySkeleton from "./CommunityProjectsRepositorySkeleton.svelte";
   import {
     isMarkdownRepositoryPath,
     isRepositoryLandingDocumentPath,
     repositoryBrowserEntries,
   } from "./repository-browser.js";
+  import {
+    clampFileTreeWidth,
+    loadRepositoryFileTreeLayout,
+    repositoryFileTreeDefaultWidth,
+    repositoryFileTreeMaximumWidth,
+    repositoryFileTreeMinimumWidth,
+    resolveLayoutStorage,
+    saveRepositoryFileTreeLayout,
+  } from "../layout-storage.js";
+  import { untrack } from "svelte";
   import "./repository-files.css";
   import "./repository-directory.css";
-  let { controller, now }: { controller: StoreController; now: number } =
+  let {
+    controller,
+    now,
+    layoutStorage,
+  }: { controller: StoreController; now: number; layoutStorage?: Storage } =
     $props();
-  let fileTreeOpen = $state(true);
-  let fileTreeWidth = $state(256);
+  const storage = untrack(() => resolveLayoutStorage(layoutStorage));
+  const initialFileTreeLayout = untrack(() =>
+    loadRepositoryFileTreeLayout(storage),
+  );
+  let fileTreeOpen = $state(initialFileTreeLayout.open);
+  let fileTreeWidth = $state(initialFileTreeLayout.width);
   let resizePointerId = $state<number | null>(null);
   let resizeStartX = 0;
   let resizeStartWidth = 0;
-  const fileTreeMinimum = 208;
-  const fileTreeMaximum = 420;
+  const fileTreeMinimum = repositoryFileTreeMinimumWidth;
+  const fileTreeMaximum = repositoryFileTreeMaximumWidth;
   const view = $derived(controller.state);
+  const initialLoading = $derived(
+    !view.snapshot &&
+      (view.status.navigation === "loading" || view.status.files === "loading"),
+  );
   const fileTreeStyle = $derived(
     `--ui-shell-body-sidebar-width: ${fileTreeWidth}px`,
   );
@@ -62,9 +85,12 @@
   function selectSnapshot(value: string | undefined) {
     if (value) controller.actions.selectRef(value);
   }
-  function clampFileTreeWidth(width: number): number {
-    return Math.max(fileTreeMinimum, Math.min(fileTreeMaximum, width));
-  }
+  $effect(() =>
+    saveRepositoryFileTreeLayout(storage, {
+      open: fileTreeOpen,
+      width: fileTreeWidth,
+    }),
+  );
   function beginFileTreeResize(event: PointerEvent) {
     if (!fileTreeOpen) return;
     event.preventDefault();
@@ -112,11 +138,17 @@
     class="community-projects__file-tree-region"
     style={fileTreeStyle}
   >
-    <CommunityProjectsRepositoryFileTree
-      files={view.snapshot?.files ?? []}
-      selectedPath={view.route.path ?? ""}
-      onSelectPath={controller.actions.selectFile}
-    />
+    {#if initialLoading}<CommunityProjectsRepositorySkeleton
+        layout="file-tree"
+        label="Loading repository file tree"
+      />{:else}<CommunityProjectsRepositoryFileTree
+        files={view.snapshot?.files ?? []}
+        selectedPath={view.route.path ?? ""}
+        hasMore={view.canLoadMoreFiles}
+        loading={view.status.files === "refreshing"}
+        onSelectPath={controller.actions.selectFile}
+        onLoadMore={() => void controller.actions.loadMore("files")}
+      />{/if}
   </AppShell.Body.Sidebar>
   <button
     type="button"
@@ -131,7 +163,7 @@
     onpointermove={moveFileTreeResize}
     onpointerup={finishFileTreeResize}
     onpointercancel={finishFileTreeResize}
-    ondblclick={() => (fileTreeWidth = 256)}
+    ondblclick={() => (fileTreeWidth = repositoryFileTreeDefaultWidth)}
     onkeydown={resizeFileTreeWithKeyboard}
   >
     <span aria-hidden="true"></span>
@@ -145,42 +177,53 @@
     class="community-projects__files-surface"
     aria-label="Repository files"
   >
-    {#if view.targets.length > 1}<Alert.Root
-        ><Alert.Title>Choose a bookmark target</Alert.Title><Alert.Description
-          >This bookmark is conflicted. Select an explicit revision to browse
-          its files.</Alert.Description
-        >
-        {#each view.targets as target}<Button
-            variant="outline"
-            onclick={() => controller.actions.selectRevision(target)}
-            >Open target {target.slice(0, 8)}…{target.slice(-4)}</Button
-          >{/each}</Alert.Root
-      >{/if}
-    {#if view.route.path}<CommunityProjectsRepositoryFilePanel
-        blob={view.blob}
-        selectedPath={view.route.path ?? ""}
-        {latestCommit}
-        {now}
-        isMarkdown={isMarkdownRepositoryPath(view.route.path ?? "")}
-      />{:else}<CommunityProjectsRepositoryDirectory
-        bind:fileTreeOpen
-        currentPath={view.route.directory}
-        {entries}
-        {latestCommit}
-        {pathCommits}
-        {previewDocuments}
-        branch={selectedSnapshot}
-        branches={view.choices}
-        {now}
-        onOpenDirectory={controller.actions.selectDirectory}
-        onOpenFile={controller.actions.selectFile}
-        onSelectCommit={(revision) => {
-          controller.actions.selectPage("log");
-          controller.actions.selectRevision(revision.eventId);
-        }}
-        onSelectBranch={selectSnapshot}
-        hasMore={view.canLoadMoreFiles}
-        onLoadMore={() => controller.actions.loadMore("files")}
-      />{/if}
+    {#if initialLoading}<CommunityProjectsRepositorySkeleton
+        layout="directory"
+        label="Loading repository files"
+      />{:else}
+      {#if view.targets.length > 1}<Alert.Root
+          ><Alert.Title>Choose a bookmark target</Alert.Title><Alert.Description
+            >This bookmark is conflicted. Select an explicit revision to browse
+            its files.</Alert.Description
+          >
+          {#each view.targets as target}<Button
+              variant="outline"
+              onclick={() => controller.actions.selectRevision(target)}
+              >Open target {target.slice(0, 8)}…{target.slice(-4)}</Button
+            >{/each}</Alert.Root
+        >{/if}
+      {#if view.route.path}<CommunityProjectsRepositoryFilePanel
+          blob={view.blob}
+          selectedPath={view.route.path ?? ""}
+          {latestCommit}
+          {now}
+          loading={view.status.detail === "loading"}
+          isMarkdown={isMarkdownRepositoryPath(view.route.path ?? "")}
+        />{:else}<CommunityProjectsRepositoryDirectory
+          bind:fileTreeOpen
+          currentPath={view.route.directory}
+          {entries}
+          {latestCommit}
+          {pathCommits}
+          {previewDocuments}
+          branch={selectedSnapshot}
+          branches={view.choices}
+          {now}
+          onOpenDirectory={controller.actions.selectDirectory}
+          onOpenFile={controller.actions.selectFile}
+          onSelectCommit={(revision) => {
+            controller.actions.selectPage("log");
+            controller.actions.selectRevision(revision.eventId);
+          }}
+          onSelectBranch={selectSnapshot}
+          hasMore={view.canLoadMoreFiles}
+          loading={view.status.files === "refreshing"}
+          onLoadMore={() => controller.actions.loadMore("files")}
+          hasMoreReferences={view.canLoadMoreBookmarks}
+          loadingReferences={view.status.bookmarks === "refreshing"}
+          onLoadMoreReferences={() =>
+            void controller.actions.loadMore("bookmarks")}
+        />{/if}
+    {/if}
   </section>
 </AppShell.Body.Content>

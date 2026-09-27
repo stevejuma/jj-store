@@ -15,7 +15,7 @@ catalog-only.
 | JST-UI-002 | The shell MUST directly adapt Community shell/navigation composition and preserve desktop/mobile, sidebar, header, focus and navigation mechanics using public Design Core exports.                                                                               |
 | JST-UI-003 | Branches, JJ Log and Op Log MUST reuse Community graph/row/file/diff compositions, preserve native identities and conflicting targets, and support fixture-only drill-down without transport or mutation capabilities.                                            |
 | JST-UI-004 | The complete catalog application MUST expose a typed state/actions controller with independent in-memory navigation, repository snapshots, file contents and profile actions, using copied Community file-browser and footer compositions without backend access. |
-| JST-UI-005 | The served browser MUST use the reviewed shell and repository components through an authenticated asynchronous controller with cursor paging, explicit snapshot refresh and typed hash restoration.                                                               |
+| JST-UI-005 | The served browser MUST use the reviewed shell and repository components through an authenticated asynchronous controller with cursor paging, representative page and detail loading skeletons, explicit snapshot refresh and typed hash restoration.             |
 | JST-UI-006 | Large repository collections MUST use bounded virtual rows, all resizable shell/canvas regions MUST persist versioned layout state, and catalog stories MUST exercise the production components.                                                                  |
 
 The catalog uses Storybook 10.5.7, Svelte CSF 5.1.2, Vitest browser 4.1.11 and
@@ -166,3 +166,27 @@ identity; the memory-only token must be entered again before the controller
 restores protected content. SSE announces fresher history without changing the
 displayed snapshot. Explicit Refresh captures current heads and retains the deep
 selection and hash when that selection remains available.
+
+Every asynchronous browsing surface preserves its final geometry while loading.
+Branches renders bookmark-card placeholders in its initial path column; JJ Log
+and Op Log render their graph/status composition; Files renders its file-tree
+and directory table composition. Commit, operation and file-detail reads retain
+the selected context and show representative changed-file, diff or source
+placeholders. The states use Design Core's public shadcn Skeleton, expose one
+labelled busy status per region and keep decorative placeholders hidden from
+assistive technology.
+
+M4.13 layout state uses versioned `jj-store/layout/v1` keys. Production uses
+browser localStorage only for shell sidebars, per-page Column Canvas geometry,
+collapse/close state and file-tree width; repository identities, selections,
+credentials, cursors and content never enter that storage. Invalid, unavailable
+or quota-limited storage falls back to defaults without blocking browsing.
+Storybook injects a fresh memory store and a dedicated remount interaction
+proves restoration without sharing state between stories.
+
+Bookmark cards, reference choices, revision and operation graphs, changed-file
+lists, directory tables and the repository file tree use measured virtual rows
+against their existing accessible scroll viewport. Large fixtures MUST keep the
+mounted row count bounded while preserving keyboard selection, graph geometry
+and cursor-edge callbacks. Headers, filters, metadata and details remain outside
+the virtual row stream.

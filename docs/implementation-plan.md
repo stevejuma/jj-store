@@ -42,6 +42,14 @@ remain compatible. Stable record/path anchors can begin forward or backward
 windows; opaque server cursors remain process-local continuations and never
 become durable URLs.
 
+M4.13 proceeds in verified slices. The first slice persists shell, per-page
+Column Canvas and file-tree geometry through versioned layout keys, injects
+isolated memory storage in Storybook, and bounds the existing fixture-backed
+bookmark, graph, changed-file, directory and file-tree collections. Remaining
+work continues commit/operation inspection cursors, removes eager recursive tree
+reads, adds lazy directory expansion, validates the upstream FileListing change
+in Community and consumes a released Design Core version before M4.14.
+
 ## Repository foundation and progress tracking
 
 Create a tracked agent guide, unchanged attachment archive, this execution plan,

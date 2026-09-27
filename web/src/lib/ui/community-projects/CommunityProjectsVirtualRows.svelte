@@ -14,6 +14,8 @@
     loading = false,
     hasMore = false,
     loadingLabel = "Loading more items",
+    loadingAsListItem = false,
+    scrollSelf = false,
     onLoadMore,
     onVisibleCursorChange,
     cursorForRow,
@@ -29,6 +31,10 @@
     loading?: boolean | undefined;
     hasMore?: boolean | undefined;
     loadingLabel?: string | undefined;
+    /** Keeps a loading announcement valid when this component is inside role=list. */
+    loadingAsListItem?: boolean | undefined;
+    /** Use this row host as the bounded viewport when a portal has no scroll ancestor. */
+    scrollSelf?: boolean | undefined;
     onLoadMore?: (() => void) | undefined;
     onVisibleCursorChange?: ((cursor: string | undefined) => void) | undefined;
     cursorForRow?: ((row: Row) => string | undefined) | undefined;
@@ -80,7 +86,10 @@
     let current = node?.parentElement ?? null;
     while (current) {
       const style = getComputedStyle(current);
-      if (/(auto|scroll|overlay)/u.test(`${style.overflowY} ${style.overflow}`))
+      if (
+        current.dataset.uiPart === "scroll-area-viewport" ||
+        /(auto|scroll|overlay)/u.test(`${style.overflowY} ${style.overflow}`)
+      )
         return current;
       current = current.parentElement;
     }
@@ -88,7 +97,7 @@
   }
 
   $effect(() => {
-    scrollElement = nearestScrollElement(host);
+    scrollElement = scrollSelf ? host : nearestScrollElement(host);
   });
 
   $effect(() => {
@@ -155,6 +164,7 @@
   bind:this={host}
   class={`community-projects-virtual-rows ${className}`.trim()}
   data-ui-component="community-projects-virtual-rows"
+  data-scroll-self={scrollSelf ? "true" : undefined}
 >
   {#if scrollElement}
     <div
@@ -194,10 +204,11 @@
   {#if loading && rows.length > 0}
     <div
       class="community-projects-virtual-rows__edge"
-      role="status"
+      role={loadingAsListItem ? "listitem" : "status"}
       aria-busy="true"
     >
-      {loadingLabel}
+      {#if loadingAsListItem}<span role="status">{loadingLabel}</span
+        >{:else}{loadingLabel}{/if}
     </div>
   {/if}
 </div>
@@ -205,6 +216,11 @@
 <style>
   .community-projects-virtual-rows {
     min-width: 0;
+  }
+
+  .community-projects-virtual-rows[data-scroll-self="true"] {
+    max-height: var(--community-projects-virtual-max-height, 15rem);
+    overflow: auto;
   }
 
   .community-projects-virtual-rows__content {

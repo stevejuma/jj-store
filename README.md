@@ -37,6 +37,12 @@ new native repository and [attach](docs/cli/attach.md) for another physical
 workspace. Use explicit build paths; development never replaces the installed
 `jj`.
 
+For the browser UI, `pnpm dev:restart` rebuilds the UI and development binaries,
+restarts an owned pinned RustFS container and native server, creates a fresh
+native demo repository, then prints its URL, repository ID and one-time token.
+The isolated runtime and credentials stay under the operating system temporary
+directory. Use `pnpm dev:stop` to stop and remove the owned services.
+
 On macOS with Xcode license prompts, prefix checks with
 `DEVELOPER_DIR=/Library/Developer/CommandLineTools` to use the installed Command
 Line Tools SDK; this does not change the system developer selection.

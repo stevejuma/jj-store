@@ -10,43 +10,69 @@ async function expectSettledGraph(page) {
   await expect
     .poll(
       () =>
-        page.locator('[data-ui-part="virtual-row"]').evaluateAll((rows) => {
-          const issues = [];
-          for (let index = 0; index < rows.length; index++) {
-            const row = rows[index];
-            const bounds = row.getBoundingClientRect();
-            const next = rows[index + 1]?.getBoundingClientRect();
-            if (next && bounds.bottom > next.top + 1)
-              issues.push(
-                `row ${index} overlaps next by ${bounds.bottom - next.top}px`,
+        page
+          .locator('[data-ui-component="community-projects-virtual-rows"]')
+          .evaluateAll((hosts) => {
+            const issues = [];
+            for (let hostIndex = 0; hostIndex < hosts.length; hostIndex++) {
+              const host = hosts[hostIndex];
+              const rowContainer = host.querySelector(
+                ":scope > .community-projects-virtual-rows__content, :scope > .community-projects-virtual-rows__fallback",
               );
-            const content = row.querySelector(".community-revision-graph-copy");
-            const line = row.querySelector(".community-revision-graph__row");
-            if (content && line) {
-              const body = content.getBoundingClientRect();
-              const frame = line.getBoundingClientRect();
-              if (body.top < frame.top - 1 || body.bottom > frame.bottom + 1)
-                issues.push(`row ${index} content exceeds line height`);
-              const ids = row
-                .querySelector(".community-revision-graph-ids")
-                ?.getBoundingClientRect();
-              for (const chip of content.querySelectorAll(
-                '[data-ui-part="community-chip"]',
-              )) {
-                const box = chip.getBoundingClientRect();
-                if (
-                  ids &&
-                  box.right > ids.left + 1 &&
-                  box.left < ids.right &&
-                  box.bottom > ids.top &&
-                  box.top < ids.bottom
-                )
-                  issues.push(`row ${index} bookmark overlaps IDs`);
+              const rows = Array.from(rowContainer?.children ?? [])
+                .filter((row) => row.matches('[data-ui-part="virtual-row"]'))
+                .sort(
+                  (left, right) =>
+                    left.getBoundingClientRect().top -
+                    right.getBoundingClientRect().top,
+                );
+              for (let index = 0; index < rows.length; index++) {
+                const row = rows[index];
+                const bounds = row.getBoundingClientRect();
+                const next = rows[index + 1]?.getBoundingClientRect();
+                if (next && bounds.bottom > next.top + 1)
+                  issues.push(
+                    `host ${hostIndex} row ${row.dataset.index ?? index} (${row.dataset.rowId ?? "unknown"}) overlaps row ${rows[index + 1]?.dataset.index ?? index + 1} by ${bounds.bottom - next.top}px`,
+                  );
+                const content = row.querySelector(
+                  ".community-revision-graph-copy",
+                );
+                const line = row.querySelector(
+                  ".community-revision-graph__row",
+                );
+                if (content && line) {
+                  const body = content.getBoundingClientRect();
+                  const frame = line.getBoundingClientRect();
+                  if (
+                    body.top < frame.top - 1 ||
+                    body.bottom > frame.bottom + 1
+                  )
+                    issues.push(
+                      `host ${hostIndex} row ${index} content exceeds line height`,
+                    );
+                  const ids = row
+                    .querySelector(".community-revision-graph-ids")
+                    ?.getBoundingClientRect();
+                  for (const chip of content.querySelectorAll(
+                    '[data-ui-part="community-chip"]',
+                  )) {
+                    const box = chip.getBoundingClientRect();
+                    if (
+                      ids &&
+                      box.right > ids.left + 1 &&
+                      box.left < ids.right &&
+                      box.bottom > ids.top &&
+                      box.top < ids.bottom
+                    )
+                      issues.push(
+                        `host ${hostIndex} row ${index} bookmark overlaps IDs`,
+                      );
+                  }
+                }
               }
             }
-          }
-          return issues;
-        }),
+            return issues;
+          }),
       {
         message: "Measured graph rows and expanded files must not overlap",
         timeout: 5000,

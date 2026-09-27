@@ -4,15 +4,22 @@
     FileListingViewModeToggle,
     type FileListingViewMode,
   } from "@lapismd/design-core/diff";
+  import "./repository-file-tree-resize.css";
 
   let {
     files,
     selectedPath = "",
+    hasMore = false,
+    loading = false,
     onSelectPath,
+    onLoadMore,
   }: {
     files: readonly { path: string }[];
     selectedPath?: string | undefined;
+    hasMore?: boolean;
+    loading?: boolean;
     onSelectPath: (path: string) => void;
+    onLoadMore?: () => void;
   } = $props();
 
   let mode = $state<FileListingViewMode>("tree");
@@ -28,7 +35,12 @@
     files={[...files]}
     {mode}
     selectedPath={selectedPath || null}
+    virtualize
+    {hasMore}
+    {loading}
+    loadingLabel="Loading more repository files"
     {onSelectPath}
+    {onLoadMore}
   >
     {#snippet fileMeta()}
       <span class="sr-only">Repository file</span>

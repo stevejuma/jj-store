@@ -2,7 +2,10 @@
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import StoreRepositoryApplication from "../../fixtures/StoreRepositoryApplicationFixture.svelte";
-  import { expectColumnCanvasFillsBody } from "./column-canvas-story-assertions.js";
+  import {
+    expectColumnCanvasFillsBody,
+    expectRepositoryBreadcrumbLayout,
+  } from "./column-canvas-story-assertions.js";
   const { Story } = defineMeta({
     title: "JJ Store/Review refinements",
     component: StoreRepositoryApplication,
@@ -244,6 +247,7 @@
     const breadcrumb = canvas.getByRole("list", {
       name: "Repository breadcrumb",
     });
+    await expectRepositoryBreadcrumbLayout(breadcrumb);
     await expect(
       getComputedStyle(
         breadcrumb.querySelector('[data-ui-part="breadcrumb-page"]')!,

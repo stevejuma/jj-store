@@ -1,6 +1,16 @@
-import { createColumnCanvasController } from "@lapismd/design-core/shadcn/column-canvas";
+import {
+  createColumnCanvasController,
+  createLocalStorageColumnCanvasLayoutPersistence,
+} from "@lapismd/design-core/shadcn/column-canvas";
+import type { StorePage } from "../ui/community-navigation/model.js";
+import { repositoryColumnCanvasStorageKey } from "../ui/layout-storage.js";
+
 /** Community column geometry; the Branches page prepends its bookmark path level. */
-export function createRepositoryLogCanvas(branches = false) {
+export function createRepositoryLogCanvas(
+  page: StorePage = "log",
+  storage?: Storage,
+) {
+  const branches = page === "branches";
   return createColumnCanvasController({
     columns: {
       branches: {
@@ -28,5 +38,13 @@ export function createRepositoryLogCanvas(branches = false) {
         resizable: true,
       },
     },
+    ...(storage
+      ? {
+          persistence: createLocalStorageColumnCanvasLayoutPersistence(
+            repositoryColumnCanvasStorageKey(page),
+            storage,
+          ),
+        }
+      : {}),
   });
 }

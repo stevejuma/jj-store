@@ -12,14 +12,20 @@
     title = "Changed files",
     compact = false,
     error = "",
+    hasMore = false,
+    loading = false,
     onSelectPath,
+    onLoadMore,
   }: {
     files: FileListingFile[];
     selectedPath?: string | null;
     title?: string | undefined;
     compact?: boolean | undefined;
     error?: string | undefined;
+    hasMore?: boolean | undefined;
+    loading?: boolean | undefined;
     onSelectPath: (path: string) => void;
+    onLoadMore?: (() => void) | undefined;
   } = $props();
 
   let mode = $state<FileListingViewMode>("tree");
@@ -41,7 +47,17 @@
     <p class="community-revision-graph-files__status">{error}</p>
   {/if}
   <div class="community-revision-graph-files__body">
-    <FileListing {files} {mode} {selectedPath} {onSelectPath} />
+    <FileListing
+      {files}
+      {mode}
+      {selectedPath}
+      virtualize
+      {hasMore}
+      {loading}
+      loadingLabel="Loading more changed files"
+      {onSelectPath}
+      {onLoadMore}
+    />
   </div>
 </section>
 

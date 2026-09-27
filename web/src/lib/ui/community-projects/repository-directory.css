@@ -97,6 +97,27 @@
   table-layout: fixed;
 }
 
+.community-projects__file-browser-card
+  > [data-ui-component="table"][data-ui-part="table-container"] {
+  max-height: min(56dvh, 36rem);
+  overflow: auto;
+}
+
+.community-projects__file-browser-table [data-ui-part="table-header"] {
+  position: sticky;
+  z-index: 2;
+  top: 0;
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.community-projects__file-browser-table
+  [data-ui-part="table-body"].community-projects__virtual-directory-body {
+  display: block;
+  width: 100%;
+}
+
 .community-projects__file-browser-table [data-ui-part="table-header"],
 .community-projects__file-browser-table [data-ui-part="table-head"] {
   background: var(--community-projects-file-table-head-background);
