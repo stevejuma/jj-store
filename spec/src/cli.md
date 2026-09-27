@@ -28,3 +28,27 @@ reopening. It is not executable command-presentation or remote CLI evidence.
 The CLI integration library binds remote RPC authority and immutable object I/O
 to the existing native factories. Loopback network lifecycle tests qualify this
 binding separately from the future executable command presentation matrix.
+
+## Executable native workspace client
+
+The development `target/debug/jj` registers lazy remote factories with upstream
+CliRunner. Ordinary JJ command parsing, transactions and workspace updates
+remain upstream-owned. Each CLI invocation owns its factory cache and Tokio
+runtime; there is no global mutable repository or principal. Native workspace
+bindings contain the endpoint, repository, profile and transport limits, never
+credentials.
+
+`store attach` creates a separate physical workspace and local metadata
+directory. Its destination must be empty and its logical workspace name must be
+unique. `store status` and `store doctor` inspect remote heads without
+snapshotting local files or reconciling operations. `store capabilities`
+distinguishes verified native commands from unsupported or still-unqualified
+ones. Executable creation, server administration and the remaining presentation
+matrix stay gated by M3.
+
+`store login` validates a token before storing it in the platform credential
+facility; stdin or a hidden terminal prompt supplies the secret. `store logout`
+deletes only the selected endpoint/repository credential. `JJ_STORE_TOKEN`
+overrides stored credentials for automation and is never persisted. Custom text
+results and authored help follow jj-nostr paging, Markdown and color
+conventions; JSON results are plain, newline-terminated and never paged.

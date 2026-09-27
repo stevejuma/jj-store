@@ -65,3 +65,8 @@ The RPC crate depends on owned model, object-I/O and service interfaces. Its
 streaming object transport implements ObjectStore only for repository-bound
 native keys and rejects mutable writes. Remote JJ authority adapters live in the
 CLI integration crate; upstream JJ types do not enter the RPC implementation.
+
+The CLI crate now builds the development executable named jj and owns local
+connection discovery, credential-facility access and command presentation. The
+installed system jj remains untouched. Connection records and derived JJ caches
+are physical-client state and do not become server authority.

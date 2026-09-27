@@ -51,3 +51,11 @@ Object IDs never select a raw storage path. Uploads validate identity before
 storage and reauthorize before writing; long downloads reauthorize per chunk.
 Server messages expose stable error categories rather than storage or credential
 details. Work permits and total stream deadlines apply before body consumption.
+
+Client credential accounts bind the canonical server URL and repository ID.
+Missing or inaccessible OS credential facilities fail explicitly without a
+plaintext fallback. Login reads secrets from stdin or a hidden terminal prompt,
+verifies repository access, then saves to the OS store. Logout cannot remove a
+process environment variable and reports when an environment override remains.
+Local connection metadata is bounded and rejects embedded URL credentials,
+unknown fields and profile mismatches before connecting.

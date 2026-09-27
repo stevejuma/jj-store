@@ -147,3 +147,10 @@ uses the shared native semantic policy and deterministic receipt identity.
 Ambiguous transport failures preserve unknown publication outcomes. An explicit
 insecure-loopback client option is required for local plaintext; shared channels
 require TLS. Executable command and administration integration remain separate.
+
+The executable installs lazy native factory closures: a native cache's bounded
+connection record selects the endpoint and repository, while credentials are
+resolved independently. The shared factory instance within one invocation keeps
+staged object inventories consistent across backend/operation/head stores.
+Ordinary Git-backed workspaces continue to use upstream factories without
+resolving native credentials or connecting to the server.
