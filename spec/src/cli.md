@@ -128,3 +128,8 @@ Standalone TLS acceptance uses generated certificates, explicit client trust and
 hostname verification, with the development plaintext override disabled. Cold
 real-storage CLI recovery runs through this same TLS listener; memory-backed RPC
 acceptance and plaintext loopback startup remain separate evidence lanes.
+
+Native library acceptance also exercises application read selection against real
+JJ transactions. This verifies that inspecting concurrent operations cannot
+invoke the CLI's mutation/reconciliation behavior. The read surface remains a
+service capability until its separate HTTP and graph integration slices.

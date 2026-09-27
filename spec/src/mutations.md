@@ -69,3 +69,8 @@ outcome retaining the caller's request identity. No receipt observed by status
 means pending/unknown, never proof of rejection. Clients validate receipt
 request identity and action against the submitted intent before reporting
 success.
+
+Application reads use a separate committed-snapshot capability with no mutation
+methods. Selecting among concurrent heads never invokes native reconciliation;
+authentication and epoch checks run again on later reads. Reconciliation remains
+an explicitly authorized native or typed mutation.

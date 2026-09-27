@@ -859,3 +859,231 @@ async fn protection_can_freeze_multiple_existing_divergent_incarnations() {
         })
         .await;
 }
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn read_session_pins_history_and_reports_divergent_heads_without_publication() {
+    use jj_store_service::reads::{OpenRead, ReadLimits};
+    tokio::task::LocalSet::new()
+        .run_until(async {
+            let f = Fixture::new().await;
+            let cache = tempfile::tempdir().unwrap();
+            let work = tempfile::tempdir().unwrap();
+            let repo = init_working(&f, cache.path(), work.path()).await;
+            let before = f.session.snapshot().await.unwrap().manifest().clone();
+            let OpenRead::Pinned(read) = f
+                .session
+                .open_read(None, ReadLimits::default())
+                .await
+                .unwrap()
+            else {
+                panic!("single head must pin")
+            };
+            let pinned = read.snapshot().await.unwrap().clone();
+            assert_eq!(pinned.operation_id, oid(repo.op_id()));
+            assert_eq!(pinned.authority.manifest_revision, before.revision);
+            assert_eq!(f.session.snapshot().await.unwrap().manifest(), &before);
+            let first = repo
+                .start_transaction()
+                .commit("first sibling")
+                .await
+                .unwrap();
+            let second = repo
+                .start_transaction()
+                .commit("second sibling")
+                .await
+                .unwrap();
+            let siblings = f.session.snapshot().await.unwrap().manifest().clone();
+            assert_eq!(siblings.heads.len(), 2);
+            assert_eq!(read.snapshot().await.unwrap(), &pinned);
+            assert!(
+                matches!(
+                    f.session
+                        .open_read(
+                            None,
+                            ReadLimits {
+                                timeout: std::time::Duration::from_nanos(1),
+                                ..ReadLimits::default()
+                            }
+                        )
+                        .await,
+                    Err(jj_store_service::reads::Error::Limit)
+                ),
+                "ready multi-head response escaped its elapsed deadline"
+            );
+            let OpenRead::SelectHead(selection) = f
+                .session
+                .open_read(None, ReadLimits::default())
+                .await
+                .unwrap()
+            else {
+                panic!("concurrent heads must be explicit")
+            };
+            assert_eq!(
+                selection.heads,
+                BTreeSet::from([oid(first.op_id()), oid(second.op_id())])
+            );
+            let OpenRead::Pinned(historical) = f
+                .session
+                .open_read(Some(oid(repo.op_id())), ReadLimits::default())
+                .await
+                .unwrap()
+            else {
+                panic!("explicit historical operation must pin")
+            };
+            assert_eq!(
+                historical.snapshot().await.unwrap().operation_id,
+                oid(repo.op_id())
+            );
+            assert_eq!(f.session.snapshot().await.unwrap().manifest(), &siblings);
+            assert!(matches!(
+                read.authorize_object(m::ObjectKey::Operation(oid(first.op_id())))
+                    .await,
+                Err(jj_store_service::reads::Error::NotCommitted)
+            ));
+        })
+        .await;
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn read_session_excludes_staged_operations_and_rechecks_revocation() {
+    use jj_store_service::{
+        administration::{TokenChange, TokenRequest},
+        reads::{Error, OpenRead, ReadLimits},
+    };
+    tokio::task::LocalSet::new()
+        .run_until(async {
+            let f = Fixture::new().await;
+            let reader = f.session(f.reader.clone(), Protection::default());
+            let OpenRead::Pinned(read) =
+                reader.open_read(None, ReadLimits::default()).await.unwrap()
+            else {
+                panic!("initial head must pin")
+            };
+            let before = f.session.snapshot().await.unwrap().manifest().clone();
+            let mut candidate = roots::operation();
+            candidate.parents = vec![o::OperationId::from_bytes(roots::ROOT_OPERATION.as_bytes())];
+            candidate.metadata.description = "unpublished candidate".into();
+            let (key, _) = f.objects.put(&candidate).await.unwrap();
+            let m::ObjectKey::Operation(id) = key else {
+                unreachable!()
+            };
+            assert!(matches!(
+                reader.open_read(Some(id), ReadLimits::default()).await,
+                Err(Error::NotCommitted)
+            ));
+            assert_eq!(read.authorize_object(key).await, Err(Error::NotCommitted));
+            assert_eq!(f.session.snapshot().await.unwrap().manifest(), &before);
+            f.session
+                .change_token(&TokenRequest {
+                    request_id: m::RequestId::new([211; 16]),
+                    expected: before.snapshot(),
+                    change: TokenChange::Revoke {
+                        token: f.reader.id(),
+                    },
+                })
+                .await
+                .unwrap();
+            assert_eq!(read.snapshot().await, Err(Error::Denied));
+            assert_eq!(read.authorize_object(key).await, Err(Error::Denied));
+            assert!(matches!(
+                reader.open_read(Some(id), ReadLimits::default()).await,
+                Err(Error::Denied)
+            ));
+        })
+        .await;
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn read_session_enforces_inventory_and_elapsed_budgets() {
+    use jj_store_service::reads::{Error, OpenRead, ReadLimits};
+    let f = Fixture::new().await;
+    assert!(matches!(
+        f.session
+            .open_read(
+                None,
+                ReadLimits {
+                    max_objects: 1,
+                    ..ReadLimits::default()
+                }
+            )
+            .await,
+        Err(Error::Limit)
+    ));
+    assert!(matches!(
+        f.session
+            .open_read(
+                None,
+                ReadLimits {
+                    max_objects: usize::MAX,
+                    ..ReadLimits::default()
+                }
+            )
+            .await,
+        Err(Error::Limit)
+    ));
+    let OpenRead::Pinned(read) = f
+        .session
+        .open_read(
+            None,
+            ReadLimits {
+                timeout: std::time::Duration::from_millis(100),
+                ..ReadLimits::default()
+            },
+        )
+        .await
+        .unwrap()
+    else {
+        panic!("initial head must pin")
+    };
+    tokio::time::sleep(std::time::Duration::from_millis(120)).await;
+    assert_eq!(read.snapshot().await, Err(Error::Limit));
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn read_session_rejects_replaced_epoch_without_rebinding() {
+    use jj_store_object::{Condition, Key, ObjectStore as _, StagedUpload, WriteOutcome};
+    use jj_store_service::reads::{Error, OpenRead, ReadLimits};
+    let f = Fixture::new().await;
+    let OpenRead::Pinned(read) = f
+        .session
+        .open_read(None, ReadLimits::default())
+        .await
+        .unwrap()
+    else {
+        panic!("initial head must pin")
+    };
+    let original = read.snapshot().await.unwrap().clone();
+    // Fault injection into this disposable memory store models replacement by a
+    // new authority epoch. This is not a supported mutation or promotion API.
+    let key = Key::new(format!("repos/{REPO}/manifest.json")).unwrap();
+    let version = f.store.head(&key).await.unwrap().version;
+    let mut manifest = f.session.snapshot().await.unwrap().manifest().clone();
+    manifest.epoch = m::EpochId::new([212; 16]);
+    let bytes = serde_json::to_vec(&manifest).unwrap();
+    let upload = StagedUpload::from_bytes(&bytes, 128 * 1024).await.unwrap();
+    assert!(matches!(
+        f.store
+            .put(&key, Condition::Matches(version), &upload)
+            .await
+            .unwrap(),
+        WriteOutcome::Applied(_)
+    ));
+    assert_eq!(read.snapshot().await, Err(Error::EpochChanged));
+    assert_eq!(
+        read.authorize_object(m::ObjectKey::Operation(original.operation_id))
+            .await,
+        Err(Error::EpochChanged)
+    );
+    let OpenRead::Pinned(new_read) = f
+        .session
+        .open_read(None, ReadLimits::default())
+        .await
+        .unwrap()
+    else {
+        panic!("explicit fresh selection required")
+    };
+    assert_ne!(
+        new_read.snapshot().await.unwrap().authority.epoch,
+        original.authority.epoch
+    );
+}
