@@ -180,6 +180,10 @@ pub struct Snapshot {
     pub objects: Objects,
 }
 impl Snapshot {
+    /// Derived snapshot I/O is confined to this selected position and identity.
+    pub fn artifacts(&self, identity: &Identity) -> Result<Artifacts> {
+        Artifacts::new(self.captured.clone(), self.bound.clone(), identity.clone())
+    }
     pub fn selected_position(&self) -> &Position {
         &self.bound
     }
@@ -334,12 +338,13 @@ impl Objects {
     }
 }
 /// All source/control reads consume one run's budget. No caller receives this
-/// raw store; even internal misuse cannot write through it.
+/// raw store. This facade rejects writes; optional artifact mutations use a
+/// separately scoped capability with internally derived keys.
 pub(crate) struct CheckedStore {
-    inner: Arc<dyn ObjectStore>,
+    pub(crate) inner: Arc<dyn ObjectStore>,
     access: Arc<dyn Authorizer>,
     epoch: m::EpochId,
-    context: Context,
+    pub(crate) context: Context,
     failure: Mutex<Option<Error>>,
 }
 impl CheckedStore {

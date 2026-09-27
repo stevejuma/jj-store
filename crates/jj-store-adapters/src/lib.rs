@@ -1,9 +1,11 @@
 //! Rebuildable projections consume only selected history and cannot publish it.
 #![forbid(unsafe_code)]
+mod artifacts;
 mod context;
 mod progress;
 mod runner;
 mod source;
+pub use artifacts::{ArtifactBlob, ArtifactBundle, Artifacts};
 pub use context::{Context, Limits};
 use jj_store_model as m;
 use jj_store_wal::{

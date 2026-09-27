@@ -317,3 +317,9 @@ checks with native repositories, real local Tantivy files and background-runner
 HTTP fixtures. Cache loss/reopen and token revocation require observed status
 transitions, not sleeps alone. Real RustFS/TLS search deployment remains a
 separate qualification from these local lifecycle fixtures.
+
+Optional adapter snapshot artifacts use a repository/epoch/full-identity
+namespace and a V1 canonical descriptor and pointer. Their stream, corruption,
+revocation, cancellation and competing-pointer fixtures are deterministic memory
+storage evidence. They do not establish Tantivy restore or RustFS deployment
+conformance and change no native identity, WAL, receipt or replay cursor format.

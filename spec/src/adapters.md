@@ -185,3 +185,24 @@ generation retain their exact ordering.
 
 A closed runner health channel marks search degraded even when its last index
 remains readable. A terminated worker cannot leave a permanently healthy status.
+
+## Optional immutable snapshot storage
+
+The adapter boundary owns an authorization-bound snapshot capability constructed
+from a selected source snapshot. It exposes streamed immutable blobs and a
+versioned bundle of canonical file names, byte lengths and SHA-256 checksums.
+Keys are derived from repository, authority epoch and the complete adapter
+identity; projections receive no arbitrary object-store path or mutation API.
+Every transfer consumes the retained run context's request, byte and deadline
+budgets and checks current repository authorization before and after I/O.
+
+Snapshot publication verifies every referenced file, uploads the immutable
+bundle descriptor, and conditionally selects the descriptor last. Selection
+binds the exact committed source reference, configuration and projection
+artifact. A lost pointer acknowledgement is resolved by checked readback; a
+competing or later pointer cannot be silently overwritten. Snapshots never
+update the repository manifest or the adapter replay cursor. File names reject
+path traversal; bounded descriptors reject unknown fields and noncanonical
+encoding. Missing, corrupt or incompatible snapshots are unusable acceleration,
+not evidence that local index files have survived. Tantivy restore must still
+verify its payload, schema and actual index readability before activation.
