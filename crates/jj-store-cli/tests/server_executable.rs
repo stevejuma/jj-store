@@ -1300,6 +1300,18 @@ fn cold_search_server_requires_injected_credentials_without_echoing_secrets() {
 
 #[cfg(unix)]
 #[test]
+fn cold_server_registers_shutdown_before_reporting_listener() {
+    let fixture = Fixture::new();
+    for local in [false, true] {
+        for _ in 0..8 {
+            let mut server = fixture.start(local);
+            server.terminate();
+        }
+    }
+}
+
+#[cfg(unix)]
+#[test]
 fn cold_search_worker_polls_failed_storage_and_stops_with_foreground_server() {
     use std::io::{Read as _, Write as _};
     use std::sync::{

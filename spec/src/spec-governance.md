@@ -157,3 +157,8 @@ Catalog source, stories, tooling and provenance require the UI chapter and
 same-change ledger evidence. Normal and specification lanes include catalog
 types, unit tests, Storybook interactions/accessibility and cold static builds.
 The progress checker recognizes catalog and Storybook paths.
+
+Cold catalog acceptance builds static assets and serves them on an owned
+ephemeral loopback port. Browser tests reject API, external HTTP and WebSocket
+requests, verify responsive navigation and fresh-instance state, and retain
+unapproved screenshots only as local review artifacts.

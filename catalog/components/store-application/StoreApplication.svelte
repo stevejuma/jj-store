@@ -16,14 +16,19 @@
     CommunityNavigationItemModel,
     CommunityNavigationModel,
   } from "../community-navigation/model.js";
+  import { createInMemoryStoreController } from "../../controller/in-memory-store-controller.svelte.js";
+  import type { StoreController } from "../../controller/contracts.js";
+  import CommunityProfileMenu from "../community-profile-menu/CommunityProfileMenu.svelte";
   let {
     initialPage = "branches",
+    controller = untrack(() => createInMemoryStoreController(initialPage)),
     initiallyCollapsed = true,
     displayMode = "auto",
     children,
     details,
   }: {
     initialPage?: StorePage;
+    controller?: StoreController;
     initiallyCollapsed?: boolean;
     displayMode?: AppShellDisplayMode;
     children?: Snippet<[StorePage, string]>;
@@ -36,13 +41,9 @@
     sidebarMinWidth: 48,
     sidebarMaxWidth: 440,
   });
-  let history = $state([
-    { page: untrack(() => initialPage), repository: "jj-store" },
-  ]);
-  let historyIndex = $state(0);
-  const current = $derived(history[historyIndex]!);
-  const canNavigateBack = $derived(historyIndex > 0);
-  const canNavigateForward = $derived(historyIndex < history.length - 1);
+  const current = $derived(controller.state.route);
+  const canNavigateBack = $derived(controller.state.canNavigateBack);
+  const canNavigateForward = $derived(controller.state.canNavigateForward);
   const compact = $derived(
     shell.mobile.resolvedMode === "desktop" &&
       shell.left.collapsed &&
@@ -66,23 +67,18 @@
       },
     ],
   };
-  const title = $derived(pages.find((p) => p.id === current.page)!.label);
+  const title = $derived(
+    current.page === "files"
+      ? "Files"
+      : pages.find((p) => p.id === current.page)!.label,
+  );
   function select(item: CommunityNavigationItemModel) {
-    const next =
-      item.kind === "repository"
-        ? { ...current, repository: item.id }
-        : { ...current, page: item.kind };
-    if (next.page !== current.page || next.repository !== current.repository) {
-      history = [...history.slice(0, historyIndex + 1), next];
-      historyIndex += 1;
-    }
+    if (item.kind === "repository") controller.actions.openRepository(item.id);
+    else controller.actions.selectPage(item.kind);
     if (shell.mobile.resolvedMode === "mobile") shell.mobile.showMain();
   }
   function navigate(delta: -1 | 1) {
-    historyIndex = Math.max(
-      0,
-      Math.min(history.length - 1, historyIndex + delta),
-    );
+    controller.actions.navigate(delta);
   }
 </script>
 
@@ -115,16 +111,24 @@
   >
     <CommunityNavigation
       model={navigation}
-      activeItemId={current.page}
+      activeItemId={current.page === "files"
+        ? current.repository
+        : current.page}
       {compact}
       onSelect={select}
     >
       {#snippet headerStart()}<strong aria-label="jj-store"
           >{compact ? "JJ" : "jj-store"}</strong
         >{/snippet}
-      {#snippet footer()}<span title="Fixture catalog"
-          >{compact ? "Demo" : "Fixture catalog"}</span
-        >{/snippet}
+      {#snippet footer()}<CommunityProfileMenu
+          member={controller.state.member}
+          authenticated={controller.state.authenticated}
+          {compact}
+          onAction={(action) =>
+            action === "sign-in"
+              ? controller.actions.signIn()
+              : controller.actions.signOut()}
+        />{/snippet}
     </CommunityNavigation>
   </AppShell.Sidebar>
   <AppShell.Main>

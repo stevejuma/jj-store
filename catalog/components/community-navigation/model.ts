@@ -1,4 +1,4 @@
-export type StorePage = "branches" | "log" | "oplog";
+export type StorePage = "branches" | "log" | "oplog" | "files";
 export interface CommunityNavigationItemModel {
   id: string;
   label: string;

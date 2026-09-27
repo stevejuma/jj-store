@@ -1,17 +1,12 @@
+import catalogVite from "../.storybook/vite.config.js";
 import { fileURLToPath } from "node:url";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
 import { playwright } from "@vitest/browser-playwright";
 import { defineConfig } from "vitest/config";
 export default defineConfig({
-  plugins: [svelte()],
-  optimizeDeps: {
-    exclude: [
-      "@lapismd/design-core",
-      "@lapismd/design-core/shell",
-      "@lapismd/design-core/shadcn/column-canvas",
-    ],
-  },
+  plugins: catalogVite.plugins,
+  optimizeDeps: catalogVite.optimizeDeps,
   test: {
     projects: [
       {

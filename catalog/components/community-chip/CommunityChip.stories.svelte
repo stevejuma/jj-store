@@ -8,7 +8,9 @@
     tags: ["visual-pending"],
     parameters: {
       docs: {
-        source: { code: '<CommunityChip tone="accent">main</CommunityChip>' },
+        source: {
+          code: '<script>\n  import { CommunityChip } from "./catalog/index.js";\n<\/script>\n<CommunityChip tone="accent">main</CommunityChip>',
+        },
       },
     },
   });
@@ -18,5 +20,8 @@
   name="Bookmark"
   play={async ({ canvasElement }) => {
     await expect(within(canvasElement).getByText("main")).toBeVisible();
-  }}><CommunityChip tone="accent">main</CommunityChip></Story
+  }}
 >
+  {#snippet template()}<CommunityChip tone="accent">main</CommunityChip
+    >{/snippet}
+</Story>

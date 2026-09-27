@@ -1,0 +1,77 @@
+<script lang="ts">
+  import * as Tooltip from "@lapismd/design-core/shadcn/tooltip";
+
+  import CommunityMemberAvatar from "../community-member-avatar/CommunityMemberAvatar.svelte";
+  import type { CommunityMemberModel } from "../community-workspace/model.js";
+
+  let {
+    email = "",
+    name = "",
+    size = "small",
+    members = [],
+  }: {
+    email?: string | undefined;
+    name?: string | undefined;
+    size?: "xsmall" | "small";
+    members?: readonly CommunityMemberModel[];
+  } = $props();
+
+  const trimmedEmail = $derived(email.trim());
+  const pubkey = $derived(undefined);
+  const member = $derived(
+    members.find((member) => member.handle === trimmedEmail) ??
+      gitAuthorMember(name, trimmedEmail),
+  );
+  const label = $derived(pubkey ? member.name : trimmedEmail);
+
+  function gitAuthorMember(
+    displayName: string,
+    authorEmail: string,
+  ): CommunityMemberModel {
+    const label = displayName.trim() || authorEmail || "Author";
+    return {
+      id: pubkey ?? (authorEmail || label),
+      name: label,
+      handle: authorEmail || label,
+      initials: label
+        .split(/\s+/)
+        .slice(0, 2)
+        .map((part) => part[0])
+        .join("")
+        .toUpperCase(),
+    };
+  }
+</script>
+
+{#if trimmedEmail}
+  <Tooltip.Provider delayDuration={0}>
+    <Tooltip.Root>
+      <Tooltip.Trigger>
+        {#snippet child({ props })}
+          <span
+            {...props}
+            class="community-projects-git-author-avatar"
+            data-ui-part="git-author"
+            role="img"
+            aria-label={label}
+          >
+            <CommunityMemberAvatar {member} {size} shape="rounded" decorative />
+          </span>
+        {/snippet}
+      </Tooltip.Trigger>
+      <Tooltip.Content side="top" sideOffset={6}>{label}</Tooltip.Content>
+    </Tooltip.Root>
+  </Tooltip.Provider>
+{:else}
+  <span class="community-projects-git-author-avatar" data-ui-part="git-author">
+    <CommunityMemberAvatar {member} {size} shape="rounded" decorative />
+  </span>
+{/if}
+
+<style>
+  .community-projects-git-author-avatar {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+  }
+</style>

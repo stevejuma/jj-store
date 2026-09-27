@@ -73,7 +73,10 @@ acceptance below.
 listener only after validating configuration, TLS and the operator policy.
 `jj store serve-local --server-config PATH` uses the same composition and
 requires a literal loopback bind address. Both stop on interrupt/termination and
-bound graceful shutdown. Neither installs a daemon nor launches RustFS.
+bound graceful shutdown. Neither installs a daemon nor launches RustFS. On Unix,
+both shutdown handlers are installed before the listening event is flushed.
+Immediate interrupt or termination after that event must enter graceful
+shutdown, even before the listener or search worker future is first polled.
 
 `jj-store config example` prints the configuration template, while
 `config check` validates it without contacting storage.

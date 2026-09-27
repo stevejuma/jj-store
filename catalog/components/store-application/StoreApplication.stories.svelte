@@ -10,6 +10,7 @@
       layout: "fullscreen",
       jjStoreShell: true,
       docs: {
+        story: { inline: false, iframeHeight: 700 },
         source: {
           code: '<script>\n  import { StoreApplication } from "./catalog/index.js";\n<\/script>\n<StoreApplication />',
         },
@@ -51,7 +52,7 @@
     );
     await userEvent.click(canvas.getByRole("button", { name: "Repositories" }));
     await userEvent.click(canvas.getByRole("button", { name: "native-demo" }));
-    await expect(canvas.getByText("native-demo · Branches")).toBeVisible();
+    await expect(canvas.getByText("native-demo · Files")).toBeVisible();
     await userEvent.click(
       canvas.getByRole("button", { name: "Toggle details" }),
     );

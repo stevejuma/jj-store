@@ -241,6 +241,7 @@ pub async fn serve(
     let config = Config::load(path)?;
     let server = PreparedServer::prepare(&config, local).await?;
     let address = server.address()?;
+    let shutdown = process::shutdown_signal()?;
     emit(
         ui,
         format,
@@ -251,7 +252,7 @@ pub async fn serve(
         ),
     )?;
     ui.stdout().flush()?;
-    server.run(process::shutdown_signal()).await?;
+    server.run(shutdown).await?;
     Ok(())
 }
 async fn run(ui: &Ui, cli: ServerCli) -> AuthorityResult<()> {

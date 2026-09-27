@@ -118,6 +118,11 @@ export default defineConfig(tableRequirements(), {
   },
   check: {
     lanes: [
+      {
+        name: "catalog-cold-browser",
+        command: "pnpm",
+        args: ["catalog:test:browser"],
+      },
       { name: "catalog-check", command: "pnpm", args: ["catalog:check"] },
       { name: "catalog-unit", command: "pnpm", args: ["catalog:test"] },
       {

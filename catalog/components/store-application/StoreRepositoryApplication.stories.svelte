@@ -1,0 +1,160 @@
+<script module lang="ts">
+  import { SOURCE_TEXT } from "../../fixtures/repository.js";
+  import { defineMeta } from "@storybook/addon-svelte-csf";
+  import { expect, userEvent, waitFor, within } from "storybook/test";
+  import StoreRepositoryApplication from "./StoreRepositoryApplication.svelte";
+  import { IDS } from "../../fixtures/repository.js";
+  const { Story } = defineMeta({
+    title: "JJ Store/Connected application",
+    component: StoreRepositoryApplication,
+    tags: ["visual-pending"],
+    args: { initiallyCollapsed: false },
+    parameters: {
+      layout: "fullscreen",
+      jjStoreShell: true,
+      docs: {
+        story: { inline: false, iframeHeight: 700 },
+        source: {
+          code: '<script>\n import { StoreRepositoryApplication, createInMemoryStoreController } from "./catalog/index.js";\n const controller = createInMemoryStoreController();\n<\/script>\n<StoreRepositoryApplication {controller} />',
+        },
+      },
+    },
+  });
+</script>
+
+<Story
+  name="Repository files"
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement),
+      body = within(canvasElement.ownerDocument.body);
+    await userEvent.click(canvas.getByRole("button", { name: "jj-store" }));
+    await expect(canvas.getByRole("heading", { name: "Files" })).toBeVisible();
+    await userEvent.click(canvas.getByRole("button", { name: "README.md" }));
+    await waitFor(() =>
+      expect(
+        canvasElement.querySelector('[data-ui-component="code-block"]'),
+      ).toHaveTextContent("# jj-store"),
+    );
+    await expect(
+      canvasElement.querySelector('[data-ui-component="code-block"]'),
+    ).toHaveTextContent(SOURCE_TEXT);
+    await expect(
+      canvasElement.querySelector('[data-ui-component="code-block"] script'),
+    ).toBeNull();
+    await userEvent.click(
+      canvas.getByRole("combobox", { name: "Repository bookmark or change" }),
+    );
+    await userEvent.click(
+      await body.findByRole("option", { name: "feature/native-objects" }),
+    );
+    await expect(
+      canvas.getByText("Select a file to preview it."),
+    ).toBeVisible();
+    await userEvent.click(canvas.getByRole("button", { name: "src/lib.rs" }));
+    await waitFor(() =>
+      expect(
+        canvasElement.querySelector('[data-ui-component="code-block"]'),
+      ).toHaveTextContent("stream_native_objects"),
+    );
+    await expect(
+      canvasElement.querySelector('[data-ui-component="code-block"]'),
+    ).not.toHaveTextContent("preserve_publication_history");
+    await userEvent.click(
+      canvas.getByRole("combobox", { name: "Repository bookmark or change" }),
+    );
+    await userEvent.click(await body.findByRole("tab", { name: "Changes" }));
+    await userEvent.type(
+      body.getByPlaceholderText("Find bookmark or change"),
+      "po".repeat(16),
+    );
+    await expect(body.getAllByRole("option")).toHaveLength(2);
+    await userEvent.click(
+      await body.findByRole("option", {
+        name: /34343434 · Preserve concurrent publication history/,
+      }),
+    );
+    await userEvent.click(canvas.getByRole("button", { name: "src/lib.rs" }));
+    await waitFor(() =>
+      expect(
+        canvasElement.querySelector('[data-ui-component="code-block"]'),
+      ).toHaveTextContent("preserve_publication_history"),
+    );
+    await userEvent.click(canvas.getByRole("button", { name: "Back" }));
+    await expect(
+      canvas.getByText("Select a file to preview it."),
+    ).toBeVisible();
+    await userEvent.click(canvas.getByRole("button", { name: "Back" }));
+    await waitFor(() =>
+      expect(
+        canvasElement.querySelector('[data-ui-component="code-block"]'),
+      ).toHaveTextContent("stream_native_objects"),
+    );
+  }}
+/>
+<Story
+  name="Conflicted snapshot"
+  args={{ initialPage: "files" }}
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement),
+      body = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      canvas.getByRole("combobox", { name: "Repository bookmark or change" }),
+    );
+    await userEvent.click(
+      await body.findByRole("option", { name: /conflicted/ }),
+    );
+    await expect(canvas.getByText("Choose a bookmark target")).toBeVisible();
+    await expect(
+      canvas.queryByRole("button", { name: "README.md" }),
+    ).not.toBeInTheDocument();
+    await userEvent.click(
+      canvas.getByRole("button", {
+        name: `Open target ${IDS.right.slice(0, 8)}…${IDS.right.slice(-4)}`,
+      }),
+    );
+    await userEvent.click(
+      canvas.getByRole("button", { name: "assets/logo.bin" }),
+    );
+    await expect(
+      canvas.getByText("Binary file", { exact: true }),
+    ).toBeVisible();
+  }}
+/>
+<Story
+  name="Profile login footer"
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement),
+      body = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Open profile menu for Maya Chen" }),
+    );
+    await userEvent.click(
+      await body.findByRole("menuitem", { name: "Sign out" }),
+    );
+    await waitFor(() =>
+      expect(
+        body.queryByRole("menu", { name: "Profile menu" }),
+      ).not.toBeInTheDocument(),
+    );
+    await waitFor(() =>
+      expect(
+        getComputedStyle(
+          canvas.getByRole("button", { name: "Open profile menu for Guest" }),
+        ).pointerEvents,
+      ).not.toBe("none"),
+    );
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Open profile menu for Guest" }),
+    );
+    await userEvent.click(
+      await body.findByRole("menuitem", { name: "Sign in" }),
+    );
+    await expect(
+      canvas.getByRole("button", { name: "Open profile menu for Maya Chen" }),
+    ).toBeVisible();
+  }}
+/>
+<Story
+  name="Mobile files"
+  args={{ initialPage: "files", displayMode: "mobile" }}
+/>

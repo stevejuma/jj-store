@@ -171,3 +171,12 @@ Record unexplained failures; compilation or a happy-path demo never establishes
 completion. First release requires CLI/browser history parity, authenticated
 abandon/resolve, rebuildable search, and acknowledged publication durability
 under the documented failures.
+
+### Catalog follow-up requested 27 September 2026
+
+M4.7 adds a typed in-memory controller and complete application stories
+alongside the simple shells. Reuse Community repository file tree, branch/change
+picker, file-content viewer and left-sidebar profile/login footer. Match
+Community fonts and icon geometry through the same shared stylesheet build
+setup. All actions remain local; production integration and authentication
+remain deferred.

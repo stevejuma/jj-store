@@ -176,3 +176,7 @@ server lifecycle. Publication and native storage do not depend on these workers.
 The isolated catalog adapts Community compositions using released Design Core.
 It has no service, transport or publication dependency; the existing served
 browser remains independent. See [catalog requirements](ui.md).
+
+The catalog has independent cold static-browser acceptance; production serving
+and API integration remain unchanged. Storybook framework/renderer/builder
+versions are aligned in the registry lockfile.

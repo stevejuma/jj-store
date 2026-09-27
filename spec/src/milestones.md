@@ -21,17 +21,18 @@ adds evidence here in its enclosing Jujutsu change.
 | M2.1        | Done        | M1         | JST-PUB-001,JST-PUB-002                                                 | Complete inventory and unique candidate CAS                                           | Retain publication and cold recovery conformance         | E-M2-001,E-M2-002                                                                                                                                                    |
 | M2.2        | Done        | M2.1       | JST-PUB-003,JST-PUB-004,JST-PUB-005                                     | Retry receipts and unknown outcome recovery                                           | Retain publication and cold recovery conformance         | E-M2-002                                                                                                                                                             |
 | M2.3        | Done        | M2.2       | JST-PUB-006                                                             | Checkpoint equivalence and cache-free restart                                         | Retain publication and cold recovery conformance         | E-M2-002                                                                                                                                                             |
-| M3          | Done        | M2         | JST-JJ-001,JST-JJ-002,JST-CLI-001,JST-SEC-001                           | Native CLI/server vertical slice with authentication                                  | Implement M4 pinned read sessions                        | E-M3-001,E-M3-002,E-M3-003,E-M3-004,E-M3-005,E-M3-006,E-M3-007,E-M3-008,E-M3-009,E-M3-010,E-M3-011,E-M3-012,E-M3-013,E-M3-014                                        |
+| M3          | Done        | M2         | JST-JJ-001,JST-JJ-002,JST-CLI-001,JST-SEC-001                           | Native CLI/server vertical slice with authentication                                  | Implement M4 pinned read sessions                        | E-M3-001,E-M3-002,E-M3-003,E-M3-004,E-M3-005,E-M3-006,E-M3-007,E-M3-008,E-M3-009,E-M3-010,E-M3-011,E-M3-012,E-M3-013,E-M3-014,E-M3-015                               |
 | M3.1        | Done        | M2         | JST-SEC-001,JST-SEC-002,JST-SEC-003,JST-SEC-004                         | Revocable tokens and transport authorization                                          | Retain native slice acceptance                           | E-M3-001,E-M3-004,E-M3-005,E-M3-006,E-M3-007,E-M3-008,E-M3-009,E-M3-011,E-M3-012,E-M3-014                                                                            |
 | M3.2        | Done        | M3.1       | JST-JJ-001,JST-JJ-004,JST-JJ-005                                        | Create edit describe log restart op-log evolog; multi-workspace                       | Retain native slice acceptance                           | E-M3-002,E-M3-003,E-M3-004,E-M3-005,E-M3-006,E-M3-008,E-M3-009,E-M3-010,E-M3-011,E-M3-013,E-M3-014                                                                   |
-| M3.3        | Done        | M3.2       | JST-CLI-001,JST-CLI-002,JST-CLI-003,JST-CLI-004                         | Custom command presentation and capability parity                                     | Retain native slice acceptance                           | E-M3-006,E-M3-009,E-M3-010,E-M3-011,E-M3-012,E-M3-013,E-M3-014                                                                                                       |
+| M3.3        | Done        | M3.2       | JST-CLI-001,JST-CLI-002,JST-CLI-003,JST-CLI-004                         | Custom command presentation and capability parity                                     | Retain native slice acceptance                           | E-M3-006,E-M3-009,E-M3-010,E-M3-011,E-M3-012,E-M3-013,E-M3-014,E-M3-015                                                                                              |
 | M4          | In progress | M3         | JST-API-001,JST-API-005                                                 | Structured reads and basic served UI match native semantics                           | Qualify SSE/API; retain deferred UI gate                 | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010,E-M4-011,E-M4-012,E-M4-013,E-M4-014,E-M4-015,E-M4-016,E-M4-017,E-SCOPE-001 |
 | M4.1        | Done        | M3         | JST-API-001,JST-API-002,JST-JJ-003                                      | Pinned three-graph reads with zero GET publications                                   | Retain pinned read conformance                           | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010,E-M4-011,E-M4-012,E-M4-013,E-M4-014                                        |
 | M4.2        | In progress | M4.1       | JST-API-003,JST-API-006                                                 | Committed SSE and generated API contract deployment qualification                     | Qualify real RustFS/TLS SSE                              | E-M4-015,E-M4-016,E-M4-017,E-SCOPE-001                                                                                                                               |
 | M4.3        | Deferred    | M4.1,M5,M6 | JST-API-004,JST-API-005                                                 | Complete browser mutations/conflicts/search/freshness and deployed browser acceptance | Resume UI only when requested                            | E-SCOPE-001                                                                                                                                                          |
 | M4.4        | Done        | Bootstrap  | JST-UI-001                                                              | Isolated catalog types, interaction/a11y and static build                             | Implement shell stories                                  | E-UI-001                                                                                                                                                             |
 | M4.5        | Done        | M4.4       | JST-UI-002                                                              | Community shell mechanics and navigation acceptance                                   | Implement repository fixture views                       | E-UI-002                                                                                                                                                             |
-| M4.6        | Planned     | M4.5       | JST-UI-003                                                              | Native fixture graph/file/diff drill-down and accessibility                           | Copy repository compositions                             | -                                                                                                                                                                    |
+| M4.6        | Done        | M4.5       | JST-UI-003                                                              | Native fixture graph/file/diff drill-down and accessibility                           | Visual review; live UI remains deferred                  | E-UI-003                                                                                                                                                             |
+| M4.7        | Done        | M4.6       | JST-UI-004                                                              | Complete in-memory application, snapshot file browser and profile footer              | Apply requested presentation refinements                 | E-UI-004                                                                                                                                                             |
 | M5          | Done        | M4.1       | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Authenticated typed commands and shared RPC policy                                    | Retain mutation conformance; proceed to M6               | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-M5-005,E-M5-006,E-M5-007,E-M5-008                                                                                  |
 | M5.1        | Done        | M4.1       | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Basic changes/refs/reconcile; preview receipt and semantic policy                     | Retain basic mutation acceptance                         | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004                                                                                                                      |
 | M5.2        | Done        | M5.1       | JST-MUT-003                                                             | Full abandon descendant bookmark workspace/evolution parity                           | Retain abandon acceptance                                | E-M5-005                                                                                                                                                             |
@@ -44,7 +45,7 @@ adds evidence here in its enclosing Jujutsu change.
 | M7          | Deferred    | M8a        | JST-ADAPT-005                                                           | Complete read-only replica through applied position                                   | After first release                                      | -                                                                                                                                                                    |
 | M8b         | Deferred    | M8a        | JST-COMPAT-004                                                          | Verified lossless import with source safety                                           | Separate migration release                               | -                                                                                                                                                                    |
 
-The user reopened Storybook-only M4.4–M4.6 on 27 September 2026. Live UI remains
+The user reopened Storybook-only M4.4–M4.7 on 27 September 2026. Live UI remains
 deferred. M4.3 retains those requirements and existing browser evidence; backend
 gates proceed independently. M4 and full first-release browser acceptance remain
 incomplete while M4.3 is Deferred. Existing browser functional checks remain
@@ -7743,6 +7744,471 @@ and named tests are checked by the progress gate.
     "remaining": [],
     "versions": "Same pinned catalog dependencies and Community source as E-UI-001.",
     "formats": "Presentation props only; no storage or API changes. Enclosing Jujutsu change is the evidence reference."
+  },
+  {
+    "id": "E-UI-003",
+    "tasks": ["M4.6"],
+    "date": "2026-09-27",
+    "kind": "storybook-repository",
+    "files": [
+      ".storybook/vite.config.ts",
+      "AGENTS.md",
+      "catalog/community/avatar-content.ts",
+      "catalog/components/community-chip/CommunityChip.stories.svelte",
+      "catalog/components/community-commit-diff/CommunityCommitDiff.svelte",
+      "catalog/components/community-diff-controls/CommunityDiffControls.svelte",
+      "catalog/components/community-member-avatar/CommunityMemberAvatar.svelte",
+      "catalog/components/community-member-avatar/community-member-avatar.css",
+      "catalog/components/community-member-avatar/model.ts",
+      "catalog/components/community-navigation/model.ts",
+      "catalog/components/community-profile-menu/CommunityProfileMenu.svelte",
+      "catalog/components/community-projects/CommunityProjectsGitAuthorAvatar.svelte",
+      "catalog/components/community-projects/CommunityProjectsRepositoryBranchSelector.svelte",
+      "catalog/components/community-projects/CommunityProjectsRepositoryFilePanel.svelte",
+      "catalog/components/community-projects/CommunityProjectsRepositoryFileTree.svelte",
+      "catalog/components/community-projects/CommunityProjectsRepositoryFiles.svelte",
+      "catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte",
+      "catalog/components/community-projects/CommunityProjectsRepositoryLog.svelte",
+      "catalog/components/community-projects/CommunityProjectsRepositoryLogDiff.stories.svelte",
+      "catalog/components/community-projects/CommunityProjectsRepositoryLogDiff.svelte",
+      "catalog/components/community-projects/CommunityProjectsRepositoryLogEmpty.svelte",
+      "catalog/components/community-projects/CommunityProjectsRepositoryLogFiles.stories.svelte",
+      "catalog/components/community-projects/CommunityProjectsRepositoryLogFiles.svelte",
+      "catalog/components/community-projects/CommunityProjectsRepositoryLogHeader.svelte",
+      "catalog/components/community-projects/CommunityProjectsRepositoryLogRail.svelte",
+      "catalog/components/community-projects/CommunityProjectsRevisionGraph.stories.svelte",
+      "catalog/components/community-projects/CommunityProjectsRevisionGraph.svelte",
+      "catalog/components/community-projects/CommunityProjectsRevisionGraphCopy.svelte",
+      "catalog/components/community-projects/CommunityProjectsRevisionGraphIds.stories.svelte",
+      "catalog/components/community-projects/CommunityProjectsRevisionGraphIds.svelte",
+      "catalog/components/community-projects/CommunityProjectsRevisionGraphMessage.svelte",
+      "catalog/components/community-projects/CommunityProjectsVirtualRows.svelte",
+      "catalog/components/community-projects/repository-browser.test.ts",
+      "catalog/components/community-projects/repository-browser.ts",
+      "catalog/components/community-projects/repository-files.css",
+      "catalog/components/community-projects/virtual-project-row-estimates.ts",
+      "catalog/components/community-relative-time/CommunityRelativeTime.svelte",
+      "catalog/components/community-relative-time/model.ts",
+      "catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte",
+      "catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.svelte",
+      "catalog/components/community-workspace/model.ts",
+      "catalog/components/store-application/RepositoryApplication.stories.svelte",
+      "catalog/components/store-application/StoreApplication.stories.svelte",
+      "catalog/components/store-application/StoreApplication.svelte",
+      "catalog/components/store-application/StoreRepositoryApplication.stories.svelte",
+      "catalog/components/store-application/StoreRepositoryApplication.svelte",
+      "catalog/controller/contracts.ts",
+      "catalog/controller/in-memory-store-controller.svelte.ts",
+      "catalog/controller/store-controller.test.ts",
+      "catalog/fixtures/DiffFixture.svelte",
+      "catalog/fixtures/FilesFixture.svelte",
+      "catalog/fixtures/RepositoryFixture.svelte",
+      "catalog/fixtures/repository.ts",
+      "catalog/fixtures/snapshots.ts",
+      "catalog/index.ts",
+      "catalog/projects/native-presentation.test.ts",
+      "catalog/projects/presentation.ts",
+      "catalog/projects/repository-log-canvas.ts",
+      "catalog/projects/repository-log-collapse.ts",
+      "catalog/projects/repository-log-files.ts",
+      "catalog/projects/repository-log-graph.test.ts",
+      "catalog/projects/repository-log-graph.ts",
+      "catalog/projects/repository-log-message.ts",
+      "catalog/projects/repository-log.ts",
+      "catalog/vitest.config.ts",
+      "docs/catalog.md",
+      "docs/implementation-plan.md",
+      "package.json",
+      "pnpm-lock.yaml",
+      "scripts/catalog-browser.test.mjs",
+      "spec/src/architecture.md",
+      "spec/src/milestones.md",
+      "spec/src/spec-governance.md",
+      "spec/src/ui.md",
+      "spec/src/verification.md",
+      "spec-validator.config.mjs"
+    ],
+    "tests": [
+      "catalog/projects/native-presentation.test.ts#preserves_native_divergence_and_bookmark_targets",
+      "catalog/projects/native-presentation.test.ts#native_ids_remain_complete_in_messages",
+      "catalog/projects/native-presentation.test.ts#operation_siblings_keep_separate_graph_lanes",
+      "scripts/catalog-browser.test.mjs#cold_catalog_contract"
+    ],
+    "runs": [
+      {
+        "command": "pnpm test:storybook catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before implementation: no matching stories."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "fail",
+        "failures": 5,
+        "note": "Initial fixture state name shadowed the Svelte rune: 5 errors and 6 warnings; renamed it."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Initial suite import/reoptimization failure; source compilation exclusions retained."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte",
+        "result": "fail",
+        "failures": 4,
+        "note": "CSF harness children were mounted as component children: 4 failed, 4 passed, 8 unhandled errors; fixed template snippets."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte",
+        "result": "fail",
+        "failures": 2,
+        "note": "Radio controls were queried as buttons; corrected public roles."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte",
+        "result": "fail",
+        "failures": 2,
+        "note": "Highlighted code spans split the text query; assert the complete diff textContent. Repeated once before final correction."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "8 repository stories pass after corrections."
+      },
+      {
+        "command": "node --test scripts/catalog-browser.test.mjs",
+        "result": "fail",
+        "failures": 1,
+        "note": "Geometry regression exposed wrapped native bookmark labels beyond fixed row height; measured row heights now feed original graph paths."
+      },
+      {
+        "command": "node --test scripts/catalog-browser.test.mjs",
+        "result": "fail",
+        "failures": 1,
+        "note": "Narrow bookmark labels overlapped inline IDs; IDs now wrap beneath content in narrow graph columns."
+      },
+      {
+        "command": "node --test scripts/catalog-browser.test.mjs",
+        "result": "fail",
+        "failures": 1,
+        "note": "Keyboard branch input queried by a label replaced by public Command context; switched to its placeholder. First unbounded attempt interrupted; regression now has bounded timeouts."
+      },
+      {
+        "command": "pnpm catalog:test:browser",
+        "result": "fail",
+        "failures": 1,
+        "note": "Autodocs includes its primary preview plus named stories; corrected explicit iframe count."
+      },
+      {
+        "command": "pnpm catalog:test:browser",
+        "result": "pass",
+        "failures": 0,
+        "note": "Cold static build, desktop/mobile geometry, keyboard selection/resize, Docs canvases, state reset, font/icon contracts and no external/API/WebSocket requests pass."
+      },
+      {
+        "command": "pnpm test:storybook",
+        "result": "pass",
+        "failures": 0,
+        "note": "33 interaction/axe tests across 10 story files pass before the additional Full app story."
+      },
+      {
+        "command": "pnpm catalog:test",
+        "result": "pass",
+        "failures": 0,
+        "note": "15 unit tests pass before copied file-browser helper tests were added."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "fail",
+        "failures": 17,
+        "note": "Final review found unsupported Testing Library exact options in two story files. Removed the unsupported options; string role names are already exact."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "One multiline exact option remained; removed it before the passing rerun."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:check",
+        "result": "fail",
+        "failures": 17,
+        "note": "Stopped at catalog-check with the same 17 story type errors; later passed all 18 lanes."
+      },
+      {
+        "command": "pnpm format:check",
+        "result": "fail",
+        "failures": 2,
+        "note": "Prettier parsed literal script tags inside two CSF play attributes as Svelte script blocks. Moved the unsafe-source fixture string to the fixture module; formatter then passed."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "71 catalog modules; 0 Svelte errors and 0 warnings."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "18 lanes pass including 19 catalog unit tests, 34 interaction/axe stories, cold static catalog, 8 existing browser cases, Rust tests and rustfmt. Before final author-spacing and shutdown fixes."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All checks and Clippy pass before the final author-spacing and shutdown fixes."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test",
+        "result": "fail",
+        "failures": 1,
+        "note": "UI/catalog lanes passed; existing cold_search_worker_polls_failed_storage_and_stops_with_foreground_server exited with SIGTERM before handler installation. Source repair and focused evidence recorded in E-M3-015."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test",
+        "result": "fail",
+        "failures": 1,
+        "note": "New Full app cold assertion used the Testing Library toHaveTextContent matcher in Playwright; corrected to toContainText. 19 unit tests and 34 interaction/axe stories passed; the cold script failed one test."
+      },
+      {
+        "command": "node --test scripts/catalog-browser.test.mjs",
+        "result": "fail",
+        "failures": 1,
+        "note": "Regex text assertion compared raw DOM whitespace; the rendered author spacing was correct. Switched to Playwright string matching with its standard whitespace normalization, retaining the required separator."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "Concurrent final validation had already loaded that same raw-whitespace assertion and stopped at catalog-cold-browser."
+      },
+      {
+        "command": "node --test scripts/catalog-browser.test.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Cold static catalog acceptance passes, including the dedicated Full app initial view and author-spacing assertion; screenshots captured, with no unexpected requests or runtime errors."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final source checks pass: all canonical/boundary/progress/contracts checks, rustfmt, Svelte checks with 0 errors/warnings and workspace Clippy."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final 18 lanes pass: 19 catalog unit tests, 34 interaction/axe stories, cold static catalog, 8 existing browser cases, 369 Rust tests (6 external-service/credential tests ignored), rustfmt, contracts, governance, boundaries and mdBook."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final aggregate passes: governance, storage harness self-tests, contracts, browser unit tests, 19 catalog unit tests, 34 stories, cold catalog and 369 Rust tests; 6 external-service/credential tests ignored."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Static Storybook, existing browser bundle/manifest and all locked Rust workspace binaries build successfully."
+      },
+      {
+        "command": "pnpm format:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rustfmt and Prettier pass."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "versions": "Community d859f33a484a9238bb11f974f4ead8e9be729ec6; Storybook 10.5.7; Svelte CSF 5.1.2; Vitest 4.1.11; Design Core 0.2.0 via ^0.2.0; Tailwind and Tailwind Vite 4.3.3 via ^4.3.3.",
+    "formats": "Presentation-only contracts; native/server/API formats unchanged. Enclosing Jujutsu change is the evidence reference."
+  },
+  {
+    "id": "E-UI-004",
+    "tasks": ["M4.7"],
+    "date": "2026-09-27",
+    "kind": "storybook-complete-application",
+    "files": [
+      "catalog/controller/contracts.ts",
+      "catalog/controller/in-memory-store-controller.svelte.ts",
+      "catalog/controller/store-controller.test.ts",
+      "catalog/components/store-application/StoreRepositoryApplication.svelte",
+      "catalog/components/store-application/StoreRepositoryApplication.stories.svelte",
+      "catalog/components/store-application/RepositoryApplication.stories.svelte",
+      "catalog/components/community-profile-menu/CommunityProfileMenu.svelte",
+      "catalog/components/community-projects/CommunityProjectsRepositoryFiles.svelte",
+      "catalog/components/community-projects/CommunityProjectsRepositoryBranchSelector.svelte",
+      "catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.svelte",
+      "docs/catalog.md"
+    ],
+    "tests": [
+      "catalog/controller/store-controller.test.ts#controller_restores_snapshot_history",
+      "catalog/controller/store-controller.test.ts#controller_isolates_instances_and_conflicts"
+    ],
+    "runs": [
+      {
+        "command": "pnpm catalog:test catalog/controller/store-controller.test.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before implementation: controller module absent; one failed suite, no tests executed."
+      },
+      {
+        "command": "pnpm catalog:test catalog/controller/store-controller.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "2 tests pass: snapshot/history restoration, instance and conflict isolation."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "fail",
+        "failures": 2,
+        "note": "Local view named state shadowed the Svelte rune; renamed the derived view."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreRepositoryApplication.stories.svelte",
+        "result": "fail",
+        "failures": 4,
+        "note": "Two file selectors used basename instead of public full-path labels, menu close animation required pointer restoration, and empty breadcrumb had no accessible name. Same count reproduced on prebundle rerun."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreRepositoryApplication.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Profile menu unmounted before global pointer restoration; wait for actual interactive state."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreRepositoryApplication.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "4 stories and blocking axe pass, including full change-ID search and divergent target selection."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreRepositoryApplication.stories.svelte catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "6 stories pass: repository files, conflicts, profile login/logout, mobile files, branch card filtering and empty cards."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Bookmark cards regression reproduced joined author text (byMaya). Empty bookmarks passed."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "2 stories pass after preserving explicit whitespace between relative time and author."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final 18 lanes pass: 19 catalog unit tests, 34 interaction/axe stories, cold static catalog, 8 existing browser cases, 369 Rust tests (6 external-service/credential tests ignored), rustfmt, contracts, governance, boundaries and mdBook."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final aggregate passes: governance, storage harness self-tests, contracts, browser unit tests, 19 catalog unit tests, 34 stories, cold catalog and 369 Rust tests; 6 external-service/credential tests ignored."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Static Storybook, existing browser bundle/manifest and all locked Rust workspace binaries build successfully."
+      },
+      {
+        "command": "pnpm format:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rustfmt and Prettier pass."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "versions": "Community d859f33a484a9238bb11f974f4ead8e9be729ec6; Storybook 10.5.7; Svelte CSF 5.1.2; Vitest 4.1.11; Design Core 0.2.0 via ^0.2.0; Tailwind and Tailwind Vite 4.3.3 via ^4.3.3.",
+    "formats": "Typed local presentation/controller contracts only. No API, server, credential or storage formats changed; enclosing Jujutsu change is the evidence reference."
+  },
+  {
+    "id": "E-M3-015",
+    "tasks": ["M3", "M3.3"],
+    "date": "2026-09-27",
+    "kind": "foreground-shutdown-regression",
+    "files": [
+      "crates/jj-store-server/src/process.rs",
+      "crates/jj-store-cli/src/server_commands.rs",
+      "crates/jj-store-cli/tests/server_executable.rs",
+      "spec/src/cli.md"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/server_executable.rs#cold_server_registers_shutdown_before_reporting_listener",
+      "crates/jj-store-cli/tests/server_executable.rs#cold_search_worker_polls_failed_storage_and_stops_with_foreground_server"
+    ],
+    "runs": [
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test",
+        "result": "fail",
+        "failures": 1,
+        "note": "Existing search-worker shutdown acceptance exited with SIGTERM. Listening output preceded polling the async handler-registration function."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test server_executable cold_search_worker_polls_failed_storage_and_stops_with_foreground_server -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "1 focused retry passed before the fix, confirming timing sensitivity rather than resolving the ordering defect."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test server_executable cold_server_registers_shutdown_before_reporting_listener --locked -- --exact",
+        "result": "fail",
+        "failures": 1,
+        "note": "New immediate-termination regression fails before the source fix. Both native run and serve-local are covered by eight cold starts each."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test server_executable cold_server_registers_shutdown_before_reporting_listener --locked -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "Immediate termination passes for all 16 cold run/serve-local starts after eager handler registration."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test server_executable --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "11 executable tests pass including the original search-worker regression; 1 external RustFS case remains intentionally ignored."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final 18 lanes pass: 19 catalog unit tests, 34 interaction/axe stories, cold static catalog, 8 existing browser cases, 369 Rust tests (6 external-service/credential tests ignored), rustfmt, contracts, governance, boundaries and mdBook."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final aggregate passes: governance, storage harness self-tests, contracts, browser unit tests, 19 catalog unit tests, 34 stories, cold catalog and 369 Rust tests; 6 external-service/credential tests ignored."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Static Storybook, existing browser bundle/manifest and all locked Rust workspace binaries build successfully."
+      },
+      {
+        "command": "pnpm format:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rustfmt and Prettier pass."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "versions": "JJ 0.45.1; Rust 1.97.1; existing locked dependencies.",
+    "formats": "No wire or storage changes. Unix shutdown handlers now install synchronously before the listening event; enclosing Jujutsu change is the evidence reference."
   }
 ]
 ```

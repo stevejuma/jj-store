@@ -157,16 +157,23 @@ impl PreparedServer {
         result.and(stopped)
     }
 }
-pub async fn shutdown_signal() {
+/// Install handlers synchronously, before the caller announces readiness.
+pub fn shutdown_signal() -> std::io::Result<impl Future<Output = ()> + Send> {
     #[cfg(unix)]
     {
         use tokio::signal::unix::{SignalKind, signal};
-        if let Ok(mut terminate) = signal(SignalKind::terminate()) {
-            tokio::select! {_=tokio::signal::ctrl_c()=>{},_=terminate.recv()=>{}}
-            return;
-        }
+        let mut terminate = signal(SignalKind::terminate())?;
+        let mut interrupt = signal(SignalKind::interrupt())?;
+        Ok(async move {
+            tokio::select! {_=interrupt.recv()=>{},_=terminate.recv()=>{}}
+        })
     }
-    let _ = tokio::signal::ctrl_c().await;
+    #[cfg(not(unix))]
+    {
+        Ok(async {
+            let _ = tokio::signal::ctrl_c().await;
+        })
+    }
 }
 #[derive(Serialize)]
 pub struct Diagnosis {
