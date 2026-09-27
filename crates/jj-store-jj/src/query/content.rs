@@ -2,8 +2,12 @@
 pub mod conflicts;
 pub mod diff;
 mod diff_copies;
+pub mod diff_summary;
 mod native;
+pub mod operation_changes;
 pub mod operations;
+pub mod paths;
+pub mod references;
 mod trees;
 use super::{
     Error, ReadAccess, Result, Stats,
@@ -24,6 +28,15 @@ use std::{sync::Arc, time::Duration};
 use tokio::{io::AsyncReadExt as _, sync::OwnedSemaphorePermit};
 
 pub use trees::{TreeEntry, TreePage, TreeRequest};
+#[derive(
+    Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, serde::Deserialize, schemars::JsonSchema,
+)]
+#[serde(rename_all = "snake_case")]
+pub enum Direction {
+    #[default]
+    Forward,
+    Backward,
+}
 const CHUNK: usize = 64 * 1024;
 #[derive(Clone, Copy)]
 pub struct Limits {
@@ -304,6 +317,50 @@ impl ContentReader {
     ) -> Result<operations::Response> {
         self.execute(store, access, move |context| {
             Box::pin(async move { operations::read(context, request).await })
+        })
+        .await
+    }
+    pub async fn references(
+        &self,
+        store: Arc<dyn ObjectStore>,
+        access: Arc<dyn ReadAccess>,
+        request: references::Request,
+    ) -> Result<references::Page> {
+        self.execute(store, access, move |context| {
+            Box::pin(async move { references::read(context, request).await })
+        })
+        .await
+    }
+    pub async fn paths(
+        &self,
+        store: Arc<dyn ObjectStore>,
+        access: Arc<dyn ReadAccess>,
+        request: paths::Request,
+    ) -> Result<paths::Page> {
+        self.execute(store, access, move |context| {
+            Box::pin(async move { paths::read(context, request).await })
+        })
+        .await
+    }
+    pub async fn operation_changes(
+        &self,
+        store: Arc<dyn ObjectStore>,
+        access: Arc<dyn ReadAccess>,
+        request: operation_changes::Request,
+    ) -> Result<operation_changes::Page> {
+        self.execute(store, access, move |context| {
+            Box::pin(async move { operation_changes::read(context, request).await })
+        })
+        .await
+    }
+    pub async fn diff_summaries(
+        &self,
+        store: Arc<dyn ObjectStore>,
+        access: Arc<dyn ReadAccess>,
+        request: diff_summary::Request,
+    ) -> Result<diff_summary::Page> {
+        self.execute(store, access, move |context| {
+            Box::pin(async move { diff_summary::read(context, request).await })
         })
         .await
     }

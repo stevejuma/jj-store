@@ -1,6 +1,8 @@
 //! Signed graph and directory continuations over bounded, credential-free pins.
+pub mod browsing;
 mod cursors;
 pub mod directory;
+pub mod operation_browsing;
 use crate::{
     auth::{Clock, Permission},
     native::NativeSession,

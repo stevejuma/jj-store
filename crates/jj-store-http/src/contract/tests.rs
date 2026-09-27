@@ -76,7 +76,7 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
     let doc = openapi();
     assert_eq!(doc["security"], json!([{"repositoryBearer":[]}]));
     let paths = doc["paths"].as_object().unwrap();
-    assert_eq!(paths.len(), 23);
+    assert_eq!(paths.len(), 27);
     let mut ids = std::collections::BTreeSet::new();
     for path in paths.values() {
         for (method, operation) in path.as_object().unwrap() {
@@ -117,6 +117,89 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
         paths["/v1/repos/{repo}/index/tasks/{task}/cancel"]["post"]
             .get("requestBody")
             .is_none()
+    );
+}
+
+#[test]
+fn browsing_contracts_keep_complete_reads_and_expose_bound_windows() {
+    let doc = openapi();
+    let paths = doc["paths"].as_object().unwrap();
+    for path in [
+        "/v1/repos/{repo}/references",
+        "/v1/repos/{repo}/commits/{commit}/paths",
+        "/v1/repos/{repo}/operations/{operation}/changes",
+        "/v1/repos/{repo}/diff/paths",
+    ] {
+        assert!(
+            paths[path]["get"]["responses"]["200"]["content"]["application/json"]["schema"]
+                .get("$ref")
+                .is_some()
+        );
+    }
+    let references = paths["/v1/repos/{repo}/references"]["get"]["parameters"]
+        .as_array()
+        .unwrap();
+    assert_eq!(
+        references
+            .iter()
+            .find(|parameter| parameter["name"] == "limit")
+            .unwrap()["schema"]["default"],
+        50
+    );
+    assert_eq!(
+        references
+            .iter()
+            .find(|parameter| parameter["name"] == "direction")
+            .unwrap()["schema"]["default"],
+        "forward"
+    );
+    let changes = paths["/v1/repos/{repo}/operations/{operation}/changes"]["get"]["parameters"]
+        .as_array()
+        .unwrap();
+    assert_eq!(
+        changes
+            .iter()
+            .find(|parameter| parameter["name"] == "parent")
+            .unwrap()["required"],
+        true
+    );
+    let diff_paths = paths["/v1/repos/{repo}/diff/paths"]["get"]["parameters"]
+        .as_array()
+        .unwrap();
+    assert_eq!(
+        diff_paths
+            .iter()
+            .find(|parameter| parameter["name"] == "at_op")
+            .unwrap()["required"],
+        true
+    );
+    let complete_diff = paths["/v1/repos/{repo}/diff"]["get"]["parameters"]
+        .as_array()
+        .unwrap();
+    assert!(
+        complete_diff
+            .iter()
+            .all(|parameter| parameter["name"] != "cursor")
+    );
+    let reference = paths["/v1/repos/{repo}/references"]["get"]["responses"]["200"]
+        ["content"]["application/json"]["schema"]["$ref"]
+        .as_str()
+        .unwrap()
+        .rsplit('/')
+        .next()
+        .unwrap();
+    let window = &doc["components"]["schemas"][reference];
+    assert!(
+        window["required"]
+            .as_array()
+            .unwrap()
+            .contains(&json!("previous_cursor"))
+    );
+    assert!(
+        window["required"]
+            .as_array()
+            .unwrap()
+            .contains(&json!("next_cursor"))
     );
 }
 

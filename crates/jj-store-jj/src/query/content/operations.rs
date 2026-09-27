@@ -106,7 +106,7 @@ pub(super) async fn read(context: Context, request: Request) -> Result<Response>
     Ok(result)
 }
 impl Context {
-    async fn operation(&self, id: m::OperationId) -> Result<dto::Operation> {
+    pub(super) async fn operation(&self, id: m::OperationId) -> Result<dto::Operation> {
         self.member(m::ObjectKey::Operation(id)).await?;
         let native = if id == roots::ROOT_OPERATION {
             roots::operation()
@@ -118,7 +118,7 @@ impl Context {
         };
         dto::Operation::try_from(&native).map_err(|_| Error::Corrupt)
     }
-    async fn view(&self, id: m::ViewId) -> Result<dto::View> {
+    pub(super) async fn view(&self, id: m::ViewId) -> Result<dto::View> {
         self.member(m::ObjectKey::View(id)).await?;
         let native = if id == roots::ROOT_VIEW {
             roots::view()
@@ -130,7 +130,7 @@ impl Context {
         };
         dto::View::try_from(&native).map_err(|_| Error::Corrupt)
     }
-    async fn difference(
+    pub(super) async fn difference(
         &self,
         id: m::OperationId,
         operation: dto::Operation,
@@ -213,7 +213,7 @@ impl Context {
             removed: collect(before.difference(after))?,
         })
     }
-    async fn ancestors(
+    pub(super) async fn ancestors(
         &self,
         heads: BTreeSet<m::CommitId>,
         visits: &mut usize,

@@ -393,3 +393,15 @@ resulting rewritten or created commit under the same command budget and current
 authorization. Sorted target/selected-path and per-result conflict data remain
 owned DTOs. An optional empty-skipped report extension preserves canonical bytes
 for older Prepared/StoredResult V1 receipts.
+
+## Bounded browser reads
+
+Reference lookup exposes native bookmark merge terms and visible changes without
+inventing a default bookmark or deleted history. Recursive path reads stop after
+the requested window and report unavailable last-change metadata when merge or
+work budgets prevent exact attribution. Operation grouping uses recorded
+predecessors first, preserves ambiguous lineage and requires explicit parent
+selection for merge operations. Diff summaries retain exact before/after terms,
+copy and rename sources, conflicts and binary/oversized reasons; selected file
+content remains a separate verified read. These read-only queries cannot stage
+objects, reconcile heads or publish repository state.

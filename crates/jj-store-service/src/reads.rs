@@ -382,6 +382,54 @@ impl CommittedRead {
         self.authorize().await.map_err(query_error)?;
         Ok(result)
     }
+    pub async fn references(
+        self: &Arc<Self>,
+        reader: &jj_store_jj::query::content::ContentReader,
+        request: jj_store_jj::query::content::references::Request,
+    ) -> jj_store_jj::query::Result<jj_store_jj::query::content::references::Page> {
+        self.authorize().await.map_err(query_error)?;
+        let result = reader
+            .references(self.session.object_store.clone(), self.clone(), request)
+            .await?;
+        self.authorize().await.map_err(query_error)?;
+        Ok(result)
+    }
+    pub async fn paths(
+        self: &Arc<Self>,
+        reader: &jj_store_jj::query::content::ContentReader,
+        request: jj_store_jj::query::content::paths::Request,
+    ) -> jj_store_jj::query::Result<jj_store_jj::query::content::paths::Page> {
+        self.authorize().await.map_err(query_error)?;
+        let result = reader
+            .paths(self.session.object_store.clone(), self.clone(), request)
+            .await?;
+        self.authorize().await.map_err(query_error)?;
+        Ok(result)
+    }
+    pub async fn operation_changes(
+        self: &Arc<Self>,
+        reader: &jj_store_jj::query::content::ContentReader,
+        request: jj_store_jj::query::content::operation_changes::Request,
+    ) -> jj_store_jj::query::Result<jj_store_jj::query::content::operation_changes::Page> {
+        self.authorize().await.map_err(query_error)?;
+        let result = reader
+            .operation_changes(self.session.object_store.clone(), self.clone(), request)
+            .await?;
+        self.authorize().await.map_err(query_error)?;
+        Ok(result)
+    }
+    pub async fn diff_summaries(
+        self: &Arc<Self>,
+        reader: &jj_store_jj::query::content::ContentReader,
+        request: jj_store_jj::query::content::diff_summary::Request,
+    ) -> jj_store_jj::query::Result<jj_store_jj::query::content::diff_summary::Page> {
+        self.authorize().await.map_err(query_error)?;
+        let result = reader
+            .diff_summaries(self.session.object_store.clone(), self.clone(), request)
+            .await?;
+        self.authorize().await.map_err(query_error)?;
+        Ok(result)
+    }
     pub async fn tree(
         self: &Arc<Self>,
         reader: &jj_store_jj::query::content::ContentReader,

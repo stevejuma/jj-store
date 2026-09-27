@@ -82,6 +82,10 @@ if (mode === "--check") {
         "content_acceptance::adapter_projection::search_paging::http_search::http_search_pins_results_across_writes_and_captures_contracts",
         "JJ_STORE_SEARCH_CONTRACT_CAPTURE",
       ],
+      [
+        "http_browsing_acceptance::http_browsing_windows_are_authorized_pinned_cursor_bound_and_contract_captured",
+        "JJ_STORE_BROWSING_CONTRACT_CAPTURE",
+      ],
     ]) {
       const capture = join(directory, `${variable}.json`);
       const { stdout } = await run(

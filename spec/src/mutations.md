@@ -346,3 +346,9 @@ verified snapshot objects. It restricts paths to that inventory, verifies
 framing and native identity, and repeats current authorization at storage/read
 boundaries. Neither raw object storage nor publication methods are exposed to
 extraction.
+
+The M4.10 committed-read service extension adds paged references, recursive
+paths, operation-change groups and changed-path summaries. It accepts no command
+intent, stages no native object or upload, creates no receipt and cannot invoke
+publication. Mutation authorization and guarded apply semantics remain
+unchanged.

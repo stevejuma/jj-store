@@ -25,7 +25,10 @@ use jj_store_service::{
     auth::{BearerToken, Permission, SystemClock},
     commands, events, index_tasks,
     native::NativeSession,
-    pagination::{self, GraphPager, SnapshotCursors, directory::DirectoryPager},
+    pagination::{
+        self, GraphPager, SnapshotCursors, browsing::BrowserPager, directory::DirectoryPager,
+        operation_browsing::OperationBrowserPager,
+    },
     reads::{self, query as q},
 };
 use serde::{Deserialize, Serialize};
@@ -79,6 +82,8 @@ struct State {
     queries: q::workers::Executors,
     graphs: GraphPager,
     directories: DirectoryPager,
+    browser: BrowserPager,
+    operation_browser: OperationBrowserPager,
     tasks: index_tasks::IndexTasks,
     commands: jj_store_service::mutations::CommandService,
     uploads: jj_store_service::uploads::Uploads,
@@ -150,7 +155,10 @@ impl HttpApi {
             .map_err(|_| "HTTP cursor limits")?,
         );
         let graphs = GraphPager::with_cursors(queries.graph().clone(), cursors.clone());
-        let directories = DirectoryPager::with_cursors(queries.content().clone(), cursors);
+        let directories = DirectoryPager::with_cursors(queries.content().clone(), cursors.clone());
+        let browser = BrowserPager::with_cursors(queries.content().clone(), cursors.clone());
+        let operation_browser =
+            OperationBrowserPager::with_cursors(queries.content().clone(), cursors);
         let tasks = index_tasks::IndexTasks::new(
             queries.graph().clone(),
             index_tasks::Limits {
@@ -175,6 +183,8 @@ impl HttpApi {
             queries,
             graphs,
             directories,
+            browser,
+            operation_browser,
             tasks,
             commands,
             uploads,

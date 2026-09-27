@@ -35,6 +35,13 @@ bounded read contracts, typed hash restoration, explicit SSE refresh,
 virtualized collections and persistent layout. Mutation, conflict-editing and
 search controls remain deferred within M4.3.
 
+M4.10 adds separate signed browsing windows for bookmark/change lookup,
+recursive paths with bounded last-change attribution, operation changes grouped
+by native change ID and exact comparison paths. The prior complete read routes
+remain compatible. Stable record/path anchors can begin forward or backward
+windows; opaque server cursors remain process-local continuations and never
+become durable URLs.
+
 ## Repository foundation and progress tracking
 
 Create a tracked agent guide, unchanged attachment archive, this execution plan,

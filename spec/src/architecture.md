@@ -196,3 +196,9 @@ M4.9 separates snapshot operation, inspected operation, commit, change and
 comparison identities in the shared controller contract. Loading, refreshing,
 paging, empty, failed and unavailable states are explicit. M4.10–M4.14 add the
 bounded transport implementation, navigation, refresh and operational evidence.
+
+M4.10 keeps bounded browser reads inside the established native-query,
+committed-read, service-pagination and HTTP transport boundaries. Reference,
+recursive-path, operation-change and diff-summary contracts add no presentation,
+fixture or mutation dependency, and their cursors remain service-owned rather
+than becoming native repository state.

@@ -323,3 +323,9 @@ namespace and a V1 canonical descriptor and pointer. Their stream, corruption,
 revocation, cancellation and competing-pointer fixtures are deterministic memory
 storage evidence. They do not establish Tantivy restore or RustFS deployment
 conformance and change no native identity, WAL, receipt or replay cursor format.
+
+M4.10 adds four browsing routes for reference lookup, recursive paths,
+operation-change groups and changed-path summaries. Generated contracts are
+checked against 51 captured registered-handler responses; existing complete read
+routes remain compatible. This local native/API evidence does not replace the
+separate built-browser and pinned RustFS qualification in M4.14.

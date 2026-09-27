@@ -17,6 +17,22 @@ type Signature = Hmac<Sha256>;
 pub(super) enum Continuation {
     Graph(m::ObjectKey),
     Directory(String),
+    References {
+        anchor: String,
+        direction: jj_store_jj::query::content::Direction,
+    },
+    Paths {
+        anchor: String,
+        direction: jj_store_jj::query::content::Direction,
+    },
+    OperationGroups {
+        anchor: String,
+        direction: jj_store_jj::query::content::Direction,
+    },
+    DiffPaths {
+        anchor: String,
+        direction: jj_store_jj::query::content::Direction,
+    },
 }
 #[derive(Clone)]
 pub(super) struct Entry {

@@ -112,3 +112,9 @@ mode uses the public Design Core CodeBlock with the filename/source body on the
 theme background. Rust source previews use CodeBlock's public custom-tokenizer
 extension point so `.rs` files highlight in the catalog while retaining the
 shared code component.
+
+M4.10 completes the bounded authenticated data contracts required by the shared
+repository presentation: reference lookup, recursive path windows, exact
+operation-change groups and changed-path summaries. It does not connect the
+served browser or introduce fixture data into production; the HTTP controller,
+query cache, loading/error presentation and real-screen wiring remain M4.11.

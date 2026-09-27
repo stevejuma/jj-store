@@ -91,6 +91,26 @@ page size is rejected. Oversized continuation tokens fail explicitly instead of
 returning an unsigned name. Cursor registries retain neither credentials nor
 mutable native sessions.
 
+Browser collection routes add bidirectional windows without changing the
+complete-response graph, tree, operation-difference or file-difference APIs.
+`GET /references` searches real local bookmarks and visible native change IDs;
+bookmark conflict terms, every explicit target, target metadata and logical
+workspace associations remain intact. The route never assumes a `main` bookmark
+and cannot manufacture deleted-bookmark history. `GET /commits/{commit}/paths`
+walks recursive leaf paths only as far as the requested forward window plus a
+bounded probe. It reports exact native terms and batches bounded last-change
+attribution. Merge ambiguity and the fixed ancestry budget are explicit
+unavailable states rather than substitutions with the selected commit.
+
+Each browsing response carries signed `previous_cursor` and `next_cursor` values
+over the same retained snapshot registry as graph and directory pages. Their
+claims bind repository, epoch, operation, publication position, manifest
+revision, query/filter/order and page size. A stable bookmark/change/path anchor
+and direction can start a new bounded seek; only opaque cursor values resume a
+retained window. Cursors never belong in permanent navigation state. Changed
+queries, credentials, repository, operation or page size fail closed, and expiry
+or process restart requires an explicit snapshot reselection.
+
 File responses verify the complete envelope and native identity into a bounded
 private spool before exposing any bytes, including for ranges. The stream checks
 current authorization and elapsed budgets before and after every bounded chunk.
@@ -117,6 +137,14 @@ state, per-workspace Git heads, Git refs and logical workspace mappings. Changed
 remote views carry complete before/after values, including empty remote views.
 The operation's predecessor map preserves absent versus known-empty data.
 
+`GET /operations/{operation}/changes` requires one immediate comparison parent
+and pages affected changes by full native change ID. Recorded predecessor edges
+take precedence. When no predecessor record exists, a newly visible commit's
+native parents are comparison candidates. A single before/after pair is an exact
+comparison; multiple candidates require explicit selection. Removed-only
+visibility has no invented file comparison. Operations whose view changes no
+visible commits return no groups, including metadata-only operations.
+
 Native-ID order makes set deltas deterministic; this order is not topological
 ordering or publication order. Commit visits, storage reads, work, response
 bytes and elapsed time are bounded. A difference is complete or fails
@@ -133,6 +161,13 @@ mean no recorded history and never become synthetic objects or shared ancestors.
 Bounded source lookup selects the nearest available ancestor on each lineage;
 when none is present, descendant lookup supports reverse comparisons. Paths
 filter target files by canonical repository prefix.
+
+`GET /diff/paths` pages changed-path summaries independently from selected-file
+content. It retains before/after terms and normal/copy/rename sources while
+marking content as not requested. The existing complete `/diff` route remains
+compatible and supplies bounded content for one selected path. Operation-group
+and changed-path continuations support stable anchors and backward windows under
+the same signed snapshot bindings as references and recursive paths.
 
 Optional content uses exact native line diffing on bounded UTF-8 text,
 preserving CRLF and missing final newlines. Every blob is fully verified before
@@ -337,12 +372,14 @@ not reset the time anchor. Explicit refresh after an event reset starts a new
 subscription. Browser graph rendering admits at most 1000 nodes and 4096 edges;
 exceeding the display budget fails explicitly before layout.
 
-## Deferred UI execution
+## Browsing UI execution
 
-As requested on 27 September 2026, further UI changes and browser deployment
-acceptance are deferred to M4.3. Existing read UI and its checks remain intact.
-Typed mutation, conflict, search and freshness UI requirements remain open;
-backend/API/SSE implementation and qualification continue independently.
+Production browsing resumed on 27 September 2026 through M4.9-M4.14. The served
+application reuses the reviewed Storybook shell for Files, Branches, JJ Log, Op
+Log, evolution and existing read details. Typed mutation controls,
+conflict-editing controls and search UI remain deferred within M4.3. Their
+existing backend contracts and checks stay enabled and cannot be counted as
+browser acceptance.
 
 ## Typed mutation HTTP transport
 

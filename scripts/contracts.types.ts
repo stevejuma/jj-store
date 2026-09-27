@@ -77,6 +77,38 @@ function operationParent(
 }
 void operationParent;
 
+type ReferenceWindow =
+  operations["references"]["responses"][200]["content"]["application/json"];
+declare const references: ReferenceWindow;
+const referenceCursor: string | null = references.next_cursor;
+type OperationChangesQuery =
+  operations["operation_changes"]["parameters"]["query"];
+const operationChanges: OperationChangesQuery = { parent: "00" };
+// @ts-expect-error Operation merges never choose an implicit comparison parent.
+const missingOperationParent: OperationChangesQuery = {};
+function exactComparison(
+  value: Schemas["Comparison"],
+): [string, string] | undefined {
+  if (value.status === "exact") return [value.from, value.to];
+  if (value.status === "select") {
+    // @ts-expect-error Ambiguous comparisons do not invent one from commit.
+    value.from;
+  }
+  return undefined;
+}
+type DiffPathsQuery = operations["diff_paths"]["parameters"]["query"];
+const diffPaths: DiffPathsQuery = { at_op: "00", from: "00", to: "00" };
+// @ts-expect-error A changed-path page is always pinned to an explicit operation.
+const unpinnedDiffPaths: DiffPathsQuery = { from: "00", to: "00" };
+void [
+  referenceCursor,
+  operationChanges,
+  missingOperationParent,
+  exactComparison,
+  diffPaths,
+  unpinnedDiffPaths,
+];
+
 type MutationRequest =
   operations["mutation_apply"]["requestBody"]["content"]["application/json"];
 const mutation: MutationRequest = {

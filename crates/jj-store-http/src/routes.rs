@@ -14,7 +14,10 @@ use axum::{
     routing::{get, post},
 };
 use jj_store_service::mutations as mutation;
-use jj_store_service::{pagination::directory, reads::query::content as c};
+use jj_store_service::{
+    pagination::{browsing, directory, operation_browsing},
+    reads::query::content as c,
+};
 use jj_store_tantivy::paging as search_paging;
 pub(super) type Input<T> = std::result::Result<Query<T>, QueryRejection>;
 pub(super) fn input<T>(value: Input<T>) -> Result<T> {
@@ -78,6 +81,39 @@ struct Directory {
 }
 #[derive(Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
+struct References {
+    at_op: Option<m::OperationId>,
+    cursor: Option<String>,
+    #[serde(default)]
+    q: String,
+    #[serde(default)]
+    kind: c::references::Kind,
+    #[serde(default = "limit")]
+    limit: usize,
+    anchor: Option<String>,
+    #[serde(default)]
+    direction: c::Direction,
+}
+#[derive(Deserialize, schemars::JsonSchema)]
+#[serde(deny_unknown_fields)]
+struct Paths {
+    at_op: Option<m::OperationId>,
+    cursor: Option<String>,
+    #[serde(default)]
+    path: String,
+    #[serde(default = "yes")]
+    recursive: bool,
+    #[serde(default = "limit")]
+    limit: usize,
+    anchor: Option<String>,
+    #[serde(default)]
+    direction: c::Direction,
+}
+fn yes() -> bool {
+    true
+}
+#[derive(Deserialize, schemars::JsonSchema)]
+#[serde(deny_unknown_fields)]
 struct Difference {
     at_op: Option<m::OperationId>,
     from: m::CommitId,
@@ -101,6 +137,32 @@ struct OperationDiff {
 }
 #[derive(Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
+struct OperationChanges {
+    parent: m::OperationId,
+    cursor: Option<String>,
+    #[serde(default = "limit")]
+    limit: usize,
+    anchor: Option<String>,
+    #[serde(default)]
+    direction: c::Direction,
+}
+#[derive(Deserialize, schemars::JsonSchema)]
+#[serde(deny_unknown_fields)]
+struct DiffPaths {
+    at_op: m::OperationId,
+    from: m::CommitId,
+    to: m::CommitId,
+    #[serde(default)]
+    path: String,
+    cursor: Option<String>,
+    #[serde(default = "limit")]
+    limit: usize,
+    anchor: Option<String>,
+    #[serde(default)]
+    direction: c::Direction,
+}
+#[derive(Deserialize, schemars::JsonSchema)]
+#[serde(deny_unknown_fields)]
 struct Prepare {
     operation: m::OperationId,
 }
@@ -116,15 +178,19 @@ macro_rules! endpoints {
             (get, "/repos/{repo}/events", events, Events, events::Event, Reply::Events),
             (get, "/repos/{repo}/objects/{kind}/{id}", object, Selection, Envelope<c::Object>, Reply::Json(200)),
             (get, "/repos/{repo}/log", log, Log, Envelope<q::GraphPage>, Reply::Json(200)),
+            (get, "/repos/{repo}/references", references, References, browsing::Window<c::references::Page>, Reply::Json(200)),
             (get, "/repos/{repo}/operations", operations, Operations, Envelope<q::GraphPage>, Reply::Json(200)),
             (get, "/repos/{repo}/operations/{operation}", operation, Empty, Envelope<OperationDetail>, Reply::Json(200)),
             (get, "/repos/{repo}/operations/{operation}/diff", operation_diff, OperationDiff, Envelope<c::operations::Response>, Reply::Json(200)),
+            (get, "/repos/{repo}/operations/{operation}/changes", operation_changes, OperationChanges, browsing::Window<c::operation_changes::Page>, Reply::Json(200)),
             (get, "/repos/{repo}/evolution", evolution, Evolution, Envelope<q::GraphPage>, Reply::Json(200)),
             (get, "/repos/{repo}/commits/{commit}", commit, Selection, Envelope<CommitDetail>, Reply::Json(200)),
             (get, "/repos/{repo}/commits/{commit}/tree", tree, Directory, Envelope<c::TreePage>, Reply::Json(200)),
+            (get, "/repos/{repo}/commits/{commit}/paths", paths, Paths, browsing::Window<c::paths::Page>, Reply::Json(200)),
             (get, "/repos/{repo}/commits/{commit}/conflicts", conflicts, Conflicts, Envelope<c::conflicts::Response>, Reply::Json(200)),
             (get, "/repos/{repo}/files/{file}", file, Selection, String, Reply::Binary),
             (get, "/repos/{repo}/diff", diff, Difference, Envelope<c::diff::Response>, Reply::Json(200)),
+            (get, "/repos/{repo}/diff/paths", diff_paths, DiffPaths, browsing::Window<c::diff_summary::Page>, Reply::Json(200)),
             (post, "/repos/{repo}/index/tasks", prepare, Empty, index_tasks::Task, Reply::Json(202)),
             (get, "/repos/{repo}/index/tasks/{task}", task, Empty, index_tasks::Task, Reply::Json(200)),
             (post, "/repos/{repo}/index/tasks/{task}/cancel", cancel, Empty, index_tasks::Task, Reply::Json(200)),
@@ -378,6 +444,60 @@ async fn tree(
         next_cursor: page.next_cursor,
     })
 }
+async fn references(
+    ExtractState(state): ExtractState<Arc<State>>,
+    context: Context,
+    args: Input<References>,
+) -> Result<Response> {
+    let args = input(args)?;
+    let page = state
+        .browser
+        .references(
+            context.session,
+            args.at_op,
+            browsing::ReferenceRequest {
+                query: args.q,
+                kind: args.kind,
+                limit: args.limit,
+            },
+            args.cursor.as_deref(),
+            args.anchor,
+            args.direction,
+        )
+        .await?;
+    match page {
+        browsing::Start::SelectHead { snapshot } => Err(Error::heads(snapshot)),
+        browsing::Start::Window(page) => state.json(&*page),
+    }
+}
+async fn paths(
+    ExtractState(state): ExtractState<Arc<State>>,
+    context: Context,
+    args: Input<Paths>,
+) -> Result<Response> {
+    let args = input(args)?;
+    let commit = context.id("commit")?;
+    let page = state
+        .browser
+        .paths(
+            context.session,
+            args.at_op,
+            browsing::PathRequest {
+                commit,
+                path: args.path,
+                recursive: args.recursive,
+                limit: args.limit,
+            },
+            args.cursor.as_deref(),
+            args.anchor,
+            args.direction,
+        )
+        .await?;
+    match page {
+        browsing::Start::SelectHead { snapshot } => Err(Error::heads(snapshot)),
+        browsing::Start::Window(page) => state.json(&*page),
+    }
+}
 async fn operation_diff(
     ExtractState(state): ExtractState<Arc<State>>,
     context: Context,
@@ -396,6 +516,32 @@ async fn operation_diff(
         )
         .await?;
     envelope(&state, &read, data).await
+}
+async fn operation_changes(
+    ExtractState(state): ExtractState<Arc<State>>,
+    context: Context,
+    args: Input<OperationChanges>,
+) -> Result<Response> {
+    let args = input(args)?;
+    let operation = context.id("operation")?;
+    let page = state
+        .operation_browser
+        .groups(
+            context.session,
+            operation_browsing::GroupRequest {
+                operation,
+                parent: args.parent,
+                limit: args.limit,
+            },
+            args.cursor.as_deref(),
+            args.anchor,
+            args.direction,
+        )
+        .await?;
+    match page {
+        browsing::Start::SelectHead { snapshot } => Err(Error::heads(snapshot)),
+        browsing::Start::Window(page) => state.json(&*page),
+    }
 }
 async fn diff(
     ExtractState(state): ExtractState<Arc<State>>,
@@ -416,6 +562,33 @@ async fn diff(
         )
         .await?;
     envelope(&state, &read, data).await
+}
+async fn diff_paths(
+    ExtractState(state): ExtractState<Arc<State>>,
+    context: Context,
+    args: Input<DiffPaths>,
+) -> Result<Response> {
+    let args = input(args)?;
+    let page = state
+        .operation_browser
+        .paths(
+            context.session,
+            args.at_op,
+            operation_browsing::DiffPathRequest {
+                from: args.from,
+                to: args.to,
+                path: args.path,
+                limit: args.limit,
+            },
+            args.cursor.as_deref(),
+            args.anchor,
+            args.direction,
+        )
+        .await?;
+    match page {
+        browsing::Start::SelectHead { snapshot } => Err(Error::heads(snapshot)),
+        browsing::Start::Window(page) => state.json(&*page),
+    }
 }
 async fn conflicts(
     ExtractState(state): ExtractState<Arc<State>>,

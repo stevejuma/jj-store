@@ -312,3 +312,9 @@ Search status reports durable, served and repository positions through the
 current authenticated HTTP endpoint. Doctor keeps authoritative readiness
 separate from configured search health and explicitly reports an unavailable
 serving endpoint. It does not start a replacement writer to inspect status.
+
+M4.10 native-lifecycle and registered-HTTP acceptance covers conflicted
+references, bidirectional signed cursors, recursive paths, operation-change
+grouping and changed-path summaries. It proves authorization, exact snapshot
+pinning, restart reset and zero publication without adding or changing a CLI
+command.

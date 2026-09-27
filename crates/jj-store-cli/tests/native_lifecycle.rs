@@ -1097,6 +1097,12 @@ mod pagination_acceptance;
 #[path = "native_lifecycle/content.rs"]
 mod content_acceptance;
 
+#[path = "native_lifecycle/browsing.rs"]
+mod browsing_acceptance;
+
+#[path = "native_lifecycle/http_browsing.rs"]
+mod http_browsing_acceptance;
+
 #[path = "native_lifecycle/events.rs"]
 mod event_acceptance;
 

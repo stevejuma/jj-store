@@ -106,6 +106,10 @@ Generated OpenAPI and TypeScript contracts have a drift check in both normal and
 specification checks. The generator uses the compiled HTTP route inventory;
 request and response schema modes preserve Serde's optionality rules. Contract
 tests validate the OpenAPI document and representative serialized native DTOs.
+The M4.10 capture also executes the registered reference, recursive-path,
+operation-change and diff-summary handlers. It proves repository authorization,
+exact snapshot pinning, signed query-bound forward/backward continuations and
+zero publication rather than validating generated shapes alone.
 
 Browser checks include Svelte/TypeScript analysis, focused client tests and cold
 Playwright interactions/accessibility against built assets. Functional and
