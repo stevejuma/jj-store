@@ -326,13 +326,7 @@ async fn graph_query_rebuild_limits_staged_rejection_and_current_revocation() {
             let cold = read.graph(&exec, query.clone(), page(100)).await.unwrap();
             assert_eq!(first.data, cold.data);
             // Corrupted profile metadata must not select a different backend.
-            let epoch_path = graphs
-                .path()
-                .join("7c41cdeb16b6b321c64e789a966b6adf723816a5")
-                .join(jj_store_jj::factories::PROFILE)
-                .join(read.snapshot().await.unwrap().authority.repo_id.to_string())
-                .join(read.snapshot().await.unwrap().authority.epoch.to_string());
-            let cache_path = epoch_path.join(repo.op_id().hex());
+            let cache_path = cache_slot(graphs.path(), oid(repo.op_id()));
             fs::write(cache_path.join("store/type"), "git").unwrap();
             assert_eq!(
                 read.graph(&exec, query.clone(), page(100))
@@ -518,6 +512,21 @@ async fn graph_query_cancellation_retains_worker_permit_until_exit_and_deadlines
         .unwrap_err(),
         q::Error::Busy
     );
+    let independent =
+        q::GraphExecutor::new(graphs.path().to_owned(), q::Limits::default(), 1).unwrap();
+    assert_eq!(
+        independent
+            .execute(
+                f.store.clone(),
+                paused.clone(),
+                q::Request::Operations,
+                page(100)
+            )
+            .await
+            .unwrap_err(),
+        q::Error::Busy,
+        "canceled worker must retain namespace lock until exit"
+    );
     paused.release.notify_one();
     let deadline = tokio::time::Instant::now() + Duration::from_secs(3);
     loop {
@@ -636,3 +645,7 @@ async fn graph_query_marks_absent_evolution_data_and_rejects_missing_continuatio
         })
         .await;
 }
+
+#[path = "graph_cache.rs"]
+mod cache_acceptance;
+use cache_acceptance::cache_slot;

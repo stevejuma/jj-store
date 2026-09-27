@@ -191,13 +191,14 @@ cache causes reconstruction from committed native objects.
 Operation graph metadata retains snapshot flags, logical workspace names and
 attributes alongside timestamps, user, host and description. A corrupt cache
 profile or backend type fails explicitly; removing the derived directory allows
-reconstruction. Index-file corruption recovery and large rebuild task reporting
-remain separate qualification work.
+reconstruction. Managed index-file corruption recovery is described below. Large
+rebuild task reporting remains separate qualification work.
 
 The current work/deadline checks bound admission, I/O and returned rows. Native
 synchronous CPU algorithms cannot be preempted by a Tokio timeout; these limits
-do not yet establish production CPU/memory qualification. That qualification and
-cache retention limits must precede shared HTTP query exposure.
+do not yet establish production CPU/memory qualification. That qualification
+must precede shared HTTP query exposure; managed cache retention is bounded
+independently.
 
 Native object DTOs reuse the explicit frozen V1 field schema after native
 integrity verification. Exporting those owned types does not change persisted
@@ -223,3 +224,32 @@ load a placeholder object. The application diff layer treats placeholders as
 lineage boundaries, retaining complete structural deltas and all source choices.
 It does not invoke the pinned experimental copy-history diff helper, whose graph
 walker requires every parent (including placeholders) to be a stored history.
+
+## Managed graph cache lifecycle
+
+The server query cache uses a private `query-cache-v1` namespace below the
+pinned upstream revision and native profile. Bounded slots retain repository,
+epoch and operation bindings, a recency counter and checksums of complete
+derived files. The checksums detect local cache damage; native objects remain
+the authority. Query execution checks current authorization before touching
+these files.
+
+An exclusive namespace lock serializes graph-cache users, including separate
+executors/processes sharing that directory. Contention returns Busy. Completed
+queries record immutable graph data before atomically installing a staged cache
+and its bounded receipt. Missing files, invalid cache receipts or checksum
+mismatches trigger reconstruction. A mismatched native backend/profile binding
+fails explicitly. Source corruption or denied reads cannot be repaired by cache
+rebuilding and remain errors.
+
+Retention bounds slot count, file count, individual-cache bytes and total
+retained bytes. Defaults retain at most 16 slots, 64 MiB of file bytes per slot,
+256 MiB in total, and 4096 filesystem entries per slot. These are admission and
+retention limits, not measured throughput guarantees. Least-recently-used slots
+are evicted under the namespace lock; failed builds and abandoned staging
+directories are disposable. Symlinks are never followed. A canceled worker
+retains its lock and permit until it exits. Responses report whether their cache
+was built, reused or rebuilt and retained cache counts/bytes. These are local
+diagnostics, never publication positions. Transient build disk use, native
+synchronous CPU work and production query memory still need resource
+qualification before shared HTTP exposure.

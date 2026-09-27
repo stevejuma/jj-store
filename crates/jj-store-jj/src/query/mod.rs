@@ -1,5 +1,6 @@
 //! Owned, bounded native graph queries. Upstream objects never cross this API.
 mod access;
+pub mod cache;
 pub mod content;
 mod graphs;
 use crate::{
@@ -13,7 +14,7 @@ use jj_lib::{config::StackedConfig, settings::UserSettings};
 use jj_store_model as m;
 use jj_store_object::ObjectStore;
 use serde::{Deserialize, Serialize};
-use std::{collections::BTreeSet, fs, path::PathBuf, sync::Arc, time::Duration};
+use std::{collections::BTreeSet, path::PathBuf, sync::Arc, time::Duration};
 use tokio::sync::Semaphore;
 
 #[derive(Clone, Debug, PartialEq, Eq, thiserror::Error)]
@@ -187,6 +188,7 @@ pub struct Stats {
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub struct GraphPage {
     pub version: u32,
+    pub cache: cache::Report,
     pub operation: m::OperationId,
     pub data: Nodes,
     pub next: Option<m::ObjectKey>,
@@ -198,9 +200,19 @@ pub struct GraphExecutor {
     root: PathBuf,
     limits: Limits,
     permits: Arc<Semaphore>,
+    cache_policy: cache::Policy,
 }
 impl GraphExecutor {
     pub fn new(root: PathBuf, limits: Limits, concurrency: usize) -> Result<Self> {
+        Self::with_cache_policy(root, limits, concurrency, cache::Policy::default())
+    }
+    pub fn with_cache_policy(
+        root: PathBuf,
+        limits: Limits,
+        concurrency: usize,
+        cache_policy: cache::Policy,
+    ) -> Result<Self> {
+        cache_policy.validate()?;
         if !root.is_absolute()
             || !(1..=64).contains(&concurrency)
             || limits.max_page == 0
@@ -220,6 +232,7 @@ impl GraphExecutor {
             root,
             limits,
             permits: Arc::new(Semaphore::new(concurrency)),
+            cache_policy,
         })
     }
     pub async fn execute(
@@ -279,22 +292,7 @@ impl GraphExecutor {
             return Err(Error::IndexBudget);
         }
         graphs::validate(&request, &page, count, &budget)?;
-        let root = self
-            .root
-            .join("7c41cdeb16b6b321c64e789a966b6adf723816a5")
-            .join(PROFILE)
-            .join(access.repository().to_string())
-            .join(access.epoch().to_string());
-        fs::create_dir_all(&root).map_err(|_| Error::Unavailable)?;
-        let path = root.join(access.operation().to_string());
-        let lock = fs::OpenOptions::new()
-            .read(true)
-            .write(true)
-            .create(true)
-            .truncate(false)
-            .open(root.join(format!("{}.lock", access.operation())))
-            .map_err(|_| Error::Unavailable)?;
-        lock.try_lock().map_err(|_| Error::Busy)?;
+        let mut cache = cache::Cache::open(&self.root, self.cache_policy, &budget)?;
         let objects = Arc::new(
             NativeObjects::new(
                 Arc::new(ReadStore::new(store, access.clone(), budget.clone())),
@@ -316,16 +314,15 @@ impl GraphExecutor {
         .map_err(|_| Error::Unavailable)?;
         let settings = UserSettings::from_config(StackedConfig::with_defaults())
             .map_err(|_| Error::Unavailable)?;
-        if !path.exists() {
-            let staging = tempfile::tempdir_in(&root).map_err(|_| Error::Unavailable)?;
+        let entry = cache.prepare(access.as_ref(), &stores, &budget)?;
+        if entry.initialize {
             stores
-                .initialize_cache(&settings, staging.path())
+                .initialize_cache(&settings, &entry.path)
                 .await
                 .map_err(|_| Error::Unavailable)?;
-            fs::rename(staging.path(), &path).map_err(|_| Error::Unavailable)?;
         }
         let loader = stores
-            .load_cache(&settings, &path)
+            .load_cache(&settings, &entry.path)
             .map_err(|_| Error::Unavailable)?;
         let repo = stores
             .load_at(&loader, access.operation())
@@ -335,8 +332,13 @@ impl GraphExecutor {
         let (data, next) = graphs::run(&repo, request, page, &access, &budget).await?;
         budget.check()?;
         budget.authorize(access.as_ref()).await?;
+        // Drop native loaders before replacing/removing their derived files.
+        drop(repo);
+        drop(loader);
+        let cache = cache.finish(entry, access.as_ref(), &budget)?;
         let result = GraphPage {
             version: 1,
+            cache,
             operation: access.operation(),
             data,
             next,

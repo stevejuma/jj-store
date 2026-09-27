@@ -25,8 +25,8 @@ adds evidence here in its enclosing Jujutsu change.
 | M3.1        | Done        | M2        | JST-SEC-001,JST-SEC-002,JST-SEC-003,JST-SEC-004                         | Revocable tokens and transport authorization                        | Retain native slice acceptance                   | E-M3-001,E-M3-004,E-M3-005,E-M3-006,E-M3-007,E-M3-008,E-M3-009,E-M3-011,E-M3-012,E-M3-014                                     |
 | M3.2        | Done        | M3.1      | JST-JJ-001,JST-JJ-004,JST-JJ-005                                        | Create edit describe log restart op-log evolog; multi-workspace     | Retain native slice acceptance                   | E-M3-002,E-M3-003,E-M3-004,E-M3-005,E-M3-006,E-M3-008,E-M3-009,E-M3-010,E-M3-011,E-M3-013,E-M3-014                            |
 | M3.3        | Done        | M3.2      | JST-CLI-001,JST-CLI-002,JST-CLI-003,JST-CLI-004                         | Custom command presentation and capability parity                   | Retain native slice acceptance                   | E-M3-006,E-M3-009,E-M3-010,E-M3-011,E-M3-012,E-M3-013,E-M3-014                                                                |
-| M4          | In progress | M3        | JST-API-001,JST-API-005                                                 | Structured reads and basic served UI match native semantics         | Qualify resources then expose HTTP               | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007                                                                |
-| M4.1        | In progress | M3        | JST-API-001,JST-API-002,JST-JJ-003                                      | Pinned three-graph reads with zero GET publications                 | Qualify resources then expose HTTP               | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007                                                                |
+| M4          | In progress | M3        | JST-API-001,JST-API-005                                                 | Structured reads and basic served UI match native semantics         | Qualify resources then expose HTTP               | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008                                                       |
+| M4.1        | In progress | M3        | JST-API-001,JST-API-002,JST-JJ-003                                      | Pinned three-graph reads with zero GET publications                 | Qualify resources then expose HTTP               | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008                                                       |
 | M4.2        | Planned     | M4.1      | JST-API-003,JST-API-004,JST-API-005                                     | SSE, safe UI, generated contracts and cold interaction tests        | Build Svelte UI                                  | -                                                                                                                             |
 | M5          | Planned     | M4        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Authenticated typed commands and shared RPC policy                  | Implement commands                               | -                                                                                                                             |
 | M5.1        | Planned     | M4        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Basic changes/refs/reconcile; preview receipt and semantic policy   | Implement command transaction facade             | -                                                                                                                             |
@@ -3336,6 +3336,172 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Rust 1.97.1; jj-cli/jj-lib 0.45.1 at 7c41cdeb16b6b321c64e789a966b6adf723816a5. Native production reads over disposable in-memory storage; no deployment or performance claim.",
     "formats": "V1 structural diff DTO retains raw target terms separately from complete source annotations and optional native line hunks. V1 conflict descriptor carries ordered labeled terms, explicit editor support and a domain-separated ConflictFingerprint. No native object, authority or RPC persistence format change."
+  },
+  {
+    "id": "E-M4-008",
+    "tasks": ["M4", "M4.1"],
+    "date": "2026-09-27",
+    "kind": "bounded-native-query-cache-retention-and-recovery",
+    "files": [
+      "crates/jj-store-cli/tests/native_lifecycle/graph_cache.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/graphs.rs",
+      "crates/jj-store-jj/src/factories.rs",
+      "crates/jj-store-jj/src/query/cache.rs",
+      "crates/jj-store-jj/src/query/mod.rs",
+      "spec/src/api.md",
+      "spec/src/cli.md",
+      "spec/src/jj-integration.md",
+      "crates/jj-store-cli/tests/administration_rpc.rs"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/native_lifecycle/graph_cache.rs#graph_cache_corrupt_operation_link_rebuilds_without_publication",
+      "crates/jj-store-cli/tests/native_lifecycle/graph_cache.rs#graph_cache_checksums_missing_files_and_receipts_rebuild_exact_snapshots",
+      "crates/jj-store-cli/tests/native_lifecycle/graph_cache.rs#graph_cache_retention_evicts_lru_and_bounds_bytes_files_and_slots",
+      "crates/jj-store-cli/tests/native_lifecycle/graph_cache.rs#graph_cache_recovery_rechecks_permission_and_serializes_independent_executors",
+      "crates/jj-store-cli/tests/native_lifecycle/graph_cache.rs#graph_cache_recovery_never_follows_symlinks_or_repairs_authoritative_objects",
+      "crates/jj-store-cli/tests/native_lifecycle/graph_cache.rs#graph_cache_bindings_separate_repository_and_epoch_for_identical_root_ids",
+      "crates/jj-store-cli/tests/native_lifecycle/graphs.rs#graph_query_three_histories_filtered_edges_and_snapshot_pagination",
+      "crates/jj-store-cli/tests/native_lifecycle/graphs.rs#graph_query_divergent_operations_bookmarks_and_explicit_workspace",
+      "crates/jj-store-cli/tests/native_lifecycle/graphs.rs#graph_query_rebuild_limits_staged_rejection_and_current_revocation",
+      "crates/jj-store-cli/tests/native_lifecycle/graphs.rs#graph_query_cancellation_retains_worker_permit_until_exit_and_deadlines_bound_waits",
+      "crates/jj-store-cli/tests/native_lifecycle/graphs.rs#graph_query_marks_absent_evolution_data_and_rejects_missing_continuations",
+      "crates/jj-store-cli/tests/administration_rpc.rs#rpc_fixture_reserves_listener_across_restarts",
+      "crates/jj-store-cli/tests/administration_rpc.rs#rpc_token_retries_and_competing_snapshots_preserve_accepted_policy"
+    ],
+    "runs": [
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle graph_cache_",
+        "result": "pass",
+        "failures": 0,
+        "note": "Before new fixture: zero matching cases; not acceptance evidence."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle graph_cache_corrupt_operation_link_rebuilds_without_publication",
+        "result": "fail",
+        "failures": 1,
+        "note": "Original regression fails: malformed native index operation link returns Unavailable instead of rebuilding the derived cache."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo check -p jj-store-service",
+        "result": "fail",
+        "failures": 16,
+        "note": "Initial cache module missed its std::fs import after removing the parent import; 16 diagnostics."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo check -p jj-store-service",
+        "result": "pass",
+        "failures": 0,
+        "note": "Service compile passes after local import correction."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle graph_cache_corrupt_operation_link_rebuilds_without_publication",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact regression passes after receipt inventory and derived-file reconstruction."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle graph_query_",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 5 original graph acceptance cases pass under bounded slot caching."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle graph_cache_",
+        "result": "fail",
+        "failures": 2,
+        "note": "Two fixture compile diagnostics: unavailable NativeObjects::scope trait and nonexistent MemoryStore::corrupt helper. Fixture now uses ObjectKey::storage_path and a checked conditional store replacement."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle graph_cache_",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial 5 cache cases pass: malformed links, checksum/missing-file/receipt/index-type damage, LRU/byte/file/slot limits, revocation, independent executors, interrupted-build cleanup, symlink isolation and authoritative-object errors."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle graph_cache_",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final 6 cases pass, including separate repository/epoch bindings for identical virtual roots and atomic local receipts."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle graph_query_",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 5 existing graph cases pass, including retained namespace lock across caller cancellation until worker exit."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "57 requirements, boundaries, ledger, rustfmt and all-target Clippy pass before shared RPC fixture repair."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test",
+        "result": "fail",
+        "failures": 1,
+        "note": "Governance/storage self-tests pass. Administration RPC target: 7 passed / 1 failed. rpc_token_retries_and_competing_snapshots_preserve_accepted_policy hit AddrInUse at restart because the fixture released its listener reservation."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test administration_rpc rpc_fixture_reserves_listener_across_restarts",
+        "result": "fail",
+        "failures": 1,
+        "note": "Deterministic source regression proves another listener can acquire a stopped fixture endpoint. The fixture now owns one nonblocking listener and restarts using cloned handles."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test administration_rpc rpc_fixture_reserves_listener_across_restarts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact listener-reservation regression passes with retained socket ownership."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test administration_rpc rpc_token_retries_and_competing_snapshots_preserve_accepted_policy",
+        "result": "pass",
+        "failures": 0,
+        "note": "Original failing retry/competing-snapshot case passes."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test administration_rpc",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 9 cases pass after the shared fixture change."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "57 requirements, boundaries, ledger, rustfmt and all-target Clippy pass after final changes."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test",
+        "result": "pass",
+        "failures": 0,
+        "note": "185 Rust tests pass / 6 external cases intentionally ignored. 15 governance and 3 storage-harness tests pass; no unresolved failures."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Locked workspace build passes."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 9 lanes pass, including 185 Rust tests, rustfmt, mdBook and mapped spec-first checks."
+      },
+      {
+        "command": "pnpm format:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rustfmt and Prettier pass."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Production CPU/memory/transient-build resource qualification and long rebuild task/status, then HTTP JSON/media/SSE, generated contracts and browser integration."
+    ],
+    "versions": "Rust 1.97.1; jj-cli/jj-lib 0.45.1 at 7c41cdeb16b6b321c64e789a966b6adf723816a5. Native queries over disposable in-memory stores; no deployment/performance claim.",
+    "formats": "Local query-cache-v1 slots replace unreleased per-operation paths under the pinned revision/profile. Receipts bind repository/epoch/operation and checksummed file inventories. Additive V1 graph cache diagnostics report reuse/build/rebuild, evictions and retained bytes/counts. No authority, native object or native RPC format change."
   }
 ]
 ```

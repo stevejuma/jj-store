@@ -159,3 +159,11 @@ Parent-selection responses cannot trigger CLI-style reconciliation.
 Structured content fixtures compare copy-aware file deltas and exact text hunks
 with pinned native helpers. Conflict fixtures cover multiple sides, binary
 content, delete/modify, file/tree and mode/copy conflicts without publication.
+
+Native read acceptance also corrupts derived index links and segments, exercises
+cache eviction and cold reconstruction, and checks that authorization and native
+publication state are preserved through cache recovery.
+
+Loopback RPC restart fixtures retain their listener reservation while a server
+instance is stopped. Restart acceptance must not race another fixture for the
+same ephemeral port or silently switch its endpoint.

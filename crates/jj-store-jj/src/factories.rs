@@ -170,6 +170,12 @@ impl NativeStores {
     pub fn load_cache(&self, settings: &UserSettings, path: &Path) -> AuthorityResult<RepoLoader> {
         let mut factories = default_backend_factories();
         factories.merge(self.factories());
+        self.verify_cache_binding(path)?;
+        Ok(RepoLoader::init_from_file_system(
+            settings, path, &factories,
+        )?)
+    }
+    pub(crate) fn verify_cache_binding(&self, path: &Path) -> AuthorityResult<()> {
         // Verify even when a modified type file would otherwise select a different backend.
         for component in ["store", "op_store", "op_heads"] {
             self.verify(&path.join(component))?;
@@ -177,9 +183,7 @@ impl NativeStores {
                 return Err("native cache backend type mismatch".into());
             }
         }
-        Ok(RepoLoader::init_from_file_system(
-            settings, path, &factories,
-        )?)
+        Ok(())
     }
     /// Explicit pinned read: never invokes native head reconciliation.
     pub async fn load_at(

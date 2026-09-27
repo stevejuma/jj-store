@@ -31,6 +31,7 @@ struct Fixture {
     operator: BearerToken,
     admin: BearerToken,
     address: SocketAddr,
+    listener: std::net::TcpListener,
     shutdown: Option<tokio::sync::oneshot::Sender<()>>,
     server: Option<tokio::task::JoinHandle<()>>,
 }
@@ -47,12 +48,15 @@ impl Fixture {
         let operator = policy
             .issue(ACTOR, Permission::CreateRepository, None)
             .unwrap();
+        let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+        listener.set_nonblocking(true).unwrap();
         let mut f = Self {
             store: Arc::default(),
             policies: Arc::new(Policies(Mutex::new(policy))),
             operator,
             admin: BearerToken::generate().unwrap(),
-            address: "127.0.0.1:0".parse().unwrap(),
+            address: listener.local_addr().unwrap(),
+            listener,
             shutdown: None,
             server: None,
         };
@@ -70,8 +74,9 @@ impl Fixture {
         )
         .unwrap();
         let rpc = NativeRpc::hosted(host, Limits::default()).unwrap();
-        let listener = tokio::net::TcpListener::bind(self.address).await.unwrap();
-        self.address = listener.local_addr().unwrap();
+        // Keep the original listener reserved across stopped server instances.
+        let listener =
+            tokio::net::TcpListener::from_std(self.listener.try_clone().unwrap()).unwrap();
         let (tx, rx) = tokio::sync::oneshot::channel();
         self.shutdown = Some(tx);
         self.server = Some(tokio::spawn(async move {
@@ -893,4 +898,19 @@ fn executable_token_help_is_authored_for_both_families() {
         let text = String::from_utf8(long.stdout).unwrap();
         assert!(text.contains("secret") && text.contains("snapshot") && !text.contains('`'));
     }
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn rpc_fixture_reserves_listener_across_restarts() {
+    let mut fixture = Fixture::new().await;
+    let address = fixture.address;
+    fixture.stop().await;
+    assert!(
+        std::net::TcpListener::bind(address).is_err(),
+        "a stopped fixture must retain its endpoint reservation"
+    );
+    fixture.start().await;
+    assert_eq!(fixture.address, address);
+    fixture.create().await;
+    fixture.stop().await;
 }

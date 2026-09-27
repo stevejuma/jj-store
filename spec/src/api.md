@@ -146,3 +146,9 @@ with identical executable mode and copy history, within the configured text
 budget. Other conflicts return a typed reason; term selection/deletion remain
 separate mutation capabilities. Conflict reads never materialize conflict
 markers, write merged trees or invoke a merge tool.
+
+Graph responses include local cache diagnostics: built, reused or rebuilt;
+evictions; retained entry count and bytes. Native operation identity remains the
+snapshot authority. Rebuilding a corrupt or evicted cache never selects newer
+heads or publishes a native operation. Busy graph-cache workers return an
+explicit retryable result rather than queuing unbounded work.
