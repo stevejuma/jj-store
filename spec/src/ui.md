@@ -41,15 +41,15 @@ collapse. Operation siblings remain visible and opening details publishes
 nothing. Full-ID clipboard controls never construct Community routes. Source
 strings render as data; file/diff controls retain public Design Core semantics.
 
-## Complete in-memory application
+## Shared application
 
-The follow-up catalog slice adds Community's repository file tree, branch
-picker, source viewer and avatar/profile footer. Choosing a repository opens its
-Files view. Bookmarks and native changes resolve to explicit snapshots;
-divergent changes and conflicted bookmarks require a target choice. Back/Forward
-restores repository, page, snapshot and file selection. Account actions only
-change the in-memory fixture identity. Simple shell stories remain alongside
-complete application stories; neither is wired to production.
+Community's repository file tree, branch picker, source viewer and profile
+footer are production-owned under `web/src/lib` and imported by Storybook.
+Choosing a repository opens its Files view. Bookmarks and native changes resolve
+to explicit snapshots; divergent changes and conflicted bookmarks require a
+target choice. Back/Forward restores repository, page, snapshot and file
+selection. Catalog account actions only change fixture identity. Production
+connection state replaces the fixture account when the HTTP controller is used.
 
 Community's Tailwind Vite plugin compiles the public Design Core stylesheet. The
 catalog uses its bundled DM Sans and Source Code Pro fonts, shared icon sizing

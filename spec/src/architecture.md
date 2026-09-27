@@ -180,17 +180,19 @@ The server composes owned adapter/Tantivy interfaces for configured background
 search. Indexers and their cancellation guards are owned by the foreground
 server lifecycle. Publication and native storage do not depend on these workers.
 
-## Presentation catalog
+## Browser presentation ownership
 
-The isolated catalog adapts Community compositions using released Design Core.
-It has no service, transport or publication dependency; the existing served
-browser remains independent. See [catalog requirements](ui.md).
+Production-owned Community adaptations, presentation models and styles live
+under `web/src/lib`. The isolated catalog imports those modules and supplies
+only fixtures, in-memory transport-free state and story harnesses. Production
+source cannot import the catalog. See [browser requirements](ui.md).
 
-The catalog has independent cold static-browser acceptance; production serving
-and API integration remain unchanged. Storybook framework/renderer/builder
-versions are aligned in the registry lockfile.
+The catalog retains independent cold static-browser acceptance. Its framework,
+renderer and builder versions are aligned in the registry lockfile. The served
+browser composes the same production modules through an authenticated
+asynchronous controller; catalog checks reject API clients and network calls.
 
-M4.8 extends only the local catalog route with a directory path and reuses
-Community directory tables and shell styling. Controller callbacks own file and
-directory history; reusable presentation components receive explicit data. The
-production browser milestone remains deferred.
+M4.9 separates snapshot operation, inspected operation, commit, change and
+comparison identities in the shared controller contract. Loading, refreshing,
+paging, empty, failed and unavailable states are explicit. M4.10–M4.14 add the
+bounded transport implementation, navigation, refresh and operational evidence.

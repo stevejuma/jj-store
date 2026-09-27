@@ -19,19 +19,16 @@
     CommunityNavigationItemModel,
     CommunityNavigationModel,
   } from "../community-navigation/model.js";
-  import { createInMemoryStoreController } from "../../controller/in-memory-store-controller.svelte.js";
   import type { StoreController } from "../../controller/contracts.js";
   import CommunityProfileMenu from "../community-profile-menu/CommunityProfileMenu.svelte";
   let {
-    initialPage = "branches",
-    controller = untrack(() => createInMemoryStoreController(initialPage)),
+    controller,
     initiallyCollapsed = true,
     displayMode = "auto",
     children,
     details,
   }: {
-    initialPage?: StorePage;
-    controller?: StoreController;
+    controller: StoreController;
     initiallyCollapsed?: boolean;
     displayMode?: AppShellDisplayMode;
     children?: Snippet<[StorePage, string]>;

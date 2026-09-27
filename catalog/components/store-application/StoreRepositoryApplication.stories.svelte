@@ -2,7 +2,7 @@
   import { SOURCE_TEXT } from "../../fixtures/repository.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
-  import StoreRepositoryApplication from "./StoreRepositoryApplication.svelte";
+  import StoreRepositoryApplication from "../../fixtures/StoreRepositoryApplicationFixture.svelte";
   import { IDS } from "../../fixtures/repository.js";
   const { Story } = defineMeta({
     title: "JJ Store/Connected application",

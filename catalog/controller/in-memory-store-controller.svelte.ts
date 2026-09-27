@@ -1,17 +1,23 @@
 import {
   IDS,
+  NOW,
   bookmarks,
   fixtureGraph,
   operations,
   revisions,
+  sampleDetail,
 } from "../fixtures/repository.js";
 import {
   choices,
   repositories,
   repositorySnapshot,
 } from "../fixtures/snapshots.js";
-import type { StoreController, StoreRoute } from "./contracts.js";
-import type { StorePage } from "../components/community-navigation/model.js";
+import type {
+  StoreController,
+  StoreControllerState,
+  StoreRoute,
+} from "../../web/src/lib/controller/contracts.js";
+import type { StorePage } from "../../web/src/lib/ui/community-navigation/model.js";
 /** Each story owns this instance. It has no persistence or transport effects. */
 export function createInMemoryStoreController(
   initialPage: StorePage = "branches",
@@ -21,7 +27,12 @@ export function createInMemoryStoreController(
       page: initialPage,
       repository: "jj-store",
       bookmark: initialPage === "files" ? "main" : "",
-      revisionId: null,
+      snapshotOperationId: IDS.opLeft,
+      inspectedOperationId: null,
+      commitId: null,
+      changeId: null,
+      comparisonParentId: null,
+      comparisonGroupId: null,
       path: null,
       directory: "",
     },
@@ -30,8 +41,8 @@ export function createInMemoryStoreController(
   let authenticated = $state(true);
   const route = $derived(history[index]!);
   const targets = $derived(
-    route.revisionId
-      ? [route.revisionId]
+    route.commitId
+      ? [route.commitId]
       : (bookmarks.find((bookmark) => bookmark.name === route.bookmark)
           ?.targets ?? (route.page === "files" ? [IDS.current] : [])),
   );
@@ -47,6 +58,14 @@ export function createInMemoryStoreController(
     index++;
   }
   const actions: StoreController["actions"] = {
+    async connect() {
+      authenticated = true;
+    },
+    disconnect() {
+      authenticated = false;
+    },
+    async refresh() {},
+    async loadMore() {},
     openRepository(id) {
       if (!repositories.some((repo) => repo.id === id))
         throw new Error("Unknown fixture repository");
@@ -54,7 +73,12 @@ export function createInMemoryStoreController(
         page: "files",
         repository: id,
         bookmark: "main",
-        revisionId: null,
+        snapshotOperationId: IDS.opLeft,
+        inspectedOperationId: null,
+        commitId: null,
+        changeId: null,
+        comparisonParentId: null,
+        comparisonGroupId: null,
         path: null,
         directory: "",
       });
@@ -64,7 +88,11 @@ export function createInMemoryStoreController(
         ...route,
         page,
         bookmark: page === "files" ? "main" : "",
-        revisionId: null,
+        inspectedOperationId: null,
+        commitId: null,
+        changeId: null,
+        comparisonParentId: null,
+        comparisonGroupId: null,
         path: null,
         directory: "",
       });
@@ -78,7 +106,11 @@ export function createInMemoryStoreController(
       push({
         ...route,
         bookmark: name,
-        revisionId: null,
+        inspectedOperationId: null,
+        commitId: null,
+        changeId: null,
+        comparisonParentId: null,
+        comparisonGroupId: null,
         path: null,
         directory: "",
       });
@@ -91,7 +123,20 @@ export function createInMemoryStoreController(
         )
       )
         throw new Error("Unknown fixture revision");
-      push({ ...route, revisionId: id, path: null, directory: "" });
+      push({
+        ...route,
+        inspectedOperationId: route.page === "oplog" ? id : null,
+        commitId: route.page === "oplog" ? null : id,
+        changeId:
+          route.page === "oplog"
+            ? null
+            : (revisions.find((revision) => revision.eventId === id)
+                ?.changeId ?? null),
+        comparisonParentId: null,
+        comparisonGroupId: null,
+        path: null,
+        directory: "",
+      });
     },
     selectFile(path) {
       if (
@@ -124,7 +169,13 @@ export function createInMemoryStoreController(
         push({
           ...route,
           bookmark: "",
-          revisionId: choice.targets[0]!,
+          inspectedOperationId: null,
+          commitId: choice.targets[0]!,
+          changeId:
+            revisions.find((revision) => revision.eventId === choice.targets[0])
+              ?.changeId ?? null,
+          comparisonParentId: null,
+          comparisonGroupId: null,
           path: null,
           directory: "",
         });
@@ -137,7 +188,7 @@ export function createInMemoryStoreController(
     },
   };
   return {
-    get state() {
+    get state(): StoreControllerState {
       return {
         route,
         canNavigateBack: index > 0,
@@ -157,6 +208,18 @@ export function createInMemoryStoreController(
                   ? route.bookmark
                   : undefined,
               ),
+        now: NOW,
+        detail:
+          (route.commitId || route.inspectedOperationId) &&
+          ![...revisions, ...operations.revisions].find(
+            (revision) =>
+              revision.eventId ===
+              (route.page === "oplog"
+                ? route.inspectedOperationId
+                : route.commitId),
+          )?.empty
+            ? sampleDetail
+            : undefined,
         authenticated,
         member: authenticated
           ? {
@@ -174,6 +237,19 @@ export function createInMemoryStoreController(
               initials: "G",
               presence: "offline" as const,
             },
+        status: {
+          connection: authenticated ? "connected" : "disconnected",
+          navigation: "ready",
+          repositories: "ready",
+          bookmarks: bookmarks.length ? "ready" : "empty",
+          graph: "ready",
+          files: snapshot?.files.length ? "ready" : "empty",
+          detail:
+            route.commitId || route.inspectedOperationId ? "ready" : "idle",
+          live: authenticated ? "live" : "disconnected",
+          refreshAvailable: false,
+          error: "",
+        },
       };
     },
     actions,

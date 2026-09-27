@@ -1,7 +1,7 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, fn, userEvent, within } from "storybook/test";
-  import CommunityProjectsRepositoryLogFiles from "./CommunityProjectsRepositoryLogFiles.svelte";
+  import CommunityProjectsRepositoryLogFiles from "../../../web/src/lib/ui/community-projects/CommunityProjectsRepositoryLogFiles.svelte";
   import FilesFixture from "../../fixtures/FilesFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Components/Changed files",

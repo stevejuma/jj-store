@@ -9,7 +9,7 @@ import {
   repositoryBreadcrumbSegments,
   repositoryBrowserEntries,
   repositoryParentPath,
-} from "./repository-browser.js";
+} from "../../../web/src/lib/ui/community-projects/repository-browser.js";
 
 const files: ProjectForgeTreeEntry[] = [
   { name: "README.md", path: "README.md", type: "blob", size: 40 },

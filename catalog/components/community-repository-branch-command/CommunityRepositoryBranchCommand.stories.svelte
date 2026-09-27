@@ -1,7 +1,7 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, fn, userEvent, within } from "storybook/test";
-  import CommunityRepositoryBranchCommand from "./CommunityRepositoryBranchCommand.svelte";
+  import CommunityRepositoryBranchCommand from "../../../web/src/lib/ui/community-repository-branch-command/CommunityRepositoryBranchCommand.svelte";
   import { bookmarks, NOW } from "../../fixtures/repository.js";
   const { Story } = defineMeta({
     title: "JJ Store/Components/Branch cards",

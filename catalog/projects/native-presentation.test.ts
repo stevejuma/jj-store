@@ -1,7 +1,7 @@
 import { test, expect } from "vitest";
-import { collapseRepositoryLogRevisions } from "./repository-log-collapse.js";
-import { parseRepositoryLogMessage } from "./repository-log-message.js";
-import { buildRepositoryLogGraph } from "./repository-log-graph.js";
+import { collapseRepositoryLogRevisions } from "../../web/src/lib/projects/repository-log-collapse.js";
+import { parseRepositoryLogMessage } from "../../web/src/lib/projects/repository-log-message.js";
+import { buildRepositoryLogGraph } from "../../web/src/lib/projects/repository-log-graph.js";
 import {
   fixtureGraph,
   IDS,

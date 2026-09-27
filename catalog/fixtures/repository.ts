@@ -1,13 +1,16 @@
-import type { Bookmark, RevisionDetail } from "../projects/presentation.js";
+import type {
+  Bookmark,
+  RevisionDetail,
+} from "../../web/src/lib/projects/presentation.js";
 import type {
   RepositoryLogGraph,
   RepositoryLogRevision,
-} from "../projects/repository-log.js";
-import { orderNewestFirst } from "../projects/repository-log.js";
+} from "../../web/src/lib/projects/repository-log.js";
+import { orderNewestFirst } from "../../web/src/lib/projects/repository-log.js";
 import {
   ancestorsOf,
   collapseRepositoryLogRevisions,
-} from "../projects/repository-log-collapse.js";
+} from "../../web/src/lib/projects/repository-log-collapse.js";
 export const NOW = 1790506800;
 export const IDS = {
   root: "01".repeat(64),

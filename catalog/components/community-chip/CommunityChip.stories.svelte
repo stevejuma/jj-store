@@ -1,7 +1,7 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, within } from "storybook/test";
-  import CommunityChip from "./CommunityChip.svelte";
+  import CommunityChip from "../../../web/src/lib/ui/community-chip/CommunityChip.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Components/Chip",
     component: CommunityChip,

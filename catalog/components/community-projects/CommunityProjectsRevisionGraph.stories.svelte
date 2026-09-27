@@ -1,7 +1,7 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, waitFor } from "storybook/test";
-  import CommunityProjectsRevisionGraph from "./CommunityProjectsRevisionGraph.svelte";
+  import CommunityProjectsRevisionGraph from "../../../web/src/lib/ui/community-projects/CommunityProjectsRevisionGraph.svelte";
   import { fixtureGraph, NOW, operations } from "../../fixtures/repository.js";
   const linear = Array.from({ length: 160 }, (_, index) => ({
     ...fixtureGraph().revisions[0]!,

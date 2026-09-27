@@ -1,5 +1,5 @@
 import { afterEach, expect, test, vi } from "vitest";
-import { observeShellHeaderGeometry } from "./shell-header-geometry.js";
+import { observeShellHeaderGeometry } from "../../../web/src/lib/ui/community-app-shell/shell-header-geometry.js";
 
 afterEach(() => vi.unstubAllGlobals());
 

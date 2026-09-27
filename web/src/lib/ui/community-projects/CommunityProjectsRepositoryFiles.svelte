@@ -46,8 +46,8 @@
   );
 
   const selectedSnapshot = $derived(
-    view.route.revisionId
-      ? `commit:${view.route.revisionId}`
+    view.route.commitId
+      ? `commit:${view.route.commitId}`
       : `bookmark:${view.route.bookmark}`,
   );
   const previewDocuments = $derived(

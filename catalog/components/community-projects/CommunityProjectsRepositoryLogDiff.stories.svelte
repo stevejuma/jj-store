@@ -2,7 +2,7 @@
   import { SOURCE_TEXT } from "../../fixtures/repository.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within } from "storybook/test";
-  import CommunityProjectsRepositoryLogDiff from "./CommunityProjectsRepositoryLogDiff.svelte";
+  import CommunityProjectsRepositoryLogDiff from "../../../web/src/lib/ui/community-projects/CommunityProjectsRepositoryLogDiff.svelte";
   import DiffFixture from "../../fixtures/DiffFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Components/Diff",

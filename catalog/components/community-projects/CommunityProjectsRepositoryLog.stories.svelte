@@ -1,7 +1,7 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
-  import CommunityProjectsRepositoryLog from "./CommunityProjectsRepositoryLog.svelte";
+  import CommunityProjectsRepositoryLog from "../../../web/src/lib/ui/community-projects/CommunityProjectsRepositoryLog.svelte";
   import RepositoryFixture from "../../fixtures/RepositoryFixture.svelte";
   import { IDS } from "../../fixtures/repository.js";
   const { Story } = defineMeta({

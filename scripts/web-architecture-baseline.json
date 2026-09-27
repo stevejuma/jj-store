@@ -3,12 +3,12 @@
   "files": {
     "web/src/App.svelte": 905,
     "web/src/style.css": 594,
-    "catalog/components/community-navigation/CommunityNavigation.css": 397,
-    "catalog/components/community-navigation/CommunityNavigation.svelte": 364,
-    "catalog/components/community-profile-menu/CommunityProfileMenu.svelte": 306,
-    "catalog/components/community-projects/CommunityProjectsRepositoryLogDiff.svelte": 328,
-    "catalog/components/community-projects/repository-files.css": 379,
+    "web/src/lib/ui/community-navigation/CommunityNavigation.css": 397,
+    "web/src/lib/ui/community-navigation/CommunityNavigation.svelte": 364,
+    "web/src/lib/ui/community-profile-menu/CommunityProfileMenu.svelte": 306,
+    "web/src/lib/ui/community-projects/CommunityProjectsRepositoryLogDiff.svelte": 328,
+    "web/src/lib/ui/community-projects/repository-files.css": 379,
     "catalog/components/store-application/RepositoryReview.stories.svelte": 513,
-    "catalog/components/store-application/StoreApplication.svelte": 320
+    "web/src/lib/ui/store-application/StoreApplication.svelte": 320
   }
 }

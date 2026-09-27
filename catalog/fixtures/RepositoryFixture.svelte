@@ -1,6 +1,6 @@
 <script lang="ts">
-  import CommunityProjectsRepositoryLog from "../components/community-projects/CommunityProjectsRepositoryLog.svelte";
-  import type { StorePage } from "../components/community-navigation/model.js";
+  import CommunityProjectsRepositoryLog from "../../web/src/lib/ui/community-projects/CommunityProjectsRepositoryLog.svelte";
+  import type { StorePage } from "../../web/src/lib/ui/community-navigation/model.js";
   import {
     NOW,
     fixtureGraph,

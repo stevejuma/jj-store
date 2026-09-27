@@ -1,7 +1,7 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, fn, userEvent, within } from "storybook/test";
-  import CommunityProjectsRevisionGraphIds from "./CommunityProjectsRevisionGraphIds.svelte";
+  import CommunityProjectsRevisionGraphIds from "../../../web/src/lib/ui/community-projects/CommunityProjectsRevisionGraphIds.svelte";
   import { IDS } from "../../fixtures/repository.js";
   const demoCommitId = `c1346134${"a".repeat(56)}`;
   const demoChangeId = `yrlvqtlmolyz${"b".repeat(20)}`;

@@ -1,4 +1,4 @@
-@import "../catalog/components/community-typography.css";
+@import "../web/src/lib/ui/community-typography.css";
 html,
 body,
 #storybook-root {

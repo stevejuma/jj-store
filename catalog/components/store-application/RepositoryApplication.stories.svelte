@@ -1,7 +1,7 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within } from "storybook/test";
-  import StoreRepositoryApplication from "./StoreRepositoryApplication.svelte";
+  import StoreRepositoryApplication from "../../fixtures/StoreRepositoryApplicationFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Application",
     component: StoreRepositoryApplication,

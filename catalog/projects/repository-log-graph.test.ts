@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import type { RepositoryLogRevision } from "./repository-log.js";
+import type { RepositoryLogRevision } from "../../web/src/lib/projects/repository-log.js";
 import {
   REPOSITORY_LOG_ROW_HEIGHT,
   buildRepositoryLogGraph,
@@ -13,7 +13,7 @@ import {
   repositoryLogSplitPath,
   shortestRepositoryLogPrefix,
   tipRevisionIds,
-} from "./repository-log-graph.js";
+} from "../../web/src/lib/projects/repository-log-graph.js";
 
 function revision(
   eventId: string,

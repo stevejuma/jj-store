@@ -1,9 +1,9 @@
-import { encodeJjChangeId } from "../projects/repository-log-graph.js";
+import { encodeJjChangeId } from "../../web/src/lib/projects/repository-log-graph.js";
 import { IDS, revisions, bookmarks } from "./repository.js";
 import type {
   RepositoryChoice,
   RepositorySnapshot,
-} from "../controller/contracts.js";
+} from "../../web/src/lib/controller/contracts.js";
 export const repositories = [
   { id: "jj-store", name: "jj-store" },
   { id: "native-demo", name: "native-demo" },

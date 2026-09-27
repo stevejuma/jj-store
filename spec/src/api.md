@@ -1,5 +1,12 @@
 # Read APIs and browser
 
+The served browser and Storybook consume the same production-owned shell,
+repository views, presentation models and styles under `web/src/lib`. Catalog
+fixtures implement the shared asynchronous controller contract without a
+transport; production transport and authentication remain owned by the web API
+layer. Snapshot operation, inspected operation, commit, change and comparison
+identities are distinct fields and must not be substituted for one another.
+
 Use tonic/protobuf for native RPC and Axum JSON/SSE for browser/agent APIs.
 Generate OpenAPI and client types. Full IDs are authoritative; shortened IDs are
 presentation. Historical loading requires no physical server working copy. Graph

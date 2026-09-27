@@ -113,9 +113,10 @@ accessibility failures remain blocking; visual review is separate and remains
 visual-pending. Browser sources and tooling require same-change ledger evidence.
 
 User-requested scope deferrals must retain original requirements and evidence.
-The 27 September 2026 UI deferral moves remaining browser work to M4.3 without
-disabling existing functional checks or treating deferred acceptance as passed.
-Backend tasks may depend on completed API foundations independently of UI work.
+The 27 September 2026 browsing resumption is limited to M4.9–M4.14. Mutation,
+conflict-editing and search controls remain deferred without disabling existing
+functional checks or treating deferred acceptance as passed. Backend tasks may
+depend on completed API foundations independently of browser progress.
 
 Contract checks validate both read/SSE and typed mutation responses captured
 from real registered handlers. Mutation request schemas and generated TypeScript
@@ -153,10 +154,13 @@ transport dependencies in authoritative storage/publication layers.
 
 ## Catalog validation
 
-Catalog source, stories, tooling and provenance require the UI chapter and
+Production presentation source lives under `web/src/lib`; catalog source owns
+only fixtures, stories and harnesses. Both areas require the UI chapter and
 same-change ledger evidence. Normal and specification lanes include catalog
 types, unit tests, Storybook interactions/accessibility and cold static builds.
-The progress checker recognizes catalog and Storybook paths.
+The catalog may import production presentation modules but its source audit
+rejects API clients and network transports. Production cannot import catalog
+fixtures. The progress checker recognizes catalog and Storybook paths.
 
 Cold catalog acceptance builds static assets and serves them on an owned
 ephemeral loopback port. Browser tests reject API, external HTTP and WebSocket
