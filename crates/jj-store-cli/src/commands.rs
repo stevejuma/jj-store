@@ -57,6 +57,23 @@ impl ConnectionArgs {
 }
 #[derive(Clone, Debug, Subcommand)]
 pub enum StoreCommand {
+    /// Create a new native repository and its first physical workspace
+    #[command(long_about = include_str!("../../../docs/cli/init.md"))]
+    Init {
+        destination: PathBuf,
+        #[arg(long)]
+        endpoint: String,
+        #[arg(long)]
+        insecure_loopback: bool,
+        #[arg(long)]
+        ca_certificate: Option<PathBuf>,
+        #[arg(long)]
+        workspace: Option<String>,
+        #[arg(long)]
+        cache: Option<PathBuf>,
+        #[arg(long)]
+        state_dir: Option<PathBuf>,
+    },
     /// Run the configured native server on a literal loopback listener
     #[command(long_about = include_str!("../../../docs/cli/serve-local.md"))]
     ServeLocal {
@@ -115,6 +132,37 @@ pub fn error(error: impl std::fmt::Display) -> CommandError {
         "Use 'jj store help -k commands'; verify the endpoint, repository ID and credentials.",
     )
 }
+async fn complete_attachment(
+    ui: &mut Ui,
+    helper: &CommandHelper,
+    format: Format,
+    attachment: &mut crate::attachment::Attachment,
+) -> Result<(), CommandError> {
+    // The upstream new-workspace helper assumes .jj/repo is a directory.
+    // A completed native attachment uses a pointer file instead. Its
+    // retry creates no new operation and can use the current settings.
+    let settings = if attachment.destination().join(".jj").exists() {
+        helper.settings().clone()
+    } else {
+        helper
+            .settings_for_new_workspace(ui, attachment.destination())?
+            .0
+    };
+    attachment.prepare(&settings).await.map_err(error)?;
+    let result = attachment.finish(&settings).await.map_err(error)?;
+    presentation::result(
+        ui,
+        helper,
+        format,
+        &serde_json::to_value(&result).map_err(error)?,
+        &format!(
+            "Attached native repository {} at {}\nWorkspace: {}\n",
+            result.repository,
+            result.path.display(),
+            result.workspace
+        ),
+    )
+}
 pub async fn run(
     ui: &mut Ui,
     helper: &CommandHelper,
@@ -125,6 +173,30 @@ pub async fn run(
         return presentation::help(ui, helper, &[]);
     };
     match command {
+        StoreCommand::Init {
+            destination,
+            endpoint,
+            insecure_loopback,
+            ca_certificate,
+            workspace,
+            cache,
+            state_dir,
+        } => {
+            let mut initialization =
+                crate::initialization::Initialization::open(crate::initialization::Options {
+                    endpoint,
+                    insecure_loopback,
+                    ca_certificate: ca_certificate.map(|p| helper.cwd().join(p)),
+                    destination: helper.cwd().join(destination),
+                    cache: cache.map(|p| helper.cwd().join(p)),
+                    workspace,
+                    state: state_dir.map(|p| helper.cwd().join(p)),
+                })
+                .map_err(error)?;
+            initialization.create().await.map_err(error)?;
+            let mut attachment = initialization.attachment().await.map_err(error)?;
+            complete_attachment(ui, helper, args.format, &mut attachment).await
+        }
         StoreCommand::ServeLocal { server_config } => {
             crate::server_commands::serve_local(ui, &helper.cwd().join(server_config), args.format)
                 .map_err(error)
@@ -148,31 +220,9 @@ pub async fn run(
             )
             .await
             .map_err(error)?;
-            // The upstream new-workspace helper assumes .jj/repo is a directory.
-            // A completed native attachment uses a pointer file instead. Its
-            // retry creates no new operation and can use the current settings.
-            let settings = if attachment.destination().join(".jj").exists() {
-                helper.settings().clone()
-            } else {
-                helper
-                    .settings_for_new_workspace(ui, attachment.destination())?
-                    .0
-            };
-            attachment.prepare(&settings).await.map_err(error)?;
-            let result = attachment.finish(&settings).await.map_err(error)?;
-            presentation::result(
-                ui,
-                helper,
-                args.format,
-                &serde_json::to_value(&result).map_err(error)?,
-                &format!(
-                    "Attached native repository {} at {}\nWorkspace: {}\n",
-                    result.repository,
-                    result.path.display(),
-                    result.workspace
-                ),
-            )
+            complete_attachment(ui, helper, args.format, &mut attachment).await
         }
+
         StoreCommand::Status | StoreCommand::Doctor => {
             let path = helper.workspace_loader()?.repo_path();
             let connection = Connection::read(path).map_err(error)?;
@@ -286,9 +336,9 @@ pub async fn run(
     }
 }
 pub fn capabilities() -> serde_json::Value {
-    json!({"version":1,"native_profile":jj_store_jj::factories::PROFILE,"transport":"jj_store.native.v1","qualification":"cold executable scenarios over loopback RPC; deployment and full semantic matrix remain gated","commands":{
+    json!({"version":1,"native_profile":jj_store_jj::factories::PROFILE,"transport":"jj_store.native.v1","qualification":"loopback RPC and pinned single-node RustFS cold recovery; shared deployment and full semantic matrix remain gated","commands":{
         "edit":"verified","describe":"verified","log":"verified","op log":"verified","evolog":"verified",
         "new":"verified","diff":"verified","bookmark create":"verified","bookmark set":"verified","bookmark delete":"verified","bookmark list":"verified",
         "abandon":"unqualified","rebase":"unqualified","squash":"unqualified",
-        "git":"unsupported","util gc":"unsupported"},"creation":"server administration pending","physical_state":"client-local","ordinary_commands":"upstream jj 0.45.1"})
+        "git":"unsupported","util gc":"unsupported"},"creation":"jj store init with durable retries","physical_state":"client-local","ordinary_commands":"upstream jj 0.45.1"})
 }

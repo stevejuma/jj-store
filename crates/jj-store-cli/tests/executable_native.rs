@@ -630,3 +630,33 @@ async fn executable_login_logout_uses_os_credentials_across_processes() {
     drop(cleanup);
     f.stop().await;
 }
+
+#[test]
+#[ignore = "writes and deletes one random initial-admin account in the OS credential facility"]
+fn os_credential_initial_admin_provisioning_is_repeatable() {
+    use jj_store_cli::{binding::Connection, credentials};
+    assert!(!credentials::environment_present());
+    let mut id = [0; 16];
+    getrandom::fill(&mut id).unwrap();
+    let connection = Connection::new(
+        "https://initial-admin-test.example.invalid",
+        jj_store_model::RepositoryId::new(id),
+        false,
+        None,
+    )
+    .unwrap();
+    struct Cleanup(Connection);
+    impl Drop for Cleanup {
+        fn drop(&mut self) {
+            let _ = credentials::remove(&self.0);
+        }
+    }
+    let _cleanup = Cleanup(connection.clone());
+    let first = credentials::provision(&connection).unwrap();
+    let repeated = credentials::provision(&connection).unwrap();
+    assert_eq!(first.expose(), repeated.expose());
+    assert_eq!(
+        credentials::resolve(&connection).unwrap().expose(),
+        first.expose()
+    );
+}

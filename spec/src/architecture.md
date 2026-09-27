@@ -83,3 +83,7 @@ credentials; server composition never depends on command presentation.
 The CLI owns resumable physical attachment journals and atomic metadata staging.
 They retain no credentials and are not authority; publication acknowledgements
 continue to come from the native service's manifest-selected receipts.
+
+The CLI builds both development executables. Repository creation is a durable
+client workflow that provisions its OS-held admin credential before remote
+creation and then delegates physical checkout setup to resumable attachment.

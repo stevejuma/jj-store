@@ -110,3 +110,9 @@ retains the standalone cold server gate after durable attachment journals and
 metadata staging. Lost-acknowledgement attachment and cache-loss retry tests use
 a hosted loopback service with memory storage; they remain distinct from this
 real-storage lifecycle run.
+
+The [initialization deployment report](../../docs/evidence/m3-init-rustfs.json)
+creates the repository with the actual `jj store init` command, repeats it with
+the same durable identities, and retains the nine-probe cold server/revocation
+gate. The OS-facility initial-admin provisioning fixture separately generates,
+reuses, reads and deletes a randomly scoped credential account.

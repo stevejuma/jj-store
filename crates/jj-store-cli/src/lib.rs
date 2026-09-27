@@ -4,6 +4,7 @@ pub mod attachment;
 pub mod binding;
 pub mod commands;
 pub mod credentials;
+pub mod initialization;
 pub mod presentation;
 pub mod remote;
 pub mod server_commands;

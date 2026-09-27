@@ -98,3 +98,8 @@ claim distributed fencing or automatic failover.
 Operator OS-account provisioning locks a per-endpoint file outside checkouts
 before its read/create sequence. Contending commands fail without replacing a
 credential; retry reuses the saved account. Lock files contain no credentials.
+
+Repository initialization saves a generated initial admin credential to its
+endpoint/repository OS account before sending any creation request. Its local
+journal stores only the public credential ID. Neither a missing OS facility nor
+a changed retry credential permits a plaintext fallback or new secret identity.

@@ -66,7 +66,7 @@ fn random_name() -> AuthorityResult<String> {
 }
 /// Canonicalize existing ancestors without creating a target. Reject ambiguous
 /// parent traversal and final symlinks; resumed physical workspaces are allowed.
-fn target(path: &Path) -> AuthorityResult<PathBuf> {
+pub(crate) fn target(path: &Path) -> AuthorityResult<PathBuf> {
     if !path.is_absolute()
         || path
             .components()
@@ -89,7 +89,7 @@ fn target(path: &Path) -> AuthorityResult<PathBuf> {
     }
     Ok(resolved)
 }
-fn empty(path: &Path) -> AuthorityResult<()> {
+pub(crate) fn empty(path: &Path) -> AuthorityResult<()> {
     if path.exists() && fs::read_dir(path)?.next().is_some() {
         return Err("native attachment requires an empty destination and cache".into());
     }
@@ -101,6 +101,27 @@ fn sync_dir(path: &Path) -> AuthorityResult<()> {
     #[cfg(not(unix))]
     let _ = path;
     Ok(())
+}
+pub(crate) fn state_path(
+    destination: &Path,
+    cache: Option<&Path>,
+    state: Option<PathBuf>,
+) -> AuthorityResult<PathBuf> {
+    let key = hex::encode(Sha256::digest(destination.as_os_str().as_encoded_bytes()));
+    Ok(match state {
+        Some(state) => state,
+        None => match cache {
+            Some(cache) => target(cache)?
+                .parent()
+                .ok_or("cache parent")?
+                .join(".jj-store-attachments")
+                .join(key),
+            None => dirs::data_local_dir()
+                .ok_or("client data directory unavailable")?
+                .join("jj-store/attachments")
+                .join(key),
+        },
+    })
 }
 impl Attachment {
     pub async fn open(
@@ -116,21 +137,7 @@ impl Attachment {
         let client = connection.connect_with(token.clone()).await?;
         client.authorize(true).await?;
         let destination = target(&destination)?;
-        let key = hex::encode(Sha256::digest(destination.as_os_str().as_encoded_bytes()));
-        let state = match state {
-            Some(state) => state,
-            None => match &cache {
-                Some(cache) => target(cache)?
-                    .parent()
-                    .ok_or("cache parent")?
-                    .join(".jj-store-attachments")
-                    .join(key),
-                None => dirs::data_local_dir()
-                    .ok_or("client data directory unavailable")?
-                    .join("jj-store/attachments")
-                    .join(key),
-            },
-        };
+        let state = state_path(&destination, cache.as_deref(), state)?;
         let state = jj_store_server::policy::outside_checkout(&state)?;
         if state.starts_with(&destination) || destination.starts_with(&state) {
             return Err("attachment state must be separate from the physical checkout".into());

@@ -1,5 +1,6 @@
 # Native commands
 
+- `jj store init`: create a new repository and its first physical workspace.
 - `jj store attach`: create a physical workspace for an existing repository.
 - `jj store status`: inspect authoritative operation heads.
 - `jj store doctor`: check binding and current access without publishing.
@@ -15,5 +16,5 @@
 - `jj-store config`, `doctor`, and `operator`: configure, inspect and administer
   it.
 
-Repository creation commands remain under implementation; the milestone ledger
-is the authority for completion.
+Repository token administration commands remain under implementation; the
+milestone ledger is the authority for completion.

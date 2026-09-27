@@ -43,8 +43,8 @@ directory. Its destination must be empty and its logical workspace name must be
 unique. `store status` and `store doctor` inspect remote heads without
 snapshotting local files or reconciling operations. `store capabilities`
 distinguishes verified native commands from unsupported or still-unqualified
-ones. Executable creation, server administration and the remaining presentation
-matrix stay gated by M3.
+ones. The ledger records command-family completion and the remaining
+presentation matrix.
 
 `store login` validates a token before storing it in the platform credential
 facility; stdin or a hidden terminal prompt supplies the secret. `store logout`
@@ -56,8 +56,8 @@ conventions; JSON results are plain, newline-terminated and never paged.
 A hosted-RPC acceptance fixture creates a repository through the operator API,
 then attaches and describes history with the actual custom jj executable. It
 reopens the host with no in-memory repository directory. This qualifies dynamic
-routing; init/serve-local and standalone server command presentation remain
-separate gates.
+routing; standalone process and initialization have separate cold executable
+acceptance below.
 
 ## Standalone process
 
@@ -89,3 +89,11 @@ workspace and path changes on retry fail explicitly. Cache initialization stages
 complete bindings before rename. Physical metadata appears only after
 publication is acknowledged; resuming never snapshots or overwrites source
 files.
+
+`store init` provisions a new repository using a separate operator credential,
+durably retaining generated repository/epoch IDs before contacting the server.
+The initial admin credential is saved to the OS facility or provided explicitly
+through the automation environment. It reuses recoverable attachment; repeating
+an acknowledged initialization cannot create another repository or workspace.
+Current admin access with the exact retained epoch can resolve a lost creation
+acknowledgement after operator revocation.

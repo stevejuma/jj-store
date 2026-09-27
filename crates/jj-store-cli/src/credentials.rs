@@ -47,6 +47,28 @@ fn entry(connection: &Connection) -> AuthorityResult<keyring::Entry> {
         .map_err(|_| "OS credential facility is unavailable".into())
 }
 
+/// Provision the initial admin account before remote creation; no file fallback.
+pub fn provision(connection: &Connection) -> AuthorityResult<BearerToken> {
+    if environment_present() {
+        return resolve(connection);
+    }
+    let directory = dirs::data_local_dir()
+        .ok_or("OS credential lock directory unavailable")?
+        .join("jj-store/repository-credentials");
+    with_operator_lock(&directory, &account(connection), || {
+        let entry = entry(connection)?;
+        match entry.get_password() {
+            Ok(text) => Ok(BearerToken::parse(&Zeroizing::new(text))
+                .map_err(|_| "invalid saved repository credential")?),
+            Err(keyring::Error::NoEntry) => {
+                let token = BearerToken::generate()?;
+                save(connection, &token)?;
+                Ok(token)
+            }
+            Err(_) => Err("OS credential facility unavailable".into()),
+        }
+    })
+}
 fn operator_entry(endpoint: &str) -> AuthorityResult<keyring::Entry> {
     let digest = hex::encode(Sha256::digest(endpoint.as_bytes()));
     keyring::Entry::new(SERVICE, &format!("operator/{digest}"))

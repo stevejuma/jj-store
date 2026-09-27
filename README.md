@@ -2,8 +2,9 @@
 
 Native, centrally authoritative Jujutsu repository storage backed by RustFS. The
 source repository is Git-colocated; served repositories have no Git, SQL, or
-relay dependency. This project is under implementation and is not yet a usable
-repository server. No existing repository migration is provided.
+relay dependency. The first release remains under implementation; the progress
+ledger records qualified native CLI/server capabilities and remaining gates. No
+existing repository migration is provided.
 
 - [Implementation plan](docs/implementation-plan.md)
 - [Progress and next action](spec/src/milestones.md)
@@ -23,8 +24,12 @@ checks them without making changes. Use `pnpm format:rust` or
 `pnpm check` and `pnpm spec:check`. Docker is required for isolated real RustFS
 conformance, not unit tests.
 
-Runtime binaries are added at the native integration milestone. Use explicit
-build paths; development never replaces the installed `jj`.
+The workspace builds `target/debug/jj` and `target/debug/jj-store`. Start with
+`target/debug/jj-store config example` and the
+[server guide](docs/cli/server.md). Use [jj store init](docs/cli/init.md) for a
+new native repository and [attach](docs/cli/attach.md) for another physical
+workspace. Use explicit build paths; development never replaces the installed
+`jj`.
 
 On macOS with Xcode license prompts, prefix checks with
 `DEVELOPER_DIR=/Library/Developer/CommandLineTools` to use the installed Command

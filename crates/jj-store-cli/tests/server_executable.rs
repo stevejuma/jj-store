@@ -377,11 +377,16 @@ fn native(f: &Fixture, token: &BearerToken, args: &[&str]) -> Output {
         )
         .unwrap();
     }
-    Command::new(env!("CARGO_BIN_EXE_jj"))
+    let mut command = Command::new(env!("CARGO_BIN_EXE_jj"));
+    command
         .current_dir(f.root.path())
         .env("JJ_CONFIG", config)
         .env("JJ_STORE_TOKEN", token.expose().as_str())
-        .env_remove("JJ_STORE_OPERATOR_TOKEN")
+        .env_remove("JJ_STORE_OPERATOR_TOKEN");
+    if args.starts_with(&["store", "init"]) {
+        command.env("JJ_STORE_OPERATOR_TOKEN", f.operator.expose().as_str());
+    }
+    command
         .args(["--no-pager", "--color=never"])
         .args(args)
         .output()
@@ -429,12 +434,32 @@ async fn real_rustfs_server_cli_restart_and_revocation() {
             .replace("http://127.0.0.1:7443/", &format!("{endpoint}/")),
     )
     .unwrap();
-    let mut id = [0; 16];
-    getrandom::fill(&mut id).unwrap();
-    let repository = m::RepositoryId::new(id);
-    getrandom::fill(&mut id).unwrap();
-    let epoch = m::EpochId::new(id);
     let admin = BearerToken::generate().unwrap();
+    let init = [
+        "store",
+        "init",
+        "work",
+        "--cache",
+        "cache",
+        "--state-dir",
+        "init-state",
+        "--workspace",
+        "deployment-a",
+        "--endpoint",
+        &endpoint,
+        "--insecure-loopback",
+        "--format=json",
+    ];
+    let created: serde_json::Value =
+        serde_json::from_str(&success(native(&f, &admin, &init))).unwrap();
+    let repeated: serde_json::Value =
+        serde_json::from_str(&success(native(&f, &admin, &init))).unwrap();
+    assert_eq!(created, repeated);
+    let repository: m::RepositoryId = created["repository"].as_str().unwrap().parse().unwrap();
+    let journal: serde_json::Value =
+        serde_json::from_slice(&fs::read(f.root.path().join("init-state/creation.json")).unwrap())
+            .unwrap();
+    let epoch: m::EpochId = journal["epoch"].as_str().unwrap().parse().unwrap();
     let options = Options {
         insecure_loopback: true,
         ..Options::default()
@@ -443,29 +468,7 @@ async fn real_rustfs_server_cli_restart_and_revocation() {
         NativeClient::connect(&endpoint, repository, f.operator.clone(), options.clone())
             .await
             .unwrap();
-    let created = operator.create_repository(epoch, &admin).await.unwrap();
-    assert_eq!(
-        created,
-        operator.create_repository(epoch, &admin).await.unwrap()
-    );
-    success(native(
-        &f,
-        &admin,
-        &[
-            "store",
-            "attach",
-            "work",
-            "--cache",
-            "cache",
-            "--workspace",
-            "deployment-a",
-            "--endpoint",
-            &endpoint,
-            "--repo-id",
-            &repository.to_string(),
-            "--insecure-loopback",
-        ],
-    ));
+    operator.create_repository(epoch, &admin).await.unwrap();
     fs::write(
         f.root.path().join("work/readme.txt"),
         "durable native publication\n",

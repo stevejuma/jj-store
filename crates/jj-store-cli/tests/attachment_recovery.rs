@@ -34,6 +34,8 @@ struct Fixture {
     root: tempfile::TempDir,
     connection: Connection,
     token: BearerToken,
+    operator: BearerToken,
+    policies: Arc<Policies>,
     client: NativeClient,
     server: tokio::task::JoinHandle<()>,
 }
@@ -53,9 +55,10 @@ impl Fixture {
                 None,
             )
             .unwrap();
+        let policies = Arc::new(Policies(Mutex::new(policy)));
         let host = RepositoryHost::new(
             Arc::new(MemoryStore::default()),
-            Arc::new(Policies(Mutex::new(policy))),
+            policies.clone(),
             Arc::new(SystemClock),
             Protection::default(),
             SessionLimits::default(),
@@ -91,6 +94,8 @@ impl Fixture {
             root,
             connection,
             token,
+            operator,
+            policies,
             client,
             server,
         }
@@ -129,6 +134,33 @@ impl Fixture {
             .env_remove("JJ_STORE_PAGER")
             .args(["--no-pager", "--color=never"])
             .args(args)
+            .output()
+            .unwrap()
+    }
+    fn init(&self, operator: &BearerToken, extra: &[&str]) -> Output {
+        Command::new(env!("CARGO_BIN_EXE_jj"))
+            .current_dir(self.root.path())
+            .env("JJ_CONFIG", self.root.path().join("jj.toml"))
+            .env("JJ_STORE_TOKEN", self.token.expose().as_str())
+            .env("JJ_STORE_OPERATOR_TOKEN", operator.expose().as_str())
+            .args([
+                "--no-pager",
+                "--color=never",
+                "store",
+                "init",
+                "created",
+                "--endpoint",
+                &self.connection.endpoint,
+                "--insecure-loopback",
+                "--workspace",
+                "created",
+                "--cache",
+                "created-cache",
+                "--state-dir",
+                "created-state",
+                "--format=json",
+            ])
+            .args(extra)
             .output()
             .unwrap()
     }
@@ -297,4 +329,94 @@ async fn recovery_preserves_unowned_physical_metadata_stage() {
     assert!(attachment.finish(&f.settings()).await.is_err());
     assert_eq!(fs::read(stage.join("user-data")).unwrap(), b"must survive");
     assert!(!f.root.path().join("work/.jj").exists());
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn executable_init_reuses_durable_identity_after_denial_and_lost_creation_ack() {
+    let f = Fixture::new().await;
+    let bad = BearerToken::generate().unwrap();
+    assert!(!f.init(&bad, &[]).status.success());
+    let journal = f.root.path().join("created-state/creation.json");
+    let before: serde_json::Value = serde_json::from_slice(&fs::read(&journal).unwrap()).unwrap();
+    assert_eq!(before["created"], false);
+    assert!(!f.root.path().join("created/.jj").exists());
+    let result: serde_json::Value =
+        serde_json::from_str(&success(f.init(&f.operator, &[]))).unwrap();
+    assert_eq!(result["repository"], before["connection"]["repository"]);
+    let repo: m::RepositoryId = result["repository"].as_str().unwrap().parse().unwrap();
+    let client = Connection::new(&f.connection.endpoint, repo, true, None)
+        .unwrap()
+        .connect_with(f.token.clone())
+        .await
+        .unwrap();
+    let heads = client.heads().await.unwrap();
+    fs::write(
+        f.root.path().join("created/local.txt"),
+        "unsnapshotted init retry",
+    )
+    .unwrap();
+    f.policies.0.lock().unwrap().revoke(f.operator.id());
+    // Simulate loss of the creation acknowledgement in durable client state.
+    let mut record: serde_json::Value =
+        serde_json::from_slice(&fs::read(&journal).unwrap()).unwrap();
+    record["created"] = false.into();
+    fs::write(&journal, serde_json::to_vec(&record).unwrap()).unwrap();
+    let repeated: serde_json::Value = serde_json::from_str(&success(f.init(&bad, &[]))).unwrap();
+    assert_eq!(repeated, result);
+    assert_eq!(client.heads().await.unwrap(), heads);
+    assert_eq!(
+        fs::read(f.root.path().join("created/local.txt")).unwrap(),
+        b"unsnapshotted init retry"
+    );
+    assert!(
+        !fs::read_to_string(&journal)
+            .unwrap()
+            .contains(f.token.expose().as_str())
+    );
+    success(f.cli(&[
+        "-R",
+        "created",
+        "describe",
+        "-m",
+        "initialized native history",
+    ]));
+    assert!(
+        success(f.cli(&["-R", "created", "log", "--no-graph", "-T", "description"]))
+            .contains("initialized native history")
+    );
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn executable_init_rejects_changed_epoch_or_credential_and_preserves_existing_files() {
+    let f = Fixture::new().await;
+    fs::create_dir(f.root.path().join("created")).unwrap();
+    fs::write(f.root.path().join("created/owned.txt"), "keep").unwrap();
+    assert!(!f.init(&f.operator, &[]).status.success());
+    assert_eq!(
+        fs::read(f.root.path().join("created/owned.txt")).unwrap(),
+        b"keep"
+    );
+    assert!(!f.root.path().join("created-state/creation.json").exists());
+    fs::remove_file(f.root.path().join("created/owned.txt")).unwrap();
+    let result: serde_json::Value =
+        serde_json::from_str(&success(f.init(&f.operator, &[]))).unwrap();
+    let repo = result["repository"].as_str().unwrap().parse().unwrap();
+    let client = Connection::new(&f.connection.endpoint, repo, true, None)
+        .unwrap()
+        .connect_with(f.token.clone())
+        .await
+        .unwrap();
+    let heads = client.heads().await.unwrap();
+    let journal = f.root.path().join("created-state/creation.json");
+    let mut record: serde_json::Value =
+        serde_json::from_slice(&fs::read(&journal).unwrap()).unwrap();
+    record["created"] = false.into();
+    record["epoch"] = m::EpochId::new([222; 16]).to_string().into();
+    fs::write(&journal, serde_json::to_vec(&record).unwrap()).unwrap();
+    assert!(!f.init(&f.operator, &[]).status.success());
+    assert_eq!(client.heads().await.unwrap(), heads);
+    record["admin"] = m::TokenId::new([223; 16]).to_string().into();
+    fs::write(&journal, serde_json::to_vec(&record).unwrap()).unwrap();
+    assert!(!f.init(&f.operator, &[]).status.success());
+    assert_eq!(client.heads().await.unwrap(), heads);
 }
