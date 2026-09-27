@@ -122,3 +122,14 @@ The
 retains nine real-storage probes while granting through custom `jj`, revoking
 through standalone `jj-store`, and retrying the original grant after revocation.
 The retry returns the original receipt without restoring revoked access.
+
+The standalone server harness now runs native initialization, attachment, token
+administration and cache-free restart over TLS with the development override
+disabled. A dedicated cold process fixture checks trust, hostname and plaintext
+rejection. Earlier reports retain their original plaintext-loopback scope.
+
+The [TLS deployment report](../../docs/evidence/m3-tls-server-rustfs.json)
+retains nine probes with zero failures. The
+[M3 gate audit](../../docs/evidence/m3-gate-audit.md) maps native CLI,
+concurrency, authorization, presentation and recovery evidence to the
+vertical-slice gate, and records remaining M4/M5/M6/M8a work explicitly.

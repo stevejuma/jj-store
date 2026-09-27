@@ -30,3 +30,8 @@ have separate codec/backend fixtures because upstream exposes no file-copy
 command in this release. External merge tools and other signing backends are not
 covered by this matrix. Non-Unix platform qualification remains a release gate;
 the ledger records completion.
+
+The standalone TLS/RustFS recovery fixture uses a generated localhost
+certificate with explicit client trust and no plaintext override. This qualifies
+the production TLS transport on the current host; other deployment topologies
+and release platforms remain separate gates.

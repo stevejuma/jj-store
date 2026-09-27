@@ -109,3 +109,10 @@ grant credential. Local journals retain only the grant ID and a domain-separated
 fingerprint of its high-entropy bytes. They never retain bearer secrets. Grant
 status/retry requires the original credential through the same protected input
 channels and authenticates the admin before reading server policy or receipts.
+
+The standalone TLS fixture rejects untrusted certificates, mismatched hostnames
+and plaintext connections before repository requests. The positive deployment
+fixture uses a generated localhost certificate and explicit trust file; it
+qualifies the production TLS path on an isolated loopback interface, not
+external DNS, certificate automation, load balancers or additional serving
+topologies.

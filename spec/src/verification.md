@@ -23,15 +23,15 @@ passing concrete tests linked from the progress ledger.
 | JST-PUB-004    | Implemented | `crates/jj-store-wal/tests/publication.rs`; `docs/evidence/m2-publication-rustfs.json`; [M2](milestones.md)                                          |
 | JST-PUB-005    | Implemented | `crates/jj-store-wal/tests/publication.rs`; `docs/evidence/m2-publication-rustfs.json`; [M2](milestones.md)                                          |
 | JST-PUB-006    | Implemented | `crates/jj-store-wal/tests/publication.rs`; `docs/evidence/m2-publication-rustfs.json`; [M2](milestones.md)                                          |
-| JST-JJ-001     | Planned     | [Native JJ integration](jj-integration.md); [milestone gate](milestones.md)                                                                          |
-| JST-JJ-002     | Planned     | [Native JJ integration](jj-integration.md); [milestone gate](milestones.md)                                                                          |
+| JST-JJ-001     | Implemented | [M3 gate audit](../../docs/evidence/m3-gate-audit.md); [native and executable evidence](milestones.md)                                               |
+| JST-JJ-002     | Implemented | [M3 gate audit](../../docs/evidence/m3-gate-audit.md); [native and executable evidence](milestones.md)                                               |
 | JST-JJ-003     | Planned     | [Native JJ integration](jj-integration.md); [milestone gate](milestones.md)                                                                          |
-| JST-JJ-004     | Planned     | [Native JJ integration](jj-integration.md); [milestone gate](milestones.md)                                                                          |
+| JST-JJ-004     | Implemented | [M3 gate audit](../../docs/evidence/m3-gate-audit.md); [native and executable evidence](milestones.md)                                               |
 | JST-JJ-005     | Planned     | [Native JJ integration](jj-integration.md); [milestone gate](milestones.md)                                                                          |
-| JST-CLI-001    | Planned     | [CLI and server commands](cli.md); [milestone gate](milestones.md)                                                                                   |
-| JST-CLI-002    | Planned     | [CLI and server commands](cli.md); [milestone gate](milestones.md)                                                                                   |
-| JST-CLI-003    | Planned     | [CLI and server commands](cli.md); [milestone gate](milestones.md)                                                                                   |
-| JST-CLI-004    | Planned     | [CLI and server commands](cli.md); [milestone gate](milestones.md)                                                                                   |
+| JST-CLI-001    | Implemented | [M3 gate audit](../../docs/evidence/m3-gate-audit.md); [native and executable evidence](milestones.md)                                               |
+| JST-CLI-002    | Implemented | [M3 gate audit](../../docs/evidence/m3-gate-audit.md); [native and executable evidence](milestones.md)                                               |
+| JST-CLI-003    | Implemented | [M3 gate audit](../../docs/evidence/m3-gate-audit.md); [native and executable evidence](milestones.md)                                               |
+| JST-CLI-004    | Implemented | [M3 gate audit](../../docs/evidence/m3-gate-audit.md); [native and executable evidence](milestones.md)                                               |
 | JST-API-001    | Planned     | [Read APIs and browser](api.md); [milestone gate](milestones.md)                                                                                     |
 | JST-API-002    | Planned     | [Read APIs and browser](api.md); [milestone gate](milestones.md)                                                                                     |
 | JST-API-003    | Planned     | [Read APIs and browser](api.md); [milestone gate](milestones.md)                                                                                     |

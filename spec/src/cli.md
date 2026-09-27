@@ -123,3 +123,8 @@ state and SSH sign/re-sign/unsign behavior. Native Git transport and destructive
 GC commands fail without publication. Other external merge tools, signers and
 release platforms remain separately qualified; file-copy snapshot evidence does
 not replace native copy-history codec/query evidence.
+
+Standalone TLS acceptance uses generated certificates, explicit client trust and
+hostname verification, with the development plaintext override disabled. Cold
+real-storage CLI recovery runs through this same TLS listener; memory-backed RPC
+acceptance and plaintext loopback startup remain separate evidence lanes.

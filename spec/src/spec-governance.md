@@ -68,3 +68,9 @@ RPC are rejected by the existing boundary checker.
 Server composition has an explicit layer in the boundary checker. Regression
 coverage rejects dependencies on CLI presentation and direct upstream JJ types,
 while permitting the owned native/service/RPC composition interfaces.
+
+The standalone server storage lane qualifies TLS using a generated certificate
+and disposable credentials. Retained reports state transport and topology scope;
+previous plaintext-loopback reports remain unchanged. Protocol-rejection
+fixtures assert a local transport failure rather than timing-dependent gRPC
+status codes. No generated private keys are retained in reports or checkouts.

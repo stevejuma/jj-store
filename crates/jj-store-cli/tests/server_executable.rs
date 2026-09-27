@@ -59,6 +59,26 @@ impl Fixture {
             real: false,
         }
     }
+    fn enable_tls(&self) -> Vec<u8> {
+        let certificate = rcgen::generate_simple_self_signed(vec!["localhost".into()]).unwrap();
+        let pem = certificate.cert.pem();
+        fs::write(self.root.path().join("server.crt"), &pem).unwrap();
+        fs::write(
+            self.root.path().join("server.key"),
+            certificate.signing_key.serialize_pem(),
+        )
+        .unwrap();
+        let config = fs::read_to_string(&self.config)
+            .unwrap()
+            .replacen("insecure_loopback = true", "insecure_loopback = false", 1)
+            .replace("http://127.0.0.1:7443/", "https://localhost:7443/")
+            .replace(
+                "# [tls]\n# certificate = \"./server.crt\"\n# private_key = \"./server.key\"",
+                "[tls]\ncertificate = \"./server.crt\"\nprivate_key = \"./server.key\"",
+            );
+        fs::write(&self.config, config).unwrap();
+        pem.into_bytes()
+    }
     fn command(&self) -> Command {
         let mut cmd = command();
         cmd.current_dir(self.root.path())
@@ -368,6 +388,73 @@ fn server_rejects_missing_credentials_invalid_tls_and_shared_plaintext_before_li
     assert!(!String::from_utf8_lossy(&tls.stdout).contains("listening"));
 }
 
+#[cfg(unix)]
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn cold_tls_server_checks_trust_hostname_and_plaintext() {
+    use jj_store_rpc::client::{NativeClient, Options};
+    let f = Fixture::new();
+    let pem = f.enable_tls();
+    let mut running = f.start(false);
+    assert_eq!(running.event["transport"], "tls");
+    let address = running.event["address"].as_str().unwrap();
+    let port = address.parse::<std::net::SocketAddr>().unwrap().port();
+    let endpoint = format!("https://localhost:{port}");
+    let repo = jj_store_model::RepositoryId::new([43; 16]);
+    assert!(
+        NativeClient::connect(&endpoint, repo, f.operator.clone(), Options::default())
+            .await
+            .is_err()
+    );
+    let trusted = Options {
+        ca_certificate_pem: Some(pem),
+        ..Options::default()
+    };
+    assert!(
+        NativeClient::connect(
+            &format!("https://{address}"),
+            repo,
+            f.operator.clone(),
+            trusted.clone()
+        )
+        .await
+        .is_err()
+    );
+    // Tonic can return a plaintext HTTP/2 channel before the peer rejects its
+    // preface. Drive an RPC so acceptance cannot stop at TCP establishment.
+    let plaintext = NativeClient::connect(
+        &format!("http://{address}"),
+        repo,
+        f.operator.clone(),
+        Options {
+            insecure_loopback: true,
+            timeout: Duration::from_secs(2),
+            ..Options::default()
+        },
+    )
+    .await;
+    match plaintext {
+        Ok(client) => {
+            let error = client.heads().await.unwrap_err();
+            // The h2 preface can race the TLS alert and map to Cancelled,
+            // Unknown or Unavailable. A local transport source, rather than a
+            // decoded remote application status, is the relevant invariant.
+            assert!(
+                std::error::Error::source(&error)
+                    .is_some_and(|source| source.is::<tonic::transport::Error>()),
+                "plaintext reached application handling: {error}"
+            );
+        }
+        Err(error) => assert_eq!(error.code(), tonic::Code::Unavailable),
+    }
+    // A completed TLS handshake needs no storage access. Authenticated native
+    // requests are separately exercised by the real RustFS deployment fixture.
+    let client = NativeClient::connect(&endpoint, repo, f.operator.clone(), trusted)
+        .await
+        .unwrap();
+    drop(client);
+    running.terminate();
+}
+
 fn native(f: &Fixture, token: &BearerToken, args: &[&str]) -> Output {
     native_command(f, token, args).output().unwrap()
 }
@@ -423,15 +510,18 @@ async fn real_rustfs_server_cli_restart_and_revocation() {
         .replace("http://127.0.0.1:9000/", &format!("{storage_endpoint}/"))
         .replace("bucket = \"jj-store\"", "bucket = \"jj-store-contract\"");
     fs::write(&f.config, text).unwrap();
+    let pem = f.enable_tls();
     let mut running = f.start(false);
+    assert_eq!(running.event["transport"], "tls");
     let address = running.event["address"].as_str().unwrap().to_owned();
-    let endpoint = format!("http://{address}");
+    let port = address.parse::<std::net::SocketAddr>().unwrap().port();
+    let endpoint = format!("https://localhost:{port}");
     fs::write(
         &f.config,
         fs::read_to_string(&f.config)
             .unwrap()
             .replace("bind = \"127.0.0.1:0\"", &format!("bind = \"{address}\""))
-            .replace("http://127.0.0.1:7443/", &format!("{endpoint}/")),
+            .replace("https://localhost:7443/", &format!("{endpoint}/")),
     )
     .unwrap();
     let admin = BearerToken::generate().unwrap();
@@ -447,7 +537,8 @@ async fn real_rustfs_server_cli_restart_and_revocation() {
         "deployment-a",
         "--endpoint",
         &endpoint,
-        "--insecure-loopback",
+        "--ca-certificate",
+        "server.crt",
         "--format=json",
     ];
     let created: serde_json::Value =
@@ -461,7 +552,7 @@ async fn real_rustfs_server_cli_restart_and_revocation() {
             .unwrap();
     let epoch: m::EpochId = journal["epoch"].as_str().unwrap().parse().unwrap();
     let options = Options {
-        insecure_loopback: true,
+        ca_certificate_pem: Some(pem),
         ..Options::default()
     };
     let operator =
@@ -521,7 +612,8 @@ async fn real_rustfs_server_cli_restart_and_revocation() {
             &endpoint,
             "--repo-id",
             &repository.to_string(),
-            "--insecure-loopback",
+            "--ca-certificate",
+            "server.crt",
         ],
     ));
     success(native(
@@ -677,7 +769,8 @@ async fn real_rustfs_server_cli_restart_and_revocation() {
                 &endpoint,
                 "--repo-id",
                 &repository.to_string(),
-                "--insecure-loopback",
+                "--ca-certificate",
+                "server.crt",
                 "--format=json",
                 "grant",
                 "--principal",
@@ -707,7 +800,8 @@ async fn real_rustfs_server_cli_restart_and_revocation() {
                 &endpoint,
                 "--repo-id",
                 &repository.to_string(),
-                "--insecure-loopback",
+                "--ca-certificate",
+                "server.crt",
                 "--format=json",
                 "revoke",
                 "--token-id",
@@ -731,7 +825,8 @@ async fn real_rustfs_server_cli_restart_and_revocation() {
                 &endpoint,
                 "--repo-id",
                 &repository.to_string(),
-                "--insecure-loopback",
+                "--ca-certificate",
+                "server.crt",
                 "--format=json",
                 "retry",
                 "--request",

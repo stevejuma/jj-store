@@ -350,7 +350,7 @@ pub async fn run(
     }
 }
 pub fn capabilities() -> serde_json::Value {
-    json!({"version":1,"native_profile":jj_store_jj::factories::PROFILE,"transport":"jj_store.native.v1","qualification":"loopback RPC and pinned single-node RustFS cold recovery; shared deployment and remaining release platforms remain gated","commands":{
+    json!({"version":1,"native_profile":jj_store_jj::factories::PROFILE,"transport":"jj_store.native.v1","qualification":"native RPC and pinned single-node RustFS cold TLS recovery on current Unix host; other deployment topologies and release platforms remain gated","commands":{
         "edit":"verified","describe":"verified","log":"verified","op log":"verified","evolog":"verified",
         "new":"verified","diff":"verified","bookmark create":"verified","bookmark set":"verified","bookmark delete":"verified","bookmark list":"verified",
         "abandon":"verified","rebase":"verified","squash":"verified","split":"verified","undo":"verified",
