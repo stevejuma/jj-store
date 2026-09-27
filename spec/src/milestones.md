@@ -29,8 +29,8 @@ adds evidence here in its enclosing Jujutsu change.
 | M4.1        | Done        | M3         | JST-API-001,JST-API-002,JST-JJ-003                                      | Pinned three-graph reads with zero GET publications                                   | Retain pinned read conformance                      | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010,E-M4-011,E-M4-012,E-M4-013,E-M4-014                                        |
 | M4.2        | In progress | M4.1       | JST-API-003,JST-API-006                                                 | Committed SSE and generated API contract deployment qualification                     | Qualify real RustFS/TLS SSE                         | E-M4-015,E-M4-016,E-M4-017,E-SCOPE-001                                                                                                                               |
 | M4.3        | Deferred    | M4.1,M5,M6 | JST-API-004,JST-API-005                                                 | Complete browser mutations/conflicts/search/freshness and deployed browser acceptance | Resume UI only when requested                       | E-SCOPE-001                                                                                                                                                          |
-| M5          | In progress | M4.1       | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Authenticated typed commands and shared RPC policy                                    | Implement explicit operation reconciliation         | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003                                                                                                                               |
-| M5.1        | In progress | M4.1       | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Basic changes/refs/reconcile; preview receipt and semantic policy                     | Implement explicit operation reconciliation         | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003                                                                                                                               |
+| M5          | In progress | M4.1       | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Authenticated typed commands and shared RPC policy                                    | Implement abandon and conflict resolution           | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004                                                                                                                      |
+| M5.1        | Done        | M4.1       | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Basic changes/refs/reconcile; preview receipt and semantic policy                     | Retain basic mutation acceptance                    | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004                                                                                                                      |
 | M5.2        | Planned     | M5.1       | JST-MUT-003                                                             | Full abandon descendant bookmark workspace/evolution parity                           | Implement abandon                                   | -                                                                                                                                                                    |
 | M5.3        | Planned     | M5.1       | JST-MUT-004                                                             | Atomic stale-safe resolution with native conflict variants                            | Implement resolve                                   | -                                                                                                                                                                    |
 | M6          | Planned     | M5         | JST-ADAPT-001,JST-ADAPT-002,JST-ADAPT-003,JST-ADAPT-004                 | Replay-equivalent searchable projection with freshness                                | Implement adapters and search                       | -                                                                                                                                                                    |
@@ -5549,6 +5549,119 @@ and named tests are checked by the progress gate.
     "remaining": [],
     "versions": "Rust 1.97.1 with rustfmt; jj-cli/jj-lib 0.45.1 at 7c41cdeb16b6b321c64e789a966b6adf723816a5; jj-native-0.45.1-v1.",
     "formats": "Adds V1 HTTP preview/apply/status and capability entries for five commands, generated OpenAPI/TypeScript and WAL Snapshot schema metadata. Adds existing schemars dependency to WAL lock entry; persisted native/WAL/intent/StoredResult formats unchanged. No browser feature or visual changes; generated TypeScript declaration is the sole web edit. Enclosing Jujutsu change is the revision reference. ReconcileOperations, Abandon and ResolveConflicts remain M5 gates. Real RustFS/TLS SSE qualification awaits stopped shared Docker; browser feature and deployment gates remain Deferred M4.3."
+  },
+  {
+    "id": "E-M5-004",
+    "tasks": ["M5", "M5.1"],
+    "date": "2026-09-27",
+    "kind": "explicit-native-reconciliation",
+    "files": [
+      "crates/jj-store-cli/tests/native_lifecycle/http_mutations.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/reconciliation.rs",
+      "crates/jj-store-cli/tests/native_lifecycle.rs",
+      "crates/jj-store-http/src/contract/tests.rs",
+      "crates/jj-store-http/src/dto.rs",
+      "crates/jj-store-jj/src/commands/execute.rs",
+      "crates/jj-store-jj/src/commands/mod.rs",
+      "crates/jj-store-jj/src/commands/reconcile.rs",
+      "crates/jj-store-service/src/commands.rs",
+      "crates/jj-store-service/src/mutations.rs",
+      "docs/evidence/m5-reconciliation.md",
+      "schemas/openapi.json",
+      "spec/src/api.md",
+      "spec/src/cli.md",
+      "spec/src/compatibility.md",
+      "spec/src/jj-integration.md",
+      "spec/src/milestones.md",
+      "spec/src/mutations.md",
+      "spec/src/verification.md",
+      "web/src/lib/api/generated.ts"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/native_lifecycle/reconciliation.rs#typed_reconciliation_merges_native_heads_rebases_descendants_and_replays_receipt",
+      "crates/jj-store-cli/tests/native_lifecycle/reconciliation.rs#typed_reconciliation_requires_exact_heads_and_explicit_current_base",
+      "crates/jj-store-cli/tests/native_lifecycle/reconciliation.rs#typed_reconciliation_recursive_ancestors_and_conflicted_bookmarks_match_upstream",
+      "crates/jj-store-cli/tests/native_lifecycle/reconciliation.rs#typed_reconciliation_resource_and_protection_failures_preserve_heads",
+      "crates/jj-store-cli/tests/native_lifecycle/http_mutations.rs#http_reconciliation_preserves_get_heads_and_publishes_only_explicit_apply"
+    ],
+    "runs": [
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle reconciliation_acceptance:: --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before implementation: Command::ReconcileOperations missing; acceptance did not compile."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle reconciliation_acceptance:: --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Original two native reconciliation acceptance fixtures pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle reconciliation --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Five expanded fixtures pass: native rewrites/retry, strict context, recursive ancestors/conflicted bookmarks, protection/resource rejection and explicit HTTP application."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle reconciliation --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All five fixtures pass after extending recursive-ancestor acceptance to three current heads."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo clippy -p jj-store-jj -p jj-store-service -p jj-store-http --all-targets --locked -- -D warnings",
+        "result": "pass",
+        "failures": 0,
+        "note": "Owning-package Clippy passes."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All normal lanes pass: rustfmt, all-target Clippy, progress/boundaries/specification, 34 actual HTTP/SSE schema responses, six schema tests, TypeScript and zero Svelte diagnostics."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test",
+        "result": "pass",
+        "failures": 0,
+        "note": "280 Rust tests including 125 native lifecycle tests pass; six external tests explicitly ignored. Also 16 governance, three storage-harness, six schema and eight browser client tests pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Production assets and locked Rust workspace build pass; browser runtime bundle unchanged."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 13 lanes pass, including eight cold Playwright interaction/accessibility tests, mdBook, spec-first, rustfmt and existing workspace/contract lanes."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm format:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Pinned rustfmt and Prettier pass."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "32 tasks validate."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "13 protected files mapped to six canonical chapters pass."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "versions": "Rust 1.97.1 with rustfmt; jj-cli/jj-lib 0.45.1 at 7c41cdeb16b6b321c64e789a966b6adf723816a5; jj-native-0.45.1-v1.",
+    "formats": "Adds reconcile_operations with explicit current base to typed Command and generated HTTP contracts/capabilities. Reports, StoredResult V1, other canonical command digests, native codecs and WAL formats are unchanged. HeadsNormalized is the existing semantic kind. No browser behavior or visual changes; generated TypeScript only. Enclosing Jujutsu change is the revision reference. Abandon and ResolveConflicts remain M5 gates. Real RustFS/TLS qualification remains blocked by stopped shared Docker; M4.3 browser work stays Deferred. M5.1 basic command, preview/apply/status, receipt and reconciliation gate is complete; M5 remains In progress for abandon and conflict resolution."
   }
 ]
 ```

@@ -362,3 +362,10 @@ publish and does not authorize later apply.
 Generated OpenAPI and TypeScript contracts include these routes and owned DTOs.
 The generated client declaration is an API artifact; browser components,
 interaction behavior and visual changes remain deferred under M4.3.
+
+The typed capability registry also advertises reconcile_operations. This command
+requires `base` as a full current operation ID and an exact expected head set
+with at least two heads. It merges all heads explicitly; GET and HEAD routes
+remain incapable of reconciliation. The base selects report comparison and merge
+ordering, while native JJ computes actual common ancestors. API types are
+regenerated without browser feature work.

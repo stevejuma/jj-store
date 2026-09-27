@@ -187,7 +187,11 @@ fn intent(
         request.request_id,
         publication_id(repository, principal, request.request_id),
         request.expected.clone(),
-        SemanticKind::OperationPublished,
+        if matches!(request.command, Command::ReconcileOperations { .. }) {
+            SemanticKind::HeadsNormalized
+        } else {
+            SemanticKind::OperationPublished
+        },
         encode(request, 512 * 1024)?,
     )?)
 }

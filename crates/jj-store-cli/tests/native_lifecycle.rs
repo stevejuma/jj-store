@@ -1108,3 +1108,6 @@ mod mutation_acceptance;
 
 #[path = "native_lifecycle/http_mutations.rs"]
 mod http_mutation_acceptance;
+
+#[path = "native_lifecycle/reconciliation.rs"]
+mod reconciliation_acceptance;

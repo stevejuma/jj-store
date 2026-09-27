@@ -350,3 +350,13 @@ these DTOs carry no native session or publication capability. Command shape
 validation is shared with canonical intent construction before serialization.
 Native execution still runs anew for a noncommitted apply and stages only
 immutable objects until guarded publication.
+
+Explicit typed reconciliation uses RepoLoader::merge_operations on the exact
+current heads, with the requested base first and the other heads sorted by full
+ID. Native common-ancestor discovery, recursive ancestor merges and descendant
+rebase semantics remain upstream-owned. The returned operation remains
+unpublished. Report comparison is against the explicit base view. Preflight
+loads the bounded reachable operation ancestry and reserves its squared node
+count times head count from the command work budget before native merging.
+Requests exceeding these conservative bounds fail; limits are not throughput or
+production CPU qualification.

@@ -13,6 +13,7 @@ struct Access {
     session: Arc<NativeSession>,
     expected: Snapshot,
     principal: m::PrincipalId,
+    operation: m::OperationId,
     inventory: BTreeSet<m::ObjectKey>,
 }
 fn error(error: wal::Error) -> query::Error {
@@ -31,11 +32,7 @@ impl ReadAccess for Access {
         self.expected.epoch
     }
     fn operation(&self) -> m::OperationId {
-        *self
-            .expected
-            .heads
-            .first()
-            .expect("checked single operation")
+        self.operation
     }
     fn inventory(&self) -> &BTreeSet<m::ObjectKey> {
         &self.inventory
@@ -48,6 +45,9 @@ impl ReadAccess for Access {
 impl MutationAccess for Access {
     fn principal(&self) -> m::PrincipalId {
         self.principal
+    }
+    fn heads(&self) -> &BTreeSet<m::OperationId> {
+        &self.expected.heads
     }
     async fn authorize_write(&self) -> query::Result<()> {
         let principal = self
@@ -78,9 +78,20 @@ impl NativeSession {
             if before.manifest().snapshot() != *expected {
                 return Err(Error::Stale);
             }
-            if expected.heads.len() != 1 {
-                return Err(Error::MultipleHeads);
-            }
+            let operation = match &command {
+                Command::ReconcileOperations { base } => {
+                    if !(2..=64).contains(&expected.heads.len()) || !expected.heads.contains(base) {
+                        return Err(Error::Invalid);
+                    }
+                    *base
+                }
+                _ => {
+                    if expected.heads.len() != 1 {
+                        return Err(Error::MultipleHeads);
+                    }
+                    *expected.heads.first().unwrap()
+                }
+            };
             let inventory = self
                 .coordinator
                 .inventory(&before, self.limits.inventory_nodes)
@@ -93,6 +104,7 @@ impl NativeSession {
                 session: self.clone(),
                 expected: expected.clone(),
                 principal: principal.id(),
+                operation,
                 inventory,
             });
             access.authorize_write().await?;

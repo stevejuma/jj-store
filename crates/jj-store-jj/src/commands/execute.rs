@@ -48,6 +48,7 @@ pub(super) fn validate(command: &Command) -> Result<()> {
                 && workspace.as_ref().is_none_or(|value| name(value, 256))
         }
         Command::Describe { description, .. } => description.len() <= 65536,
+        Command::ReconcileOperations { .. } => true,
         Command::BookmarkCreate { name: value, .. } => name(value, 1024),
         Command::BookmarkMove {
             name: value,
@@ -119,6 +120,7 @@ pub(super) async fn run(
     budget: Arc<Budget>,
 ) -> Result<Prepared> {
     let principal = mutation.principal();
+    let heads = mutation.heads().clone();
     let access: Arc<dyn ReadAccess> = Arc::new(super::access::Access(mutation));
     if access
         .inventory()
@@ -165,130 +167,13 @@ pub(super) async fn run(
         .await
         .map_err(unavailable)?;
     budget.check()?;
-    let mut tx = repo.start_transaction();
-    tx.set_attribute("jj-store.principal".into(), principal.to_string());
-    let mut created = vec![];
-    let description = match command {
-        Command::New {
-            parents,
-            description,
-            workspace,
-        } => {
-            let mut parent_commits = Vec::with_capacity(parents.len());
-            for id in parents {
-                parent_commits.push(commit(&repo, access.as_ref(), id, false, &budget).await?);
-            }
-            if let Some(name) = &workspace
-                && repo
-                    .view()
-                    .get_wc_commit_id(name.as_str().as_ref())
-                    .is_none()
-            {
-                return Err(Error::Invalid);
-            }
-            let tree = jj_lib::rewrite::merge_commit_trees(tx.repo(), &parent_commits)
-                .await
-                .map_err(unavailable)?;
-            let new = tx
-                .repo_mut()
-                .new_commit(
-                    parent_commits.iter().map(|c| c.id().clone()).collect(),
-                    tree,
-                )
-                .set_description(description)
-                .write()
-                .await
-                .map_err(unavailable)?;
-            created.push(cid(new.id()));
-            if let Some(name) = workspace {
-                tx.set_workspace_name(name.as_str().as_ref());
-                tx.repo_mut()
-                    .edit(name.into(), &new)
-                    .await
-                    .map_err(unavailable)?;
-            }
-            "new change"
-        }
-        Command::Describe {
-            commit: id,
-            description,
-        } => {
-            if id == roots::ROOT_COMMIT {
-                return Err(Error::Root);
-            }
-            let old = commit(&repo, access.as_ref(), id, true, &budget).await?;
-            if old.description() != description {
-                tx.repo_mut()
-                    .transform_descendants(vec![old.id().clone()], async |rewriter| {
-                        let target = rewriter.old_commit().id() == old.id();
-                        let builder = rewriter.reparent();
-                        if target {
-                            builder.set_description(&description).write().await?;
-                        } else {
-                            builder.write().await?;
-                        }
-                        Ok(())
-                    })
-                    .await
-                    .map_err(unavailable)?;
-            }
-            "describe change"
-        }
-        Command::BookmarkCreate { name, target } => {
-            let old = repo.view().get_local_bookmark(name.as_str().as_ref());
-            if old.is_present() {
-                return Err(Error::StaleBookmark);
-            }
-            if repo.view().store_view().remote_views.values().any(|view| {
-                view.bookmarks
-                    .get(jj_lib::ref_name::RefName::new(&name))
-                    .is_some_and(|remote| remote.state == o::RemoteRefState::Tracked)
-            }) {
-                return Err(Error::Invalid);
-            }
-            let target = commit(&repo, access.as_ref(), target, false, &budget).await?;
-            tx.repo_mut().set_local_bookmark_target(
-                name.as_str().as_ref(),
-                o::RefTarget::normal(target.id().clone()),
-            );
-            "create bookmark"
-        }
-        Command::BookmarkMove {
-            name,
-            expected,
-            target,
-        } => {
-            let old = repo.view().get_local_bookmark(name.as_str().as_ref());
-            if old.is_absent() || reference(old) != expected {
-                return Err(Error::StaleBookmark);
-            }
-            let target = commit(&repo, access.as_ref(), target, false, &budget).await?;
-            tx.repo_mut().set_local_bookmark_target(
-                name.as_str().as_ref(),
-                o::RefTarget::normal(target.id().clone()),
-            );
-            "move bookmark"
-        }
-        Command::BookmarkDelete { name, expected } => {
-            let old = repo.view().get_local_bookmark(name.as_str().as_ref());
-            if old.is_absent() || reference(old) != expected {
-                return Err(Error::StaleBookmark);
-            }
-            tx.repo_mut()
-                .set_local_bookmark_target(name.as_str().as_ref(), o::RefTarget::absent());
-            "delete bookmark"
-        }
+    let (staged, mut created) = match command {
+        Command::ReconcileOperations { base } => (
+            super::reconcile::merge(&repo, &heads, base, principal, &budget).await?,
+            vec![],
+        ),
+        command => transact(&repo, access.as_ref(), command, principal, &budget).await?,
     };
-    tx.repo_mut()
-        .rebase_descendants()
-        .await
-        .map_err(unavailable)?;
-    budget.check()?;
-    let staged = tx
-        .write(format!("jj-store: {description}"))
-        .await
-        .map_err(unavailable)?
-        .leave_unpublished();
     let mut rewrites = vec![];
     for (id, predecessors) in staged
         .operation()
@@ -362,4 +247,139 @@ pub(super) async fn run(
     budget.authorize(access.as_ref()).await?;
     budget.complete_output(&result)?;
     Ok(result)
+}
+
+async fn transact(
+    repo: &Arc<ReadonlyRepo>,
+    access: &dyn ReadAccess,
+    command: Command,
+    principal: m::PrincipalId,
+    budget: &Budget,
+) -> Result<(Arc<ReadonlyRepo>, Vec<m::CommitId>)> {
+    let mut tx = repo.start_transaction();
+    tx.set_attribute("jj-store.principal".into(), principal.to_string());
+    let mut created = vec![];
+    let description = match command {
+        Command::ReconcileOperations { .. } => return Err(Error::Invalid),
+        Command::New {
+            parents,
+            description,
+            workspace,
+        } => {
+            let mut parent_commits = Vec::with_capacity(parents.len());
+            for id in parents {
+                parent_commits.push(commit(repo, access, id, false, budget).await?);
+            }
+            if let Some(name) = &workspace
+                && repo
+                    .view()
+                    .get_wc_commit_id(name.as_str().as_ref())
+                    .is_none()
+            {
+                return Err(Error::Invalid);
+            }
+            let tree = jj_lib::rewrite::merge_commit_trees(tx.repo(), &parent_commits)
+                .await
+                .map_err(unavailable)?;
+            let new = tx
+                .repo_mut()
+                .new_commit(
+                    parent_commits.iter().map(|c| c.id().clone()).collect(),
+                    tree,
+                )
+                .set_description(description)
+                .write()
+                .await
+                .map_err(unavailable)?;
+            created.push(cid(new.id()));
+            if let Some(name) = workspace {
+                tx.set_workspace_name(name.as_str().as_ref());
+                tx.repo_mut()
+                    .edit(name.into(), &new)
+                    .await
+                    .map_err(unavailable)?;
+            }
+            "new change"
+        }
+        Command::Describe {
+            commit: id,
+            description,
+        } => {
+            if id == roots::ROOT_COMMIT {
+                return Err(Error::Root);
+            }
+            let old = commit(repo, access, id, true, budget).await?;
+            if old.description() != description {
+                tx.repo_mut()
+                    .transform_descendants(vec![old.id().clone()], async |rewriter| {
+                        let target = rewriter.old_commit().id() == old.id();
+                        let builder = rewriter.reparent();
+                        if target {
+                            builder.set_description(&description).write().await?;
+                        } else {
+                            builder.write().await?;
+                        }
+                        Ok(())
+                    })
+                    .await
+                    .map_err(unavailable)?;
+            }
+            "describe change"
+        }
+        Command::BookmarkCreate { name, target } => {
+            let old = repo.view().get_local_bookmark(name.as_str().as_ref());
+            if old.is_present() {
+                return Err(Error::StaleBookmark);
+            }
+            if repo.view().store_view().remote_views.values().any(|view| {
+                view.bookmarks
+                    .get(jj_lib::ref_name::RefName::new(&name))
+                    .is_some_and(|remote| remote.state == o::RemoteRefState::Tracked)
+            }) {
+                return Err(Error::Invalid);
+            }
+            let target = commit(repo, access, target, false, budget).await?;
+            tx.repo_mut().set_local_bookmark_target(
+                name.as_str().as_ref(),
+                o::RefTarget::normal(target.id().clone()),
+            );
+            "create bookmark"
+        }
+        Command::BookmarkMove {
+            name,
+            expected,
+            target,
+        } => {
+            let old = repo.view().get_local_bookmark(name.as_str().as_ref());
+            if old.is_absent() || reference(old) != expected {
+                return Err(Error::StaleBookmark);
+            }
+            let target = commit(repo, access, target, false, budget).await?;
+            tx.repo_mut().set_local_bookmark_target(
+                name.as_str().as_ref(),
+                o::RefTarget::normal(target.id().clone()),
+            );
+            "move bookmark"
+        }
+        Command::BookmarkDelete { name, expected } => {
+            let old = repo.view().get_local_bookmark(name.as_str().as_ref());
+            if old.is_absent() || reference(old) != expected {
+                return Err(Error::StaleBookmark);
+            }
+            tx.repo_mut()
+                .set_local_bookmark_target(name.as_str().as_ref(), o::RefTarget::absent());
+            "delete bookmark"
+        }
+    };
+    tx.repo_mut()
+        .rebase_descendants()
+        .await
+        .map_err(unavailable)?;
+    budget.check()?;
+    let staged = tx
+        .write(format!("jj-store: {description}"))
+        .await
+        .map_err(unavailable)?
+        .leave_unpublished();
+    Ok((staged, created))
 }

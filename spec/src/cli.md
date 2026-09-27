@@ -227,3 +227,8 @@ authenticated New/Describe/bookmark commands, strict snapshots, protected
 history, durable replay and lost acknowledgements. These routes reuse the
 service and do not change ordinary CLI spelling or its capability evidence.
 Browser work remains deferred under M4.3.
+
+Typed reconciliation acceptance compares native descendant rebases and recursive
+operation-ancestor merges to pinned upstream behavior, including three current
+heads and conflicted bookmarks. The application mutation is explicit and strict;
+ordinary CLI head-reconciliation behavior remains unchanged.

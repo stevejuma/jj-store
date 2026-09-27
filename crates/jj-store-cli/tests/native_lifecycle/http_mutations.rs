@@ -125,7 +125,8 @@ async fn http_mutations_preview_apply_status_replay_and_contract_capture() {
             "describe",
             "bookmark_create",
             "bookmark_move",
-            "bookmark_delete"
+            "bookmark_delete",
+            "reconcile_operations"
         ])
     );
     record("capabilities", "get", status, &caps);
@@ -517,4 +518,65 @@ async fn http_mutations_deadline_after_manifest_cas_retains_request_identity() {
         f.session.snapshot().await.unwrap().manifest().published,
         m::WalPosition(1)
     );
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn http_reconciliation_preserves_get_heads_and_publishes_only_explicit_apply() {
+    tokio::task::LocalSet::new()
+        .run_until(async {
+            let f = Fixture::new().await;
+            let cache = tempfile::tempdir().unwrap();
+            let loader = f
+                .stores
+                .initialize_cache(&settings(), cache.path())
+                .await
+                .unwrap();
+            let (left, _, _, _) = super::reconciliation_acceptance::seed(&f, &loader).await;
+            let expected = f.session.snapshot().await.unwrap().manifest().snapshot();
+            let router = api(&f, cache.path(), Config::default(), Protection::default());
+            let (status, snapshot) = send(&router, request(&f.reader, "snapshot", None)).await;
+            assert_eq!(status, StatusCode::OK);
+            assert_eq!(snapshot["heads"].as_array().unwrap().len(), 2);
+            assert_eq!(
+                f.session.snapshot().await.unwrap().manifest().snapshot(),
+                expected
+            );
+            let mut input = new_request(&f, 148).await;
+            input["command"] = json!({"type":"reconcile_operations", "base":oid(left.op_id())});
+            let (status, preview) = send(
+                &router,
+                request(&f.token, "mutations/preview", Some(&input)),
+            )
+            .await;
+            assert_eq!(status, StatusCode::OK, "{preview}");
+            assert_eq!(preview["status"], "prepared");
+            assert_eq!(
+                f.session.snapshot().await.unwrap().manifest().snapshot(),
+                expected
+            );
+            let (status, receipt) =
+                send(&router, request(&f.token, "mutations", Some(&input))).await;
+            assert_eq!(status, StatusCode::OK, "{receipt}");
+            assert_eq!(receipt["status"], "committed");
+            let path = format!("mutations/{}", input["request_id"].as_str().unwrap());
+            assert_eq!(
+                send(&router, request(&f.token, &path, None)).await.1,
+                receipt
+            );
+            assert_eq!(
+                send(&router, request(&f.token, "mutations", Some(&input)))
+                    .await
+                    .1,
+                receipt
+            );
+            assert_eq!(
+                f.session.snapshot().await.unwrap().manifest().heads.len(),
+                1
+            );
+            assert_eq!(
+                f.session.snapshot().await.unwrap().manifest().published.0,
+                expected.position.0 + 1
+            );
+        })
+        .await;
 }

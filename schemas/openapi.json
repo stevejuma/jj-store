@@ -4310,6 +4310,23 @@
                         },
                         "additionalProperties": false,
                         "required": ["type", "name", "expected"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "base": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{128}$",
+                            "minLength": 128,
+                            "maxLength": 128
+                          },
+                          "type": {
+                            "type": "string",
+                            "const": "reconcile_operations"
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": ["type", "base"]
                       }
                     ]
                   }
@@ -4582,6 +4599,23 @@
                         },
                         "additionalProperties": false,
                         "required": ["type", "name", "expected"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "base": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{128}$",
+                            "minLength": 128,
+                            "maxLength": 128
+                          },
+                          "type": {
+                            "type": "string",
+                            "const": "reconcile_operations"
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": ["type", "base"]
                       }
                     ]
                   }

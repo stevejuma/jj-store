@@ -229,3 +229,12 @@ stale input, worker admission and recovery from an HTTP timeout after manifest
 CAS. These are fault-injecting memory-store proofs; real RustFS/TLS deployment
 evidence remains separate. Generated TypeScript declarations change with the
 API; browser features and visual work remain deferred under M4.3.
+
+ReconcileOperations is qualified with real pinned native transactions over
+memory storage: multi-head preview/apply/retry, three-head recursive common
+ancestors, conflicted bookmark parity, descendant/workspace rewrites,
+stale/invalid base rejection, protection, limits and explicit HTTP application.
+Reports compare to the selected base view. Existing request/result codecs retain
+V1 compatibility; only the typed command union and advertised capability gain a
+variant. Real storage and larger resource scenarios remain independent
+operational evidence.

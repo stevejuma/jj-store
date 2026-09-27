@@ -1,6 +1,7 @@
 //! Typed native transaction preparation. This executor cannot publish heads.
 mod access;
 mod execute;
+mod reconcile;
 use crate::query::{self, ReadAccess, access::Budget, workers::Workers};
 use jj_store_model as m;
 use jj_store_object::ObjectStore;
@@ -51,6 +52,9 @@ pub enum Command {
         name: String,
         expected: crate::native_dto::RefTarget,
     },
+    ReconcileOperations {
+        base: m::OperationId,
+    },
 }
 impl Command {
     /// Shared shape admission for execution and canonical application intent.
@@ -85,6 +89,7 @@ pub struct Prepared {
 #[async_trait::async_trait]
 pub trait MutationAccess: ReadAccess {
     fn principal(&self) -> m::PrincipalId;
+    fn heads(&self) -> &std::collections::BTreeSet<m::OperationId>;
     async fn authorize_write(&self) -> query::Result<()>;
 }
 #[derive(Clone, Copy)]

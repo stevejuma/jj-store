@@ -4967,6 +4967,11 @@ export interface operations {
                 expected: (string | null)[];
                 /** @constant */
                 type: "bookmark_delete";
+              }
+            | {
+                base: string;
+                /** @constant */
+                type: "reconcile_operations";
               };
         };
       };
@@ -5138,6 +5143,11 @@ export interface operations {
                 expected: (string | null)[];
                 /** @constant */
                 type: "bookmark_delete";
+              }
+            | {
+                base: string;
+                /** @constant */
+                type: "reconcile_operations";
               };
         };
       };
