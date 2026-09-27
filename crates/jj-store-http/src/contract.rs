@@ -17,6 +17,10 @@ impl Document {
     fn new() -> Self {
         let mut settings = SchemaSettings::draft2020_12().for_serialize();
         settings.definitions_path = "/components/schemas".into();
+        // Keep sibling constraints on references visible to OpenAPI client generators.
+        settings
+            .transforms
+            .push(Box::<schemars::transform::RemoveRefSiblings>::default());
         let mut input = SchemaSettings::draft2020_12().for_deserialize();
         // HTTP request DTOs are finite records. Inline them so a type used in
         // both directions cannot accidentally reuse its opposite contract.

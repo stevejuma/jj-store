@@ -80,7 +80,7 @@ export default defineConfig(tableRequirements(), {
           chapters: ["spec/src/cli.md"],
         },
         {
-          pattern: "^(?:crates/jj-store-http/|web/)",
+          pattern: "^(?:crates/jj-store-http/|web/|docs/browser\\.md$)",
           chapters: ["spec/src/api.md"],
         },
         {
@@ -114,6 +114,13 @@ export default defineConfig(tableRequirements(), {
   },
   check: {
     lanes: [
+      { name: "browser-check", command: "pnpm", args: ["web:check"] },
+      { name: "browser-unit", command: "pnpm", args: ["web:test"] },
+      {
+        name: "browser-interaction",
+        command: "pnpm",
+        args: ["web:test:browser"],
+      },
       { name: "contracts", command: "pnpm", args: ["contracts:check"] },
       {
         name: "rustfmt",

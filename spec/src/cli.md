@@ -205,3 +205,9 @@ The CLI-owned native lifecycle fixtures also exercise every HTTP read route for
 generated contract conformance. An opt-in capture path receives only disposable
 response bodies and route metadata, never request credentials. This fixture does
 not alter CLI presentation or publication semantics.
+
+Server configuration may provide web_root, resolved relative to its TOML file,
+to serve a prebuilt browser bundle alongside the authenticated HTTP/RPC APIs.
+Build it with pnpm web:build. A malformed or oversized bundle fails server
+startup explicitly; no filesystem directory listing or repository content is
+served as a browser asset.

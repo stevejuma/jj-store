@@ -192,3 +192,19 @@ web/src/lib/api/generated.ts. Contract checks regenerate both into memory and
 reject drift. Serialization fixtures verify native ID widths, tagged enums,
 ordered tuple entries and nullable predecessor fields independently of browser
 rendering. Existing native golden fixtures continue to qualify persistence.
+
+Browser fixtures consume serialized native read responses and explicitly test
+source escaping, snapshot selection, request cancellation and credential
+lifecycle. Static serving has separate compiled-route tests. Fixture-backed
+browser evidence does not substitute for real RustFS/browser deployment
+qualification; the ledger retains that distinction.
+
+Cold Playwright acceptance uses a disposable loopback Rust host with the
+production static asset router and CSP. API requests in this lane are fulfilled
+from freshly captured authenticated native fixtures. Production RustFS/TLS
+browser acceptance remains distinct from this static/client conformance lane.
+
+Browser acceptance builds production assets and starts the actual Rust asset
+router under its CSP. Disposable captured native HTTP fixtures exercise browser
+interaction and accessibility; production RustFS/TLS qualification is recorded
+separately. Visual review remains visual-pending.

@@ -114,3 +114,10 @@ inventory and project-owned schema traits. Released openapi-typescript tooling
 generates browser types from that document. Schema traits add no storage, search
 or presentation dependency to lower layers; transport generation stays in the
 HTTP crate and the Node build scripts.
+
+The browser is a Svelte 5/TypeScript/Vite application under web. It consumes
+generated read contracts with an explicit lossless-integer mapping. A server
+web_root selects a prebuilt static bundle; its manifest and assets are loaded at
+startup with fixed bounds, so requests do not read arbitrary disk paths. The
+Rust workspace remains buildable without a frontend toolchain; pnpm build builds
+the browser bundle before the Rust executables.

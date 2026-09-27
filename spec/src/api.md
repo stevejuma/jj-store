@@ -292,3 +292,40 @@ semantics; the existing transport/lifecycle tests remain required. Rust numeric
 widths are retained in JSON schemas. Browser clients must reject unsafe integer
 conversion or use lossless parsing when native values exceed JavaScript's exact
 integer range; generated TypeScript number types alone do not guarantee this.
+
+## Browser read client
+
+The served Svelte application selects a repository by full ID and authenticates
+with an in-memory Bearer token. Disconnect, authorization failure and page
+teardown abort outstanding reads/subscriptions and clear repository data. No
+credential enters URL state, browser storage, analytics or logs. Requests stay
+on the application origin and omit cookies.
+
+Commit, operation and evolution graphs render server-provided edges without
+inferring ancestry. Multiple heads require an explicit choice; revset context
+and pagination retain an exact selected operation and time anchor. Live events
+indicate newer history without replacing the displayed snapshot. Reconnect
+resumes only fully parsed SSE IDs, while reset asks for explicit refresh.
+
+Read errors retain explicit cursor reset, incomplete history and index
+preparation states. Users may prepare/cancel the selected native index. Source
+strings, signatures, paths, diff hunks and conflict terms render as text. File
+previews have a byte cap, distinguish binary/invalid UTF-8, and never execute or
+follow repository content. JSON integers outside JavaScript's safe range remain
+exact through lossless parsing and bigint presentation.
+
+Static browser assets are loaded once from a bounded, explicit manifest. Only
+listed index/JavaScript/CSS files are served; repository paths cannot select
+filesystem content. The document permits same-origin scripts/styles/connects and
+prohibits framing, plugins and inline script. The browser read client is
+independent of the later typed mutation and search capabilities.
+
+Generated schemas express reference siblings through equivalent allOf
+composition so client generators retain internal enum discriminators. The
+TypeScript consumer checks operation-diff narrowing across every status.
+
+The snapshot bar identifies the loaded operation independently of editable query
+fields. Query retries and pages retain original inputs; index preparation must
+not reset the time anchor. Explicit refresh after an event reset starts a new
+subscription. Browser graph rendering admits at most 1000 nodes and 4096 edges;
+exceeding the display budget fails explicitly before layout.

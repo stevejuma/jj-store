@@ -1,5 +1,6 @@
 //! Versioned authenticated application reads; no direct storage or native JJ types.
 #![forbid(unsafe_code)]
+pub mod assets;
 mod body;
 pub mod contract;
 mod dto;

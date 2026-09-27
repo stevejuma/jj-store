@@ -67,3 +67,12 @@ void [
   eventPosition,
   taskError,
 ];
+
+function operationParent(
+  value: Schemas["OperationDiffData"],
+): string | undefined {
+  if (value.status === "difference") return value.parent;
+  if (value.status === "select_parent") return value.parents[0];
+  return undefined;
+}
+void operationParent;

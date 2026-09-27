@@ -460,6 +460,108 @@ fn native(f: &Fixture, token: &BearerToken, args: &[&str]) -> Output {
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn cold_tls_server_serves_only_the_configured_browser_bundle() {
+    let f = Fixture::new();
+    let pem = f.enable_tls();
+    let root = f.root.path().join("browser");
+    fs::create_dir_all(root.join("assets")).unwrap();
+    fs::write(
+        root.join("index.html"),
+        "<!doctype html><title>Native browser</title>",
+    )
+    .unwrap();
+    fs::write(root.join("assets/app-123.js"), "export const version=1;").unwrap();
+    fs::write(
+        root.join("asset-manifest.json"),
+        r#"{"version":1,"files":["index.html","assets/app-123.js"]}"#,
+    )
+    .unwrap();
+    fs::write(
+        &f.config,
+        fs::read_to_string(&f.config).unwrap().replace(
+            "operator_policy = \"./operators.json\"",
+            "operator_policy = \"./operators.json\"\nweb_root = \"./browser\"",
+        ),
+    )
+    .unwrap();
+    let mut running = f.start(false);
+    let port = running.event["address"]
+        .as_str()
+        .unwrap()
+        .parse::<std::net::SocketAddr>()
+        .unwrap()
+        .port();
+    let client = reqwest::Client::builder()
+        .no_proxy()
+        .timeout(Duration::from_secs(3))
+        .add_root_certificate(reqwest::Certificate::from_pem(&pem).unwrap())
+        .build()
+        .unwrap();
+    let base = format!("https://localhost:{port}");
+    let response = client.get(&base).send().await.unwrap();
+    assert_eq!(response.status(), reqwest::StatusCode::OK);
+    assert!(
+        response.headers()["content-security-policy"]
+            .to_str()
+            .unwrap()
+            .contains("script-src 'self'")
+    );
+    assert!(response.text().await.unwrap().contains("Native browser"));
+    let response = client
+        .get(format!("{base}/assets/app-123.js"))
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(response.status(), reqwest::StatusCode::OK);
+    assert_eq!(
+        response.headers()["content-type"],
+        "text/javascript; charset=utf-8"
+    );
+    assert_eq!(
+        client
+            .get(format!("{base}/asset-manifest.json"))
+            .send()
+            .await
+            .unwrap()
+            .status(),
+        reqwest::StatusCode::NOT_FOUND
+    );
+    let unknown_grpc = client
+        .post(format!("{base}/unknown.Service/Call"))
+        .header("content-type", "application/grpc+proto")
+        .body(Vec::new())
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(unknown_grpc.status(), reqwest::StatusCode::OK);
+    assert_eq!(unknown_grpc.headers()["grpc-status"], "12");
+    assert_eq!(
+        client
+            .get(format!("{base}/v1/unknown"))
+            .send()
+            .await
+            .unwrap()
+            .status(),
+        reqwest::StatusCode::NOT_FOUND
+    );
+
+    assert_eq!(
+        client
+            .get(format!(
+                "{base}/v1/repos/{}/snapshot",
+                jj_store_model::RepositoryId::new([1; 16])
+            ))
+            .send()
+            .await
+            .unwrap()
+            .status(),
+        reqwest::StatusCode::UNAUTHORIZED
+    );
+    #[cfg(unix)]
+    running.terminate();
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn cold_tls_http_reads_support_http1_and_http2() {
     let f = Fixture::new();
     let pem = f.enable_tls();

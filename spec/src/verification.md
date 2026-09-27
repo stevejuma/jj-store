@@ -34,9 +34,9 @@ passing concrete tests linked from the progress ledger.
 | JST-CLI-004    | Implemented | [M3 gate audit](../../docs/evidence/m3-gate-audit.md); [native and executable evidence](milestones.md)                                               |
 | JST-API-001    | Implemented | [M4.1 HTTP read audit](../../docs/evidence/m4-http-read-gate.md); [native and deployed evidence](milestones.md)                                      |
 | JST-API-002    | Implemented | [M4.1 HTTP read audit](../../docs/evidence/m4-http-read-gate.md); [native and deployed evidence](milestones.md)                                      |
-| JST-API-003    | Planned     | [Read APIs and browser](api.md); [milestone gate](milestones.md)                                                                                     |
-| JST-API-004    | Planned     | [Read APIs and browser](api.md); [milestone gate](milestones.md)                                                                                     |
-| JST-API-005    | Planned     | [Read APIs and browser](api.md); [milestone gate](milestones.md)                                                                                     |
+| JST-API-003    | Planned     | [Browser read acceptance](../../docs/evidence/m4-browser.md); [mutation/search and deployment gaps](milestones.md)                                   |
+| JST-API-004    | Planned     | [Browser read acceptance](../../docs/evidence/m4-browser.md); [mutation/search and deployment gaps](milestones.md)                                   |
+| JST-API-005    | Planned     | [Browser read acceptance](../../docs/evidence/m4-browser.md); [mutation/search and deployment gaps](milestones.md)                                   |
 | JST-API-006    | Implemented | [Generated contract evidence](../../docs/evidence/m4-generated-contracts.md); [commands and results](milestones.md)                                  |
 | JST-MUT-001    | Planned     | [Typed mutations](mutations.md); [milestone gate](milestones.md)                                                                                     |
 | JST-MUT-002    | Planned     | [Typed mutations](mutations.md); [milestone gate](milestones.md)                                                                                     |

@@ -147,3 +147,13 @@ present a current scoped credential, including after reconnect or server
 restart. Event streams have dedicated admission so connected browsers do not
 consume every ordinary HTTP read slot. Slow/unpolled streams expire and release
 their bound session and credential with the response body.
+
+The browser clears in-memory credentials and data on disconnect or authorization
+failure, aborts old work before repository changes, and ignores stale async
+completions. It uses same-origin fetch with omitted cookies and manual redirect
+rejection. Source data is always text. Static serving has an explicit bounded
+asset allowlist, rejects symlinks and path escapes, and never falls back to the
+app for unknown API paths. Browser assets contain no deployment credentials.
+
+The shared listener returns HTTP 404 for unknown ordinary routes. Unknown native
+gRPC services retain the protocol-specific UNIMPLEMENTED status.

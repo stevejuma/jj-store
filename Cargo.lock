@@ -3324,7 +3324,9 @@ dependencies = [
  "schemars",
  "serde",
  "serde_json",
+ "tempfile",
  "tokio",
+ "tower",
  "url",
 ]
 
@@ -3416,6 +3418,7 @@ name = "jj-store-server"
 version = "0.1.0"
 dependencies = [
  "async-trait",
+ "axum",
  "futures 0.3.34",
  "jj-store-http",
  "jj-store-jj",

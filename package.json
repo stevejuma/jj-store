@@ -10,12 +10,12 @@
   },
   "type": "module",
   "scripts": {
-    "build": "cargo build --workspace --locked",
-    "check": "pnpm spec:validate && pnpm check:boundaries && pnpm check:progress && pnpm format:rust:check && pnpm contracts:check && cargo clippy --workspace --all-targets --locked -- -D warnings",
+    "build": "pnpm web:build && cargo build --workspace --locked",
+    "check": "pnpm spec:validate && pnpm check:boundaries && pnpm check:progress && pnpm format:rust:check && pnpm contracts:check && pnpm web:check && cargo clippy --workspace --all-targets --locked -- -D warnings",
     "check:boundaries": "node scripts/check-boundaries.mjs",
     "check:progress": "node scripts/check-progress.mjs",
     "test:governance": "node --test scripts/governance.test.mjs",
-    "test": "pnpm test:governance && pnpm test:storage-harness && pnpm test:contracts && cargo test --workspace --locked",
+    "test": "pnpm test:governance && pnpm test:storage-harness && pnpm test:contracts && pnpm web:test && cargo test --workspace --locked",
     "spec:build": "spec-validator build",
     "spec:check": "spec-validator check",
     "spec:first": "spec-validator first",
@@ -28,14 +28,30 @@
     "format:rust:check": "cargo fmt --all -- --check",
     "contracts:generate": "node scripts/contracts.mjs --write",
     "contracts:check": "node scripts/contracts.mjs --check && pnpm test:contracts",
-    "test:contracts": "node --test scripts/contracts.test.mjs && tsc -p scripts/tsconfig.contracts.json"
+    "test:contracts": "node --test scripts/contracts.test.mjs && tsc -p scripts/tsconfig.contracts.json",
+    "web:check": "svelte-check --tsconfig web/tsconfig.json",
+    "web:build": "vite build --config web/vite.config.ts && node scripts/web-manifest.mjs",
+    "web:dev": "vite --config web/vite.config.ts",
+    "web:preview": "vite preview --config web/vite.config.ts",
+    "web:test": "tsx --test web/tests/*.test.ts",
+    "web:test:browser": "pnpm web:build && node scripts/browser-fixtures.mjs && playwright test --config web/playwright.config.ts"
   },
   "devDependencies": {
     "@apidevtools/swagger-parser": "^13.1.0",
+    "@axe-core/playwright": "^4.13.0",
     "@lapismd/spec-validator": "^0.1.0",
+    "@playwright/test": "^1.63.0",
+    "@sveltejs/vite-plugin-svelte": "^7.3.1",
+    "@types/node": "^24.19.0",
     "ajv": "^8.20.0",
+    "lossless-json": "^4.3.1",
     "openapi-typescript": "^7.13.0",
     "prettier": "^3.6.2",
-    "typescript": "^5.9.3"
+    "prettier-plugin-svelte": "^3.5.2",
+    "svelte": "^5.57.1",
+    "svelte-check": "^4.7.6",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3",
+    "vite": "^8.3.1"
   }
 }

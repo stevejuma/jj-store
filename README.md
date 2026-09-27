@@ -12,6 +12,7 @@ existing repository migration is provided.
 - [Upstream pins](docs/upstream-lock.md)
 - [Original reference](docs/reference/README.md)
 - [Agent guide](AGENTS.md)
+- [Repository browser](docs/browser.md)
 
 ## Development
 

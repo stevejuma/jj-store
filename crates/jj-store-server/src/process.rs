@@ -19,6 +19,7 @@ use tonic::{service::Routes, transport::Server};
 pub struct PreparedServer {
     rpc: NativeRpc,
     http: HttpApi,
+    browser: Option<jj_store_http::assets::BrowserAssets>,
     listener: tokio::net::TcpListener,
     tls: Option<tokio_rustls::TlsAcceptor>,
     concurrent: usize,
@@ -84,10 +85,17 @@ impl PreparedServer {
             },
         )
         .map_err(Error::Config)?;
+        let browser = config
+            .web_root
+            .as_deref()
+            .map(jj_store_http::assets::BrowserAssets::load)
+            .transpose()
+            .map_err(Error::Config)?;
         let listener = tokio::net::TcpListener::bind(config.bind).await?;
         Ok(Self {
             rpc,
             http,
+            browser,
             listener,
             tls,
             concurrent: config.limits.concurrent_requests,
@@ -100,9 +108,13 @@ impl PreparedServer {
     }
     pub async fn run(self, shutdown: impl Future<Output = ()> + Send + 'static) -> Result<()> {
         let (tx, rx) = tokio::sync::oneshot::channel();
-        let router = Routes::new(self.rpc.service())
+        let mut router = Routes::new(self.rpc.service())
             .into_axum_router()
-            .merge(self.http.router());
+            .merge(self.http.router())
+            .fallback(unknown_route);
+        if let Some(browser) = self.browser {
+            router = router.merge(browser.router());
+        }
         let incoming =
             crate::listener::incoming(self.listener, self.tls, self.concurrent * 4, self.timeout);
         let serve = Server::builder()
@@ -171,4 +183,34 @@ pub async fn doctor(
         heads,
         adapters: "not configured",
     })
+}
+
+// Tonic's default fallback uses HTTP 200 for gRPC errors. Ordinary HTTP
+// clients must receive a real 404, including when browser assets are enabled.
+async fn unknown_route(
+    method: axum::http::Method,
+    headers: axum::http::HeaderMap,
+) -> axum::response::Response {
+    use axum::{
+        body::Body,
+        http::{StatusCode, header},
+        response::IntoResponse,
+    };
+    let grpc = headers
+        .get(header::CONTENT_TYPE)
+        .and_then(|value| value.to_str().ok())
+        .and_then(|value| value.split(';').next())
+        .is_some_and(|value| value == "application/grpc" || value.starts_with("application/grpc+"));
+    if method == axum::http::Method::POST && grpc {
+        tonic::Status::unimplemented("").into_http::<Body>()
+    } else {
+        (
+            StatusCode::NOT_FOUND,
+            [
+                (header::CACHE_CONTROL, "no-store"),
+                (header::X_CONTENT_TYPE_OPTIONS, "nosniff"),
+            ],
+        )
+            .into_response()
+    }
 }

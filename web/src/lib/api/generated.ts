@@ -791,7 +791,10 @@ export interface components {
           /** @constant */
           status: "select_parent";
         }
-      | components["schemas"]["OperationDiffDifference"];
+      | ({
+          /** @constant */
+          status: "difference";
+        } & components["schemas"]["OperationDiffDifference"]);
     OperationDiffViewDelta: {
       heads: components["schemas"]["SetDelta_CommitId"];
       local_bookmarks: components["schemas"]["NamedChange_Array_of_Nullable_CommitId"][];

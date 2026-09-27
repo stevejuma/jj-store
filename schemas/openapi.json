@@ -5205,12 +5205,14 @@
             "required": ["status", "operation", "parents"]
           },
           {
-            "$ref": "#/components/schemas/OperationDiffDifference",
+            "required": ["status"],
             "type": "object",
             "properties": {
               "status": { "type": "string", "const": "difference" }
             },
-            "required": ["status"]
+            "allOf": [
+              { "$ref": "#/components/schemas/OperationDiffDifference" }
+            ]
           }
         ]
       },

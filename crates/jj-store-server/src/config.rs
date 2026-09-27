@@ -18,6 +18,8 @@ public_url = "http://127.0.0.1:7443/"
 insecure_loopback = true
 state_dir = "./state"
 operator_policy = "./operators.json"
+# Optional browser bundle built with pnpm web:build:
+# web_root = "./web/dist"
 # Shared deployments require both files and an https public_url:
 # [tls]
 # certificate = "./server.crt"
@@ -52,6 +54,7 @@ pub struct Config {
     pub state_dir: PathBuf,
     pub operator_policy: PathBuf,
     pub tls: Option<Tls>,
+    pub web_root: Option<PathBuf>,
     pub storage: Storage,
     #[serde(default)]
     pub limits: Limits,
@@ -115,6 +118,7 @@ impl Config {
             tls.certificate = base.join(&tls.certificate);
             tls.private_key = policy::outside_checkout(&base.join(&tls.private_key))?;
         }
+        config.web_root = config.web_root.map(|root| base.join(root));
         config.validate()?;
         Ok(config)
     }

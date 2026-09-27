@@ -18,22 +18,22 @@ status; reports hold immutable evidence rather than competing status summaries.
 
 ## Change map
 
-| Protected area                | Required chapter     |
-| ----------------------------- | -------------------- |
-| `^rustfmt\\.toml$`            | `spec-governance.md` |
-| `^crates/jj-store-model/`     | `identity.md`        |
-| `^crates/jj-store-object/`    | `object-store.md`    |
-| `^crates/jj-store-wal/`       | `publication.md`     |
-| `^crates/jj-store-jj/`        | `jj-integration.md`  |
-| `^crates/jj-store-service/`   | `mutations.md`       |
-| `^crates/jj-store-rpc/`       | `jj-integration.md`  |
-| `^crates/jj-store-server/`    | `cli.md`             |
-| `^(?:crates/jj-store-http/    | web/)`               | `api.md`                     |
-| `^crates/jj-store-(?:adapters | tantivy)/`           | `adapters.md`                |
-| `^(?:crates/jj-store-cli/     | bins/                | docs/cli/)`                  | `cli.md`         |
-| `^(?:crates/jj-store-testkit/ | fixtures/            | schemas/                     | proto/           | docs/upstream-lock | docs/codec   | docs/compatibility   | docs/licenses/                | docs/evidence/    | scripts/.*(?:rustfs | spike | upstream) | deploy/)` | `compatibility.md` |
-| `^(?:scripts/                 | AGENTS\.md$          | spec-validator\.config\.mjs$ | spec/book\.toml$ | \.gitignore$       | \.prettier)` | `spec-governance.md` |
-| `^(?:Cargo\.(?:toml           | lock)$               | rust-toolchain\.toml$        | package\.json$   | pnpm-lock\.yaml$   | README\.md$  | LICENSE\.md$         | docs/implementation-plan\.md$ | docs/reference/)` | `architecture.md`   |
+| Protected area                                                                                                                                                                                   | Required chapter     |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------- |
+| `^rustfmt\.toml$`                                                                                                                                                                                | `spec-governance.md` |
+| `^crates/jj-store-model/`                                                                                                                                                                        | `identity.md`        |
+| `^crates/jj-store-object/`                                                                                                                                                                       | `object-store.md`    |
+| `^crates/jj-store-wal/`                                                                                                                                                                          | `publication.md`     |
+| `^crates/jj-store-jj/`                                                                                                                                                                           | `jj-integration.md`  |
+| `^crates/jj-store-service/`                                                                                                                                                                      | `mutations.md`       |
+| `^crates/jj-store-rpc/`                                                                                                                                                                          | `jj-integration.md`  |
+| `^crates/jj-store-server/`                                                                                                                                                                       | `cli.md`             |
+| `^(?:crates/jj-store-http/\|web/\|docs/browser\.md$)`                                                                                                                                            | `api.md`             |
+| `^crates/jj-store-(?:adapters\|tantivy)/`                                                                                                                                                        | `adapters.md`        |
+| `^(?:crates/jj-store-cli/\|bins/\|docs/cli/)`                                                                                                                                                    | `cli.md`             |
+| `^(?:crates/jj-store-testkit/\|fixtures/\|schemas/\|proto/\|docs/upstream-lock\|docs/codec\|docs/compatibility\|docs/licenses/\|docs/evidence/\|scripts/.*(?:rustfs\|spike\|upstream)\|deploy/)` | `compatibility.md`   |
+| `^(?:scripts/\|AGENTS\.md$\|spec-validator\.config\.mjs$\|spec/book\.toml$\|\.gitignore$\|\.prettier)`                                                                                           | `spec-governance.md` |
+| `^(?:Cargo\.(?:toml\|lock)$\|rust-toolchain\.toml$\|package\.json$\|pnpm-lock\.yaml$\|README\.md$\|LICENSE\.md$\|docs/implementation-plan\.md$\|docs/reference/)`                                | `architecture.md`    |
 
 The M0 contract harness is validated in both normal tests and spec checks. Real
 storage qualification remains an explicit lane and cannot be inferred from the
@@ -105,3 +105,8 @@ Generated OpenAPI and TypeScript contracts have a drift check in both normal and
 specification checks. The generator uses the compiled HTTP route inventory;
 request and response schema modes preserve Serde's optionality rules. Contract
 tests validate the OpenAPI document and representative serialized native DTOs.
+
+Browser checks include Svelte/TypeScript analysis, focused client tests and cold
+Playwright interactions/accessibility against built assets. Functional and
+accessibility failures remain blocking; visual review is separate and remains
+visual-pending. Browser sources and tooling require same-change ledger evidence.
