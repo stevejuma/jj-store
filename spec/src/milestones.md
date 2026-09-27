@@ -33,9 +33,9 @@ adds evidence here in its enclosing Jujutsu change.
 | M5.1        | Done        | M4.1       | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Basic changes/refs/reconcile; preview receipt and semantic policy                     | Retain basic mutation acceptance                    | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004                                                                                                                      |
 | M5.2        | Done        | M5.1       | JST-MUT-003                                                             | Full abandon descendant bookmark workspace/evolution parity                           | Retain abandon acceptance                           | E-M5-005                                                                                                                                                             |
 | M5.3        | Done        | M5.1       | JST-MUT-004                                                             | Atomic stale-safe resolution with native conflict variants                            | Retain mutation conformance; proceed to M6          | E-M5-006,E-M5-007,E-M5-008                                                                                                                                           |
-| M6          | In progress | M5         | JST-ADAPT-001,JST-ADAPT-002,JST-ADAPT-003,JST-ADAPT-004                 | Replay-equivalent searchable projection with freshness                                | Implement Tantivy projection and search             | E-M6-001                                                                                                                                                             |
+| M6          | In progress | M5         | JST-ADAPT-001,JST-ADAPT-002,JST-ADAPT-003,JST-ADAPT-004                 | Replay-equivalent searchable projection with freshness                                | Complete native extraction and search integration   | E-M6-001,E-M6-002                                                                                                                                                    |
 | M6.1        | Done        | M5         | JST-ADAPT-001,JST-ADAPT-002                                             | Ordered committed reader and durable replay-safe checkpoints                          | Implement Tantivy projection and search             | E-M6-001                                                                                                                                                             |
-| M6.2        | Planned     | M6.1       | JST-ADAPT-003,JST-ADAPT-004                                             | Tantivy crash/rebuild/generation and revocation tests                                 | Implement projection and search API                 | E-SCOPE-001                                                                                                                                                          |
+| M6.2        | In progress | M6.1       | JST-ADAPT-003,JST-ADAPT-004                                             | Tantivy crash/rebuild/generation and revocation tests                                 | Complete native extraction and search integration   | E-SCOPE-001,E-M6-002                                                                                                                                                 |
 | M8a         | Planned     | M6,M4.3    | JST-COMPAT-003,JST-SEC-005                                              | Pinned release, restore, security, performance and cold UI evidence                   | Complete backend hardening; retain deferred UI gate | E-SCOPE-001                                                                                                                                                          |
 | M8a.1       | Planned     | M6         | JST-COMPAT-003,JST-SEC-005                                              | Local/shared examples, diagnostics, restore and request budgets                       | Run non-UI release acceptance                       | E-SCOPE-001                                                                                                                                                          |
 | M7          | Deferred    | M8a        | JST-ADAPT-005                                                           | Complete read-only replica through applied position                                   | After first release                                 | -                                                                                                                                                                    |
@@ -6398,6 +6398,155 @@ and named tests are checked by the progress gate.
     "remaining": [],
     "versions": "Rust 1.97.1 with rustfmt; jj-cli/jj-lib 0.45.1 at 7c41cdeb16b6b321c64e789a966b6adf723816a5; jj-native-0.45.1-v1.",
     "formats": "New adapter checkpoint V1 with identity, exact selected source reference and durable artifact descriptor under repos/{repo}/adapters/v1/{name}/cursor.json. WAL/native/RPC formats unchanged. Adapter crate and service binding added to committed workspace locks; no UI files changed. Enclosing Jujutsu change is the revision reference. Tantivy and real RustFS/TLS qualification remain separate gates."
+  },
+  {
+    "id": "E-M6-002",
+    "tasks": ["M6", "M6.2"],
+    "date": "2026-09-27",
+    "kind": "local-tantivy",
+    "files": [
+      "Cargo.lock",
+      "Cargo.toml",
+      "crates/jj-store-tantivy/Cargo.toml",
+      "crates/jj-store-tantivy/src/disk.rs",
+      "crates/jj-store-tantivy/src/document.rs",
+      "crates/jj-store-tantivy/src/lib.rs",
+      "crates/jj-store-tantivy/src/projection.rs",
+      "crates/jj-store-tantivy/src/search.rs",
+      "crates/jj-store-tantivy/tests/durability.rs",
+      "crates/jj-store-tantivy/tests/support/mod.rs",
+      "docs/evidence/m6-tantivy-generations.md",
+      "docs/licenses/NOTICE.md",
+      "docs/upstream-lock.md",
+      "spec/src/adapters.md",
+      "spec/src/architecture.md",
+      "spec/src/compatibility.md",
+      "spec/src/milestones.md",
+      "spec/src/security.md"
+    ],
+    "tests": [
+      "crates/jj-store-tantivy/tests/durability.rs#tantivy_recovers_committed_payload_without_repeating_effects",
+      "crates/jj-store-tantivy/tests/durability.rs#tantivy_crashes_before_pointer_replay_and_after_reader_recover",
+      "crates/jj-store-tantivy/tests/durability.rs#tantivy_generation_pagination_retains_old_files_and_checks_each_authorization",
+      "crates/jj-store-tantivy/tests/durability.rs#tantivy_missing_corrupt_artifacts_and_config_changes_rebuild",
+      "crates/jj-store-tantivy/tests/durability.rs#tantivy_limits_and_writer_owner_fail_without_advancing",
+      "crates/jj-store-tantivy/tests/durability.rs#tantivy_scope_changes_remove_stale_content_and_replay_upserts",
+      "crates/jj-store-tantivy/tests/durability.rs#tantivy_remote_acknowledgement_loss_recovers_real_index",
+      "crates/jj-store-tantivy/tests/durability.rs#tantivy_retained_generation_budget_recovers_after_reader_release",
+      "crates/jj-store-tantivy/tests/durability.rs#tantivy_restored_older_generation_replays_without_cursor_regression",
+      "crates/jj-store-tantivy/tests/durability.rs#tantivy_rechecks_authorization_before_returning_query_results"
+    ],
+    "runs": [
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-tantivy --test durability tantivy_recovers_committed_payload_without_repeating_effects --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "Named initial target cannot run: Tantivy crate does not exist."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo check -p jj-store-tantivy",
+        "result": "fail",
+        "failures": 1,
+        "note": "Initial product compile target: four diagnostics for Tantivy 0.26 collector API and extractor Sync bounds."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-tantivy --test durability tantivy_recovers_committed_payload_without_repeating_effects --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "One remaining product compile diagnostic: TopDocs requires order_by_score in Tantivy 0.26."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-tantivy --test durability tantivy_recovers_committed_payload_without_repeating_effects --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "Fixture compile target: ambiguous Checkpoint import, three Arc inference errors and async closure borrow; compiler reports six diagnostics."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-tantivy --test durability tantivy_recovers_committed_payload_without_repeating_effects --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Original durable-pointer/reload/restart acceptance passes with real Tantivy files and recovered commit payload."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-tantivy --test durability --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial six durability, loss/config rebuild, scope, reader, authorization and limit tests pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo clippy -p jj-store-tantivy --all-targets --locked -- -D warnings",
+        "result": "fail",
+        "failures": 1,
+        "note": "One too-many-arguments lint in private commit helper; grouped commit inputs without suppressing the lint."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-tantivy --test durability --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Expanded ten fixtures pass, including before/after remote cursor write, restored older local generation, retained-generation budget and post-query revocation."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo clippy -p jj-store-tantivy --all-targets --locked -- -D warnings",
+        "result": "pass",
+        "failures": 0,
+        "note": "Focused all-target Clippy passes after input grouping and literal bounded query implementation."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-tantivy --test durability --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All ten final fixtures pass after streamed file hashing/copy, complete output bounds and retained-generation limits."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo clippy -p jj-store-tantivy --all-targets --locked -- -D warnings",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final focused all-target Clippy passes without suppressions."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-tantivy --test durability tantivy_recovers_committed_payload_without_repeating_effects --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Original target rerun with the exact locked command passes."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Normal checks pass, including all-target Clippy, rustfmt, eleven package boundaries, ledger/spec, generated contracts and existing Svelte analysis."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test",
+        "result": "pass",
+        "failures": 0,
+        "note": "322 Rust tests pass, zero failures; six external deployment tests remain explicitly ignored. Governance, storage harness, contracts and existing browser unit checks pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Locked Rust workspace and existing browser assets build successfully."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 13 specification lanes pass, including existing cold browser interaction/accessibility, full Rust tests, rustfmt, mdBook and spec-first."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm format:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rustfmt and all repository Prettier checks pass."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Implement native extraction and configured source scopes, native view visibility filtering, server/HTTP search and freshness/minimum-position waits, generated contracts and immutable remote index snapshots.",
+      "Run cold process/deployment and measured search acceptance; UI remains deferred and real RustFS/TLS qualification remains externally blocked."
+    ],
+    "versions": "Rust 1.97.1 with rustfmt; jj-cli/jj-lib 0.45.1 at 7c41cdeb16b6b321c64e789a966b6adf723816a5; Tantivy 0.26.2 with mmap/LZ4 locked from crates.io. Tantivy source revision from released .cargo_vcs_info.json: 72d1ef9a6468aa68bbc69dcc80cdf60aaf64364d.",
+    "formats": "New disposable local Tantivy schema V1, canonical commit payload and checksummed generation descriptor plus atomic local active pointer. Uses existing adapter checkpoint V1; native/WAL/RPC/HTTP formats unchanged. Enclosing Jujutsu change is the revision reference; no UI changes."
   }
 ]
 ```

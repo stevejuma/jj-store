@@ -8,7 +8,7 @@
 | RustFS            | `rustfs/rustfs@sha256:b7014e0ce2bc703c1316b3ef760e29dfae61fe4a50d1a66fa89638e0f8ea211f` | Initial single-node contract candidate              | Single-node probes passed; other topologies unqualified |
 | Commit Cloud POC  | `4b1c77b9db365e426e49846669a1626698fd5fa6`                                              | Factory/RPC shape only                              | Audit in M0                                             |
 | WalGit            | `80e9a20b29e29aefd16a4dae6f8e274cce85cca5`                                              | Publication and durable consumer design             | Audit in M0                                             |
-| Tantivy           | Pending M6 lock                                                                         | Rebuildable search                                  | Deferred dependency introduction                        |
+| Tantivy           | 0.26.2; Cargo.lock checksum                                                             | Rebuildable search                                  | Local projection durability qualification in M6         |
 
 The JJ source pin is recorded by the published crate's `.cargo_vcs_info.json`.
 Both JJ crates stay on the same tested release. A RustFS image being available
@@ -38,3 +38,9 @@ A second cold run includes interrupted body transfer:
 tests pass for exact hash vectors, read-only divergent operations, and
 request-scoped OpHeadsStore gRPC. Product storage/server/API implementation
 remains in M1 onward.
+
+The released Tantivy 0.26.2 crate records upstream source revision
+`72d1ef9a6468aa68bbc69dcc80cdf60aaf64364d` in `.cargo_vcs_info.json`. Its
+initial local schema uses mmap and LZ4 without optional language stemmers. Index
+files are disposable; source/WAL format identity is unaffected by this
+dependency.

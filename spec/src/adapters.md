@@ -50,3 +50,30 @@ service authorization retains its own session limits. Polling retries the same
 failed batch with bounded backoff and reports durable position, remote cursor,
 lag and degraded status through a bounded watch channel. No wake callback runs
 on the repository publication path.
+
+## Local Tantivy generations
+
+The Tantivy projection stores deterministic operation, commit and scoped-file
+keys. Each update copies a bounded committed local generation into a private
+staging directory, applies deterministic delete/upsert terms, then prepares a
+Tantivy commit whose payload binds adapter identity, exact source position,
+source-scope snapshots and the previous artifact. Tantivy opstamps are not
+source positions. Files and the complete file descriptor are synced before an
+atomic local active-pointer replacement; the remote runner cursor follows
+recoverable local state. Crash orphans may be discarded and replayed.
+
+Recovery verifies descriptor checksums, commit payload, schema and actual index
+readability. Missing or corrupt derived files request rebuild. A reader-load
+failure after pointer replacement leaves the durable checkpoint ahead of the
+served generation and reports degradation; recovery must retry loading it.
+Published generations are immutable and held by reader references. Retired files
+are removed only after their last reader exits. Configuration changes build a
+new generation without changing existing readers. Disk-copy, document, file,
+query and result budgets are explicit; this first implementation trades bounded
+local copying for simple crash-safe reader isolation.
+
+Core search pins an immutable generation and rechecks repository authorization
+and epoch before and after every request, including pagination. It exposes no
+unauthorized counts or stored content. HTTP cursors, source extraction, native
+visibility filtering and serving configuration require additional integration
+acceptance; the storage engine alone does not close the search milestone.

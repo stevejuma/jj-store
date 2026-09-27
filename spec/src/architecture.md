@@ -148,3 +148,8 @@ their durable artifacts. Repository publication never invokes an adapter.
 The service binds adapter source authorization to its existing repository token
 session. The service may consume the adapter crate's owned callback/interface;
 the adapter crate cannot depend on the service or publish native history.
+
+The Tantivy crate owns local projection generations and indexed documents. It
+consumes the committed adapter contract, with no upstream JJ imports or
+publication capability. Native extraction and transport composition remain
+separate boundaries. Tantivy is locked to 0.26.2 for its initial index schema.

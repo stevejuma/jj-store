@@ -16,3 +16,8 @@ the transaction algorithm from `cli/src/commands/abandon.rs` at that same JJ
 revision (Copyright 2020 The Jujutsu Authors, Apache-2.0). It uses native
 `transform_descendants_with_options` and `RewriteRefsOptions`; server admission,
 authorization, report and publication boundaries are project-owned.
+
+Tantivy 0.26.2, MIT (Quickwit contributors), is consumed as a released crates.io
+dependency with checksum in Cargo.lock. Its source license remains available at
+https://github.com/quickwit-oss/tantivy/blob/72d1ef9a6468aa68bbc69dcc80cdf60aaf64364d/LICENSE.
+No upstream Tantivy implementation source is copied.

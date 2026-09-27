@@ -273,3 +273,9 @@ service-token source acceptance. These are independent of Tantivy durability and
 real RustFS/TLS deployment qualification. Corrupt selected tails must fail
 bootstrap before destination effects, and missing local files cannot be masked
 by an advanced remote cursor.
+
+Tantivy 0.26.2 is pinned with mmap and LZ4 support. Its local durable projection
+fixtures use real index files plus the production adapter runner and selected
+WAL reader. Synthetic extraction in these fixtures proves destination
+durability, not native extraction, view visibility, HTTP search or RustFS
+deployment.

@@ -181,3 +181,10 @@ after each storage request and before returning buffered content. A captured
 source epoch cannot cross revocation or an epoch change. Projection checkpoints
 contain identity and durability metadata, never credentials. Local writer locks
 and checkpoint CAS do not provide distributed destination fencing.
+
+Local search readers recheck current repository permission and epoch before and
+after query work. A pinned generation does not convey access. Source bodies are
+indexed but omitted from hits; native content retrieval remains separately
+authorized. Search text uses a bounded literal token conjunction and exact
+canonical native IDs, without accepting regular-expression or query-language
+programs. Local index roots have private permissions and exclusive ownership.
