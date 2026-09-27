@@ -25,8 +25,8 @@ adds evidence here in its enclosing Jujutsu change.
 | M3.1        | Done        | M2        | JST-SEC-001,JST-SEC-002,JST-SEC-003,JST-SEC-004                         | Revocable tokens and transport authorization                        | Retain native slice acceptance                   | E-M3-001,E-M3-004,E-M3-005,E-M3-006,E-M3-007,E-M3-008,E-M3-009,E-M3-011,E-M3-012,E-M3-014                                     |
 | M3.2        | Done        | M3.1      | JST-JJ-001,JST-JJ-004,JST-JJ-005                                        | Create edit describe log restart op-log evolog; multi-workspace     | Retain native slice acceptance                   | E-M3-002,E-M3-003,E-M3-004,E-M3-005,E-M3-006,E-M3-008,E-M3-009,E-M3-010,E-M3-011,E-M3-013,E-M3-014                            |
 | M3.3        | Done        | M3.2      | JST-CLI-001,JST-CLI-002,JST-CLI-003,JST-CLI-004                         | Custom command presentation and capability parity                   | Retain native slice acceptance                   | E-M3-006,E-M3-009,E-M3-010,E-M3-011,E-M3-012,E-M3-013,E-M3-014                                                                |
-| M4          | In progress | M3        | JST-API-001,JST-API-005                                                 | Structured reads and basic served UI match native semantics         | Implement diffs and qualify query resources      | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005                                                                                  |
-| M4.1        | In progress | M3        | JST-API-001,JST-API-002,JST-JJ-003                                      | Pinned three-graph reads with zero GET publications                 | Implement diffs and qualify query resources      | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005                                                                                  |
+| M4          | In progress | M3        | JST-API-001,JST-API-005                                                 | Structured reads and basic served UI match native semantics         | Implement content diffs and qualify resources    | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006                                                                         |
+| M4.1        | In progress | M3        | JST-API-001,JST-API-002,JST-JJ-003                                      | Pinned three-graph reads with zero GET publications                 | Implement content diffs and qualify resources    | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006                                                                         |
 | M4.2        | Planned     | M4.1      | JST-API-003,JST-API-004,JST-API-005                                     | SSE, safe UI, generated contracts and cold interaction tests        | Build Svelte UI                                  | -                                                                                                                             |
 | M5          | Planned     | M4        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Authenticated typed commands and shared RPC policy                  | Implement commands                               | -                                                                                                                             |
 | M5.1        | Planned     | M4        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Basic changes/refs/reconcile; preview receipt and semantic policy   | Implement command transaction facade             | -                                                                                                                             |
@@ -3035,6 +3035,101 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Rust 1.97.1; jj-cli/jj-lib 0.45.1. Production service/native queries over disposable in-memory stores, not RustFS or browser evidence.",
     "formats": "Shared process-local V1 read cursor prefix jsr1 and domain bind traversal kind, snapshot, query, page size and typed continuation. Replaces unreleased jsg1 graph tokens; retained pins remain ephemeral across restarts. No native object, authority or RPC format change."
+  },
+  {
+    "id": "E-M4-006",
+    "tasks": ["M4", "M4.1"],
+    "date": "2026-09-27",
+    "kind": "native-operation-view-and-visibility-differences",
+    "files": [
+      "crates/jj-store-jj/src/query/content/operations.rs",
+      "crates/jj-store-jj/src/query/content.rs",
+      "crates/jj-store-service/src/reads.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/operation_diff.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/content.rs",
+      "spec/src/api.md",
+      "spec/src/jj-integration.md",
+      "spec/src/cli.md",
+      "spec/src/mutations.md"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/native_lifecycle/operation_diff.rs#operation_diff_preserves_every_view_field_and_excludes_hidden_predecessors",
+      "crates/jj-store-cli/tests/native_lifecycle/operation_diff.rs#operation_diff_matches_native_revsets_after_rewrite_and_abandon",
+      "crates/jj-store-cli/tests/native_lifecycle/operation_diff.rs#operation_diff_merge_parent_selection_and_root_are_explicit",
+      "crates/jj-store-cli/tests/native_lifecycle/operation_diff.rs#operation_diff_rejects_limits_staged_later_and_revoked_reads",
+      "crates/jj-store-cli/tests/native_lifecycle/operation_diff.rs#operation_diff_rejects_missing_and_corrupt_visible_history"
+    ],
+    "runs": [
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle operation_diff_",
+        "result": "pass",
+        "failures": 0,
+        "note": "Before implementation: zero matching cases, not acceptance evidence."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo check -p jj-store-service",
+        "result": "fail",
+        "failures": 1,
+        "note": "Compile diagnostic: upstream ObjectId trait needed for CommitId::as_bytes. Added the trait import at the JJ integration boundary."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo check -p jj-store-service",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle operation_diff_",
+        "result": "fail",
+        "failures": 1,
+        "note": "Fixture compile diagnostic: pinned Revset exposes an async stream, not iter(). The upstream parity fixture now collects that native stream."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle operation_diff_",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial 5 cases pass: full-field deltas, native revset parity, parent selection, budgets, membership, revocation, missing/corrupt commit history."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle operation_diff_",
+        "result": "pass",
+        "failures": 0,
+        "note": "Expanded 5 cases pass: native child creation distinguishes head changes from visibility, parent abandonment rebases descendants and bookmark/workspace mappings, and a merge yields distinct differences for its two parents."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "57 requirements, boundaries, progress, rustfmt and all-target Clippy pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test",
+        "result": "pass",
+        "failures": 0,
+        "note": "168 Rust tests pass / 6 external cases intentionally ignored. 15 governance and 3 storage-harness tests pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm build",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 9 lanes pass, including 168 Rust tests, rustfmt, mdBook and mapped spec-first checks."
+      },
+      {
+        "command": "pnpm format:check",
+        "result": "pass",
+        "failures": 0
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Structured content diffs/conflict descriptors, query resource qualification, HTTP JSON/media/SSE, generated contracts and browser integration remain M4 work."
+    ],
+    "versions": "Rust 1.97.1; jj-cli/jj-lib 0.45.1. Native transactions and production reads over disposable in-memory stores; no deployment/performance claim.",
+    "formats": "Version 1 operation-diff DTO distinguishes root/parent-selection/difference, complete view-field deltas, deterministic native-ID visibility deltas and absent-versus-empty predecessor maps. No authority, persistence or native RPC format change."
   }
 ]
 ```

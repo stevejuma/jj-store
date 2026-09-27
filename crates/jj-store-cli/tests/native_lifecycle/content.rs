@@ -858,3 +858,6 @@ async fn content_read_canceled_chunk_cannot_resume_with_skipped_bytes() {
 
 #[path = "directory.rs"]
 mod directory_acceptance;
+
+#[path = "operation_diff.rs"]
+mod operation_diff_acceptance;

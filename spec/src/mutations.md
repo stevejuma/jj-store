@@ -93,3 +93,7 @@ checks as graph reads and expose no publication or staging method.
 Directory continuation pins share the graph cursor authority boundary. A fresh
 currently authenticated session is required on every page, and no cursor can
 switch between graph and directory queries or acquire publication capability.
+
+Operation differences use the same committed read capability and expose no
+transaction or publication method. A selected comparison parent is validated
+against the native operation before loading its view.

@@ -93,3 +93,24 @@ browser rendering remain transport/presentation requirements.
 Canceling a chunk invalidates that stream handle. Reusing it fails explicitly;
 resumption requires opening a fresh verified range. This prevents cancellation
 between local I/O and final authorization from silently skipping content.
+
+## Operation differences
+
+Operation differences compare an explicitly selected immediate native parent. A
+sole parent is the default; merge operations require explicit parent selection,
+and the virtual root reports that it has no parent. Another committed operation
+cannot be substituted for an immediate parent.
+
+The response distinguishes head changes from visible commit changes. Visibility
+is the native commit-parent closure of each view's heads; predecessor-only
+objects remain historical dependencies rather than visible commits. Complete
+view deltas preserve local and remote bookmarks/tags, conflict terms, tracking
+state, per-workspace Git heads, Git refs and logical workspace mappings. Changed
+remote views carry complete before/after values, including empty remote views.
+The operation's predecessor map preserves absent versus known-empty data.
+
+Native-ID order makes set deltas deterministic; this order is not topological
+ordering or publication order. Commit visits, storage reads, work, response
+bytes and elapsed time are bounded. A difference is complete or fails
+explicitly; it never silently truncates history. Equal head sets need no
+ancestry traversal.

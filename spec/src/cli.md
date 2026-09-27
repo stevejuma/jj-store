@@ -151,3 +151,7 @@ still require HTTP/browser acceptance.
 Directory cursor fixtures verify exact committed snapshots through later writes,
 checkpointing and retries, alongside graph cursor cross-query rejection and
 shared capacity. HTTP/browser integration remains separate acceptance.
+
+Operation-diff fixtures compare complete view changes and native commit-parent
+visibility, including abandonment, hidden predecessors and operation merges.
+Parent-selection responses cannot trigger CLI-style reconciliation.

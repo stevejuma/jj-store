@@ -205,3 +205,9 @@ bytes. Content readers apply committed membership and current authorization
 before root handling, metadata reads and stream preparation. Native directory
 queries run with read-only backend authority and no signer or physical checkout;
 trivial merge semantics are delegated to the pinned library.
+
+Operation-diff reads compare decoded native view fields and traverse
+commit-parent links for visible-set changes. They do not infer visibility from
+predecessor retention, bookmarks or storage inventories. Immediate
+operation-parent selection is explicit; read capabilities and bounded workers
+remain mandatory.
