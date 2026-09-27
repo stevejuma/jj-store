@@ -669,3 +669,6 @@ use cache_acceptance::cache_slot;
 
 #[path = "query_resources.rs"]
 mod resource_acceptance;
+
+#[path = "index_preparation.rs"]
+mod index_acceptance;

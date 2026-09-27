@@ -222,6 +222,22 @@ async fn within_deadline<T>(
 }
 
 impl CommittedRead {
+    pub async fn prepare_index(
+        self: &Arc<Self>,
+        executor: &jj_store_jj::query::GraphExecutor,
+        cancellation: jj_store_jj::query::Cancellation,
+    ) -> jj_store_jj::query::Result<jj_store_jj::query::IndexReport> {
+        self.authorize().await.map_err(query_error)?;
+        let result = executor
+            .prepare_index(
+                self.session.object_store.clone(),
+                self.clone(),
+                cancellation,
+            )
+            .await?;
+        self.authorize().await.map_err(query_error)?;
+        Ok(result)
+    }
     /// Execute through the owned JJ boundary; the caller supplies trusted cache
     /// and worker limits, never user-selected local paths or store credentials.
     pub async fn graph(

@@ -184,3 +184,8 @@ Native lifecycle acceptance checks aggregate graph/content admission, including
 pending worker cancellation and the lifetime of verified file handles. These
 fixtures exercise owned native query interfaces; HTTP serving qualification is
 recorded separately.
+
+Native index-preparation fixtures cover cold-read admission, exact-operation
+preparation during later publications, cache loss/rebuild and shared-worker
+cancellation. These are native library tests, independent of browser task
+status.

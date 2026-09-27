@@ -102,3 +102,14 @@ Conflict descriptors bind ordered native terms and labels to repository, epoch,
 commit, change and path through a domain-separated fingerprint. The read-side
 term position and fingerprint are data for later atomic resolution validation;
 neither a fingerprint nor an editor-support result authorizes a mutation.
+
+A committed read may prepare its native index through the bounded query
+executor. It supplies the same current authorization and captured membership as
+graph reads, and checks authorization again before exposing the preparation
+report. Preparation has no repository publication capability.
+
+The index-task registry contains only exact read-snapshot metadata, initiating
+principal IDs, cancellation handles and owned outcomes. Full inventories and
+request credentials live only in bounded running jobs and are dropped before
+completion. Task status/cancel calls authenticate independently; the task ID is
+neither a read capability nor a publication receipt.

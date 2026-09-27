@@ -21,6 +21,8 @@ pub enum Error {
     InvalidCursor,
     #[error("read cursor expired or its serving instance changed; select a new snapshot")]
     CursorReset,
+    #[error("native index preparation required for the selected snapshot")]
+    IndexRebuildRequired { snapshot: Box<ReadSnapshot> },
     #[error("read pagination resource limit exceeded")]
     Limit,
     #[error("read pagination is busy")]
@@ -89,6 +91,20 @@ impl GraphPager {
     pub fn with_cursors(executor: GraphExecutor, cursors: Arc<SnapshotCursors>) -> Self {
         Self { executor, cursors }
     }
+    async fn execute_read(
+        &self,
+        read: &Arc<reads::CommittedRead>,
+        request: Request,
+        page: query::Page,
+    ) -> Result<GraphPage> {
+        match read.graph(&self.executor, request, page).await {
+            Ok(page) => Ok(page),
+            Err(query::Error::IndexRebuildRequired) => Err(Error::IndexRebuildRequired {
+                snapshot: Box::new(read.snapshot().await?.clone()),
+            }),
+            Err(error) => Err(error.into()),
+        }
+    }
     /// First page. Any multiple-head response is explicit and creates no pin.
     pub async fn begin(
         &self,
@@ -112,9 +128,9 @@ impl GraphPager {
                 OpenRead::SelectHead(snapshot) => return Ok(Start::SelectHead { snapshot }),
                 OpenRead::Pinned(read) => Arc::new(read),
             };
-            let mut graph = read
-                .graph(
-                    &self.executor,
+            let mut graph = self
+                .execute_read(
+                    &read,
                     request,
                     query::Page {
                         limit: page_size,
@@ -170,9 +186,9 @@ impl GraphPager {
                 return Err(Error::InvalidCursor);
             };
             let read = entry.pin.resume(session, self.cursors.limits.read).await?;
-            let mut graph = read
-                .graph(
-                    &self.executor,
+            let mut graph = self
+                .execute_read(
+                    &read,
                     request,
                     query::Page {
                         limit: page_size,

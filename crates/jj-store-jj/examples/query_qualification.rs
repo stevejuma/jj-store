@@ -152,11 +152,39 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         let fixture = Arc::new(Fixture::generate(commits, wide));
         let seed_millis = started.elapsed().as_millis();
         let cache = tempfile::tempdir()?;
-        let limits = q::Limits::default();
+        let limits = q::Limits {
+            max_inline_rebuild_commits: 0,
+            ..q::Limits::default()
+        };
         let executor = q::GraphExecutor::new(cache.path().to_owned(), limits, 1)?;
+        let start = Instant::now();
+        assert_eq!(
+            executor
+                .execute(
+                    fixture.clone(),
+                    fixture.clone(),
+                    log("all()"),
+                    q::Page {
+                        limit: 500,
+                        after: None
+                    }
+                )
+                .await
+                .unwrap_err(),
+            q::Error::IndexRebuildRequired
+        );
+        let cold_admission_millis = start.elapsed().as_millis();
+        let start = Instant::now();
+        let prepared = executor
+            .prepare_index(fixture.clone(), fixture.clone(), q::Cancellation::default())
+            .await?;
+        assert_eq!(prepared.operation, fixture.operation);
+        assert_eq!(prepared.cache.state, q::cache::State::Built);
+        let preparation =
+            json!({"result":"pass", "millis":start.elapsed().as_millis(), "report":prepared});
         let mut runs = vec![];
         for (name, request) in [
-            ("cold_log", log("all()")),
+            ("prepared_log", log("all()")),
             ("warm_log", log("all()")),
             ("warm_filter", log("subject(z)")),
             ("operations", q::Request::Operations),
@@ -236,12 +264,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .unwrap_err(),
             q::Error::Limit
         );
-        scenarios.push(json!({"shape":if wide {"wide_heads"} else {"linear"},"commits":commits,"objects":fixture.inventory.len(),"encoded_bytes":fixture.bytes,"fixture_millis":seed_millis,"runs":runs,"negative_admission_cases":2}));
+        scenarios.push(json!({"shape":if wide {"wide_heads"} else {"linear"},"commits":commits,"objects":fixture.inventory.len(),"encoded_bytes":fixture.bytes,"fixture_millis":seed_millis,"cold_admission_millis":cold_admission_millis,"preparation":preparation,"runs":runs,"negative_admission_cases":2}));
     }
     println!(
         "{}",
         serde_json::to_string(
-            &json!({"profile":jj_store_jj::factories::PROFILE,"revision":"7c41cdeb16b6b321c64e789a966b6adf723816a5","build":"release","limits":{"max_metadata_nodes":q::Limits::default().metadata.max_nodes,"max_merge_terms":q::Limits::default().metadata.max_merge_terms,"max_tree_entries":q::Limits::default().metadata.max_tree_entries,"max_parent_edges":q::Limits::default().metadata.max_parent_edges,"max_index_commits":q::Limits::default().max_index_commits,"max_work":q::Limits::default().max_work,"max_object_bytes":q::Limits::default().max_object_bytes,"max_output_bytes":q::Limits::default().max_output_bytes,"timeout_millis":q::Limits::default().timeout.as_millis()},"scenarios":scenarios})
+            &json!({"profile":jj_store_jj::factories::PROFILE,"revision":"7c41cdeb16b6b321c64e789a966b6adf723816a5","build":"release","limits":{"max_metadata_nodes":q::Limits::default().metadata.max_nodes,"max_merge_terms":q::Limits::default().metadata.max_merge_terms,"max_tree_entries":q::Limits::default().metadata.max_tree_entries,"max_parent_edges":q::Limits::default().metadata.max_parent_edges,"max_index_commits":q::Limits::default().max_index_commits,"max_inline_rebuild_commits":0,"max_work":q::Limits::default().max_work,"max_object_bytes":q::Limits::default().max_object_bytes,"max_output_bytes":q::Limits::default().max_output_bytes,"timeout_millis":q::Limits::default().timeout.as_millis()},"scenarios":scenarios})
         )?
     );
     Ok(())

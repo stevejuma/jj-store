@@ -165,3 +165,9 @@ The [predicate audit](../../docs/evidence/m4-native-predicate-audit.md) retains
 final release measurements and a separate eleven-case RustFS rerun after the
 returned-file runtime repair. Native parity uses a direct upstream oracle;
 preflight admission never substitutes its own predicate results.
+
+Native graph resource qualification includes explicit preparation of a cold
+index before prepared/warm reads. Its retained report distinguishes admission,
+index construction and graph evaluation for linear and wide-head histories. The
+fixture store excludes service authorization and deployment I/O costs; native
+lifecycle tests cover authenticated task status, revocation and cancellation.

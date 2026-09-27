@@ -873,3 +873,6 @@ mod predicate_acceptance;
 
 #[path = "query_workers.rs"]
 mod worker_acceptance;
+
+#[path = "index_tasks.rs"]
+mod index_task_acceptance;

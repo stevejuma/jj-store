@@ -7,5 +7,6 @@ pub mod native;
 
 pub mod transport;
 
+pub mod index_tasks;
 pub mod pagination;
 pub mod reads;

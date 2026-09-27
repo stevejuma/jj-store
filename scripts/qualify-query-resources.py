@@ -45,12 +45,13 @@ def main():
             payload = json.loads(stdout)
     scenarios = (payload or {}).get("scenarios", [])
     runs = [run for case in scenarios for run in case["runs"]]
-    expected = {"cold_log": min(500, args.commits), "warm_log": min(500, args.commits), "warm_filter": 0, "operations": 2}
+    expected = {"prepared_log": min(500, args.commits), "warm_log": min(500, args.commits), "warm_filter": 0, "operations": 2}
     passed = (
         status == 0
         and len(scenarios) == 2
         and {case["shape"] for case in scenarios} == {"linear", "wide_heads"}
         and all(case["commits"] == args.commits and case["negative_admission_cases"] == 2 for case in scenarios)
+        and all(case["preparation"]["result"] == "pass" and case["preparation"]["report"]["cache"]["state"] == "built" for case in scenarios)
         and len(runs) == 8
         and all(len(case["runs"]) == 4 and {run["name"] for run in case["runs"]} == set(expected) for case in scenarios)
         and all(run["result"] == "pass" and run["rows"] == expected[run["name"]] for run in runs)

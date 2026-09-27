@@ -25,8 +25,8 @@ adds evidence here in its enclosing Jujutsu change.
 | M3.1        | Done        | M2        | JST-SEC-001,JST-SEC-002,JST-SEC-003,JST-SEC-004                         | Revocable tokens and transport authorization                        | Retain native slice acceptance                   | E-M3-001,E-M3-004,E-M3-005,E-M3-006,E-M3-007,E-M3-008,E-M3-009,E-M3-011,E-M3-012,E-M3-014                                     |
 | M3.2        | Done        | M3.1      | JST-JJ-001,JST-JJ-004,JST-JJ-005                                        | Create edit describe log restart op-log evolog; multi-workspace     | Retain native slice acceptance                   | E-M3-002,E-M3-003,E-M3-004,E-M3-005,E-M3-006,E-M3-008,E-M3-009,E-M3-010,E-M3-011,E-M3-013,E-M3-014                            |
 | M3.3        | Done        | M3.2      | JST-CLI-001,JST-CLI-002,JST-CLI-003,JST-CLI-004                         | Custom command presentation and capability parity                   | Retain native slice acceptance                   | E-M3-006,E-M3-009,E-M3-010,E-M3-011,E-M3-012,E-M3-013,E-M3-014                                                                |
-| M4          | In progress | M3        | JST-API-001,JST-API-005                                                 | Structured reads and basic served UI match native semantics         | Qualify resources then expose HTTP               | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010,E-M4-011,E-M4-012                   |
-| M4.1        | In progress | M3        | JST-API-001,JST-API-002,JST-JJ-003                                      | Pinned three-graph reads with zero GET publications                 | Qualify resources then expose HTTP               | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010,E-M4-011,E-M4-012                   |
+| M4          | In progress | M3        | JST-API-001,JST-API-005                                                 | Structured reads and basic served UI match native semantics         | Compose HTTP reads and task status               | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010,E-M4-011,E-M4-012,E-M4-013          |
+| M4.1        | In progress | M3        | JST-API-001,JST-API-002,JST-JJ-003                                      | Pinned three-graph reads with zero GET publications                 | Compose HTTP reads and task status               | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010,E-M4-011,E-M4-012,E-M4-013          |
 | M4.2        | Planned     | M4.1      | JST-API-003,JST-API-004,JST-API-005                                     | SSE, safe UI, generated contracts and cold interaction tests        | Build Svelte UI                                  | -                                                                                                                             |
 | M5          | Planned     | M4        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Authenticated typed commands and shared RPC policy                  | Implement commands                               | -                                                                                                                             |
 | M5.1        | Planned     | M4        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Basic changes/refs/reconcile; preview receipt and semantic policy   | Implement command transaction facade             | -                                                                                                                             |
@@ -4083,6 +4083,140 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Rust 1.97.1; jj-cli/jj-lib 0.45.1 at 7c41cdeb16b6b321c64e789a966b6adf723816a5. Existing per-query shape/byte/work/deadline policies unchanged.",
     "formats": "Additive shared query worker composition and capacity/in-use diagnostics. No native identity, envelope, publication, HTTP or RPC format changes."
+  },
+  {
+    "id": "E-M4-013",
+    "tasks": ["M4", "M4.1"],
+    "date": "2026-09-27",
+    "kind": "native-index-preparation-and-service-tasks",
+    "files": [
+      "crates/jj-store-cli/tests/native_lifecycle/content.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/graphs.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/index_preparation.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/index_tasks.rs",
+      "crates/jj-store-jj/examples/query_qualification.rs",
+      "crates/jj-store-jj/src/query/mod.rs",
+      "crates/jj-store-service/src/index_tasks.rs",
+      "crates/jj-store-service/src/lib.rs",
+      "crates/jj-store-service/src/pagination.rs",
+      "crates/jj-store-service/src/reads.rs",
+      "docs/evidence/m4-index-preparation-audit.md",
+      "docs/evidence/m4-index-preparation-budget.json",
+      "scripts/qualify-query-resources.py",
+      "spec/src/api.md",
+      "spec/src/cli.md",
+      "spec/src/compatibility.md",
+      "spec/src/jj-integration.md",
+      "spec/src/mutations.md",
+      "spec/src/spec-governance.md"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/native_lifecycle/index_preparation.rs#index_preparation_is_explicit_snapshot_bound_and_disposable",
+      "crates/jj-store-cli/tests/native_lifecycle/index_preparation.rs#index_preparation_cancels_pending_work_and_retains_shared_slot_until_exit",
+      "crates/jj-store-cli/tests/native_lifecycle/index_preparation.rs#graph_cursor_rebuild_reports_original_snapshot_after_later_publication",
+      "crates/jj-store-cli/tests/native_lifecycle/index_tasks.rs#index_tasks_report_pinned_completion_restart_and_current_revocation",
+      "crates/jj-store-cli/tests/native_lifecycle/index_tasks.rs#index_tasks_deduplicate_bound_cancel_and_drop_running_jobs",
+      "crates/jj-store-cli/tests/native_lifecycle/index_tasks.rs#index_tasks_retention_expiry_and_failures_are_explicit",
+      "crates/jj-store-cli/tests/native_lifecycle/index_tasks.rs#index_tasks_expiry_cancels_pending_storage_without_status_polling"
+    ],
+    "runs": [
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle index_preparation_",
+        "result": "fail",
+        "failures": 17,
+        "note": "Before: 17 compile diagnostics identify absent explicit preparation, cancellation and inline-threshold interfaces. No tests ran; this is a missing-feature baseline."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle index_preparation_",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both native preparation fixtures pass after implementation: exact snapshot/cache loss/hard budget and cancellation/shared worker lifecycle."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle index_tasks_",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before service implementation: unresolved index_tasks import; no tests ran."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle index_tasks_",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial three service task cases pass for ready/failed/canceled, retention, restart/revocation, coalescing, bounded execution and service drop."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle graph_cursor_rebuild_reports_original_snapshot_after_later_publication",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before pagination integration: rebuild error loses the original cursor snapshot after a later publication."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle graph_cursor_rebuild_reports_original_snapshot_after_later_publication",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact regression passes with original complete snapshot in rebuild-required response and original cursor resume after preparation."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle index_",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 7 preparation/task/cursor cases pass, including expiry without status polling."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle index_tasks_report_pinned_completion_restart_and_current_revocation",
+        "result": "pass",
+        "failures": 0,
+        "note": "Expanded access fixture also rejects valid same-principal tokens for a different native repository on status and cancel."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo build --release --locked -p jj-store-jj --example query_qualification",
+        "result": "pass",
+        "failures": 0,
+        "note": "Optimized native graph fixture built with explicit cold admission/preparation."
+      },
+      {
+        "command": "python3 scripts/qualify-query-resources.py --scenario graphs --binary target/release/examples/query_qualification --output docs/evidence/m4-index-preparation-budget.json",
+        "result": "pass",
+        "failures": 0,
+        "note": "Linear and wide-head histories each contain 50,000 commits. Cold admission, preparation and 8 prepared/warm graph reads pass. Whole process: 5.71 seconds elapsed, 5.22 CPU seconds, 296026112 peak RSS bytes. Scope excludes service, RustFS/network and browser costs."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "57 requirements, package boundaries, progress, rustfmt and all-target Clippy pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test",
+        "result": "pass",
+        "failures": 0,
+        "note": "216 Rust tests pass / 6 external cases intentionally ignored. All 78 native lifecycle cases, 15 governance tests and 3 storage-harness self-tests pass; no unresolved failures."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Locked workspace build passes."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 9 lanes pass, including 216 Rust tests, rustfmt, mdBook and mapped spec-first checks."
+      },
+      {
+        "command": "pnpm format:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rustfmt and Prettier pass."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "HTTP composition and admission for snapshot capture/response delivery, JSON/media/SSE routes including index task status, generated contracts and browser integration. Whole-server deployment and aggregate performance qualification remains M8a."
+    ],
+    "versions": "Rust 1.97.1; jj-cli/jj-lib 0.45.1 at 7c41cdeb16b6b321c64e789a966b6adf723816a5. Release binary and Cargo.lock hashes retained in the process report.",
+    "formats": "Additive owned index-preparation report, process-local task status/error DTOs and snapshot-bearing pagination rebuild errors. Default inline threshold is 1000 retained commits; hard index/shape/work/byte budgets are unchanged. No native identity, envelope, publication, local cache receipt or RPC format change."
   }
 ]
 ```

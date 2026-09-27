@@ -20,7 +20,8 @@ use serde::{Deserialize, Serialize};
 use std::{collections::BTreeSet, path::PathBuf, sync::Arc, time::Duration};
 use workers::Workers;
 
-#[derive(Clone, Debug, PartialEq, Eq, thiserror::Error)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, thiserror::Error)]
+#[serde(rename_all = "snake_case")]
 pub enum Error {
     #[error("query request was canceled")]
     Canceled,
@@ -36,6 +37,8 @@ pub enum Error {
     Busy,
     #[error("native index exceeds the configured rebuild budget")]
     IndexBudget,
+    #[error("native index requires an explicit preparation task")]
+    IndexRebuildRequired,
     #[error("invalid query or missing query context")]
     Invalid,
     #[error("native query or cache is unavailable")]
@@ -67,6 +70,7 @@ pub struct Limits {
     pub predicates: predicates::Limits,
     pub max_page: usize,
     pub max_index_commits: usize,
+    pub max_inline_rebuild_commits: usize,
     pub max_work: usize,
     pub max_object_bytes: u64,
     pub max_output_bytes: usize,
@@ -80,6 +84,7 @@ impl Default for Limits {
             predicates: predicates::Limits::default(),
             max_page: 500,
             max_index_commits: 50_000,
+            max_inline_rebuild_commits: 1_000,
             max_work: 1_000_000,
             max_object_bytes: 256 * 1024 * 1024,
             max_output_bytes: 8 * 1024 * 1024,
@@ -206,6 +211,32 @@ pub struct GraphPage {
     pub next: Option<m::ObjectKey>,
     pub stats: Stats,
 }
+/// Cancellation is separate from dropping a request: a task owner can signal it
+/// and still await actual worker exit before reporting completion.
+#[derive(Clone, Default)]
+pub struct Cancellation(tokio_util::sync::CancellationToken);
+impl Cancellation {
+    pub fn cancel(&self) {
+        self.0.cancel();
+    }
+}
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct IndexReport {
+    pub version: u32,
+    pub operation: m::OperationId,
+    pub cache: cache::Report,
+    pub stats: Stats,
+}
+enum Work {
+    Graph(Request, Page),
+    Prepare,
+}
+#[derive(Serialize)]
+#[serde(untagged)]
+enum Output {
+    Graph(GraphPage),
+    Index(IndexReport),
+}
 /// Bounded jobs and operation-specific local caches; no physical working copy.
 #[derive(Clone)]
 pub struct GraphExecutor {
@@ -263,10 +294,48 @@ impl GraphExecutor {
         request: Request,
         page: Page,
     ) -> Result<GraphPage> {
-        let budget = Arc::new(Budget::new(self.limits)?);
+        match self
+            .execute_work(
+                store,
+                access,
+                Work::Graph(request, page),
+                Cancellation::default(),
+            )
+            .await?
+        {
+            Output::Graph(page) => Ok(page),
+            Output::Index(_) => Err(Error::Unavailable),
+        }
+    }
+    pub async fn prepare_index(
+        &self,
+        store: Arc<dyn ObjectStore>,
+        access: Arc<dyn ReadAccess>,
+        cancellation: Cancellation,
+    ) -> Result<IndexReport> {
+        match self
+            .execute_work(store, access, Work::Prepare, cancellation)
+            .await?
+        {
+            Output::Index(report) => Ok(report),
+            Output::Graph(_) => Err(Error::Unavailable),
+        }
+    }
+    async fn execute_work(
+        &self,
+        store: Arc<dyn ObjectStore>,
+        access: Arc<dyn ReadAccess>,
+        work: Work,
+        cancellation: Cancellation,
+    ) -> Result<Output> {
+        let mut budget = Budget::new(self.limits)?;
+        budget.cancellation = cancellation.0;
+        let budget = Arc::new(budget);
         let permit = self.workers.acquire()?;
         budget.authorize(access.as_ref()).await?;
-        if page.limit == 0 || page.limit > self.limits.max_page {
+        if let Work::Graph(_, page) = &work
+            && (page.limit == 0 || page.limit > self.limits.max_page)
+        {
             return Err(Error::Limit);
         }
         let cancellation = budget.cancellation.clone().drop_guard();
@@ -277,7 +346,7 @@ impl GraphExecutor {
             let _permit = permit;
             runtime.block_on(tokio::task::LocalSet::new().run_until(async {
                 let result = budget
-                    .until(executor.run(store, access.clone(), request, page, budget.clone()))
+                    .until(executor.run(store, access.clone(), work, budget.clone()))
                     .await?;
                 budget.authorize(access.as_ref()).await?;
                 match result {
@@ -295,10 +364,9 @@ impl GraphExecutor {
         &self,
         store: Arc<dyn ObjectStore>,
         access: Arc<dyn ReadAccess>,
-        request: Request,
-        page: Page,
+        work: Work,
         budget: Arc<Budget>,
-    ) -> Result<GraphPage> {
+    ) -> Result<Output> {
         budget.check()?;
         let count = access
             .inventory()
@@ -308,7 +376,9 @@ impl GraphExecutor {
         if count > self.limits.max_index_commits {
             return Err(Error::IndexBudget);
         }
-        graphs::validate(&request, &page, count, &budget)?;
+        if let Work::Graph(request, page) = &work {
+            graphs::validate(request, page, count, &budget)?;
+        }
         let mut cache = cache::Cache::open(&self.root, self.cache_policy, &budget)?;
         let objects = Arc::new(
             NativeObjects::new(
@@ -333,6 +403,9 @@ impl GraphExecutor {
             .map_err(|_| Error::Unavailable)?;
         let entry = cache.prepare(access.as_ref(), &stores, &budget)?;
         if entry.initialize {
+            if matches!(work, Work::Graph(..)) && count > self.limits.max_inline_rebuild_commits {
+                return Err(Error::IndexRebuildRequired);
+            }
             stores
                 .initialize_cache(&settings, &entry.path)
                 .await
@@ -346,20 +419,33 @@ impl GraphExecutor {
             .await
             .map_err(|_| Error::Unavailable)?;
         budget.check()?;
-        let (data, next) = graphs::run(&repo, request, page, &access, &budget).await?;
+        let data = match work {
+            Work::Graph(request, page) => {
+                Some(graphs::run(&repo, request, page, &access, &budget).await?)
+            }
+            Work::Prepare => None,
+        };
         budget.check()?;
         budget.authorize(access.as_ref()).await?;
         // Drop native loaders before replacing/removing their derived files.
         drop(repo);
         drop(loader);
         let cache = cache.finish(entry, access.as_ref(), &budget)?;
-        let result = GraphPage {
-            version: 1,
-            cache,
-            operation: access.operation(),
-            data,
-            next,
-            stats: budget.stats(),
+        let result = match data {
+            Some((data, next)) => Output::Graph(GraphPage {
+                version: 1,
+                cache,
+                operation: access.operation(),
+                data,
+                next,
+                stats: budget.stats(),
+            }),
+            None => Output::Index(IndexReport {
+                version: 1,
+                cache,
+                operation: access.operation(),
+                stats: budget.stats(),
+            }),
         };
         budget.complete_output(&result)?;
         Ok(result)

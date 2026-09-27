@@ -89,3 +89,9 @@ lifecycle test binary under an independent process timeout. It requires each
 named admission/parity test and records actual process CPU/RSS separately from
 compilation. A hung debug fixture must be diagnosed and recorded, not counted as
 a passing deadline test.
+
+Large graph resource qualification records cold admission and explicit index
+preparation separately from prepared/warm graph queries. The harness requires a
+successful preparation report for both linear and wide-head fixtures; an
+explicit rebuild-required response alone is not a passing query or completed
+task.

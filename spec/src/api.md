@@ -184,3 +184,32 @@ or snapshot repositories. A dropped request releases capacity after its worker
 exits; an open file handle keeps capacity until its verified spool is released.
 Transport admission also bounds snapshot capture and response delivery, which
 are separate from native worker execution.
+
+Cold graph requests above the configured inline index threshold return an
+explicit rebuild-required result. Index preparation remains tied to the selected
+operation while repository heads advance. Clients retry that snapshot after a
+preparation task reports completion; evicted or lost caches can require another
+preparation. Completion never means repository history or local cache files are
+permanently pinned. Hard query budgets also apply to preparation and cannot be
+relaxed by a request parameter.
+
+Index preparation tasks are process-local and require an explicit operation.
+Starting, inspecting and canceling a task require current repository read
+access; only its initiating principal may cancel it. Status also checks the
+current epoch. Task IDs are opaque and confer no authority. Running tasks for
+the same principal, repository, epoch and operation coalesce. Completed reports
+retain no credentials or full inventories. Retention, snapshot capture,
+concurrent jobs and expiry are bounded; exhaustion returns Busy. Expiry or
+server restart returns task-reset rather than selecting current heads. A new
+start may prepare an evicted cache.
+
+Task cancellation or service teardown signals the native budget, and Canceling
+becomes Canceled after worker exit. Expiry also signals cancellation without a
+polling client. A task can fail with the native resource or integrity error;
+completion does not waive those budgets. HTTP routes consume this service
+contract and bound request/response delivery separately.
+
+Both initial graph pages and signed-cursor resumes return the captured snapshot
+with rebuild-required errors. A later publication cannot change the operation
+selected for preparation. Continuing with the original cursor retains its
+original snapshot/inventory after the exact operation cache has been prepared.

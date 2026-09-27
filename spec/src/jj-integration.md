@@ -308,3 +308,20 @@ credentials or repository data. This bounds simultaneous native jobs/streams;
 per-query byte/work/shape limits remain independent. It is not an OS memory
 reservation. Snapshot admission, response delivery, native RPC and background
 jobs also need explicit composition at the serving boundary.
+
+## Explicit index preparation
+
+Graph execution has a separate inline cold-build threshold (1000 retained
+commits by default) within the hard index-admission budget. Above that
+threshold, a missing or damaged cache returns IndexRebuildRequired before native
+index construction. A verified warm cache remains usable. An explicit
+preparation job loads the exact selected operation and builds/checks the native
+index without evaluating a user revset or publishing repository state. Its
+report binds the operation and local cache outcome; it does not pin that cache
+against later eviction or loss.
+
+Preparation uses the same byte, shape, work, index-count, elapsed and shared
+worker bounds as graph execution. It can bypass only the inline threshold. An
+owned cancellation signal stops pending waits and is checked around synchronous
+native steps; awaiting preparation returns only after the worker exits. The
+service retains task identity/status and fresh request authorization separately.
