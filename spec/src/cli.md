@@ -133,3 +133,8 @@ Native library acceptance also exercises application read selection against real
 JJ transactions. This verifies that inspecting concurrent operations cannot
 invoke the CLI's mutation/reconciliation behavior. The read surface remains a
 service capability until its separate HTTP and graph integration slices.
+
+Graph acceptance compares library results with native transaction histories,
+including filtered edges, hidden predecessors, sibling operations and cache
+rebuilds. Upstream types and transaction fixtures stay in the CLI/JJ boundary;
+application services consume only owned graph requests and responses.

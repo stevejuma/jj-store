@@ -180,3 +180,54 @@ async fn within_deadline<T>(
     }
     result
 }
+
+impl CommittedRead {
+    /// Execute through the owned JJ boundary; the caller supplies trusted cache
+    /// and worker limits, never user-selected local paths or store credentials.
+    pub async fn graph(
+        self: &Arc<Self>,
+        executor: &jj_store_jj::query::GraphExecutor,
+        request: jj_store_jj::query::Request,
+        page: jj_store_jj::query::Page,
+    ) -> jj_store_jj::query::Result<jj_store_jj::query::GraphPage> {
+        self.authorize().await.map_err(query_error)?;
+        let result = executor
+            .execute(
+                self.session.object_store.clone(),
+                self.clone(),
+                request,
+                page,
+            )
+            .await?;
+        self.authorize().await.map_err(query_error)?;
+        Ok(result)
+    }
+}
+fn query_error(error: Error) -> jj_store_jj::query::Error {
+    use jj_store_jj::query::Error as Q;
+    match error {
+        Error::Denied => Q::Denied,
+        Error::EpochChanged => Q::EpochChanged,
+        Error::NotCommitted => Q::NotCommitted,
+        Error::Limit => Q::Limit,
+        Error::Unavailable => Q::Unavailable,
+    }
+}
+#[async_trait::async_trait]
+impl jj_store_jj::query::ReadAccess for CommittedRead {
+    fn repository(&self) -> m::RepositoryId {
+        self.snapshot.authority.repo_id
+    }
+    fn epoch(&self) -> m::EpochId {
+        self.snapshot.authority.epoch
+    }
+    fn operation(&self) -> m::OperationId {
+        self.snapshot.operation_id
+    }
+    fn inventory(&self) -> &BTreeSet<m::ObjectKey> {
+        &self.inventory
+    }
+    async fn authorize(&self) -> jj_store_jj::query::Result<()> {
+        self.authorize().await.map_err(query_error)
+    }
+}

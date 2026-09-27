@@ -65,6 +65,7 @@ impl SemanticPolicy for NativeSemantic {
 /// server construction supplies object access and configured protection rules.
 pub struct NativeSession {
     pub(crate) repository: m::RepositoryId,
+    pub(crate) object_store: Arc<dyn ObjectStore>,
     access: Arc<RepositoryAccess>,
     pub(crate) coordinator: Coordinator,
     pub(crate) limits: SessionLimits,
@@ -94,9 +95,16 @@ impl NativeSession {
             inventory_nodes: limits.inventory_nodes,
         });
         let guard = Arc::new(AuthenticatedGuard::new(access.clone(), semantic));
-        let coordinator = Coordinator::new(store, repository, objects, guard, limits.publication)?;
+        let coordinator = Coordinator::new(
+            store.clone(),
+            repository,
+            objects,
+            guard,
+            limits.publication,
+        )?;
         Ok(Self {
             repository,
+            object_store: store,
             access,
             coordinator,
             limits,

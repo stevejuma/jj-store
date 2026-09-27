@@ -36,3 +36,10 @@ HTTP routes and browser integration are separate M4 slices.
 Elapsed-time guards check before and after polling an operation as well as
 applying asynchronous timeouts. An immediately ready in-memory or cached result
 cannot bypass an expired request deadline.
+
+The native graph interface has explicit log context (logical workspace, author
+email for identity-relative expressions, and a fixed time anchor). It uses no
+user configuration, physical checkout, shell command or CLI output parser.
+Continuation is a native graph-node identity in the same query traversal;
+missing continuation nodes fail explicitly. Signing and binding these internal
+continuations to transport requests remains the HTTP pagination slice.

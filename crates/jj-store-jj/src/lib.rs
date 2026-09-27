@@ -9,6 +9,7 @@ pub mod factories;
 pub mod objects;
 pub mod operation_stores;
 pub mod policy;
+pub mod query;
 pub mod roots;
 
 mod runtime;

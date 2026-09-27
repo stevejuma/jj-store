@@ -74,3 +74,9 @@ Application reads use a separate committed-snapshot capability with no mutation
 methods. Selecting among concurrent heads never invokes native reconciliation;
 authentication and epoch checks run again on later reads. Reconciliation remains
 an explicitly authorized native or typed mutation.
+
+The read capability supplies the native graph executor with current
+authorization and its immutable object membership. The executor's backend denies
+every write and head transition, even when the originating credential has admin
+permission. Derived index writes are local cache maintenance, not repository
+publication.

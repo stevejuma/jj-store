@@ -169,3 +169,32 @@ Administration requests and responses bound snapshot heads, token counts,
 message sizes, deadlines and concurrent work. Credential-bearing protobuf
 messages use redacted Debug output; decoded secrets are cleared after parsing.
 TLS and explicit loopback transport rules are identical to ordinary native RPC.
+
+## Bounded application graphs
+
+The graph executor loads only the service-selected operation through load_at,
+uses a read-only authority and permits physical object access only to the
+captured committed inventory. It runs upstream revset, operation-walk and
+evolution algorithms without a server checkout. Graph DTOs retain native IDs,
+ordered parents, direct/indirect/missing commit edges, local bookmark conflict
+annotations, logical workspaces, visibility and divergence. Evolution
+distinguishes absent predecessor records from known-empty records.
+
+Requests have explicit page, object-byte, output-byte, index-size, traversal,
+revset-size and elapsed-time bounds. Native futures run on a caller-owned
+multithread reactor inside bounded blocking jobs; cancellation retains the job
+permit until worker exit. Query caches bind upstream revision, native profile,
+repository, epoch and operation. Cache construction stages a complete directory
+before rename, and a local lock rejects competing cache writers. Losing the
+cache causes reconstruction from committed native objects.
+
+Operation graph metadata retains snapshot flags, logical workspace names and
+attributes alongside timestamps, user, host and description. A corrupt cache
+profile or backend type fails explicitly; removing the derived directory allows
+reconstruction. Index-file corruption recovery and large rebuild task reporting
+remain separate qualification work.
+
+The current work/deadline checks bound admission, I/O and returned rows. Native
+synchronous CPU algorithms cannot be preempted by a Tokio timeout; these limits
+do not yet establish production CPU/memory qualification. That qualification and
+cache retention limits must precede shared HTTP query exposure.

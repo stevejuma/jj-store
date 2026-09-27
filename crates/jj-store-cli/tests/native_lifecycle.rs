@@ -1087,3 +1087,6 @@ async fn read_session_rejects_replaced_epoch_without_rebinding() {
         original.authority.epoch
     );
 }
+
+#[path = "native_lifecycle/graphs.rs"]
+mod graph_acceptance;

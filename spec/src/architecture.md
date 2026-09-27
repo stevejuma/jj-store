@@ -87,3 +87,8 @@ continue to come from the native service's manifest-selected receipts.
 The CLI builds both development executables. Repository creation is a durable
 client workflow that provisions its OS-held admin credential before remote
 creation and then delegates physical checkout setup to resumable attachment.
+
+The JJ integration crate owns graph DTOs and a bounded executor for native
+queries. Its explicit time-context dependency and temporary cache staging remain
+inside that boundary. Service read capabilities implement the executor's owned
+authorization interface; upstream JJ types do not enter transport or services.
