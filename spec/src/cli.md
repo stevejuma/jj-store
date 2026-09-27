@@ -283,3 +283,7 @@ Tantivy, adapters or service contracts.
 Native CLI integration fixtures also exercise authorized HTTP search over actual
 native objects and local Tantivy generations. These tests require no installed
 CLI replacement and make no browser feature changes.
+
+Native integration fixtures verify configured search identity at runner startup
+and same-position restart after source exclusions change. Failed rebuilds must
+not expose an incompatible prior generation to newly authorized reads.

@@ -306,3 +306,8 @@ Search HTTP compatibility uses real registered Axum handlers with a native
 repository and local Tantivy projection. Generated OpenAPI/client shapes are
 checked against captured page, status, capability and freshness-error responses.
 This local evidence does not substitute for RustFS deployment qualification.
+
+Search configuration recovery is qualified with native source content, local
+index reopen and a failed replacement commit. The evidence distinguishes
+rebuildable index configuration from unchanged repository IDs and committed
+positions; a restart must not activate incompatible source projections.

@@ -153,3 +153,17 @@ content worker pool and caps search output to the HTTP response budget. Route
 availability does not imply an index is ready; status distinguishes durable and
 served positions, and a missing reader returns search_not_ready. Server runner
 configuration and remote snapshot restoration require separate acceptance.
+
+## Configuration identity before recovery
+
+The runner validates a projection's accepted identity before acquiring writer
+ownership or reading its remote cursor. Native Tantivy extraction binds that
+identity to its complete canonical configuration. A caller cannot label one
+extractor with another configuration digest, implementation or schema.
+
+Recovery checks that binding before exposing a generation. An incompatible local
+artifact is a rebuild candidate and remains unavailable to new readers,
+including when the replacement build fails. Rebuilding at the same native
+position produces an artifact for the new configuration. Existing compatible
+pins retain their immutable generation; native repository data and IDs do not
+change when source projection exclusions change.

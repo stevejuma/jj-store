@@ -561,3 +561,6 @@ async fn native_tantivy_clears_ambiguous_scopes_and_respects_source_disable() {
         })
         .await;
 }
+
+#[path = "search_identity.rs"]
+mod search_identity;

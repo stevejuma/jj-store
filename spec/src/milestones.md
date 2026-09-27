@@ -33,9 +33,9 @@ adds evidence here in its enclosing Jujutsu change.
 | M5.1        | Done        | M4.1       | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Basic changes/refs/reconcile; preview receipt and semantic policy                     | Retain basic mutation acceptance                    | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004                                                                                                                      |
 | M5.2        | Done        | M5.1       | JST-MUT-003                                                             | Full abandon descendant bookmark workspace/evolution parity                           | Retain abandon acceptance                           | E-M5-005                                                                                                                                                             |
 | M5.3        | Done        | M5.1       | JST-MUT-004                                                             | Atomic stale-safe resolution with native conflict variants                            | Retain mutation conformance; proceed to M6          | E-M5-006,E-M5-007,E-M5-008                                                                                                                                           |
-| M6          | In progress | M5         | JST-ADAPT-001,JST-ADAPT-002,JST-ADAPT-003,JST-ADAPT-004                 | Replay-equivalent searchable projection with freshness                                | Configure server search and remote snapshots        | E-M6-001,E-M6-002,E-M6-003,E-M6-004,E-M6-005,E-M6-006                                                                                                                |
+| M6          | In progress | M5         | JST-ADAPT-001,JST-ADAPT-002,JST-ADAPT-003,JST-ADAPT-004                 | Replay-equivalent searchable projection with freshness                                | Configure server search and remote snapshots        | E-M6-001,E-M6-002,E-M6-003,E-M6-004,E-M6-005,E-M6-006,E-M6-007                                                                                                       |
 | M6.1        | Done        | M5         | JST-ADAPT-001,JST-ADAPT-002                                             | Ordered committed reader and durable replay-safe checkpoints                          | Implement Tantivy projection and search             | E-M6-001                                                                                                                                                             |
-| M6.2        | In progress | M6.1       | JST-ADAPT-003,JST-ADAPT-004                                             | Tantivy crash/rebuild/generation and revocation tests                                 | Configure server search and remote snapshots        | E-SCOPE-001,E-M6-002,E-M6-003,E-M6-004,E-M6-005,E-M6-006                                                                                                             |
+| M6.2        | In progress | M6.1       | JST-ADAPT-003,JST-ADAPT-004                                             | Tantivy crash/rebuild/generation and revocation tests                                 | Configure server search and remote snapshots        | E-SCOPE-001,E-M6-002,E-M6-003,E-M6-004,E-M6-005,E-M6-006,E-M6-007                                                                                                    |
 | M8a         | Planned     | M6,M4.3    | JST-COMPAT-003,JST-SEC-005                                              | Pinned release, restore, security, performance and cold UI evidence                   | Complete backend hardening; retain deferred UI gate | E-SCOPE-001                                                                                                                                                          |
 | M8a.1       | Planned     | M6         | JST-COMPAT-003,JST-SEC-005                                              | Local/shared examples, diagnostics, restore and request budgets                       | Run non-UI release acceptance                       | E-SCOPE-001                                                                                                                                                          |
 | M7          | Deferred    | M8a        | JST-ADAPT-005                                                           | Complete read-only replica through applied position                                   | After first release                                 | -                                                                                                                                                                    |
@@ -7114,6 +7114,104 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Rust 1.97.1 with rustfmt; jj-cli/jj-lib 0.45.1 at 7c41cdeb16b6b321c64e789a966b6adf723816a5; jj-native-0.45.1-v1; Tantivy 0.26.2 at 72d1ef9a6468aa68bbc69dcc80cdf60aaf64364d.",
     "formats": "Adds registered V1 HTTP search and status routes, per-repository search capability and optional search_status error data; generated OpenAPI and client declarations updated. Local schema 2, jss1 cursors and authoritative native/WAL/receipt formats unchanged. Enclosing Jujutsu change is the revision reference."
+  },
+  {
+    "id": "E-M6-007",
+    "tasks": ["M6", "M6.2"],
+    "date": "2026-09-27",
+    "kind": "search-config-recovery",
+    "files": [
+      "crates/jj-store-adapters/src/runner.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/adapter_projection.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/search_identity.rs",
+      "crates/jj-store-tantivy/src/native.rs",
+      "crates/jj-store-tantivy/src/projection.rs",
+      "docs/evidence/m6-search-identity.md",
+      "spec/src/adapters.md",
+      "spec/src/cli.md",
+      "spec/src/compatibility.md",
+      "spec/src/milestones.md",
+      "spec/src/security.md"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/native_lifecycle/search_identity.rs#native_search_rejects_mislabeled_extractor_configuration_before_recovery",
+      "crates/jj-store-cli/tests/native_lifecycle/search_identity.rs#native_search_config_change_hides_incompatible_recovery_until_rebuild"
+    ],
+    "runs": [
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle search_identity --locked",
+        "result": "fail",
+        "failures": 2,
+        "note": "Both regressions fail: mislabeled native extractor accepted and incompatible recovered generation served after failed rebuild."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle search_identity --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both original regressions pass after early identity validation and recovery filtering."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle search_identity --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both final regressions pass; mismatched config, implementation, schema and name are rejected before ownership."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle adapter_projection --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 22 native projection/search/HTTP/recovery fixtures pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-adapters --test delivery --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All ten adapter delivery/recovery fixtures pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-tantivy --test durability --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All ten local Tantivy durability fixtures pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Normal checks pass, including rustfmt, all-target Clippy, contract drift/capture, boundaries, progress and existing Svelte checks."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test",
+        "result": "pass",
+        "failures": 0,
+        "note": "346 Rust tests passed, zero failures, six external tests ignored; governance, harness, contract and existing web unit lanes pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rust workspace and existing browser bundle build successfully."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 13 specification lanes pass, including existing cold browser interaction/accessibility, Rust tests, mdBook, rustfmt and spec-first."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm format:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rustfmt and repository Prettier checks pass."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Configure server search runners, credentials, lifecycle and diagnostics.",
+      "Implement immutable remote index snapshots/restore and measured cold deployment evidence. Real RustFS/TLS qualification remains blocked externally; UI stays deferred."
+    ],
+    "versions": "Rust 1.97.1 with rustfmt; jj-cli/jj-lib 0.45.1 at 7c41cdeb16b6b321c64e789a966b6adf723816a5; jj-native-0.45.1-v1; Tantivy 0.26.2 at 72d1ef9a6468aa68bbc69dcc80cdf60aaf64364d.",
+    "formats": "Projection/Extractor owned interfaces add identity validation. No native, WAL, receipt, adapter checkpoint, local index schema 2 or HTTP format changes. Enclosing Jujutsu change is the revision reference."
   }
 ]
 ```

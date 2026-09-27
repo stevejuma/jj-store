@@ -206,3 +206,8 @@ and zeroized on drop. Authentication precedes cursor parsing and lookup; a valid
 cursor cannot bypass repository or epoch checks. Bounded waits reauthorize while
 polling, and expiry maintenance releases idle generation pins independently of
 further requests. Response-size failures release any newly retained pin.
+
+A restart with changed search source exclusions cannot temporarily serve the
+previous configuration's files during recovery. A configured extractor rejects
+mislabeled identities before runner startup, and incompatible recovered
+artifacts remain unserved until a compatible rebuild succeeds.

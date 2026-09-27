@@ -12,6 +12,10 @@ use std::{
 /// read only the supplied selected snapshot and retain its bounded authorization.
 #[async_trait::async_trait]
 pub trait Extractor: Send + Sync {
+    /// Configured extractors bind persisted checkpoints to the inputs they use.
+    fn validate_identity(&self, identity: &Identity) -> Result<()> {
+        identity.validate()
+    }
     async fn bootstrap(&mut self, snapshot: &Snapshot, context: &Context) -> Result<Update>;
     async fn update(&mut self, batch: &Batch, context: &Context) -> Result<Update>;
 }
@@ -134,9 +138,24 @@ impl<E: Extractor> TantivyProjection<E> {
 }
 #[async_trait::async_trait]
 impl<E: Extractor> Projection for TantivyProjection<E> {
+    fn validate_identity(&self, identity: &Identity) -> Result<()> {
+        if identity.implementation != IMPLEMENTATION || identity.schema != SCHEMA_VERSION {
+            return Err(Error::Invalid);
+        }
+        self.extractor.validate_identity(identity)
+    }
     async fn recover(&mut self, context: Context) -> Result<Option<Checkpoint>> {
         let result = async {
-            if let Some(generation) = self.recover_inner(context).await? {
+            let recovered = self.recover_inner(context).await?;
+            let compatible = match recovered {
+                Some(generation) => match self.validate_identity(&generation.checkpoint.identity) {
+                    Ok(()) => Some(generation),
+                    Err(Error::Invalid) => None,
+                    Err(error) => return Err(error),
+                },
+                None => None,
+            };
+            if let Some(generation) = compatible {
                 let checkpoint = generation.checkpoint.clone();
                 self.activate(generation)?;
                 Ok(Some(checkpoint))
@@ -164,6 +183,7 @@ impl<E: Extractor> Projection for TantivyProjection<E> {
         context: Context,
     ) -> Result<Checkpoint> {
         let result = async {
+            self.validate_identity(identity)?;
             let update = self.extractor.bootstrap(&snapshot, &context).await?;
             if !update.delete.is_empty() {
                 return Err(Error::Invalid);
@@ -183,11 +203,13 @@ impl<E: Extractor> Projection for TantivyProjection<E> {
         context: Context,
     ) -> Result<Checkpoint> {
         let result = async {
+            self.validate_identity(identity)?;
             let previous = self
                 .recover_inner(context.clone())
                 .await?
                 .ok_or(Error::Corrupt)?;
-            if previous.payload.source != batch.before {
+            if previous.checkpoint.identity != *identity || previous.payload.source != batch.before
+            {
                 return Err(Error::Corrupt);
             }
             let update = self.extractor.update(&batch, &context).await?;

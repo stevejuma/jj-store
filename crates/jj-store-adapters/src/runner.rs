@@ -9,6 +9,10 @@ use tokio::sync::{Semaphore, watch};
 /// timeout/cancellation, so they retain admission and the local writer lease.
 #[async_trait]
 pub trait Projection: Send {
+    /// Reject incompatible implementation/configuration before any runner I/O.
+    fn validate_identity(&self, identity: &Identity) -> Result<()> {
+        identity.validate()
+    }
     async fn recover(&mut self, context: Context) -> Result<Option<Checkpoint>>;
     async fn bootstrap(
         &mut self,
@@ -50,6 +54,7 @@ impl<P: Projection> Runner<P> {
         limits: Limits,
     ) -> Result<Self> {
         identity.validate()?;
+        projection.validate_identity(&identity)?;
         limits.validate()?;
         let lease = Lease::acquire(owner_root, source.repository(), &identity.name)?;
         Ok(Self {

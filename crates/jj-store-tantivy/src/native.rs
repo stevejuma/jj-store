@@ -396,6 +396,12 @@ impl NativeExtractor {
 }
 #[async_trait::async_trait]
 impl Extractor for NativeExtractor {
+    fn validate_identity(&self, identity: &Identity) -> Result<()> {
+        if *identity != self.config.identity()? {
+            return Err(Error::Invalid);
+        }
+        Ok(())
+    }
     async fn bootstrap(&mut self, snapshot: &Snapshot, context: &Context) -> Result<Update> {
         self.extract(snapshot, None, context).await
     }
