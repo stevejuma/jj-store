@@ -336,3 +336,11 @@ contract generator through service exports. Native metadata schema names are
 prefixed to distinguish them from query presentation types. Schema derives do
 not reorder fields, change Serde attributes or modify native payload identity.
 No upstream JJ type enters generated application contracts.
+
+Typed command preparation owns native transactions in this crate. It stages an
+unpublished operation under a bounded authority that cannot publish heads.
+New/Describe and bookmark updates use pinned native helpers; descendant rewrites
+and logical workspace/bookmark effects are reported from the resulting view and
+operation predecessor map. Physical working copies and user configuration do not
+participate. Read-only query stores retain their unconditional write denial;
+command staging adds only its own immutable native objects to read membership.

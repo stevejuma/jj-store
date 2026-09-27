@@ -208,3 +208,9 @@ Browser acceptance builds production assets and starts the actual Rust asset
 router under its CSP. Disposable captured native HTTP fixtures exercise browser
 interaction and accessibility; production RustFS/TLS qualification is recorded
 separately. Visual review remains visual-pending.
+
+Typed native command preparation is qualified by
+[the M5 preparation report](../../docs/evidence/m5-command-preparation.md).
+Native merge/rewrite/reporting fixtures and in-flight authorization/cancellation
+checks use test storage; they do not qualify durable public mutation endpoints
+or deployed RustFS/browser behavior.

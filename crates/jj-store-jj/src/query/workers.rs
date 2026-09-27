@@ -32,7 +32,7 @@ impl Workers {
             in_use: self.capacity - self.permits.available_permits(),
         }
     }
-    pub(super) fn acquire(&self) -> Result<OwnedSemaphorePermit> {
+    pub(crate) fn acquire(&self) -> Result<OwnedSemaphorePermit> {
         self.permits
             .clone()
             .try_acquire_owned()

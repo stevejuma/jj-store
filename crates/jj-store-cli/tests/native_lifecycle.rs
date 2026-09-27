@@ -1099,3 +1099,6 @@ mod content_acceptance;
 
 #[path = "native_lifecycle/events.rs"]
 mod event_acceptance;
+
+#[path = "native_lifecycle/commands.rs"]
+mod command_acceptance;

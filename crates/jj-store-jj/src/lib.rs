@@ -14,3 +14,5 @@ pub mod query;
 pub mod roots;
 
 mod runtime;
+
+pub mod commands;

@@ -211,3 +211,8 @@ to serve a prebuilt browser bundle alongside the authenticated HTTP/RPC APIs.
 Build it with pnpm web:build. A malformed or oversized bundle fails server
 startup explicitly; no filesystem directory listing or repository content is
 served as a browser asset.
+
+CLI-owned native lifecycle fixtures compare internal typed command preparation
+with the pinned native repository model, including descendant, bookmark,
+workspace and evolution effects. The command preparation library does not add a
+new CLI command or advertise HTTP mutation support by itself.

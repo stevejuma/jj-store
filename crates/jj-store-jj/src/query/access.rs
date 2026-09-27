@@ -24,7 +24,7 @@ use tokio::{
 
 use tokio_util::sync::{CancellationToken, WaitForCancellationFutureOwned};
 
-pub(super) struct Budget {
+pub(crate) struct Budget {
     pub cancellation: CancellationToken,
     pub limits: Limits,
     pub deadline: Instant,
@@ -170,7 +170,7 @@ impl Budget {
         }
     }
 }
-pub(super) struct ReadOnlyAuthority {
+pub(crate) struct ReadOnlyAuthority {
     pub access: Arc<dyn ReadAccess>,
     pub budget: Arc<Budget>,
 }
@@ -249,7 +249,8 @@ impl NativeAuthority for ReadOnlyAuthority {
         self.access.repository()
     }
 }
-pub(super) struct ReadStore {
+pub(crate) struct ReadStore {
+    staged: Option<Arc<Mutex<BTreeSet<m::ObjectKey>>>>,
     predicate_files: bool,
     inner: Arc<dyn ObjectStore>,
     access: Arc<dyn ReadAccess>,
@@ -263,11 +264,16 @@ impl ReadStore {
         predicate_files: bool,
     ) -> Self {
         Self {
+            staged: None,
             predicate_files,
             inner,
             access,
             budget,
         }
+    }
+    pub(crate) fn with_staged(mut self, staged: Arc<Mutex<BTreeSet<m::ObjectKey>>>) -> Self {
+        self.staged = Some(staged);
+        self
     }
     async fn validate(&self, key: &Key) -> storage::Result<m::ObjectKey> {
         self.budget
@@ -284,7 +290,10 @@ impl ReadStore {
         })()
         .filter(|id| {
             id.storage_path(self.access.repository()) == key.as_str()
-                && self.access.inventory().contains(id)
+                && (self.access.inventory().contains(id)
+                    || self.staged.as_ref().is_some_and(|staged| {
+                        staged.lock().expect("command staged objects").contains(id)
+                    }))
         });
         object.ok_or_else(|| {
             self.budget.fail(Error::NotCommitted);

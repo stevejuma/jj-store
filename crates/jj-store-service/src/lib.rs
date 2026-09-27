@@ -11,3 +11,5 @@ pub mod transport;
 pub mod index_tasks;
 pub mod pagination;
 pub mod reads;
+
+pub mod commands;

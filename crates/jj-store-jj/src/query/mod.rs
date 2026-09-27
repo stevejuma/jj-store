@@ -1,5 +1,5 @@
 //! Owned, bounded native graph queries. Upstream objects never cross this API.
-mod access;
+pub(crate) mod access;
 pub mod admission;
 pub mod cache;
 pub mod content;
@@ -280,20 +280,8 @@ impl GraphExecutor {
         workers: Workers,
     ) -> Result<Self> {
         cache_policy.validate()?;
-        limits.metadata.validate()?;
-        limits.predicates.validate()?;
-        if !root.is_absolute()
-            || limits.max_page == 0
-            || limits.max_page > 10_000
-            || limits.max_index_commits == 0
-            || limits.max_work == 0
-            || limits.max_object_bytes == 0
-            || limits.max_output_bytes == 0
-            || limits.max_revset_bytes == 0
-            || limits.max_revset_bytes > 16_384
-            || limits.timeout.is_zero()
-            || limits.timeout > Duration::from_secs(300)
-        {
+        limits.validate()?;
+        if !root.is_absolute() {
             return Err(Error::Limit);
         }
         Ok(Self {
@@ -465,5 +453,26 @@ impl GraphExecutor {
         };
         budget.complete_output(&result)?;
         Ok(result)
+    }
+}
+
+impl Limits {
+    pub(crate) fn validate(&self) -> Result<()> {
+        self.metadata.validate()?;
+        self.predicates.validate()?;
+        if self.max_page == 0
+            || self.max_page > 10_000
+            || self.max_index_commits == 0
+            || self.max_work == 0
+            || self.max_object_bytes == 0
+            || self.max_output_bytes == 0
+            || self.max_revset_bytes == 0
+            || self.max_revset_bytes > 16_384
+            || self.timeout.is_zero()
+            || self.timeout > Duration::from_secs(300)
+        {
+            return Err(Error::Limit);
+        }
+        Ok(())
     }
 }
