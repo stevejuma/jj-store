@@ -329,3 +329,10 @@ fields. Query retries and pages retain original inputs; index preparation must
 not reset the time anchor. Explicit refresh after an event reset starts a new
 subscription. Browser graph rendering admits at most 1000 nodes and 4096 edges;
 exceeding the display budget fails explicitly before layout.
+
+## Deferred UI execution
+
+As requested on 27 September 2026, further UI changes and browser deployment
+acceptance are deferred to M4.3. Existing read UI and its checks remain intact.
+Typed mutation, conflict, search and freshness UI requirements remain open;
+backend/API/SSE implementation and qualification continue independently.

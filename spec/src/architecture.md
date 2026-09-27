@@ -121,3 +121,8 @@ web_root selects a prebuilt static bundle; its manifest and assets are loaded at
 startup with fixed bounds, so requests do not read arbitrary disk paths. The
 Rust workspace remains buildable without a frontend toolchain; pnpm build builds
 the browser bundle before the Rust executables.
+
+The user deferred further UI changes on 27 September 2026. Existing browser code
+remains intact while backend/API/CLI/storage/search and operational work
+continue. M4.3 in the progress ledger retains the uncompleted UI requirements;
+backend completion does not establish full browser release acceptance.

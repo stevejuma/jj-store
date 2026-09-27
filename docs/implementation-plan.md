@@ -19,6 +19,21 @@ existing-repository migration remain explicit follow-on milestones.
 The development repository is Git-colocated; repositories served by the product
 use native JJ storage without requiring Git, SQL, or Nostr.
 
+## Execution scope update — 27 September 2026
+
+The user deferred any further UI changes and requested continuing all other
+tasks. Preserve the implemented read browser. Defer mutation/conflict/search UI,
+visual work and remaining browser deployment acceptance until the user returns
+to UI work. Backend mutation and search APIs, native/CLI behavior, storage
+recovery, authentication, SSE, generated API contracts and operational
+acceptance continue independently. Do not disable existing browser checks.
+
+M4.3 in the progress ledger owns the remaining deferred UI work. M4.2 retains
+SSE/API contract qualification. Backend M5 tasks depend on the completed read
+foundation M4.1, so deferred browser work does not block them. The original full
+release UI requirements remain recorded and are not marked complete by backend
+acceptance.
+
 ## Repository foundation and progress tracking
 
 Create a tracked agent guide, unchanged attachment archive, this execution plan,

@@ -110,3 +110,8 @@ Browser checks include Svelte/TypeScript analysis, focused client tests and cold
 Playwright interactions/accessibility against built assets. Functional and
 accessibility failures remain blocking; visual review is separate and remains
 visual-pending. Browser sources and tooling require same-change ledger evidence.
+
+User-requested scope deferrals must retain original requirements and evidence.
+The 27 September 2026 UI deferral moves remaining browser work to M4.3 without
+disabling existing functional checks or treating deferred acceptance as passed.
+Backend tasks may depend on completed API foundations independently of UI work.

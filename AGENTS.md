@@ -62,6 +62,14 @@ browser/lifecycle changes. Visual baselines require explicit approval.
 - Keep destructive GC, multi-writer serving, and automatic promotion disabled.
 - Search/adapters are rebuildable and cannot become repository authority.
 
+## Current execution scope
+
+The user deferred further UI changes on 27 September 2026. Preserve the existing
+browser implementation and continue non-UI backend, API, CLI, storage, search
+and operational work. UI features and browser deployment acceptance resume only
+when requested. Track that deferred scope in M4.3 of the single progress ledger;
+existing functional checks remain enabled.
+
 ## Local execution
 
 Use explicit development binary paths. Do not replace the installed `jj`,
