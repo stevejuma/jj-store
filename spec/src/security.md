@@ -44,3 +44,10 @@ creation capability before storage access. Its coordinator guard rejects all
 ordinary publications. Once initialized, the native service session enforces
 current repository credentials and the shared native semantic policy; no
 permissive policy constructor is exposed by that session.
+
+Native RPC V1 carries bearer credentials in sensitive authorization metadata.
+Unknown repositories and invalid credentials share an authorization failure.
+Object IDs never select a raw storage path. Uploads validate identity before
+storage and reauthorize before writing; long downloads reauthorize per chunk.
+Server messages expose stable error categories rather than storage or credential
+details. Work permits and total stream deadlines apply before body consumption.

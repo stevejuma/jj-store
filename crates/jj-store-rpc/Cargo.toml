@@ -1,0 +1,28 @@
+[package]
+name = "jj-store-rpc"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+jj-store-model.workspace = true
+jj-store-object.workspace = true
+jj-store-service.workspace = true
+async-trait = "0.1"
+async-stream = "0.3"
+bytes = "1"
+futures = "0.3"
+prost = "0.14"
+tonic = { version = "0.14", features = ["transport", "tls-ring", "tls-native-roots"] }
+tonic-prost = "0.14"
+tokio = { version = "1", features = ["net", "time", "sync", "io-util"] }
+tokio-stream = { version = "0.1", features = ["net"] }
+tokio-util = { version = "0.7", features = ["io"] }
+url = "2"
+
+[build-dependencies]
+prost-build = "0.14"
+tonic-prost-build = "0.14"
+protoc-bin-vendored = "3"

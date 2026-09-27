@@ -17,7 +17,7 @@ export function dependencyErrors(packages) {
       "jj-store-object",
       "jj-store-wal",
     ],
-    "jj-store-rpc": ["jj-store-model", "jj-store-service"],
+    "jj-store-rpc": ["jj-store-model", "jj-store-object", "jj-store-service"],
     "jj-store-http": [
       "jj-store-model",
       "jj-store-service",

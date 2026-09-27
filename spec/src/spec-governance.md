@@ -59,3 +59,7 @@ formats every workspace crate, including examples and tests;
 `pnpm format:rust:check` checks those files without changing them. `pnpm format`
 and `pnpm format:check` include Rust alongside Prettier. Both `pnpm check` and
 `pnpm spec:check` reject Rust formatting drift.
+
+The RPC layer may consume the owned object streaming interface. Its native JJ
+trait adapters remain in the CLI crate, and direct upstream JJ dependencies in
+RPC are rejected by the existing boundary checker.

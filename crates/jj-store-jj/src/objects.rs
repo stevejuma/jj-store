@@ -306,3 +306,66 @@ impl jj_store_wal::inventory::DependencySource for NativeObjects {
         })
     }
 }
+
+/// Validate an untrusted framed upload before creating its immutable key. This
+/// uses complete native codecs for metadata and bounded streaming for blobs.
+pub async fn validate_upload(
+    key: m::ObjectKey,
+    upload: &StagedUpload,
+    max_blob: u64,
+) -> Result<()> {
+    if let m::ObjectKey::File(id) = key {
+        let mut reader = upload.reader()?;
+        let mut bytes = [0; HEADER_LEN];
+        reader.read_exact(&mut bytes).await?;
+        let header = Header::decode(&bytes, key, max_blob)?;
+        if header.payload_len.checked_add(HEADER_LEN as u64) != Some(upload.len()) {
+            return Err(Error::Integrity);
+        }
+        let mut native = Blake2b512::new();
+        let mut envelope = Header::hasher(key, header.payload_len);
+        let mut buffer = vec![0; 64 * 1024];
+        loop {
+            let n = reader.read(&mut buffer).await?;
+            if n == 0 {
+                break;
+            }
+            native.update(&buffer[..n]);
+            envelope.update(&buffer[..n]);
+        }
+        if native.finalize().as_slice() != id.as_bytes()
+            || envelope.finalize().as_slice() != header.digest.as_bytes()
+        {
+            return Err(Error::Integrity);
+        }
+    } else {
+        use jj_lib::{backend as b, op_store as o};
+        if upload.len() > MAX_METADATA_BYTES + HEADER_LEN as u64 {
+            return Err(jj_store_object::Error::Limit.into());
+        }
+        let mut bytes = Vec::new();
+        upload.reader()?.read_to_end(&mut bytes).await?;
+        match key {
+            m::ObjectKey::Commit(_) => {
+                codec::decode::<b::Commit>(key, &bytes, MAX_METADATA_BYTES)?;
+            }
+            m::ObjectKey::Tree(_) => {
+                codec::decode::<b::Tree>(key, &bytes, MAX_METADATA_BYTES)?;
+            }
+            m::ObjectKey::Symlink(_) => {
+                codec::decode::<codec::NativeSymlink>(key, &bytes, MAX_METADATA_BYTES)?;
+            }
+            m::ObjectKey::Copy(_) => {
+                codec::decode::<b::CopyHistory>(key, &bytes, MAX_METADATA_BYTES)?;
+            }
+            m::ObjectKey::View(_) => {
+                codec::decode::<o::View>(key, &bytes, MAX_METADATA_BYTES)?;
+            }
+            m::ObjectKey::Operation(_) => {
+                codec::decode::<o::Operation>(key, &bytes, MAX_METADATA_BYTES)?;
+            }
+            m::ObjectKey::File(_) => unreachable!(),
+        }
+    }
+    Ok(())
+}

@@ -14,11 +14,16 @@ clap = { version = "4", features = ["derive"] }
 futures = "0.3"
 gix = "0.87.1"
 
-[dev-dependencies]
+jj-store-rpc.workspace = true
 jj-store-jj.workspace = true
 jj-store-model.workspace = true
 jj-store-object.workspace = true
 jj-store-service.workspace = true
+
+[dev-dependencies]
 jj-store-wal.workspace = true
 tempfile = "3"
 tokio = { version = "1", features = ["macros", "rt-multi-thread", "time", "sync"] }
+tonic = { version = "0.14", features = ["transport"] }
+tokio-stream = { version = "0.1", features = ["net"] }
+rcgen = "0.14"

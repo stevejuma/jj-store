@@ -129,3 +129,21 @@ block their calling thread while I/O drivers must keep running. Factories reject
 a single-thread runtime. Cache initialization writes only local store bindings
 and derived-store metadata; it avoids upstream initialization paths that assume
 root reads cannot fail authorization.
+
+## Native RPC V1
+
+The native gRPC boundary accepts typed repository/object IDs, immutable object
+uploads, committed ID queries, and head transitions. It exposes no raw keys,
+manifest CAS, policy writes, or caller-selected principal. The service verifies
+complete envelope and native identity before immutable storage, preventing a
+malformed upload from poisoning a content-addressed key. Remote factory adapters
+reuse the same native codecs and runtime binding as in-process factories.
+
+Each RPC authenticates current repository permissions. Uploads recheck write
+permission after bounded streaming and validation; downloads recheck read
+permission as chunks are emitted. Streams have bounded chunks, total bytes,
+concurrency and elapsed time, and drop owned spools when canceled. Publication
+uses the shared native semantic policy and deterministic receipt identity.
+Ambiguous transport failures preserve unknown publication outcomes. An explicit
+insecure-loopback client option is required for local plaintext; shared channels
+require TLS. Executable command and administration integration remain separate.

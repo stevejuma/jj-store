@@ -152,7 +152,7 @@ impl NativeSession {
             kind: SemanticKind::OperationPublished,
         })
     }
-    async fn inventory(&self) -> wal::Result<BTreeSet<m::ObjectKey>> {
+    pub(crate) async fn inventory(&self) -> wal::Result<BTreeSet<m::ObjectKey>> {
         tokio::time::timeout(self.limits.timeout, async {
             let base = self.snapshot().await?;
             let inventory = self

@@ -130,8 +130,12 @@ test("rejects_layer_and_native_dependency_leaks", () =>
         name: "jj-store-wal",
         dependencies: [{ name: "jj-lib" }, { name: "jj-store-tantivy" }],
       },
+      {
+        name: "jj-store-rpc",
+        dependencies: [{ name: "jj-lib" }, { name: "jj-store-wal" }],
+      },
     ]).length,
-    2,
+    4,
   ));
 test("accepts_owned_dependencies", () =>
   assert.deepEqual(
@@ -139,6 +143,14 @@ test("accepts_owned_dependencies", () =>
       {
         name: "jj-store-jj",
         dependencies: [{ name: "jj-lib" }, { name: "jj-store-wal" }],
+      },
+      {
+        name: "jj-store-rpc",
+        dependencies: [
+          { name: "jj-store-model" },
+          { name: "jj-store-object" },
+          { name: "jj-store-service" },
+        ],
       },
     ]),
     [],

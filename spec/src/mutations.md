@@ -48,3 +48,9 @@ identical receipt retries are resolved before this check. Publication also
 checks new workspace-name claims against current heads, so concurrent physical
 clients cannot silently acquire the same logical workspace name. Reconciliation
 can retain mappings inherited from its parent operations.
+
+The native transport facade derives publication actors from repository tokens
+and accepts only native removed-head/added-operation transitions. It does not
+expose settings mutations or an unguarded coordinator. RPC head updates
+therefore use the same protected-history checks and durable retry receipts as
+local sessions.

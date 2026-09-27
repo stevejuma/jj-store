@@ -60,3 +60,8 @@ The service implements the owned native-store authority interfaces through the
 shared guarded coordinator. JJ factories and semantic object inspection remain
 in the JJ integration crate. CLI-package integration fixtures exercise the full
 native library lifecycle without moving upstream types into service code.
+
+The RPC crate depends on owned model, object-I/O and service interfaces. Its
+streaming object transport implements ObjectStore only for repository-bound
+native keys and rejects mutable writes. Remote JJ authority adapters live in the
+CLI integration crate; upstream JJ types do not enter the RPC implementation.
