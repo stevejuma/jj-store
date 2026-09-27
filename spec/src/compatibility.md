@@ -247,3 +247,10 @@ atomic policy/input failures, hidden no-op and HTTP receipts. Added report
 fields are default-empty and skipped when empty; earlier V1 serialized reports
 reencode without additional fields. This does not replace RustFS/deployment
 acceptance.
+
+[Atomic conflict term evidence](../../docs/evidence/m5-resolve-terms.md) covers
+shared read/mutation fingerprints, all native term kinds, multi-sided and
+unlabeled conflicts, partial resolution, descendant/reference/evolution updates,
+no-staging invalid batches, authorization, durable retry and HTTP conformance.
+Native codecs, stored reports and prior V1 receipt bytes are unchanged. This
+term/delete slice does not qualify uploaded replacements or deployed RustFS.

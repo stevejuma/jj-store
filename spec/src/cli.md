@@ -239,3 +239,9 @@ commits, hidden targets, historical/evolution reads, protected policy and typed
 HTTP retry behavior. It also preserves binary/mode/copy/symlink/submodule values
 through native rewrites. Ordinary CLI commands remain covered by their existing
 executable parity lanes.
+
+Native lifecycle acceptance now exercises typed conflict term selection and
+deletion through the service and HTTP API, including descendant/bookmark/logical
+workspace updates. Ordinary jj resolve remains an upstream client command;
+server typed commands never execute client editors or alter physical files.
+Uploaded typed replacements retain their own pending M5.3 acceptance gate.

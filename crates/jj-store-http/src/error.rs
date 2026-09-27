@@ -188,6 +188,7 @@ impl From<jj_store_service::mutations::Error> for Error {
             E::Preparation(C::MultipleHeads) => {
                 Self::new(StatusCode::CONFLICT, "reconciliation_required")
             }
+            E::Preparation(C::StaleConflict) => Self::new(StatusCode::CONFLICT, "stale_conflict"),
             E::Preparation(C::StaleBookmark) => Self::new(StatusCode::CONFLICT, "stale_bookmark"),
             E::Preparation(C::Root) => Self::denied(),
             E::Preparation(C::Hidden) => Self::new(StatusCode::NOT_FOUND, "not_found"),

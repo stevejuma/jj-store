@@ -16,7 +16,12 @@ impl OperatorPolicies for NoOperators {
         panic!("mutation must not access operator policy")
     }
 }
-fn api(f: &Fixture, cache: &std::path::Path, config: Config, protection: Protection) -> Router {
+pub(crate) fn api(
+    f: &Fixture,
+    cache: &std::path::Path,
+    config: Config,
+    protection: Protection,
+) -> Router {
     let host = RepositoryHost::new(
         f.store.clone(),
         Arc::new(NoOperators),
@@ -30,7 +35,7 @@ fn api(f: &Fixture, cache: &std::path::Path, config: Config, protection: Protect
         .unwrap()
         .router()
 }
-fn request(token: &BearerToken, path: &str, body: Option<&Value>) -> HttpRequest<Body> {
+pub(crate) fn request(token: &BearerToken, path: &str, body: Option<&Value>) -> HttpRequest<Body> {
     let mut builder = HttpRequest::builder()
         .uri(format!("/v1/repos/{REPO}/{path}"))
         .header(
@@ -47,7 +52,7 @@ fn request(token: &BearerToken, path: &str, body: Option<&Value>) -> HttpRequest
     };
     builder.body(body).unwrap()
 }
-async fn send(router: &Router, request: HttpRequest<Body>) -> (StatusCode, Value) {
+pub(crate) async fn send(router: &Router, request: HttpRequest<Body>) -> (StatusCode, Value) {
     let response = router.clone().oneshot(request).await.unwrap();
     assert_eq!(response.headers()["cache-control"], "no-store");
     assert_eq!(response.headers()["x-content-type-options"], "nosniff");
@@ -127,7 +132,8 @@ async fn http_mutations_preview_apply_status_replay_and_contract_capture() {
             "bookmark_move",
             "bookmark_delete",
             "reconcile_operations",
-            "abandon"
+            "abandon",
+            "resolve_conflicts"
         ])
     );
     record("capabilities", "get", status, &caps);

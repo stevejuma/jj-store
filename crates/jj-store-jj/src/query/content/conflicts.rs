@@ -105,6 +105,31 @@ pub fn fingerprint(
     hash.update(serde_json::to_vec(&input).map_err(|_| Error::Unavailable)?);
     Ok(m::ConflictFingerprint::new(hash.finalize().into()))
 }
+/// Shared by the read descriptor and atomic mutation validation. Never simplify
+/// or renumber terms before fingerprinting and selecting a native term.
+pub(crate) fn native_terms(
+    tree: &jj_lib::merged_tree::MergedTree,
+    value: &b::MergedTreeValue,
+) -> Result<Vec<Term>> {
+    let values = native::terms(value)?;
+    let labels = tree.labels_by_term("");
+    if values.len() != labels.iter().len() {
+        return Err(Error::Corrupt);
+    }
+    values
+        .into_iter()
+        .zip(labels.iter())
+        .enumerate()
+        .map(|(i, (value, label))| {
+            Ok(Term {
+                id: i.try_into().map_err(|_| Error::Limit)?,
+                role: if i % 2 == 0 { Role::Add } else { Role::Remove },
+                value,
+                label: tree.labels().has_labels().then(|| (*label).to_owned()),
+            })
+        })
+        .collect()
+}
 pub(super) async fn read(context: Context, request: Request) -> Result<Response> {
     let path = native::path(&request.path)?;
     let store = context.native_store()?;
@@ -112,7 +137,6 @@ pub(super) async fn read(context: Context, request: Request) -> Result<Response>
     let change =
         m::ChangeId::from_slice(commit.change_id().as_bytes()).map_err(|_| Error::Corrupt)?;
     let tree = commit.tree();
-    let labels = tree.labels_by_term("").map(|label| (*label).to_owned());
     let matcher = PrefixMatcher::new([path.as_ref()]);
     let mut conflicts = vec![];
     for (path, value) in tree.conflicts_matching(&matcher) {
@@ -121,21 +145,10 @@ pub(super) async fn read(context: Context, request: Request) -> Result<Response>
             return Err(Error::Limit);
         }
         let value = value.map_err(map_backend)?;
-        let values = native::terms(&value)?;
-        if values.len() != labels.iter().len() {
-            return Err(Error::Corrupt);
-        }
-        let mut terms = vec![];
-        for (i, (value, label)) in values.into_iter().zip(labels.iter()).enumerate() {
+        let terms = native_terms(&tree, &value)?;
+        for term in &terms {
             context.budget.work(1)?;
-            let term = Term {
-                id: i.try_into().map_err(|_| Error::Limit)?,
-                role: if i % 2 == 0 { Role::Add } else { Role::Remove },
-                value,
-                label: tree.labels().has_labels().then(|| label.clone()),
-            };
-            context.budget.output(&term)?;
-            terms.push(term);
+            context.budget.output(term)?;
         }
         let path = path.as_internal_file_string().to_owned();
         let fingerprint = fingerprint(

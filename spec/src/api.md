@@ -377,3 +377,12 @@ An all-hidden request returns HTTP 409 no_changes with zero publications; this
 rejection is not a retained receipt. Snapshot and request identity rules remain
 identical to other commands. Generated schemas/types expose this API while
 browser mutation controls remain deferred.
+
+ResolveConflicts is advertised as resolve_conflicts and accepts a commit plus
+1–256 conflict paths with fingerprints. Each resolution is select_term with an
+ordered zero-based term index, or delete. A stale fingerprint or a path that is
+no longer a conflict returns HTTP 409 stale_conflict; malformed/overlapping
+paths and invalid term indices return 400. Preview/apply/status retain the
+existing authorization, limits, atomic snapshot and retry behavior. Uploaded
+replacement-file actions remain an explicit M5.3 gap and are rejected. Only API
+declarations change under web; conflict editors remain deferred.

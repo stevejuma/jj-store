@@ -3,6 +3,7 @@ mod abandon;
 mod access;
 mod execute;
 mod reconcile;
+mod resolve;
 use crate::query::{self, ReadAccess, access::Budget, workers::Workers};
 use jj_store_model as m;
 use jj_store_object::ObjectStore;
@@ -27,12 +28,18 @@ pub enum Error {
     StaleBookmark,
     #[error("no visible revisions to abandon")]
     NoChanges,
+    #[error("selected conflict differs from the expected native terms")]
+    StaleConflict,
 }
 pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(tag = "type", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Command {
+    ResolveConflicts {
+        commit: m::CommitId,
+        paths: Vec<ConflictResolution>,
+    },
     New {
         parents: Vec<m::CommitId>,
         description: String,
@@ -63,6 +70,20 @@ pub enum Command {
         retain_bookmarks: bool,
         restore_descendants: bool,
     },
+}
+/// One path in an atomic resolution of the original commit tree.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct ConflictResolution {
+    pub path: String,
+    pub fingerprint: m::ConflictFingerprint,
+    pub resolution: Resolution,
+}
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
+#[serde(tag = "type", rename_all = "snake_case", deny_unknown_fields)]
+pub enum Resolution {
+    SelectTerm { term: u32 },
+    Delete,
 }
 impl Command {
     /// Shared shape admission for execution and canonical application intent.

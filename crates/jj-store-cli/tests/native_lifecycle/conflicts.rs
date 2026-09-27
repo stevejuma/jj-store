@@ -386,3 +386,6 @@ async fn conflict_descriptor_limits_revocation_and_verified_content_fail_closed(
         q::Error::Corrupt
     );
 }
+
+#[path = "resolve.rs"]
+mod resolve_acceptance;

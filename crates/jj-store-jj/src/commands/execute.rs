@@ -49,6 +49,7 @@ pub(super) fn validate(command: &Command) -> Result<()> {
         }
         Command::Describe { description, .. } => description.len() <= 65536,
         Command::ReconcileOperations { .. } => true,
+        Command::ResolveConflicts { paths, .. } => super::resolve::validate(paths).is_ok(),
         Command::Abandon { commits, .. } => {
             !commits.is_empty()
                 && commits.len() <= 256
@@ -175,6 +176,11 @@ pub(super) async fn run(
     let mut abandoned = vec![];
     let mut skipped_hidden = vec![];
     let (staged, mut created) = match command {
+        Command::ResolveConflicts { commit, paths } => (
+            super::resolve::stage(&repo, access.as_ref(), commit, paths, principal, &budget)
+                .await?,
+            vec![],
+        ),
         Command::Abandon {
             commits,
             retain_bookmarks,
@@ -288,7 +294,9 @@ async fn transact(
     tx.set_attribute("jj-store.principal".into(), principal.to_string());
     let mut created = vec![];
     let description = match command {
-        Command::ReconcileOperations { .. } | Command::Abandon { .. } => {
+        Command::ReconcileOperations { .. }
+        | Command::Abandon { .. }
+        | Command::ResolveConflicts { .. } => {
             return Err(Error::Invalid);
         }
         Command::New {

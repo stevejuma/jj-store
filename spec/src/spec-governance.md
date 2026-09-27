@@ -124,3 +124,8 @@ API declarations does not close any deferred browser feature or deployment gate.
 The contract lane captures typed abandon preview/apply/no-change responses as
 well as foundational mutations and reads. New nonempty optional report fields
 must conform to generated schemas while older V1 report bytes remain unchanged.
+
+Contract capture includes atomic conflict preview/apply and rejection responses.
+The generated command union exposes only implemented resolution actions; further
+upload support needs its own specification, security and acceptance evidence.
+Existing browser checks remain enabled while UI work is deferred.

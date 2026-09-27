@@ -4121,7 +4121,7 @@
             }
           },
           "409": {
-            "description": "stale_snapshot, stale_bookmark, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt.",
+            "description": "stale_snapshot, stale_bookmark, stale_conflict, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt.",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/ErrorBody" }
@@ -4214,6 +4214,72 @@
                   },
                   "command": {
                     "oneOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "commit": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{128}$",
+                            "minLength": 128,
+                            "maxLength": 128
+                          },
+                          "paths": {
+                            "type": "array",
+                            "items": {
+                              "description": "One path in an atomic resolution of the original commit tree.",
+                              "type": "object",
+                              "properties": {
+                                "path": { "type": "string" },
+                                "fingerprint": {
+                                  "type": "string",
+                                  "pattern": "^[0-9a-f]{128}$",
+                                  "minLength": 128,
+                                  "maxLength": 128
+                                },
+                                "resolution": {
+                                  "oneOf": [
+                                    {
+                                      "type": "object",
+                                      "properties": {
+                                        "term": {
+                                          "type": "integer",
+                                          "format": "uint32",
+                                          "minimum": 0
+                                        },
+                                        "type": {
+                                          "type": "string",
+                                          "const": "select_term"
+                                        }
+                                      },
+                                      "additionalProperties": false,
+                                      "required": ["type", "term"]
+                                    },
+                                    {
+                                      "type": "object",
+                                      "properties": {
+                                        "type": {
+                                          "type": "string",
+                                          "const": "delete"
+                                        }
+                                      },
+                                      "required": ["type"],
+                                      "additionalProperties": false
+                                    }
+                                  ]
+                                }
+                              },
+                              "additionalProperties": false,
+                              "required": ["path", "fingerprint", "resolution"]
+                            }
+                          },
+                          "type": {
+                            "type": "string",
+                            "const": "resolve_conflicts"
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": ["type", "commit", "paths"]
+                      },
                       {
                         "type": "object",
                         "properties": {
@@ -4434,7 +4500,7 @@
             }
           },
           "409": {
-            "description": "stale_snapshot, stale_bookmark, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt.",
+            "description": "stale_snapshot, stale_bookmark, stale_conflict, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt.",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/ErrorBody" }
@@ -4527,6 +4593,72 @@
                   },
                   "command": {
                     "oneOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "commit": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{128}$",
+                            "minLength": 128,
+                            "maxLength": 128
+                          },
+                          "paths": {
+                            "type": "array",
+                            "items": {
+                              "description": "One path in an atomic resolution of the original commit tree.",
+                              "type": "object",
+                              "properties": {
+                                "path": { "type": "string" },
+                                "fingerprint": {
+                                  "type": "string",
+                                  "pattern": "^[0-9a-f]{128}$",
+                                  "minLength": 128,
+                                  "maxLength": 128
+                                },
+                                "resolution": {
+                                  "oneOf": [
+                                    {
+                                      "type": "object",
+                                      "properties": {
+                                        "term": {
+                                          "type": "integer",
+                                          "format": "uint32",
+                                          "minimum": 0
+                                        },
+                                        "type": {
+                                          "type": "string",
+                                          "const": "select_term"
+                                        }
+                                      },
+                                      "additionalProperties": false,
+                                      "required": ["type", "term"]
+                                    },
+                                    {
+                                      "type": "object",
+                                      "properties": {
+                                        "type": {
+                                          "type": "string",
+                                          "const": "delete"
+                                        }
+                                      },
+                                      "required": ["type"],
+                                      "additionalProperties": false
+                                    }
+                                  ]
+                                }
+                              },
+                              "additionalProperties": false,
+                              "required": ["path", "fingerprint", "resolution"]
+                            }
+                          },
+                          "type": {
+                            "type": "string",
+                            "const": "resolve_conflicts"
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": ["type", "commit", "paths"]
+                      },
                       {
                         "type": "object",
                         "properties": {
@@ -4753,7 +4885,7 @@
             }
           },
           "409": {
-            "description": "stale_snapshot, stale_bookmark, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt.",
+            "description": "stale_snapshot, stale_bookmark, stale_conflict, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt.",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/ErrorBody" }
@@ -4833,7 +4965,7 @@
           "405": { "description": "Unsupported method." },
           "408": { "description": "Native query canceled." },
           "409": {
-            "description": "stale_snapshot, stale_bookmark, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt."
+            "description": "stale_snapshot, stale_bookmark, stale_conflict, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt."
           },
           "410": {
             "description": "Index task expired or was lost on server restart."

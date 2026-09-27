@@ -4939,6 +4939,26 @@ export interface operations {
           };
           command:
             | {
+                commit: string;
+                paths: {
+                  path: string;
+                  fingerprint: string;
+                  resolution:
+                    | {
+                        /** Format: uint32 */
+                        term: number;
+                        /** @constant */
+                        type: "select_term";
+                      }
+                    | {
+                        /** @constant */
+                        type: "delete";
+                      };
+                }[];
+                /** @constant */
+                type: "resolve_conflicts";
+              }
+            | {
                 parents: string[];
                 description: string;
                 workspace?: string | null;
@@ -5049,7 +5069,7 @@ export interface operations {
           "application/json": components["schemas"]["ErrorBody"];
         };
       };
-      /** @description stale_snapshot, stale_bookmark, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt. */
+      /** @description stale_snapshot, stale_bookmark, stale_conflict, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt. */
       409: {
         headers: {
           [name: string]: unknown;
@@ -5121,6 +5141,26 @@ export interface operations {
             heads: string[];
           };
           command:
+            | {
+                commit: string;
+                paths: {
+                  path: string;
+                  fingerprint: string;
+                  resolution:
+                    | {
+                        /** Format: uint32 */
+                        term: number;
+                        /** @constant */
+                        type: "select_term";
+                      }
+                    | {
+                        /** @constant */
+                        type: "delete";
+                      };
+                }[];
+                /** @constant */
+                type: "resolve_conflicts";
+              }
             | {
                 parents: string[];
                 description: string;
@@ -5232,7 +5272,7 @@ export interface operations {
           "application/json": components["schemas"]["ErrorBody"];
         };
       };
-      /** @description stale_snapshot, stale_bookmark, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt. */
+      /** @description stale_snapshot, stale_bookmark, stale_conflict, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt. */
       409: {
         headers: {
           [name: string]: unknown;
@@ -5354,7 +5394,7 @@ export interface operations {
           "application/json": components["schemas"]["ErrorBody"];
         };
       };
-      /** @description stale_snapshot, stale_bookmark, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt. */
+      /** @description stale_snapshot, stale_bookmark, stale_conflict, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt. */
       409: {
         headers: {
           [name: string]: unknown;
@@ -5462,7 +5502,7 @@ export interface operations {
         };
         content?: never;
       };
-      /** @description stale_snapshot, stale_bookmark, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt. */
+      /** @description stale_snapshot, stale_bookmark, stale_conflict, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt. */
       409: {
         headers: {
           [name: string]: unknown;

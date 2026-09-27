@@ -60,6 +60,7 @@ impl From<&Config> for Capabilities {
                 "bookmark_delete",
                 "reconcile_operations",
                 "abandon",
+                "resolve_conflicts",
             ]
             .map(str::to_owned)
             .to_vec(),

@@ -368,3 +368,10 @@ rewrites create replacement working-copy commits and update conflicted
 bookmarks. Reports retain exact abandoned/hidden IDs without deleting native
 objects. New optional empty-skipped report fields preserve older V1 receipt
 canonical bytes.
+
+Typed conflict resolution shares read-side native term construction and
+fingerprinting. A FilesMatcher selects exact conflict leaves; a complete
+preflight validates every path before MergedTreeBuilder changes the tree. Native
+rewrite_commit/rebase_descendants maintain change identity, references and
+evolution. Ordered term selection retains file/copy/mode, symlink, submodule and
+directory values. It never invokes external conflict tools.
