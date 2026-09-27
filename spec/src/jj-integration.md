@@ -1,5 +1,10 @@
 # Native JJ integration
 
+Search visibility uses the same bounded native commit-parent traversal as
+operation differences. It starts at the explicitly selected operation's view
+heads and does not follow predecessor links or reconcile operation heads.
+Resource exhaustion returns an error instead of a partial visibility set.
+
 Commit ancestry, operation ancestry, evolution, and publication order are four
 separate histories. Multiple operation heads are legal. CLI repository opening
 can use native reconciliation, but HTTP GET cannot. Backend copy lookup and

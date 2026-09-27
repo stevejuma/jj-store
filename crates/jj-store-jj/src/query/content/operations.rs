@@ -67,6 +67,15 @@ pub struct Response {
     pub data: Data,
     pub stats: Stats,
 }
+pub(super) async fn visible(context: Context) -> Result<BTreeSet<m::CommitId>> {
+    let operation = context.operation(context.access.operation()).await?;
+    let view = context.view(operation.view_id).await?;
+    let ids = context
+        .ancestors(view.head_ids.into_iter().collect(), &mut 0)
+        .await?;
+    context.budget.complete_output(&ids)?;
+    Ok(ids)
+}
 pub(super) async fn read(context: Context, request: Request) -> Result<Response> {
     let operation = context.operation(request.operation).await?;
     let data = match request.parent {

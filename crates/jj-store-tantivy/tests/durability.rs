@@ -26,9 +26,7 @@ async fn tantivy_recovers_committed_payload_without_repeating_effects() {
     assert_eq!(
         pin.query(
             f.access.as_ref(),
-            "generation",
-            0,
-            20,
+            SearchRequest::historical("generation", 0, 20),
             SearchLimits::default()
         )
         .await
@@ -51,9 +49,7 @@ async fn tantivy_recovers_committed_payload_without_repeating_effects() {
         .unwrap()
         .query(
             f.access.as_ref(),
-            "generation",
-            0,
-            20,
+            SearchRequest::historical("generation", 0, 20),
             SearchLimits::default(),
         )
         .await
@@ -87,9 +83,7 @@ async fn tantivy_crashes_before_pointer_replay_and_after_reader_recover() {
             .unwrap()
             .query(
                 f.access.as_ref(),
-                "generation",
-                0,
-                20,
+                SearchRequest::historical("generation", 0, 20),
                 SearchLimits::default(),
             )
             .await
@@ -111,9 +105,7 @@ async fn tantivy_generation_pagination_retains_old_files_and_checks_each_authori
     let page = pin
         .query(
             f.access.as_ref(),
-            "generation",
-            0,
-            1,
+            SearchRequest::historical("generation", 0, 1),
             SearchLimits::default(),
         )
         .await
@@ -125,9 +117,7 @@ async fn tantivy_generation_pagination_retains_old_files_and_checks_each_authori
     let second = pin
         .query(
             f.access.as_ref(),
-            "generation",
-            1,
-            1,
+            SearchRequest::historical("generation", 1, 1),
             SearchLimits::default(),
         )
         .await
@@ -139,9 +129,7 @@ async fn tantivy_generation_pagination_retains_old_files_and_checks_each_authori
     assert!(matches!(
         pin.query(
             f.access.as_ref(),
-            "generation",
-            1,
-            1,
+            SearchRequest::historical("generation", 1, 1),
             SearchLimits::default()
         )
         .await,
@@ -156,9 +144,7 @@ async fn tantivy_generation_pagination_retains_old_files_and_checks_each_authori
     assert!(matches!(
         pin.query(
             f.access.as_ref(),
-            "generation",
-            0,
-            1,
+            SearchRequest::historical("generation", 0, 1),
             SearchLimits::default()
         )
         .await,
@@ -169,9 +155,7 @@ async fn tantivy_generation_pagination_retains_old_files_and_checks_each_authori
     assert!(matches!(
         pin.query(
             f.access.as_ref(),
-            "generation",
-            0,
-            1,
+            SearchRequest::historical("generation", 0, 1),
             SearchLimits::default()
         )
         .await,
@@ -218,9 +202,7 @@ async fn tantivy_missing_corrupt_artifacts_and_config_changes_rebuild() {
                 .unwrap()
                 .query(
                     f.access.as_ref(),
-                    "generation",
-                    0,
-                    10,
+                    SearchRequest::historical("generation", 0, 10),
                     SearchLimits::default()
                 )
                 .await
@@ -286,9 +268,7 @@ async fn tantivy_limits_and_writer_owner_fail_without_advancing() {
     assert!(matches!(
         pin.query(
             f.access.as_ref(),
-            "generation",
-            0,
-            101,
+            SearchRequest::historical("generation", 0, 101),
             SearchLimits::default()
         )
         .await,
@@ -297,9 +277,7 @@ async fn tantivy_limits_and_writer_owner_fail_without_advancing() {
     assert!(matches!(
         pin.query(
             f.access.as_ref(),
-            "generation",
-            0,
-            1,
+            SearchRequest::historical("generation", 0, 1),
             SearchLimits {
                 output_bytes: 1,
                 ..Default::default()
@@ -350,9 +328,13 @@ async fn tantivy_scope_changes_remove_stale_content_and_replay_upserts() {
     runner.step(token()).await.unwrap();
     let access = f.access.as_ref();
     let query = |pin: PinnedReader| async move {
-        pin.query(access, "secret", 0, 20, SearchLimits::default())
-            .await
-            .unwrap()
+        pin.query(
+            access,
+            SearchRequest::historical("secret", 0, 20),
+            SearchLimits::default(),
+        )
+        .await
+        .unwrap()
     };
     assert_eq!(
         query(search.pin(f.access.as_ref()).await.unwrap())
@@ -465,9 +447,7 @@ async fn tantivy_remote_acknowledgement_loss_recovers_real_index() {
             .unwrap()
             .query(
                 f.access.as_ref(),
-                &op(1).to_string(),
-                0,
-                10,
+                SearchRequest::historical(&op(1).to_string(), 0, 10),
                 SearchLimits::default(),
             )
             .await
@@ -546,9 +526,7 @@ async fn tantivy_restored_older_generation_replays_without_cursor_regression() {
         .unwrap()
         .query(
             f.access.as_ref(),
-            "generation",
-            0,
-            10,
+            SearchRequest::historical("generation", 0, 10),
             SearchLimits::default(),
         )
         .await
@@ -593,25 +571,31 @@ async fn tantivy_rechecks_authorization_before_returning_query_results() {
     let pin = search.pin(f.access.as_ref()).await.unwrap();
     let revoke = Revoke(Default::default());
     assert!(matches!(
-        pin.query(&revoke, "generation", 0, 10, SearchLimits::default())
-            .await,
+        pin.query(
+            &revoke,
+            SearchRequest::historical("generation", 0, 10),
+            SearchLimits::default()
+        )
+        .await,
         Err(Error::Denied)
     ));
     assert_eq!(revoke.0.load(Ordering::SeqCst), 2);
     assert!(matches!(
         pin.query(
             f.access.as_ref(),
-            &"generation ".repeat(33),
-            0,
-            10,
+            SearchRequest::historical(&"generation ".repeat(33), 0, 10),
             SearchLimits::default()
         )
         .await,
         Err(Error::Limit)
     ));
     assert!(matches!(
-        pin.query(f.access.as_ref(), "*", 0, 10, SearchLimits::default())
-            .await,
+        pin.query(
+            f.access.as_ref(),
+            SearchRequest::historical("*", 0, 10),
+            SearchLimits::default()
+        )
+        .await,
         Err(Error::Invalid)
     ));
 }

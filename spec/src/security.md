@@ -194,3 +194,8 @@ without treating native usernames or attributes as authentication. Explicit
 source scopes and prefix exclusions precede file-content reads. Native
 projection readers accept only the selected inventory and expose no write
 capability.
+
+Selected-view search filters retain no credential or live session. Their checked
+repository and epoch must match the pinned index, and a new request must supply
+current repository authorization before and after execution. Neither a filter
+nor a historical search mode bypasses token revocation.

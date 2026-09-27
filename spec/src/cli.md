@@ -1,5 +1,9 @@
 # CLI and server commands
 
+Native search acceptance compares selected-view commit visibility with retained
+historical metadata, including invisible predecessors and pagination after
+hidden-hit filtering. These fixtures do not introduce CLI search commands.
+
 First custom commands: init, attach, status, capabilities, doctor, serve-local,
 and credential login/logout. JSON is never paged. Custom standalone no-command
 invocation prints help successfully; ordinary upstream jj defaults stay intact.

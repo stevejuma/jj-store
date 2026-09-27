@@ -285,3 +285,10 @@ lineages, configured bookmark/workspace scopes, retained predecessors and native
 tree diffs. Incremental updates and full rebuilds must produce equivalent hits.
 The generic codec fixture contains a deliberately inconsistent shared copy path;
 it remains rejected by diff execution, and search uses a valid scope fixture.
+
+Selected-view search tests compare complete commit visibility to the pinned
+native graph's all() revset. They distinguish retained historical metadata from
+visible commits, verify filtering before pagination, and keep both selected view
+and index generation stable across later writes. Foreign repository/epoch
+filters and revoked tokens fail explicitly. This is native/local-index evidence,
+separate from HTTP pagination and RustFS deployment qualification.

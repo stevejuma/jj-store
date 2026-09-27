@@ -1,5 +1,10 @@
 # Typed mutations
 
+An authorized read can produce a credential-free, immutable selected-view commit
+set for search filtering. Only the service constructs this value after native
+traversal and a final authorization check. It is informational, cannot publish,
+and cannot replace the fresh authorization required by every search request.
+
 Previews do not publish or grant authorization. Stale snapshots/conflicts fail
 explicitly. Binary, structural, symlink, executable, and multi-sided conflicts
 are not flattened into a two-sided text model. Supported term selection and

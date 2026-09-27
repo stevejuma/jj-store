@@ -9,7 +9,7 @@ pub use document::{Document, DocumentKey, ScopeSnapshot, ScopeState, Update};
 use jj_store_adapters::{Error, Result};
 use jj_store_model as m;
 pub use projection::{Extractor, Fault, Faults, TantivyProjection};
-pub use search::{Page, PinnedReader, Search, SearchLimits};
+pub use search::{Page, PinnedReader, Search, SearchLimits, SearchRequest, SearchView};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest as _, Sha256};
 use std::collections::BTreeMap;

@@ -4,6 +4,7 @@ use crate::{
     *,
 };
 use jj_store_adapters::{Authorizer, Checkpoint};
+use jj_store_service::reads::{ReadSnapshot, VisibleView};
 use std::{
     sync::{Arc, RwLock},
     time::Duration,
@@ -11,7 +12,7 @@ use std::{
 use tantivy::{
     Term,
     collector::TopDocs,
-    query::{BooleanQuery, Occur, Query, TermQuery},
+    query::{BooleanQuery, ConstScoreQuery, Occur, Query, RegexQuery, TermQuery, TermSetQuery},
     schema::{IndexRecordOption, TantivyDocument, Value as _},
 };
 use tokio::sync::Semaphore;
@@ -103,9 +104,41 @@ pub struct PinnedReader {
     generation: Arc<Generation>,
     slots: Arc<Semaphore>,
 }
+#[derive(Clone)]
+pub enum SearchView {
+    Historical,
+    VisibleCommits(VisibleView),
+}
+/// Visibility is mandatory. Operation metadata and explicit file scopes remain
+/// historical independently of the selected commit visibility mode.
+pub struct SearchRequest<'a> {
+    pub text: &'a str,
+    pub offset: usize,
+    pub limit: usize,
+    pub view: SearchView,
+}
+impl<'a> SearchRequest<'a> {
+    pub fn historical(text: &'a str, offset: usize, limit: usize) -> Self {
+        Self {
+            text,
+            offset,
+            limit,
+            view: SearchView::Historical,
+        }
+    }
+    pub fn visible(text: &'a str, offset: usize, limit: usize, view: VisibleView) -> Self {
+        Self {
+            text,
+            offset,
+            limit,
+            view: SearchView::VisibleCommits(view),
+        }
+    }
+}
 #[derive(Clone, Debug, Serialize)]
 pub struct Page {
     pub checkpoint: Checkpoint,
+    pub selected_view: Option<ReadSnapshot>,
     pub scopes: BTreeMap<String, ScopeSnapshot>,
     pub hits: Vec<Document>,
     pub next_offset: Option<usize>,
@@ -115,11 +148,15 @@ impl PinnedReader {
     pub async fn query(
         &self,
         access: &dyn Authorizer,
-        query: &str,
-        offset: usize,
-        limit: usize,
+        request: SearchRequest<'_>,
         limits: SearchLimits,
     ) -> Result<Page> {
+        let SearchRequest {
+            text: query,
+            offset,
+            limit,
+            view,
+        } = request;
         if limits.max_offset > 100_000
             || limits.max_page > 1000
             || limits.output_bytes > 8 * 1024 * 1024
@@ -138,6 +175,16 @@ impl PinnedReader {
         {
             return Err(Error::Denied);
         }
+        if let SearchView::VisibleCommits(view) = &view {
+            if view.snapshot().authority.repo_id != expected.repository
+                || view.snapshot().authority.epoch != expected.epoch
+            {
+                return Err(Error::Denied);
+            }
+            if view.commits().len() > 100_000 {
+                return Err(Error::Limit);
+            }
+        }
         let permit = self
             .slots
             .clone()
@@ -151,7 +198,25 @@ impl PinnedReader {
                 let _permit = permit;
                 let searcher = generation.reader.searcher();
                 let fields = &generation.fields;
-                let query = literal_query(&generation, &query)?;
+                let mut query = literal_query(&generation, &query)?;
+                let selected_view = match view {
+                    SearchView::Historical => None,
+                    SearchView::VisibleCommits(view) => {
+                        let visible =
+                            TermSetQuery::new(view.commits().iter().map(|id| {
+                                Term::from_field_text(fields.key, &format!("commit/{id}"))
+                            }));
+                        // This fixed internal pattern selects the other two
+                        // document classes. User input never becomes a regex.
+                        let other = tv(RegexQuery::from_pattern("(op|file)/.*", fields.key))?;
+                        let filter = BooleanQuery::union(vec![Box::new(visible), Box::new(other)]);
+                        query = Box::new(BooleanQuery::intersection(vec![
+                            query,
+                            Box::new(ConstScoreQuery::new(Box::new(filter), 0.0)),
+                        ]));
+                        Some(view.snapshot().clone())
+                    }
+                };
                 let docs = tv(searcher.search(
                     query.as_ref(),
                     &TopDocs::with_limit(limit + 1)
@@ -185,6 +250,7 @@ impl PinnedReader {
                 }
                 let page = Page {
                     checkpoint: generation.checkpoint.clone(),
+                    selected_view,
                     scopes: generation.payload.scopes.clone(),
                     hits,
                     next_offset,

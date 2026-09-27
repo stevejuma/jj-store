@@ -1,6 +1,8 @@
 use super::*;
 use jj_store_adapters as a;
 use jj_store_service::adapter::ProjectionRead;
+#[path = "search_visibility.rs"]
+mod search_visibility;
 struct ReadNative {
     seen: Arc<std::sync::Mutex<Vec<m::ObjectKey>>>,
     checkpoint: Option<a::Checkpoint>,
@@ -110,14 +112,14 @@ async fn native_tantivy_extracts_committed_metadata_and_explicit_source_scopes()
         let before = f.f.session.snapshot().await.unwrap().manifest().clone();
         runner.step(a::CancellationToken::new()).await.unwrap();
         let pin = search.pin(&source).await.unwrap();
-        let page = pin.query(&source, "content fixture", 0, 50, SearchLimits::default()).await.unwrap();
+        let page = pin.query(&source, SearchRequest::historical("content fixture", 0, 50), SearchLimits::default()).await.unwrap();
         let operation = page.hits.iter().find(|d| matches!(d.key, DocumentKey::Operation { .. })).unwrap();
         assert_eq!(operation.actor.as_deref(), Some(ACTOR.to_string().as_str()));
         assert_eq!(page.scopes["bookmark:conflicted"].state, ScopeState::Conflicted);
         assert_eq!(page.scopes["workspace:laptop"].state, ScopeState::Ready);
-        let page = pin.query(&source, "invisible predecessor", 0, 50, SearchLimits::default()).await.unwrap();
+        let page = pin.query(&source, SearchRequest::historical("invisible predecessor", 0, 50), SearchLimits::default()).await.unwrap();
         assert!(page.hits.iter().any(|d| matches!(d.key, DocumentKey::Commit { .. })));
-        let page = pin.query(&source, "empty", 0, 50, SearchLimits::default()).await.unwrap();
+        let page = pin.query(&source, SearchRequest::historical("empty", 0, 50), SearchLimits::default()).await.unwrap();
         assert_eq!(page.hits.len(), 1);
         assert!(matches!(&page.hits[0].key, DocumentKey::File { scope, path } if scope=="workspace:laptop" && path=="empty"));
         assert_eq!(f.f.session.snapshot().await.unwrap().manifest(), &before);
@@ -245,7 +247,11 @@ async fn native_tantivy_diffs_replay_equivalently_and_keep_exact_scope_context()
             runner.step(a::CancellationToken::new()).await.unwrap();
             let old = search.pin(&source).await.unwrap();
             let page = old
-                .query(&source, "signal", 0, 100, SearchLimits::default())
+                .query(
+                    &source,
+                    SearchRequest::historical("signal", 0, 100),
+                    SearchLimits::default(),
+                )
                 .await
                 .unwrap();
             assert_eq!(page.hits.len(), 2);
@@ -262,7 +268,11 @@ async fn native_tantivy_diffs_replay_equivalently_and_keep_exact_scope_context()
             runner.step(a::CancellationToken::new()).await.unwrap();
             let pin = search.pin(&source).await.unwrap();
             let page = pin
-                .query(&source, "signal", 0, 100, SearchLimits::default())
+                .query(
+                    &source,
+                    SearchRequest::historical("signal", 0, 100),
+                    SearchLimits::default(),
+                )
                 .await
                 .unwrap();
             assert_eq!(page.hits.len(), 2);
@@ -285,9 +295,7 @@ async fn native_tantivy_diffs_replay_equivalently_and_keep_exact_scope_context()
             let by_operation = pin
                 .query(
                     &source,
-                    &operation.to_string(),
-                    0,
-                    100,
+                    SearchRequest::historical(&operation.to_string(), 0, 100),
                     SearchLimits::default(),
                 )
                 .await
@@ -301,7 +309,11 @@ async fn native_tantivy_diffs_replay_equivalently_and_keep_exact_scope_context()
                 2
             );
             let old_page = old
-                .query(&source, "signal", 0, 100, SearchLimits::default())
+                .query(
+                    &source,
+                    SearchRequest::historical("signal", 0, 100),
+                    SearchLimits::default(),
+                )
                 .await
                 .unwrap();
             assert!(old_page.hits.iter().all(|d| d.commit == Some(first)));
@@ -323,7 +335,11 @@ async fn native_tantivy_diffs_replay_equivalently_and_keep_exact_scope_context()
             rebuild.step(a::CancellationToken::new()).await.unwrap();
             for term in ["signal", "metafixture"] {
                 let mut left = pin
-                    .query(&source, term, 0, 100, SearchLimits::default())
+                    .query(
+                        &source,
+                        SearchRequest::historical(term, 0, 100),
+                        SearchLimits::default(),
+                    )
                     .await
                     .unwrap()
                     .hits;
@@ -331,7 +347,11 @@ async fn native_tantivy_diffs_replay_equivalently_and_keep_exact_scope_context()
                     .pin(&source)
                     .await
                     .unwrap()
-                    .query(&source, term, 0, 100, SearchLimits::default())
+                    .query(
+                        &source,
+                        SearchRequest::historical(term, 0, 100),
+                        SearchLimits::default(),
+                    )
                     .await
                     .unwrap()
                     .hits;
@@ -350,8 +370,12 @@ async fn native_tantivy_diffs_replay_equivalently_and_keep_exact_scope_context()
                 .await
                 .unwrap();
             assert!(matches!(
-                pin.query(&source, "signal", 0, 100, SearchLimits::default())
-                    .await,
+                pin.query(
+                    &source,
+                    SearchRequest::historical("signal", 0, 100),
+                    SearchLimits::default()
+                )
+                .await,
                 Err(a::Error::Denied)
             ));
         })
@@ -477,7 +501,11 @@ async fn native_tantivy_clears_ambiguous_scopes_and_respects_source_disable() {
                 .pin(&source)
                 .await
                 .unwrap()
-                .query(&source, "signal", 0, 20, SearchLimits::default())
+                .query(
+                    &source,
+                    SearchRequest::historical("signal", 0, 20),
+                    SearchLimits::default(),
+                )
                 .await
                 .unwrap();
             assert!(page.hits.is_empty());
@@ -508,17 +536,25 @@ async fn native_tantivy_clears_ambiguous_scopes_and_respects_source_disable() {
                 .unwrap();
             let pin = search.pin(&source).await.unwrap();
             let page = pin
-                .query(&source, "signal", 0, 20, SearchLimits::default())
+                .query(
+                    &source,
+                    SearchRequest::historical("signal", 0, 20),
+                    SearchLimits::default(),
+                )
                 .await
                 .unwrap();
             assert!(page.hits.is_empty());
             assert_eq!(page.scopes["main"].state, ScopeState::Disabled);
             assert!(
-                !pin.query(&source, "sibling", 0, 20, SearchLimits::default())
-                    .await
-                    .unwrap()
-                    .hits
-                    .is_empty()
+                !pin.query(
+                    &source,
+                    SearchRequest::historical("sibling", 0, 20),
+                    SearchLimits::default()
+                )
+                .await
+                .unwrap()
+                .hits
+                .is_empty()
             );
         })
         .await;

@@ -86,6 +86,21 @@ pub struct CommittedRead {
     inventory: Arc<BTreeSet<m::ObjectKey>>,
     deadline: Instant,
 }
+/// Immutable filtering information, never authorization. Only a checked native
+/// read constructs it; retaining it retains neither a credential nor a session.
+#[derive(Clone)]
+pub struct VisibleView {
+    snapshot: ReadSnapshot,
+    commits: Arc<BTreeSet<m::CommitId>>,
+}
+impl VisibleView {
+    pub fn snapshot(&self) -> &ReadSnapshot {
+        &self.snapshot
+    }
+    pub fn commits(&self) -> &BTreeSet<m::CommitId> {
+        &self.commits
+    }
+}
 /// Only checked read sessions create these; no public or deserializable wire API.
 /// A retained pin is credential-free and must be rebound to a fresh session.
 #[derive(Clone)]
@@ -225,6 +240,20 @@ async fn within_deadline<T>(
 }
 
 impl CommittedRead {
+    pub async fn search_visibility(
+        self: &Arc<Self>,
+        reader: &query::content::ContentReader,
+    ) -> query::Result<VisibleView> {
+        self.authorize().await.map_err(query_error)?;
+        let commits = reader
+            .visible_commits(self.session.object_store.clone(), self.clone())
+            .await?;
+        self.authorize().await.map_err(query_error)?;
+        Ok(VisibleView {
+            snapshot: self.snapshot.clone(),
+            commits: Arc::new(commits),
+        })
+    }
     pub async fn prepare_index(
         self: &Arc<Self>,
         executor: &jj_store_jj::query::GraphExecutor,

@@ -74,9 +74,9 @@ local copying for simple crash-safe reader isolation.
 
 Core search pins an immutable generation and rechecks repository authorization
 and epoch before and after every request, including pagination. It exposes no
-unauthorized counts or stored content. HTTP cursors, source extraction, native
-visibility filtering and serving configuration require additional integration
-acceptance; the storage engine alone does not close the search milestone.
+unauthorized counts or stored content. HTTP cursors and serving configuration
+require additional integration acceptance; the storage engine alone does not
+close the search milestone.
 
 Native extraction can read bounded selected history and earlier complete
 inventories through the delivered snapshot. Both stop at that snapshot's
@@ -109,3 +109,20 @@ schema version 2 removes stale per-file commit/operation ID terms; earlier local
 indexes rebuild. This changes no authoritative native or adapter cursor format.
 The owned content bridge retains current authorization and the adapter context
 through native workers. Failed extraction cannot advance the index or cursor.
+
+## Selected-view commit search
+
+Every core search request explicitly chooses historical metadata or commit
+visibility at an authorized native read snapshot. Visible commits are the
+complete parent closure of that view's heads, including the virtual root but
+excluding predecessor-only history. The native reader applies history, work,
+metadata, output and deadline budgets; it returns a complete set or an explicit
+error. No global abandoned flag substitutes for selected-view semantics.
+
+The search engine intersects that set with commit hits before ranking and
+pagination. Operation metadata remains historical; source hits retain their
+explicit indexed scope snapshots. Results identify the selected native view and
+the independently pinned index generation. Later repository or index updates
+cannot silently change either one. Lagging generations can omit new results but
+cannot promote hidden commits into visible ones. Both modes still require fresh
+repository authorization and matching epochs; visibility data grants no access.

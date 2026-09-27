@@ -240,6 +240,17 @@ impl ContentReader {
         cancellation.disarm();
         result
     }
+    /// Complete native visibility at the selected operation; no predecessor edges.
+    pub async fn visible_commits(
+        &self,
+        store: Arc<dyn ObjectStore>,
+        access: Arc<dyn ReadAccess>,
+    ) -> Result<std::collections::BTreeSet<m::CommitId>> {
+        self.execute(store, access, move |context| {
+            Box::pin(async move { operations::visible(context).await })
+        })
+        .await
+    }
     pub async fn object(
         &self,
         store: Arc<dyn ObjectStore>,
