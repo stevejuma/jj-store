@@ -186,8 +186,9 @@ impl ContentReader {
             ..super::Limits::default()
         })?);
         budget.authorize(access.as_ref()).await?;
+        let cancellation = budget.cancellation.clone().drop_guard();
         let runtime = tokio::runtime::Handle::current();
-        tokio::task::spawn_blocking(move || {
+        let result = tokio::task::spawn_blocking(move || {
             runtime.block_on(tokio::task::LocalSet::new().run_until(async {
                 let objects = Arc::new(
                     NativeObjects::new(
@@ -204,15 +205,15 @@ impl ContentReader {
                     objects,
                     permit: Some(permit),
                 };
-                let result = tokio::time::timeout_at(budget.deadline, run(context))
-                    .await
-                    .map_err(|_| budget.fail(Error::Limit))?;
+                let result = budget.until(run(context)).await?;
                 budget.authorize(access.as_ref()).await?;
                 result.map_err(|error| budget.failure().unwrap_or(error))
             }))
         })
         .await
-        .map_err(|_| Error::Unavailable)?
+        .map_err(|_| Error::Unavailable)?;
+        cancellation.disarm();
+        result
     }
     pub async fn object(
         &self,

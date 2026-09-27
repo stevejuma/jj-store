@@ -253,3 +253,17 @@ was built, reused or rebuilt and retained cache counts/bytes. These are local
 diagnostics, never publication positions. Transient build disk use, native
 synchronous CPU work and production query memory still need resource
 qualification before shared HTTP exposure.
+
+Native query request cancellation signals the shared worker budget. Pending
+permission checks and storage I/O are dropped, and later CPU/work checkpoints
+reject the canceled request. A worker keeps its permit and cache lock until
+actual exit, including while a bounded synchronous native step finishes.
+Cancellation never publishes native state. A successfully returned verified file
+stream owns its remaining lifetime separately from the preparation request.
+
+The native runtime adapter disables Tokio's scheduler-only cooperative budget
+for each backend/stream poll. Pinned JJ can synchronously poll these futures
+through pollster; that executor cannot replenish Tokio's task-local budget.
+Project work/byte limits, real deadlines and cancellation remain enforced by the
+owned boundaries. Real pending I/O remains pending. This rule prevents a
+cooperative-yield spin during metadata-filtered native revsets.

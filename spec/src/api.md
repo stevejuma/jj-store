@@ -152,3 +152,9 @@ evictions; retained entry count and bytes. Native operation identity remains the
 snapshot authority. Rebuilding a corrupt or evicted cache never selects newer
 heads or publishes a native operation. Busy graph-cache workers return an
 explicit retryable result rather than queuing unbounded work.
+
+Dropping an in-flight graph/content request cancels its native worker budget.
+Pending authorization and storage waits terminate promptly; synchronous native
+steps observe cancellation at their next bounded checkpoint. An already returned
+verified file stream remains usable until it is dropped, expires or loses
+access.

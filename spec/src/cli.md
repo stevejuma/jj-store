@@ -167,3 +167,7 @@ publication state are preserved through cache recovery.
 Loopback RPC restart fixtures retain their listener reservation while a server
 instance is stopped. Restart acceptance must not race another fixture for the
 same ephemeral port or silently switch its endpoint.
+
+Read-worker acceptance verifies prompt cancellation of pending graph/content
+I/O, retention of worker permits during synchronous work, and continued use of
+successfully prepared binary streams.

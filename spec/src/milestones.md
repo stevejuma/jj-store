@@ -25,8 +25,8 @@ adds evidence here in its enclosing Jujutsu change.
 | M3.1        | Done        | M2        | JST-SEC-001,JST-SEC-002,JST-SEC-003,JST-SEC-004                         | Revocable tokens and transport authorization                        | Retain native slice acceptance                   | E-M3-001,E-M3-004,E-M3-005,E-M3-006,E-M3-007,E-M3-008,E-M3-009,E-M3-011,E-M3-012,E-M3-014                                     |
 | M3.2        | Done        | M3.1      | JST-JJ-001,JST-JJ-004,JST-JJ-005                                        | Create edit describe log restart op-log evolog; multi-workspace     | Retain native slice acceptance                   | E-M3-002,E-M3-003,E-M3-004,E-M3-005,E-M3-006,E-M3-008,E-M3-009,E-M3-010,E-M3-011,E-M3-013,E-M3-014                            |
 | M3.3        | Done        | M3.2      | JST-CLI-001,JST-CLI-002,JST-CLI-003,JST-CLI-004                         | Custom command presentation and capability parity                   | Retain native slice acceptance                   | E-M3-006,E-M3-009,E-M3-010,E-M3-011,E-M3-012,E-M3-013,E-M3-014                                                                |
-| M4          | In progress | M3        | JST-API-001,JST-API-005                                                 | Structured reads and basic served UI match native semantics         | Qualify resources then expose HTTP               | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008                                                       |
-| M4.1        | In progress | M3        | JST-API-001,JST-API-002,JST-JJ-003                                      | Pinned three-graph reads with zero GET publications                 | Qualify resources then expose HTTP               | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008                                                       |
+| M4          | In progress | M3        | JST-API-001,JST-API-005                                                 | Structured reads and basic served UI match native semantics         | Qualify resources then expose HTTP               | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009                                              |
+| M4.1        | In progress | M3        | JST-API-001,JST-API-002,JST-JJ-003                                      | Pinned three-graph reads with zero GET publications                 | Qualify resources then expose HTTP               | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009                                              |
 | M4.2        | Planned     | M4.1      | JST-API-003,JST-API-004,JST-API-005                                     | SSE, safe UI, generated contracts and cold interaction tests        | Build Svelte UI                                  | -                                                                                                                             |
 | M5          | Planned     | M4        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Authenticated typed commands and shared RPC policy                  | Implement commands                               | -                                                                                                                             |
 | M5.1        | Planned     | M4        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Basic changes/refs/reconcile; preview receipt and semantic policy   | Implement command transaction facade             | -                                                                                                                             |
@@ -3502,6 +3502,183 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Rust 1.97.1; jj-cli/jj-lib 0.45.1 at 7c41cdeb16b6b321c64e789a966b6adf723816a5. Native queries over disposable in-memory stores; no deployment/performance claim.",
     "formats": "Local query-cache-v1 slots replace unreleased per-operation paths under the pinned revision/profile. Receipts bind repository/epoch/operation and checksummed file inventories. Additive V1 graph cache diagnostics report reuse/build/rebuild, evictions and retained bytes/counts. No authority, native object or native RPC format change."
+  },
+  {
+    "id": "E-M4-009",
+    "tasks": ["M4", "M4.1"],
+    "date": "2026-09-27",
+    "kind": "native-query-cancellation-and-release-resource-qualification",
+    "files": [
+      "crates/jj-store-cli/tests/native_lifecycle/graphs.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/query_resources.rs",
+      "crates/jj-store-jj/examples/query_qualification.rs",
+      "crates/jj-store-jj/src/query/access.rs",
+      "crates/jj-store-jj/src/query/content.rs",
+      "crates/jj-store-jj/src/query/mod.rs",
+      "crates/jj-store-jj/src/runtime.rs",
+      "docs/evidence/m4-native-query-audit.md",
+      "docs/evidence/m4-native-query-budget-before.json",
+      "docs/evidence/m4-native-query-budget.json",
+      "scripts/qualify-query-resources.py",
+      "spec/src/api.md",
+      "spec/src/cli.md",
+      "spec/src/compatibility.md",
+      "spec/src/jj-integration.md",
+      "spec/src/spec-governance.md",
+      "docs/evidence/m4-runtime-rustfs.json"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/native_lifecycle/query_resources.rs#query_cancel_drops_pending_graph_authorization_and_releases_cache",
+      "crates/jj-store-cli/tests/native_lifecycle/query_resources.rs#query_cancel_drops_pending_content_authorization_and_releases_permit",
+      "crates/jj-store-cli/tests/native_lifecycle/query_resources.rs#query_cancel_drops_remote_object_bodies_for_graphs_and_content",
+      "crates/jj-store-jj/src/runtime.rs#native_runtime_future_progress_does_not_require_foreign_executor_cooperative_reset",
+      "crates/jj-store-jj/src/runtime.rs#native_runtime_stream_progress_does_not_require_foreign_executor_cooperative_reset",
+      "crates/jj-store-cli/tests/native_lifecycle/graphs.rs#graph_query_cancellation_retains_worker_permit_until_exit_and_deadlines_bound_waits",
+      "crates/jj-store-jj/examples/query_qualification.rs#main",
+      "crates/jj-store-jj/tests/rustfs.rs#real_rustfs_transport_and_native_blob_contract",
+      "crates/jj-store-jj/tests/rustfs.rs#real_rustfs_manifest_publication_and_cold_recovery",
+      "crates/jj-store-cli/tests/server_executable.rs#real_rustfs_server_cli_restart_and_revocation"
+    ],
+    "runs": [
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle query_cancel_",
+        "result": "fail",
+        "failures": 2,
+        "note": "Before: 0 passed / 2 failed. Detached graph/content workers retained permits past the one-second cancellation check and produced secondary runtime-shutdown panics."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle query_cancel_",
+        "result": "pass",
+        "failures": 0,
+        "note": "After request-drop cancellation: original 2 cases pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle graph_query_cancellation_retains_worker_permit_until_exit_and_deadlines_bound_waits",
+        "result": "fail",
+        "failures": 1,
+        "note": "The old async-pause fixture expected Busy after the worker had correctly exited. Replaced only its first pause with a synchronous gate, retaining the exact permit/cache ownership assertion and independent deadline case."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle query_cancel_",
+        "result": "fail",
+        "failures": 1,
+        "note": "One fixture compile diagnostic: non-binding synchronization guard. Bound the guard within its synchronous scope."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle query_cancel_",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 3 cases pass, including cancellation dropping actual pending remote response bodies. Temporary unused-guard warning subsequently corrected."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle graph_query_cancellation_retains_worker_permit_until_exit_and_deadlines_bound_waits",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact permit/cache/deadline case passes with deterministic synchronous work."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo run --release --locked -p jj-store-jj --example query_qualification -- 50000",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before benchmark creation: example target absent."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo build --release --locked -p jj-store-jj --example query_qualification",
+        "result": "fail",
+        "failures": 1,
+        "note": "One fixture compile diagnostic: native View head_ids is a HashSet, not BTreeSet. Fixed explicit collection; removed unused import."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo build --release --locked -p jj-store-jj --example query_qualification",
+        "result": "pass",
+        "failures": 0,
+        "note": "Release fixture compiles."
+      },
+      {
+        "command": "python3 scripts/qualify-query-resources.py --binary target/release/examples/query_qualification --commits 50000 --output .scratch/m4-native-query-budget.json",
+        "result": "fail",
+        "failures": 1,
+        "note": "Independent process timeout at 180.01 seconds / 177.47 CPU seconds; no complete query report. Live sampling located a Tokio cooperative-budget spin inside native synchronous metadata predicate reads. Immutable before report retained."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-jj runtime::tests",
+        "result": "fail",
+        "failures": 2,
+        "note": "Both bounded-poll regressions fail: native future and stream yield Pending after exhausting Tokio cooperative budget under a foreign executor."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-jj runtime::tests",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both regressions pass after runtime boundary unconstrained polling; real pending oneshot I/O remains pending."
+      },
+      {
+        "command": "python3 scripts/qualify-query-resources.py --binary target/release/examples/query_qualification --commits 50000 --output .scratch/m4-native-query-budget-after.json",
+        "result": "pass",
+        "failures": 0,
+        "note": "First repaired release run passes: 4.68 seconds elapsed, 4.15 CPU seconds, 243204096 peak RSS bytes. All 8 native query cases pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo build --release --locked -p jj-store-jj --example query_qualification",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final release fixture asserts exact row counts and records query strings and configured limits."
+      },
+      {
+        "command": "python3 scripts/qualify-query-resources.py --binary target/release/examples/query_qualification --commits 50000 --output docs/evidence/m4-native-query-budget.json",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final report passes: 8 query cases plus 4 negative admission checks; 4.74 seconds elapsed, 4.13 CPU seconds, 246366208 peak RSS bytes. Binary/lock hashes and scope retained."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 57 native lifecycle cases pass after cancellation and shared runtime fixes."
+      },
+      {
+        "command": "python3 scripts/rustfs-contract.py --run --rust-client --server --output .scratch/m4-runtime-rustfs.json",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 11 real RustFS harness cases pass; compiled native transport, cache-free cold publication recovery and TLS server/CLI restart/revocation requalify the shared runtime adapter."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "57 requirements, boundaries, ledger, rustfmt and all-target Clippy pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test",
+        "result": "pass",
+        "failures": 0,
+        "note": "190 Rust tests pass / 6 external cases intentionally ignored; 15 governance and 3 storage-harness tests pass. No unresolved failures."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Locked workspace build passes."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 9 lanes pass, including 190 Rust tests, rustfmt, mdBook and mapped spec-first checks."
+      },
+      {
+        "command": "pnpm format:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rustfmt and Prettier pass."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Adversarial merge/tree amplification and large content memory admission, controlled long-index rebuild tasks/status, HTTP JSON/media/SSE, generated contracts and browser integration. Fixed-width graph measurements do not qualify whole-server deployment budgets."
+    ],
+    "versions": "Rust 1.97.1; jj-cli/jj-lib 0.45.1 at 7c41cdeb16b6b321c64e789a966b6adf723816a5; Tokio 1.53.1; release measurement host and binary/lock checksums recorded in linked evidence.",
+    "formats": "New owned Canceled query error; no native identity, envelope, publication, RPC or persisted authority format change. Qualification JSON is evidence only."
   }
 ]
 ```

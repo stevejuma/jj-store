@@ -22,7 +22,10 @@ use tokio::{
     time::{Instant, Sleep},
 };
 
+use tokio_util::sync::{CancellationToken, WaitForCancellationFutureOwned};
+
 pub(super) struct Budget {
+    pub cancellation: CancellationToken,
     pub limits: Limits,
     pub deadline: Instant,
     reads: AtomicU64,
@@ -34,6 +37,7 @@ pub(super) struct Budget {
 impl Budget {
     pub fn new(limits: Limits) -> Result<Self> {
         Ok(Self {
+            cancellation: CancellationToken::new(),
             limits,
             deadline: Instant::now()
                 .checked_add(limits.timeout)
@@ -53,6 +57,9 @@ impl Budget {
         self.failure.lock().expect("query failure lock").clone()
     }
     pub fn check(&self) -> Result<()> {
+        if self.cancellation.is_cancelled() {
+            return Err(self.fail(Error::Canceled));
+        }
         if let Some(error) = self.failure() {
             return Err(error);
         }
@@ -73,11 +80,21 @@ impl Budget {
     pub fn work(&self, amount: usize) -> Result<()> {
         self.charge(&self.work, amount as u64, self.limits.max_work as u64)
     }
+    pub async fn until<T>(&self, future: impl std::future::Future<Output = T>) -> Result<T> {
+        self.check()?;
+        let result = tokio::select! {
+            biased;
+            _ = self.cancellation.cancelled() => Err(self.fail(Error::Canceled)),
+            result = tokio::time::timeout_at(self.deadline, future) =>
+                result.map_err(|_| self.fail(Error::Limit)),
+        };
+        self.check()?;
+        result
+    }
     pub async fn authorize(&self, access: &dyn ReadAccess) -> Result<()> {
         self.work(1)?;
-        tokio::time::timeout_at(self.deadline, access.authorize())
-            .await
-            .map_err(|_| self.fail(Error::Limit))?
+        self.until(access.authorize())
+            .await?
             .map_err(|error| self.fail(error))?;
         self.check()
     }
@@ -232,12 +249,11 @@ impl ReadStore {
 impl ObjectStore for ReadStore {
     async fn head(&self, key: &Key) -> storage::Result<Metadata> {
         self.validate(key).await?;
-        let metadata = tokio::time::timeout_at(self.budget.deadline, self.inner.head(key))
+        let metadata = self
+            .budget
+            .until(self.inner.head(key))
             .await
-            .map_err(|_| {
-                self.budget.fail(Error::Limit);
-                storage::Error::Limit
-            })??;
+            .map_err(|_| storage::Error::Limit)??;
         self.validate(key).await?;
         Ok(metadata)
     }
@@ -246,12 +262,11 @@ impl ObjectStore for ReadStore {
         if range.is_some() {
             return Err(storage::Error::Range);
         }
-        let download = tokio::time::timeout_at(self.budget.deadline, self.inner.get(key, None))
+        let download = self
+            .budget
+            .until(self.inner.get(key, None))
             .await
-            .map_err(|_| {
-                self.budget.fail(Error::Limit);
-                storage::Error::Limit
-            })??;
+            .map_err(|_| storage::Error::Limit)??;
         self.budget
             .charge(
                 &self.budget.bytes,
@@ -268,6 +283,7 @@ impl ObjectStore for ReadStore {
             ),
             remaining: download.metadata.len,
             sleep: Box::pin(tokio::time::sleep_until(self.budget.deadline)),
+            cancelled: Box::pin(self.budget.cancellation.clone().cancelled_owned()),
             budget: self.budget.clone(),
         };
         Ok(Download {
@@ -284,6 +300,7 @@ struct DeadlineReader {
     inner: storage::Reader,
     remaining: u64,
     sleep: Pin<Box<Sleep>>,
+    cancelled: Pin<Box<WaitForCancellationFutureOwned>>,
     budget: Arc<Budget>,
 }
 impl AsyncRead for DeadlineReader {
@@ -294,6 +311,9 @@ impl AsyncRead for DeadlineReader {
     ) -> Poll<io::Result<()>> {
         if let Err(error) = self.budget.check() {
             return Poll::Ready(Err(io::Error::other(error)));
+        }
+        if self.cancelled.as_mut().poll(cx).is_ready() {
+            return Poll::Ready(Err(io::Error::other(self.budget.fail(Error::Canceled))));
         }
         if self.sleep.as_mut().poll(cx).is_ready() {
             return Poll::Ready(Err(io::Error::other(self.budget.fail(Error::Limit))));

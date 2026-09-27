@@ -133,3 +133,17 @@ retains nine probes with zero failures. The
 [M3 gate audit](../../docs/evidence/m3-gate-audit.md) maps native CLI,
 concurrency, authorization, presentation and recovery evidence to the
 vertical-slice gate, and records remaining M4/M5/M6/M8a work explicitly.
+
+Native query resource qualification uses a release fixture executable and an
+external process measurement harness. It records linear and wide-head graphs at
+the configured commit ceiling, cold/warm/filter/operation reads, native
+byte/work counts, retained cache bytes, elapsed/CPU time and peak process RSS.
+Fixture storage is explicitly separate from RustFS and service authorization
+costs. The report is qualification for its recorded host and inputs;
+first-release whole-server/deployment performance remains an M8a requirement.
+
+The query runtime adapter is requalified by the
+[M4 RustFS rerun](../../docs/evidence/m4-runtime-rustfs.json): all 11 harness
+cases pass, including native transport, cold publication recovery and TLS
+server/CLI restart and token revocation. This is storage/lifecycle evidence,
+separate from the native query resource measurement.

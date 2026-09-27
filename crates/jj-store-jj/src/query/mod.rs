@@ -19,6 +19,8 @@ use tokio::sync::Semaphore;
 
 #[derive(Clone, Debug, PartialEq, Eq, thiserror::Error)]
 pub enum Error {
+    #[error("query request was canceled")]
+    Canceled,
     #[error("query is not authorized")]
     Denied,
     #[error("query object is not committed in this snapshot")]
@@ -252,18 +254,16 @@ impl GraphExecutor {
         if page.limit == 0 || page.limit > self.limits.max_page {
             return Err(Error::Limit);
         }
+        let cancellation = budget.cancellation.clone().drop_guard();
         let executor = self.clone();
         let runtime = tokio::runtime::Handle::current();
         // The permit stays with the blocking job if the caller cancels its future.
-        tokio::task::spawn_blocking(move || {
+        let result = tokio::task::spawn_blocking(move || {
             let _permit = permit;
             runtime.block_on(tokio::task::LocalSet::new().run_until(async {
-                let result = tokio::time::timeout_at(
-                    budget.deadline,
-                    executor.run(store, access.clone(), request, page, budget.clone()),
-                )
-                .await
-                .map_err(|_| budget.fail(Error::Limit))?;
+                let result = budget
+                    .until(executor.run(store, access.clone(), request, page, budget.clone()))
+                    .await?;
                 budget.authorize(access.as_ref()).await?;
                 match result {
                     Ok(value) => Ok(value),
@@ -272,7 +272,9 @@ impl GraphExecutor {
             }))
         })
         .await
-        .map_err(|_| Error::Unavailable)?
+        .map_err(|_| Error::Unavailable)?;
+        cancellation.disarm();
+        result
     }
     async fn run(
         &self,

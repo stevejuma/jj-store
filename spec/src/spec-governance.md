@@ -74,3 +74,8 @@ and disposable credentials. Retained reports state transport and topology scope;
 previous plaintext-loopback reports remain unchanged. Protocol-rejection
 fixtures assert a local transport failure rather than timing-dependent gRPC
 status codes. No generated private keys are retained in reports or checkouts.
+
+Query resource measurements run through `scripts/qualify-query-resources.py`
+against an explicitly built release fixture binary. Reports retain the actual
+process result and scope, including resource/admission failures. Ordinary green
+unit checks do not imply a successful release resource run.

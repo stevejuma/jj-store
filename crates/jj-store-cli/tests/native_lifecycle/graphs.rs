@@ -480,12 +480,7 @@ async fn graph_query_cancellation_retains_worker_permit_until_exit_and_deadlines
     let f = Fixture::new().await;
     let graphs = tempfile::tempdir().unwrap();
     let read = pin(&f, roots::ROOT_OPERATION).await;
-    let paused = Arc::new(PausedAccess {
-        inner: read,
-        calls: Default::default(),
-        entered: Default::default(),
-        release: Default::default(),
-    });
+    let paused = resource_acceptance::BlockingAccess::new(read);
     let exec = q::GraphExecutor::new(graphs.path().to_owned(), q::Limits::default(), 1).unwrap();
     let task = {
         let exec = exec.clone();
@@ -527,7 +522,7 @@ async fn graph_query_cancellation_retains_worker_permit_until_exit_and_deadlines
         q::Error::Busy,
         "canceled worker must retain namespace lock until exit"
     );
-    paused.release.notify_one();
+    paused.release();
     let deadline = tokio::time::Instant::now() + Duration::from_secs(3);
     loop {
         match exec
@@ -649,3 +644,6 @@ async fn graph_query_marks_absent_evolution_data_and_rejects_missing_continuatio
 #[path = "graph_cache.rs"]
 mod cache_acceptance;
 use cache_acceptance::cache_slot;
+
+#[path = "query_resources.rs"]
+mod resource_acceptance;
