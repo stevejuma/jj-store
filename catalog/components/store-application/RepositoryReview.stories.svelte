@@ -2,6 +2,7 @@
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import StoreRepositoryApplication from "../../fixtures/StoreRepositoryApplicationFixture.svelte";
+  import { expectColumnCanvasFillsBody } from "./column-canvas-story-assertions.js";
   const { Story } = defineMeta({
     title: "JJ Store/Review refinements",
     component: StoreRepositoryApplication,
@@ -9,19 +10,6 @@
     args: { initiallyCollapsed: false },
     parameters: { layout: "fullscreen", jjStoreShell: true },
   });
-
-  async function expectColumnCanvasFillsBody(canvasElement: HTMLElement) {
-    const root = canvasElement.querySelector<HTMLElement>(
-      '[data-ui-component="column-canvas"][data-ui-part="root"]',
-    )!;
-    const viewport = root.closest<HTMLElement>(
-      '[data-ui-part="scroll-area-viewport"]',
-    )!;
-    await expect(root.getBoundingClientRect().height).toBeCloseTo(
-      viewport.getBoundingClientRect().height,
-      0,
-    );
-  }
 </script>
 
 <Story

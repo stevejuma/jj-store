@@ -236,6 +236,8 @@
   }
 
   .community-app-shell__header-end {
+    position: relative;
+    z-index: 1;
     display: flex;
     align-items: center;
     margin-inline-start: auto;

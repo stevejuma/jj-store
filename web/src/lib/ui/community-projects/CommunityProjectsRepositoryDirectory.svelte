@@ -40,6 +40,8 @@
     onOpenFile,
     onSelectCommit,
     onSelectBranch,
+    hasMore = false,
+    onLoadMore = () => {},
   }: {
     fileTreeOpen?: boolean | undefined;
     now: number;
@@ -56,6 +58,8 @@
     onOpenFile: (path: string) => void;
     onSelectCommit?: ((commit: ProjectForgeCommit) => void) | undefined;
     onSelectBranch: (value: string | undefined) => void;
+    hasMore?: boolean;
+    onLoadMore?: () => void | Promise<void>;
   } = $props();
 
   const latestCommitDate = $derived(latestCommit?.createdAt);
@@ -248,6 +252,11 @@
         {/each}
       </Table.Body>
     </Table.Root>
+    {#if hasMore}<footer class="community-projects__file-browser-more">
+        <Button type="button" variant="ghost" onclick={() => onLoadMore()}
+          >More files</Button
+        >
+      </footer>{/if}
   </div>
 
   {#if landingDocuments.length > 0}

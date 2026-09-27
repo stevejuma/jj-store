@@ -4,6 +4,8 @@
   import StoreApplication from "./StoreApplication.svelte";
   import CommunityProjectsRepositoryLog from "../community-projects/CommunityProjectsRepositoryLog.svelte";
   import CommunityProjectsRepositoryFiles from "../community-projects/CommunityProjectsRepositoryFiles.svelte";
+  import * as Alert from "@lapismd/design-core/shadcn/alert";
+  import { Button } from "@lapismd/design-core/shadcn/button";
   let {
     controller,
     initiallyCollapsed = true,
@@ -19,11 +21,32 @@
       ? state.route.inspectedOperationId
       : state.route.commitId,
   );
+  const needsOperation = $derived(
+    state.status.connection === "connected" &&
+      !state.route.snapshotOperationId &&
+      state.operationHeads.length > 1,
+  );
 </script>
 
 <StoreApplication {controller} {initiallyCollapsed} {displayMode}>
   {#snippet children(page)}
-    {#if page === "files"}<CommunityProjectsRepositoryFiles
+    {#if needsOperation}<section class="store-repository-application__state">
+        <Alert.Root>
+          <Alert.Title>Multiple operation heads</Alert.Title>
+          <Alert.Description
+            >Choose the native operation snapshot to browse. Opening this view
+            never reconciles history.</Alert.Description
+          >
+          <div class="store-repository-application__choices">
+            {#each state.operationHeads as operation}<Button
+                variant="outline"
+                onclick={() => controller.actions.selectOperation(operation)}
+                >{operation.slice(0, 12)}</Button
+              >{/each}
+          </div>
+        </Alert.Root>
+      </section>
+    {:else if page === "files"}<CommunityProjectsRepositoryFiles
         {controller}
         now={state.now}
       />
@@ -42,10 +65,70 @@
         patch={state.route.path
           ? state.detail?.patches[state.route.path]
           : undefined}
+        hasMoreBookmarks={state.canLoadMoreBookmarks}
+        hasMoreGraph={state.canLoadMoreGraph}
+        unavailableComparisonCount={state.unavailableComparisonCount}
         now={state.now}
         onSelectBranch={controller.actions.selectBookmark}
         onSelectRevision={controller.actions.selectRevision}
         onSelectPath={controller.actions.selectFile}
+        onLoadMoreBookmarks={() => controller.actions.loadMore("bookmarks")}
+        onLoadMoreGraph={() => controller.actions.loadMore("graph")}
       />{/if}
   {/snippet}
+  {#snippet details()}
+    <dl class="store-repository-application__details">
+      <dt>Repository</dt>
+      <dd>{state.repository.name}</dd>
+      <dt>Snapshot</dt>
+      <dd>
+        {state.route.snapshotOperationId?.slice(0, 12) ?? "Choose a head"}
+      </dd>
+      <dt>Connection</dt>
+      <dd>{state.status.live}</dd>
+      {#if state.conflictCount !== null}<dt>Conflicts</dt>
+        <dd>{state.conflictCount}</dd>{/if}
+    </dl>
+    {#if state.comparisonParents.length}<Alert.Root>
+        <Alert.Title>Choose comparison parent</Alert.Title>
+        <Alert.Description
+          >This merge operation has multiple recorded predecessors.</Alert.Description
+        >
+        {#each state.comparisonParents as parent}<Button
+            variant="outline"
+            onclick={() => controller.actions.selectComparisonParent(parent)}
+            >{parent.slice(0, 12)}</Button
+          >{/each}
+      </Alert.Root>{/if}
+    {#if state.status.error}<Alert.Root variant="destructive">
+        <Alert.Title>Repository request failed</Alert.Title>
+        <Alert.Description>{state.status.error}</Alert.Description>
+        {#if state.status.error.includes("index rebuild required")}<Button
+            variant="outline"
+            onclick={() => controller.actions.prepareIndex()}
+            >Prepare index</Button
+          >{/if}
+      </Alert.Root>{/if}
+  {/snippet}
 </StoreApplication>
+
+<style>
+  .store-repository-application__state {
+    padding: 1rem;
+  }
+  .store-repository-application__choices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding-block-start: 0.75rem;
+  }
+  .store-repository-application__details {
+    padding: 0.75rem;
+    font-size: var(--community-text-body);
+  }
+  .store-repository-application__details dd {
+    margin: 0 0 1rem;
+    color: var(--muted-foreground);
+    overflow-wrap: anywhere;
+  }
+</style>

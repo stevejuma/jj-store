@@ -75,6 +75,8 @@ impl BrowserAssets {
                     "text/javascript; charset=utf-8"
                 } else if file.ends_with(".css") {
                     "text/css; charset=utf-8"
+                } else if file.ends_with(".woff2") {
+                    "font/woff2"
                 } else {
                     return Err("browser asset media");
                 }

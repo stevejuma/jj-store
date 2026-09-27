@@ -63,6 +63,13 @@ export interface StoreControllerState {
   readonly canNavigateForward: boolean;
   readonly repositories: readonly { id: string; name: string }[];
   readonly repository: { id: string; name: string };
+  readonly operationHeads: readonly string[];
+  readonly comparisonParents: readonly string[];
+  readonly conflictCount: number | null;
+  readonly unavailableComparisonCount: number;
+  readonly canLoadMoreBookmarks: boolean;
+  readonly canLoadMoreGraph: boolean;
+  readonly canLoadMoreFiles: boolean;
   readonly graph: RepositoryLogGraph;
   readonly now: number;
   readonly detail: RevisionDetail | undefined;
@@ -82,6 +89,9 @@ export interface StoreController {
     connect(connection: StoreConnection): Promise<void>;
     disconnect(): void;
     refresh(): Promise<void>;
+    selectOperation(id: string): Promise<void>;
+    selectComparisonParent(id: string): Promise<void>;
+    prepareIndex(): Promise<void>;
     loadMore(collection: "bookmarks" | "graph" | "files"): Promise<void>;
     openRepository(id: string): void | Promise<void>;
     selectPage(page: StorePage): void | Promise<void>;

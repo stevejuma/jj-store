@@ -25,10 +25,10 @@ adds evidence here in its enclosing Jujutsu change.
 | M3.1        | Done        | M2          | JST-SEC-001,JST-SEC-002,JST-SEC-003,JST-SEC-004                         | Revocable tokens and transport authorization                                                                        | Retain native slice acceptance                           | E-M3-001,E-M3-004,E-M3-005,E-M3-006,E-M3-007,E-M3-008,E-M3-009,E-M3-011,E-M3-012,E-M3-014                                                                                                       |
 | M3.2        | Done        | M3.1        | JST-JJ-001,JST-JJ-004,JST-JJ-005                                        | Create edit describe log restart op-log evolog; multi-workspace                                                     | Retain native slice acceptance                           | E-M3-002,E-M3-003,E-M3-004,E-M3-005,E-M3-006,E-M3-008,E-M3-009,E-M3-010,E-M3-011,E-M3-013,E-M3-014                                                                                              |
 | M3.3        | Done        | M3.2        | JST-CLI-001,JST-CLI-002,JST-CLI-003,JST-CLI-004                         | Custom command presentation and capability parity                                                                   | Retain native slice acceptance                           | E-M3-006,E-M3-009,E-M3-010,E-M3-011,E-M3-012,E-M3-013,E-M3-014,E-M3-015                                                                                                                         |
-| M4          | In progress | M3          | JST-API-001,JST-API-005                                                 | Structured reads and served UI match native semantics                                                               | Complete M4.10-M4.14 and qualify real SSE deployment     | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010,E-M4-011,E-M4-012,E-M4-013,E-M4-014,E-M4-015,E-M4-016,E-M4-017,E-M4-018,E-SCOPE-001,E-UI-007,E-UI-008 |
+| M4          | In progress | M3          | JST-API-001,JST-API-005                                                 | Structured reads and served UI match native semantics                                                               | Complete M4.12-M4.14 and qualify real SSE deployment     | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010,E-M4-011,E-M4-012,E-M4-013,E-M4-014,E-M4-015,E-M4-016,E-M4-017,E-M4-018,E-SCOPE-001,E-UI-007,E-UI-008 |
 | M4.1        | Done        | M3          | JST-API-001,JST-API-002,JST-JJ-003                                      | Pinned three-graph reads with zero GET publications                                                                 | Retain pinned read conformance                           | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010,E-M4-011,E-M4-012,E-M4-013,E-M4-014                                                                   |
 | M4.2        | In progress | M4.1        | JST-API-003,JST-API-006                                                 | Committed SSE and generated API contract deployment qualification                                                   | Qualify real RustFS/TLS SSE                              | E-M4-015,E-M4-016,E-M4-017,E-SCOPE-001                                                                                                                                                          |
-| M4.3        | In progress | M4.1,M5,M6  | JST-API-004,JST-API-005                                                 | Complete browsing integration, then mutations/conflicts/search and deployed browser acceptance                      | Implement browsing M4.11-M4.14; retain write/search gaps | E-SCOPE-001,E-UI-007,E-UI-008,E-M4-018                                                                                                                                                          |
+| M4.3        | In progress | M4.1,M5,M6  | JST-API-004,JST-API-005                                                 | Complete browsing integration, then mutations/conflicts/search and deployed browser acceptance                      | Implement browsing M4.12-M4.14; retain write/search gaps | E-SCOPE-001,E-UI-007,E-UI-008,E-M4-018                                                                                                                                                          |
 | M4.4        | Done        | Bootstrap   | JST-UI-001                                                              | Isolated catalog types, interaction/a11y and static build                                                           | Implement shell stories                                  | E-UI-001                                                                                                                                                                                        |
 | M4.5        | Done        | M4.4        | JST-UI-002                                                              | Community shell mechanics and navigation acceptance                                                                 | Implement repository fixture views                       | E-UI-002                                                                                                                                                                                        |
 | M4.6        | Done        | M4.5        | JST-UI-003                                                              | Native fixture graph/file/diff drill-down and accessibility                                                         | Visual review; live UI remains deferred                  | E-UI-003                                                                                                                                                                                        |
@@ -36,7 +36,7 @@ adds evidence here in its enclosing Jujutsu change.
 | M4.8        | Done        | M4.7        | JST-UI-002,JST-UI-003,JST-UI-004                                        | Reviewed shell/card/header styling and directory navigation pass interaction, accessibility and cold catalog checks | Visual review pending; live UI remains deferred          | E-UI-005,E-UI-006,E-UI-009,E-UI-010                                                                                                                                                             |
 | M4.9        | Done        | M4.8        | JST-ARCH-004,JST-UI-005                                                 | Shared production components/controller and no-growth architecture checks                                           | Retain source ownership and proceed to bounded APIs      | E-UI-007,E-UI-008                                                                                                                                                                               |
 | M4.10       | Done        | M4.9        | JST-API-001,JST-API-002,JST-API-006                                     | Bounded bookmark, directory metadata and operation-change contracts                                                 | Implement M4.11 authenticated browser data/controller    | E-M4-018                                                                                                                                                                                        |
-| M4.11       | Planned     | M4.10       | JST-API-004,JST-API-005,JST-UI-005                                      | Authenticated cached browser implements all browsing screens                                                        | Implement HTTP data source and production shell          | -                                                                                                                                                                                               |
+| M4.11       | In progress | M4.10       | JST-API-004,JST-API-005,JST-UI-005                                      | Authenticated cached browser implements all browsing screens                                                        | Implement typed hash restoration and persistent layouts  | E-UI-011                                                                                                                                                                                        |
 | M4.12       | Planned     | M4.11       | JST-API-002,JST-API-003,JST-UI-005                                      | Hash restoration, Back/Forward and explicit SSE refresh preserve snapshots                                          | Implement after real browsing controller                 | -                                                                                                                                                                                               |
 | M4.13       | Planned     | M4.11       | JST-API-002,JST-UI-006                                                  | Large collections are cursor-paged/virtualized and every resizable region persists                                  | Extend Design Core FileListing and integrate release     | -                                                                                                                                                                                               |
 | M4.14       | Planned     | M4.12,M4.13 | JST-API-003,JST-API-004,JST-API-005                                     | Cold built browser passes captured and real RustFS-backed native repository acceptance                              | Run after browsing, navigation and layout complete       | -                                                                                                                                                                                               |
@@ -9370,6 +9370,170 @@ and named tests are checked by the progress gate.
     "remaining": [],
     "versions": "Registry Design Core ^0.2.0; Svelte 5.57.1; Storybook 10.5.7; Vitest 4.1.11. Enclosing Jujutsu change is the revision reference.",
     "formats": "Final user refinement: paired controls show four leading characters alone at rest; hover/focus reveals five leading characters, two dots and the final two characters. A single Git or JJ identifier shows that expanded abbreviation immediately at rest. Inactive halves retain their chip. Balanced 5px inline padding; 11px resting IDs, 10px expanded IDs, 9px chips and 8px Copied text with tick. Default paired control fits 122px by 27px with constant outer width. Feedback expands the tapped side and preserves independent feedback tint when the other side expands. CSS animates grid tracks; pointer/focus/feedback select the active half. Graph rows wrap before bookmark/ID overlap. No transport, schema or stored format changes. Stories remain visual-pending; screenshots are not approved baselines. Functional acceptance completes the pending E-UI-009 checkpoint; next action is optional human visual review."
+  },
+  {
+    "id": "E-UI-011",
+    "tasks": ["M4", "M4.3", "M4.11"],
+    "date": "2026-09-27",
+    "kind": "implementation",
+    "files": [
+      "catalog/components/store-application/RepositoryReview.stories.svelte",
+      "catalog/components/store-application/StoreApplication.stories.svelte",
+      "catalog/components/store-application/StoreConnection.stories.svelte",
+      "catalog/components/store-application/StoreRepositoryApplication.stories.svelte",
+      "catalog/components/store-application/column-canvas-story-assertions.ts",
+      "catalog/controller/in-memory-store-controller.svelte.ts",
+      "catalog/vitest.config.ts",
+      "crates/jj-store-http/src/assets.rs",
+      "crates/jj-store-http/tests/assets.rs",
+      "package.json",
+      "pnpm-lock.yaml",
+      "scripts/web-manifest.mjs",
+      "spec/src/milestones.md",
+      "spec/src/ui.md",
+      "spec/src/verification.md",
+      "web/src/App.svelte",
+      "web/src/lib/controller/contracts.ts",
+      "web/src/lib/controller/http-store-data-source.ts",
+      "web/src/lib/controller/native-data-source.ts",
+      "web/src/lib/controller/native-presentation.ts",
+      "web/src/lib/controller/production-store-controller.svelte.ts",
+      "web/src/lib/controller/production-store-loaders.ts",
+      "web/src/lib/controller/production-store-reader.svelte.ts",
+      "web/src/lib/controller/production-store-state.svelte.ts",
+      "web/src/lib/controller/store-query-client.ts",
+      "web/src/lib/controller/store-query-keys.ts",
+      "web/src/lib/controller/store-route-history.svelte.ts",
+      "web/src/lib/ui/community-app-shell/CommunityAppShell.svelte",
+      "web/src/lib/ui/community-profile-menu/CommunityProfileMenu.svelte",
+      "web/src/lib/ui/community-projects/CommunityProjectsRepositoryDirectory.svelte",
+      "web/src/lib/ui/community-projects/CommunityProjectsRepositoryFiles.svelte",
+      "web/src/lib/ui/community-projects/CommunityProjectsRepositoryLog.svelte",
+      "web/src/lib/ui/store-application/StoreApplication.svelte",
+      "web/src/lib/ui/store-application/StoreConnection.svelte",
+      "web/src/lib/ui/store-application/StoreRepositoryApplication.svelte",
+      "web/src/lib/ui/store-application/StoreRepositoryDetails.svelte",
+      "web/src/lib/ui/store-application/repository-breadcrumb.css",
+      "web/src/style.css",
+      "web/tests/browser/reads.spec.ts",
+      "web/tests/production-store-loaders.test.ts",
+      "web/tests/vite/production-store-data-source.test.ts",
+      "web/vite.config.ts"
+    ],
+    "tests": [
+      "web/tests/vite/production-store-data-source.test.ts#query cache reuses reads within one authentication session",
+      "web/tests/vite/production-store-data-source.test.ts#query keys isolate credentials that reconnect to the same repository",
+      "web/tests/vite/production-store-data-source.test.ts#authorization and API failures are never retried",
+      "web/tests/vite/production-store-data-source.test.ts#closing a source aborts requests and clears protected cache entries",
+      "web/tests/production-store-loaders.test.ts#native presentation preserves conflicting targets and exact identifiers",
+      "web/tests/production-store-loaders.test.ts#paged reads reject a continuation from another captured snapshot",
+      "web/tests/production-store-loaders.test.ts#ambiguous operations require a parent before loading change groups",
+      "web/tests/production-store-loaders.test.ts#explicit operation parent maps each changed path to its comparison",
+      "web/tests/browser/reads.spec.ts#native_graphs_files_and_source_rendering_are_accessible",
+      "web/tests/browser/reads.spec.ts#disconnect_discards_inflight_history_and_revocation_clears_data",
+      "web/tests/browser/reads.spec.ts#graph_and_directory_pages_retain_exact_snapshots_and_query_context",
+      "web/tests/browser/reads.spec.ts#event_reconnect_resumes_and_reset_requires_explicit_refresh"
+    ],
+    "runs": [
+      {
+        "command": "temporary pnpm add /tmp/jj-store-design-core-a11y/lapismd-design-core-0.1.2.tgz; pnpm web:build; focused mobile Playwright; full Playwright; restore manifest/lockfile",
+        "result": "pass",
+        "failures": 0,
+        "note": "Packed Design Core source at fa2d34e5 passes the exact mobile accessibility regression 1/1 and all eight production browser scenarios. package.json, pnpm-lock.yaml and registry @lapismd/design-core@0.2.0 were restored afterward; no local dependency remains."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/RepositoryReview.stories.svelte",
+        "result": "fail",
+        "failures": 2,
+        "note": "After switching shell bodies to independent regions, two story assertions still expected the removed body ScrollArea. Product behavior was retained and the assertions were updated to verify fixed body overflow and column-owned scrolling."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/RepositoryReview.stories.svelte; pnpm check:architecture",
+        "result": "fail",
+        "failures": 2,
+        "note": "All eight focused interactions passed; architecture then found growth in two frozen hotspots. The shared assertion and hidden-title style were extracted without raising budgets."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/RepositoryReview.stories.svelte; pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "All eight shell/repository interaction and accessibility stories pass. Body titles remain accessibility-only, Branches/JJ Log/Op Log have no body scroller, and the 124-module architecture budget passes."
+      },
+      {
+        "command": "pnpm web:test",
+        "result": "fail",
+        "failures": 1,
+        "note": "The first focused unit run exposed that Node tsx cannot import TanStack Svelte Query .svelte exports. Loader/presentation tests passed; Query-backed tests moved to the existing Svelte-capable Vitest lane."
+      },
+      {
+        "command": "pnpm web:test; pnpm catalog:test",
+        "result": "fail",
+        "failures": 1,
+        "note": "All 13 Node web tests passed. Three Query regressions passed, while the cancellation assertion observed TanStack CancelledError and the file used node:test under Vitest. The test now asserts cancellation semantically with Vitest."
+      },
+      {
+        "command": "pnpm catalog:test; pnpm catalog:check; pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 27 Vite unit tests pass, the catalog stays transport-free with zero Svelte warnings, and the 124-module architecture scan passes."
+      },
+      {
+        "command": "pnpm web:test:browser",
+        "result": "fail",
+        "failures": 1,
+        "note": "Seven of eight production browser scenarios pass against registry @lapismd/design-core@0.2.0. The mobile scenario fails only Axe region on the Design Core mobile-stage role=group landmark. The source-owned fix is committed at Design Core fa2d34e5 and passed 8/8 through the temporary package run recorded above; jj-store remains on the released semver dependency."
+      },
+      {
+        "command": "VITEST_MAX_WORKERS=1 pnpm test",
+        "result": "fail",
+        "failures": 1,
+        "note": "The first serial aggregate reached Rust assets and exposed cleanup ordering for the new WOFF2 fixture. crates/jj-store-http/tests/assets.rs now removes font-123.woff2 before replacing the fixture directory."
+      },
+      {
+        "command": "cargo test -p jj-store-http --test assets browser_asset_symlinks_are_rejected -- --exact; cargo test -p jj-store-http --test assets",
+        "result": "pass",
+        "failures": 0,
+        "note": "The exact Rust asset regression passes 1/1 and the complete asset suite passes 3/3 after the fixture cleanup repair."
+      },
+      {
+        "command": "VITEST_MAX_WORKERS=1 pnpm test",
+        "result": "fail",
+        "failures": 1,
+        "note": "The second serial aggregate reached Storybook and exposed an asynchronous ProfileLoginFooter sign-in assertion: the menu applies the action after its close transition, so the immediate assertion still observed Guest. The exact Maya Chen expectation was retained and synchronized with close completion."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreRepositoryApplication.stories.svelte -t ProfileLoginFooter; pnpm test:storybook",
+        "result": "pass",
+        "failures": 0,
+        "note": "The exact footer regression passes 1/1 and the complete Storybook interaction/accessibility lane passes 46/46 after waiting for sign-in close completion."
+      },
+      {
+        "command": "VITEST_MAX_WORKERS=1 pnpm test",
+        "result": "pass",
+        "failures": 0,
+        "note": "The serial aggregate passes governance 21/21, storage-harness 3/3, contracts 6/6, web 13/13, catalog unit 27/27, Storybook 46/46, cold catalog browser 1/1, and the complete Rust workspace with only its declared environment-dependent ignored tests."
+      },
+      {
+        "command": "pnpm build; pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Cold Storybook and production web builds, the locked Rust workspace build, specification validation, package boundaries, 124-module architecture budget, progress governance, generated contracts, Svelte checks and locked workspace Clippy all pass. Existing non-fatal CSS :global and bundle-size warnings remain visible in Vite output."
+      },
+      {
+        "command": "pnpm format:check; pnpm spec:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "Rust and Prettier formatting pass. The canonical spec run passes validation, cold catalog, catalog checks, 27/27 catalog units, 46/46 Storybook interactions/accessibility checks, web checks and 13/13 web units, then stops at the known registry Design Core mobile-stage Axe region violation with production browser acceptance at 7/8."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Registry-only production browser acceptance remains 7/8 until the separately approved Design Core mobile-stage fix is released and consumed.",
+      "M4.12 typed hash restoration, M4.13 persistent virtualized layouts and M4.14 cold real RustFS acceptance remain.",
+      "Consume the mobile-stage fix only after a separately approved Design Core registry release."
+    ],
+    "versions": "Registry Design Core ^0.2.0; temporary source acceptance fa2d34e5; @tanstack/svelte-query 6.3.0; Svelte 5.57.1; Storybook 10.5.7; Vitest 4.1.11; Playwright 1.63.x. Enclosing Jujutsu change is the revision reference.",
+    "formats": "Memory-only repository credentials; session/repository/snapshot/query-scoped cache keys; explicit SSE freshness and refresh. Static bundle adds hashed WOFF2 font assets under the existing self-only CSP. No native object, WAL, storage, credential persistence or HTTP schema changes. Body page titles remain accessibility-only; Column Canvas bodies own vertical scrolling. Stories remain visual-pending and visual tests were skipped at user request."
   }
 ]
 ```

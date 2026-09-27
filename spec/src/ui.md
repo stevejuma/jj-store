@@ -111,9 +111,10 @@ Back/Forward history.
 Branch cards retain themed bottom dividers, including the final visible card in
 filtered lists, and keep square lower corners. Branches, JJ Log and Op Log omit
 the redundant body title bar; their Column Canvas headers identify the views.
-Mobile retains navigation/history/sidebar controls without duplicating the page
-title. The right details rail inherits the shell background with no visible
-border.
+Their shell body is a fixed, non-scrolling region; only each Column Canvas body
+scrolls vertically. Mobile retains navigation/history/sidebar controls without
+duplicating the page title. The right details rail inherits the shell background
+with no visible border.
 
 Files places its directory breadcrumb in the body page navigation, rooted at
 `Files`. The repository file tree is a shell body-left sidebar with a
@@ -138,3 +139,12 @@ repository presentation: reference lookup, recursive path windows, exact
 operation-change groups and changed-path summaries. It does not connect the
 served browser or introduce fixture data into production; the HTTP controller,
 query cache, loading/error presentation and real-screen wiring remain M4.11.
+
+M4.11 uses a session-scoped TanStack Query client with Community's 30-second
+stale time, ten-minute inactive collection and disabled focus refetch. Query
+keys bind the in-memory authentication session, repository, selected operation
+and resource inputs. Disconnect, replacement and revocation close transport,
+cancel pending work and clear protected cache entries. The production bundle
+uses the catalog's released Design Core theme plus bundled DM Sans and Source
+Code Pro WOFF2 assets; the static manifest and router allow only hashed JS, CSS
+and WOFF2 files with explicit media types under the existing self-only CSP.

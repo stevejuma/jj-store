@@ -1,4 +1,14 @@
 /* Copied Community project breadcrumb typography and geometry. */
+.store-application__title {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
 .community-application__project-breadcrumb {
   display: flex;
   width: 100%;

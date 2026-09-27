@@ -195,9 +195,13 @@
     await userEvent.click(
       await body.findByRole("menuitem", { name: "Sign in" }),
     );
-    await expect(
-      canvas.getByRole("button", { name: "Open profile menu for Maya Chen" }),
-    ).toBeVisible();
+    await waitFor(() =>
+      expect(
+        canvas.getByRole("button", {
+          name: "Open profile menu for Maya Chen",
+        }),
+      ).toBeVisible(),
+    );
   }}
 />
 <Story

@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Skeleton } from "@lapismd/design-core/shadcn/skeleton";
   import * as Alert from "@lapismd/design-core/shadcn/alert";
+  import { Button } from "@lapismd/design-core/shadcn/button";
   import * as ColumnCanvas from "@lapismd/design-core/shadcn/column-canvas";
   import { untrack } from "svelte";
   import type { FileListingFile } from "@lapismd/design-core/diff";
@@ -23,12 +24,17 @@
     selectedPath = null,
     files = [],
     patch,
+    hasMoreBookmarks = false,
+    hasMoreGraph = false,
+    unavailableComparisonCount = 0,
     loading = false,
     error = "",
     now,
     onSelectBranch,
     onSelectRevision,
     onSelectPath,
+    onLoadMoreBookmarks = () => {},
+    onLoadMoreGraph = () => {},
   }: {
     page?: StorePage;
     graph: RepositoryLogGraph;
@@ -38,12 +44,17 @@
     selectedPath?: string | null;
     files?: FileListingFile[];
     patch?: string;
+    hasMoreBookmarks?: boolean;
+    hasMoreGraph?: boolean;
+    unavailableComparisonCount?: number;
     loading?: boolean;
     error?: string;
     now: number;
     onSelectBranch: (name: string) => void;
     onSelectRevision: (id: string | null) => void;
     onSelectPath: (path: string | null) => void;
+    onLoadMoreBookmarks?: () => void | Promise<void>;
+    onLoadMoreGraph?: () => void | Promise<void>;
   } = $props();
   const canvas = createRepositoryLogCanvas(untrack(() => page === "branches"));
   const revisionDepth = $derived(page === "branches" ? 1 : 0);
@@ -114,7 +125,10 @@
               {now}
               selected={selectedBranch}
               onSelect={onSelectBranch}
-            /></ColumnCanvas.Body
+            />{#if hasMoreBookmarks}<Button
+                variant="ghost"
+                onclick={() => onLoadMoreBookmarks()}>More branches</Button
+              >{/if}</ColumnCanvas.Body
           >
         </ColumnCanvas.Column>{/if}
       <ColumnCanvas.Column id="revisions">
@@ -133,6 +147,16 @@
               {graph.devices.length} operation heads · selecting one does not reconcile
               history
             </p>{/if}
+          {#if unavailableComparisonCount > 0}<Alert.Root>
+              <Alert.Title>Comparison needs a target</Alert.Title>
+              <Alert.Description
+                >{unavailableComparisonCount === 1
+                  ? "One affected change has"
+                  : `${unavailableComparisonCount} affected changes have`}
+                ambiguous lineage and cannot be compared until an explicit target
+                is selected.</Alert.Description
+              >
+            </Alert.Root>{/if}
           {#if graph.revisions.length === 0}<CommunityProjectsRepositoryLogEmpty
               pane={page === "oplog" ? "oplog" : "log"}
               branch={selectedBranch}
@@ -156,6 +180,10 @@
                   onSelectPath={selectFile}
                 />{/snippet}
             </CommunityProjectsRevisionGraph>{/if}
+          {#if hasMoreGraph}<Button
+              variant="ghost"
+              onclick={() => onLoadMoreGraph()}>More history</Button
+            >{/if}
         </ColumnCanvas.Body>
       </ColumnCanvas.Column>
       <CommunityProjectsRepositoryLogDiff

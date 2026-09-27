@@ -21,6 +21,16 @@
   } = $props();
   let menuOpen = $state(false),
     tooltipOpen = $state(false);
+  let pendingAction: "sign-in" | "sign-out" | undefined;
+  function selectAction(action: "sign-in" | "sign-out") {
+    pendingAction = action;
+  }
+  function finishAction(open: boolean) {
+    if (open || !pendingAction) return;
+    const action = pendingAction;
+    pendingAction = undefined;
+    onAction(action);
+  }
 </script>
 
 <div class="community-profile-menu" data-compact={compact || undefined}>
@@ -31,6 +41,7 @@
         menuOpen = open;
         if (open) tooltipOpen = false;
       }}
+      onOpenChangeComplete={finishAction}
     >
       <Tooltip.Root open={tooltipOpen} disabled={!compact || menuOpen}>
         <Tooltip.Trigger>
@@ -77,6 +88,7 @@
       </Tooltip.Root>
 
       <DropdownMenu.Content
+        preventScroll={false}
         side="top"
         align="start"
         sideOffset={8}
@@ -92,11 +104,11 @@
 
         <DropdownMenu.Group>
           {#if authenticated}<DropdownMenu.Item
-              onSelect={() => onAction("sign-out")}
+              onSelect={() => selectAction("sign-out")}
               ><LogOutIcon data-icon="inline-start" aria-hidden="true" />Sign
               out</DropdownMenu.Item
             >
-          {:else}<DropdownMenu.Item onSelect={() => onAction("sign-in")}
+          {:else}<DropdownMenu.Item onSelect={() => selectAction("sign-in")}
               ><LogInIcon data-icon="inline-start" aria-hidden="true" />Sign in</DropdownMenu.Item
             >{/if}
         </DropdownMenu.Group>
@@ -226,114 +238,5 @@
   :global(.community-profile-menu__menu-identity strong) {
     color: var(--foreground);
     font-size: var(--community-text-body);
-  }
-
-  :global(.community-profile-menu__status-action) {
-    min-height: 2.75rem;
-    border: 1px solid var(--border);
-    border-radius: 0.75rem;
-  }
-
-  :global(
-    .community-profile-menu__presence-trigger[data-ui-part="dropdown-menu-sub-trigger"]
-  ) {
-    grid-column: 2;
-    align-self: end;
-    justify-self: start;
-    min-height: 1.125rem;
-    gap: 0.35rem;
-    border-radius: 999px;
-    padding: 0.0625rem 0.45rem;
-    color: var(--muted-foreground);
-    background: color-mix(in srgb, var(--muted-foreground) 10%, transparent);
-    font-size: var(--community-text-secondary);
-    line-height: 1;
-  }
-
-  :global(
-    .community-profile-menu__presence-trigger[data-ui-part="dropdown-menu-sub-trigger"]
-      [data-ui-part="dropdown-menu-sub-trigger-icon"]
-  ) {
-    display: none;
-  }
-
-  .community-profile-menu__presence-dot,
-  .community-profile-menu__presence-option-dot {
-    flex: none;
-    width: 0.45rem;
-    height: 0.45rem;
-    border-radius: 999px;
-    background: var(--muted-foreground);
-  }
-
-  :global(
-    .community-profile-menu__presence-trigger[data-presence="online"]
-      .community-profile-menu__presence-dot
-  ),
-  .community-profile-menu__presence-option-dot[data-presence="online"] {
-    background: var(--success, #08b94e);
-  }
-
-  :global(
-    .community-profile-menu__presence-trigger[data-presence="away"]
-      .community-profile-menu__presence-dot
-  ),
-  .community-profile-menu__presence-option-dot[data-presence="away"] {
-    background: var(--warning, #d99a00);
-  }
-
-  :global(.community-profile-menu__presence-content) {
-    width: 11rem;
-    z-index: calc(var(--ui-workspace-overlay-z-index, 50) + 20);
-  }
-
-  :global(
-    .community-profile-menu__presence-content
-      [data-ui-part="dropdown-menu-radio-item"]
-  ) {
-    gap: 0.5rem;
-  }
-
-  :global(.community-profile-menu__community-icon) {
-    display: grid;
-    width: 1.25rem;
-    height: 1.25rem;
-    flex: none;
-    place-items: center;
-    border: 1px solid var(--border);
-    border-radius: 0.375rem;
-    background: color-mix(in srgb, var(--muted) 72%, transparent);
-    font-size: var(--community-text-secondary);
-    text-align: center;
-  }
-
-  :global(
-    .community-profile-menu__community-trigger[data-ui-part="dropdown-menu-sub-trigger"]
-  ) {
-    min-height: 2.25rem;
-    gap: 0.5rem;
-    border-radius: 0.5rem;
-    padding: 0.5rem 0.75rem;
-  }
-
-  :global(.community-profile-menu__community-content) {
-    width: 15rem;
-    z-index: calc(var(--ui-workspace-overlay-z-index, 50) + 20);
-    padding: 0.25rem;
-  }
-
-  :global(.community-profile-menu__community-label) {
-    display: grid;
-    min-width: 0;
-    flex: 1;
-  }
-
-  :global(.community-profile-menu__community-label small) {
-    overflow: hidden;
-    color: var(--muted-foreground);
-    font-size: var(--community-text-secondary);
-    font-weight: 400;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 </style>

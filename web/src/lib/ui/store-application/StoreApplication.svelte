@@ -21,6 +21,8 @@
   } from "../community-navigation/model.js";
   import type { StoreController } from "../../controller/contracts.js";
   import CommunityProfileMenu from "../community-profile-menu/CommunityProfileMenu.svelte";
+  import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
+  import StoreRepositoryDetails from "./StoreRepositoryDetails.svelte";
   let {
     controller,
     initiallyCollapsed = true,
@@ -58,19 +60,20 @@
     { id: "log", label: "JJ Log", kind: "log" },
     { id: "oplog", label: "Op Log", kind: "oplog" },
   ];
-  const navigation: CommunityNavigationModel = {
+  const navigation: CommunityNavigationModel = $derived({
     primaryItems: pages,
     sections: [
       {
         id: "repositories",
         label: "Repositories",
-        items: [
-          { id: "jj-store", label: "jj-store", kind: "repository" },
-          { id: "native-demo", label: "native-demo", kind: "repository" },
-        ],
+        items: controller.state.repositories.map((repository) => ({
+          id: repository.id,
+          label: repository.name,
+          kind: "repository" as const,
+        })),
       },
     ],
-  };
+  });
   const title = $derived(
     current.page === "files"
       ? "Files"
@@ -115,6 +118,16 @@
     </div>
   {/snippet}
   {#snippet headerEnd()}<Button
+      variant={controller.state.status.refreshAvailable ? "outline" : "ghost"}
+      size="icon-sm"
+      aria-label={controller.state.status.refreshAvailable
+        ? "Refresh snapshot (new history available)"
+        : "Refresh snapshot"}
+      title="Refresh snapshot"
+      disabled={controller.state.status.connection !== "connected"}
+      onclick={() => controller.actions.refresh()}
+      ><RefreshCwIcon aria-hidden="true" /></Button
+    ><Button
       variant="ghost"
       size="icon-sm"
       aria-label="Toggle details"
@@ -208,7 +221,7 @@
       </AppShell.Toolbar>
     {/if}
     <AppShell.Body
-      layout={current.page === "files" ? "regions" : "scroll"}
+      layout="regions"
       label={current.page === "files"
         ? "Repository files workspace"
         : undefined}
@@ -216,6 +229,7 @@
         ? "store-application__files-body"
         : undefined}
     >
+      <h1 class="store-application__title">{title}</h1>
       {#key current.repository + current.page}
         {#if children}{@render children(
             current.page,
@@ -243,14 +257,10 @@
       >{#if details}{@render details(
           current.page,
           current.repository,
-        )}{:else}<dl>
-          <dt>Repository</dt>
-          <dd>{current.repository}</dd>
-          <dt>View</dt>
-          <dd>{title}</dd>
-          <dt>Source</dt>
-          <dd>Deterministic fixtures</dd>
-        </dl>{/if}</AppShell.Sidebar.Body
+        )}{:else}<StoreRepositoryDetails
+          {controller}
+          {title}
+        />{/if}</AppShell.Sidebar.Body
     >
   </AppShell.Sidebar>
 </CommunityAppShell>
@@ -309,13 +319,5 @@
 
   .store-application__placeholder {
     padding: 1rem;
-  }
-  dl {
-    padding: 0.75rem;
-    font-size: var(--community-text-body);
-  }
-  dd {
-    margin: 0 0 1rem;
-    color: var(--muted-foreground);
   }
 </style>

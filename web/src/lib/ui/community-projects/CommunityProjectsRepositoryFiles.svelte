@@ -179,6 +179,8 @@
           controller.actions.selectRevision(revision.eventId);
         }}
         onSelectBranch={selectSnapshot}
+        hasMore={view.canLoadMoreFiles}
+        onLoadMore={() => controller.actions.loadMore("files")}
       />{/if}
   </section>
 </AppShell.Body.Content>

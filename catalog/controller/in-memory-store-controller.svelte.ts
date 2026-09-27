@@ -65,6 +65,9 @@ export function createInMemoryStoreController(
       authenticated = false;
     },
     async refresh() {},
+    async selectOperation() {},
+    async selectComparisonParent() {},
+    async prepareIndex() {},
     async loadMore() {},
     openRepository(id) {
       if (!repositories.some((repo) => repo.id === id))
@@ -195,6 +198,13 @@ export function createInMemoryStoreController(
         canNavigateForward: index < history.length - 1,
         repositories,
         repository: repositories.find((repo) => repo.id === route.repository)!,
+        operationHeads: [IDS.opLeft, IDS.opRight],
+        comparisonParents: [],
+        conflictCount: null,
+        unavailableComparisonCount: 0,
+        canLoadMoreBookmarks: false,
+        canLoadMoreGraph: false,
+        canLoadMoreFiles: false,
         bookmarks,
         choices,
         targets,

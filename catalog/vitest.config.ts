@@ -13,7 +13,11 @@ export default defineConfig({
         plugins: [svelte()],
         test: {
           name: "catalog-unit",
-          include: ["catalog/**/*.test.ts", ".storybook/**/*.test.ts"],
+          include: [
+            "catalog/**/*.test.ts",
+            ".storybook/**/*.test.ts",
+            "web/tests/vite/**/*.test.ts",
+          ],
         },
       },
       {

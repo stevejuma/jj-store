@@ -13,9 +13,10 @@ fn bundle(root: &std::path::Path) {
     )
     .unwrap();
     fs::write(root.join("assets/app-123.js"), "export const version=1;").unwrap();
+    fs::write(root.join("assets/font-123.woff2"), b"wOF2fixture").unwrap();
     fs::write(
         root.join("asset-manifest.json"),
-        r#"{"version":1,"files":["index.html","assets/app-123.js"]}"#,
+        r#"{"version":1,"files":["index.html","assets/app-123.js","assets/font-123.woff2"]}"#,
     )
     .unwrap();
 }
@@ -36,12 +37,25 @@ async fn browser_assets_are_allowlisted_preloaded_and_sandboxed() {
         .to_str()
         .unwrap();
     assert!(csp.contains("script-src 'self'"));
+    assert!(csp.contains("font-src 'self'"));
     assert!(!csp.contains("unsafe-inline"));
     assert!(
         std::str::from_utf8(&to_bytes(response.into_body(), 1024).await.unwrap())
             .unwrap()
             .contains("Browser")
     );
+    let response = router
+        .clone()
+        .oneshot(
+            Request::builder()
+                .uri("/assets/font-123.woff2")
+                .body(Body::empty())
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+    assert_eq!(response.status(), StatusCode::OK);
+    assert_eq!(response.headers()["content-type"], "font/woff2");
     for uri in [
         "/asset-manifest.json",
         "/../secret",
@@ -123,6 +137,7 @@ fn browser_asset_symlinks_are_rejected() {
     .unwrap();
     assert!(BrowserAssets::load(root.path()).is_err());
     fs::remove_file(root.path().join("assets/app-123.js")).unwrap();
+    fs::remove_file(root.path().join("assets/font-123.woff2")).unwrap();
     fs::remove_dir(root.path().join("assets")).unwrap();
     symlink(root.path(), root.path().join("assets")).unwrap();
     assert!(BrowserAssets::load(root.path()).is_err());

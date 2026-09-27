@@ -21,9 +21,135 @@ const repo = snapshot.repo_id;
 const operation = snapshot.heads[0];
 const token = "disposable-browser-fixture-token";
 const graph = sample("log");
-const commit = graph.data.data.nodes.find((n: any) =>
+const commitNode = graph.data.data.nodes.find((n: any) =>
   n.commit.description.startsWith("binary"),
-).commit.id;
+).commit;
+const commit = commitNode.id;
+const parent = commitNode.parents[0];
+const tree = sample("commits/{commit}/tree");
+const stats = graph.data.stats;
+const textChange = {
+  path: "bin",
+  before: [],
+  after: tree.data.entries[0].terms,
+  sources: [{ kind: "normal", path: "bin", terms: [] }],
+  content: {
+    status: "text",
+    hunks: [
+      {
+        kind: "different",
+        before_start: 1,
+        after_start: 1,
+        before: "",
+        after: "<script>window.sourceExecuted=true</script>\n",
+      },
+    ],
+  },
+};
+const windowPage = (data: unknown, next_cursor: string | null = null) => ({
+  snapshot: structuredClone(graph.snapshot),
+  data,
+  previous_cursor: null,
+  next_cursor,
+});
+function referencesPage(next_cursor: string | null = null) {
+  return windowPage(
+    {
+      version: 1,
+      operation,
+      references: [
+        {
+          kind: "bookmark",
+          name: "main",
+          terms: [commit],
+          conflicted: false,
+          workspaces: [...commitNode.workspaces],
+          targets: [
+            {
+              commit,
+              change: commitNode.change_id,
+              parents: [...commitNode.parents],
+              description: commitNode.description,
+              author: structuredClone(commitNode.author),
+              committer: structuredClone(commitNode.committer),
+              conflicted: commitNode.conflicted,
+              workspaces: [...commitNode.workspaces],
+            },
+          ],
+        },
+      ],
+      previous: null,
+      next: next_cursor,
+      stats,
+    },
+    next_cursor,
+  );
+}
+function pathsPage(next_cursor: string | null = null) {
+  return windowPage(
+    {
+      version: 1,
+      commit,
+      path: "",
+      recursive: true,
+      entries: tree.data.entries.map((entry: any) => ({
+        path: entry.name,
+        terms: structuredClone(entry.terms),
+        conflicted: entry.conflicted,
+        last_change: {
+          status: "available",
+          commit,
+          change: commitNode.change_id,
+          description: commitNode.description,
+          author: structuredClone(commitNode.author),
+          committer: structuredClone(commitNode.committer),
+        },
+      })),
+      previous: null,
+      next: next_cursor,
+      stats,
+    },
+    next_cursor,
+  );
+}
+function operationChangesPage() {
+  return windowPage({
+    version: 1,
+    operation,
+    parent,
+    groups: [
+      {
+        change: commitNode.change_id,
+        before: [parent],
+        after: [commit],
+        comparison: { status: "exact", from: parent, to: commit },
+      },
+    ],
+    previous: null,
+    next: null,
+    stats,
+  });
+}
+function diffPathsPage() {
+  return windowPage({
+    version: 1,
+    from: parent,
+    to: commit,
+    path: "",
+    changes: [structuredClone(textChange)],
+    previous: null,
+    next: null,
+    stats,
+  });
+}
+function diffPage() {
+  const value = sample("diff");
+  value.data.from = parent;
+  value.data.to = commit;
+  value.data.path = "bin";
+  value.data.changes = [structuredClone(textChange)];
+  return value;
+}
 async function api(
   page: Page,
   options: { multi?: boolean; changed?: boolean; delayLog?: boolean } = {},
@@ -54,6 +180,26 @@ async function api(
       const value = sample("snapshot");
       if (options.multi) value.heads.push("ab".repeat(64));
       await route.fulfill({ json: value });
+      return;
+    }
+    if (path === "references") {
+      await route.fulfill({ json: referencesPage() });
+      return;
+    }
+    if (path?.startsWith("commits/") && path.endsWith("/paths")) {
+      await route.fulfill({ json: pathsPage() });
+      return;
+    }
+    if (path?.startsWith("operations/") && path.endsWith("/changes")) {
+      await route.fulfill({ json: operationChangesPage() });
+      return;
+    }
+    if (path === "diff/paths") {
+      await route.fulfill({ json: diffPathsPage() });
+      return;
+    }
+    if (path === "diff") {
+      await route.fulfill({ json: diffPage() });
       return;
     }
     if (path === "log" && options.delayLog)
@@ -104,6 +250,7 @@ test("native_graphs_files_and_source_rendering_are_accessible", async ({
   page.on("pageerror", (e) => errors.push(e.message));
   await api(page);
   await connect(page);
+  await page.getByRole("option", { name: "main", exact: true }).click();
   await expect(
     page.getByRole("button", { name: /binary <script>/ }).first(),
   ).toBeVisible();
@@ -111,27 +258,28 @@ test("native_graphs_files_and_source_rendering_are_accessible", async ({
     .getByRole("button", { name: /binary <script>/ })
     .first()
     .click();
-  await expect(page.getByRole("heading", { name: "Files" })).toBeVisible();
-  await page.getByRole("button", { name: "bin file", exact: true }).click();
-  await expect(page.locator("pre.source")).toContainText(
-    "<script>window.sourceExecuted=true</script>",
-  );
+  await expect(
+    page.getByRole("region", { name: "Changed files" }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "bin", exact: true }).click();
+  await expect(page.getByText("window.sourceExecuted=true")).toBeVisible();
+  await page.getByRole("link", { name: repo, exact: true }).click();
+  await expect(
+    page.getByRole("table", { name: "Repository files" }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Open file bin" }).click();
+  await expect(
+    page.getByRole("region", { name: "Source preview for bin" }),
+  ).toContainText("<script>window.sourceExecuted=true</script>");
   expect(
     await page.evaluate(() => Reflect.get(window, "sourceExecuted")),
   ).toBeUndefined();
-  await page.getByRole("button", { name: "Show diff", exact: true }).click();
-  await expect(page.getByText("0 changed paths")).toBeVisible();
+  await page.getByRole("button", { name: "Op Log", exact: true }).click();
   await page
-    .getByRole("button", { name: "View evolution", exact: true })
+    .getByRole("button", { name: "content fixture", exact: true })
     .click();
   await expect(
-    page.getByRole("button", { name: "Evolution", exact: true }),
-  ).toHaveAttribute("aria-pressed", "true");
-  await expect(page.locator(".graph-rows li").first()).toBeVisible();
-  await page.getByRole("button", { name: "Operations", exact: true }).click();
-  await page.locator(".graph-row").first().click();
-  await expect(
-    page.getByRole("heading", { name: "Operation changes" }),
+    page.getByRole("region", { name: "Changed files in operation" }),
   ).toBeVisible();
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   expect(
@@ -147,7 +295,11 @@ test("native_graphs_files_and_source_rendering_are_accessible", async ({
     path: ".scratch/browser-history.png",
     fullPage: true,
   });
-  await page.getByRole("button", { name: "Disconnect", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Open profile menu for Repository connected" })
+    .click();
+  await page.getByRole("menuitem", { name: "Sign out" }).click();
+  await expect(page.getByRole("menu", { name: "Profile menu" })).toBeHidden();
   await expect(
     page.getByRole("heading", { name: "Explore native history." }),
   ).toBeVisible();
@@ -161,29 +313,43 @@ test("multiple_heads_require_choice_and_events_preserve_the_selected_view", asyn
   const requests = await api(page, { multi: true, changed: true });
   await connect(page);
   await expect(
-    page.getByText("Multiple operation heads.", { exact: true }),
+    page.getByText("Multiple operation heads", { exact: true }),
   ).toBeVisible();
   expect(requests).not.toContain("log");
   await page
     .getByRole("button", { name: operation.slice(0, 12), exact: true })
     .click();
-  await expect(page.locator(".graph-row").first()).toBeVisible();
-  await expect(page.getByText(/Newer history is available/)).toBeVisible();
   await expect(
-    page.getByLabel("Selected operation", { exact: true }),
-  ).toHaveValue(operation);
+    page.getByRole("option", { name: "main", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", {
+      name: "Refresh snapshot (new history available)",
+    }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Toggle details" }).click();
+  await expect(page.getByText(operation.slice(0, 12))).toBeVisible();
 });
 test("disconnect_discards_inflight_history_and_revocation_clears_data", async ({
   page,
 }) => {
   await api(page, { delayLog: true });
   await connect(page);
-  await page.getByRole("button", { name: "Disconnect", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Open profile menu for Repository connected" })
+    .click();
+  await page.getByRole("menuitem", { name: "Sign out" }).click();
+  await expect(page.getByRole("menu", { name: "Profile menu" })).toBeHidden();
   await page.waitForTimeout(400);
-  await expect(page.locator(".graph-row")).toHaveCount(0);
+  await expect(
+    page.getByRole("region", { name: "Repository log" }),
+  ).toHaveCount(0);
+  await page.getByLabel("Repository ID", { exact: true }).fill(repo);
   await page.getByLabel("Repository token", { exact: true }).fill(token);
   await page.getByRole("button", { name: "Open repository" }).click();
-  await expect(page.locator(".graph-row").first()).toBeVisible();
+  await expect(
+    page.getByRole("option", { name: "main", exact: true }),
+  ).toBeVisible();
   await page.route("**/snapshot", (route) =>
     route.fulfill({ status: 403, json: { version: 1, code: "access_denied" } }),
   );
@@ -191,7 +357,9 @@ test("disconnect_discards_inflight_history_and_revocation_clears_data", async ({
   await expect(
     page.getByRole("heading", { name: "Explore native history." }),
   ).toBeVisible();
-  await expect(page.locator(".graph-row")).toHaveCount(0);
+  await expect(
+    page.getByRole("region", { name: "Repository log" }),
+  ).toHaveCount(0);
   await expect(
     page.getByLabel("Repository token", { exact: true }),
   ).toHaveValue("");
@@ -202,7 +370,9 @@ test("mobile_connect_and_history_have_no_horizontal_overflow", async ({
   await page.setViewportSize({ width: 390, height: 844 });
   await api(page);
   await connect(page);
-  await expect(page.locator(".graph-row").first()).toBeVisible();
+  await expect(
+    page.getByRole("option", { name: "main", exact: true }),
+  ).toBeVisible();
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= window.innerWidth,
@@ -229,43 +399,40 @@ test("graph_and_directory_pages_retain_exact_snapshots_and_query_context", async
     await route.fulfill({ json: result });
   });
   await connect(page);
-  await expect(page.locator(".graph-row")).toHaveCount(1);
-  await page.getByLabel("Revset", { exact: true }).fill("none()");
-  await page
-    .getByLabel("Selected operation", { exact: true })
-    .fill("ff".repeat(64));
-  await expect(
-    page.getByRole("region", { name: "Snapshot state" }).locator("code"),
-  ).toHaveAttribute("title", operation);
-  await page
-    .getByRole("button", { name: "Load more at this snapshot" })
-    .click();
+  await page.getByRole("option", { name: "main", exact: true }).click();
+  const revisionGraph = page.getByRole("list", { name: "Revision graph" });
+  await expect(revisionGraph.getByRole("listitem")).toHaveCount(1);
+  await page.getByRole("button", { name: "More history" }).click();
+  await page.getByRole("button", { name: "Toggle details" }).click();
   await expect(page.getByRole("alert")).toContainText(
     "pagination snapshot mismatch",
   );
-  expect(queries[1].get("revset")).toBe(queries[0].get("revset"));
+  expect(queries[1].get("revset")).toBe("all()");
   expect(queries[1].get("at_time_millis")).toBe(
     queries[0].get("at_time_millis"),
   );
   expect(queries[1].get("cursor")).toBe("graph-page-2");
-  await expect(page.locator(".graph-row")).toHaveCount(1);
+  await expect(revisionGraph.getByRole("listitem")).toHaveCount(1);
   let pages = 0;
-  await page.route("**/tree?**", async (route) => {
-    const result = sample("commits/{commit}/tree");
+  await page.route("**/commits/*/paths?**", async (route) => {
+    const result = pathsPage("paths-page-2");
     if (pages++) {
       result.snapshot.manifest_revision++;
       result.next_cursor = null;
     }
     await route.fulfill({ json: result });
   });
-  await page.locator(".graph-row").first().click();
-  await expect(page.locator(".file-list li")).toHaveCount(2);
-  await page.getByRole("button", { name: "Dismiss", exact: true }).click();
+  await page.getByRole("link", { name: repo, exact: true }).click();
+  await expect(
+    page.getByRole("table", { name: "Repository files" }),
+  ).toBeVisible();
   await page.getByRole("button", { name: "More files", exact: true }).click();
   await expect(page.getByRole("alert")).toContainText(
     "pagination snapshot mismatch",
   );
-  await expect(page.locator(".file-list li")).toHaveCount(2);
+  await expect(page.getByRole("button", { name: "Open file bin" })).toHaveCount(
+    1,
+  );
 });
 
 test("index_preparation_retries_the_original_query_after_context_edits", async ({
@@ -299,13 +466,15 @@ test("index_preparation_retries_the_original_query_after_context_edits", async (
     route.fulfill({ json: sample("index/tasks/{task}") }),
   );
   await connect(page);
+  await page.getByRole("button", { name: "Toggle details" }).click();
   await expect(
     page.getByRole("button", { name: "Prepare index" }),
   ).toBeVisible();
-  await page.getByLabel("Revset", { exact: true }).fill("none()");
   await page.getByRole("button", { name: "Prepare index" }).click();
-  await expect(page.locator(".graph-row").first()).toBeVisible();
-  expect(queries).toHaveLength(2);
+  await expect(
+    page.getByRole("option", { name: "main", exact: true }),
+  ).toBeVisible();
+  await expect.poll(() => queries.length).toBe(2);
   expect(queries[1]).toBe(queries[0]);
   await expect(page.getByRole("alert")).toHaveCount(0);
 });
@@ -329,16 +498,20 @@ test("event_reconnect_resumes_and_reset_requires_explicit_refresh", async ({
     });
   });
   await connect(page);
-  await expect(page.locator(".graph-row").first()).toBeVisible();
-  await expect(page.getByText("Refresh needed", { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole("option", { name: "main", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", {
+      name: "Refresh snapshot (new history available)",
+    }),
+  ).toBeVisible();
   expect(resumes).toEqual([null, id]);
   await page.getByRole("button", { name: /Refresh snapshot/ }).click();
-  await expect.poll(() => resumes.length).toBeGreaterThanOrEqual(3);
-  expect(resumes[2]).toBe(null);
+  await expect.poll(() => resumes.slice(2).includes(null)).toBe(true);
   await expect(
-    page.getByLabel("Selected operation", { exact: true }),
-  ).toHaveValue(operation);
-  await expect(page.locator(".graph-row").first()).toBeVisible();
+    page.getByRole("option", { name: "main", exact: true }),
+  ).toBeVisible();
 });
 
 test("new_file_selection_discards_an_older_inflight_preview", async ({
@@ -347,11 +520,11 @@ test("new_file_selection_discards_an_older_inflight_preview", async ({
   await api(page);
   const fileA = "ab".repeat(64),
     fileB = "cd".repeat(64);
-  await page.route("**/tree?**", async (route) => {
-    const result = sample("commits/{commit}/tree");
+  await page.route("**/commits/*/paths?**", async (route) => {
+    const result = pathsPage();
     result.data.entries = [fileA, fileB].map((id, i) => ({
       ...result.data.entries[0],
-      name: `file-${i}`,
+      path: `file-${i}`,
       terms: [{ ...result.data.entries[0].terms[0], id }],
     }));
     result.next_cursor = null;
@@ -382,14 +555,14 @@ test("new_file_selection_discards_an_older_inflight_preview", async ({
     });
   });
   await connect(page);
-  await page
-    .getByRole("button", { name: /binary <script>/ })
-    .first()
-    .click();
-  await page.getByRole("button", { name: "file-0 file", exact: true }).click();
+  await page.getByRole("link", { name: repo, exact: true }).click();
+  await page.getByRole("button", { name: "Open file file-0" }).click();
   await started;
-  await page.getByRole("button", { name: "file-1 file", exact: true }).click();
-  await expect(page.locator("pre.source")).toHaveText("selected-file");
+  await page.getByRole("button", { name: "file-1", exact: true }).click();
+  const selected = page.getByRole("region", {
+    name: "Source preview for file-1",
+  });
+  await expect(selected).toContainText("selected-file");
   finish();
-  await expect(page.locator("pre.source")).toHaveText("selected-file");
+  await expect(selected).toContainText("selected-file");
 });

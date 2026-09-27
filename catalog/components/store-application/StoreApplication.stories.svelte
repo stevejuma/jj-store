@@ -23,6 +23,19 @@
   name="Default"
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    const bodyTitle = canvasElement.querySelector<HTMLElement>(
+      ".store-application__title",
+    )!;
+    await expect(getComputedStyle(bodyTitle).position).toBe("absolute");
+    await expect(bodyTitle.getBoundingClientRect().width).toBe(1);
+    const mainBody = canvasElement.querySelector<HTMLElement>(
+      '[data-ui-component="app-shell"][data-ui-part="body"]',
+    )!;
+    await expect(mainBody).toHaveAttribute("data-layout", "regions");
+    await expect(getComputedStyle(mainBody).overflow).toBe("hidden");
+    await expect(
+      mainBody.querySelector(".ui-minimal-app-shell__body-scroll-area"),
+    ).toBeNull();
     await expect(
       canvas.getByText("jj-store · Branches", { exact: true }),
     ).toBeVisible();
