@@ -276,3 +276,21 @@ bounded separately. Native graph/content limits carry this policy and report the
 cumulative scanned node count. The native persistence codec remains lossless for
 shapes outside these query budgets. Derived native merge expansion and aggregate
 memory still require separate qualification before shared HTTP exposure.
+
+Revset file predicates preflight recursive merge shape using the pinned native
+ancestor-selection order. The preflight tracks counts rather than constructing
+merged trees, bounds intermediate terms before allocation, and reserves work for
+both preflight and native predicate evaluations. This policy leaves normal graph
+queries intact. Predicate file bodies have per-file/cumulative byte caps and
+reserve cumulative squared line work before native file materialization. Binary
+streaming through the content API has independent limits.
+
+Read-only query authority also admits each logical backend tree path before
+native traversal, including virtual trees. Paths are limited to 64 components
+and 4096 bytes. Ordinary native sessions keep their existing authorization; this
+query guard does not alter persistence or physical client workspaces.
+
+Returned native file readers also cross the caller-owned runtime adapter on
+every poll. The foreign-executor cooperative-budget rule applies after file
+preparation as well as during backend futures and copy streams; genuine pending
+local I/O remains Pending.

@@ -83,3 +83,9 @@ unit checks do not imply a successful release resource run.
 The resource harness supports separate graph and content fixture processes.
 Content evidence includes positive boundary inputs and explicit oversized-input
 rejections, preserving checksums, exact commands, CPU, elapsed time and RSS.
+
+The predicate resource scenario runs the explicitly compiled release native
+lifecycle test binary under an independent process timeout. It requires each
+named admission/parity test and records actual process CPU/RSS separately from
+compilation. A hung debug fixture must be diagnosed and recorded, not counted as
+a passing deadline test.

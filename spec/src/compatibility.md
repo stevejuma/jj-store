@@ -154,3 +154,14 @@ including 50,000-entry trees, 65-term merges and 256 MiB verified file
 streams/ranges. Immutable fixture measurements remain separate from
 RustFS/network and browser qualification. Native synthesized merges and
 aggregate worker budgets remain explicit follow-on qualification.
+
+Native predicate qualification includes accepted byte/line boundaries, repeated
+logical paths sharing immutable blobs, recursive parent merge admission,
+criss-cross histories, path-depth rejection and direct pinned-upstream result
+comparison. The native file-reader runtime adapter additionally requires its
+bounded-poll regression and real RustFS/CLI lifecycle requalification.
+
+The [predicate audit](../../docs/evidence/m4-native-predicate-audit.md) retains
+final release measurements and a separate eleven-case RustFS rerun after the
+returned-file runtime repair. Native parity uses a direct upstream oracle;
+preflight admission never substitutes its own predicate results.

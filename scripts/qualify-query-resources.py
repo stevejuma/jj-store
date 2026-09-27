@@ -7,6 +7,7 @@ import hashlib
 import pathlib
 import platform
 import resource
+import re
 import subprocess
 import time
 
@@ -16,13 +17,15 @@ def main():
     parser.add_argument("--binary", type=pathlib.Path, required=True)
     parser.add_argument("--output", type=pathlib.Path, required=True)
     parser.add_argument("--commits", type=int, default=50000)
-    parser.add_argument("--scenario", choices=["graphs", "content"], default="graphs")
+    parser.add_argument("--scenario", choices=["graphs", "content", "predicates"], default="graphs")
     args = parser.parse_args()
     if not 100 <= args.commits <= 50000:
         parser.error("commit count must be 100..=50000")
     before = resource.getrusage(resource.RUSAGE_CHILDREN)
     started = time.monotonic()
     command = [str(args.binary.resolve())] + ([str(args.commits)] if args.scenario == "graphs" else [])
+    if args.scenario == "predicates":
+        command += ["native_predicates_", "--test-threads=1", "--nocapture"]
     try:
         child = subprocess.run(command, text=True, capture_output=True, timeout=180)
         status = child.returncode
@@ -36,7 +39,10 @@ def main():
     cpu = usage.ru_utime + usage.ru_stime - before.ru_utime - before.ru_stime
     payload = None
     if status == 0:
-        payload = json.loads(stdout)
+        if args.scenario == "predicates":
+            payload = {"tests": re.findall(r"^test .*::(native_predicates_\w+) \.\.\. ok$", stdout, re.MULTILINE), "output": stdout}
+        else:
+            payload = json.loads(stdout)
     scenarios = (payload or {}).get("scenarios", [])
     runs = [run for case in scenarios for run in case["runs"]]
     expected = {"cold_log": min(500, args.commits), "warm_log": min(500, args.commits), "warm_filter": 0, "operations": 2}
@@ -58,6 +64,21 @@ def main():
                   and {run["name"] for run in runs} == expected_content
                   and all(run["result"] == "pass" for run in runs)
                   and peak <= 1024 * 1024 * 1024 and cpu <= 60)
+    if args.scenario == "predicates":
+        expected_predicates = {
+            "native_predicates_bound_file_bytes_before_materialization",
+            "native_predicates_bound_line_comparison_work_before_evaluation",
+            "native_predicates_bound_derived_merge_terms_without_limiting_plain_log",
+            "native_predicates_preserve_admitted_file_and_recursive_merge_semantics",
+            "native_predicates_reject_recursive_criss_cross_expansion",
+            "native_predicates_bound_recursive_tree_depth_for_graphs_and_content",
+            "native_predicates_admit_boundary_files_and_charge_repeated_tree_paths",
+        }
+        tests = (payload or {}).get("tests", [])
+        passed = (status == 0 and len(tests) == len(expected_predicates)
+                  and set(tests) == expected_predicates
+                  and "test result: ok. 7 passed; 0 failed; 0 ignored;" in stdout
+                  and peak <= 1024 * 1024 * 1024 and cpu <= 60)
     with args.binary.open("rb") as binary:
         binary_hash = hashlib.file_digest(binary, "sha256").hexdigest()
     report = {
@@ -67,7 +88,7 @@ def main():
         "binary_sha256": binary_hash,
         "cargo_lock_sha256": hashlib.sha256(pathlib.Path("Cargo.lock").read_bytes()).hexdigest(),
         "scenario": args.scenario,
-        "scope": "Encoded immutable fixture storage (large content uses disk spools) and production native query executor; no service authorization, network, RustFS or browser cost. Whole-process memory includes fixture generation and encoded source objects.",
+        "scope": ("Production authenticated read sessions and native graph/content predicates against memory storage; includes fixture publication and direct upstream oracle. No RPC, RustFS, HTTP or browser cost." if args.scenario == "predicates" else "Encoded immutable fixture storage (large content uses disk spools) and production native query executor; no service authorization, network, RustFS or browser cost. Whole-process memory includes fixture generation and encoded source objects."),
         "ceilings": {"peak_process_bytes": 1024 * 1024 * 1024, "cpu_seconds": 60, "wall_seconds": 180},
         "process": {"exit_code": status, "wall_seconds": time.monotonic() - started, "cpu_seconds": cpu, "peak_rss_bytes": peak},
         "native": payload,

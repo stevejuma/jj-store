@@ -166,3 +166,13 @@ exceeding them returns a resource-limit error without changing native codecs,
 identities or stored data. The scan retains no metadata collections and checks
 cancellation/deadlines as it visits input. Native shape and identity validation
 still follow admission; admission alone never makes an object trustworthy.
+
+Native file predicates have separate byte and line-work admission from streamed
+file downloads. Recursive parent merges are preflighted against the selected
+native index before predicate evaluation, reserving ancestry work and bounding
+unreduced merge terms/labels. The original native predicate evaluates admitted
+inputs; limits return explicit errors without publishing or truncating results.
+
+Implicit graph/content tree walks use the same 64-component, 4096-byte path
+limits as explicit content paths. Repeated subtree objects at different paths
+still require admission at each native cache key.

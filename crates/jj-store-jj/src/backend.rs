@@ -16,6 +16,7 @@ use jj_store_model as m;
 use std::{
     collections::BTreeSet,
     fmt,
+    future::Future as _,
     pin::Pin,
     sync::{Arc, Mutex},
     task::{Context, Poll},
@@ -28,6 +29,11 @@ use tokio_util::compat::{FuturesAsyncReadCompatExt as _, TokioAsyncReadCompatExt
 #[async_trait::async_trait]
 pub trait BackendAuthority: Send + Sync {
     async fn authorize_read(&self) -> AuthorityResult<()>;
+    /// Optional request policy for logical tree traversal, independent of codec
+    /// support. Ordinary native sessions retain their existing read permission.
+    async fn authorize_tree_read(&self, _path: &str) -> AuthorityResult<()> {
+        self.authorize_read().await
+    }
     async fn authorize_write(&self) -> AuthorityResult<()>;
     /// Complete retained, manifest-selected copy inventory, or an explicit error.
     async fn copy_ids(&self, limit: usize) -> AuthorityResult<BTreeSet<m::CopyId>>;
@@ -160,8 +166,13 @@ impl AsyncRead for FileReader {
         buf: &mut [u8],
     ) -> Poll<std::io::Result<usize>> {
         let runtime = self.runtime.clone();
-        let _guard = runtime.enter();
-        self.reader.as_mut().poll_read(cx, buf)
+        // JJ may read returned files through its foreign synchronous executor.
+        // This reader needs the same per-poll runtime/cooperative boundary as
+        // native futures and copy streams, including genuine Pending I/O.
+        std::pin::pin!(runtime.run(std::future::poll_fn(|cx| {
+            self.reader.as_mut().poll_read(cx, buf)
+        })))
+        .poll(cx)
     }
 }
 
@@ -305,11 +316,14 @@ impl Backend for NativeBackend {
             })
             .await
     }
-    async fn read_tree(&self, _path: &RepoPath, id: &TreeId) -> BackendResult<Tree> {
+    async fn read_tree(&self, path: &RepoPath, id: &TreeId) -> BackendResult<Tree> {
         self.runtime
             .run(async {
                 let _permit = self.permits.acquire().await.map_err(other)?;
-                self.authority.authorize_read().await.map_err(other)?;
+                self.authority
+                    .authorize_tree_read(path.as_internal_file_string())
+                    .await
+                    .map_err(other)?;
                 let key = m::ObjectKey::Tree(m::TreeId::new(id_bytes(id, "tree")?));
                 if *id == self.empty {
                     return Ok(Tree::default());
@@ -381,5 +395,55 @@ impl Backend for NativeBackend {
         Err(BackendError::Unsupported(
             "destructive GC is disabled".to_owned(),
         ))
+    }
+}
+
+#[cfg(test)]
+mod runtime_reader_tests {
+    use super::*;
+    struct BudgetedReader {
+        ready: bool,
+    }
+    impl AsyncRead for BudgetedReader {
+        fn poll_read(
+            self: Pin<&mut Self>,
+            cx: &mut Context<'_>,
+            buf: &mut [u8],
+        ) -> Poll<std::io::Result<usize>> {
+            if !self.ready {
+                return Poll::Pending;
+            }
+            let mut budget = std::pin::pin!(tokio::task::consume_budget());
+            std::task::ready!(budget.as_mut().poll(cx));
+            buf[0] = 7;
+            Poll::Ready(Ok(1))
+        }
+    }
+    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+    async fn native_file_reader_progress_does_not_require_foreign_executor_cooperative_reset() {
+        let spool = jj_store_object::StagedUpload::from_bytes(b"", 0)
+            .await
+            .unwrap();
+        let mut reader = Box::pin(FileReader {
+            runtime: crate::runtime::RuntimeContext::current().unwrap(),
+            reader: Box::pin(BudgetedReader { ready: true }),
+            _spool: spool,
+        });
+        let mut context = Context::from_waker(futures::task::noop_waker_ref());
+        let mut bytes = [0];
+        for _ in 0..512 {
+            assert!(matches!(
+                reader.as_mut().poll_read(&mut context, &mut bytes),
+                Poll::Ready(Ok(1))
+            ));
+            assert_eq!(bytes, [7]);
+        }
+        reader.as_mut().get_mut().reader = Box::pin(BudgetedReader { ready: false });
+        assert!(
+            reader
+                .as_mut()
+                .poll_read(&mut context, &mut bytes)
+                .is_pending()
+        );
     }
 }

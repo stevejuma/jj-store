@@ -867,3 +867,6 @@ mod diff_acceptance;
 
 #[path = "content_admission.rs"]
 mod admission_acceptance;
+
+#[path = "query_predicates.rs"]
+mod predicate_acceptance;

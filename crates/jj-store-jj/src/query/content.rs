@@ -196,7 +196,7 @@ impl ContentReader {
             runtime.block_on(tokio::task::LocalSet::new().run_until(async {
                 let objects = Arc::new(
                     NativeObjects::new(
-                        Arc::new(ReadStore::new(store, access.clone(), budget.clone())),
+                        Arc::new(ReadStore::new(store, access.clone(), budget.clone(), false)),
                         access.repository(),
                         limits.max_blob_bytes,
                     )

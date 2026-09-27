@@ -175,3 +175,7 @@ successfully prepared binary streams.
 Native application-read acceptance includes oversized persisted merge terms,
 reference conflicts and dense trees. Rejection at this read boundary must not
 narrow ordinary CLI persistence or alter native hashes.
+
+File-predicate acceptance distinguishes native log parity from resource-limit
+rejection. Large downloads remain streamed under content budgets; ordinary CLI
+commands retain upstream semantics.

@@ -25,8 +25,8 @@ adds evidence here in its enclosing Jujutsu change.
 | M3.1        | Done        | M2        | JST-SEC-001,JST-SEC-002,JST-SEC-003,JST-SEC-004                         | Revocable tokens and transport authorization                        | Retain native slice acceptance                   | E-M3-001,E-M3-004,E-M3-005,E-M3-006,E-M3-007,E-M3-008,E-M3-009,E-M3-011,E-M3-012,E-M3-014                                     |
 | M3.2        | Done        | M3.1      | JST-JJ-001,JST-JJ-004,JST-JJ-005                                        | Create edit describe log restart op-log evolog; multi-workspace     | Retain native slice acceptance                   | E-M3-002,E-M3-003,E-M3-004,E-M3-005,E-M3-006,E-M3-008,E-M3-009,E-M3-010,E-M3-011,E-M3-013,E-M3-014                            |
 | M3.3        | Done        | M3.2      | JST-CLI-001,JST-CLI-002,JST-CLI-003,JST-CLI-004                         | Custom command presentation and capability parity                   | Retain native slice acceptance                   | E-M3-006,E-M3-009,E-M3-010,E-M3-011,E-M3-012,E-M3-013,E-M3-014                                                                |
-| M4          | In progress | M3        | JST-API-001,JST-API-005                                                 | Structured reads and basic served UI match native semantics         | Qualify resources then expose HTTP               | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010                                     |
-| M4.1        | In progress | M3        | JST-API-001,JST-API-002,JST-JJ-003                                      | Pinned three-graph reads with zero GET publications                 | Qualify resources then expose HTTP               | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010                                     |
+| M4          | In progress | M3        | JST-API-001,JST-API-005                                                 | Structured reads and basic served UI match native semantics         | Qualify resources then expose HTTP               | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010,E-M4-011                            |
+| M4.1        | In progress | M3        | JST-API-001,JST-API-002,JST-JJ-003                                      | Pinned three-graph reads with zero GET publications                 | Qualify resources then expose HTTP               | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010,E-M4-011                            |
 | M4.2        | Planned     | M4.1      | JST-API-003,JST-API-004,JST-API-005                                     | SSE, safe UI, generated contracts and cold interaction tests        | Build Svelte UI                                  | -                                                                                                                             |
 | M5          | Planned     | M4        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Authenticated typed commands and shared RPC policy                  | Implement commands                               | -                                                                                                                             |
 | M5.1        | Planned     | M4        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Basic changes/refs/reconcile; preview receipt and semantic policy   | Implement command transaction facade             | -                                                                                                                             |
@@ -3814,6 +3814,196 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Rust 1.97.1; jj-cli/jj-lib 0.45.1 at 7c41cdeb16b6b321c64e789a966b6adf723816a5; release host and binary/lock hashes recorded in linked evidence.",
     "formats": "Additive owned query metadata-node statistics and trusted configuration limits. No native identity, envelope, authority or RPC format change."
+  },
+  {
+    "id": "E-M4-011",
+    "tasks": ["M4", "M4.1"],
+    "date": "2026-09-27",
+    "kind": "native-revset-predicate-admission-and-reader-runtime",
+    "files": [
+      "crates/jj-store-cli/tests/native_lifecycle/content.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/query_predicates.rs",
+      "crates/jj-store-jj/src/backend.rs",
+      "crates/jj-store-jj/src/query/access.rs",
+      "crates/jj-store-jj/src/query/content.rs",
+      "crates/jj-store-jj/src/query/graphs.rs",
+      "crates/jj-store-jj/src/query/mod.rs",
+      "crates/jj-store-jj/src/query/predicates.rs",
+      "scripts/qualify-query-resources.py",
+      "spec/src/api.md",
+      "spec/src/cli.md",
+      "spec/src/compatibility.md",
+      "spec/src/jj-integration.md",
+      "spec/src/spec-governance.md",
+      "docs/evidence/m4-native-predicate-audit.md",
+      "docs/evidence/m4-native-predicate-budget.json",
+      "docs/evidence/m4-native-reader-rustfs.json"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/native_lifecycle/query_predicates.rs#native_predicates_bound_file_bytes_before_materialization",
+      "crates/jj-store-cli/tests/native_lifecycle/query_predicates.rs#native_predicates_bound_line_comparison_work_before_evaluation",
+      "crates/jj-store-cli/tests/native_lifecycle/query_predicates.rs#native_predicates_bound_derived_merge_terms_without_limiting_plain_log",
+      "crates/jj-store-cli/tests/native_lifecycle/query_predicates.rs#native_predicates_preserve_admitted_file_and_recursive_merge_semantics",
+      "crates/jj-store-cli/tests/native_lifecycle/query_predicates.rs#native_predicates_reject_recursive_criss_cross_expansion",
+      "crates/jj-store-cli/tests/native_lifecycle/query_predicates.rs#native_predicates_bound_recursive_tree_depth_for_graphs_and_content",
+      "crates/jj-store-cli/tests/native_lifecycle/query_predicates.rs#native_predicates_admit_boundary_files_and_charge_repeated_tree_paths",
+      "crates/jj-store-jj/src/backend.rs#native_file_reader_progress_does_not_require_foreign_executor_cooperative_reset",
+      "crates/jj-store-jj/tests/rustfs.rs#real_rustfs_transport_and_native_blob_contract",
+      "crates/jj-store-jj/tests/rustfs.rs#real_rustfs_manifest_publication_and_cold_recovery",
+      "crates/jj-store-cli/tests/server_executable.rs#real_rustfs_server_cli_restart_and_revocation"
+    ],
+    "runs": [
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle native_predicates_",
+        "result": "fail",
+        "failures": 1,
+        "note": "Initial fixture compile error: CommittedRead.graph requires an Arc receiver; corrected helper type."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle native_predicates_",
+        "result": "fail",
+        "failures": 3,
+        "note": "Before implementation: 2 real regressions accept oversized file bytes/lines. The third merge fixture returned Invalid because its path predicate omitted logical workspace context; this result was not accepted as merge-limit evidence."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle native_predicates_",
+        "result": "fail",
+        "failures": 1,
+        "note": "After byte/line guards: 2 pass / merge case still Invalid. Switching to files(all()) did not remove native workspace requirements."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle native_predicates_bound_derived_merge_terms_without_limiting_plain_log",
+        "result": "fail",
+        "failures": 1,
+        "note": "First temporary preflight-disabled probe still lacked workspace context; Invalid, not valid baseline evidence. Source restored afterward."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle native_predicates_",
+        "result": "fail",
+        "failures": 3,
+        "note": "Expanded suite before workspace fixture correction: 2 pass / 3 Invalid failures."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle native_predicates_bound_derived_merge_terms_without_limiting_plain_log",
+        "result": "fail",
+        "failures": 1,
+        "note": "Corrected fixture supplies a published logical workspace. With only preflight temporarily disabled, the 34-parent input succeeds instead of Limit. This is the actual merge regression baseline; preflight restored afterward."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle native_predicates_",
+        "result": "fail",
+        "failures": 1,
+        "note": "After workspace correction: 4 pass / 1 parity expectation fails. Native 3-by-2 criss-cross merge behavior differs from the fixture assumption. Replaced the assumption with direct pinned native evaluation, preserving exact result comparison."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle native_predicates_",
+        "result": "fail",
+        "failures": 2,
+        "note": "Oracle fixture had 2 compile diagnostics: direct chrono dependency unavailable and missing expected binding. Used inferred native date type and corrected binding."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle native_predicates_",
+        "result": "pass",
+        "failures": 0,
+        "note": "Five cases pass, including direct native oracle comparison across 4 histories and 4 predicates."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle native_predicates_bound_recursive_tree_depth_for_graphs_and_content",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before path admission, a 70-level tree succeeds through graph traversal instead of Limit."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle native_predicates_",
+        "result": "pass",
+        "failures": 0,
+        "note": "Six cases pass after backend tree-path admission, including graph and content depth rejection."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle native_predicates_",
+        "result": "fail",
+        "failures": 1,
+        "note": "Boundary fixture: 6 pass / 1 native sorted-tree assertion fails. Zero-padded generated entry names preserve canonical lexical ordering."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle native_predicates_",
+        "result": "fail",
+        "failures": 1,
+        "note": "After fixture ordering repair: 6 cases pass, final repeated-file predicate spins under pollster. Live process and one-second sample prove FileReader/Tokio cooperative-budget exhaustion. Owned test process 16674 terminated after diagnosis; no deadline pass claimed."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-jj native_file_reader_progress_does_not_require_foreign_executor_cooperative_reset",
+        "result": "fail",
+        "failures": 1,
+        "note": "Bounded manual polling of a budget-consuming returned reader reproduces the runtime gap."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-jj native_file_reader_progress_does_not_require_foreign_executor_cooperative_reset",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact regression passes after routing each reader poll through RuntimeContext.run; genuine Pending is preserved."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle native_predicates_",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 7 cases pass in 2.25 seconds after reader fix: accepted 256 KiB / 901-line input, exact 4 MiB repeated-path reads, over-budget rejections, recursive merges/depth and upstream parity."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test --release --locked -p jj-store-cli --test native_lifecycle --no-run --message-format=json-render-diagnostics",
+        "result": "pass",
+        "failures": 0,
+        "note": "Release native test binary compiled, then rebuilt after the returned-reader repair and conservative temporary-label reservation."
+      },
+      {
+        "command": "python3 scripts/qualify-query-resources.py --scenario predicates --binary /Users/stevejuma/code/lapismd/jj-store/target/release/deps/native_lifecycle-fa95bbe1873b7c06 --output docs/evidence/m4-native-predicate-budget.json",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 7 named acceptance cases pass in final release process: 4.10 seconds elapsed / 0.85 CPU seconds / 19169280 peak RSS bytes. Earlier repaired release process also passed (2.17 elapsed / 0.76 CPU / 19595264 RSS) before final label reservation."
+      },
+      {
+        "command": "python3 scripts/rustfs-contract.py --run --rust-client --server --output .scratch/m4-native-reader-rustfs.json",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 11 real RustFS harness cases pass after the native returned-reader runtime fix, including native transport, cold publication recovery and TLS server/CLI restart/revocation."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "57 requirements, package boundaries, progress, rustfmt and all-target Clippy pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test",
+        "result": "pass",
+        "failures": 0,
+        "note": "206 Rust tests pass / 6 external cases intentionally ignored. All 68 native lifecycle cases, 15 governance tests and 3 storage-harness self-tests pass; no unresolved failures."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Locked workspace build passes."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 9 lanes pass, including 206 Rust tests, rustfmt, mdBook and mapped spec-first checks."
+      },
+      {
+        "command": "pnpm format:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rustfmt and Prettier pass."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Shared worker composition and controlled long cold-index tasks/status, then HTTP JSON/media/SSE, generated contracts and browser integration. Whole-server operational qualification remains M8a."
+    ],
+    "versions": "Rust 1.97.1; jj-cli/jj-lib 0.45.1 at 7c41cdeb16b6b321c64e789a966b6adf723816a5. Predicate ancestry accounting mirrors the pinned recursive merge ordering without constructing merges; admitted evaluation remains upstream.",
+    "formats": "Additive owned graph predicate limits and file-byte/line statistics. Optional native authority tree-path admission defaults to existing session permission. No native identity, envelope, publication or RPC format changes."
   }
 ]
 ```

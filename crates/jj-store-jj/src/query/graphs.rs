@@ -227,6 +227,7 @@ pub(super) async fn run(
             };
             let parsed = revset::parse(&mut Default::default(), &expression, &context)
                 .map_err(|_| Error::Invalid)?;
+            super::predicates::preflight(repo, &parsed, access, budget).await?;
             let resolved = parsed
                 .resolve_user_expression(
                     repo,

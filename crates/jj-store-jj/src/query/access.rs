@@ -30,6 +30,8 @@ pub(super) struct Budget {
     pub deadline: Instant,
     reads: AtomicU64,
     metadata_nodes: AtomicU64,
+    predicate_bytes: AtomicU64,
+    predicate_lines: AtomicU64,
     bytes: AtomicU64,
     work: AtomicU64,
     output: AtomicU64,
@@ -45,6 +47,8 @@ impl Budget {
                 .ok_or(Error::Limit)?,
             reads: AtomicU64::new(0),
             metadata_nodes: AtomicU64::new(0),
+            predicate_bytes: AtomicU64::new(0),
+            predicate_lines: AtomicU64::new(0),
             bytes: AtomicU64::new(0),
             work: AtomicU64::new(0),
             output: AtomicU64::new(0),
@@ -78,6 +82,32 @@ impl Budget {
             })
             .map_err(|_| self.fail(Error::Limit))?;
         Ok(())
+    }
+    fn predicate_file(&self, framed_bytes: u64) -> Result<()> {
+        let bytes = framed_bytes
+            .checked_sub(m::envelope::HEADER_LEN as u64)
+            .ok_or_else(|| self.fail(Error::Corrupt))?;
+        if bytes > self.limits.predicates.max_file_bytes {
+            return Err(self.fail(Error::Limit));
+        }
+        self.charge(
+            &self.predicate_bytes,
+            bytes,
+            self.limits.predicates.max_total_file_bytes,
+        )?;
+        self.predicate_lines(1)
+    }
+    fn predicate_lines(&self, added: u64) -> Result<()> {
+        self.check()?;
+        let old = self
+            .predicate_lines
+            .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |n| {
+                n.checked_add(added)
+                    .filter(|n| *n <= self.limits.predicates.max_lines)
+            })
+            .map_err(|_| self.fail(Error::Limit))?;
+        let total = old + added;
+        self.work((total * total - old * old) as usize)
     }
     pub fn metadata_node(&self) -> Result<()> {
         self.charge(&self.metadata_nodes, 1, self.limits.metadata.max_nodes)
@@ -132,6 +162,8 @@ impl Budget {
     pub fn stats(&self) -> Stats {
         Stats {
             metadata_nodes: self.metadata_nodes.load(Ordering::Relaxed),
+            predicate_file_bytes: self.predicate_bytes.load(Ordering::Relaxed),
+            predicate_lines: self.predicate_lines.load(Ordering::Relaxed),
             object_reads: self.reads.load(Ordering::Relaxed),
             object_bytes: self.bytes.load(Ordering::Relaxed),
             work: self.work.load(Ordering::Relaxed),
@@ -144,6 +176,13 @@ pub(super) struct ReadOnlyAuthority {
 }
 #[async_trait::async_trait]
 impl BackendAuthority for ReadOnlyAuthority {
+    async fn authorize_tree_read(&self, path: &str) -> AuthorityResult<()> {
+        self.budget.authorize(self.access.as_ref()).await?;
+        if path.len() > 4096 || path.split('/').filter(|name| !name.is_empty()).count() > 64 {
+            return Err(self.budget.fail(Error::Limit).into());
+        }
+        Ok(())
+    }
     async fn authorize_read(&self) -> AuthorityResult<()> {
         Ok(self.budget.authorize(self.access.as_ref()).await?)
     }
@@ -211,6 +250,7 @@ impl NativeAuthority for ReadOnlyAuthority {
     }
 }
 pub(super) struct ReadStore {
+    predicate_files: bool,
     inner: Arc<dyn ObjectStore>,
     access: Arc<dyn ReadAccess>,
     budget: Arc<Budget>,
@@ -220,8 +260,10 @@ impl ReadStore {
         inner: Arc<dyn ObjectStore>,
         access: Arc<dyn ReadAccess>,
         budget: Arc<Budget>,
+        predicate_files: bool,
     ) -> Self {
         Self {
+            predicate_files,
             inner,
             access,
             budget,
@@ -279,8 +321,16 @@ impl ObjectStore for ReadStore {
                 self.budget.limits.max_object_bytes,
             )
             .map_err(|_| storage::Error::Limit)?;
+        let predicate_file = self.predicate_files && matches!(object, m::ObjectKey::File(_));
+        if predicate_file {
+            self.budget
+                .predicate_file(download.metadata.len)
+                .map_err(|_| storage::Error::Limit)?;
+        }
         self.budget.reads.fetch_add(1, Ordering::Relaxed);
         let reader = DeadlineReader {
+            predicate_file,
+            header_remaining: m::envelope::HEADER_LEN,
             inner: Box::pin(
                 download
                     .reader
@@ -322,6 +372,8 @@ impl ObjectStore for ReadStore {
     }
 }
 struct DeadlineReader {
+    predicate_file: bool,
+    header_remaining: usize,
     inner: storage::Reader,
     remaining: u64,
     sleep: Pin<Box<Sleep>>,
@@ -350,6 +402,17 @@ impl AsyncRead for DeadlineReader {
             return Poll::Ready(Err(io::Error::other(self.budget.fail(Error::Unavailable))));
         }
         self.remaining -= size;
+        if self.predicate_file {
+            let skip = self.header_remaining.min(size as usize);
+            self.header_remaining -= skip;
+            let lines = buf.filled()[before + skip..]
+                .iter()
+                .filter(|&&b| b == b'\n')
+                .count() as u64;
+            if let Err(error) = self.budget.predicate_lines(lines) {
+                return Poll::Ready(Err(io::Error::other(error)));
+            }
+        }
         if let Err(error) = self.budget.check() {
             return Poll::Ready(Err(io::Error::other(error)));
         }
