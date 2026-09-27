@@ -828,3 +828,69 @@ async fn historical_settings_bind_selected_snapshot_and_survive_checkpoint() {
 
 #[path = "publication/application.rs"]
 mod application_acceptance;
+
+#[tokio::test]
+async fn selected_reader_keeps_exact_committed_refs_and_inventory_across_checkpoint() {
+    let (store, c) = fixture().await;
+    store.arm("manifest.json", Fault::Before);
+    assert!(matches!(
+        c.publish(&request(1, &[0], 1)).await.unwrap(),
+        PublishOutcome::OutcomeUnknown { .. }
+    ));
+    let orphan = store
+        .writes
+        .lock()
+        .unwrap()
+        .iter()
+        .find(|key| key.contains("/wal/"))
+        .unwrap()
+        .clone();
+    committed(c.publish(&request(1, &[0], 1)).await.unwrap());
+    let pinned = c.read().await.unwrap();
+    let first = pinned
+        .selected_records(store.clone(), WalPosition(0), 1)
+        .await
+        .unwrap();
+    assert_eq!(first.len(), 1);
+    assert_eq!(Some(first[0].reference()), pinned.manifest().tail);
+    assert_ne!(first[0].reference().key(REPO).unwrap().as_str(), orphan);
+    assert_eq!(first[0].transaction().after.position, WalPosition(1));
+    committed(c.publish(&request(2, &[1], 2)).await.unwrap());
+    let checkpoint = c.checkpoint().await.unwrap();
+    let earlier = pinned
+        .selected_records(store.clone(), WalPosition(0), 32)
+        .await
+        .unwrap();
+    assert_eq!(earlier.len(), 1);
+    assert_eq!(earlier[0].reference(), first[0].reference());
+    let later = checkpoint
+        .selected_records(store.clone(), WalPosition(1), 1)
+        .await
+        .unwrap();
+    assert_eq!(later[0].transaction().previous, Some(first[0].reference()));
+    assert_eq!(Some(later[0].reference()), checkpoint.manifest().tail);
+    let inventory = first[0].inventory(store.clone(), 100).await.unwrap();
+    assert!(
+        inventory
+            .iter()
+            .any(|n| n.key == ObjectKey::Operation(op(1)))
+    );
+    assert!(
+        !inventory
+            .iter()
+            .any(|n| n.key == ObjectKey::Operation(op(2)))
+    );
+    assert!(
+        checkpoint
+            .selected_records(store.clone(), WalPosition(3), 1)
+            .await
+            .is_err()
+    );
+    assert!(
+        checkpoint
+            .selected_records(store.clone(), WalPosition(0), 1025)
+            .await
+            .is_err()
+    );
+    assert!(first[0].inventory(store, 1).await.is_err());
+}

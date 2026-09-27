@@ -138,3 +138,13 @@ identity belongs to model; native file verification and tree rewriting remain in
 JJ integration. This introduces a staging-record V1 format without changing
 native, WAL, RPC or existing mutation-result codecs. Dependency locks retain
 registry artifacts.
+
+The adapter crate owns read-only committed delivery, projection checkpoint
+bookkeeping and local writer ownership. It depends on model, object storage and
+WAL, with no native JJ, service, transport, search engine or UI dependency.
+Authorization enters through an owned callback; projection implementations own
+their durable artifacts. Repository publication never invokes an adapter.
+
+The service binds adapter source authorization to its existing repository token
+session. The service may consume the adapter crate's owned callback/interface;
+the adapter crate cannot depend on the service or publish native history.

@@ -7,6 +7,7 @@ license.workspace = true
 publish = false
 
 [dependencies]
+jj-store-adapters.workspace = true
 schemars.workspace = true
 jj-store-model.workspace = true
 jj-store-object.workspace = true

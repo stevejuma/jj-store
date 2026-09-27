@@ -584,11 +584,50 @@ async fn rpc_guarded_publication_preserves_receipts_siblings_and_protection() {
         .await;
 }
 
+struct UploadAdmission {
+    inner: Arc<MemoryStore>,
+    armed: std::sync::atomic::AtomicBool,
+    admitted: tokio::sync::Notify,
+}
+#[async_trait::async_trait]
+impl jj_store_object::ObjectStore for UploadAdmission {
+    async fn head(&self, key: &Key) -> jj_store_object::Result<jj_store_object::Metadata> {
+        self.inner.head(key).await
+    }
+    async fn put(
+        &self,
+        key: &Key,
+        condition: Condition,
+        upload: &StagedUpload,
+    ) -> jj_store_object::Result<WriteOutcome> {
+        self.inner.put(key, condition, upload).await
+    }
+    async fn get(
+        &self,
+        key: &Key,
+        range: Option<jj_store_object::ByteRange>,
+    ) -> jj_store_object::Result<jj_store_object::Download> {
+        let result = self.inner.get(key, range).await?;
+        if key.as_str().ends_with("/manifest.json")
+            && self.armed.swap(false, std::sync::atomic::Ordering::SeqCst)
+        {
+            self.admitted.notify_one();
+        }
+        Ok(result)
+    }
+}
+
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn rpc_stream_protocol_deadlines_and_permits_are_bounded() {
     let mut f = Harness::new().await;
     f.stop().await;
-    f.start(
+    let admission = Arc::new(UploadAdmission {
+        inner: f.store.clone(),
+        armed: Default::default(),
+        admitted: Default::default(),
+    });
+    f.start_on_store(
+        admission.clone(),
         Protection::default(),
         RpcLimits {
             concurrent: 1,
@@ -625,19 +664,20 @@ async fn rpc_stream_protocol_deadlines_and_permits_are_bounded() {
     let (tx, rx) = tokio::sync::mpsc::channel(1);
     tx.send(start()).await.unwrap();
     let request = req(&f.admin, tokio_stream::wrappers::ReceiverStream::new(rx));
-    let task = tokio::spawn(async move { raw.write_object(request).await });
     let client = f.client(&f.admin).await;
-    tokio::time::timeout(Duration::from_secs(2), async {
-        loop {
-            if let Err(error) = client.heads().await {
-                assert_eq!(error.code(), Code::ResourceExhausted);
-                break;
-            }
-            tokio::task::yield_now().await;
-        }
-    })
-    .await
-    .unwrap();
+    admission
+        .armed
+        .store(true, std::sync::atomic::Ordering::SeqCst);
+    let task = tokio::spawn(async move { raw.write_object(request).await });
+    // Wait for a server-side authorization read under the upload's permit.
+    // Polling heads first can win that one permit and reject the upload itself.
+    tokio::time::timeout(Duration::from_secs(2), admission.admitted.notified())
+        .await
+        .unwrap();
+    assert_eq!(
+        client.heads().await.unwrap_err().code(),
+        Code::ResourceExhausted
+    );
     assert_eq!(
         task.await.unwrap().unwrap_err().code(),
         Code::DeadlineExceeded

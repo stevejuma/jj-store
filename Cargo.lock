@@ -3274,6 +3274,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "jj-store-adapters"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "jj-store-model",
+ "jj-store-object",
+ "jj-store-wal",
+ "serde",
+ "serde_json",
+ "sha2 0.10.9",
+ "tempfile",
+ "thiserror 2.0.21",
+ "tokio",
+ "tokio-util 0.7.19",
+]
+
+[[package]]
 name = "jj-store-cli"
 version = "0.1.0"
 dependencies = [
@@ -3288,6 +3305,7 @@ dependencies = [
  "hex",
  "jj-cli",
  "jj-lib",
+ "jj-store-adapters",
  "jj-store-http",
  "jj-store-jj",
  "jj-store-model",
@@ -3448,6 +3466,7 @@ dependencies = [
  "getrandom 0.4.3",
  "hex",
  "hmac",
+ "jj-store-adapters",
  "jj-store-jj",
  "jj-store-model",
  "jj-store-object",
@@ -5828,6 +5847,7 @@ dependencies = [
  "futures-core",
  "futures-io",
  "futures-sink",
+ "futures-util",
  "libc",
  "pin-project-lite",
  "tokio",

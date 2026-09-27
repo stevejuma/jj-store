@@ -1,6 +1,8 @@
 //! One manifest CAS selects immutable native inventory, history and receipts.
 mod application;
+mod reader;
 pub use application::ApplicationIntent;
+pub use reader::SelectedRecord;
 
 use crate::{
     Error, Result,
@@ -136,30 +138,24 @@ impl ManifestSnapshot {
         store: Arc<dyn ObjectStore>,
         limit: usize,
     ) -> Result<Vec<VerifiedNode>> {
-        let manifest = &self.manifest;
-        let records = Records::new(store, manifest.repository);
-        let catalog = Catalog::new(records.clone());
-        let entries = catalog.entries(manifest.inventory, limit).await?;
-        let mut out = Vec::new();
-        for (key, reference) in entries {
-            let node: VerifiedNode = records.get(reference, RecordKind::Inventory).await?;
-            if object_key(node.key) != key {
-                return Err(Error::Corrupt("inventory catalog key"));
-            }
-            out.push(node);
-        }
-        let keys = out.iter().map(|n| n.key).collect::<BTreeSet<_>>();
-        if manifest
-            .heads
-            .iter()
-            .any(|id| !keys.contains(&ObjectKey::Operation(*id)))
-            || out
-                .iter()
-                .any(|n| n.dependencies.iter().any(|k| !keys.contains(k)))
-        {
-            return Err(Error::Corrupt("incomplete committed inventory"));
-        }
-        Ok(out)
+        reader::inventory(
+            store,
+            self.manifest.repository,
+            self.manifest.inventory,
+            &self.manifest.heads,
+            limit,
+        )
+        .await
+    }
+    /// Selected immutable records with their exact cursor anchors. The caller
+    /// authorizes access before traversal; no mutation authority is exposed.
+    pub async fn selected_records(
+        &self,
+        store: Arc<dyn ObjectStore>,
+        after: WalPosition,
+        limit: usize,
+    ) -> Result<Vec<SelectedRecord>> {
+        reader::selected(self, store, after, limit).await
     }
     pub fn digest(&self) -> RecordDigest {
         self.digest
@@ -787,84 +783,20 @@ impl Coordinator {
         }
         self.catalog.update(base, changes).await
     }
-    /// Reads only exact manifest-selected historical positions, with a caller
-    /// bound on work. Staged/orphaned candidates are never enumerated.
+    /// Reads the verified publications selected by this captured manifest.
     pub async fn committed(
         &self,
         snapshot: &ManifestSnapshot,
         after: WalPosition,
         limit: usize,
     ) -> Result<Vec<PublishedTransaction>> {
-        let manifest = &snapshot.manifest;
-        manifest.validate(self.records.repository)?;
-        if limit > 1024 || after.0 > manifest.published.0 {
-            return Err(Error::Limit("committed page"));
-        }
-        let count = (manifest.published.0 - after.0).min(limit as u64);
-        let mut out = Vec::new();
-        let mut previous = if after.0 == 0 {
-            None
-        } else {
-            Some(
-                self.catalog
-                    .get(manifest.history, sequence_key(after))
-                    .await?
-                    .ok_or(Error::Corrupt("historical position missing"))?,
-            )
-        };
-        let mut previous_snapshot = if let Some(reference) = previous {
-            let prior: PublishedTransaction = self.records.get(reference, RecordKind::Wal).await?;
-            if prior.repository != manifest.repository
-                || prior.after.epoch != manifest.epoch
-                || prior.after.position != after
-            {
-                return Err(Error::Corrupt("previous log position"));
-            }
-            prior.after
-        } else {
-            Snapshot {
-                epoch: manifest.epoch,
-                position: WalPosition(0),
-                heads: BTreeSet::from([OperationId::new([0; 64])]),
-            }
-        };
-        for offset in 1..=count {
-            let position = WalPosition(after.0 + offset);
-            let reference = self
-                .catalog
-                .get(manifest.history, sequence_key(position))
-                .await?
-                .ok_or(Error::Corrupt("committed position missing"))?;
-            let transaction: PublishedTransaction =
-                self.records.get(reference, RecordKind::Wal).await?;
-            if transaction.repository != manifest.repository
-                || transaction.after.epoch != manifest.epoch
-                || transaction.before.epoch != manifest.epoch
-                || transaction.after.position != position
-                || transaction.before != previous_snapshot
-                || transaction.before.position.0.checked_add(1) != Some(position.0)
-                || transaction.previous != previous
-                || Some(transaction.attempt) != reference.attempt
-            {
-                return Err(Error::Corrupt("committed log chain"));
-            }
-            let receipt: Receipt = self
-                .records
-                .get(transaction.receipt, RecordKind::Receipt)
-                .await?;
-            if receipt.accepted != transaction.after {
-                return Err(Error::Corrupt("log receipt snapshot"));
-            }
-            previous_snapshot = transaction.after.clone();
-            previous = Some(reference);
-            out.push(transaction);
-        }
-        if after.0 + count == manifest.published.0
-            && (previous != manifest.tail || previous_snapshot != manifest.snapshot())
-        {
-            return Err(Error::Corrupt("manifest tail disagreement"));
-        }
-        Ok(out)
+        snapshot.manifest.validate(self.records.repository)?;
+        Ok(snapshot
+            .selected_records(self.records.store.clone(), after, limit)
+            .await?
+            .into_iter()
+            .map(|record| record.into_transaction())
+            .collect())
     }
     pub async fn checkpoint(&self) -> Result<ManifestSnapshot> {
         tokio::time::timeout(self.limits.timeout, async {

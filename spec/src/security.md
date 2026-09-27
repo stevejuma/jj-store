@@ -175,3 +175,9 @@ are capped at 256 MiB in total and also consume existing native read/publication
 budgets. Records are bounded to 16 KiB. Staging is not a mutable repository side
 table and cannot advance history. Persisted orphan staging is retained;
 automated cleanup and destructive GC remain disabled.
+
+Adapter source/control reads reauthorize the bound repository session before and
+after each storage request and before returning buffered content. A captured
+source epoch cannot cross revocation or an epoch change. Projection checkpoints
+contain identity and durability metadata, never credentials. Local writer locks
+and checkpoint CAS do not provide distributed destination fencing.

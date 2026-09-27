@@ -266,3 +266,10 @@ Conflict-resolution report compatibility requires older V1 Prepared results to
 decode and reencode byte-for-byte with the added optional field absent. New
 previews and retained receipts enumerate the target and affected descendants
 without changing native object identities or WAL publication formats.
+
+Adapter delivery qualification combines a selected WAL-reference regression,
+production-coordinator fault tests with synced local artifact files, and native
+service-token source acceptance. These are independent of Tantivy durability and
+real RustFS/TLS deployment qualification. Corrupt selected tails must fail
+bootstrap before destination effects, and missing local files cannot be masked
+by an advanced remote cursor.

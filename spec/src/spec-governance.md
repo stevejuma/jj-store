@@ -134,3 +134,8 @@ The generated-contract lane also captures actual binary-upload results and
 uploaded-file mutation responses. Upload IDs have canonical-width schema checks
 and the staging record has an independently calculated digest fixture. Adding
 these API declarations does not resume deferred UI work.
+
+Dependency checks permit service-to-adapter authorization wiring while retaining
+the adapter-to-service/native/UI prohibition. Adapter runner and fault fixtures
+join normal Rust and specification validation; their tests cannot substitute for
+real storage deployment or Tantivy-specific durability qualification.

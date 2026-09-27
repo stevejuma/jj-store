@@ -12,6 +12,7 @@ export function dependencyErrors(packages) {
     "jj-store-wal": ["jj-store-model", "jj-store-object"],
     "jj-store-jj": ["jj-store-model", "jj-store-object", "jj-store-wal"],
     "jj-store-service": [
+      "jj-store-adapters",
       "jj-store-model",
       "jj-store-jj",
       "jj-store-object",

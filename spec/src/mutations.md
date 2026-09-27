@@ -329,3 +329,9 @@ selected receipt retains the actual report for status and retries. The optional
 field is absent from non-resolution reports and defaults to absent when decoding
 older receipts, preserving their canonical V1 bytes. Absence means no report was
 recorded; it does not mean conflict-free.
+
+A service session can supply an authenticated read-only adapter source. It
+checks current repository read permission and authority epoch through the same
+token policy as reads and mutations; a saved adapter checkpoint grants no
+access. Adapter cursor writes use a dedicated non-authoritative namespace and
+cannot change repository heads, receipts, settings or manifest authority.

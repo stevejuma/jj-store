@@ -1,5 +1,5 @@
 [workspace]
-members = ["crates/jj-store-model", "crates/jj-store-jj", "crates/jj-store-cli", "crates/jj-store-object", "crates/jj-store-wal", "crates/jj-store-service", "crates/jj-store-rpc", "crates/jj-store-server", "crates/jj-store-http"]
+members = ["crates/jj-store-model", "crates/jj-store-jj", "crates/jj-store-cli", "crates/jj-store-object", "crates/jj-store-wal", "crates/jj-store-service", "crates/jj-store-rpc", "crates/jj-store-server", "crates/jj-store-http", "crates/jj-store-adapters"]
 resolver = "2"
 
 [workspace.package]
@@ -10,6 +10,7 @@ license = "Apache-2.0"
 authors = ["LapisMD contributors"]
 
 [workspace.dependencies]
+jj-store-adapters = { path = "crates/jj-store-adapters" }
 schemars = "1.2.1"
 jj-store-model = { path = "crates/jj-store-model" }
 jj-store-object = { path = "crates/jj-store-object" }

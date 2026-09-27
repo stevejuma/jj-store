@@ -255,3 +255,14 @@ native operation or durable mutation receipt.
 Native conflict-resolution acceptance also checks complete bounded reports for
 the target and rewritten descendants, explicit empty remaining-path lists, and
 legacy receipt decoding. This API contract adds no browser or CLI editor.
+
+Native adapter-source acceptance binds the runner to repository read tokens,
+checks committed native framing/identity, excludes staged objects, and verifies
+revocation before further projection delivery. This test uses in-process native
+stores; it does not claim search, UI or real storage deployment qualification.
+
+RPC deadline/admission acceptance waits for a server-side authorization read to
+prove the pending upload owns the permit before issuing the competing request. A
+polling competitor must not win admission and accidentally reject the upload
+under test. The original transport deadline and failure/release assertions
+remain unchanged.

@@ -33,8 +33,8 @@ adds evidence here in its enclosing Jujutsu change.
 | M5.1        | Done        | M4.1       | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Basic changes/refs/reconcile; preview receipt and semantic policy                     | Retain basic mutation acceptance                    | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004                                                                                                                      |
 | M5.2        | Done        | M5.1       | JST-MUT-003                                                             | Full abandon descendant bookmark workspace/evolution parity                           | Retain abandon acceptance                           | E-M5-005                                                                                                                                                             |
 | M5.3        | Done        | M5.1       | JST-MUT-004                                                             | Atomic stale-safe resolution with native conflict variants                            | Retain mutation conformance; proceed to M6          | E-M5-006,E-M5-007,E-M5-008                                                                                                                                           |
-| M6          | Planned     | M5         | JST-ADAPT-001,JST-ADAPT-002,JST-ADAPT-003,JST-ADAPT-004                 | Replay-equivalent searchable projection with freshness                                | Implement adapters and search                       | -                                                                                                                                                                    |
-| M6.1        | Planned     | M5         | JST-ADAPT-001,JST-ADAPT-002                                             | Ordered committed reader and durable replay-safe checkpoints                          | Implement runner                                    | -                                                                                                                                                                    |
+| M6          | In progress | M5         | JST-ADAPT-001,JST-ADAPT-002,JST-ADAPT-003,JST-ADAPT-004                 | Replay-equivalent searchable projection with freshness                                | Implement Tantivy projection and search             | E-M6-001                                                                                                                                                             |
+| M6.1        | Done        | M5         | JST-ADAPT-001,JST-ADAPT-002                                             | Ordered committed reader and durable replay-safe checkpoints                          | Implement Tantivy projection and search             | E-M6-001                                                                                                                                                             |
 | M6.2        | Planned     | M6.1       | JST-ADAPT-003,JST-ADAPT-004                                             | Tantivy crash/rebuild/generation and revocation tests                                 | Implement projection and search API                 | E-SCOPE-001                                                                                                                                                          |
 | M8a         | Planned     | M6,M4.3    | JST-COMPAT-003,JST-SEC-005                                              | Pinned release, restore, security, performance and cold UI evidence                   | Complete backend hardening; retain deferred UI gate | E-SCOPE-001                                                                                                                                                          |
 | M8a.1       | Planned     | M6         | JST-COMPAT-003,JST-SEC-005                                              | Local/shared examples, diagnostics, restore and request budgets                       | Run non-UI release acceptance                       | E-SCOPE-001                                                                                                                                                          |
@@ -6182,6 +6182,222 @@ and named tests are checked by the progress gate.
     "remaining": [],
     "versions": "Rust 1.97.1 with rustfmt; jj-cli/jj-lib 0.45.1 at 7c41cdeb16b6b321c64e789a966b6adf723816a5; jj-native-0.45.1-v1.",
     "formats": "Adds optional absent-skipped ConflictResolutionReport to Prepared and generated HTTP/TypeScript contracts. Existing V1 receipt canonical bytes and native/WAL/RPC versions unchanged. Enclosing Jujutsu change is the revision reference. UI stays Deferred M4.3; RustFS/TLS deployment gate remains separate. E-M5-007 recorded the previously missing report; this audit closes that gap. M5 backend gates are complete independently of deferred M4.3 and outstanding external deployment qualification."
+  },
+  {
+    "id": "E-M6-001",
+    "tasks": ["M6", "M6.1"],
+    "date": "2026-09-27",
+    "kind": "adapter-delivery-checkpoints",
+    "files": [
+      "Cargo.lock",
+      "Cargo.toml",
+      "crates/jj-store-adapters/Cargo.toml",
+      "crates/jj-store-adapters/src/context.rs",
+      "crates/jj-store-adapters/src/lib.rs",
+      "crates/jj-store-adapters/src/progress.rs",
+      "crates/jj-store-adapters/src/runner.rs",
+      "crates/jj-store-adapters/src/source.rs",
+      "crates/jj-store-adapters/tests/delivery.rs",
+      "crates/jj-store-adapters/tests/delivery/support.rs",
+      "crates/jj-store-cli/Cargo.toml",
+      "crates/jj-store-cli/tests/native_lifecycle.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/adapters.rs",
+      "crates/jj-store-service/Cargo.toml",
+      "crates/jj-store-service/src/adapter.rs",
+      "crates/jj-store-service/src/lib.rs",
+      "crates/jj-store-wal/src/publication.rs",
+      "crates/jj-store-wal/src/publication/reader.rs",
+      "crates/jj-store-wal/tests/publication.rs",
+      "docs/evidence/m6-adapter-delivery.md",
+      "scripts/check-boundaries.mjs",
+      "spec/src/adapters.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/compatibility.md",
+      "spec/src/milestones.md",
+      "spec/src/mutations.md",
+      "spec/src/publication.md",
+      "spec/src/security.md",
+      "spec/src/spec-governance.md",
+      "crates/jj-store-cli/tests/native_rpc.rs",
+      "spec/src/verification.md"
+    ],
+    "tests": [
+      "crates/jj-store-adapters/tests/delivery.rs#adapter_replays_only_selected_records_and_bootstraps_after_artifact_loss",
+      "crates/jj-store-adapters/tests/delivery.rs#adapter_effect_crashes_and_poison_never_advance_or_skip_source",
+      "crates/jj-store-adapters/tests/delivery.rs#adapter_cursor_crashes_reconcile_durable_artifact_after_restart",
+      "crates/jj-store-adapters/tests/delivery.rs#adapter_restored_older_artifact_catches_up_without_remote_regression_and_config_rebuilds",
+      "crates/jj-store-adapters/tests/delivery.rs#adapter_denial_limits_and_corrupt_selected_data_fail_without_advancing",
+      "crates/jj-store-adapters/tests/delivery.rs#adapter_timeout_keeps_writer_and_admission_until_background_work_exits",
+      "crates/jj-store-adapters/tests/delivery.rs#adapter_polling_retries_poison_with_health_and_stops_on_cancellation",
+      "crates/jj-store-adapters/tests/delivery.rs#adapter_corrupt_native_payload_and_noncanonical_or_foreign_cursor_are_rejected",
+      "crates/jj-store-adapters/tests/delivery.rs#adapter_bootstrap_rejects_corrupt_selected_tail_before_destination_effect",
+      "crates/jj-store-cli/tests/native_lifecycle/adapters.rs#native_adapter_source_verifies_committed_objects_and_rechecks_revocation",
+      "crates/jj-store-wal/tests/publication.rs#selected_reader_keeps_exact_committed_refs_and_inventory_across_checkpoint",
+      "crates/jj-store-cli/tests/native_rpc.rs#rpc_stream_protocol_deadlines_and_permits_are_bounded"
+    ],
+    "runs": [
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-wal --test publication selected_reader --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "Selected-record acceptance cannot compile: five missing-method diagnostics in one test target."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-wal --test publication selected_reader --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact WAL regression passes: orphan exclusion, exact references, captured history and record-specific inventory survive checkpoints and reject oversized/future traversal."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-adapters --test delivery adapter_replays_only_selected_records_and_bootstraps_after_artifact_loss --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "Adapter crate does not yet exist; baseline acceptance target cannot run."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo check -p jj-store-adapters",
+        "result": "pass",
+        "failures": 0,
+        "note": "New crate compiles; removed one unused import warning. Lockfile records the workspace crate."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-adapters --test delivery adapter_replays_only_selected_records_and_bootstraps_after_artifact_loss",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial ordered replay and artifact-loss acceptance passes."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-adapters --test delivery --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "During fixture cleanup the artifact deletion was accidentally removed before a rebuild assertion. Restored restart assertions and explicit file-loss step; no product assertion weakened."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-adapters --test delivery",
+        "result": "pass",
+        "failures": 0,
+        "note": "Six initial crash, recovery, poison, scope, ownership and limit tests pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle native_adapter_source --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Native JJ objects decode through current read-token binding; staged content is denied; revoked token cannot advance the projection."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-adapters --test delivery --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Eight expanded fixtures pass, including polling/backoff/cancellation and corrupt native/cursor data."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-adapters --test delivery adapter_bootstrap_rejects_corrupt_selected_tail_before_destination_effect --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "Bootstrap incorrectly acknowledges a corrupt selected WAL tail because only inventory was read."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-adapters --test delivery adapter_bootstrap_rejects_corrupt_selected_tail_before_destination_effect --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact regression passes after current tail/receipt validation; no destination effect or cursor is written."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-adapters --test delivery --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All nine final adapter fault tests pass; remote pointer readback also rejects an unexpected competing cursor."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-adapters --test delivery adapter_replays_only_selected_records_and_bootstraps_after_artifact_loss --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Original acceptance rerun with exact locked command passes."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle native_adapter_source --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final source boundary including bootstrap tail/receipt checks passes native token, integrity and revocation fixture."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Normal checks pass: all-target Clippy, rustfmt, ten package boundaries, progress, generated contracts and Svelte checks."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test",
+        "result": "pass",
+        "failures": 0,
+        "note": "312 Rust tests pass, zero failures; six external deployment tests ignored. Existing governance, harness, contracts and browser unit tests pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Locked Rust workspace and unchanged browser assets build successfully."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "Repeated Rust lane hits RPC admission fixture race at native_rpc.rs:640: no occupied permit observed before watchdog. 144 native lifecycle and nine adapter fixtures pass; specification stops before final build lanes."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_rpc rpc_stream_protocol_deadlines_and_permits_are_bounded --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Narrow baseline rerun passes, exposing the nondeterministic nature of the fixture: heads polling can acquire the sole permit before the upload or begin after its short deadline."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_rpc rpc_stream_protocol_deadlines_and_permits_are_bounded --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "After replacing competing polling with server-side upload-admission synchronization and connecting the observer first, exact deadline/permit/release acceptance passes. The 400 ms product deadline and rejection assertions remain unchanged."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_rpc --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All seven tests consuming the native RPC harness pass after synchronization repair."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final all-target checks pass after RPC synchronization repair."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test",
+        "result": "pass",
+        "failures": 0,
+        "note": "312 Rust tests pass, zero failures, six opt-in external tests ignored; governance, contracts, harness and existing browser unit lanes pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Locked workspace and existing browser assets build."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 13 lanes pass, including existing cold browser interactions/accessibility, Rust tests, rustfmt, mdBook and spec-first."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm format:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rustfmt and Prettier pass."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "versions": "Rust 1.97.1 with rustfmt; jj-cli/jj-lib 0.45.1 at 7c41cdeb16b6b321c64e789a966b6adf723816a5; jj-native-0.45.1-v1.",
+    "formats": "New adapter checkpoint V1 with identity, exact selected source reference and durable artifact descriptor under repos/{repo}/adapters/v1/{name}/cursor.json. WAL/native/RPC formats unchanged. Adapter crate and service binding added to committed workspace locks; no UI files changed. Enclosing Jujutsu change is the revision reference. Tantivy and real RustFS/TLS qualification remain separate gates."
   }
 ]
 ```

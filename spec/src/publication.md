@@ -137,3 +137,13 @@ lookup.
 The exact Snapshot value exports JSON Schema metadata for the typed HTTP
 service. Schema derivation changes no serialization, hashing, accepted heads or
 durable WAL record format; no HTTP transport dependency enters publication.
+
+## Selected adapter reads
+
+A checked manifest supplies a read-only selected-record API returning each exact
+WAL reference with its verified publication/receipt chain. Its page remains
+bound to that manifest during later writes or checkpoint revisions. Selected
+records retain their own complete inventory root, so an earlier record cannot
+enumerate objects committed by a later publication. Callers supply current
+authorization, deadline and page/inventory budgets; this API grants no
+publication method.

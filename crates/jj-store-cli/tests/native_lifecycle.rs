@@ -1114,3 +1114,6 @@ mod reconciliation_acceptance;
 
 #[path = "native_lifecycle/abandon.rs"]
 mod abandon_acceptance;
+
+#[path = "native_lifecycle/adapters.rs"]
+mod adapter_acceptance;

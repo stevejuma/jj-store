@@ -16,3 +16,5 @@ pub mod commands;
 pub mod mutations;
 
 pub mod uploads;
+
+pub mod adapter;
