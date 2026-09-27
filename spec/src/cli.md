@@ -232,3 +232,10 @@ Typed reconciliation acceptance compares native descendant rebases and recursive
 operation-ancestor merges to pinned upstream behavior, including three current
 heads and conflicted bookmarks. The application mutation is explicit and strict;
 ordinary CLI head-reconciliation behavior remains unchanged.
+
+Native abandon acceptance exercises both bookmark-retention and
+descendant-content options, adjacent targets, merges, replacement workspace
+commits, hidden targets, historical/evolution reads, protected policy and typed
+HTTP retry behavior. It also preserves binary/mode/copy/symlink/submodule values
+through native rewrites. Ordinary CLI commands remain covered by their existing
+executable parity lanes.

@@ -369,3 +369,11 @@ with at least two heads. It merges all heads explicitly; GET and HEAD routes
 remain incapable of reconciliation. The base selects report comparison and merge
 ordering, while native JJ computes actual common ancestors. API types are
 regenerated without browser feature work.
+
+Abandon is an advertised typed command with explicit full commit IDs and boolean
+retain_bookmarks/restore_descendants options. Reports include nonempty abandoned
+and skipped_hidden lists. Empty lists are omitted to preserve V1 receipt bytes.
+An all-hidden request returns HTTP 409 no_changes with zero publications; this
+rejection is not a retained receipt. Snapshot and request identity rules remain
+identical to other commands. Generated schemas/types expose this API while
+browser mutation controls remain deferred.

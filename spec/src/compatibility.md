@@ -238,3 +238,12 @@ Reports compare to the selected base view. Existing request/result codecs retain
 V1 compatibility; only the typed command union and advertised capability gain a
 variant. Real storage and larger resource scenarios remain independent
 operational evidence.
+
+Abandon adapts the pinned CLI descendant-transform algorithm with attribution in
+the third-party notice. Native fixtures cover every option combination, adjacent
+and merge targets, conflicted bookmark terms, multiple workspace replacements,
+binary/mode/copy/symlink/submodule preservation, retained evolution and history,
+atomic policy/input failures, hidden no-op and HTTP receipts. Added report
+fields are default-empty and skipped when empty; earlier V1 serialized reports
+reencode without additional fields. This does not replace RustFS/deployment
+acceptance.

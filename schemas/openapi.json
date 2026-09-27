@@ -4121,7 +4121,7 @@
             }
           },
           "409": {
-            "description": "stale_snapshot, stale_bookmark, reconciliation_required, epoch_changed or intent_conflict. No publication by this rejected attempt.",
+            "description": "stale_snapshot, stale_bookmark, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt.",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/ErrorBody" }
@@ -4327,6 +4327,30 @@
                         },
                         "additionalProperties": false,
                         "required": ["type", "base"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "commits": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{128}$",
+                              "minLength": 128,
+                              "maxLength": 128
+                            }
+                          },
+                          "retain_bookmarks": { "type": "boolean" },
+                          "restore_descendants": { "type": "boolean" },
+                          "type": { "type": "string", "const": "abandon" }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                          "type",
+                          "commits",
+                          "retain_bookmarks",
+                          "restore_descendants"
+                        ]
                       }
                     ]
                   }
@@ -4410,7 +4434,7 @@
             }
           },
           "409": {
-            "description": "stale_snapshot, stale_bookmark, reconciliation_required, epoch_changed or intent_conflict. No publication by this rejected attempt.",
+            "description": "stale_snapshot, stale_bookmark, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt.",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/ErrorBody" }
@@ -4616,6 +4640,30 @@
                         },
                         "additionalProperties": false,
                         "required": ["type", "base"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "commits": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{128}$",
+                              "minLength": 128,
+                              "maxLength": 128
+                            }
+                          },
+                          "retain_bookmarks": { "type": "boolean" },
+                          "restore_descendants": { "type": "boolean" },
+                          "type": { "type": "string", "const": "abandon" }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                          "type",
+                          "commits",
+                          "retain_bookmarks",
+                          "restore_descendants"
+                        ]
                       }
                     ]
                   }
@@ -4705,7 +4753,7 @@
             }
           },
           "409": {
-            "description": "stale_snapshot, stale_bookmark, reconciliation_required, epoch_changed or intent_conflict. No publication by this rejected attempt.",
+            "description": "stale_snapshot, stale_bookmark, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt.",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/ErrorBody" }
@@ -4785,7 +4833,7 @@
           "405": { "description": "Unsupported method." },
           "408": { "description": "Native query canceled." },
           "409": {
-            "description": "stale_snapshot, stale_bookmark, reconciliation_required, epoch_changed or intent_conflict. No publication by this rejected attempt."
+            "description": "stale_snapshot, stale_bookmark, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt."
           },
           "410": {
             "description": "Index task expired or was lost on server restart."
@@ -6591,6 +6639,14 @@
             "type": "integer",
             "format": "uint64",
             "minimum": 0
+          },
+          "abandoned": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/CommitId" }
+          },
+          "skipped_hidden": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/CommitId" }
           }
         },
         "required": [

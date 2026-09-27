@@ -1128,6 +1128,8 @@ export interface components {
       staged_objects: number;
       /** Format: uint64 */
       staged_bytes: number;
+      abandoned?: components["schemas"]["CommitId"][];
+      skipped_hidden?: components["schemas"]["CommitId"][];
     };
     Rewrite: {
       commit: components["schemas"]["CommitId"];
@@ -4972,6 +4974,13 @@ export interface operations {
                 base: string;
                 /** @constant */
                 type: "reconcile_operations";
+              }
+            | {
+                commits: string[];
+                retain_bookmarks: boolean;
+                restore_descendants: boolean;
+                /** @constant */
+                type: "abandon";
               };
         };
       };
@@ -5040,7 +5049,7 @@ export interface operations {
           "application/json": components["schemas"]["ErrorBody"];
         };
       };
-      /** @description stale_snapshot, stale_bookmark, reconciliation_required, epoch_changed or intent_conflict. No publication by this rejected attempt. */
+      /** @description stale_snapshot, stale_bookmark, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt. */
       409: {
         headers: {
           [name: string]: unknown;
@@ -5148,6 +5157,13 @@ export interface operations {
                 base: string;
                 /** @constant */
                 type: "reconcile_operations";
+              }
+            | {
+                commits: string[];
+                retain_bookmarks: boolean;
+                restore_descendants: boolean;
+                /** @constant */
+                type: "abandon";
               };
         };
       };
@@ -5216,7 +5232,7 @@ export interface operations {
           "application/json": components["schemas"]["ErrorBody"];
         };
       };
-      /** @description stale_snapshot, stale_bookmark, reconciliation_required, epoch_changed or intent_conflict. No publication by this rejected attempt. */
+      /** @description stale_snapshot, stale_bookmark, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt. */
       409: {
         headers: {
           [name: string]: unknown;
@@ -5338,7 +5354,7 @@ export interface operations {
           "application/json": components["schemas"]["ErrorBody"];
         };
       };
-      /** @description stale_snapshot, stale_bookmark, reconciliation_required, epoch_changed or intent_conflict. No publication by this rejected attempt. */
+      /** @description stale_snapshot, stale_bookmark, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt. */
       409: {
         headers: {
           [name: string]: unknown;
@@ -5446,7 +5462,7 @@ export interface operations {
         };
         content?: never;
       };
-      /** @description stale_snapshot, stale_bookmark, reconciliation_required, epoch_changed or intent_conflict. No publication by this rejected attempt. */
+      /** @description stale_snapshot, stale_bookmark, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt. */
       409: {
         headers: {
           [name: string]: unknown;

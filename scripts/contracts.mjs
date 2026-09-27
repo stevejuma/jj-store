@@ -66,6 +66,10 @@ if (mode === "--check") {
         "http_mutation_acceptance::http_mutations_preview_apply_status_replay_and_contract_capture",
         "JJ_STORE_MUTATION_CONTRACT_CAPTURE",
       ],
+      [
+        "http_mutation_acceptance::http_abandon_previews_native_effects_and_reports_hidden_noop_without_publication",
+        "JJ_STORE_ABANDON_CONTRACT_CAPTURE",
+      ],
     ]) {
       const capture = join(directory, `${variable}.json`);
       const { stdout } = await run(

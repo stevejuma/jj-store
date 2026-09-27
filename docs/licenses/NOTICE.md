@@ -10,3 +10,9 @@ The unmodified upstream custom-backend example is copied under
 `crates/jj-store-cli/examples/upstream_custom_backend.rs` from JJ revision
 `7c41cdeb16b6b321c64e789a966b6adf723816a5`; it retains its Apache-2.0 header. It
 is a Git-backed extension proof, not the native production backend.
+
+Typed native abandonment in `crates/jj-store-jj/src/commands/abandon.rs` adapts
+the transaction algorithm from `cli/src/commands/abandon.rs` at that same JJ
+revision (Copyright 2020 The Jujutsu Authors, Apache-2.0). It uses native
+`transform_descendants_with_options` and `RewriteRefsOptions`; server admission,
+authorization, report and publication boundaries are project-owned.

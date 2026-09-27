@@ -1,4 +1,5 @@
 //! Typed native transaction preparation. This executor cannot publish heads.
+mod abandon;
 mod access;
 mod execute;
 mod reconcile;
@@ -24,6 +25,8 @@ pub enum Error {
     Root,
     #[error("bookmark target differs from the expected native terms")]
     StaleBookmark,
+    #[error("no visible revisions to abandon")]
+    NoChanges,
 }
 pub type Result<T> = std::result::Result<T, Error>;
 
@@ -55,6 +58,11 @@ pub enum Command {
     ReconcileOperations {
         base: m::OperationId,
     },
+    Abandon {
+        commits: Vec<m::CommitId>,
+        retain_bookmarks: bool,
+        restore_descendants: bool,
+    },
 }
 impl Command {
     /// Shared shape admission for execution and canonical application intent.
@@ -84,6 +92,10 @@ pub struct Prepared {
     pub stats: query::Stats,
     pub staged_objects: usize,
     pub staged_bytes: u64,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub abandoned: Vec<m::CommitId>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub skipped_hidden: Vec<m::CommitId>,
 }
 /// Implemented by a checked service session, never deserialized from a request.
 #[async_trait::async_trait]

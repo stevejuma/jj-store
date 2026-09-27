@@ -120,3 +120,7 @@ Contract checks validate both read/SSE and typed mutation responses captured
 from real registered handlers. Mutation request schemas and generated TypeScript
 narrowing reject untyped commands and caller-selected principals. Regenerating
 API declarations does not close any deferred browser feature or deployment gate.
+
+The contract lane captures typed abandon preview/apply/no-change responses as
+well as foundational mutations and reads. New nonempty optional report fields
+must conform to generated schemas while older V1 report bytes remain unchanged.

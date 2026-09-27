@@ -49,6 +49,11 @@ pub(super) fn validate(command: &Command) -> Result<()> {
         }
         Command::Describe { description, .. } => description.len() <= 65536,
         Command::ReconcileOperations { .. } => true,
+        Command::Abandon { commits, .. } => {
+            !commits.is_empty()
+                && commits.len() <= 256
+                && commits.iter().collect::<BTreeSet<_>>().len() == commits.len()
+        }
         Command::BookmarkCreate { name: value, .. } => name(value, 1024),
         Command::BookmarkMove {
             name: value,
@@ -62,7 +67,7 @@ pub(super) fn validate(command: &Command) -> Result<()> {
     };
     if valid { Ok(()) } else { Err(Error::Invalid) }
 }
-async fn commit(
+pub(super) async fn commit(
     repo: &ReadonlyRepo,
     access: &dyn ReadAccess,
     id: m::CommitId,
@@ -167,7 +172,28 @@ pub(super) async fn run(
         .await
         .map_err(unavailable)?;
     budget.check()?;
+    let mut abandoned = vec![];
+    let mut skipped_hidden = vec![];
     let (staged, mut created) = match command {
+        Command::Abandon {
+            commits,
+            retain_bookmarks,
+            restore_descendants,
+        } => {
+            let result = super::abandon::stage(
+                &repo,
+                access.as_ref(),
+                commits,
+                retain_bookmarks,
+                restore_descendants,
+                principal,
+                &budget,
+            )
+            .await?;
+            abandoned = result.abandoned;
+            skipped_hidden = result.skipped_hidden;
+            (result.repo, vec![])
+        }
         Command::ReconcileOperations { base } => (
             super::reconcile::merge(&repo, &heads, base, principal, &budget).await?,
             vec![],
@@ -243,6 +269,8 @@ pub(super) async fn run(
         stats: budget.stats(),
         staged_objects,
         staged_bytes,
+        abandoned,
+        skipped_hidden,
     };
     budget.authorize(access.as_ref()).await?;
     budget.complete_output(&result)?;
@@ -260,7 +288,9 @@ async fn transact(
     tx.set_attribute("jj-store.principal".into(), principal.to_string());
     let mut created = vec![];
     let description = match command {
-        Command::ReconcileOperations { .. } => return Err(Error::Invalid),
+        Command::ReconcileOperations { .. } | Command::Abandon { .. } => {
+            return Err(Error::Invalid);
+        }
         Command::New {
             parents,
             description,

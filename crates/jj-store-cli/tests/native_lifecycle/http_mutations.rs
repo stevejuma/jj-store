@@ -126,7 +126,8 @@ async fn http_mutations_preview_apply_status_replay_and_contract_capture() {
             "bookmark_create",
             "bookmark_move",
             "bookmark_delete",
-            "reconcile_operations"
+            "reconcile_operations",
+            "abandon"
         ])
     );
     record("capabilities", "get", status, &caps);
@@ -579,4 +580,47 @@ async fn http_reconciliation_preserves_get_heads_and_publishes_only_explicit_app
             );
         })
         .await;
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn http_abandon_previews_native_effects_and_reports_hidden_noop_without_publication() {
+    tokio::task::LocalSet::new().run_until(async {
+        let f = Fixture::new().await;
+        let cache = tempfile::tempdir().unwrap();
+        let loader = f.stores.initialize_cache(&settings(), cache.path()).await.unwrap();
+        let (_, ids) = super::abandon_acceptance::seed(&f, &loader).await;
+        let router = api(&f, cache.path(), Config::default(), Protection::default());
+        let mut input = new_request(&f, 159).await;
+        input["command"] = json!({
+            "type": "abandon", "commits": [ids[1]],
+            "retain_bookmarks": false, "restore_descendants": true
+        });
+        let expected = f.session.snapshot().await.unwrap().manifest().snapshot();
+        let (status, preview) = send(&router, request(&f.token, "mutations/preview", Some(&input))).await;
+        assert_eq!(status, StatusCode::OK, "{preview}");
+        assert_eq!(preview["preview"]["result"]["abandoned"], json!([ids[1]]));
+        assert_eq!(f.session.snapshot().await.unwrap().manifest().snapshot(), expected);
+        let (status, receipt) = send(&router, request(&f.token, "mutations", Some(&input))).await;
+        assert_eq!(status, StatusCode::OK, "{receipt}");
+        assert_eq!(receipt["status"], "committed");
+        let before = f.session.snapshot().await.unwrap().manifest().snapshot();
+        let mut noop = input.clone();
+        noop["request_id"] = json!(m::RequestId::new([160; 16]));
+        noop["expected"] = json!(before);
+        let (status, error) = send(&router, request(&f.token, "mutations", Some(&noop))).await;
+        assert_eq!(status, StatusCode::CONFLICT);
+        assert_eq!(error["code"], "no_changes");
+        let path = format!("mutations/{}", input["request_id"].as_str().unwrap());
+        assert_eq!(send(&router, request(&f.token, &path, None)).await.1, receipt);
+        assert_eq!(send(&router, request(&f.token, "mutations", Some(&input))).await.1, receipt);
+        assert_eq!(f.session.snapshot().await.unwrap().manifest().snapshot(), before);
+        if let Some(path) = std::env::var_os("JJ_STORE_ABANDON_CONTRACT_CAPTURE") {
+            let samples = [
+                json!({"path":"/v1/repos/{repo}/mutations/preview","method":"post","status":200,"media":"application/json","data":preview}),
+                json!({"path":"/v1/repos/{repo}/mutations","method":"post","status":200,"media":"application/json","data":receipt}),
+                json!({"path":"/v1/repos/{repo}/mutations","method":"post","status":409,"media":"application/json","data":error}),
+            ];
+            std::fs::write(path, serde_json::to_vec(&samples).unwrap()).unwrap();
+        }
+    }).await;
 }

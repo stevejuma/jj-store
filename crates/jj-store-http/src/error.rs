@@ -192,6 +192,7 @@ impl From<jj_store_service::mutations::Error> for Error {
             E::Preparation(C::Root) => Self::denied(),
             E::Preparation(C::Hidden) => Self::new(StatusCode::NOT_FOUND, "not_found"),
             E::Preparation(C::Invalid) => Self::invalid(),
+            E::Preparation(C::NoChanges) => Self::new(StatusCode::CONFLICT, "no_changes"),
         }
     }
 }

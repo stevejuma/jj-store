@@ -360,3 +360,11 @@ loads the bounded reachable operation ancestry and reserves its squared node
 count times head count from the command work budget before native merging.
 Requests exceeding these conservative bounds fail; limits are not throughput or
 production CPU qualification.
+
+Typed abandon follows the pinned abandon command's native descendant-transform
+and RewriteRefsOptions behavior. Target visibility comes from the native index;
+hidden committed targets are skipped and absent targets fail. Native reference
+rewrites create replacement working-copy commits and update conflicted
+bookmarks. Reports retain exact abandoned/hidden IDs without deleting native
+objects. New optional empty-skipped report fields preserve older V1 receipt
+canonical bytes.
