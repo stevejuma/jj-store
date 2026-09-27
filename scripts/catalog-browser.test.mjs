@@ -4,6 +4,7 @@ import { createServer } from "node:http";
 import { readFile, mkdir } from "node:fs/promises";
 import { resolve, extname, sep } from "node:path";
 import { chromium, expect } from "@playwright/test";
+import { expectSplitCopy } from "./catalog-split-copy.mjs";
 
 async function expectSettledGraph(page) {
   await expect
@@ -241,6 +242,7 @@ test("cold_catalog_contract", { timeout: 60000 }, async () => {
       page.getByRole("option", { name: "main", exact: true }),
     ).toContainText("just now by Maya Chen");
     await page.screenshot({ path: ".scratch/catalog-full-app.png" });
+    await expectSplitCopy(browser, origin);
     assert.deepEqual(unexpected, []);
     assert.deepEqual(errors, []);
   } finally {

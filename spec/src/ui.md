@@ -74,19 +74,26 @@ collapsed columns span the usable padded body area. Graph content reserves the
 full graph lane width so author avatars align across forks and merges. JJ Log
 and Op Log rows are square-edged and retain bottom dividers through the final
 visible row. Revision rows with both a commit ID and JJ change ID use a shared
-split copy control: commit SHA and copy icon on the left, friendly JJ change ID
-and copy icon on the right, with shadcn tooltips exposing the full copied value
-on hover and focus. JJ Log and Op Log rows open their changed files inline, and
-selecting a changed file opens the diff column. Op Log operation details and the
-selected file diff render as equal-width stacked cards in the same Column Canvas
-column: the operation card owns its title, collapse control, metadata and close
-action, while the file-diff card keeps its file header and view controls
-underneath. Parent operation navigation remains available without opening a
-standalone details column. Missing selected-file diffs and binary or unavailable
-diffs use the shared shadcn Empty composition with icon media rather than plain
-status text. Files opens the copied Community directory table until a file is
-selected; directory, file and snapshot navigation participate in the in-memory
-Back/Forward history.
+split copy control with neutral GIT and accent JJ chips and no copy icons. Each
+semantic button copies its complete underlying native identifier and exposes it
+in a shadcn tooltip. Display text retains a configurable leading prefix (default
+six), three dots and the final two characters; short IDs remain whole. Hover or
+keyboard focus redistributes space inside a constant outer width, showing a
+longer active prefix (default ten) and two leading characters on the other side.
+Both sides remain tappable without hover; reduced motion disables the
+transition. Success or failure feedback belongs only to the clicked side and
+resets after 1.5 seconds. Either identifier may be absent; no empty button is
+rendered. Operation IDs retain their separately labelled control. JJ Log and Op
+Log rows open their changed files inline, and selecting a changed file opens the
+diff column. Op Log operation details and the selected file diff render as
+equal-width stacked cards in the same Column Canvas column: the operation card
+owns its title, collapse control, metadata and close action, while the file-diff
+card keeps its file header and view controls underneath. Parent operation
+navigation remains available without opening a standalone details column.
+Missing selected-file diffs and binary or unavailable diffs use the shared
+shadcn Empty composition with icon media rather than plain status text. Files
+opens the copied Community directory table until a file is selected; directory,
+file and snapshot navigation participate in the in-memory Back/Forward history.
 
 Branch cards retain themed bottom dividers, including the final visible card in
 filtered lists, and keep square lower corners. Branches, JJ Log and Op Log omit

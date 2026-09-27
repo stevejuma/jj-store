@@ -479,3 +479,8 @@ selection. Current authorization precedes lookup and parsing of search inputs;
 revoked access returns no freshness, counts or index metadata. These GETs never
 publish history. Generated contracts include responses and errors; UI remains
 deferred.
+
+Browser native-ID controls derive their compact labels from the complete DTO
+identities, preserving the suffix rather than using caller-truncated labels.
+Clipboard actions retain the exact underlying identity; the split-control
+presentation and interaction contract is owned by JST-UI-003.

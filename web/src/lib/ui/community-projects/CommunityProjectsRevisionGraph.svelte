@@ -181,9 +181,7 @@
         />
         <CommunityProjectsRevisionGraphIds
           changeId={row.changeIdEncoded}
-          changeDisplay={row.changeIdEncoded.slice(0, 12)}
           commitId={row.revision.eventId}
-          commitDisplay={row.commitIdShort}
           {commitLabel}
           placement="inline"
         />

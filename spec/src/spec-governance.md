@@ -189,3 +189,7 @@ and `.rs` source highlighting through the public CodeBlock tokenizer prop. Cold
 acceptance locates the persistent column controls after the redundant title bars
 are removed. Screenshots remain visual-pending and cannot substitute for
 interaction/accessibility checks.
+
+The cold catalog lane checks native pointer and touch split-copy behavior,
+constant-width geometry and reduced motion against freshly built assets.
+Synthetic story hover events alone do not establish CSS hover acceptance.

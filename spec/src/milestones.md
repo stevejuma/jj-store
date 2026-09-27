@@ -33,7 +33,7 @@ adds evidence here in its enclosing Jujutsu change.
 | M4.5        | Done        | M4.4        | JST-UI-002                                                              | Community shell mechanics and navigation acceptance                                                                 | Implement repository fixture views                       | E-UI-002                                                                                                                                                                                        |
 | M4.6        | Done        | M4.5        | JST-UI-003                                                              | Native fixture graph/file/diff drill-down and accessibility                                                         | Visual review; live UI remains deferred                  | E-UI-003                                                                                                                                                                                        |
 | M4.7        | Done        | M4.6        | JST-UI-004                                                              | Complete in-memory application, snapshot file browser and profile footer                                            | Retain fixture acceptance; live UI remains deferred      | E-UI-004                                                                                                                                                                                        |
-| M4.8        | Done        | M4.7        | JST-UI-002,JST-UI-003,JST-UI-004                                        | Reviewed shell/card/header styling and directory navigation pass interaction, accessibility and cold catalog checks | Visual review pending; live UI remains deferred          | E-UI-005,E-UI-006                                                                                                                                                                               |
+| M4.8        | Done        | M4.7        | JST-UI-002,JST-UI-003,JST-UI-004                                        | Reviewed shell/card/header styling and directory navigation pass interaction, accessibility and cold catalog checks | Visual review pending; live UI remains deferred          | E-UI-005,E-UI-006,E-UI-009                                                                                                                                                                      |
 | M4.9        | Done        | M4.8        | JST-ARCH-004,JST-UI-005                                                 | Shared production components/controller and no-growth architecture checks                                           | Retain source ownership and proceed to bounded APIs      | E-UI-007,E-UI-008                                                                                                                                                                               |
 | M4.10       | Done        | M4.9        | JST-API-001,JST-API-002,JST-API-006                                     | Bounded bookmark, directory metadata and operation-change contracts                                                 | Implement M4.11 authenticated browser data/controller    | E-M4-018                                                                                                                                                                                        |
 | M4.11       | Planned     | M4.10       | JST-API-004,JST-API-005,JST-UI-005                                      | Authenticated cached browser implements all browsing screens                                                        | Implement HTTP data source and production shell          | -                                                                                                                                                                                               |
@@ -9140,6 +9140,80 @@ and named tests are checked by the progress gate.
     "remaining": [],
     "versions": "Native profile jj-0.45.1; cursor envelope jsr1; OpenAPI 3.1; generated openapi-typescript 7.13.0; enclosing Jujutsu change is the revision reference.",
     "formats": "Additive browsing HTTP routes and signed continuation kinds for references, recursive paths, operation groups and diff summaries. Existing complete graph/tree/operation-diff/file-diff responses, native object envelopes, WAL, receipts, credentials and storage formats remain unchanged."
+  },
+  {
+    "id": "E-UI-009",
+    "tasks": ["M4.8"],
+    "date": "2026-09-27",
+    "kind": "implementation",
+    "files": [
+      "catalog/components/community-projects/CommunityProjectsRevisionGraphIds.stories.svelte",
+      "catalog/components/community-projects/revision-id.test.ts",
+      "scripts/catalog-browser.test.mjs",
+      "scripts/catalog-split-copy.mjs",
+      "spec/src/api.md",
+      "spec/src/milestones.md",
+      "spec/src/spec-governance.md",
+      "spec/src/ui.md",
+      "web/src/lib/ui/community-projects/CommunityProjectsRevisionGraph.svelte",
+      "web/src/lib/ui/community-projects/CommunityProjectsRevisionGraphIds.svelte",
+      "web/src/lib/ui/community-projects/revision-graph-ids.css",
+      "web/src/lib/ui/community-projects/revision-id.ts"
+    ],
+    "tests": [
+      "catalog/components/community-projects/revision-id.test.ts#abbreviates native identifiers with a prefix and final two characters",
+      "scripts/catalog-browser.test.mjs#cold_catalog_contract"
+    ],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-projects/CommunityProjectsRevisionGraphIds.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Before change: the two existing identity stories passed but did not cover the requested split-control behavior."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-projects/CommunityProjectsRevisionGraphIds.stories.svelte",
+        "result": "fail",
+        "failures": 7,
+        "note": "New acceptance scenarios fail against the original component."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-projects/CommunityProjectsRevisionGraphIds.stories.svelte",
+        "result": "fail",
+        "failures": 2,
+        "note": "Synthetic Storybook hover did not activate CSS hover. Keyboard assertions remain in the stories; real pointer checks were added to cold browser acceptance."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-projects/CommunityProjectsRevisionGraphIds.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Nine focused interaction/accessibility stories pass, including full copy values, independent feedback, failure retry, keyboard input and optional identifiers."
+      },
+      {
+        "command": "pnpm catalog:test",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 23 catalog unit tests pass, including three abbreviation regressions."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "No Svelte errors or warnings; catalog and 109-module architecture checks pass."
+      },
+      {
+        "command": "pnpm catalog:test:browser",
+        "result": "fail",
+        "failures": 1,
+        "note": "Cold build succeeds; cold_catalog_contract finds row 2 bookmark overlap with the wider identifiers before reaching the new native pointer/touch checks."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Fix graph bookmark overlap and complete native pointer/touch/reduced-motion acceptance, full check/test/build/spec and formatting lanes. Stories remain visual-pending."
+    ],
+    "versions": "Existing registry Design Core ^0.2.0, Svelte 5.57.1, Storybook 10.5.7, Vitest 4.1.11. Enclosing Jujutsu change is the revision reference.",
+    "formats": "Presentation-only prefix/suffix abbreviation and fixed-width split-copy interaction. Complete underlying clipboard identities retained. No service, schema, storage or credential format changes. User requested a checkpoint commit before continuing validation."
   }
 ]
 ```

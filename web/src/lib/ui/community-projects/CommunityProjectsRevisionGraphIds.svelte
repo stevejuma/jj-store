@@ -4,105 +4,80 @@
   import Check from "@lucide/svelte/icons/check";
   import Copy from "@lucide/svelte/icons/copy";
   import TriangleAlert from "@lucide/svelte/icons/triangle-alert";
+  import CommunityChip from "../community-chip/CommunityChip.svelte";
+  import { abbreviateRevisionId, revisionLeadingChars } from "./revision-id.js";
+  import "./revision-graph-ids.css";
 
   let {
     changeId = "",
-    changeDisplay = "",
-    commitId,
-    commitDisplay = "",
+    commitId = "",
     commitLabel = "commit ID",
+    compactLeadingChars = 6,
+    expandedLeadingChars = 10,
     placement = "overlay",
   }: {
     changeId?: string | undefined;
-    changeDisplay?: string | undefined;
-    commitId: string;
-    commitDisplay?: string | undefined;
+    commitId?: string | undefined;
     commitLabel?: string | undefined;
+    /** Leading characters retained before ... and the final two characters. */
+    compactLeadingChars?: number;
+    /** Leading characters shown by the hovered or keyboard-focused half. */
+    expandedLeadingChars?: number;
     placement?: "overlay" | "inline" | undefined;
   } = $props();
 
-  let copied = $state("");
-  let failed = $state("");
-  let resetTimer: ReturnType<typeof setTimeout> | undefined;
+  type Side = "commit" | "change";
+  type Feedback = "" | "copied" | "failed";
+  let feedback = $state<Record<Side, Feedback>>({ commit: "", change: "" });
+  const timers: Partial<Record<Side, ReturnType<typeof setTimeout>>> = {};
+  const requests = { commit: 0, change: 0 };
+  let destroyed = false;
+  const compact = $derived(revisionLeadingChars(compactLeadingChars, 6));
+  const expanded = $derived(
+    Math.max(compact, revisionLeadingChars(expandedLeadingChars, 10)),
+  );
+  const capacity = $derived(Math.max(compact * 2, expanded + 2));
 
+  function reset() {
+    for (const side of ["commit", "change"] as const) {
+      clearTimeout(timers[side]);
+      requests[side]++;
+      feedback[side] = "";
+    }
+  }
+  $effect(() => {
+    // Reused file/snapshot surfaces must not show feedback for the previous ID.
+    void commitId;
+    void changeId;
+    reset();
+  });
   onDestroy(() => {
-    if (resetTimer) clearTimeout(resetTimer);
+    destroyed = true;
+    reset();
   });
 
-  function shorten(value: string): string {
-    if (value.length <= 13) return value;
-    return `${value.slice(0, 8)}…${value.slice(-4)}`;
-  }
-
-  function displayValue(
-    value: string,
-    explicit: string,
-    length: number,
-  ): string {
-    if (explicit) return explicit;
-    if (!value) return "";
-    if (value.length <= length) return value;
-    return value.slice(0, length);
-  }
-
-  async function copy(label: string, value: string): Promise<void> {
-    copied = "";
-    failed = "";
+  async function copy(side: Side, value: string): Promise<void> {
+    const request = ++requests[side];
+    clearTimeout(timers[side]);
+    feedback[side] = "";
+    let result: Feedback;
     try {
       const clipboard = globalThis.navigator?.clipboard;
       if (!clipboard?.writeText) throw new Error("Clipboard is unavailable");
       await clipboard.writeText(value);
-      copied = label;
+      result = "copied";
     } catch {
-      failed = label;
+      result = "failed";
     }
-    if (resetTimer) clearTimeout(resetTimer);
-    resetTimer = setTimeout(() => {
-      copied = "";
-      failed = "";
+    if (destroyed || requests[side] !== request) return;
+    feedback[side] = result;
+    timers[side] = setTimeout(() => {
+      feedback[side] = "";
     }, 1_500);
   }
 </script>
 
-{#snippet copyIcon(state: string)}
-  {#if state === "copied"}
-    <Check aria-hidden="true" />
-  {:else if state === "failed"}
-    <TriangleAlert aria-hidden="true" />
-  {:else}
-    <Copy aria-hidden="true" />
-  {/if}
-{/snippet}
-
-{#snippet idButton(label: string, value: string, tone: "change" | "commit")}
-  {@const state =
-    copied === label ? "copied" : failed === label ? "failed" : ""}
-  <button
-    type="button"
-    class="community-revision-graph-ids__button"
-    class:community-revision-graph-ids__button--change={tone === "change"}
-    aria-label="Copy full {label}: {value}"
-    title="Copy full {label}"
-    data-copied={state === "copied" || undefined}
-    data-copy-failed={state === "failed" || undefined}
-    onclick={(event) => {
-      event.stopPropagation();
-      void copy(label, value);
-    }}
-  >
-    <code>{shorten(value)}</code>
-    {@render copyIcon(state)}
-  </button>
-{/snippet}
-
-{#snippet splitButton(
-  label: string,
-  value: string,
-  display: string,
-  side: "left" | "right",
-)}
-  {@const state =
-    copied === label ? "copied" : failed === label ? "failed" : ""}
+{#snippet splitButton(label: string, value: string, side: Side, chip: string)}
   <Tooltip.Root>
     <Tooltip.Trigger>
       {#snippet child({ props })}
@@ -110,24 +85,28 @@
           {...props}
           type="button"
           class="community-revision-graph-ids__split-button"
-          class:community-revision-graph-ids__split-button--left={side ===
-            "left"}
-          class:community-revision-graph-ids__split-button--right={side ===
-            "right"}
-          aria-label="Copy full {label}: {value}"
-          data-copied={state === "copied" || undefined}
-          data-copy-failed={state === "failed" || undefined}
+          data-side={side}
+          aria-label="Copy {label} {value}"
+          data-copied={feedback[side] === "copied" || undefined}
+          data-copy-failed={feedback[side] === "failed" || undefined}
           onclick={(event) => {
             event.stopPropagation();
-            void copy(label, value);
+            void copy(side, value);
           }}
         >
-          {#if side === "left"}
-            {@render copyIcon(state)}
-            <code>{display}</code>
+          <CommunityChip size="inline" shape="square" variant="muted" ariaHidden
+            >{chip}</CommunityChip
+          >
+          {#if feedback[side]}
+            <code>{feedback[side] === "copied" ? "Copied!" : "Retry"}</code>
           {:else}
-            <code>{display}</code>
-            {@render copyIcon(state)}
+            <code class="id-compact"
+              >{abbreviateRevisionId(value, compact)}</code
+            >
+            <code class="id-expanded"
+              >{abbreviateRevisionId(value, expanded)}</code
+            >
+            <code class="id-collapsed">{abbreviateRevisionId(value, 2)}</code>
           {/if}
         </button>
       {/snippet}
@@ -136,180 +115,68 @@
   </Tooltip.Root>
 {/snippet}
 
-<div class="community-revision-graph-ids" data-placement={placement}>
-  {#if changeId && commitLabel === "commit ID"}
-    <div
-      class="community-revision-graph-ids__split"
-      role="group"
-      aria-label="Native revision identifiers"
-    >
-      <Tooltip.Provider delayDuration={0}>
-        {@render splitButton(
-          commitLabel,
-          commitId,
-          displayValue(commitId, commitDisplay, 8),
-          "left",
-        )}
-        {@render splitButton(
-          "change ID",
-          changeId,
-          displayValue(changeId, changeDisplay, 12),
-          "right",
-        )}
-      </Tooltip.Provider>
-    </div>
-  {:else if changeId}
-    {@render idButton("change ID", changeId, "change")}
-    {@render idButton(commitLabel, commitId, "commit")}
-  {:else}
-    {@render idButton(commitLabel, commitId, "commit")}
-  {/if}
-</div>
-
-<style>
-  .community-revision-graph-ids {
-    position: absolute;
-    z-index: 3;
-    top: calc(var(--community-revision-graph-row-height, 76px) / 2);
-    right: 0.5rem;
-    display: flex;
-    transform: translateY(-50%);
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 0.2rem;
-  }
-
-  .community-revision-graph-ids[data-placement="inline"] {
-    position: static;
-    z-index: auto;
-    top: auto;
-    right: auto;
-    transform: none;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: center;
-  }
-
-  .community-revision-graph-ids__button {
-    display: inline-flex;
-    min-width: 0;
-    max-width: 100%;
-    height: 1.65rem;
-    align-items: center;
-    gap: 0.35rem;
-    padding: 0 0.4rem;
-    border: 1px solid transparent;
-    border-radius: 0.4rem;
-    color: inherit;
-    background: color-mix(in srgb, currentcolor 7%, transparent);
-    font-weight: 500;
-    cursor: pointer;
-  }
-
-  .community-revision-graph-ids__button--change {
-    color: var(--primary);
-  }
-
-  .community-revision-graph-ids__split {
-    display: inline-flex;
-    min-width: 0;
-    max-width: 100%;
-    overflow: hidden;
-    border: 1px solid transparent;
-    border-radius: 0.4rem;
-    color: inherit;
-    background: color-mix(in srgb, currentcolor 7%, transparent);
-  }
-
-  .community-revision-graph-ids__split-button {
-    display: inline-flex;
-    min-width: 0;
-    height: 1.65rem;
-    align-items: center;
-    gap: 0.35rem;
-    padding: 0 0.4rem;
-    border: 0;
-    color: inherit;
-    background: transparent;
-    font: inherit;
-    font-weight: 500;
-    cursor: pointer;
-  }
-
-  .community-revision-graph-ids__split-button--right {
-    color: var(--primary);
-    border-left: 1px solid color-mix(in srgb, currentcolor 16%, transparent);
-  }
-
-  .community-revision-graph-ids__button code {
-    min-width: 0;
-    overflow: hidden;
-    font-family: var(--font-mono, monospace);
-    font-size: var(--community-text-secondary);
-    font-weight: 500;
-    line-height: 1;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .community-revision-graph-ids__button :global(svg) {
-    width: 0.75rem;
-    height: 0.75rem;
-    flex: 0 0 auto;
-  }
-
-  .community-revision-graph-ids__split-button code {
-    min-width: 0;
-    overflow: hidden;
-    font-family: var(--font-mono, monospace);
-    font-size: var(--community-text-secondary);
-    font-weight: 500;
-    line-height: 1;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .community-revision-graph-ids__split-button :global(svg) {
-    width: 0.75rem;
-    height: 0.75rem;
-    flex: 0 0 auto;
-  }
-
-  @media (hover: hover) {
-    .community-revision-graph-ids__button:hover {
-      border-color: color-mix(in srgb, currentcolor 20%, transparent);
-      background: color-mix(in srgb, currentcolor 12%, transparent);
-      box-shadow: 0 1px 2px color-mix(in srgb, currentcolor 14%, transparent);
-    }
-
-    .community-revision-graph-ids__split:has(
-      .community-revision-graph-ids__split-button:hover
-    ) {
-      border-color: color-mix(in srgb, currentcolor 20%, transparent);
-      background: color-mix(in srgb, currentcolor 12%, transparent);
-      box-shadow: 0 1px 2px color-mix(in srgb, currentcolor 14%, transparent);
-    }
-
-    .community-revision-graph-ids__split-button:hover {
-      background: color-mix(in srgb, currentcolor 8%, transparent);
-    }
-  }
-
-  .community-revision-graph-ids__button:focus-visible {
-    border-color: color-mix(in srgb, currentcolor 28%, transparent);
-    background: color-mix(in srgb, currentcolor 12%, transparent);
-    outline: none;
-  }
-
-  .community-revision-graph-ids__split-button:focus-visible {
-    background: color-mix(in srgb, currentcolor 10%, transparent);
-    outline: none;
-  }
-
-  .community-revision-graph-ids__split:has(
-    .community-revision-graph-ids__split-button:focus-visible
-  ) {
-    border-color: color-mix(in srgb, currentcolor 28%, transparent);
-    background: color-mix(in srgb, currentcolor 12%, transparent);
-  }
-</style>
+{#if commitId || changeId}
+  <div class="community-revision-graph-ids" data-placement={placement}>
+    {#if commitLabel === "commit ID"}
+      <div
+        class="community-revision-graph-ids__split"
+        data-single={!commitId || !changeId || undefined}
+        style:--id-capacity={capacity + 10}
+        style:--id-expanded={expanded + 5}
+        role="group"
+        aria-label="Native revision identifiers"
+      >
+        <Tooltip.Provider delayDuration={0}>
+          {#if commitId}{@render splitButton(
+              "Git commit SHA",
+              commitId,
+              "commit",
+              "GIT",
+            )}{/if}
+          {#if changeId}{@render splitButton(
+              "JJ Change ID",
+              changeId,
+              "change",
+              "JJ",
+            )}{/if}
+        </Tooltip.Provider>
+      </div>
+    {:else if commitId}
+      <button
+        type="button"
+        class="community-revision-graph-ids__button"
+        aria-label="Copy full {commitLabel}: {commitId}"
+        title="Copy full {commitLabel}"
+        data-copied={feedback.commit === "copied" || undefined}
+        data-copy-failed={feedback.commit === "failed" || undefined}
+        onclick={(event) => {
+          event.stopPropagation();
+          void copy("commit", commitId);
+        }}
+      >
+        <code
+          >{commitId.length <= 13
+            ? commitId
+            : `${commitId.slice(0, 8)}…${commitId.slice(-4)}`}</code
+        >
+        {#if feedback.commit === "copied"}<Check aria-hidden="true" />
+        {:else if feedback.commit === "failed"}<TriangleAlert
+            aria-hidden="true"
+          />
+        {:else}<Copy aria-hidden="true" />{/if}
+      </button>
+    {/if}
+    <span class="sr-only" role="status" aria-atomic="true">
+      {#each ["commit", "change"] as const as side}
+        {#if feedback[side]}
+          {feedback[side] === "copied" ? "Copied" : "Could not copy"}
+          {side === "change"
+            ? "JJ Change ID"
+            : commitLabel === "commit ID"
+              ? "Git commit SHA"
+              : commitLabel}.
+        {/if}
+      {/each}
+    </span>
+  </div>
+{/if}
