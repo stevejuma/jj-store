@@ -87,3 +87,19 @@ The
 retains all ten RustFS storage/publication probes after sharing the committed
 inventory reader. It uses the storage harness's test principals and does not
 replace authenticated RPC/HTTP or executable CLI acceptance.
+
+## Standalone native deployment
+
+The [cold server report](../../docs/evidence/m3-server-rustfs.json) records
+`python3 scripts/rustfs-contract.py --run --server` against the pinned image. It
+creates a repository through authenticated operator RPC, attaches two physical
+workspaces using the custom executable, and verifies
+describe/bookmark/log/op-log/ evolog and binary content after killing both
+server and RustFS and deleting rebuildable process/index state. Unsnapshotted
+client edits survive; repository and operator revocation take effect on later
+requests. Owned processes, container and volume are removed by fixture guards.
+
+This qualifies explicit loopback deployment; valid shared TLS, complete ordinary
+command semantics, recoverable init/attach and other release platforms remain
+separate gates. Standalone PTY tests cover paging, color, JSON and missing-pager
+hints independently of this storage run.

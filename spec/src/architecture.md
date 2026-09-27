@@ -74,3 +74,8 @@ are physical-client state and do not become server authority.
 Typed provisioning and token administration extend the existing native RPC V1.
 Service-owned snapshots and secret-free results cross the transport boundary;
 RPC does not import native JJ types or gain raw storage-publication access.
+
+The server composition crate owns bounded TOML configuration, operator-policy
+files, RustFS construction, process exclusivity and the foreground listener.
+Both executable entry points live in the CLI crate to share presentation and OS
+credentials; server composition never depends on command presentation.

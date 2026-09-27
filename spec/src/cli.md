@@ -58,3 +58,26 @@ then attaches and describes history with the actual custom jj executable. It
 reopens the host with no in-memory repository directory. This qualifies dynamic
 routing; init/serve-local and standalone server command presentation remain
 separate gates.
+
+## Standalone process
+
+`jj-store run --config PATH` serves in the foreground and reports its bound
+listener only after validating configuration, TLS and the operator policy.
+`jj store serve-local --server-config PATH` uses the same composition and
+requires a literal loopback bind address. Both stop on interrupt/termination and
+bound graceful shutdown. Neither installs a daemon nor launches RustFS.
+
+`jj-store config example` prints the configuration template, while
+`config check` validates it without contacting storage.
+`doctor --config PATH --repo-id ID` checks the configured repository through the
+in-process authenticated service. It does not publish operations.
+`operator init` persists a verifier for an environment-injected or OS-held
+operator credential; `operator list/revoke` administer that trusted local policy
+file. Token values are never command-line arguments or output. Repository token
+commands remain a separate command slice.
+
+On Unix, serve-local is parsed by CliRunner and then replaces the process with
+the paired jj-store binary from the same executable directory. This resets the
+upstream CLI's immediate-exit signal handler so the server owns graceful
+shutdown. Other platforms fail explicitly and direct users to jj-store run;
+platform handoff qualification remains a release gate.

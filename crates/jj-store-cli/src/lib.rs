@@ -5,3 +5,4 @@ pub mod commands;
 pub mod credentials;
 pub mod presentation;
 pub mod remote;
+pub mod server_commands;

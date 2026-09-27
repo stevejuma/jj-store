@@ -125,11 +125,11 @@ def race(s3, key, condition, contenders):
     require(read[1]["etag"] == results[winner][1]["etag"], "acknowledged token differs from read token")
 
 
-def run_contract(image, rounds, contenders, output, rust_client=False):
+def run_contract(image, rounds, contenders, output, rust_client=False, server=False):
     require("@sha256:" in image, "use an immutable image digest")
     name = "jj-store-m0-" + uuid.uuid4().hex[:12]
     volume = name + "-data"
-    report = {"schema": 1, "image": image, "topology": "single container, one data volume, independent HTTP client connections", "rounds": rounds, "contenders": contenders, "started_at": datetime.datetime.now(datetime.timezone.utc).isoformat(), "tests": [], "limitations": ["No multi-node/load-balancer qualification", "Discarded acknowledgement simulates an unknown client outcome, not a faulty RustFS network", "Production token and semantic-policy integration remains M3/M5; test principals explicitly permitted"]}
+    report = {"schema": 1, "image": image, "topology": "single container, one data volume, independent HTTP client connections", "rounds": rounds, "contenders": contenders, "started_at": datetime.datetime.now(datetime.timezone.utc).isoformat(), "tests": [], "limitations": ["No multi-node/load-balancer qualification", "Discarded acknowledgement simulates an unknown client outcome, not a faulty RustFS network", "Server fixture uses generated repository-scoped credentials; shared TLS and full semantic-policy qualification remain separate gates" if server else "Production token and semantic-policy integration remains M3/M5; test principals explicitly permitted"]}
     def docker(*args):
         return subprocess.check_output(["docker", *args], text=True, stderr=subprocess.STDOUT).strip()
     def record(test, action):
@@ -264,6 +264,18 @@ def run_contract(image, rounds, contenders, output, rust_client=False):
                                                "output": (result.stdout + result.stderr)[-8000:]}
                 require(result.returncode == 0, "cold publication recovery failed: " + report["cold_publication"]["output"])
             record("native_publication_survives_process_kill_and_empty_caches", cold_publication)
+        if server:
+            def server_client():
+                env = dict(os.environ, JST_TEST_ENDPOINT=s3.endpoint, JST_TEST_ACCESS_KEY=ACCESS,
+                           JST_TEST_SECRET_KEY=SECRET, JST_TEST_CONTAINER=name,
+                           DEVELOPER_DIR="/Library/Developer/CommandLineTools")
+                command = ["cargo", "test", "-p", "jj-store-cli", "--test", "server_executable", "--locked",
+                           "real_rustfs_server_cli_restart_and_revocation", "--", "--ignored", "--nocapture"]
+                result = subprocess.run(command, env=env, capture_output=True, text=True, timeout=300)
+                report["server_client"] = {"command": command, "exit_code": result.returncode,
+                                           "output": (result.stdout + result.stderr)[-8000:]}
+                require(result.returncode == 0, "server/CLI RustFS test failed: " + report["server_client"]["output"])
+            record("authenticated_server_cli_cold_restart_and_revocation", server_client)
     except Exception as error:
         report["startup_error"] = str(error)
     finally:
@@ -272,7 +284,7 @@ def run_contract(image, rounds, contenders, output, rust_client=False):
             result = subprocess.run(["docker", *args], capture_output=True, text=True)
             if result.returncode and "No such" not in result.stderr: report.setdefault("cleanup_errors", []).append(result.stderr.strip())
         report["failures"] = sum(t["failures"] for t in report["tests"]) + int("startup_error" in report) + len(report.get("cleanup_errors", []))
-        report["result"] = "pass" if report["failures"] == 0 and len(report["tests"]) == (10 if rust_client else 8) else "fail"
+        report["result"] = "pass" if report["failures"] == 0 and len(report["tests"]) == ((10 if rust_client else 8) + int(server)) else "fail"
         output.parent.mkdir(parents=True, exist_ok=True)
         output.write_text(json.dumps(report, indent=2) + "\n")
         print(f"report={output} result={report['result']} failures={report['failures']}", flush=True)
@@ -284,6 +296,7 @@ if __name__ == "__main__":
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--self-test", action="store_true")
     mode.add_argument("--run", action="store_true")
+    parser.add_argument("--server", action="store_true", help="Qualify actual server/CLI processes and token revocation against RustFS")
     parser.add_argument("--rust-client", action="store_true", help="Also qualify the compiled native object transport")
     parser.add_argument("--image", default=IMAGE)
     parser.add_argument("--rounds", type=int, default=20)
@@ -294,4 +307,4 @@ if __name__ == "__main__":
         unittest.main(argv=[__file__])
     else:
         require(1 <= options.rounds <= 1000 and 2 <= options.contenders <= 64, "invalid concurrency limits")
-        raise SystemExit(run_contract(options.image, options.rounds, options.contenders, options.output, options.rust_client))
+        raise SystemExit(run_contract(options.image, options.rounds, options.contenders, options.output, options.rust_client, options.server))

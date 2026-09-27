@@ -11,6 +11,10 @@ import tempfile
 import time
 
 binary = sys.argv[1]
+server = len(sys.argv) > 2 and sys.argv[2] == "server"
+family = [] if server else ["store"]
+label = "Server:" if server else "Client:"
+help_command = "run" if server else "attach"
 
 def run_tty(args, environment):
     master, slave = pty.openpty()
@@ -51,27 +55,27 @@ with tempfile.TemporaryDirectory(prefix="jj-store-pager-") as directory:
     env.pop("NO_COLOR", None)
     env["JJ_CONFIG"] = ""
     env["JJ_STORE_PAGER"] = f"{sys.executable} {pager} {marker}"
-    output = run_tty(["store", "version"], env)
-    assert marker.exists() and "Client:" in output
+    output = run_tty([*family, "version"], env)
+    assert marker.exists() and label in output
     marker.unlink()
-    run_tty(["--no-pager", "store", "version"], env)
+    run_tty(["--no-pager", *family, "version"], env)
     assert not marker.exists()
-    output = run_tty(["store", "version", "--format=json", "--color=always"], env)
+    output = run_tty([*family, "version", "--format=json", "--color=always"], env)
     assert not marker.exists() and "\x1b[" not in output
-    assert json.loads(output)["client"]["upstream_jj"] == "0.45.1"
-    output = run_tty(["store", "attach", "--help"], env)
+    assert json.loads(output)["server" if server else "client"]["upstream_jj"] == "0.45.1"
+    output = run_tty([*family, help_command, "--help"], env)
     assert marker.exists() and "\x1b[" in output
     marker.unlink()
     env["NO_COLOR"] = "1"
-    output = run_tty(["store", "attach", "--help"], env)
+    output = run_tty([*family, help_command, "--help"], env)
     assert "\x1b[" not in output
-    output = run_tty(["store", "attach", "--help", "--color=always"], env)
+    output = run_tty([*family, help_command, "--help", "--color=always"], env)
     assert "\x1b[" in output
     env["JJ_STORE_PAGER"] = "cat"
     marker.unlink()
-    run_tty(["store", "version"], env)
+    run_tty([*family, "version"], env)
     assert not marker.exists()
     env["JJ_STORE_PAGER"] = "jj-store-nonexistent-test-pager"
-    output = run_tty(["store", "version"], env)
-    assert "Client:" in output and "Warning:" in output and "Hint:" in output and "--no-pager" in output, output
+    output = run_tty([*family, "version"], env)
+    assert label in output and "Warning:" in output and "Hint:" in output and "--no-pager" in output, output
 print("PTY: text/help paging, no-pager, JSON, auto/forced color and NO_COLOR passed")

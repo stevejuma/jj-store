@@ -12,7 +12,7 @@ use std::io::Write as _;
 
 /// Native text output owns a short-lived pager process so a failed spawn can
 /// fall back to stdout without losing the result. JSON never enters this path.
-fn page(ui: &Ui, text: &str, no_pager: bool) -> Result<(), CommandError> {
+pub(crate) fn page(ui: &Ui, text: &str, no_pager: bool) -> Result<(), CommandError> {
     use std::{
         io::IsTerminal as _,
         process::{Command, Stdio},

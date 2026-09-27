@@ -84,3 +84,17 @@ Missing manifests and incorrect credentials return the same access-denied
 category. Credential-bearing creation/grant messages redact Debug and erase
 decoded plaintext after parsing. Request limits and permits apply to
 administration as well as object transfers.
+
+Server configuration rejects unknown keys, embedded secrets, invalid resource
+budgets and insecure shared listeners. RustFS secrets come only from the server
+environment. Operator policy and process state paths must be outside Git/JJ
+checkouts. Operator policy files contain only verifiers, use bounded canonical
+encoding, and reject symlinks. Local policy updates lock a stable sibling lock,
+atomically replace the file and sync it; each creation request reloads policy.
+The foreground process holds an exclusive local state-directory lock. Shared
+storage still requires a single configured serving instance; this lock does not
+claim distributed fencing or automatic failover.
+
+Operator OS-account provisioning locks a per-endpoint file outside checkouts
+before its read/create sequence. Contending commands fail without replacing a
+credential; retry reuses the saved account. Lock files contain no credentials.

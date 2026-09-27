@@ -57,6 +57,12 @@ impl ConnectionArgs {
 }
 #[derive(Clone, Debug, Subcommand)]
 pub enum StoreCommand {
+    /// Run the configured native server on a literal loopback listener
+    #[command(long_about = include_str!("../../../docs/cli/serve-local.md"))]
+    ServeLocal {
+        #[arg(long = "server-config")]
+        server_config: PathBuf,
+    },
     /// Attach a new physical workspace to a native repository
     #[command(long_about = include_str!("../../../docs/cli/attach.md"))]
     Attach {
@@ -121,6 +127,10 @@ pub async fn run(
         return presentation::help(ui, helper, &[]);
     };
     match command {
+        StoreCommand::ServeLocal { server_config } => {
+            crate::server_commands::serve_local(ui, &helper.cwd().join(server_config), args.format)
+                .map_err(error)
+        }
         StoreCommand::Attach {
             destination,
             connection,

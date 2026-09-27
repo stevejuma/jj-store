@@ -155,3 +155,28 @@ test("accepts_owned_dependencies", () =>
     ]),
     [],
   ));
+
+test("server_composition_cannot_depend_on_cli_or_native_upstream", () => {
+  assert.equal(
+    dependencyErrors([
+      {
+        name: "jj-store-server",
+        dependencies: [{ name: "jj-store-cli" }, { name: "jj-lib" }],
+      },
+    ]).length,
+    2,
+  );
+  assert.deepEqual(
+    dependencyErrors([
+      {
+        name: "jj-store-server",
+        dependencies: [
+          { name: "jj-store-jj" },
+          { name: "jj-store-rpc" },
+          { name: "jj-store-service" },
+        ],
+      },
+    ]),
+    [],
+  );
+});

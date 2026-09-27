@@ -3264,6 +3264,7 @@ version = "0.1.0"
 dependencies = [
  "async-trait",
  "clap",
+ "clap_complete",
  "dirs",
  "futures 0.3.34",
  "getrandom 0.4.3",
@@ -3275,6 +3276,7 @@ dependencies = [
  "jj-store-model",
  "jj-store-object",
  "jj-store-rpc",
+ "jj-store-server",
  "jj-store-service",
  "jj-store-wal",
  "keyring",
@@ -3369,6 +3371,26 @@ dependencies = [
  "tonic-prost-build",
  "url",
  "zeroize",
+]
+
+[[package]]
+name = "jj-store-server"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "jj-store-jj",
+ "jj-store-model",
+ "jj-store-object",
+ "jj-store-rpc",
+ "jj-store-service",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "thiserror 2.0.21",
+ "tokio",
+ "toml",
+ "tonic",
+ "url",
 ]
 
 [[package]]

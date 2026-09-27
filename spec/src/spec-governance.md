@@ -27,6 +27,7 @@ status; reports hold immutable evidence rather than competing status summaries.
 | `^crates/jj-store-jj/`        | `jj-integration.md`  |
 | `^crates/jj-store-service/`   | `mutations.md`       |
 | `^crates/jj-store-rpc/`       | `jj-integration.md`  |
+| `^crates/jj-store-server/`    | `cli.md`             |
 | `^(?:crates/jj-store-http/    | web/)`               | `api.md`                     |
 | `^crates/jj-store-(?:adapters | tantivy)/`           | `adapters.md`                |
 | `^(?:crates/jj-store-cli/     | bins/                | docs/cli/)`                  | `cli.md`         |
@@ -63,3 +64,7 @@ and `pnpm format:check` include Rust alongside Prettier. Both `pnpm check` and
 The RPC layer may consume the owned object streaming interface. Its native JJ
 trait adapters remain in the CLI crate, and direct upstream JJ dependencies in
 RPC are rejected by the existing boundary checker.
+
+Server composition has an explicit layer in the boundary checker. Regression
+coverage rejects dependencies on CLI presentation and direct upstream JJ types,
+while permitting the owned native/service/RPC composition interfaces.

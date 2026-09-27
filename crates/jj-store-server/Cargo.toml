@@ -1,0 +1,26 @@
+[package]
+name = "jj-store-server"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+jj-store-model.workspace = true
+jj-store-object.workspace = true
+jj-store-jj.workspace = true
+jj-store-service.workspace = true
+jj-store-rpc.workspace = true
+async-trait = "0.1"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+toml = "1.1"
+url = "2"
+thiserror = "2"
+tempfile = "3"
+tokio = { version = "1", features = ["net", "signal", "time", "rt"] }
+tonic = { version = "0.14", features = ["transport", "tls-ring"] }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }

@@ -76,6 +76,10 @@ export default defineConfig(tableRequirements(), {
           chapters: ["spec/src/jj-integration.md"],
         },
         {
+          pattern: "^crates/jj-store-server/",
+          chapters: ["spec/src/cli.md"],
+        },
+        {
           pattern: "^(?:crates/jj-store-http/|web/)",
           chapters: ["spec/src/api.md"],
         },
