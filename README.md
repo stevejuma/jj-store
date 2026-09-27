@@ -26,8 +26,8 @@ checks them without making changes. Use `pnpm format:rust` or
 conformance, not unit tests.
 
 `pnpm contracts:generate` regenerates OpenAPI and browser types from the Rust
-read contracts. `pnpm contracts:check` rejects drift and verifies actual HTTP
-fixture responses; it runs in both normal and specification checks. See the
+application contracts. `pnpm contracts:check` rejects drift and verifies actual
+HTTP fixture responses; it runs in both normal and specification checks. See the
 [contract guide](schemas/README.md).
 
 The workspace builds `target/debug/jj` and `target/debug/jj-store`. Start with

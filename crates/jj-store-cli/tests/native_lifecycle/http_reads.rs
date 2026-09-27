@@ -445,6 +445,44 @@ async fn http_reads_unpolled_response_expiry_releases_transport_and_native_slots
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn http_mutation_previews_share_native_worker_admission_with_file_reads() {
+    let f = ContentFixture::new().await;
+    let cache = tempfile::tempdir().unwrap();
+    let router = api(
+        &f,
+        cache.path(),
+        Config {
+            workers: 1,
+            ..Config::default()
+        },
+    );
+    let before = f.f.session.snapshot().await.unwrap().manifest().clone();
+    let response = router
+        .clone()
+        .oneshot(request(&f.f.reader, &format!("files/{}", f.file)))
+        .await
+        .unwrap();
+    assert_eq!(response.status(), StatusCode::OK);
+    let make = || {
+        let mut req = request(&f.f.token, "mutations/preview");
+        *req.method_mut() = axum::http::Method::POST;
+        req.headers_mut()
+            .insert("content-type", "application/json".parse().unwrap());
+        *req.body_mut() = Body::from(serde_json::json!({"version":1,"request_id":m::RequestId::new([240;16]),"expected":before.snapshot(),"command":{"type":"new","parents":[roots::ROOT_COMMIT],"description":"admission","workspace":null}}).to_string());
+        req
+    };
+    let busy = router.clone().oneshot(make()).await.unwrap();
+    assert_eq!(busy.status(), StatusCode::SERVICE_UNAVAILABLE);
+    let body: Value =
+        serde_json::from_slice(&to_bytes(busy.into_body(), 4096).await.unwrap()).unwrap();
+    assert_eq!(body["code"], "busy");
+    drop(response);
+    let available = router.oneshot(make()).await.unwrap();
+    assert_eq!(available.status(), StatusCode::OK);
+    assert_eq!(*f.f.session.snapshot().await.unwrap().manifest(), before);
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
 async fn http_reads_index_task_and_signed_cursor_preserve_snapshot_across_publication() {
     let f = ContentFixture::new().await;
     let cache = tempfile::tempdir().unwrap();

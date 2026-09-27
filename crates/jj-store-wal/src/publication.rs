@@ -23,7 +23,7 @@ use std::{
 
 const MAX_HEADS: usize = 256;
 const MAX_MANIFEST: u64 = 128 * 1024;
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct Snapshot {
     pub epoch: EpochId,

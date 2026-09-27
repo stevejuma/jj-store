@@ -1,4 +1,7 @@
 use super::*;
+use crate::mutations::{
+    apply as mutation_apply, preview as mutation_preview, status as mutation_status,
+};
 use crate::{
     contract::{Document, Reply},
     dto::*,
@@ -8,9 +11,10 @@ use axum::{
     extract::{DefaultBodyLimit, Query, rejection::QueryRejection},
     routing::{get, post},
 };
+use jj_store_service::mutations as mutation;
 use jj_store_service::{pagination::directory, reads::query::content as c};
-type Input<T> = std::result::Result<Query<T>, QueryRejection>;
-fn input<T>(value: Input<T>) -> Result<T> {
+pub(super) type Input<T> = std::result::Result<Query<T>, QueryRejection>;
+pub(super) fn input<T>(value: Input<T>) -> Result<T> {
     value.map(|Query(v)| v).map_err(|_| Error::invalid())
 }
 fn limit() -> usize {
@@ -21,7 +25,7 @@ fn all() -> String {
 }
 #[derive(Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
-struct Empty {}
+pub(super) struct Empty {}
 #[derive(Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
 struct Selection {
@@ -118,7 +122,10 @@ macro_rules! endpoints {
             (get, "/repos/{repo}/diff", diff, Difference, Envelope<c::diff::Response>, Reply::Json(200)),
             (post, "/repos/{repo}/index/tasks", prepare, Empty, index_tasks::Task, Reply::Json(202)),
             (get, "/repos/{repo}/index/tasks/{task}", task, Empty, index_tasks::Task, Reply::Json(200)),
-            (post, "/repos/{repo}/index/tasks/{task}/cancel", cancel, Empty, index_tasks::Task, Reply::Json(200))
+            (post, "/repos/{repo}/index/tasks/{task}/cancel", cancel, Empty, index_tasks::Task, Reply::Json(200)),
+            (post, "/repos/{repo}/mutations/preview", mutation_preview, Empty, mutation::Preview, Reply::Json(200)),
+            (post, "/repos/{repo}/mutations", mutation_apply, Empty, mutation::Outcome, Reply::Json(200)),
+            (get, "/repos/{repo}/mutations/{request_id}", mutation_status, Empty, mutation::Status, Reply::Json(200))
         }
     };
 }
@@ -130,11 +137,15 @@ pub(super) fn document(doc: &mut Document) {
     }
     endpoints!(register);
     doc.body::<Prepare>("/v1/repos/{repo}/index/tasks", "post");
+    doc.body::<mutation::Request>("/v1/repos/{repo}/mutations/preview", "post");
+    doc.body::<mutation::Request>("/v1/repos/{repo}/mutations", "post");
 }
 pub(super) fn router() -> Router<Arc<State>> {
     macro_rules! register {
         ($(($method:ident, $path:literal, $handler:ident, $query:ty, $response:ty, $reply:expr)),* ) => {
-            Router::new()$(.route($path, $method($handler)))*
+            Router::new()$(.route($path, $method($handler).layer(DefaultBodyLimit::max(
+                if $path.contains("/mutations") { crate::mutations::MAX_REQUEST_BYTES } else { 4096 }
+            ))))*
         };
     }
     endpoints!(register)
@@ -142,7 +153,6 @@ pub(super) fn router() -> Router<Arc<State>> {
         .method_not_allowed_fallback(|| async {
             Error::new(StatusCode::METHOD_NOT_ALLOWED, "unsupported_method")
         })
-        .layer(DefaultBodyLimit::max(4096))
 }
 async fn capabilities(
     ExtractState(state): ExtractState<Arc<State>>,

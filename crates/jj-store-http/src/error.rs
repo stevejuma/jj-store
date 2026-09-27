@@ -171,3 +171,27 @@ impl From<events::Error> for Error {
         }
     }
 }
+
+impl From<jj_store_service::mutations::Error> for Error {
+    fn from(error: jj_store_service::mutations::Error) -> Self {
+        use jj_store_service::{commands::Error as C, mutations::Error as E};
+        match error {
+            E::Denied => Self::denied(),
+            E::Stale => Self::new(StatusCode::CONFLICT, "stale_snapshot"),
+            E::IntentConflict => Self::new(StatusCode::CONFLICT, "intent_conflict"),
+            E::Limit => Self::limit(),
+            E::Invalid => Self::invalid(),
+            E::Corrupt => Self::new(StatusCode::SERVICE_UNAVAILABLE, "corrupt_receipt"),
+            E::Unavailable => Self::unavailable(),
+            E::Preparation(C::Query(error)) => error.into(),
+            E::Preparation(C::Stale) => Self::new(StatusCode::CONFLICT, "stale_snapshot"),
+            E::Preparation(C::MultipleHeads) => {
+                Self::new(StatusCode::CONFLICT, "reconciliation_required")
+            }
+            E::Preparation(C::StaleBookmark) => Self::new(StatusCode::CONFLICT, "stale_bookmark"),
+            E::Preparation(C::Root) => Self::denied(),
+            E::Preparation(C::Hidden) => Self::new(StatusCode::NOT_FOUND, "not_found"),
+            E::Preparation(C::Invalid) => Self::invalid(),
+        }
+    }
+}

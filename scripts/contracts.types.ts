@@ -76,3 +76,28 @@ function operationParent(
   return undefined;
 }
 void operationParent;
+
+type MutationRequest =
+  operations["mutation_apply"]["requestBody"]["content"]["application/json"];
+const mutation: MutationRequest = {
+  version: 1,
+  request_id: "00",
+  expected: { epoch: "00", position: 0, heads: ["00"] },
+  command: { type: "describe", commit: "00", description: "example" },
+};
+// @ts-expect-error Caller identity is never an input capability.
+const actor: MutationRequest = { ...mutation, principal: "00" };
+const shell: MutationRequest = {
+  ...mutation,
+  // @ts-expect-error No arbitrary CLI or shell endpoint exists.
+  command: { type: "shell", args: [] },
+};
+type MutationOutcome =
+  operations["mutation_apply"]["responses"][200]["content"]["application/json"];
+function mutationId(value: MutationOutcome): string {
+  if (value.status === "committed") return value.receipt.request_id;
+  // @ts-expect-error Unknown outcome is not a receipt.
+  value.receipt;
+  return value.request_id;
+}
+void [mutation, actor, shell, mutationId];

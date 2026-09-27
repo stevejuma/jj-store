@@ -133,3 +133,7 @@ settings access, this internal storage interface requires current authorization
 at the service boundary. Missing entries mean no selected receipt was observed,
 not proof that an in-flight request was rejected. Checkpoints retain this
 lookup.
+
+The exact Snapshot value exports JSON Schema metadata for the typed HTTP
+service. Schema derivation changes no serialization, hashing, accepted heads or
+durable WAL record format; no HTTP transport dependency enters publication.

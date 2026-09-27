@@ -27,3 +27,19 @@ IDs and SSE IDs are strings and must never be shortened for API requests.
 The source-of-truth route prefix is `/v1/repos/{repo}`. There is no public
 repository enumeration route: repository selection uses IDs supplied by the user
 or deployment. Read routes do not publish or reconcile operations.
+
+Typed commands use `POST /v1/repos/{repo}/mutations/preview`,
+`POST /v1/repos/{repo}/mutations`, and
+`GET /v1/repos/{repo}/mutations/{request_id}`. All require current write
+permission. The request is `{ version: 1, request_id, expected, command }`;
+`expected` contains the exact epoch, position and heads. Use full IDs, a fresh
+request ID for a new intention, and the same complete request for every retry.
+Capability discovery lists the currently supported command tags.
+
+Previews return provisional results without publication. Apply returns
+`committed` with its durable receipt or `outcome_unknown` with the request ID.
+Status returns `committed`, `outcome_unknown` or `not_known`; the latter is not
+proof that an in-flight request cannot commit. These tagged outcomes use
+HTTP 200. Stale snapshots and changed intent are distinct HTTP 409 errors.
+Always retain the original request ID across network, deadline and delivery
+failures. Browser controls for these commands remain deferred.

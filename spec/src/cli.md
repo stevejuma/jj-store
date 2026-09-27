@@ -221,3 +221,9 @@ Native lifecycle tests also exercise the typed command service's provisional
 preview, strict apply and principal-scoped durable status. Retry evidence checks
 native result identity after later publications/restart; it does not advertise a
 new CLI extension or imply browser mutation support.
+
+Native lifecycle acceptance also exercises the typed HTTP command transport:
+authenticated New/Describe/bookmark commands, strict snapshots, protected
+history, durable replay and lost acknowledgements. These routes reuse the
+service and do not change ordinary CLI spelling or its capability evidence.
+Browser work remains deferred under M4.3.

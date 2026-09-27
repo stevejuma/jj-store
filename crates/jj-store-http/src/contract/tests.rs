@@ -75,7 +75,7 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
     let doc = openapi();
     assert_eq!(doc["security"], json!([{"repositoryBearer":[]}]));
     let paths = doc["paths"].as_object().unwrap();
-    assert_eq!(paths.len(), 17);
+    assert_eq!(paths.len(), 20);
     let mut ids = std::collections::BTreeSet::new();
     for path in paths.values() {
         for (method, operation) in path.as_object().unwrap() {
@@ -116,5 +116,48 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
         paths["/v1/repos/{repo}/index/tasks/{task}/cancel"]["post"]
             .get("requestBody")
             .is_none()
+    );
+}
+
+#[test]
+fn mutation_contracts_require_typed_intent_and_write_permission() {
+    let doc = openapi();
+    for path in [
+        "/v1/repos/{repo}/mutations",
+        "/v1/repos/{repo}/mutations/preview",
+    ] {
+        let op = &doc["paths"][path]["post"];
+        assert_eq!(op["tags"], json!(["mutations"]));
+        assert!(
+            op["description"]
+                .as_str()
+                .unwrap()
+                .contains("write permission")
+        );
+        let schema = &op["requestBody"]["content"]["application/json"]["schema"];
+        assert_eq!(schema["additionalProperties"], false);
+        assert_eq!(
+            schema["required"],
+            json!(["version", "request_id", "expected", "command"])
+        );
+        assert_eq!(
+            schema["properties"]["expected"]["additionalProperties"],
+            false
+        );
+        assert_eq!(
+            schema["properties"]["command"]["oneOf"]
+                .as_array()
+                .unwrap()
+                .len(),
+            5
+        );
+    }
+    let status = &doc["paths"]["/v1/repos/{repo}/mutations/{request_id}"]["get"];
+    assert_eq!(status["parameters"][1]["name"], "request_id");
+    assert!(
+        status["description"]
+            .as_str()
+            .unwrap()
+            .contains("not_known never proves rejection")
     );
 }

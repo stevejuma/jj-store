@@ -126,3 +126,8 @@ The user deferred further UI changes on 27 September 2026. Existing browser code
 remains intact while backend/API/CLI/storage/search and operational work
 continue. M4.3 in the progress ledger retains the uncompleted UI requirements;
 backend completion does not establish full browser release acceptance.
+
+The WAL snapshot DTO shares schema metadata with the typed application API using
+schemars. The locked dependency is schema infrastructure, with no HTTP/UI
+runtime dependency in storage or publication. HTTP native command execution
+shares the serving instance's native worker admission with read execution.

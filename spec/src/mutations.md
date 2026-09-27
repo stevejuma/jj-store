@@ -200,6 +200,14 @@ Status authenticates current write permission, resolves only the same
 principal's request key and validates the selected result's repository,
 identity, digest and accepted snapshot. No selected receipt is NotKnown, never
 proof of rejection. Transport/storage uncertainty returns an unknown outcome
-with the original request ID; semantic rejection remains an explicit error.
-These service methods are not yet HTTP/RPC mutation endpoints, and browser work
-remains deferred to M4.3.
+with the original request ID; semantic rejection remains an explicit error. The
+HTTP mutation endpoints consume these service methods; native RPC continues to
+use its guarded native publication facade. Browser work remains deferred to
+M4.3.
+
+The HTTP boundary consumes the durable command service for preview/apply/status.
+Current write permission precedes body decoding and is checked again by the
+service. HTTP admission and native command preparation share bounded worker
+capacity with reads. Tagged outcomes retain the original request ID across
+unknown transport outcomes; status is scoped to the authenticated principal. No
+browser mutation controls are introduced by this transport slice.

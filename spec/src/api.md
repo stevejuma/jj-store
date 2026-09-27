@@ -336,3 +336,29 @@ As requested on 27 September 2026, further UI changes and browser deployment
 acceptance are deferred to M4.3. Existing read UI and its checks remain intact.
 Typed mutation, conflict, search and freshness UI requirements remain open;
 backend/API/SSE implementation and qualification continue independently.
+
+## Typed mutation HTTP transport
+
+`POST /v1/repos/{repo}/mutations/preview` and `POST .../mutations` accept a
+versioned typed request with request_id, exact expected snapshot and command.
+`GET .../mutations/{request_id}` resolves that principal's durable receipt. All
+three require current repository write permission, including before parsing
+command bodies. Unknown fields, unsupported command variants, malformed IDs,
+unknown query parameters and bodies above 512 KiB fail explicitly. Native
+commands share the serving instance's worker pool with graph/content reads.
+Capabilities advertise only implemented commands and the request limit.
+
+Preview returns prepared provisional native results or the already committed
+receipt. Apply returns committed or outcome_unknown; status returns committed,
+not_known or outcome_unknown. These tagged results use HTTP 200; unknown does
+not prove acceptance or rejection. Stale snapshots and changed intent return 409
+with distinct codes. Semantic protection returns 403. No rejection is persisted
+as a receipt, so later not_known status is never proof of rejection. Retain the
+original request ID on every connection, delivery or timeout failure. Once
+apply/status has parsed and authorized an identity, an HTTP deadline or
+oversized result returns outcome_unknown with that identity. Preview cannot
+publish and does not authorize later apply.
+
+Generated OpenAPI and TypeScript contracts include these routes and owned DTOs.
+The generated client declaration is an API artifact; browser components,
+interaction behavior and visual changes remain deferred under M4.3.

@@ -221,3 +221,11 @@ retaining existing native/token request digests and WAL envelope versions.
 Fault-store and authenticated native tests cover duplicate races, checkpoint
 recovery, lost acknowledgements, authorization and selected receipt corruption;
 real deployment qualification remains a separate gate. UI work is deferred.
+
+Typed HTTP mutation conformance captures actual preview/apply/status responses
+for schema validation, including committed, not-known and unknown outcomes.
+Native fixtures cover all advertised commands, protected policy, revocation,
+stale input, worker admission and recovery from an HTTP timeout after manifest
+CAS. These are fault-injecting memory-store proofs; real RustFS/TLS deployment
+evidence remains separate. Generated TypeScript declarations change with the
+API; browser features and visual work remain deferred under M4.3.

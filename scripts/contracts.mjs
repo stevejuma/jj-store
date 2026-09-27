@@ -56,30 +56,42 @@ for (const [path, text] of artifacts) {
 if (mode === "--check") {
   const directory = await mkdtemp(join(tmpdir(), "jj-store-contract-"));
   try {
-    const capture = join(directory, "responses.json");
-    const { stdout } = await run(
-      "cargo",
+    const samples = [];
+    for (const [fixture, variable] of [
       [
-        "test",
-        "--quiet",
-        "--locked",
-        "-p",
-        "jj-store-cli",
-        "--test",
-        "native_lifecycle",
         "content_acceptance::http_acceptance::http_contract_capture_matches_registered_routes",
-        "--",
-        "--exact",
+        "JJ_STORE_CONTRACT_CAPTURE",
       ],
-      {
-        cwd: root,
-        env: { ...process.env, JJ_STORE_CONTRACT_CAPTURE: capture },
-        maxBuffer: 4 * 1024 * 1024,
-      },
-    );
-    if (!stdout.includes("1 passed; 0 failed"))
-      throw new Error(`Contract fixture did not run: ${stdout}`);
-    const samples = JSON.parse(await readFile(capture, "utf8"));
+      [
+        "http_mutation_acceptance::http_mutations_preview_apply_status_replay_and_contract_capture",
+        "JJ_STORE_MUTATION_CONTRACT_CAPTURE",
+      ],
+    ]) {
+      const capture = join(directory, `${variable}.json`);
+      const { stdout } = await run(
+        "cargo",
+        [
+          "test",
+          "--quiet",
+          "--locked",
+          "-p",
+          "jj-store-cli",
+          "--test",
+          "native_lifecycle",
+          fixture,
+          "--",
+          "--exact",
+        ],
+        {
+          cwd: root,
+          env: { ...process.env, [variable]: capture },
+          maxBuffer: 4 * 1024 * 1024,
+        },
+      );
+      if (!stdout.includes("1 passed; 0 failed"))
+        throw new Error(`Contract fixture did not run: ${stdout}`);
+      samples.push(...JSON.parse(await readFile(capture, "utf8")));
+    }
     const validate = responseValidator(document);
     for (const sample of samples) validate(sample);
     console.log(

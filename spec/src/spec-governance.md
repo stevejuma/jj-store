@@ -115,3 +115,8 @@ User-requested scope deferrals must retain original requirements and evidence.
 The 27 September 2026 UI deferral moves remaining browser work to M4.3 without
 disabling existing functional checks or treating deferred acceptance as passed.
 Backend tasks may depend on completed API foundations independently of UI work.
+
+Contract checks validate both read/SSE and typed mutation responses captured
+from real registered handlers. Mutation request schemas and generated TypeScript
+narrowing reject untyped commands and caller-selected principals. Regenerating
+API declarations does not close any deferred browser feature or deployment gate.

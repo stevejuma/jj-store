@@ -112,3 +112,42 @@ test("response_validation_rejects_missing_contracts_and_wrong_media", () => {
     }),
   );
 });
+
+test("mutation_requests_are_strict_and_unknown_outcomes_retain_identity", () => {
+  const body =
+    document.paths["/v1/repos/{repo}/mutations"].post.requestBody.content[
+      "application/json"
+    ].schema;
+  const request = {
+    version: 1,
+    request_id: "aa".repeat(16),
+    expected: { epoch: "bb".repeat(16), position: 0, heads: ["00".repeat(64)] },
+    command: {
+      type: "new",
+      parents: ["00".repeat(64)],
+      description: "",
+      workspace: null,
+    },
+  };
+  validate(body, request);
+  for (const invalid of [
+    { ...request, principal: "cc".repeat(16) },
+    { ...request, command: { type: "shell", args: ["new"] } },
+    { ...request, command: { ...request.command, ignored: true } },
+    { ...request, expected: { ...request.expected, latest: true } },
+    { ...request, request_id: "aa" },
+  ])
+    assert.throws(() => validate(body, invalid));
+  const response =
+    document.paths["/v1/repos/{repo}/mutations"].post.responses["200"].content[
+      "application/json"
+    ].schema;
+  validate(response, {
+    status: "outcome_unknown",
+    request_id: request.request_id,
+  });
+  assert.throws(() => validate(response, { status: "outcome_unknown" }));
+  assert.throws(() =>
+    validate(response, { status: "committed", request_id: request.request_id }),
+  );
+});

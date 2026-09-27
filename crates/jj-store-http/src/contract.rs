@@ -35,6 +35,7 @@ impl Document {
         let schema = match name {
             "repo" => self.output.subschema_for::<m::RepositoryId>().to_value(),
             "commit" | "id" => self.output.subschema_for::<m::CommitId>().to_value(),
+            "request_id" => self.output.subschema_for::<m::RequestId>().to_value(),
             "file" => self.output.subschema_for::<m::FileId>().to_value(),
             "operation" => self.output.subschema_for::<m::OperationId>().to_value(),
             "kind" => {
@@ -144,9 +145,19 @@ impl Document {
                 200
             }
         };
-        let operation = json!({"operationId":id, "tags":["reads"],
+        let mutation = path.contains("/mutations");
+        let mut operation = json!({"operationId":id, "tags":["reads"],
             "description":"Requires current repository read permission. Unknown query fields are rejected. Source strings are untrusted data. Reads never reconcile or publish native operations.",
             "parameters":parameters, "responses":responses, "x-jj-store-query-schema":query});
+        if mutation {
+            operation["tags"] = json!(["mutations"]);
+            operation["description"] = json!(
+                "Requires current repository write permission, including status. Strict typed commands only. Preview does not publish. Apply may return outcome_unknown; status not_known never proves rejection. Retain the original request ID across every retry or transport failure. Request bytes are capped at 524288. Stale snapshots, bookmark expectations, multiple heads and changed intent return distinct 409 codes; protected transitions return 403. Browser mutation work remains deferred."
+            );
+            operation["responses"]["409"]["description"] = json!(
+                "stale_snapshot, stale_bookmark, reconciliation_required, epoch_changed or intent_conflict. No publication by this rejected attempt."
+            );
+        }
         let mut item = json!({method:operation});
         if method == "get" {
             let mut head = operation;
@@ -193,11 +204,11 @@ impl Document {
         );
         json!({"openapi":"3.1.0", "jsonSchemaDialect":"https://json-schema.org/draft/2020-12/schema",
             "info":{"title":"jj-store application API", "version":"1.0.0", "license":{"name":"Apache-2.0","identifier":"Apache-2.0"},
-                "description":"Native JJ read contracts. Same-origin Bearer authentication; tokens never appear in paths, query strings or cookies. Shared deployments require TLS. Numeric JSON values retain Rust widths: clients must handle precision beyond JavaScript safe integers explicitly."},
-            "servers":[{"url":"/"}], "tags":[{"name":"reads"}],
+                "description":"Native JJ read and typed mutation contracts. Same-origin Bearer authentication; tokens never appear in paths, query strings or cookies. Shared deployments require TLS. Numeric JSON values retain Rust widths: clients must handle precision beyond JavaScript safe integers explicitly."},
+            "servers":[{"url":"/"}], "tags":[{"name":"reads"},{"name":"mutations"}],
             "security":[{"repositoryBearer":[]}],
             "paths":self.paths,
-            "components":{"securitySchemes":{"repositoryBearer":{"type":"http","scheme":"bearer","description":"Revocable repository-scoped token with read permission."}},
+            "components":{"securitySchemes":{"repositoryBearer":{"type":"http","scheme":"bearer","description":"Revocable repository-scoped token; read routes require read permission, mutation routes require write permission."}},
                 "schemas":self.output.take_definitions(true)}})
     }
 }

@@ -1,10 +1,11 @@
-//! Versioned authenticated application reads; no direct storage or native JJ types.
+//! Versioned authenticated application API; no direct storage or native JJ types.
 #![forbid(unsafe_code)]
 pub mod assets;
 mod body;
 pub mod contract;
 mod dto;
 mod error;
+mod mutations;
 mod routes;
 use axum::{
     Router,
@@ -19,7 +20,7 @@ use jj_store_model as m;
 use jj_store_service::{
     administration::RepositoryHost,
     auth::{BearerToken, Permission, SystemClock},
-    events, index_tasks,
+    commands, events, index_tasks,
     native::NativeSession,
     pagination::{self, GraphPager, SnapshotCursors, directory::DirectoryPager},
     reads::{self, query as q},
@@ -44,6 +45,7 @@ pub struct Config {
     pub read: reads::ReadLimits,
     pub graph: q::Limits,
     pub content: q::content::Limits,
+    pub commands: commands::Limits,
 }
 impl Default for Config {
     fn default() -> Self {
@@ -59,6 +61,7 @@ impl Default for Config {
             read: Default::default(),
             graph: Default::default(),
             content: Default::default(),
+            commands: Default::default(),
         }
     }
 }
@@ -71,6 +74,7 @@ struct State {
     graphs: GraphPager,
     directories: DirectoryPager,
     tasks: index_tasks::IndexTasks,
+    commands: jj_store_service::mutations::CommandService,
 }
 #[derive(Clone)]
 pub struct HttpApi(Arc<State>);
@@ -123,6 +127,10 @@ impl HttpApi {
             },
         )
         .map_err(|_| "HTTP index task limits")?;
+        let commands = jj_store_service::mutations::CommandService::new(
+            commands::Executor::with_workers(config.commands, queries.workers().clone())
+                .map_err(|_| "HTTP native command limits")?,
+        );
         Ok(Self(Arc::new(State {
             host,
             slots: Arc::new(Semaphore::new(config.concurrency)),
@@ -132,6 +140,7 @@ impl HttpApi {
             graphs,
             directories,
             tasks,
+            commands,
         })))
     }
     pub fn router(&self) -> Router {
@@ -237,9 +246,20 @@ async fn admit(
             Err(_) => return secure(Error::timeout().into_response()),
         }
     }
+    let pending = mutations::Pending::default();
+    let head = request.method() == axum::http::Method::HEAD;
+    request.extensions_mut().insert(pending.clone());
     let response = match tokio::time::timeout_at(deadline, next.run(request)).await {
         Ok(response) if Instant::now() < deadline => response,
-        _ => return secure(Error::timeout().into_response()),
+        _ => {
+            let mut response = pending
+                .response()
+                .unwrap_or_else(|| Error::timeout().into_response());
+            if head {
+                *response.body_mut() = Body::empty();
+            }
+            return secure(response);
+        }
     };
     secure(response.map(|body| Body::new(body::Guard::new(body, permit, deadline))))
 }

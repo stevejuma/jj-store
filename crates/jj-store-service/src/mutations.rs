@@ -57,7 +57,7 @@ impl From<commands::Error> for Error {
         }
     }
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct Request {
     pub version: u32,
@@ -65,7 +65,7 @@ pub struct Request {
     pub expected: Snapshot,
     pub command: Command,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
 pub struct Receipt {
     pub version: u32,
     pub request_id: m::RequestId,
@@ -74,7 +74,7 @@ pub struct Receipt {
     pub accepted: Snapshot,
     pub result: Prepared,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
 pub struct PreviewReport {
     pub version: u32,
     pub request_id: m::RequestId,
@@ -83,19 +83,19 @@ pub struct PreviewReport {
     /// Provisional native IDs; apply revalidates and may produce different IDs.
     pub result: Prepared,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
 #[serde(tag = "status", rename_all = "snake_case")]
 pub enum Preview {
     Prepared { preview: PreviewReport },
     Committed { receipt: Receipt },
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
 #[serde(tag = "status", rename_all = "snake_case")]
 pub enum Outcome {
     Committed { receipt: Box<Receipt> },
     OutcomeUnknown { request_id: m::RequestId },
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
 #[serde(tag = "status", rename_all = "snake_case")]
 pub enum Status {
     Committed { receipt: Box<Receipt> },

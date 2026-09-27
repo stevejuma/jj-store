@@ -1105,3 +1105,6 @@ mod command_acceptance;
 
 #[path = "native_lifecycle/mutations.rs"]
 mod mutation_acceptance;
+
+#[path = "native_lifecycle/http_mutations.rs"]
+mod http_mutation_acceptance;

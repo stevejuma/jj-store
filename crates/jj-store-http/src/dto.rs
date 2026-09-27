@@ -13,6 +13,7 @@ pub(crate) struct Capabilities {
     pub events: bool,
     pub search: bool,
     pub typed_mutations: Vec<String>,
+    pub mutation_request_bytes: usize,
     pub event_limits: EventLimits,
     pub limits: ReadLimits,
     pub log_context: LogContext,
@@ -51,7 +52,16 @@ impl From<&Config> for Capabilities {
             index_tasks: true,
             events: true,
             search: false,
-            typed_mutations: vec![],
+            typed_mutations: [
+                "new",
+                "describe",
+                "bookmark_create",
+                "bookmark_move",
+                "bookmark_delete",
+            ]
+            .map(str::to_owned)
+            .to_vec(),
+            mutation_request_bytes: crate::mutations::MAX_REQUEST_BYTES,
             event_limits: EventLimits {
                 streams: config.event_concurrency,
                 replay_window: config.events.replay_window,
