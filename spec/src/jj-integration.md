@@ -73,3 +73,30 @@ gate.
 
 A full staged-operation budget rejects a new distinct operation, while an
 identical acknowledged metadata-upload retry remains idempotent.
+
+## Native commit backend
+
+The commit backend uses checked native codecs for trees, commits, symlinks and
+copy histories, and the verified streaming spool for files. It authorizes each
+read or write, including virtual roots. A bounded semaphore limits outstanding
+object operations. An unknown upload is an error, never an acknowledged native
+write. Existing signatures are preserved; requesting a second signature on a
+signed commit is rejected. New signatures cover the domain-separated V1 unsigned
+commit payload, with the exact signed bytes retained in the native signature.
+
+Copy enumeration uses only the committed inventory plus this session's
+acknowledged writes. Queries enforce node, work, retained-byte and deadline
+budgets, fail explicitly instead of truncating, and return deterministic reverse
+topological order. Copy records cover the DAG range excluding all ancestors of
+the lower bound. A history first introduced at a target is traced to its nearest
+ancestor source on each lineage, including intermediate histories created within
+one commit. Inherited histories do not generate repeated copy events. Conflicted
+trees simplify signed terms per path before retaining positive file
+alternatives, so canceled terms cannot reintroduce deleted files. Path filtering
+applies to targets. Placeholders have no persisted history and generate no
+inferred copy events. A file created and copied entirely within one commit has
+no ancestor copy record. This integration does not infer renames from equal file
+contents.
+
+Native factories, authenticated transport wiring and full CLI/workspace
+lifecycle acceptance remain separate M3 gates.

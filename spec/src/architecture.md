@@ -50,3 +50,8 @@ between future HTTP and RPC adapters.
 The development toolchain includes rustfmt with a tracked edition-2024 policy.
 Rust formatting is part of the shared formatting commands, normal checks and
 canonical specification checks.
+
+The native backend adapts JJ's futures file streams to the owned Tokio
+transport. Its query engine derives bounded copy records from native history;
+those derived results never become publication authority or require a listing
+API.
