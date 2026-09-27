@@ -64,6 +64,7 @@ impl SemanticPolicy for NativeSemantic {
 /// No caller-authored actor and no permissive semantic-policy parameter. Trusted
 /// server construction supplies object access and configured protection rules.
 pub struct NativeSession {
+    pub(crate) events: crate::events::Hints,
     pub(crate) repository: m::RepositoryId,
     pub(crate) object_store: Arc<dyn ObjectStore>,
     access: Arc<RepositoryAccess>,
@@ -103,6 +104,7 @@ impl NativeSession {
             limits.publication,
         )?;
         Ok(Self {
+            events: crate::events::Hints::default(),
             repository,
             object_store: store,
             access,
@@ -123,7 +125,11 @@ impl NativeSession {
         Ok(snapshot)
     }
     pub async fn publish_request(&self, request: &Request) -> wal::Result<PublishOutcome> {
-        self.coordinator.publish(request).await
+        let result = self.coordinator.publish(request).await?;
+        if matches!(result, PublishOutcome::Committed(_)) {
+            self.events.published(self.repository);
+        }
+        Ok(result)
     }
     /// Authentication selects the principal; deterministic transition identity
     /// survives process loss without persisting credentials or volatile counters.
@@ -241,7 +247,7 @@ impl OperationAuthority for NativeSession {
         new: m::OperationId,
     ) -> AuthorityResult<()> {
         let request = self.transition_request(old, new).await?;
-        match self.coordinator.publish(&request).await? {
+        match self.publish_request(&request).await? {
             PublishOutcome::Committed(_) => Ok(()),
             PublishOutcome::OutcomeUnknown { .. } => Err(wal::Error::OutcomeUnknown.into()),
         }

@@ -102,3 +102,9 @@ transport admission. It consumes service-exported owned read contracts and bound
 native sessions; it has no direct object-store or upstream JJ dependency. The
 service exports those contracts without duplicating native codec definitions.
 The server composes HTTP and native RPC on the same TLS listener and public URL.
+
+The service owns committed-event cursors, bounded replay, current authorization,
+and a fixed-capacity process-local notification channel shared by hosted
+sessions. The HTTP transport owns SSE framing and independent stream admission.
+Publication never awaits consumers; polling selected manifests supplies
+cross-process delivery.

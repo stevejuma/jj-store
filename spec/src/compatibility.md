@@ -180,3 +180,9 @@ cache-loss recovery and revocation pass on the production TLS listener. HTTP/1.1
 and HTTP/2 negotiation, incomplete TLS handshakes and connection admission are
 regular cold process/unit tests. This remains single-node storage evidence; full
 release performance and browser qualification are separate gates.
+
+The committed-event contract and admission defaults are documented in
+[the SSE evidence guide](../../docs/evidence/m4-committed-events.md). E-M4-015
+in the ledger distinguishes focused service/HTTP evidence from the production
+TLS and real RustFS deployment fixture. A Docker availability failure cannot be
+reported as a passing deployment run.

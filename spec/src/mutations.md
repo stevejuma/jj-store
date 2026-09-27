@@ -119,3 +119,9 @@ application service boundary. HTTP receives that binding with the same token,
 repository, policy and limits; it cannot select an actor or replace the guard.
 Owned read DTOs and verified range types are exported through the service for
 transport consumers without exposing upstream JJ types.
+
+Successful native and token-policy publication wakes bounded process-local event
+subscribers. Wake hints contain only repository identity and do not establish
+commitment. Event readers reauthorize and follow selected WAL records; unknown
+outcomes and writes by another process are recovered by periodic manifest reads.
+No subscriber callback is awaited by publication.

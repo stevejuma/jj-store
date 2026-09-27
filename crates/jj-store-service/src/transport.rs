@@ -62,6 +62,7 @@ impl From<jj_store_object::Error> for Error {
 /// Trusted server configuration. Tokens are supplied separately for each RPC.
 #[derive(Clone)]
 pub struct NativeEndpoint {
+    pub(crate) events: crate::events::Hints,
     repository: m::RepositoryId,
     store: Arc<dyn ObjectStore>,
     objects: Arc<NativeObjects>,
@@ -83,6 +84,7 @@ impl NativeEndpoint {
             NativeObjects::new(store.clone(), repository, max_blob).map_err(|_| Error::Invalid)?,
         );
         Ok(Self {
+            events: crate::events::Hints::default(),
             repository,
             store,
             objects,
@@ -96,7 +98,7 @@ impl NativeEndpoint {
         self.repository
     }
     pub fn bind(&self, token: BearerToken) -> Result<NativeRequest> {
-        let session = NativeSession::new(
+        let mut session = NativeSession::new(
             self.store.clone(),
             self.objects.clone(),
             token,
@@ -104,6 +106,7 @@ impl NativeEndpoint {
             self.protection.clone(),
             self.limits,
         )?;
+        session.events = self.events.clone();
         Ok(NativeRequest {
             endpoint: self.clone(),
             session,

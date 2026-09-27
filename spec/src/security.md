@@ -140,3 +140,10 @@ request headers arrive. HTTP/2 stream and header limits supplement application
 admission. Native RPC and HTTP keep separate bounded request pools. A socket
 close never proves an in-flight publication failed; native receipt recovery
 continues to resolve unknown outcomes.
+
+SSE authenticates before subscription and before every queued event or
+heartbeat. Resume IDs are public positions, not capabilities. A new request must
+present a current scoped credential, including after reconnect or server
+restart. Event streams have dedicated admission so connected browsers do not
+consume every ordinary HTTP read slot. Slow/unpolled streams expire and release
+their bound session and credential with the response body.

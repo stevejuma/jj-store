@@ -169,3 +169,14 @@ impl From<tasks::Error> for Error {
         }
     }
 }
+
+impl From<events::Error> for Error {
+    fn from(value: events::Error) -> Self {
+        match value {
+            events::Error::Denied => Self::denied(),
+            events::Error::InvalidCursor => Self::new(StatusCode::BAD_REQUEST, "invalid_cursor"),
+            events::Error::Limit => Self::limit(),
+            events::Error::Unavailable => Self::unavailable(),
+        }
+    }
+}

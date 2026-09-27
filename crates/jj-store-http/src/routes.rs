@@ -98,6 +98,7 @@ pub(super) fn router() -> Router<Arc<State>> {
     Router::new()
         .route("/repos/{repo}/capabilities", get(capabilities))
         .route("/repos/{repo}/snapshot", get(snapshot))
+        .route("/repos/{repo}/events", get(events))
         .route("/repos/{repo}/objects/{kind}/{id}", get(object))
         .route("/repos/{repo}/log", get(log))
         .route("/repos/{repo}/operations", get(operations))
@@ -128,7 +129,8 @@ async fn capabilities(
 ) -> Result<Response> {
     input(args)?;
     state.json(&serde_json::json!({"version":1,"native_profile":reads::NATIVE_PROFILE,
-        "authentication":"repository_bearer", "read_api":true,"index_tasks":true,"events":false,"search":false,"typed_mutations":[],
+        "authentication":"repository_bearer", "read_api":true,"index_tasks":true,"events":true,"search":false,"typed_mutations":[],
+        "event_limits":{"streams":state.config.event_concurrency,"replay_window":state.config.events.replay_window,"page":state.config.events.page_size,"poll_millis":state.config.events.poll_interval.as_millis()},
         "limits":{"requests":state.config.concurrency,"workers":state.config.workers,"deadline_millis":state.config.timeout.as_millis(),"json_bytes":state.config.max_json_bytes,"page":state.config.graph.max_page,"index_commits":state.config.graph.max_index_commits,"inline_index_commits":state.config.graph.max_inline_rebuild_commits,"file_bytes":state.config.content.max_blob_bytes},
         "log_context":{"at_time_millis":"required","workspace":"explicit when needed","user_email":"explicit for identity-relative expressions"}}))
 }
@@ -557,4 +559,70 @@ async fn cancel(
         .cancel(context.session.clone(), context.value("task")?)
         .await?;
     state.json(&task)
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct Events {
+    after: Option<String>,
+}
+async fn events(
+    ExtractState(state): ExtractState<Arc<State>>,
+    context: Context,
+    args: Input<Events>,
+) -> Result<Response> {
+    use axum::response::sse::{Event as SseEvent, Sse};
+    let args = input(args)?;
+    if context.headers.get_all("last-event-id").iter().count() > 1 {
+        return Err(Error::invalid());
+    }
+    let header = context
+        .headers
+        .get("last-event-id")
+        .map(|value| value.to_str().map_err(|_| Error::invalid()))
+        .transpose()?;
+    if args
+        .after
+        .as_deref()
+        .zip(header)
+        .is_some_and(|(a, b)| a != b)
+    {
+        return Err(Error::invalid());
+    }
+    let after = args
+        .after
+        .as_deref()
+        .or(header)
+        .map(str::parse::<events::Cursor>)
+        .transpose()?;
+    let feed = events::Subscription::open(context.session, after, state.config.events).await?;
+    let stream = futures::stream::try_unfold(feed, |mut feed| async move {
+        let Some(event) = feed.next().await.map_err(std::io::Error::other)? else {
+            return Ok(None);
+        };
+        let frame = if matches!(event.kind, events::EventKind::Heartbeat) {
+            SseEvent::default().comment("keep-alive")
+        } else {
+            let name = match event.kind {
+                events::EventKind::Ready { .. } => "ready",
+                events::EventKind::Changed => "repository-changed",
+                events::EventKind::Reset { .. } => "reset",
+                events::EventKind::Heartbeat => unreachable!(),
+            };
+            let bytes = encode(&event, 64 * 1024)
+                .map_err(|_| std::io::Error::other("event response limit"))?;
+            let data =
+                String::from_utf8(bytes).map_err(|_| std::io::Error::other("event encoding"))?;
+            SseEvent::default()
+                .event(name)
+                .id(event.cursor.to_string())
+                .data(data)
+        };
+        Ok::<_, std::io::Error>(Some((frame, feed)))
+    });
+    let mut response = Sse::new(stream).into_response();
+    response
+        .headers_mut()
+        .insert("x-accel-buffering", "no".parse().unwrap());
+    Ok(response)
 }

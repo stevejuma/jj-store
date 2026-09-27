@@ -194,3 +194,9 @@ HTTP acceptance uses real authenticated native service fixtures and compares
 owned DTOs at exact operations, including binary media and error boundaries. The
 foreground server serves HTTP V1 and native RPC on one listener, with shared TLS
 and explicit insecure-loopback configuration.
+
+The cold server/CLI deployment fixture also opens authenticated SSE, publishes a
+native bookmark operation, resumes from the same event ID after server/storage
+restart and cache deletion, and checks live stream termination on token
+revocation. SSE and RPC share the production TLS listener and scoped native
+sessions.

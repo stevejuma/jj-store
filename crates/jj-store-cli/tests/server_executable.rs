@@ -755,6 +755,30 @@ async fn real_rustfs_server_cli_restart_and_revocation() {
         snapshot,
         "GETs published history"
     );
+    let events_url = format!("{base}/events");
+    let mut live = http
+        .get(&events_url)
+        .bearer_auth(admin.expose().as_str())
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(live.status(), reqwest::StatusCode::OK);
+    let mut buffer = String::new();
+    let ready = next_server_event(&mut live, &mut buffer).await.unwrap();
+    assert_eq!(ready["type"], "ready");
+    let resume = event_cursor(&ready);
+    success(native(
+        &f,
+        &admin,
+        &["-R", "work", "bookmark", "create", "streamed", "-r", "main"],
+    ));
+    let changed = next_server_event(&mut live, &mut buffer).await.unwrap();
+    assert_eq!(changed["type"], "changed");
+    assert!(
+        changed["cursor"]["position"].as_u64().unwrap()
+            > ready["cursor"]["position"].as_u64().unwrap()
+    );
+    drop(live);
     fs::write(
         f.root.path().join("work/local-only.txt"),
         "unsnapshotted local bytes",
@@ -837,6 +861,24 @@ async fn real_rustfs_server_cli_restart_and_revocation() {
         );
         tokio::time::sleep(Duration::from_millis(100)).await;
     }
+    let mut resumed = http
+        .get(&events_url)
+        .bearer_auth(admin.expose().as_str())
+        .header("last-event-id", &resume)
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(resumed.status(), reqwest::StatusCode::OK);
+    let mut buffer = String::new();
+    assert_eq!(
+        next_server_event(&mut resumed, &mut buffer).await.unwrap()["type"],
+        "ready"
+    );
+    assert_eq!(
+        next_server_event(&mut resumed, &mut buffer).await.unwrap(),
+        changed
+    );
+    drop(resumed);
     // The authoritative operation survives process/cache/storage restart.
     let recovered_graph = http_json(&http, &admin, &log_url).await;
     assert_eq!(recovered_graph["data"]["data"], graph["data"]["data"]);
@@ -937,6 +979,20 @@ async fn real_rustfs_server_cli_restart_and_revocation() {
         .unwrap();
     reader_client.heads().await.unwrap();
     http_json(&http, &reader, &log_url).await;
+    let mut revoked_stream = http
+        .get(&events_url)
+        .bearer_auth(reader.expose().as_str())
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(revoked_stream.status(), reqwest::StatusCode::OK);
+    let mut revoked_buffer = String::new();
+    assert_eq!(
+        next_server_event(&mut revoked_stream, &mut revoked_buffer)
+            .await
+            .unwrap()["type"],
+        "ready"
+    );
     let revoked: serde_json::Value = serde_json::from_str(&success(
         f.command()
             .env("JJ_STORE_TOKEN", admin.expose().as_str())
@@ -960,6 +1016,12 @@ async fn real_rustfs_server_cli_restart_and_revocation() {
     ))
     .unwrap();
     assert_eq!(revoked["state"], "committed");
+    assert!(
+        next_server_event(&mut revoked_stream, &mut revoked_buffer)
+            .await
+            .is_err()
+    );
+    drop(revoked_stream);
     let denied = http
         .get(&log_url)
         .bearer_auth(reader.expose().as_str())
@@ -1058,4 +1120,37 @@ async fn http_json(client: &reqwest::Client, token: &BearerToken, url: &str) -> 
     let json = response.json::<serde_json::Value>().await.unwrap();
     assert_eq!(status, reqwest::StatusCode::OK, "{json}");
     json
+}
+
+fn event_cursor(event: &serde_json::Value) -> String {
+    format!(
+        "v1:{}:{}:{}",
+        event["cursor"]["repository"].as_str().unwrap(),
+        event["cursor"]["epoch"].as_str().unwrap(),
+        event["cursor"]["position"].as_u64().unwrap()
+    )
+}
+async fn next_server_event(
+    response: &mut reqwest::Response,
+    buffer: &mut String,
+) -> Result<serde_json::Value, ()> {
+    tokio::time::timeout(Duration::from_secs(5), async {
+        loop {
+            if let Some(end) = buffer.find("\n\n") {
+                let frame = buffer[..end].to_owned();
+                buffer.drain(..end + 2);
+                if let Some(data) = frame.lines().find_map(|line| line.strip_prefix("data: ")) {
+                    return serde_json::from_str(data).map_err(|_| ());
+                }
+                continue;
+            }
+            let chunk = response.chunk().await.map_err(|_| ())?.ok_or(())?;
+            buffer.push_str(std::str::from_utf8(&chunk).map_err(|_| ())?);
+            if buffer.len() > 128 * 1024 {
+                return Err(());
+            }
+        }
+    })
+    .await
+    .map_err(|_| ())?
 }

@@ -16,7 +16,7 @@ use jj_store_model as m;
 use jj_store_service::{
     administration::RepositoryHost,
     auth::{BearerToken, Permission, SystemClock},
-    index_tasks,
+    events, index_tasks,
     native::NativeSession,
     pagination::{self, GraphPager, SnapshotCursors, directory::DirectoryPager},
     reads::{self, query as q},
@@ -32,6 +32,8 @@ type Result<T> = std::result::Result<T, Error>;
 pub struct Config {
     pub origin: String,
     pub concurrency: usize,
+    pub event_concurrency: usize,
+    pub events: events::Limits,
     pub workers: usize,
     pub timeout: Duration,
     pub max_json_bytes: usize,
@@ -45,6 +47,8 @@ impl Default for Config {
         Self {
             origin: "http://127.0.0.1:7443".into(),
             concurrency: 8,
+            event_concurrency: 16,
+            events: Default::default(),
             workers: 2,
             timeout: Duration::from_secs(30),
             max_json_bytes: 16 * 1024 * 1024,
@@ -59,6 +63,7 @@ struct State {
     host: RepositoryHost,
     config: Config,
     slots: Arc<Semaphore>,
+    event_slots: Arc<Semaphore>,
     queries: q::workers::Executors,
     graphs: GraphPager,
     directories: DirectoryPager,
@@ -76,6 +81,7 @@ impl HttpApi {
         if !matches!(url.scheme(), "http" | "https")
             || url.origin().ascii_serialization() != config.origin
             || !(1..=64).contains(&config.concurrency)
+            || !(1..=128).contains(&config.event_concurrency)
             || !(64..=64 * 1024 * 1024).contains(&config.max_json_bytes)
             || !(512..=32768).contains(&config.max_uri_bytes)
             || config.timeout.is_zero()
@@ -83,6 +89,7 @@ impl HttpApi {
         {
             return Err("HTTP limits or origin");
         }
+        config.events.validate().map_err(|_| "HTTP event limits")?;
         let queries = q::workers::Executors::new(
             cache,
             config.graph,
@@ -116,6 +123,7 @@ impl HttpApi {
         Ok(Self(Arc::new(State {
             host,
             slots: Arc::new(Semaphore::new(config.concurrency)),
+            event_slots: Arc::new(Semaphore::new(config.event_concurrency)),
             config,
             queries,
             graphs,
@@ -197,7 +205,17 @@ async fn admit(
     if let Err(error) = checked {
         return secure(error.into_response());
     }
-    let permit = match state.slots.clone().try_acquire_owned() {
+    let event_route = request.method() == axum::http::Method::GET
+        && request
+            .extensions()
+            .get::<axum::extract::MatchedPath>()
+            .is_some_and(|path| path.as_str() == "/v1/repos/{repo}/events");
+    let slots = if event_route {
+        &state.event_slots
+    } else {
+        &state.slots
+    };
+    let permit = match slots.clone().try_acquire_owned() {
         Ok(p) => p,
         Err(_) => return secure(Error::busy().into_response()),
     };
@@ -267,8 +285,13 @@ impl FromRequestParts<Arc<State>> for Context {
             .map_err(reads::Error::from)?;
         // Retain only range/request metadata; no bearer header enters response state.
         let mut headers = HeaderMap::new();
-        for value in parts.headers.get_all(header::RANGE) {
-            headers.append(header::RANGE, value.clone());
+        for name in [
+            header::RANGE,
+            axum::http::HeaderName::from_static("last-event-id"),
+        ] {
+            for value in parts.headers.get_all(&name) {
+                headers.append(name.clone(), value.clone());
+            }
         }
         Ok(Self {
             session,

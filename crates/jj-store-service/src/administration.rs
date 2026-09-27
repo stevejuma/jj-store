@@ -22,6 +22,7 @@ pub trait OperatorPolicies: Send + Sync {
 }
 #[derive(Clone)]
 pub struct RepositoryHost {
+    events: crate::events::Hints,
     store: Arc<dyn ObjectStore>,
     operators: Arc<dyn OperatorPolicies>,
     clock: Arc<dyn Clock>,
@@ -48,6 +49,7 @@ impl RepositoryHost {
             max_blob,
         )?;
         Ok(Self {
+            events: crate::events::Hints::default(),
             store,
             operators,
             clock,
@@ -62,14 +64,16 @@ impl RepositoryHost {
         &self,
         repository: m::RepositoryId,
     ) -> crate::transport::Result<NativeEndpoint> {
-        NativeEndpoint::new(
+        let mut endpoint = NativeEndpoint::new(
             repository,
             self.store.clone(),
             self.clock.clone(),
             self.protection.clone(),
             self.limits,
             self.max_blob,
-        )
+        )?;
+        endpoint.events = self.events.clone();
+        Ok(endpoint)
     }
     pub async fn create(
         &self,
@@ -246,7 +250,7 @@ impl NativeSession {
     pub async fn change_token(&self, request: &TokenRequest) -> wal::Result<PublishOutcome> {
         let outcome = tokio::time::timeout(self.limits.timeout, async {
             let prepared = self.token_request(request).await?;
-            self.coordinator.publish(&prepared).await
+            self.publish_request(&prepared).await
         })
         .await;
         // Never imply rejection if cancellation could have raced the manifest CAS.
