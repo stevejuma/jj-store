@@ -17,7 +17,7 @@
     parameters: {
       docs: {
         source: {
-          code: '<script>\n  import CommunityProjectsRevisionGraphIds from "./web/src/lib/ui/community-projects/CommunityProjectsRevisionGraphIds.svelte";\n<\/script>\n<CommunityProjectsRevisionGraphIds {commitId} {changeId} compactLeadingChars={6} expandedLeadingChars={10} placement="inline" />',
+          code: '<script>\n  import CommunityProjectsRevisionGraphIds from "./web/src/lib/ui/community-projects/CommunityProjectsRevisionGraphIds.svelte";\n<\/script>\n<CommunityProjectsRevisionGraphIds {commitId} {changeId} compactLeadingChars={4} expandedLeadingChars={5} placement="inline" />',
         },
       },
     },
@@ -59,16 +59,19 @@
       });
       await expect(within(commit).getByText("GIT")).toBeVisible();
       await expect(within(change).getByText("JJ")).toBeVisible();
-      await expect(within(commit).getByText("565656...c9")).toBeVisible();
-      await expect(within(change).getByText("ututut...ut")).toBeVisible();
+      await expect(within(commit).getByText("5656")).toBeVisible();
+      await expect(within(change).getByText("utut")).toBeVisible();
       await expect(split.querySelectorAll("svg")).toHaveLength(0);
       const width = split.getBoundingClientRect().width;
       const before = commit.getBoundingClientRect().width;
       await userEvent.hover(commit);
       await expect(await body.findByText(demoCommitId)).toBeVisible();
       await userEvent.tab();
-      await expect(within(commit).getByText("565656b3e4...c9")).toBeVisible();
-      await expect(within(change).getByText("ut...ut")).toBeVisible();
+      await expect(within(commit).getByText("56565..c9")).toBeVisible();
+      await expect(within(change).getByText("JJ")).toBeVisible();
+      await expect(
+        within(change).getByText("utut", { exact: true }),
+      ).not.toBeVisible();
       await waitFor(() =>
         expect(commit.getBoundingClientRect().width).toBeGreaterThan(
           before + 10,
@@ -77,13 +80,17 @@
       await expect(split.getBoundingClientRect().width).toBe(width);
       await userEvent.click(commit);
       await expect(write).toHaveBeenLastCalledWith(demoCommitId);
-      await expect(within(commit).getByText("Copied!")).toBeVisible();
+      await expect(
+        within(commit).getByText("Copied", { exact: true }),
+      ).toBeVisible();
       await userEvent.tab();
-      await expect(within(change).getByText("utututvvvv...ut")).toBeVisible();
+      await expect(within(change).getByText("ututu..ut")).toBeVisible();
       await expect(split.getBoundingClientRect().width).toBe(width);
       await userEvent.click(change);
       await expect(write).toHaveBeenLastCalledWith(demoChangeId);
-      await expect(within(change).getByText("Copied!")).toBeVisible();
+      await expect(
+        within(change).getByText("Copied", { exact: true }),
+      ).toBeVisible();
       await expect(commit).toHaveAttribute("data-copied", "true");
       await waitFor(() => expect(commit).not.toHaveAttribute("data-copied"), {
         timeout: 2000,
@@ -109,15 +116,17 @@
       });
       await userEvent.tab();
       await expect(commit).toHaveFocus();
-      await expect(within(commit).getByText("565656b3e4...c9")).toBeVisible();
+      await expect(within(commit).getByText("56565..c9")).toBeVisible();
       await userEvent.keyboard("{Enter}");
       await expect(write).toHaveBeenLastCalledWith(demoCommitId);
       await userEvent.tab();
       await expect(change).toHaveFocus();
-      await expect(within(change).getByText("utututvvvv...ut")).toBeVisible();
+      await expect(within(change).getByText("ututu..ut")).toBeVisible();
       await userEvent.keyboard(" ");
       await expect(write).toHaveBeenLastCalledWith(demoChangeId);
-      await expect(within(change).getByText("Copied!")).toBeVisible();
+      await expect(
+        within(change).getByText("Copied", { exact: true }),
+      ).toBeVisible();
     });
   }}
 />
@@ -131,9 +140,14 @@
       const button = canvas.getByRole("button", {
         name: `Copy Git commit SHA ${demoCommitId}`,
       });
+      await expect(
+        within(button).getByText("56565..c9", { exact: true }),
+      ).toBeVisible();
       await userEvent.click(button);
       await expect(write).toHaveBeenLastCalledWith(demoCommitId);
-      await expect(within(button).getByText("Copied!")).toBeVisible();
+      await expect(
+        within(button).getByText("Copied", { exact: true }),
+      ).toBeVisible();
     });
   }}
 />
@@ -147,6 +161,9 @@
       const button = canvas.getByRole("button", {
         name: `Copy JJ Change ID ${demoChangeId}`,
       });
+      await expect(
+        within(button).getByText("ututu..ut", { exact: true }),
+      ).toBeVisible();
       await userEvent.click(button);
       await expect(write).toHaveBeenLastCalledWith(demoChangeId);
     });
@@ -163,14 +180,16 @@
 />
 <Story
   name="Custom abbreviation"
-  args={{ compactLeadingChars: 4, expandedLeadingChars: 12 }}
+  args={{ compactLeadingChars: 5, expandedLeadingChars: 12 }}
   play={async ({ canvasElement }) => {
     const commit = within(canvasElement).getByRole("button", {
       name: `Copy Git commit SHA ${demoCommitId}`,
     });
-    await expect(within(commit).getByText("5656...c9")).toBeVisible();
+    await expect(
+      within(commit).getByText("56565", { exact: true }),
+    ).toBeVisible();
     await userEvent.tab();
-    await expect(within(commit).getByText("565656b3e4a1...c9")).toBeVisible();
+    await expect(within(commit).getByText("565656b3e4a1..c9")).toBeVisible();
     await userEvent.unhover(commit);
   }}
 />
@@ -184,12 +203,16 @@
         name: `Copy Git commit SHA ${demoCommitId}`,
       });
       await userEvent.click(commit);
-      await expect(within(commit).getByText("Retry")).toBeVisible();
+      await expect(
+        within(commit).getByText("Retry", { exact: true }),
+      ).toBeVisible();
       await expect(canvas.getByRole("status")).toHaveTextContent(
         "Could not copy Git commit SHA",
       );
       await userEvent.click(commit);
-      await expect(within(commit).getByText("Copied!")).toBeVisible();
+      await expect(
+        within(commit).getByText("Copied", { exact: true }),
+      ).toBeVisible();
     });
   }}
 />

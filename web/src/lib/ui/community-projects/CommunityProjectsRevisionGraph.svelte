@@ -238,6 +238,7 @@
     position: relative;
     z-index: 1;
     display: flex;
+    flex-wrap: wrap;
     box-sizing: border-box;
     min-width: 0;
     align-items: center;
@@ -254,6 +255,10 @@
     font: inherit;
     text-align: left;
     cursor: pointer;
+  }
+
+  .community-revision-graph__row :global(.community-revision-graph-copy) {
+    flex-basis: 12rem;
   }
 
   .community-revision-graph__row:hover,

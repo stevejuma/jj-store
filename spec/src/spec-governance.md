@@ -193,3 +193,12 @@ interaction/accessibility checks.
 The cold catalog lane checks native pointer and touch split-copy behavior,
 constant-width geometry and reduced motion against freshly built assets.
 Synthetic story hover events alone do not establish CSS hover acceptance.
+
+Split-copy cold acceptance checks four-character resting labels and expanded
+five-character prefixes with two dots and a two-character suffix. It prevents
+identifier clipping while either section expands. Single-identifier stories
+verify that the prefix, dots and suffix are visible immediately at rest.
+
+The default split-copy control stays within 122px width and 27px height at the
+standard root scale, including active and independent feedback states, with
+balanced inline padding.

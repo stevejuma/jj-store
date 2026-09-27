@@ -76,24 +76,37 @@ and Op Log rows are square-edged and retain bottom dividers through the final
 visible row. Revision rows with both a commit ID and JJ change ID use a shared
 split copy control with neutral GIT and accent JJ chips and no copy icons. Each
 semantic button copies its complete underlying native identifier and exposes it
-in a shadcn tooltip. Display text retains a configurable leading prefix (default
-six), three dots and the final two characters; short IDs remain whole. Hover or
-keyboard focus redistributes space inside a constant outer width, showing a
-longer active prefix (default ten) and two leading characters on the other side.
-Both sides remain tappable without hover; reduced motion disables the
-transition. Success or failure feedback belongs only to the clicked side and
-resets after 1.5 seconds. Either identifier may be absent; no empty button is
-rendered. Operation IDs retain their separately labelled control. JJ Log and Op
-Log rows open their changed files inline, and selecting a changed file opens the
-diff column. Op Log operation details and the selected file diff render as
-equal-width stacked cards in the same Column Canvas column: the operation card
-owns its title, collapse control, metadata and close action, while the file-diff
-card keeps its file header and view controls underneath. Parent operation
-navigation remains available without opening a standalone details column.
-Missing selected-file diffs and binary or unavailable diffs use the shared
-shadcn Empty composition with icon media rather than plain status text. Files
-opens the copied Community directory table until a file is selected; directory,
-file and snapshot navigation participate in the in-memory Back/Forward history.
+in a shadcn tooltip. At rest the display contains only a configurable leading
+prefix (default four), with no dots or suffix. Hover or keyboard focus
+redistributes space inside a constant outer width, revealing a longer active
+prefix (default five), two dots and the final two characters; short IDs remain
+whole. The inactive side keeps only its identifying chip. Both sides remain
+tappable without hover; reduced motion disables the transition. Success or
+failure feedback belongs only to the clicked side and resets after 1.5 seconds.
+The expanded half retains its chip beside a tick and 8px `Copied` text (or a
+warning and `Retry`), with a live announcement. Feedback keeps the tapped half
+expanded on touch devices. When another half expands, the previous half keeps
+its chip and independent feedback tint. CSS animates the grid redistribution;
+pointer, keyboard focus and copy feedback select the active side. Either
+identifier may be absent; no empty button is rendered. A single identifier shows
+the expanded prefix, two dots and final two characters immediately, without
+requiring hover or focus. The default control uses 11px resting identifiers,
+10px expanded identifiers, 9px chips and a roughly 121px total width at the
+standard 16px root scale. Each half retains 5px inline padding, including at the
+trailing edge during hover and feedback. Graph rows wrap the ID control below
+metadata before bookmark chips can overlap it. Clipboard live announcements
+remain scoped to the split control; operation IDs retain their separately
+labelled legacy control. JJ Log and Op Log rows open their changed files inline,
+and selecting a changed file opens the diff column. Op Log operation details and
+the selected file diff render as equal-width stacked cards in the same Column
+Canvas column: the operation card owns its title, collapse control, metadata and
+close action, while the file-diff card keeps its file header and view controls
+underneath. Parent operation navigation remains available without opening a
+standalone details column. Missing selected-file diffs and binary or unavailable
+diffs use the shared shadcn Empty composition with icon media rather than plain
+status text. Files opens the copied Community directory table until a file is
+selected; directory, file and snapshot navigation participate in the in-memory
+Back/Forward history.
 
 Branch cards retain themed bottom dividers, including the final visible card in
 filtered lists, and keep square lower corners. Branches, JJ Log and Op Log omit

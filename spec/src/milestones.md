@@ -33,7 +33,7 @@ adds evidence here in its enclosing Jujutsu change.
 | M4.5        | Done        | M4.4        | JST-UI-002                                                              | Community shell mechanics and navigation acceptance                                                                 | Implement repository fixture views                       | E-UI-002                                                                                                                                                                                        |
 | M4.6        | Done        | M4.5        | JST-UI-003                                                              | Native fixture graph/file/diff drill-down and accessibility                                                         | Visual review; live UI remains deferred                  | E-UI-003                                                                                                                                                                                        |
 | M4.7        | Done        | M4.6        | JST-UI-004                                                              | Complete in-memory application, snapshot file browser and profile footer                                            | Retain fixture acceptance; live UI remains deferred      | E-UI-004                                                                                                                                                                                        |
-| M4.8        | Done        | M4.7        | JST-UI-002,JST-UI-003,JST-UI-004                                        | Reviewed shell/card/header styling and directory navigation pass interaction, accessibility and cold catalog checks | Visual review pending; live UI remains deferred          | E-UI-005,E-UI-006,E-UI-009                                                                                                                                                                      |
+| M4.8        | Done        | M4.7        | JST-UI-002,JST-UI-003,JST-UI-004                                        | Reviewed shell/card/header styling and directory navigation pass interaction, accessibility and cold catalog checks | Visual review pending; live UI remains deferred          | E-UI-005,E-UI-006,E-UI-009,E-UI-010                                                                                                                                                             |
 | M4.9        | Done        | M4.8        | JST-ARCH-004,JST-UI-005                                                 | Shared production components/controller and no-growth architecture checks                                           | Retain source ownership and proceed to bounded APIs      | E-UI-007,E-UI-008                                                                                                                                                                               |
 | M4.10       | Done        | M4.9        | JST-API-001,JST-API-002,JST-API-006                                     | Bounded bookmark, directory metadata and operation-change contracts                                                 | Implement M4.11 authenticated browser data/controller    | E-M4-018                                                                                                                                                                                        |
 | M4.11       | Planned     | M4.10       | JST-API-004,JST-API-005,JST-UI-005                                      | Authenticated cached browser implements all browsing screens                                                        | Implement HTTP data source and production shell          | -                                                                                                                                                                                               |
@@ -9214,6 +9214,162 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Existing registry Design Core ^0.2.0, Svelte 5.57.1, Storybook 10.5.7, Vitest 4.1.11. Enclosing Jujutsu change is the revision reference.",
     "formats": "Presentation-only prefix/suffix abbreviation and fixed-width split-copy interaction. Complete underlying clipboard identities retained. No service, schema, storage or credential format changes. User requested a checkpoint commit before continuing validation."
+  },
+  {
+    "id": "E-UI-010",
+    "tasks": ["M4.8"],
+    "date": "2026-09-27",
+    "kind": "implementation",
+    "files": [
+      "catalog/components/community-projects/CommunityProjectsRevisionGraphIds.stories.svelte",
+      "catalog/components/community-projects/revision-id.test.ts",
+      "scripts/catalog-split-copy.mjs",
+      "spec/src/api.md",
+      "spec/src/milestones.md",
+      "spec/src/ui.md",
+      "web/src/lib/ui/community-projects/CommunityProjectsRevisionGraph.svelte",
+      "web/src/lib/ui/community-projects/CommunityProjectsRevisionGraphIds.svelte",
+      "web/src/lib/ui/community-projects/revision-graph-ids.css",
+      "web/src/lib/ui/community-projects/revision-id.ts",
+      "spec/src/spec-governance.md",
+      "spec/src/verification.md"
+    ],
+    "tests": [
+      "catalog/components/community-projects/revision-id.test.ts#abbreviates native identifiers with a prefix and final two characters",
+      "scripts/catalog-browser.test.mjs#cold_catalog_contract"
+    ],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-projects/CommunityProjectsRevisionGraphIds.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Nine focused interaction/accessibility stories pass with five-character prefixes, two-dot separators and eight-character expanded prefixes."
+      },
+      {
+        "command": "pnpm catalog:test",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 23 catalog unit tests pass including updated abbreviation boundary/invalid-input tests."
+      },
+      {
+        "command": "pnpm catalog:test:browser",
+        "result": "pass",
+        "failures": 0,
+        "note": "Fresh static build and cold_catalog_contract pass. Bookmark overlap is resolved by wrapping at the graph metadata basis. Native pointer/touch copying, independent feedback, constant outer width, unclipped suffixes and reduced motion pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All normal checks pass, including contracts, architecture, Svelte diagnostics and locked Rust clippy."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test",
+        "result": "fail",
+        "failures": 2,
+        "note": "42 of 44 stories pass; OpLog and ShellAndGraphAlignment encounter multiple status roles because the new clipboard live region also rendered inside legacy operation-ID controls."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte catalog/components/store-application/RepositoryReview.stories.svelte -t 'OpLog|ShellAndGraphAlignment'",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both exact regressions pass after scoping the clipboard live region to the Git/JJ control; legacy operation-ID presentation stays unchanged."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test",
+        "result": "pass",
+        "failures": 0,
+        "note": "Full suite passes after the Op Log correction: 23 catalog unit and 44 interaction/accessibility stories, cold native-pointer/touch catalog acceptance, web/governance/contracts/storage harness and full Rust workspace. This run used the intermediate five-character labels; final four-character at-rest refinement is verified below."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm format:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rust and repository-wide Prettier formatting pass."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-projects/CommunityProjectsRevisionGraphIds.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final requested display: all nine focused stories pass with only four characters at rest and prefix/dots/suffix revealed by hover or keyboard focus."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-projects/CommunityProjectsRevisionGraphIds.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Nine stories pass after reclaiming reserved width: four characters at rest, six-character expanded prefix with two dots and suffix, and compact independent check/warning feedback."
+      },
+      {
+        "command": "pnpm catalog:test:browser",
+        "result": "pass",
+        "failures": 0,
+        "note": "Intermediate reclaimed-width control passed cold pointer/touch acceptance."
+      },
+      {
+        "command": "pnpm catalog:test:browser",
+        "result": "fail",
+        "failures": 1,
+        "note": "After making the inactive half chip-only, the geometry helper waited for an absent code element. The helper now inspects all visible chip, identifier and feedback boxes, and preserves minimum trailing padding assertions."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-projects/CommunityProjectsRevisionGraphIds.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "All nine final stories pass with chip, tick and Copied feedback in the expanded half, four-character resting prefixes and five-character expanded prefixes with dots/suffix."
+      },
+      {
+        "command": "pnpm catalog:test:browser",
+        "result": "pass",
+        "failures": 0,
+        "note": "Fresh build and cold native-pointer/touch acceptance pass: default width <=122px, height <=27px, constant outer width, and at least 4px measured edge clearance for every visible chip/text/feedback box."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final component has zero Svelte errors/warnings and passes the 110-module architecture boundary."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-projects/CommunityProjectsRevisionGraphIds.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Latest single-identifier refinement passes all nine focused interaction/accessibility stories. Git-only and JJ-only now assert the five-character prefix, two dots and two-character suffix immediately at rest, before interaction; paired controls retain four-character resting labels."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final source passes all normal checks: 11-package boundaries, 110-module architecture, contracts, progress, rustfmt, zero web/catalog Svelte errors or warnings, and locked workspace clippy."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final source passes all 23 catalog unit tests, 44 Storybook interaction/accessibility stories, fresh-build cold_catalog_contract pointer/touch/geometry acceptance, web/governance/contracts/storage-harness tests, and the complete Rust workspace. Environment-gated ignored RustFS tests were not executed; no new live-service claim is made."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final source builds the static Storybook catalog, production browser and locked Rust workspace. Existing non-failing Design Core CSS minifier and Storybook chunk-size warnings remain."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 18 canonical lanes pass on final source, including cold catalog, 44 stories, eight production browser scenarios, web/catalog types and units, contracts, Rust workspace, mdBook and spec-first. This completes the graph overlap, native pointer/touch, reduced-motion and aggregate-validation gaps recorded at checkpoint E-UI-009."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm format:check; pnpm check:progress; pnpm spec:validate; pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final repository-wide formatting and evidence/specification consumers pass: 43 tasks, 65 requirements, seven protected files and four canonical chapters. Visual baselines remain unapproved."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "versions": "Registry Design Core ^0.2.0; Svelte 5.57.1; Storybook 10.5.7; Vitest 4.1.11. Enclosing Jujutsu change is the revision reference.",
+    "formats": "Final user refinement: paired controls show four leading characters alone at rest; hover/focus reveals five leading characters, two dots and the final two characters. A single Git or JJ identifier shows that expanded abbreviation immediately at rest. Inactive halves retain their chip. Balanced 5px inline padding; 11px resting IDs, 10px expanded IDs, 9px chips and 8px Copied text with tick. Default paired control fits 122px by 27px with constant outer width. Feedback expands the tapped side and preserves independent feedback tint when the other side expands. CSS animates grid tracks; pointer/focus/feedback select the active half. Graph rows wrap before bookmark/ID overlap. No transport, schema or stored format changes. Stories remain visual-pending; screenshots are not approved baselines. Functional acceptance completes the pending E-UI-009 checkpoint; next action is optional human visual review."
   }
 ]
 ```

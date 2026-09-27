@@ -27,23 +27,30 @@ export async function expectSplitCopy(browser, origin) {
         name: `Copy JJ Change ID ${jj}`,
         exact: true,
       });
-      await expect(
-        commit.getByText("565656...c9", { exact: true }),
-      ).toBeVisible();
-      await expect(
-        change.getByText("ututut...ut", { exact: true }),
-      ).toBeVisible();
+      await expect(commit.getByText("5656", { exact: true })).toBeVisible();
+      await expect(change.getByText("utut", { exact: true })).toBeVisible();
       const width = (await group.boundingBox()).width;
+      expect(width).toBeLessThanOrEqual(122);
+      expect((await group.boundingBox()).height).toBeLessThanOrEqual(27);
       const left = (await commit.boundingBox()).width;
       const right = (await change.boundingBox()).width;
       const unchangedWidth = async () =>
         expect((await group.boundingBox()).width).toBe(width);
       const noClipping = async () => {
+        await expect
+          .poll(() => group.evaluate((el) => el.getAnimations().length))
+          .toBe(0);
         for (const button of [commit, change]) {
           const box = await button.boundingBox();
-          const code = await button.locator("code:visible").boundingBox();
-          expect(code.x).toBeGreaterThanOrEqual(box.x);
-          expect(code.x + code.width).toBeLessThanOrEqual(box.x + box.width);
+          for (const content of await button
+            .locator(".community-chip, code:visible, .id-feedback:visible")
+            .all()) {
+            const bounds = await content.boundingBox();
+            expect(bounds.x).toBeGreaterThanOrEqual(box.x + 4);
+            expect(bounds.x + bounds.width).toBeLessThanOrEqual(
+              box.x + box.width - 4,
+            );
+          }
         }
       };
       await noClipping();
@@ -51,11 +58,9 @@ export async function expectSplitCopy(browser, origin) {
         await expect(group).toHaveCSS("transition-duration", "0.16s");
         await commit.hover();
         await expect(
-          commit.getByText("565656b3e4...c9", { exact: true }),
+          commit.getByText("56565..c9", { exact: true }),
         ).toBeVisible();
-        await expect(
-          change.getByText("ut...ut", { exact: true }),
-        ).toBeVisible();
+        await expect(change.getByText("JJ", { exact: true })).toBeVisible();
         await expect
           .poll(async () => (await commit.boundingBox()).width)
           .toBeGreaterThan(left + 10);
@@ -68,11 +73,9 @@ export async function expectSplitCopy(browser, origin) {
         await noClipping();
         await change.hover();
         await expect(
-          change.getByText("utututvvvv...ut", { exact: true }),
+          change.getByText("ututu..ut", { exact: true }),
         ).toBeVisible();
-        await expect(
-          commit.getByText("56...c9", { exact: true }),
-        ).toBeVisible();
+        await expect(commit.getByText("GIT", { exact: true })).toBeVisible();
         await expect
           .poll(async () => (await change.boundingBox()).width)
           .toBeGreaterThan(right + 10);
@@ -95,13 +98,21 @@ export async function expectSplitCopy(browser, origin) {
       await expect
         .poll(() => page.evaluate(() => navigator.clipboard.readText()))
         .toBe(git);
-      await expect(commit.getByText("Copied!", { exact: true })).toBeVisible();
+      await expect(commit.getByText("Copied", { exact: true })).toBeVisible();
+      await expect(commit.getByText("GIT", { exact: true })).toBeVisible();
+      await expect(
+        commit.locator('[data-copy-feedback="copied"] svg'),
+      ).toBeVisible();
       if (touch) await change.tap();
       else await change.click();
       await expect
         .poll(() => page.evaluate(() => navigator.clipboard.readText()))
         .toBe(jj);
-      await expect(change.getByText("Copied!", { exact: true })).toBeVisible();
+      await expect(change.getByText("Copied", { exact: true })).toBeVisible();
+      await expect(change.getByText("JJ", { exact: true })).toBeVisible();
+      await expect(
+        change.locator('[data-copy-feedback="copied"] svg'),
+      ).toBeVisible();
       await expect(commit).toHaveAttribute("data-copied", "true");
       await unchangedWidth();
       await noClipping();
@@ -112,12 +123,8 @@ export async function expectSplitCopy(browser, origin) {
         timeout: 2000,
       });
       if (touch) {
-        await expect(
-          commit.getByText("565656...c9", { exact: true }),
-        ).toBeVisible();
-        await expect(
-          change.getByText("ututut...ut", { exact: true }),
-        ).toBeVisible();
+        await expect(commit.getByText("5656", { exact: true })).toBeVisible();
+        await expect(change.getByText("utut", { exact: true })).toBeVisible();
       }
       await page.screenshot({
         path: `.scratch/split-copy-${touch ? "touch" : "desktop"}.png`,

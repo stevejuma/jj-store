@@ -484,3 +484,8 @@ Browser native-ID controls derive their compact labels from the complete DTO
 identities, preserving the suffix rather than using caller-truncated labels.
 Clipboard actions retain the exact underlying identity; the split-control
 presentation and interaction contract is owned by JST-UI-003.
+
+Paired native-ID labels default to four leading characters alone. Hover or
+keyboard focus reveals the longer prefix, two dots and final two characters. A
+single identifier shows that longer abbreviation immediately; configuring the
+display never changes clipboard values.

@@ -12,14 +12,14 @@
     changeId = "",
     commitId = "",
     commitLabel = "commit ID",
-    compactLeadingChars = 6,
-    expandedLeadingChars = 10,
+    compactLeadingChars = 4,
+    expandedLeadingChars = 5,
     placement = "overlay",
   }: {
     changeId?: string | undefined;
     commitId?: string | undefined;
     commitLabel?: string | undefined;
-    /** Leading characters retained before ... and the final two characters. */
+    /** Leading characters shown at rest, without dots or suffix. */
     compactLeadingChars?: number;
     /** Leading characters shown by the hovered or keyboard-focused half. */
     expandedLeadingChars?: number;
@@ -32,11 +32,16 @@
   const timers: Partial<Record<Side, ReturnType<typeof setTimeout>>> = {};
   const requests = { commit: 0, change: 0 };
   let destroyed = false;
-  const compact = $derived(revisionLeadingChars(compactLeadingChars, 6));
+  const compact = $derived(revisionLeadingChars(compactLeadingChars, 4));
   const expanded = $derived(
-    Math.max(compact, revisionLeadingChars(expandedLeadingChars, 10)),
+    Math.max(compact, revisionLeadingChars(expandedLeadingChars, 5)),
   );
-  const capacity = $derived(Math.max(compact * 2, expanded + 2));
+  let hovered = $state<Side | null>(null);
+  let focused = $state<Side | null>(null);
+  let feedbackSide = $state<Side>("commit");
+  const active = $derived(
+    focused ?? hovered ?? (feedback[feedbackSide] ? feedbackSide : null),
+  );
 
   function reset() {
     for (const side of ["commit", "change"] as const) {
@@ -71,6 +76,7 @@
     }
     if (destroyed || requests[side] !== request) return;
     feedback[side] = result;
+    feedbackSide = side;
     timers[side] = setTimeout(() => {
       feedback[side] = "";
     }, 1_500);
@@ -86,6 +92,25 @@
           type="button"
           class="community-revision-graph-ids__split-button"
           data-side={side}
+          data-active={active === side || undefined}
+          onpointerenter={(event) => {
+            if (
+              event.pointerType !== "touch" &&
+              matchMedia("(hover: hover)").matches
+            )
+              hovered = side;
+          }}
+          onpointerleave={() => {
+            hovered = null;
+          }}
+          onfocus={(event) => {
+            focused = event.currentTarget.matches(":focus-visible")
+              ? side
+              : null;
+          }}
+          onblur={() => {
+            focused = null;
+          }}
           aria-label="Copy {label} {value}"
           data-copied={feedback[side] === "copied" || undefined}
           data-copy-failed={feedback[side] === "failed" || undefined}
@@ -97,16 +122,21 @@
           <CommunityChip size="inline" shape="square" variant="muted" ariaHidden
             >{chip}</CommunityChip
           >
-          {#if feedback[side]}
-            <code>{feedback[side] === "copied" ? "Copied!" : "Retry"}</code>
-          {:else}
-            <code class="id-compact"
-              >{abbreviateRevisionId(value, compact)}</code
+          {#if feedback[side] && active === side}
+            <span
+              class="id-feedback"
+              data-copy-feedback={feedback[side]}
+              aria-hidden="true"
             >
+              {#if feedback[side] === "copied"}<Check />{:else}<TriangleAlert
+                />{/if}
+              {feedback[side] === "copied" ? "Copied" : "Retry"}
+            </span>
+          {:else}
+            <code class="id-compact">{value.slice(0, compact)}</code>
             <code class="id-expanded"
               >{abbreviateRevisionId(value, expanded)}</code
             >
-            <code class="id-collapsed">{abbreviateRevisionId(value, 2)}</code>
           {/if}
         </button>
       {/snippet}
@@ -120,9 +150,10 @@
     {#if commitLabel === "commit ID"}
       <div
         class="community-revision-graph-ids__split"
+        data-active={active ?? undefined}
         data-single={!commitId || !changeId || undefined}
-        style:--id-capacity={capacity + 10}
-        style:--id-expanded={expanded + 5}
+        style:--id-compact={compact}
+        style:--id-expanded={expanded + 4}
         role="group"
         aria-label="Native revision identifiers"
       >
@@ -166,17 +197,24 @@
         {:else}<Copy aria-hidden="true" />{/if}
       </button>
     {/if}
-    <span class="sr-only" role="status" aria-atomic="true">
-      {#each ["commit", "change"] as const as side}
-        {#if feedback[side]}
-          {feedback[side] === "copied" ? "Copied" : "Could not copy"}
-          {side === "change"
-            ? "JJ Change ID"
-            : commitLabel === "commit ID"
-              ? "Git commit SHA"
-              : commitLabel}.
-        {/if}
-      {/each}
-    </span>
+    {#if commitLabel === "commit ID"}
+      <span
+        class="sr-only"
+        role="status"
+        aria-label="Clipboard feedback"
+        aria-atomic="true"
+      >
+        {#each ["commit", "change"] as const as side}
+          {#if feedback[side]}
+            {feedback[side] === "copied" ? "Copied" : "Could not copy"}
+            {side === "change"
+              ? "JJ Change ID"
+              : commitLabel === "commit ID"
+                ? "Git commit SHA"
+                : commitLabel}.
+          {/if}
+        {/each}
+      </span>
+    {/if}
   </div>
 {/if}
