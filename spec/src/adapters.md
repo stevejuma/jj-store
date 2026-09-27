@@ -146,3 +146,10 @@ only that configured scope's files. Historical metadata search is explicit;
 visible-commit mode requires operation selection when heads are ambiguous.
 Pagination reaching its offset budget reports truncation without an unusable
 continuation. Search remains unable to publish repository history.
+
+HTTP composition accepts only explicitly configured per-repository search
+handles and runner health receivers. It constructs pagers with the shared native
+content worker pool and caps search output to the HTTP response budget. Route
+availability does not imply an index is ready; status distinguishes durable and
+served positions, and a missing reader returns search_not_ready. Server runner
+configuration and remote snapshot restoration require separate acceptance.

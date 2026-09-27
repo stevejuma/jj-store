@@ -33,9 +33,9 @@ adds evidence here in its enclosing Jujutsu change.
 | M5.1        | Done        | M4.1       | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Basic changes/refs/reconcile; preview receipt and semantic policy                     | Retain basic mutation acceptance                    | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004                                                                                                                      |
 | M5.2        | Done        | M5.1       | JST-MUT-003                                                             | Full abandon descendant bookmark workspace/evolution parity                           | Retain abandon acceptance                           | E-M5-005                                                                                                                                                             |
 | M5.3        | Done        | M5.1       | JST-MUT-004                                                             | Atomic stale-safe resolution with native conflict variants                            | Retain mutation conformance; proceed to M6          | E-M5-006,E-M5-007,E-M5-008                                                                                                                                           |
-| M6          | In progress | M5         | JST-ADAPT-001,JST-ADAPT-002,JST-ADAPT-003,JST-ADAPT-004                 | Replay-equivalent searchable projection with freshness                                | Connect HTTP/server search and remote snapshots     | E-M6-001,E-M6-002,E-M6-003,E-M6-004,E-M6-005                                                                                                                         |
+| M6          | In progress | M5         | JST-ADAPT-001,JST-ADAPT-002,JST-ADAPT-003,JST-ADAPT-004                 | Replay-equivalent searchable projection with freshness                                | Configure server search and remote snapshots        | E-M6-001,E-M6-002,E-M6-003,E-M6-004,E-M6-005,E-M6-006                                                                                                                |
 | M6.1        | Done        | M5         | JST-ADAPT-001,JST-ADAPT-002                                             | Ordered committed reader and durable replay-safe checkpoints                          | Implement Tantivy projection and search             | E-M6-001                                                                                                                                                             |
-| M6.2        | In progress | M6.1       | JST-ADAPT-003,JST-ADAPT-004                                             | Tantivy crash/rebuild/generation and revocation tests                                 | Connect HTTP/server search and remote snapshots     | E-SCOPE-001,E-M6-002,E-M6-003,E-M6-004,E-M6-005                                                                                                                      |
+| M6.2        | In progress | M6.1       | JST-ADAPT-003,JST-ADAPT-004                                             | Tantivy crash/rebuild/generation and revocation tests                                 | Configure server search and remote snapshots        | E-SCOPE-001,E-M6-002,E-M6-003,E-M6-004,E-M6-005,E-M6-006                                                                                                             |
 | M8a         | Planned     | M6,M4.3    | JST-COMPAT-003,JST-SEC-005                                              | Pinned release, restore, security, performance and cold UI evidence                   | Complete backend hardening; retain deferred UI gate | E-SCOPE-001                                                                                                                                                          |
 | M8a.1       | Planned     | M6         | JST-COMPAT-003,JST-SEC-005                                              | Local/shared examples, diagnostics, restore and request budgets                       | Run non-UI release acceptance                       | E-SCOPE-001                                                                                                                                                          |
 | M7          | Deferred    | M8a        | JST-ADAPT-005                                                           | Complete read-only replica through applied position                                   | After first release                                 | -                                                                                                                                                                    |
@@ -6995,6 +6995,125 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Rust 1.97.1 with rustfmt; jj-cli/jj-lib 0.45.1 at 7c41cdeb16b6b321c64e789a966b6adf723816a5; jj-native-0.45.1-v1; Tantivy 0.26.2 at 72d1ef9a6468aa68bbc69dcc80cdf60aaf64364d.",
     "formats": "New in-memory search serving request/status/page contracts and ephemeral jss1 HMAC cursor profile. Canonical native/WAL/receipt/adapter cursor, local Tantivy schema 2 and registered HTTP formats remain unchanged. Enclosing Jujutsu change is the revision reference; no UI changes."
+  },
+  {
+    "id": "E-M6-006",
+    "tasks": ["M6", "M6.2"],
+    "date": "2026-09-27",
+    "kind": "http-search",
+    "files": [
+      "Cargo.lock",
+      "crates/jj-store-cli/tests/native_lifecycle/http_search.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/search_paging.rs",
+      "crates/jj-store-http/Cargo.toml",
+      "crates/jj-store-http/src/contract.rs",
+      "crates/jj-store-http/src/contract/tests.rs",
+      "crates/jj-store-http/src/dto.rs",
+      "crates/jj-store-http/src/error.rs",
+      "crates/jj-store-http/src/lib.rs",
+      "crates/jj-store-http/src/routes.rs",
+      "crates/jj-store-http/src/search.rs",
+      "docs/evidence/m6-http-search.md",
+      "schemas/openapi.json",
+      "scripts/contracts.mjs",
+      "spec/src/adapters.md",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/compatibility.md",
+      "spec/src/milestones.md",
+      "spec/src/spec-governance.md",
+      "web/src/lib/api/generated.ts"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/native_lifecycle/http_search.rs#http_search_pins_results_across_writes_and_captures_contracts",
+      "crates/jj-store-cli/tests/native_lifecycle/http_search.rs#http_search_rejects_bad_inputs_and_unconfigured_repositories",
+      "crates/jj-store-cli/tests/native_lifecycle/http_search.rs#http_search_revocation_and_repository_isolation_precede_query_details",
+      "crates/jj-store-cli/tests/native_lifecycle/http_search.rs#http_search_reports_degradation_and_head_runs_without_publication",
+      "crates/jj-store-cli/tests/native_lifecycle/http_search.rs#http_search_requires_head_selection_and_reports_missing_reader",
+      "crates/jj-store-http/src/contract/tests.rs#search_contract_requires_query_and_exposes_freshness_and_resets"
+    ],
+    "runs": [
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle http_search_pins_results_across_writes_and_captures_contracts --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "Initial acceptance cannot compile: missing SearchIndex and HttpApi::with_search (two diagnostics)."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle http_search_pins_results_across_writes_and_captures_contracts --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Original named acceptance passes after implementation and again with the committed dependency lock."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle http_search --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial four HTTP search fixtures pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-http --lib --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Six HTTP contract tests pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm contracts:generate",
+        "result": "pass",
+        "failures": 0,
+        "note": "OpenAPI and TypeScript declarations regenerated."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm contracts:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "47 actual HTTP/SSE responses conform; six contract validators and TypeScript checks pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle http_search --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All five HTTP search fixtures pass, including multiple-head selection and an absent reader."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All checks pass: rustfmt, boundaries, progress, generated contracts, existing Svelte and all-target Clippy."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test",
+        "result": "pass",
+        "failures": 0,
+        "note": "344 Rust tests passed, zero failures, six external tests ignored; governance, harness, contract and existing web unit checks pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Existing browser bundle and Rust workspace build successfully."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 13 specification lanes pass, including existing cold browser interaction/accessibility, Rust tests, mdBook and spec-first."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm format:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rustfmt and repository Prettier formatting pass."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Configure server search runners, credentials, lifecycle and diagnostics.",
+      "Implement immutable remote index snapshots and restore; record cold deployment and measured performance evidence. RustFS/TLS external qualification is blocked; UI remains deferred."
+    ],
+    "versions": "Rust 1.97.1 with rustfmt; jj-cli/jj-lib 0.45.1 at 7c41cdeb16b6b321c64e789a966b6adf723816a5; jj-native-0.45.1-v1; Tantivy 0.26.2 at 72d1ef9a6468aa68bbc69dcc80cdf60aaf64364d.",
+    "formats": "Adds registered V1 HTTP search and status routes, per-repository search capability and optional search_status error data; generated OpenAPI and client declarations updated. Local schema 2, jss1 cursors and authoritative native/WAL/receipt formats unchanged. Enclosing Jujutsu change is the revision reference."
   }
 ]
 ```

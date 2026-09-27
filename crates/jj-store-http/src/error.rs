@@ -9,6 +9,7 @@ pub struct Error {
     snapshot: Option<Box<reads::ReadSnapshot>>,
     heads: Option<Box<reads::HeadSnapshot>>,
     length: Option<u64>,
+    search_status: Option<Box<jj_store_tantivy::paging::Status>>,
 }
 impl Error {
     pub fn new(status: StatusCode, code: &'static str) -> Self {
@@ -18,6 +19,7 @@ impl Error {
             snapshot: None,
             heads: None,
             length: None,
+            search_status: None,
         }
     }
     pub fn invalid() -> Self {
@@ -64,6 +66,7 @@ impl IntoResponse for Error {
             code: self.code,
             snapshot: self.snapshot,
             heads: self.heads,
+            search_status: self.search_status,
         };
         let (status, bytes) = match encode(&value, 64 * 1024) {
             Ok(bytes) => (self.status, bytes),
@@ -211,6 +214,36 @@ impl From<jj_store_service::uploads::Error> for Error {
             E::Busy => Self::busy(),
             E::Corrupt => Self::new(StatusCode::SERVICE_UNAVAILABLE, "corrupt_upload"),
             E::Unavailable => Self::unavailable(),
+        }
+    }
+}
+
+impl From<jj_store_tantivy::paging::Error> for Error {
+    fn from(value: jj_store_tantivy::paging::Error) -> Self {
+        use jj_store_adapters::Error as A;
+        use jj_store_tantivy::paging::Error as E;
+        match value {
+            E::Invalid => Self::invalid(),
+            E::InvalidCursor => Self::new(StatusCode::BAD_REQUEST, "invalid_cursor"),
+            E::CursorReset => Self::new(StatusCode::CONFLICT, "cursor_reset"),
+            E::EpochChanged => Self::new(StatusCode::CONFLICT, "epoch_changed"),
+            E::NotReady => Self::new(StatusCode::SERVICE_UNAVAILABLE, "search_not_ready"),
+            E::IndexLag(status) => Self {
+                search_status: Some(status),
+                ..Self::new(StatusCode::CONFLICT, "index_lag")
+            },
+            E::SelectHead(heads) => Self::heads(*heads),
+            E::Limit | E::Adapter(A::Limit) => Self::limit(),
+            E::Busy | E::Adapter(A::Busy) => Self::busy(),
+            E::Unavailable | E::Adapter(A::Unavailable | A::CursorConflict | A::Projection) => {
+                Self::unavailable()
+            }
+            E::Adapter(A::Denied) => Self::denied(),
+            E::Adapter(A::Invalid) => Self::invalid(),
+            E::Adapter(A::Corrupt) => Self::new(StatusCode::SERVICE_UNAVAILABLE, "corrupt_index"),
+            E::Adapter(A::Canceled) => Self::new(StatusCode::REQUEST_TIMEOUT, "canceled"),
+            E::Read(e) => e.into(),
+            E::Native(e) => e.into(),
         }
     }
 }

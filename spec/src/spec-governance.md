@@ -139,3 +139,9 @@ Dependency checks permit service-to-adapter authorization wiring while retaining
 the adapter-to-service/native/UI prohibition. Adapter runner and fault fixtures
 join normal Rust and specification validation; their tests cannot substitute for
 real storage deployment or Tantivy-specific durability qualification.
+
+Generated-contract checks capture registered search page, status and freshness
+error responses through a real native fixture. The capture must execute its
+exact named test and produce samples; a zero-test invocation cannot count as
+contract evidence. Generated API declarations remain permitted during UI
+deferral.

@@ -159,6 +159,18 @@ impl Document {
                 "stale_snapshot, stale_bookmark, stale_conflict, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt."
             );
         }
+        if path.ends_with("/search") || path.ends_with("/search/status") {
+            operation["tags"] = json!(["search"]);
+            operation["description"] = json!(
+                "Requires current repository read permission. Only explicitly configured repositories advertise search. Search pins a native view and Tantivy generation, reauthorizes every page, and never publishes. q is required; at_op selects visible-commit mode, historical mode is explicit. All query inputs must match a continuation. Minimum-position waits are bounded; 409 index_lag includes authorized search_status. Expired/restarted cursors require reset. Indexed positions are distinct from current repository positions. Source strings are untrusted data."
+            );
+            operation["responses"]["501"] = json!({"description":"Search is not configured for this repository.", "content":{"application/json":{"schema":error}}});
+            operation["responses"]["409"]["description"] = json!(
+                "index_lag with search_status, select_operation with heads, cursor_reset or epoch_changed."
+            );
+            operation["responses"]["503"]["description"] =
+                json!("search_not_ready, busy, unavailable, corrupt_index, or incomplete history.");
+        }
         if path.ends_with("/conflict-uploads") {
             operation["tags"] = json!(["mutations"]);
             operation["description"] = json!(
@@ -213,7 +225,7 @@ impl Document {
         json!({"openapi":"3.1.0", "jsonSchemaDialect":"https://json-schema.org/draft/2020-12/schema",
             "info":{"title":"jj-store application API", "version":"1.0.0", "license":{"name":"Apache-2.0","identifier":"Apache-2.0"},
                 "description":"Native JJ read and typed mutation contracts. Same-origin Bearer authentication; tokens never appear in paths, query strings or cookies. Shared deployments require TLS. Numeric JSON values retain Rust widths: clients must handle precision beyond JavaScript safe integers explicitly."},
-            "servers":[{"url":"/"}], "tags":[{"name":"reads"},{"name":"mutations"}],
+            "servers":[{"url":"/"}], "tags":[{"name":"reads"},{"name":"mutations"},{"name":"search"}],
             "security":[{"repositoryBearer":[]}],
             "paths":self.paths,
             "components":{"securitySchemes":{"repositoryBearer":{"type":"http","scheme":"bearer","description":"Revocable repository-scoped token; read routes require read permission, mutation routes require write permission."}},

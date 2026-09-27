@@ -78,6 +78,10 @@ if (mode === "--check") {
         "content_acceptance::diff_acceptance::conflict_acceptance::resolve_acceptance::uploads_acceptance::conflict_upload_http_stages_verified_binary_without_publication_then_resolves",
         "JJ_STORE_UPLOAD_CONTRACT_CAPTURE",
       ],
+      [
+        "content_acceptance::adapter_projection::search_paging::http_search::http_search_pins_results_across_writes_and_captures_contracts",
+        "JJ_STORE_SEARCH_CONTRACT_CAPTURE",
+      ],
     ]) {
       const capture = join(directory, `${variable}.json`);
       const { stdout } = await run(

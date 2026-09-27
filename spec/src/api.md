@@ -415,3 +415,23 @@ Empty lists explicitly mean no remaining conflicts on that result; absent
 reports are legacy or non-resolution responses. Preview IDs are provisional. The
 generated OpenAPI and TypeScript contracts describe this extension; browser
 controls remain deferred.
+
+## Search HTTP transport
+
+Configured repositories expose GET /v1/repos/{repo}/search and GET
+/v1/repos/{repo}/search/status. Capabilities advertise search per repository;
+unconfigured repositories return search_not_configured after authorization.
+Search requires q and accepts explicit mode, at_op, scope, page_size,
+minimum_position, wait_millis and cursor. Unknown or duplicate fields fail.
+Historical mode is explicit and cannot also select at_op. Continuations retain
+all original query inputs and their selected native view and index generation.
+
+Search shares HTTP admission, response limits and native content workers with
+other read routes. Search pages and status report indexed and repository
+positions separately. A bounded freshness wait that cannot reach its target
+returns 409 index_lag with currently authorized search_status. Expired or
+restarted cursor state returns cursor_reset; multi-head queries require explicit
+selection. Current authorization precedes lookup and parsing of search inputs;
+revoked access returns no freshness, counts or index metadata. These GETs never
+publish history. Generated contracts include responses and errors; UI remains
+deferred.

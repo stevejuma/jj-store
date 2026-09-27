@@ -279,3 +279,7 @@ Native adapter acceptance reads complete metadata, trees and files through the
 service projection reader, including virtual roots and non-file native entries.
 These fixtures exercise pinned JJ codecs without moving upstream imports into
 Tantivy, adapters or service contracts.
+
+Native CLI integration fixtures also exercise authorized HTTP search over actual
+native objects and local Tantivy generations. These tests require no installed
+CLI replacement and make no browser feature changes.

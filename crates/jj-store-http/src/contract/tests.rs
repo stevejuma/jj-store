@@ -76,7 +76,7 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
     let doc = openapi();
     assert_eq!(doc["security"], json!([{"repositoryBearer":[]}]));
     let paths = doc["paths"].as_object().unwrap();
-    assert_eq!(paths.len(), 21);
+    assert_eq!(paths.len(), 23);
     let mut ids = std::collections::BTreeSet::new();
     for path in paths.values() {
         for (method, operation) in path.as_object().unwrap() {
@@ -196,5 +196,41 @@ fn conflict_upload_contract_has_binary_body_exact_snapshot_and_write_permission(
     assert_eq!(
         doc["components"]["schemas"]["ConflictUploadId"]["pattern"],
         "^[0-9a-f]{64}$"
+    );
+}
+
+#[test]
+fn search_contract_requires_query_and_exposes_freshness_and_resets() {
+    let doc = openapi();
+    let op = &doc["paths"]["/v1/repos/{repo}/search"]["get"];
+    let query = &op["x-jj-store-query-schema"];
+    assert_eq!(query["additionalProperties"], false);
+    assert_eq!(query["required"], json!(["q"]));
+    assert_eq!(query["properties"]["page_size"]["default"], 50);
+    assert_eq!(query["properties"]["mode"]["default"], "visible_commits");
+    assert_eq!(query["properties"]["wait_millis"]["default"], 0);
+    assert!(op["responses"].get("501").is_some());
+    let schemas = &doc["components"]["schemas"];
+    for field in [
+        "indexed_position",
+        "index_generation",
+        "selected_view",
+        "scope_snapshots",
+        "is_stale",
+        "degraded",
+        "next_cursor",
+        "truncated",
+    ] {
+        assert!(
+            schemas["SearchPage"]["required"]
+                .as_array()
+                .unwrap()
+                .contains(&json!(field))
+        );
+    }
+    assert!(
+        schemas["ErrorBody"]["properties"]
+            .get("search_status")
+            .is_some()
     );
 }

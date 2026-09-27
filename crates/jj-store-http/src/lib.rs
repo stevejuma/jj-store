@@ -7,6 +7,8 @@ mod dto;
 mod error;
 mod mutations;
 mod routes;
+mod search;
+pub use search::SearchIndex;
 mod uploads;
 use axum::{
     Router,
@@ -70,6 +72,7 @@ impl Default for Config {
 }
 struct State {
     host: RepositoryHost,
+    search: BTreeMap<m::RepositoryId, jj_store_tantivy::paging::Pager>,
     config: Config,
     slots: Arc<Semaphore>,
     event_slots: Arc<Semaphore>,
@@ -87,6 +90,15 @@ impl HttpApi {
         host: RepositoryHost,
         cache: PathBuf,
         config: Config,
+    ) -> std::result::Result<Self, &'static str> {
+        Self::with_search(host, cache, config, BTreeMap::new())
+    }
+    /// Compose explicitly configured search projections without starting adapter writers.
+    pub fn with_search(
+        host: RepositoryHost,
+        cache: PathBuf,
+        config: Config,
+        indexes: BTreeMap<m::RepositoryId, SearchIndex>,
     ) -> std::result::Result<Self, &'static str> {
         let url = url::Url::parse(&config.origin).map_err(|_| "HTTP origin")?;
         if !matches!(url.scheme(), "http" | "https")
@@ -109,6 +121,23 @@ impl HttpApi {
             config.workers,
         )
         .map_err(|_| "HTTP native query limits")?;
+        if indexes.len() > 128 {
+            return Err("HTTP search repository limit");
+        }
+        let mut search = BTreeMap::new();
+        for (repo, mut index) in indexes {
+            index.limits.query.output_bytes =
+                index.limits.query.output_bytes.min(config.max_json_bytes);
+            let pager = jj_store_tantivy::paging::Pager::new(
+                index.search,
+                index.health,
+                queries.content().clone(),
+                index.limits,
+                Arc::new(SystemClock),
+            )
+            .map_err(|_| "HTTP search limits")?;
+            search.insert(repo, pager);
+        }
         let cursors = Arc::new(
             SnapshotCursors::new(
                 pagination::Limits {
@@ -139,6 +168,7 @@ impl HttpApi {
             .map_err(|_| "HTTP upload limits")?;
         Ok(Self(Arc::new(State {
             host,
+            search,
             slots: Arc::new(Semaphore::new(config.concurrency)),
             event_slots: Arc::new(Semaphore::new(config.event_concurrency)),
             config,

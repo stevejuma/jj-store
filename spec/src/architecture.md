@@ -161,3 +161,8 @@ separate boundaries. Tantivy is locked to 0.26.2 for its initial index schema.
 Tantivy native extraction consumes only service-owned projection readers and
 DTOs. Service adapts verified snapshot objects to native read-only storage;
 upstream JJ imports remain confined to the JJ integration and CLI crates.
+
+HTTP search consumes the Tantivy pager and adapter health contracts through an
+explicit repository registry. It constructs search pagers using the existing
+native content worker pool. Lower storage/publication/service layers gain no
+search transport dependency; the server starts configured writers separately.

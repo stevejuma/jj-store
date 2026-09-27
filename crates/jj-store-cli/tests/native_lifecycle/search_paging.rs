@@ -658,3 +658,6 @@ async fn native_search_page_output_failure_does_not_exhaust_cursor_pins() {
         })
         .await;
 }
+
+#[path = "http_search.rs"]
+mod http_search;

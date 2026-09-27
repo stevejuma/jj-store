@@ -113,4 +113,6 @@ pub(crate) struct ErrorBody {
     pub snapshot: Option<Box<reads::ReadSnapshot>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub heads: Option<Box<reads::HeadSnapshot>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub search_status: Option<Box<jj_store_tantivy::paging::Status>>,
 }

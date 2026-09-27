@@ -301,3 +301,8 @@ degradation. Reader catch-up tests prepare durable artifacts separately; an
 invented one-second index-build expectation is not a release performance
 requirement. HTTP routes, cold server wiring and real RustFS remain separate
 gates.
+
+Search HTTP compatibility uses real registered Axum handlers with a native
+repository and local Tantivy projection. Generated OpenAPI/client shapes are
+checked against captured page, status, capability and freshness-error responses.
+This local evidence does not substitute for RustFS deployment qualification.

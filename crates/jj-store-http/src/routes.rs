@@ -2,6 +2,7 @@ use super::*;
 use crate::mutations::{
     apply as mutation_apply, preview as mutation_preview, status as mutation_status,
 };
+use crate::search::{Query as SearchQuery, search, search_status};
 use crate::{
     contract::{Document, Reply},
     dto::*,
@@ -14,6 +15,7 @@ use axum::{
 };
 use jj_store_service::mutations as mutation;
 use jj_store_service::{pagination::directory, reads::query::content as c};
+use jj_store_tantivy::paging as search_paging;
 pub(super) type Input<T> = std::result::Result<Query<T>, QueryRejection>;
 pub(super) fn input<T>(value: Input<T>) -> Result<T> {
     value.map(|Query(v)| v).map_err(|_| Error::invalid())
@@ -108,6 +110,8 @@ macro_rules! endpoints {
     ($register:ident) => {
         $register! {
             (get, "/repos/{repo}/capabilities", capabilities, Empty, Capabilities, Reply::Json(200)),
+            (get, "/repos/{repo}/search", search, SearchQuery, search_paging::Page, Reply::Json(200)),
+            (get, "/repos/{repo}/search/status", search_status, Empty, search_paging::Status, Reply::Json(200)),
             (get, "/repos/{repo}/snapshot", snapshot, Empty, reads::HeadSnapshot, Reply::Json(200)),
             (get, "/repos/{repo}/events", events, Events, events::Event, Reply::Events),
             (get, "/repos/{repo}/objects/{kind}/{id}", object, Selection, Envelope<c::Object>, Reply::Json(200)),
@@ -158,11 +162,13 @@ pub(super) fn router() -> Router<Arc<State>> {
 }
 async fn capabilities(
     ExtractState(state): ExtractState<Arc<State>>,
-    _: Context,
+    context: Context,
     args: Input<Empty>,
 ) -> Result<Response> {
     input(args)?;
-    state.json(&Capabilities::from(&state.config))
+    let mut capabilities = Capabilities::from(&state.config);
+    capabilities.search = state.search.contains_key(&context.id("repo")?);
+    state.json(&capabilities)
 }
 async fn snapshot(
     ExtractState(state): ExtractState<Arc<State>>,
