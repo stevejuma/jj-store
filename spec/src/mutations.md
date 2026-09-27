@@ -113,3 +113,9 @@ principal IDs, cancellation handles and owned outcomes. Full inventories and
 request credentials live only in bounded running jobs and are dropped before
 completion. Task status/cancel calls authenticate independently; the task ID is
 neither a read capability nor a publication receipt.
+
+The native transport binding can transfer its authenticated session into the
+application service boundary. HTTP receives that binding with the same token,
+repository, policy and limits; it cannot select an actor or replace the guard.
+Owned read DTOs and verified range types are exported through the service for
+transport consumers without exposing upstream JJ types.

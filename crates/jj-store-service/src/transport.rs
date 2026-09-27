@@ -115,6 +115,9 @@ pub struct NativeRequest {
     session: NativeSession,
 }
 impl NativeRequest {
+    pub fn into_session(self) -> Arc<NativeSession> {
+        Arc::new(self.session)
+    }
     pub async fn tokens(&self) -> Result<TokenListing> {
         Ok(self.session.tokens().await?)
     }

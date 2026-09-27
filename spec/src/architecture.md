@@ -96,3 +96,9 @@ authorization interface; upstream JJ types do not enter transport or services.
 The service owns graph continuation signing and a bounded process-local snapshot
 registry. It retains immutable read pins without retaining session credentials;
 native query execution remains in the JJ integration crate.
+
+The HTTP crate owns Axum request parsing, stable JSON errors, media headers and
+transport admission. It consumes service-exported owned read contracts and bound
+native sessions; it has no direct object-store or upstream JJ dependency. The
+service exports those contracts without duplicating native codec definitions.
+The server composes HTTP and native RPC on the same TLS listener and public URL.

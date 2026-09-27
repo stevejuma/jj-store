@@ -189,3 +189,8 @@ Native index-preparation fixtures cover cold-read admission, exact-operation
 preparation during later publications, cache loss/rebuild and shared-worker
 cancellation. These are native library tests, independent of browser task
 status.
+
+HTTP acceptance uses real authenticated native service fixtures and compares
+owned DTOs at exact operations, including binary media and error boundaries. The
+foreground server serves HTTP V1 and native RPC on one listener, with shared TLS
+and explicit insecure-loopback configuration.

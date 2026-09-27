@@ -325,3 +325,8 @@ worker bounds as graph execution. It can bypass only the inline threshold. An
 owned cancellation signal stops pending waits and is checked around synchronous
 native steps; awaiting preparation returns only after the worker exits. The
 service retains task identity/status and fresh request authorization separately.
+
+A verified file may select one exact byte range before its first chunk.
+Selection uses the already-verified spool, retains authorization/deadline/worker
+ownership, and cannot seek again or reset a consumed stream. HTTP range
+normalization stays in the transport; native content verification is unchanged.

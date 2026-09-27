@@ -3,6 +3,7 @@ use crate::{
     config::Config,
     policy::{self, PolicyFile},
 };
+use jj_store_http::{Config as HttpConfig, HttpApi};
 use jj_store_model::RepositoryId;
 use jj_store_rpc::server::{Limits, NativeRpc};
 use jj_store_service::auth::BearerToken;
@@ -13,13 +14,15 @@ use std::{
     net::SocketAddr,
     time::Duration,
 };
-use tonic::transport::{Identity, Server, ServerTlsConfig};
+use tonic::{service::Routes, transport::Server};
 
 pub struct PreparedServer {
     rpc: NativeRpc,
+    http: HttpApi,
     listener: tokio::net::TcpListener,
-    identity: Option<Identity>,
-    insecure_loopback: bool,
+    tls: Option<tokio_rustls::TlsAcceptor>,
+    concurrent: usize,
+    timeout: Duration,
     _lock: File,
 }
 impl PreparedServer {
@@ -32,20 +35,16 @@ impl PreparedServer {
         }
         let policy = PolicyFile::new(config.operator_policy.clone())?;
         policy.read()?;
-        let identity = if let Some(tls) = &config.tls {
+        let tls = if let Some(tls) = &config.tls {
             let certificate = policy::read_regular(&tls.certificate, 1024 * 1024)?;
             let key = policy::read_regular(&tls.private_key, 1024 * 1024)?;
-            let identity = Identity::from_pem(certificate, key);
-            Server::builder()
-                .tls_config(ServerTlsConfig::new().identity(identity.clone()))
-                .map_err(|_| Error::Config("TLS certificate or private key"))?;
-            Some(identity)
+            Some(crate::listener::tls(&certificate, &key)?)
         } else {
             None
         };
         let host = config.host()?;
         let rpc = NativeRpc::hosted(
-            host,
+            host.clone(),
             Limits {
                 concurrent: config.limits.concurrent_requests,
                 timeout: Duration::from_secs(config.limits.request_seconds),
@@ -57,12 +56,42 @@ impl PreparedServer {
         let state = policy::outside_checkout(&config.state_dir)?;
         fs::create_dir_all(&state)?;
         let lock = policy::exclusive_lock(&state.join("server.lock"))?;
+        let timeout = Duration::from_secs(config.limits.request_seconds);
+        let http = HttpApi::new(
+            host,
+            state.join("native-reads"),
+            HttpConfig {
+                origin: url::Url::parse(&config.public_url)
+                    .map_err(|_| Error::Config("public URL"))?
+                    .origin()
+                    .ascii_serialization(),
+                concurrency: config.limits.concurrent_requests.min(64),
+                timeout,
+                read: jj_store_service::reads::ReadLimits {
+                    max_objects: config.limits.inventory_nodes,
+                    timeout,
+                },
+                graph: jj_store_service::reads::query::Limits {
+                    timeout,
+                    ..Default::default()
+                },
+                content: jj_store_service::reads::query::content::Limits {
+                    timeout,
+                    max_blob_bytes: config.limits.max_blob_bytes,
+                    ..Default::default()
+                },
+                ..Default::default()
+            },
+        )
+        .map_err(Error::Config)?;
         let listener = tokio::net::TcpListener::bind(config.bind).await?;
         Ok(Self {
             rpc,
+            http,
             listener,
-            identity,
-            insecure_loopback: config.insecure_loopback,
+            tls,
+            concurrent: config.limits.concurrent_requests,
+            timeout,
             _lock: lock,
         })
     }
@@ -71,14 +100,22 @@ impl PreparedServer {
     }
     pub async fn run(self, shutdown: impl Future<Output = ()> + Send + 'static) -> Result<()> {
         let (tx, rx) = tokio::sync::oneshot::channel();
-        let serve = self.rpc.serve(
-            self.listener,
-            self.identity,
-            self.insecure_loopback,
-            async {
+        let router = Routes::new(self.rpc.service())
+            .into_axum_router()
+            .merge(self.http.router());
+        let incoming =
+            crate::listener::incoming(self.listener, self.tls, self.concurrent * 4, self.timeout);
+        let serve = Server::builder()
+            .accept_http1(true)
+            .max_concurrent_streams(self.concurrent as u32)
+            .concurrency_limit_per_connection(self.concurrent)
+            .http2_max_header_list_size(16 * 1024)
+            .max_connection_age(Duration::from_secs(300))
+            .max_connection_age_grace(self.timeout)
+            .add_routes(Routes::from(router))
+            .serve_with_incoming_shutdown(incoming, async {
                 let _ = rx.await;
-            },
-        );
+            });
         tokio::pin!(serve);
         tokio::select! {
             result=&mut serve=>result.map_err(|_|Error::Service("native listener failed")),

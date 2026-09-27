@@ -25,8 +25,8 @@ adds evidence here in its enclosing Jujutsu change.
 | M3.1        | Done        | M2        | JST-SEC-001,JST-SEC-002,JST-SEC-003,JST-SEC-004                         | Revocable tokens and transport authorization                        | Retain native slice acceptance                   | E-M3-001,E-M3-004,E-M3-005,E-M3-006,E-M3-007,E-M3-008,E-M3-009,E-M3-011,E-M3-012,E-M3-014                                     |
 | M3.2        | Done        | M3.1      | JST-JJ-001,JST-JJ-004,JST-JJ-005                                        | Create edit describe log restart op-log evolog; multi-workspace     | Retain native slice acceptance                   | E-M3-002,E-M3-003,E-M3-004,E-M3-005,E-M3-006,E-M3-008,E-M3-009,E-M3-010,E-M3-011,E-M3-013,E-M3-014                            |
 | M3.3        | Done        | M3.2      | JST-CLI-001,JST-CLI-002,JST-CLI-003,JST-CLI-004                         | Custom command presentation and capability parity                   | Retain native slice acceptance                   | E-M3-006,E-M3-009,E-M3-010,E-M3-011,E-M3-012,E-M3-013,E-M3-014                                                                |
-| M4          | In progress | M3        | JST-API-001,JST-API-005                                                 | Structured reads and basic served UI match native semantics         | Compose HTTP reads and task status               | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010,E-M4-011,E-M4-012,E-M4-013          |
-| M4.1        | In progress | M3        | JST-API-001,JST-API-002,JST-JJ-003                                      | Pinned three-graph reads with zero GET publications                 | Compose HTTP reads and task status               | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010,E-M4-011,E-M4-012,E-M4-013          |
+| M4          | In progress | M3        | JST-API-001,JST-API-005                                                 | Structured reads and basic served UI match native semantics         | Implement SSE, contracts and browser             | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010,E-M4-011,E-M4-012,E-M4-013,E-M4-014 |
+| M4.1        | Done        | M3        | JST-API-001,JST-API-002,JST-JJ-003                                      | Pinned three-graph reads with zero GET publications                 | Retain pinned read conformance                   | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010,E-M4-011,E-M4-012,E-M4-013,E-M4-014 |
 | M4.2        | Planned     | M4.1      | JST-API-003,JST-API-004,JST-API-005                                     | SSE, safe UI, generated contracts and cold interaction tests        | Build Svelte UI                                  | -                                                                                                                             |
 | M5          | Planned     | M4        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Authenticated typed commands and shared RPC policy                  | Implement commands                               | -                                                                                                                             |
 | M5.1        | Planned     | M4        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Basic changes/refs/reconcile; preview receipt and semantic policy   | Implement command transaction facade             | -                                                                                                                             |
@@ -4217,6 +4217,193 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Rust 1.97.1; jj-cli/jj-lib 0.45.1 at 7c41cdeb16b6b321c64e789a966b6adf723816a5. Release binary and Cargo.lock hashes retained in the process report.",
     "formats": "Additive owned index-preparation report, process-local task status/error DTOs and snapshot-bearing pagination rebuild errors. Default inline threshold is 1000 retained commits; hard index/shape/work/byte budgets are unchanged. No native identity, envelope, publication, local cache receipt or RPC format change."
+  },
+  {
+    "id": "E-M4-014",
+    "tasks": ["M4", "M4.1"],
+    "date": "2026-09-27",
+    "kind": "authenticated-http-reads-and-shared-tls-listener",
+    "files": [
+      "Cargo.lock",
+      "Cargo.toml",
+      "crates/jj-store-cli/Cargo.toml",
+      "crates/jj-store-cli/tests/native_lifecycle/content.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/http_reads.rs",
+      "crates/jj-store-cli/tests/server_executable.rs",
+      "crates/jj-store-http/Cargo.toml",
+      "crates/jj-store-http/src/body.rs",
+      "crates/jj-store-http/src/error.rs",
+      "crates/jj-store-http/src/lib.rs",
+      "crates/jj-store-http/src/routes.rs",
+      "crates/jj-store-jj/src/query/content.rs",
+      "crates/jj-store-server/Cargo.toml",
+      "crates/jj-store-server/src/lib.rs",
+      "crates/jj-store-server/src/listener.rs",
+      "crates/jj-store-server/src/process.rs",
+      "crates/jj-store-service/src/reads.rs",
+      "crates/jj-store-service/src/transport.rs",
+      "docs/evidence/m4-http-read-gate.md",
+      "docs/evidence/m4-http-rustfs.json",
+      "scripts/check-boundaries.mjs",
+      "scripts/governance.test.mjs",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/compatibility.md",
+      "spec/src/jj-integration.md",
+      "spec/src/milestones.md",
+      "spec/src/mutations.md",
+      "spec/src/security.md",
+      "spec/src/spec-governance.md",
+      "spec/src/verification.md"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/native_lifecycle/http_reads.rs#http_reads_match_native_snapshots_objects_graphs_and_differences_without_publication",
+      "crates/jj-store-cli/tests/native_lifecycle/http_reads.rs#http_reads_authentication_queries_and_binary_ranges_fail_closed",
+      "crates/jj-store-cli/tests/native_lifecycle/http_reads.rs#http_reads_revocation_stops_inflight_media_and_credentials_never_become_query_data",
+      "crates/jj-store-cli/tests/native_lifecycle/http_reads.rs#http_reads_unpolled_response_expiry_releases_transport_and_native_slots",
+      "crates/jj-store-cli/tests/native_lifecycle/http_reads.rs#http_reads_index_task_and_signed_cursor_preserve_snapshot_across_publication",
+      "crates/jj-store-cli/tests/native_lifecycle/http_reads.rs#http_reads_range_selection_cannot_reset_consumed_or_preselected_files",
+      "crates/jj-store-cli/tests/native_lifecycle/http_reads.rs#http_reads_reject_unframed_request_content",
+      "crates/jj-store-server/src/listener.rs#listener_idle_deadline_releases_owned_connection_slot",
+      "crates/jj-store-server/src/listener.rs#listener_connection_capacity_is_retained_until_drop",
+      "crates/jj-store-cli/tests/server_executable.rs#cold_tls_http_reads_support_http1_and_http2",
+      "crates/jj-store-cli/tests/server_executable.rs#real_rustfs_server_cli_restart_and_revocation",
+      "scripts/governance.test.mjs#http_consumes_owned_service_contracts_without_storage_or_upstream",
+      "scripts/governance.test.mjs#server_composition_cannot_depend_on_cli_or_native_upstream"
+    ],
+    "runs": [
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle http_reads_",
+        "result": "fail",
+        "failures": 9,
+        "note": "Before HTTP implementation: missing crate/Axum/Tower imports produced 9 compile diagnostics; no tests ran."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle http_reads_",
+        "result": "fail",
+        "failures": 3,
+        "note": "Initial implementation: 3 Send-future compile errors and 1 unused import warning; fixed an owned VerifiedFile info future and middleware request borrow scope."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle http_reads_",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial 2 route fixtures passed, then expanded 6 cases passed including range, revocation, cursor/task and unpolled response expiry."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test server_executable cold_tls_http_reads_support_http1_and_http2",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before production integration: HTTP/1.1 TLS client rejected with NoApplicationProtocol; one failed test."
+      },
+      {
+        "command": "pnpm test:governance",
+        "result": "fail",
+        "failures": 1,
+        "note": "New allowed server-to-HTTP composition assertion failed before boundary allowlist update. HTTP direct storage/native import rejection passed."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test server_executable cold_tls_",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both HTTP/1.1 + HTTP/2 and native certificate/hostname/plaintext TLS fixtures passed after shared listener integration."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle http_reads_reject_unframed_request_content",
+        "result": "fail",
+        "failures": 1,
+        "note": "Unexpected streamed GET body without framing headers returned 200 instead of 400. Fixed bounded EOF verification before bodyless route execution."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle http_reads_",
+        "result": "fail",
+        "failures": 1,
+        "note": "Intermediate compile diagnostic: HeaderMap has no get_all_mut; changed sensitive-header marking to iter_mut. No tests ran."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle http_reads_",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 7 focused HTTP fixtures passed, including the exact unframed-body regression."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-server listener_",
+        "result": "pass",
+        "failures": 0,
+        "note": "2 listener fixtures pass: shared connection admission and activity/idle deadline retaining then releasing the socket permit."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test server_executable",
+        "result": "pass",
+        "failures": 0,
+        "note": "7 cold executable tests pass / 1 external RustFS case ignored; trust, protocols, state lock, commands and shutdown remain intact."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools python3 scripts/rustfs-contract.py --run --rust-client --server --output .scratch/m4-http-rustfs.json",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 11 pinned single-node harness cases pass, including real HTTP/CLI fixed-operation parity, unchanged GET manifest snapshot, ranges, process/storage kills, removed caches and revoked HTTP access. Report retained in docs/evidence/m4-http-rustfs.json."
+      },
+      {
+        "command": "pnpm test:governance",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 16 cases pass, including corrected allowed composition and forbidden direct HTTP storage/native dependencies."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm check",
+        "result": "fail",
+        "failures": 1,
+        "note": "One Clippy manual_option_zip diagnostic, repeated for library/test targets. Replaced nested option mapping with zip; no behavior or assertion weakened."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "57 requirements, 9 package boundaries, progress, rustfmt and all-target Clippy pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test",
+        "result": "fail",
+        "failures": 1,
+        "note": "Environment failure before Rust tests: attachment_recovery linker write failed with errno=28 (disk full). Governance 16/16 and harness self-tests 3/3 passed. No product test failure was observed."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm build",
+        "result": "fail",
+        "failures": 2,
+        "note": "Environment failure: rustc LLVM output could not write (disk full) for jj-cli and jj-store-cli. Removed only jj-store target/debug/incremental generated cache (14 GiB); no source, release artifacts, credentials or other checkout files removed."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test",
+        "result": "pass",
+        "failures": 0,
+        "note": "226 Rust tests pass / 6 external tests ignored, including 85 native lifecycle tests and 7 cold executable server tests. Governance 16/16, storage harness self-tests 3/3 pass after generated-cache cleanup. No unresolved product failures."
+      },
+      {
+        "command": "pnpm format:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rustfmt and Prettier pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Locked workspace build passes after generated-cache cleanup."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 9 lanes pass, including 226 Rust tests / 6 external ignored, governance, rustfmt, mdBook and mapped spec-first checks. M4.1 read gate is complete; M4.2 SSE/generated contracts/browser, M5, M6 and M8a remain separately unfinished."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "versions": "Rust 1.97.1; jj-cli/jj-lib 0.45.1 at 7c41cdeb16b6b321c64e789a966b6adf723816a5; Axum 0.8.9, tonic 0.14.6, tokio-rustls 0.26.5; locked serde_path_to_error 0.1.20.",
+    "formats": "Additive HTTP V1 authenticated JSON/media/index-task routes and stable error envelopes, one-time verified spool range selection; dual HTTP/1.1 and h2 ALPN. Native persistence, publication and RPC wire formats unchanged. SSE, mutations, search and UI are not advertised."
   }
 ]
 ```

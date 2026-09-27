@@ -1,0 +1,560 @@
+use super::*;
+use axum::{
+    Json,
+    extract::{DefaultBodyLimit, Query, rejection::QueryRejection},
+    routing::{get, post},
+};
+use jj_store_service::{pagination::directory, reads::query::content as c};
+type Input<T> = std::result::Result<Query<T>, QueryRejection>;
+fn input<T>(value: Input<T>) -> Result<T> {
+    value.map(|Query(v)| v).map_err(|_| Error::invalid())
+}
+fn limit() -> usize {
+    50
+}
+fn all() -> String {
+    "all()".into()
+}
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct Empty {}
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct Selection {
+    at_op: Option<m::OperationId>,
+}
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct Log {
+    at_op: Option<m::OperationId>,
+    cursor: Option<String>,
+    #[serde(default = "limit")]
+    limit: usize,
+    #[serde(default = "all")]
+    revset: String,
+    workspace: Option<String>,
+    #[serde(default)]
+    user_email: String,
+    at_time_millis: i64,
+}
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct Operations {
+    at_op: Option<m::OperationId>,
+    heads: Option<m::OperationId>,
+    cursor: Option<String>,
+    #[serde(default = "limit")]
+    limit: usize,
+}
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct Evolution {
+    at_op: Option<m::OperationId>,
+    commit: m::CommitId,
+    cursor: Option<String>,
+    #[serde(default = "limit")]
+    limit: usize,
+}
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct Directory {
+    at_op: Option<m::OperationId>,
+    cursor: Option<String>,
+    #[serde(default)]
+    path: String,
+    #[serde(default = "limit")]
+    limit: usize,
+}
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct Difference {
+    at_op: Option<m::OperationId>,
+    from: m::CommitId,
+    to: m::CommitId,
+    #[serde(default)]
+    path: String,
+    #[serde(default)]
+    content: bool,
+}
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct Conflicts {
+    at_op: Option<m::OperationId>,
+    #[serde(default)]
+    path: String,
+}
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct OperationDiff {
+    parent: Option<m::OperationId>,
+}
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct Prepare {
+    operation: m::OperationId,
+}
+
+pub(super) fn router() -> Router<Arc<State>> {
+    Router::new()
+        .route("/repos/{repo}/capabilities", get(capabilities))
+        .route("/repos/{repo}/snapshot", get(snapshot))
+        .route("/repos/{repo}/objects/{kind}/{id}", get(object))
+        .route("/repos/{repo}/log", get(log))
+        .route("/repos/{repo}/operations", get(operations))
+        .route("/repos/{repo}/operations/{operation}", get(operation))
+        .route(
+            "/repos/{repo}/operations/{operation}/diff",
+            get(operation_diff),
+        )
+        .route("/repos/{repo}/evolution", get(evolution))
+        .route("/repos/{repo}/commits/{commit}", get(commit))
+        .route("/repos/{repo}/commits/{commit}/tree", get(tree))
+        .route("/repos/{repo}/commits/{commit}/conflicts", get(conflicts))
+        .route("/repos/{repo}/files/{file}", get(file))
+        .route("/repos/{repo}/diff", get(diff))
+        .route("/repos/{repo}/index/tasks", post(prepare))
+        .route("/repos/{repo}/index/tasks/{task}", get(task))
+        .route("/repos/{repo}/index/tasks/{task}/cancel", post(cancel))
+        .fallback(|| async { Error::new(StatusCode::NOT_FOUND, "unknown_route") })
+        .method_not_allowed_fallback(|| async {
+            Error::new(StatusCode::METHOD_NOT_ALLOWED, "unsupported_method")
+        })
+        .layer(DefaultBodyLimit::max(4096))
+}
+async fn capabilities(
+    ExtractState(state): ExtractState<Arc<State>>,
+    _: Context,
+    args: Input<Empty>,
+) -> Result<Response> {
+    input(args)?;
+    state.json(&serde_json::json!({"version":1,"native_profile":reads::NATIVE_PROFILE,
+        "authentication":"repository_bearer", "read_api":true,"index_tasks":true,"events":false,"search":false,"typed_mutations":[],
+        "limits":{"requests":state.config.concurrency,"workers":state.config.workers,"deadline_millis":state.config.timeout.as_millis(),"json_bytes":state.config.max_json_bytes,"page":state.config.graph.max_page,"index_commits":state.config.graph.max_index_commits,"inline_index_commits":state.config.graph.max_inline_rebuild_commits,"file_bytes":state.config.content.max_blob_bytes},
+        "log_context":{"at_time_millis":"required","workspace":"explicit when needed","user_email":"explicit for identity-relative expressions"}}))
+}
+async fn snapshot(
+    ExtractState(state): ExtractState<Arc<State>>,
+    context: Context,
+    args: Input<Empty>,
+) -> Result<Response> {
+    input(args)?;
+    let snapshot = context
+        .session
+        .snapshot()
+        .await
+        .map_err(reads::Error::from)?;
+    state.json(&reads::HeadSnapshot::from(snapshot.manifest()))
+}
+async fn object(
+    ExtractState(state): ExtractState<Arc<State>>,
+    context: Context,
+    args: Input<Selection>,
+) -> Result<Response> {
+    let args = input(args)?;
+    let key = match context.value("kind")? {
+        "commit" => m::ObjectKey::Commit(context.id("id")?),
+        "tree" => m::ObjectKey::Tree(context.id("id")?),
+        "view" => m::ObjectKey::View(context.id("id")?),
+        "operation" => m::ObjectKey::Operation(context.id("id")?),
+        "copy" => m::ObjectKey::Copy(context.id("id")?),
+        "symlink" => m::ObjectKey::Symlink(context.id("id")?),
+        "file" => m::ObjectKey::File(context.id("id")?),
+        _ => return Err(Error::invalid()),
+    };
+    let read = pinned(&context, &state, args.at_op).await?;
+    let data = read.object(state.queries.content(), key).await?;
+    envelope(&state, &read, data).await
+}
+async fn graph(
+    state: &State,
+    context: Context,
+    at_op: Option<m::OperationId>,
+    request: q::Request,
+    limit: usize,
+    cursor: Option<String>,
+) -> Result<Response> {
+    let page = if let Some(cursor) = cursor {
+        state
+            .graphs
+            .resume(context.session, &cursor, at_op, request, limit)
+            .await?
+    } else {
+        match state
+            .graphs
+            .begin(context.session, at_op, request, limit)
+            .await?
+        {
+            pagination::Start::SelectHead { snapshot } => return Err(Error::heads(snapshot)),
+            pagination::Start::Page(page) => *page,
+        }
+    };
+    state.json(&Envelope {
+        snapshot: page.snapshot,
+        data: page.graph,
+        next_cursor: page.next_cursor,
+    })
+}
+async fn log(
+    ExtractState(state): ExtractState<Arc<State>>,
+    context: Context,
+    args: Input<Log>,
+) -> Result<Response> {
+    let args = input(args)?;
+    graph(
+        &state,
+        context,
+        args.at_op,
+        q::Request::Log {
+            revset: args.revset,
+            workspace: args.workspace,
+            user_email: args.user_email,
+            at_time_millis: args.at_time_millis,
+        },
+        args.limit,
+        args.cursor,
+    )
+    .await
+}
+async fn operations(
+    ExtractState(state): ExtractState<Arc<State>>,
+    context: Context,
+    args: Input<Operations>,
+) -> Result<Response> {
+    let args = input(args)?;
+    if args.at_op.zip(args.heads).is_some_and(|(a, b)| a != b) {
+        return Err(Error::invalid());
+    }
+    graph(
+        &state,
+        context,
+        args.at_op.or(args.heads),
+        q::Request::Operations,
+        args.limit,
+        args.cursor,
+    )
+    .await
+}
+async fn evolution(
+    ExtractState(state): ExtractState<Arc<State>>,
+    context: Context,
+    args: Input<Evolution>,
+) -> Result<Response> {
+    let args = input(args)?;
+    graph(
+        &state,
+        context,
+        args.at_op,
+        q::Request::Evolution {
+            commit: args.commit,
+        },
+        args.limit,
+        args.cursor,
+    )
+    .await
+}
+async fn operation(
+    ExtractState(state): ExtractState<Arc<State>>,
+    context: Context,
+    args: Input<Empty>,
+) -> Result<Response> {
+    input(args)?;
+    let id = context.id("operation")?;
+    let read = pinned(&context, &state, Some(id)).await?;
+    let operation = read
+        .object(state.queries.content(), m::ObjectKey::Operation(id))
+        .await?;
+    let c::ObjectData::Operation(data) = &operation.data else {
+        return Err(Error::unavailable());
+    };
+    let view = read
+        .object(state.queries.content(), m::ObjectKey::View(data.view_id))
+        .await?;
+    #[derive(Serialize)]
+    struct Detail {
+        operation: c::Object,
+        view: c::Object,
+    }
+    envelope(&state, &read, Detail { operation, view }).await
+}
+async fn commit(
+    ExtractState(state): ExtractState<Arc<State>>,
+    context: Context,
+    args: Input<Selection>,
+) -> Result<Response> {
+    let args = input(args)?;
+    let id = context.id("commit")?;
+    let read = pinned(&context, &state, args.at_op).await?;
+    let object = read
+        .object(state.queries.content(), m::ObjectKey::Commit(id))
+        .await?;
+    let graph = match read
+        .graph(
+            state.queries.graph(),
+            q::Request::Evolution { commit: id },
+            q::Page {
+                limit: 1,
+                after: None,
+            },
+        )
+        .await
+    {
+        Err(q::Error::IndexRebuildRequired) => {
+            return Err(Error::rebuild(read.snapshot().await?.clone()));
+        }
+        result => result?,
+    };
+    let q::Nodes::Evolution(nodes) = graph.data else {
+        return Err(Error::unavailable());
+    };
+    let commit = nodes
+        .into_iter()
+        .next()
+        .ok_or_else(Error::unavailable)?
+        .commit;
+    #[derive(Serialize)]
+    struct Detail {
+        object: c::Object,
+        commit: q::Commit,
+    }
+    envelope(&state, &read, Detail { object, commit }).await
+}
+async fn tree(
+    ExtractState(state): ExtractState<Arc<State>>,
+    context: Context,
+    args: Input<Directory>,
+) -> Result<Response> {
+    let args = input(args)?;
+    let request = directory::Request {
+        commit: context.id("commit")?,
+        path: args.path,
+        limit: args.limit,
+    };
+    let page = if let Some(cursor) = args.cursor {
+        state
+            .directories
+            .resume(context.session, &cursor, args.at_op, request)
+            .await?
+    } else {
+        match state
+            .directories
+            .begin(context.session, args.at_op, request)
+            .await?
+        {
+            directory::Start::SelectHead { snapshot } => return Err(Error::heads(snapshot)),
+            directory::Start::Page(page) => *page,
+        }
+    };
+    state.json(&Envelope {
+        snapshot: page.snapshot,
+        data: page.tree,
+        next_cursor: page.next_cursor,
+    })
+}
+async fn operation_diff(
+    ExtractState(state): ExtractState<Arc<State>>,
+    context: Context,
+    args: Input<OperationDiff>,
+) -> Result<Response> {
+    let args = input(args)?;
+    let operation = context.id("operation")?;
+    let read = pinned(&context, &state, Some(operation)).await?;
+    let data = read
+        .operation_diff(
+            state.queries.content(),
+            c::operations::Request {
+                operation,
+                parent: args.parent,
+            },
+        )
+        .await?;
+    envelope(&state, &read, data).await
+}
+async fn diff(
+    ExtractState(state): ExtractState<Arc<State>>,
+    context: Context,
+    args: Input<Difference>,
+) -> Result<Response> {
+    let args = input(args)?;
+    let read = pinned(&context, &state, args.at_op).await?;
+    let data = read
+        .diff(
+            state.queries.content(),
+            c::diff::Request {
+                from: args.from,
+                to: args.to,
+                path: args.path,
+                content: args.content,
+            },
+        )
+        .await?;
+    envelope(&state, &read, data).await
+}
+async fn conflicts(
+    ExtractState(state): ExtractState<Arc<State>>,
+    context: Context,
+    args: Input<Conflicts>,
+) -> Result<Response> {
+    let args = input(args)?;
+    let read = pinned(&context, &state, args.at_op).await?;
+    let data = read
+        .conflicts(
+            state.queries.content(),
+            c::conflicts::Request {
+                commit: context.id("commit")?,
+                path: args.path,
+            },
+        )
+        .await?;
+    envelope(&state, &read, data).await
+}
+fn range(headers: &HeaderMap, length: u64) -> Result<Option<reads::ByteRange>> {
+    let Some(header) = headers.get(header::RANGE) else {
+        return Ok(None);
+    };
+    let invalid = || Error::range(length);
+    if length == 0 || headers.get_all(header::RANGE).iter().count() != 1 {
+        return Err(invalid());
+    }
+    let value = header
+        .to_str()
+        .map_err(|_| invalid())?
+        .trim()
+        .strip_prefix("bytes=")
+        .ok_or_else(invalid)?;
+    let (a, b) = value.split_once('-').ok_or_else(invalid)?;
+    let number = |s: &str| -> Result<u64> {
+        if s.is_empty() || !s.bytes().all(|b| b.is_ascii_digit()) {
+            return Err(invalid());
+        }
+        s.parse().map_err(|_| invalid())
+    };
+    let (start, end) = if a.is_empty() {
+        let count = number(b)?;
+        if count == 0 {
+            return Err(invalid());
+        }
+        (length.saturating_sub(count), length)
+    } else {
+        let start = number(a)?;
+        let end = if b.is_empty() {
+            length
+        } else {
+            number(b)?.min(length - 1) + 1
+        };
+        (start, end)
+    };
+    if start >= length {
+        return Err(invalid());
+    }
+    Ok(Some(
+        reads::ByteRange::new(start, end).map_err(|_| invalid())?,
+    ))
+}
+async fn file(
+    ExtractState(state): ExtractState<Arc<State>>,
+    context: Context,
+    args: Input<Selection>,
+) -> Result<Response> {
+    let args = input(args)?;
+    let id: m::FileId = context.id("file")?;
+    let read = pinned(&context, &state, args.at_op).await?;
+    let mut file = read.file(state.queries.content(), id, None).await?;
+    let full = file.info().await?.full_length;
+    let selection = range(&context.headers, full)?;
+    if let Some(selection) = selection {
+        file = file.select_range(selection).await?;
+    }
+    let info = file.info().await?;
+    let snapshot = read.snapshot().await?.clone();
+    let stream = futures::stream::try_unfold(file, |mut file| async move {
+        file.next_chunk()
+            .await
+            .map(|next| next.map(|bytes| (bytes, file)))
+            .map_err(std::io::Error::other)
+    });
+    let mut response = Body::from_stream(stream).into_response();
+    let headers = response.headers_mut();
+    headers.insert(
+        header::CONTENT_TYPE,
+        "application/octet-stream".parse().unwrap(),
+    );
+    headers.insert(
+        header::CONTENT_DISPOSITION,
+        format!("attachment; filename=\"{id}.bin\"")
+            .parse()
+            .unwrap(),
+    );
+    headers.insert(header::ACCEPT_RANGES, "bytes".parse().unwrap());
+    headers.insert(
+        header::CONTENT_LENGTH,
+        (info.end - info.start).to_string().parse().unwrap(),
+    );
+    for (name, value) in [
+        (
+            "x-jj-store-repository",
+            snapshot.authority.repo_id.to_string(),
+        ),
+        ("x-jj-store-epoch", snapshot.authority.epoch.to_string()),
+        ("x-jj-store-operation", snapshot.operation_id.to_string()),
+        (
+            "x-jj-store-position",
+            snapshot.authority.published_seq.0.to_string(),
+        ),
+        (
+            "x-jj-store-revision",
+            snapshot.authority.manifest_revision.to_string(),
+        ),
+    ] {
+        headers.insert(name, value.parse().unwrap());
+    }
+    if selection.is_some() {
+        headers.insert(
+            header::CONTENT_RANGE,
+            format!("bytes {}-{}/{}", info.start, info.end - 1, full)
+                .parse()
+                .unwrap(),
+        );
+        *response.status_mut() = StatusCode::PARTIAL_CONTENT;
+    }
+    Ok(response)
+}
+async fn prepare(
+    ExtractState(state): ExtractState<Arc<State>>,
+    context: Context,
+    args: Input<Empty>,
+    body: std::result::Result<Json<Prepare>, axum::extract::rejection::JsonRejection>,
+) -> Result<Response> {
+    input(args)?;
+    let Json(request) = body.map_err(|_| Error::invalid())?;
+    let task = state
+        .tasks
+        .start(context.session, request.operation)
+        .await?;
+    let mut response = state.json(&task)?;
+    *response.status_mut() = StatusCode::ACCEPTED;
+    Ok(response)
+}
+async fn task(
+    ExtractState(state): ExtractState<Arc<State>>,
+    context: Context,
+    args: Input<Empty>,
+) -> Result<Response> {
+    input(args)?;
+    let task = state
+        .tasks
+        .status(context.session.clone(), context.value("task")?)
+        .await?;
+    state.json(&task)
+}
+async fn cancel(
+    ExtractState(state): ExtractState<Arc<State>>,
+    context: Context,
+    args: Input<Empty>,
+) -> Result<Response> {
+    input(args)?;
+    let task = state
+        .tasks
+        .cancel(context.session.clone(), context.value("task")?)
+        .await?;
+    state.json(&task)
+}

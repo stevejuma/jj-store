@@ -171,3 +171,12 @@ index before prepared/warm reads. Its retained report distinguishes admission,
 index construction and graph evaluation for linear and wide-head histories. The
 fixture store excludes service authorization and deployment I/O costs; native
 lifecycle tests cover authenticated task status, revocation and cancellation.
+
+The M4.1 HTTP read gate is audited in
+[the transport report](../../docs/evidence/m4-http-read-gate.md), with retained
+[pinned RustFS results](../../docs/evidence/m4-http-rustfs.json). HTTP/CLI
+history at a fixed operation, binary ranges, zero read publications, cold
+cache-loss recovery and revocation pass on the production TLS listener. HTTP/1.1
+and HTTP/2 negotiation, incomplete TLS handshakes and connection admission are
+regular cold process/unit tests. This remains single-node storage evidence; full
+release performance and browser qualification are separate gates.

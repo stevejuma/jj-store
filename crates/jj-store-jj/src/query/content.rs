@@ -94,6 +94,7 @@ pub struct VerifiedFile {
     budget: Arc<Budget>,
     remaining: u64,
     chunk_in_progress: bool,
+    pristine: bool,
 }
 impl std::fmt::Debug for VerifiedFile {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -101,9 +102,32 @@ impl std::fmt::Debug for VerifiedFile {
     }
 }
 impl VerifiedFile {
-    pub async fn info(&self) -> Result<FileInfo> {
+    pub fn info(&self) -> impl std::future::Future<Output = Result<FileInfo>> + Send + use<> {
+        let budget = self.budget.clone();
+        let access = self.access.clone();
+        let info = self.info.clone();
+        async move {
+            budget.authorize(access.as_ref()).await?;
+            Ok(info)
+        }
+    }
+    /// Select a range once, before streaming, without repeating remote reads.
+    pub async fn select_range(mut self, range: ByteRange) -> Result<Self> {
         self.budget.authorize(self.access.as_ref()).await?;
-        Ok(self.info.clone())
+        if !self.pristine || range.end() > self.info.full_length {
+            return Err(Error::Range);
+        }
+        self.pristine = false;
+        self.reader = self
+            .budget
+            .until(self._spool.reader_range(range))
+            .await?
+            .map_err(|_| Error::Unavailable)?;
+        self.info.start = range.start();
+        self.info.end = range.end();
+        self.remaining = range.len();
+        self.budget.authorize(self.access.as_ref()).await?;
+        Ok(self)
     }
     pub async fn next_chunk(&mut self) -> Result<Option<Vec<u8>>> {
         // A canceled call can have consumed local bytes before its final
@@ -112,6 +136,7 @@ impl VerifiedFile {
         if self.chunk_in_progress {
             return Err(self.budget.fail(Error::Unavailable));
         }
+        self.pristine = false;
         self.chunk_in_progress = true;
         self.budget.authorize(self.access.as_ref()).await?;
         if self.remaining == 0 {
@@ -389,6 +414,7 @@ impl Context {
             budget: self.budget,
             remaining: end - start,
             chunk_in_progress: false,
+            pristine: range.is_none(),
         })
     }
 }

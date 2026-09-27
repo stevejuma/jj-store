@@ -458,6 +458,60 @@ async fn cold_tls_server_checks_trust_hostname_and_plaintext() {
 fn native(f: &Fixture, token: &BearerToken, args: &[&str]) -> Output {
     native_command(f, token, args).output().unwrap()
 }
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn cold_tls_http_reads_support_http1_and_http2() {
+    let f = Fixture::new();
+    let pem = f.enable_tls();
+    let mut running = f.start(false);
+    let port = running.event["address"]
+        .as_str()
+        .unwrap()
+        .parse::<std::net::SocketAddr>()
+        .unwrap()
+        .port();
+    let url = format!(
+        "https://localhost:{port}/v1/repos/{}/snapshot",
+        jj_store_model::RepositoryId::new([43; 16])
+    );
+    // An incomplete TLS handshake must not serialize acceptance of good clients.
+    let mut stalled_handshake = tokio::net::TcpStream::connect(("127.0.0.1", port))
+        .await
+        .unwrap();
+    for version in [reqwest::Version::HTTP_11, reqwest::Version::HTTP_2] {
+        let builder = reqwest::Client::builder()
+            .no_proxy()
+            .timeout(Duration::from_secs(3))
+            .add_root_certificate(reqwest::Certificate::from_pem(&pem).unwrap());
+        let client = if version == reqwest::Version::HTTP_11 {
+            builder.http1_only()
+        } else {
+            builder.http2_prior_knowledge()
+        }
+        .build()
+        .unwrap();
+        let response = client.get(&url).send().await.unwrap();
+        assert_eq!(response.version(), version);
+        assert_eq!(response.status(), reqwest::StatusCode::UNAUTHORIZED);
+        assert_eq!(response.headers()["cache-control"], "no-store");
+        assert_eq!(
+            response.json::<serde_json::Value>().await.unwrap()["code"],
+            "bearer_required"
+        );
+    }
+    use tokio::io::AsyncReadExt as _;
+    assert_eq!(
+        tokio::time::timeout(
+            Duration::from_secs(7),
+            stalled_handshake.read(&mut [0u8; 1])
+        )
+        .await
+        .unwrap()
+        .unwrap(),
+        0
+    );
+    running.terminate();
+}
 fn native_command(f: &Fixture, token: &BearerToken, args: &[&str]) -> Command {
     let config = f.root.path().join("native.toml");
     if !config.exists() {
@@ -552,7 +606,7 @@ async fn real_rustfs_server_cli_restart_and_revocation() {
             .unwrap();
     let epoch: m::EpochId = journal["epoch"].as_str().unwrap().parse().unwrap();
     let options = Options {
-        ca_certificate_pem: Some(pem),
+        ca_certificate_pem: Some(pem.clone()),
         ..Options::default()
     };
     let operator =
@@ -621,6 +675,86 @@ async fn real_rustfs_server_cli_restart_and_revocation() {
         &admin,
         &["-R", "other", "new", "main", "-m", "independent workspace"],
     ));
+    let http = reqwest::Client::builder()
+        .no_proxy()
+        .http1_only()
+        .timeout(Duration::from_secs(30))
+        .add_root_certificate(reqwest::Certificate::from_pem(&pem).unwrap())
+        .build()
+        .unwrap();
+    let base = format!("{endpoint}/v1/repos/{repository}");
+    let snapshot = http_json(&http, &admin, &format!("{base}/snapshot")).await;
+    let at_op = snapshot["heads"].as_array().unwrap()[0].as_str().unwrap();
+    let log_url = format!("{base}/log?at_op={at_op}&at_time_millis=1790000000000&revset=all()");
+    let graph = http_json(&http, &admin, &log_url).await;
+    let nodes = graph["data"]["data"]["nodes"].as_array().unwrap();
+    assert!(graph["next_cursor"].is_null());
+    let mut http_ids: Vec<_> = nodes
+        .iter()
+        .map(|n| n["commit"]["id"].as_str().unwrap().to_owned())
+        .collect();
+    let native_ids = success(native(
+        &f,
+        &admin,
+        &[
+            "-R",
+            "work",
+            "--ignore-working-copy",
+            "--at-op",
+            at_op,
+            "log",
+            "-r",
+            "all()",
+            "--no-graph",
+            "-T",
+            "commit_id ++ \"\\n\" ",
+        ],
+    ));
+    let mut native_ids: Vec<_> = native_ids.split_whitespace().map(str::to_owned).collect();
+    http_ids.sort();
+    native_ids.sort();
+    assert_eq!(http_ids, native_ids);
+    let commit = nodes
+        .iter()
+        .find(|n| {
+            n["commit"]["description"]
+                .as_str()
+                .unwrap()
+                .contains("second durable description")
+        })
+        .unwrap()["commit"]["id"]
+        .as_str()
+        .unwrap();
+    let tree = http_json(
+        &http,
+        &admin,
+        &format!("{base}/commits/{commit}/tree?at_op={at_op}"),
+    )
+    .await;
+    let file = tree["data"]["entries"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|e| e["name"] == "binary.bin")
+        .unwrap()["terms"][0]["id"]
+        .as_str()
+        .unwrap();
+    let file_url = format!("{base}/files/{file}?at_op={at_op}");
+    let media = http
+        .get(&file_url)
+        .bearer_auth(admin.expose().as_str())
+        .header("range", "bytes=1-3")
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(media.status(), reqwest::StatusCode::PARTIAL_CONTENT);
+    assert_eq!(media.headers()["x-jj-store-operation"], at_op);
+    assert_eq!(media.bytes().await.unwrap().as_ref(), &binary[1..4]);
+    assert_eq!(
+        http_json(&http, &admin, &format!("{base}/snapshot")).await,
+        snapshot,
+        "GETs published history"
+    );
     fs::write(
         f.root.path().join("work/local-only.txt"),
         "unsnapshotted local bytes",
@@ -703,6 +837,17 @@ async fn real_rustfs_server_cli_restart_and_revocation() {
         );
         tokio::time::sleep(Duration::from_millis(100)).await;
     }
+    // The authoritative operation survives process/cache/storage restart.
+    let recovered_graph = http_json(&http, &admin, &log_url).await;
+    assert_eq!(recovered_graph["data"]["data"], graph["data"]["data"]);
+    let media = http
+        .get(&file_url)
+        .bearer_auth(admin.expose().as_str())
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(media.status(), reqwest::StatusCode::OK);
+    assert_eq!(media.bytes().await.unwrap().as_ref(), binary);
     assert_eq!(
         fs::read(f.root.path().join("work/local-only.txt")).unwrap(),
         b"unsnapshotted local bytes"
@@ -791,6 +936,7 @@ async fn real_rustfs_server_cli_restart_and_revocation() {
         .await
         .unwrap();
     reader_client.heads().await.unwrap();
+    http_json(&http, &reader, &log_url).await;
     let revoked: serde_json::Value = serde_json::from_str(&success(
         f.command()
             .env("JJ_STORE_TOKEN", admin.expose().as_str())
@@ -814,6 +960,17 @@ async fn real_rustfs_server_cli_restart_and_revocation() {
     ))
     .unwrap();
     assert_eq!(revoked["state"], "committed");
+    let denied = http
+        .get(&log_url)
+        .bearer_auth(reader.expose().as_str())
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(denied.status(), reqwest::StatusCode::FORBIDDEN);
+    assert_eq!(
+        denied.json::<serde_json::Value>().await.unwrap()["code"],
+        "access_denied"
+    );
     let replay: serde_json::Value = serde_json::from_str(&success(
         native_command(
             &f,
@@ -888,4 +1045,17 @@ fn standalone_terminal_paging_color_and_json_contract() {
             .output()
             .unwrap(),
     );
+}
+
+async fn http_json(client: &reqwest::Client, token: &BearerToken, url: &str) -> serde_json::Value {
+    let response = client
+        .get(url)
+        .bearer_auth(token.expose().as_str())
+        .send()
+        .await
+        .unwrap();
+    let status = response.status();
+    let json = response.json::<serde_json::Value>().await.unwrap();
+    assert_eq!(status, reqwest::StatusCode::OK, "{json}");
+    json
 }

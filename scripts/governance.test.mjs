@@ -174,6 +174,35 @@ test("server_composition_cannot_depend_on_cli_or_native_upstream", () => {
           { name: "jj-store-jj" },
           { name: "jj-store-rpc" },
           { name: "jj-store-service" },
+          { name: "jj-store-http" },
+        ],
+      },
+    ]),
+    [],
+  );
+});
+
+test("http_consumes_owned_service_contracts_without_storage_or_upstream", () => {
+  assert.equal(
+    dependencyErrors([
+      {
+        name: "jj-store-http",
+        dependencies: [
+          { name: "jj-lib" },
+          { name: "jj-store-object" },
+          { name: "jj-store-jj" },
+        ],
+      },
+    ]).length,
+    3,
+  );
+  assert.deepEqual(
+    dependencyErrors([
+      {
+        name: "jj-store-http",
+        dependencies: [
+          { name: "jj-store-model" },
+          { name: "jj-store-service" },
         ],
       },
     ]),

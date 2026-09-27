@@ -95,3 +95,8 @@ preparation separately from prepared/warm graph queries. The harness requires a
 successful preparation report for both linear and wide-head fixtures; an
 explicit rebuild-required response alone is not a passing query or completed
 task.
+
+The server may depend on the HTTP transport for listener composition. HTTP keeps
+its existing service/model dependency boundary and consumes only owned
+contracts; it cannot depend directly on storage, CLI presentation or upstream JJ
+libraries.

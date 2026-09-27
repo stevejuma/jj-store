@@ -123,3 +123,20 @@ requests authenticate before cursor lookup or historical reads, including cached
 pages. The signing key is generated for the serving process, remains outside
 serialized DTOs and has redacted Debug output. Restart or expiry requires
 explicit snapshot reselection.
+
+HTTP accepts exactly one Authorization Bearer header, never URL credentials or
+cookies. Browser Origin headers must match the configured public origin; no
+cross-origin credential policy is enabled. Repository binding precedes source
+reads, including task/cursor lookup. Unknown repositories and invalid repository
+tokens share access-denied behavior. API responses disable caching and MIME
+sniffing and use a restrictive content security policy. Request/response
+admission also covers slow or unpolled bodies, independently of native worker
+slots.
+
+The production listener negotiates HTTP/2 and HTTP/1.1 through one TLS acceptor.
+Connection admission covers both transports, including incomplete handshakes.
+Handshake concurrency and duration are bounded; idle sockets expire even before
+request headers arrive. HTTP/2 stream and header limits supplement application
+admission. Native RPC and HTTP keep separate bounded request pools. A socket
+close never proves an in-flight publication failed; native receipt recovery
+continues to resolve unknown outcomes.

@@ -1,6 +1,9 @@
 //! Manifest-pinned application reads. This capability exposes no publication API.
 use crate::native::NativeSession;
+// Only project-owned contracts cross this transport-facing service boundary.
+pub use jj_store_jj::{factories::PROFILE as NATIVE_PROFILE, query};
 use jj_store_model as m;
+pub use jj_store_object::ByteRange;
 use jj_store_wal::{self as wal, publication::Manifest};
 use serde::Serialize;
 use std::{collections::BTreeSet, sync::Arc, time::Duration};

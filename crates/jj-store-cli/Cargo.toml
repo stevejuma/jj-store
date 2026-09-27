@@ -50,6 +50,10 @@ name = "jj-store"
 path = "src/server_main.rs"
 
 [dev-dependencies]
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "http2", "json"] }
+jj-store-http.workspace = true
+axum = { version = "0.8", features = ["json", "query"] }
+tower = { version = "0.5", features = ["util"] }
 jj-store-wal.workspace = true
 tokio = { version = "1", features = ["macros", "rt-multi-thread", "time", "sync"] }
 tonic = { version = "0.14", features = ["transport"] }
