@@ -6,11 +6,11 @@ import {
   storeErrorMessage,
 } from "./http-store-data-source.js";
 import type { StoreDataSource } from "./native-data-source.js";
+import { followProductionStoreEvents } from "./production-store-events.js";
 import { createProductionStoreReader } from "./production-store-reader.svelte.js";
 import {
   clearProductionStoreView,
   createProductionStoreState,
-  emptyGraph,
   initialStatus,
 } from "./production-store-state.svelte.js";
 import { createStoreQueryClient } from "./store-query-client.js";
@@ -47,28 +47,16 @@ export function createProductionStoreController(
     current,
     report,
   });
+  if (history.error)
+    Object.assign(data.status, { navigation: "failed", error: history.error });
 
-  async function follow(active: StoreDataSource, signal: AbortSignal) {
-    let after: string | undefined,
-      delay = 500;
-    while (!signal.aborted && active === source) {
-      try {
-        data.status.live = "live";
-        await active.events(after, signal, (event, id) => {
-          if (signal.aborted || active !== source) return;
-          after = id;
-          delay = 500;
-          if (event.type === "ready") data.heads = [...event.snapshot.heads];
-          else data.status.refreshAvailable = true;
-        });
-      } catch {
-        if (signal.aborted || active !== source) return;
-      }
-      data.status.live = "reconnecting";
-      await new Promise((resolve) => setTimeout(resolve, delay));
-      delay = Math.min(delay * 2, 10_000);
-    }
+  async function restoreRoute() {
+    if (!source || !operation()) return;
+    version += 1;
+    clearProductionStoreView(data);
+    await reader.restorePage();
   }
+
   function disconnect(message = "", denied = false) {
     version += 1;
     feed.abort();
@@ -113,8 +101,13 @@ export function createProductionStoreController(
       data.status.connection = "connected";
       data.status.repositories = "ready";
       feed = new AbortController();
-      void follow(active, feed.signal);
-      if (selected) await reader.loadPage();
+      void followProductionStoreEvents(
+        active,
+        () => active === source,
+        data,
+        feed.signal,
+      );
+      if (history.route.snapshotOperationId) await reader.restorePage();
     } catch (cause) {
       if (!current(ticket, active)) return;
       const message = storeErrorMessage(cause);
@@ -130,18 +123,23 @@ export function createProductionStoreController(
     const selected = data.heads.length === 1 ? data.heads[0]! : null;
     version += 1;
     clearProductionStoreView(data);
-    history.connect(active.repository, selected);
+    history.refresh(selected);
     data.status.refreshAvailable = false;
     feed = new AbortController();
-    void follow(active, feed.signal);
-    if (selected) await reader.loadPage();
+    void followProductionStoreEvents(
+      active,
+      () => active === source,
+      data,
+      feed.signal,
+    );
+    if (selected) await reader.restorePage();
   }
   async function selectOperation(id: string) {
     if (!data.heads.includes(id)) return;
     version += 1;
     clearProductionStoreView(data);
-    history.connect(activeSource().repository, id);
-    await reader.loadPage();
+    history.selectSnapshot(id);
+    await reader.restorePage();
   }
   async function prepareIndex() {
     if (!data.neededIndex) return;
@@ -158,14 +156,12 @@ export function createProductionStoreController(
     if (current(ticket, active) && task.status === "ready") {
       data.neededIndex = null;
       data.status.error = "";
-      await reader.loadPage();
+      await reader.restorePage();
     }
   }
   async function selectPage(page: StorePage) {
     history.page(page);
-    data.graph = emptyGraph();
-    data.detail = undefined;
-    await reader.loadPage();
+    await restoreRoute();
   }
   async function selectRevision(id: string | null) {
     const page = history.route.page;
@@ -189,6 +185,10 @@ export function createProductionStoreController(
   const actions: StoreController["actions"] = {
     connect: ({ repository, token }) => connect(repository, token),
     disconnect: () => disconnect(),
+    destroy() {
+      disconnect();
+      history.destroy();
+    },
     refresh,
     selectOperation,
     async selectComparisonParent(id) {
@@ -212,12 +212,11 @@ export function createProductionStoreController(
     async openRepository(id) {
       if (id !== source?.repository) return;
       history.page("files");
-      await reader.loadPage();
+      await restoreRoute();
     },
     selectPage,
     async navigate(delta) {
-      history.navigate(delta);
-      await reader.loadPage();
+      if (history.navigate(delta)) await restoreRoute();
     },
     selectBookmark(name) {
       const bookmark = data.bookmarks.find((item) => item.name === name);
@@ -247,6 +246,17 @@ export function createProductionStoreController(
     signIn() {},
     signOut: () => disconnect(),
   };
+
+  history.onExternalRoute((result) => {
+    if (result.kind === "invalid") {
+      data.status.navigation = "failed";
+      data.status.error = result.message;
+    } else if (result.kind === "route" && source) {
+      if (result.route.repository !== source.repository)
+        disconnect("Reconnect to open the requested repository.");
+      else void restoreRoute();
+    }
+  });
 
   return {
     get state() {

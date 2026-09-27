@@ -148,3 +148,21 @@ cancel pending work and clear protected cache entries. The production bundle
 uses the catalog's released Design Core theme plus bundled DM Sans and Source
 Code Pro WOFF2 assets; the static manifest and router allow only hashed JS, CSS
 and WOFF2 files with explicit media types under the existing self-only CSP.
+
+M4.12 owns the typed hash route
+`#/repos/<repository-id>/<page>?at_op=<operation-id>&…`. Permanent routes use
+full native repository, operation, commit and change identities plus safely
+encoded bookmark and repository paths; credentials, continuation cursors and
+response data never enter the URL. A repository selection is valid only with an
+explicit captured operation. Commit selections are excluded from Op Log, while
+inspected operations and comparison parent/group selections are confined to Op
+Log. Unknown, duplicate, malformed, unsafe and page-incompatible fields fail
+closed with an explicit route error.
+
+Application navigation pushes browser history, while native Back/Forward events
+restore the pinned repository, page, snapshot, bookmark/change/commit, operation
+comparison, directory and selected file. Reload prefills only the repository
+identity; the memory-only token must be entered again before the controller
+restores protected content. SSE announces fresher history without changing the
+displayed snapshot. Explicit Refresh captures current heads and retains the deep
+selection and hash when that selection remains available.

@@ -64,6 +64,7 @@ export function createInMemoryStoreController(
     disconnect() {
       authenticated = false;
     },
+    destroy() {},
     async refresh() {},
     async selectOperation() {},
     async selectComparisonParent() {},

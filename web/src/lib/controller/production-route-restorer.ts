@@ -1,0 +1,132 @@
+import type { StoreRoute } from "./contracts.js";
+import type { ProductionStoreState } from "./production-store-state.svelte.js";
+import type { createStoreRouteHistory } from "./store-route-history.svelte.js";
+
+interface RouteReads {
+  loadReferences(): Promise<void>;
+  loadGraph(): Promise<void>;
+  loadFiles(commit: string): Promise<void>;
+  loadBlob(path: string): Promise<void>;
+  loadCommit(id: string): Promise<void>;
+  loadOperation(id: string, parent?: string): Promise<void>;
+  loadPatch(path: string): Promise<void>;
+}
+
+function unavailable(
+  data: ProductionStoreState,
+  area: "files" | "detail",
+  message: string,
+) {
+  data.status[area] = "unavailable";
+  data.status.error = message;
+}
+
+async function restoreFiles(
+  desired: StoreRoute,
+  data: ProductionStoreState,
+  history: ReturnType<typeof createStoreRouteHistory>,
+  reads: RouteReads,
+) {
+  await reads.loadReferences();
+  const choice = desired.bookmark
+    ? data.choices.find(
+        (candidate) =>
+          candidate.kind === "bookmark" && candidate.label === desired.bookmark,
+      )
+    : desired.changeId
+      ? data.choices.find(
+          (candidate) => candidate.value === `change:${desired.changeId}`,
+        )
+      : undefined;
+  if ((desired.bookmark || desired.changeId) && !choice) {
+    unavailable(
+      data,
+      "files",
+      "The requested repository reference is unavailable.",
+    );
+    return;
+  }
+  const fallback = data.choices.find(
+    (candidate) => candidate.targets.length === 1,
+  );
+  const selected = choice ?? (desired.commitId ? undefined : fallback);
+  data.targets = selected
+    ? [...selected.targets]
+    : desired.commitId
+      ? [desired.commitId]
+      : [];
+  if (
+    desired.commitId &&
+    selected &&
+    !selected.targets.includes(desired.commitId)
+  ) {
+    unavailable(
+      data,
+      "files",
+      "The requested commit is not a target of this repository reference.",
+    );
+    return;
+  }
+  const commit =
+    desired.commitId ??
+    (selected?.targets.length === 1 ? selected.targets[0]! : null);
+  if (!commit) {
+    data.status.files = data.targets.length > 1 ? "unavailable" : "empty";
+    return;
+  }
+  const next = {
+    ...desired,
+    bookmark: selected?.kind === "bookmark" ? selected.label : desired.bookmark,
+    changeId:
+      selected?.kind === "change"
+        ? selected.value.slice("change:".length)
+        : desired.changeId,
+    commitId: commit,
+  };
+  history.replace(next);
+  await reads.loadFiles(commit);
+  if (!desired.path) return;
+  if (!data.snapshot?.files.some((file) => file.path === desired.path)) {
+    unavailable(data, "detail", "The requested file is unavailable.");
+    return;
+  }
+  await reads.loadBlob(desired.path);
+}
+
+export async function restoreProductionStoreRoute(
+  desired: StoreRoute,
+  data: ProductionStoreState,
+  history: ReturnType<typeof createStoreRouteHistory>,
+  reads: RouteReads,
+) {
+  data.status.error = "";
+  data.status.navigation = "loading";
+  if (desired.page === "files")
+    await restoreFiles(desired, data, history, reads);
+  else {
+    await Promise.all([reads.loadReferences(), reads.loadGraph()]);
+    if (desired.bookmark) {
+      const bookmark = data.bookmarks.find(
+        (candidate) => candidate.name === desired.bookmark,
+      );
+      if (!bookmark) {
+        unavailable(data, "detail", "The requested bookmark is unavailable.");
+        data.status.navigation = "failed";
+        return;
+      }
+      data.targets = [...bookmark.targets];
+    }
+    const selected =
+      desired.page === "oplog"
+        ? desired.inspectedOperationId
+        : desired.commitId;
+    if (selected && desired.page === "oplog")
+      await reads.loadOperation(
+        selected,
+        desired.comparisonParentId ?? undefined,
+      );
+    else if (selected) await reads.loadCommit(selected);
+    if (desired.path && selected) await reads.loadPatch(desired.path);
+  }
+  data.status.navigation = data.status.error ? "failed" : "ready";
+}

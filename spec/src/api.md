@@ -381,6 +381,12 @@ conflict-editing controls and search UI remain deferred within M4.3. Their
 existing backend contracts and checks stay enabled and cannot be counted as
 browser acceptance.
 
+Local workspace validation may resolve `@lapismd/design-core` from the sibling
+source repository through the guarded pnpm hook. That development resolution
+does not change browser request contracts, static-asset policy or runtime
+transport behavior. Clean environments without the sibling source use the
+registry range and committed registry lockfile.
+
 ## Typed mutation HTTP transport
 
 `POST /v1/repos/{repo}/mutations/preview` and `POST .../mutations` accept a

@@ -88,6 +88,7 @@ export interface StoreController {
   readonly actions: {
     connect(connection: StoreConnection): Promise<void>;
     disconnect(): void;
+    destroy(): void;
     refresh(): Promise<void>;
     selectOperation(id: string): Promise<void>;
     selectComparisonParent(id: string): Promise<void>;

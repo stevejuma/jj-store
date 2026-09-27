@@ -33,7 +33,7 @@ status; reports hold immutable evidence rather than competing status summaries.
 | `^crates/jj-store-(?:adapters\|tantivy)/`                                                                                                                                                        | `adapters.md`        |
 | `^(?:crates/jj-store-cli/\|bins/\|docs/cli/)`                                                                                                                                                    | `cli.md`             |
 | `^(?:crates/jj-store-testkit/\|fixtures/\|schemas/\|proto/\|docs/upstream-lock\|docs/codec\|docs/compatibility\|docs/licenses/\|docs/evidence/\|scripts/.*(?:rustfs\|spike\|upstream)\|deploy/)` | `compatibility.md`   |
-| `^(?:scripts/\|AGENTS\.md$\|spec-validator\.config\.mjs$\|spec/book\.toml$\|\.gitignore$\|\.prettier)`                                                                                           | `spec-governance.md` |
+| `^(?:scripts/\|AGENTS\.md$\|spec-validator\.config\.mjs$\|spec/book\.toml$\|\.gitignore$\|\.pnpmfile\.cjs$\|\.prettier)`                                                                         | `spec-governance.md` |
 | `^(?:Cargo\.(?:toml\|lock)$\|rust-toolchain\.toml$\|package\.json$\|pnpm-lock\.yaml$\|README\.md$\|LICENSE\.md$\|docs/implementation-plan\.md$\|docs/reference/)`                                | `architecture.md`    |
 
 The M0 contract harness is validated in both normal tests and spec checks. Real
@@ -176,6 +176,13 @@ enforces counted-line limits and exact no-growth budgets for existing hotspots,
 rejects production imports from catalog fixtures, and keeps reusable
 presentation modules independent of API/controller ownership. Its focused
 negative tests run in the governance lane.
+
+The tracked pnpm hook may substitute an available sibling Design Core source for
+dependency, development-dependency and optional-dependency fields only. Peer
+ranges, the published package range and the committed registry lockfile remain
+unchanged. Governance tests cover both local-source resolution and the registry
+fallback when that sibling is absent; local installation uses `--lockfile=false`
+so validation state cannot rewrite the release lock.
 
 M4.8 review acceptance covers populated and filtered branch dividers, the
 absence of duplicate history-page titles, shared column header styling, and

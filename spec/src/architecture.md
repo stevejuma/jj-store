@@ -202,3 +202,10 @@ committed-read, service-pagination and HTTP transport boundaries. Reference,
 recursive-path, operation-change and diff-summary contracts add no presentation,
 fixture or mutation dependency, and their cursors remain service-owned rather
 than becoming native repository state.
+
+The local pnpm hook follows the workspace source-first boundary for Design Core.
+When `../design-core` exists it resolves the declared dependency from that
+source for development validation; otherwise it leaves the released semver range
+intact. It never rewrites peer ranges. `package.json` and `pnpm-lock.yaml`
+remain registry-resolved, and final dependency integration still requires a
+released registry version.

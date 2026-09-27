@@ -59,3 +59,17 @@
     onConnect: fn(),
   }}
 />
+
+<Story
+  name="Restored repository"
+  args={{
+    status: disconnected,
+    initialRepository: "12".repeat(16),
+    onConnect: fn(),
+  }}
+  play={async ({ canvasElement }) => {
+    await expect(
+      within(canvasElement).getByLabelText("Repository ID"),
+    ).toHaveValue("12".repeat(16));
+  }}
+/>

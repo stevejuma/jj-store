@@ -37,7 +37,7 @@ adds evidence here in its enclosing Jujutsu change.
 | M4.9        | Done        | M4.8        | JST-ARCH-004,JST-UI-005                                                 | Shared production components/controller and no-growth architecture checks                                           | Retain source ownership and proceed to bounded APIs      | E-UI-007,E-UI-008                                                                                                                                                                               |
 | M4.10       | Done        | M4.9        | JST-API-001,JST-API-002,JST-API-006                                     | Bounded bookmark, directory metadata and operation-change contracts                                                 | Implement M4.11 authenticated browser data/controller    | E-M4-018                                                                                                                                                                                        |
 | M4.11       | In progress | M4.10       | JST-API-004,JST-API-005,JST-UI-005                                      | Authenticated cached browser implements all browsing screens                                                        | Implement typed hash restoration and persistent layouts  | E-UI-011                                                                                                                                                                                        |
-| M4.12       | Planned     | M4.11       | JST-API-002,JST-API-003,JST-UI-005                                      | Hash restoration, Back/Forward and explicit SSE refresh preserve snapshots                                          | Implement after real browsing controller                 | -                                                                                                                                                                                               |
+| M4.12       | In progress | M4.11       | JST-API-002,JST-API-003,JST-UI-005                                      | Hash restoration, Back/Forward and explicit SSE refresh preserve snapshots                                          | Clear registry accessibility gate; continue M4.13        | E-UI-012                                                                                                                                                                                        |
 | M4.13       | Planned     | M4.11       | JST-API-002,JST-UI-006                                                  | Large collections are cursor-paged/virtualized and every resizable region persists                                  | Extend Design Core FileListing and integrate release     | -                                                                                                                                                                                               |
 | M4.14       | Planned     | M4.12,M4.13 | JST-API-003,JST-API-004,JST-API-005                                     | Cold built browser passes captured and real RustFS-backed native repository acceptance                              | Run after browsing, navigation and layout complete       | -                                                                                                                                                                                               |
 | M5          | Done        | M4.1        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Authenticated typed commands and shared RPC policy                                                                  | Retain mutation conformance; proceed to M6               | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-M5-005,E-M5-006,E-M5-007,E-M5-008                                                                                                             |
@@ -9534,6 +9534,141 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Registry Design Core ^0.2.0; temporary source acceptance fa2d34e5; @tanstack/svelte-query 6.3.0; Svelte 5.57.1; Storybook 10.5.7; Vitest 4.1.11; Playwright 1.63.x. Enclosing Jujutsu change is the revision reference.",
     "formats": "Memory-only repository credentials; session/repository/snapshot/query-scoped cache keys; explicit SSE freshness and refresh. Static bundle adds hashed WOFF2 font assets under the existing self-only CSP. No native object, WAL, storage, credential persistence or HTTP schema changes. Body page titles remain accessibility-only; Column Canvas bodies own vertical scrolling. Stories remain visual-pending and visual tests were skipped at user request."
+  },
+  {
+    "id": "E-UI-012",
+    "tasks": ["M4", "M4.3", "M4.12"],
+    "date": "2026-09-27",
+    "kind": "implementation",
+    "files": [
+      ".pnpmfile.cjs",
+      "catalog/components/store-application/StoreConnection.stories.svelte",
+      "catalog/controller/in-memory-store-controller.svelte.ts",
+      "package.json",
+      "scripts/local-package-pnpmfile.cjs",
+      "scripts/local-package-pnpmfile.test.mjs",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/milestones.md",
+      "spec/src/spec-governance.md",
+      "spec/src/ui.md",
+      "spec/src/verification.md",
+      "web/src/App.svelte",
+      "web/src/lib/controller/contracts.ts",
+      "web/src/lib/controller/production-route-restorer.ts",
+      "web/src/lib/controller/production-store-controller.svelte.ts",
+      "web/src/lib/controller/production-store-events.ts",
+      "web/src/lib/controller/production-store-reader.svelte.ts",
+      "web/src/lib/controller/store-route-codec.ts",
+      "web/src/lib/controller/store-route-history.svelte.ts",
+      "web/src/lib/ui/community-app-shell/CommunityAppShell.svelte",
+      "web/src/lib/ui/store-application/StoreConnection.svelte",
+      "web/tests/browser/native-browser-fixture.ts",
+      "web/tests/browser/navigation.spec.ts",
+      "web/tests/browser/reads.spec.ts",
+      "web/tests/store-route-codec.test.ts",
+      "web/tests/vite/store-route-history.test.ts"
+    ],
+    "tests": [
+      "scripts/local-package-pnpmfile.test.mjs#local package hook uses available Design Core source",
+      "scripts/local-package-pnpmfile.test.mjs#local package hook retains registry range when source is absent",
+      "web/tests/store-route-codec.test.ts#native operation route hash round-trips every stable selection",
+      "web/tests/store-route-codec.test.ts#repository paths and bookmark names remain safely encoded",
+      "web/tests/store-route-codec.test.ts#malformed, duplicate, foreign and unsafe route data fails closed",
+      "web/tests/vite/store-route-history.test.ts#route history restores, pushes and replaces native browser hashes",
+      "web/tests/vite/store-route-history.test.ts#external browser navigation restores known and newly entered routes",
+      "web/tests/vite/store-route-history.test.ts#invalid owned hashes remain explicit and never change selection",
+      "web/tests/browser/navigation.spec.ts#hash route restores snapshot and file through controls reload and browser history",
+      "web/tests/browser/navigation.spec.ts#malformed owned route is explicit before authentication"
+    ],
+    "runs": [
+      {
+        "command": "pnpm exec tsx --test web/tests/store-route-codec.test.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "The new snapshot-bound selection regression failed before the parser change because a bookmark without at_op was accepted. The exact assertion was retained."
+      },
+      {
+        "command": "pnpm exec tsx --test web/tests/store-route-codec.test.ts; pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/store-route-history.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Codec acceptance passes 3/3 and browser-history acceptance passes 3/3 after enforcing snapshot-bound and page-compatible selections."
+      },
+      {
+        "command": "pnpm web:build && node scripts/browser-fixtures.mjs && pnpm exec playwright test --config web/playwright.config.ts navigation.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both cold built navigation scenarios pass: Back/Forward, reload and reconnect restore the selected source file; credentials stay out of the URL/storage; explicit SSE refresh preserves the exact deep hash; malformed routes remain explicit."
+      },
+      {
+        "command": "pnpm web:test:browser",
+        "result": "fail",
+        "failures": 1,
+        "note": "Nine of ten production browser scenarios pass. The sole failure is the previously recorded Axe region violation in registry Design Core 0.2.0 mobile-stage role=group. The source-owned fix remains committed at Design Core fa2d34e5 and no local package substitution is retained."
+      },
+      {
+        "command": "node --test scripts/local-package-pnpmfile.test.mjs",
+        "result": "fail",
+        "failures": 1,
+        "note": "The exact hook regression failed before implementation because the local package hook module did not exist. The local and fallback assertions were retained."
+      },
+      {
+        "command": "node --test scripts/local-package-pnpmfile.test.mjs; pnpm install --lockfile=false --force",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both hook regressions pass. The install resolves Design Core to ../design-core when present, preserves the package manifest range and peer ranges, and leaves the registry pnpm-lock.yaml byte-for-byte unchanged."
+      },
+      {
+        "command": "pnpm web:test:browser",
+        "result": "pass",
+        "failures": 0,
+        "note": "All ten cold built production browser scenarios pass against local Design Core source fa2d34e5, including the mobile accessibility regression and both typed hash navigation scenarios."
+      },
+      {
+        "command": "pnpm spec:check",
+        "result": "fail",
+        "failures": 3,
+        "note": "Every executable canonical lane passed, then spec-first required the new package/install hook boundary in api.md, architecture.md and spec-governance.md. The implementation and tests were retained and all three mapped chapters were updated."
+      },
+      {
+        "command": "pnpm test:governance; pnpm test:storybook",
+        "result": "pass",
+        "failures": 0,
+        "note": "Governance passes 23/23, including both local package hook branches, and Storybook interaction/accessibility passes 47/47 against the local Design Core source."
+      },
+      {
+        "command": "VITEST_MAX_WORKERS=1 pnpm test",
+        "result": "pass",
+        "failures": 0,
+        "note": "The serial aggregate passes governance 23/23, storage harness 3/3, contracts 6/6, web 16/16, catalog unit 30/30, Storybook 47/47, cold catalog browser 1/1 and the complete Rust workspace with only its declared environment-dependent ignored tests."
+      },
+      {
+        "command": "pnpm build; pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Cold Storybook, production browser and locked Rust builds pass. Specification validation, boundaries, 128-module architecture, progress, Rust formatting, generated contracts, web/catalog Svelte checks and locked workspace Clippy also pass. Existing non-fatal CSS :global and bundle-size warnings remain visible."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Spec-first passes for 20 protected files across five canonical chapters, and all 18 canonical lanes pass against local Design Core source, including cold catalog, interaction/accessibility, production browser and Rust workspace acceptance."
+      },
+      {
+        "command": "pnpm format:check; pnpm check:progress; pnpm spec:validate; pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rust and Prettier formatting, 43-task progress governance, all 65 canonical requirements and the five-chapter spec-first mapping pass. Visual tests and baseline updates were skipped at the user's request."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Registry-only production browser acceptance remains 9/10 until the separately approved Design Core mobile-stage fix is released and consumed.",
+      "M4.13 persistent virtualized layouts and M4.14 cold real RustFS acceptance remain.",
+      "Consume the mobile-stage fix only after a separately approved Design Core registry release."
+    ],
+    "versions": "Registry Design Core ^0.2.0 with guarded local source resolution at fa2d34e5 when ../design-core is present; @tanstack/svelte-query 6.3.0; Svelte 5.57.1; Storybook 10.5.7; Vitest 4.1.11; Playwright 1.63.x. Enclosing Jujutsu change is the revision reference.",
+    "formats": "Typed fragment routes use full 32-character repository/change IDs and 128-character operation/commit IDs. Bookmark names and repository paths are URL encoded. Credentials, cursors and response contents stay out of routes and storage. SSE freshness remains advisory until explicit refresh. The pnpm hook changes only local dependency resolution when the sibling source exists; package.json and pnpm-lock.yaml remain registry-resolved. No native storage, publication, HTTP schema or credential-persistence changes. Stories remain visual-pending and visual tests were skipped at user request."
   }
 ]
 ```

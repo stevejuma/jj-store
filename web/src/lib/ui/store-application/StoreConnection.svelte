@@ -5,6 +5,7 @@
   import * as Field from "@lapismd/design-core/shadcn/field";
   import { Input } from "@lapismd/design-core/shadcn/input";
   import { Spinner } from "@lapismd/design-core/shadcn/spinner";
+  import { untrack } from "svelte";
   import type {
     StoreConnection,
     StoreControllerStatus,
@@ -12,12 +13,14 @@
 
   let {
     status,
+    initialRepository = "",
     onConnect,
   }: {
     status: StoreControllerStatus;
+    initialRepository?: string;
     onConnect: (connection: StoreConnection) => Promise<void>;
   } = $props();
-  let repository = $state("");
+  let repository = $state(untrack(() => initialRepository));
   let token = $state("");
   const pending = $derived(status.connection === "connecting");
 

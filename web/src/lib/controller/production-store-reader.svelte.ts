@@ -11,6 +11,7 @@ import {
   readReferences,
 } from "./production-store-loaders.js";
 import type { ProductionStoreState } from "./production-store-state.svelte.js";
+import { restoreProductionStoreRoute } from "./production-route-restorer.js";
 import type { createStoreRouteHistory } from "./store-route-history.svelte.js";
 
 interface ReaderContext {
@@ -217,18 +218,7 @@ export function createProductionStoreReader(context: ReaderContext) {
     data.blob = undefined;
     if (commit) await loadFiles(commit);
   }
-  async function loadPage() {
-    if (!context.operation()) return;
-    data.status.error = "";
-    if (history.route.page === "files") {
-      await loadReferences();
-      const selected = data.choices.find(
-        (choice) => choice.targets.length === 1,
-      );
-      if (selected) await selectRef(selected.value, false);
-    } else await Promise.all([loadReferences(), loadGraph()]);
-  }
-  return {
+  const reads = {
     loadReferences,
     loadGraph,
     loadFiles,
@@ -237,6 +227,10 @@ export function createProductionStoreReader(context: ReaderContext) {
     loadOperation,
     loadPatch,
     selectRef,
-    loadPage,
+  };
+  return {
+    ...reads,
+    restorePage: () =>
+      restoreProductionStoreRoute(history.route, data, history, reads),
   };
 }
