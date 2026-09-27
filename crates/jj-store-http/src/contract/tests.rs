@@ -47,6 +47,7 @@ fn contract_preserves_native_shapes_and_hex_id_widths() {
         ("ChangeId", 32),
         ("CommitId", 128),
         ("ConflictFingerprint", 128),
+        ("ConflictUploadId", 64),
     ] {
         assert_eq!(schemas[name]["minLength"], length);
         assert_eq!(schemas[name]["maxLength"], length);
@@ -75,7 +76,7 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
     let doc = openapi();
     assert_eq!(doc["security"], json!([{"repositoryBearer":[]}]));
     let paths = doc["paths"].as_object().unwrap();
-    assert_eq!(paths.len(), 20);
+    assert_eq!(paths.len(), 21);
     let mut ids = std::collections::BTreeSet::new();
     for path in paths.values() {
         for (method, operation) in path.as_object().unwrap() {
@@ -159,5 +160,41 @@ fn mutation_contracts_require_typed_intent_and_write_permission() {
             .as_str()
             .unwrap()
             .contains("not_known never proves rejection")
+    );
+}
+
+#[test]
+fn conflict_upload_contract_has_binary_body_exact_snapshot_and_write_permission() {
+    let doc = openapi();
+    let op = &doc["paths"]["/v1/repos/{repo}/conflict-uploads"]["post"];
+    assert!(
+        op["description"]
+            .as_str()
+            .unwrap()
+            .contains("write permission before body consumption")
+    );
+    assert_eq!(
+        op["requestBody"]["content"]["application/octet-stream"]["schema"]["format"],
+        "binary"
+    );
+    for name in [
+        "epoch",
+        "position",
+        "operation",
+        "commit",
+        "path",
+        "fingerprint",
+    ] {
+        assert!(
+            op["parameters"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|p| p["name"] == name && p["required"] == true)
+        );
+    }
+    assert_eq!(
+        doc["components"]["schemas"]["ConflictUploadId"]["pattern"],
+        "^[0-9a-f]{64}$"
     );
 }

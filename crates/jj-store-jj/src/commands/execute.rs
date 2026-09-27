@@ -125,6 +125,7 @@ pub(super) async fn run(
     limits: Limits,
     budget: Arc<Budget>,
 ) -> Result<Prepared> {
+    let uploaded_files = mutation.uploaded_files().clone();
     let principal = mutation.principal();
     let heads = mutation.heads().clone();
     let access: Arc<dyn ReadAccess> = Arc::new(super::access::Access(mutation));
@@ -177,8 +178,16 @@ pub(super) async fn run(
     let mut skipped_hidden = vec![];
     let (staged, mut created) = match command {
         Command::ResolveConflicts { commit, paths } => (
-            super::resolve::stage(&repo, access.as_ref(), commit, paths, principal, &budget)
-                .await?,
+            super::resolve::stage(
+                &repo,
+                access.as_ref(),
+                commit,
+                paths,
+                principal,
+                &budget,
+                &uploaded_files,
+            )
+            .await?,
             vec![],
         ),
         Command::Abandon {

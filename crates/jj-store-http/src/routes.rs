@@ -5,6 +5,7 @@ use crate::mutations::{
 use crate::{
     contract::{Document, Reply},
     dto::*,
+    uploads::{Query as UploadQuery, stage as conflict_upload},
 };
 use axum::{
     Json,
@@ -125,6 +126,7 @@ macro_rules! endpoints {
             (post, "/repos/{repo}/index/tasks/{task}/cancel", cancel, Empty, index_tasks::Task, Reply::Json(200)),
             (post, "/repos/{repo}/mutations/preview", mutation_preview, Empty, mutation::Preview, Reply::Json(200)),
             (post, "/repos/{repo}/mutations", mutation_apply, Empty, mutation::Outcome, Reply::Json(200)),
+            (post, "/repos/{repo}/conflict-uploads", conflict_upload, UploadQuery, jj_store_service::uploads::Upload, Reply::Json(200)),
             (get, "/repos/{repo}/mutations/{request_id}", mutation_status, Empty, mutation::Status, Reply::Json(200))
         }
     };

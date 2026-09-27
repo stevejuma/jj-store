@@ -29,10 +29,10 @@ adds evidence here in its enclosing Jujutsu change.
 | M4.1        | Done        | M3         | JST-API-001,JST-API-002,JST-JJ-003                                      | Pinned three-graph reads with zero GET publications                                   | Retain pinned read conformance                      | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010,E-M4-011,E-M4-012,E-M4-013,E-M4-014                                        |
 | M4.2        | In progress | M4.1       | JST-API-003,JST-API-006                                                 | Committed SSE and generated API contract deployment qualification                     | Qualify real RustFS/TLS SSE                         | E-M4-015,E-M4-016,E-M4-017,E-SCOPE-001                                                                                                                               |
 | M4.3        | Deferred    | M4.1,M5,M6 | JST-API-004,JST-API-005                                                 | Complete browser mutations/conflicts/search/freshness and deployed browser acceptance | Resume UI only when requested                       | E-SCOPE-001                                                                                                                                                          |
-| M5          | In progress | M4.1       | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Authenticated typed commands and shared RPC policy                                    | Implement authorized conflict uploads               | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-M5-005,E-M5-006                                                                                                    |
+| M5          | In progress | M4.1       | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Authenticated typed commands and shared RPC policy                                    | Report remaining conflicts and audit M5             | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-M5-005,E-M5-006,E-M5-007                                                                                           |
 | M5.1        | Done        | M4.1       | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Basic changes/refs/reconcile; preview receipt and semantic policy                     | Retain basic mutation acceptance                    | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004                                                                                                                      |
 | M5.2        | Done        | M5.1       | JST-MUT-003                                                             | Full abandon descendant bookmark workspace/evolution parity                           | Retain abandon acceptance                           | E-M5-005                                                                                                                                                             |
-| M5.3        | In progress | M5.1       | JST-MUT-004                                                             | Atomic stale-safe resolution with native conflict variants                            | Implement authorized conflict uploads               | E-M5-006                                                                                                                                                             |
+| M5.3        | In progress | M5.1       | JST-MUT-004                                                             | Atomic stale-safe resolution with native conflict variants                            | Report remaining conflicts and audit M5             | E-M5-006,E-M5-007                                                                                                                                                    |
 | M6          | Planned     | M5         | JST-ADAPT-001,JST-ADAPT-002,JST-ADAPT-003,JST-ADAPT-004                 | Replay-equivalent searchable projection with freshness                                | Implement adapters and search                       | -                                                                                                                                                                    |
 | M6.1        | Planned     | M5         | JST-ADAPT-001,JST-ADAPT-002                                             | Ordered committed reader and durable replay-safe checkpoints                          | Implement runner                                    | -                                                                                                                                                                    |
 | M6.2        | Planned     | M6.1       | JST-ADAPT-003,JST-ADAPT-004                                             | Tantivy crash/rebuild/generation and revocation tests                                 | Implement projection and search API                 | E-SCOPE-001                                                                                                                                                          |
@@ -5916,6 +5916,160 @@ and named tests are checked by the progress gate.
     "remaining": [],
     "versions": "Rust 1.97.1 with rustfmt; jj-cli/jj-lib 0.45.1 at 7c41cdeb16b6b321c64e789a966b6adf723816a5; jj-native-0.45.1-v1.",
     "formats": "Adds resolve_conflicts typed variant with bounded paths, fingerprint, select_term/delete actions and stale_conflict HTTP code/capability. No native codec, WAL, StoredResult V1 or Prepared format changes; earlier receipts reencode unchanged. Only generated TypeScript changes under web; UI stays Deferred M4.3. Enclosing Jujutsu change is the revision reference. Authorized uploaded file replacements remain M5.3; real RustFS/TLS SSE qualification awaits the stopped shared Docker engine."
+  },
+  {
+    "id": "E-M5-007",
+    "tasks": ["M5", "M5.3"],
+    "date": "2026-09-27",
+    "kind": "authorized-conflict-uploads",
+    "files": [
+      "Cargo.lock",
+      "crates/jj-store-cli/tests/native_lifecycle/conflict_uploads.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/resolve.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/upload_faults.rs",
+      "crates/jj-store-http/Cargo.toml",
+      "crates/jj-store-http/src/contract.rs",
+      "crates/jj-store-http/src/contract/tests.rs",
+      "crates/jj-store-http/src/dto.rs",
+      "crates/jj-store-http/src/error.rs",
+      "crates/jj-store-http/src/lib.rs",
+      "crates/jj-store-http/src/mutations.rs",
+      "crates/jj-store-http/src/routes.rs",
+      "crates/jj-store-http/src/uploads.rs",
+      "crates/jj-store-jj/src/commands/execute.rs",
+      "crates/jj-store-jj/src/commands/mod.rs",
+      "crates/jj-store-jj/src/commands/resolve.rs",
+      "crates/jj-store-model/src/ids.rs",
+      "crates/jj-store-model/tests/framing.rs",
+      "crates/jj-store-server/src/process.rs",
+      "crates/jj-store-service/src/commands.rs",
+      "crates/jj-store-service/src/lib.rs",
+      "crates/jj-store-service/src/uploads.rs",
+      "docs/evidence/m5-conflict-uploads.md",
+      "schemas/openapi.json",
+      "scripts/contracts.mjs",
+      "scripts/contracts.test.mjs",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/compatibility.md",
+      "spec/src/identity.md",
+      "spec/src/jj-integration.md",
+      "spec/src/milestones.md",
+      "spec/src/mutations.md",
+      "spec/src/security.md",
+      "spec/src/spec-governance.md",
+      "web/src/lib/api/generated.ts"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/native_lifecycle/conflict_uploads.rs#conflict_upload_http_stages_verified_binary_without_publication_then_resolves",
+      "crates/jj-store-cli/tests/native_lifecycle/conflict_uploads.rs#conflict_upload_reuse_checks_principal_snapshot_path_and_verified_bytes",
+      "crates/jj-store-cli/tests/native_lifecycle/conflict_uploads.rs#conflict_upload_atomic_mixed_resolution_retains_copy_history_and_other_conflicts",
+      "crates/jj-store-cli/tests/native_lifecycle/upload_faults.rs#conflict_upload_lost_ack_repeats_same_record_after_restart_and_stale_binding_rejects",
+      "crates/jj-store-cli/tests/native_lifecycle/upload_faults.rs#conflict_upload_revocation_during_body_and_busy_deadline_reject_before_remote_writes",
+      "crates/jj-store-cli/tests/native_lifecycle/upload_faults.rs#conflict_upload_http_bounds_bodies_and_authorizes_before_consumption",
+      "crates/jj-store-service/src/uploads.rs#conflict_upload_record_v1_has_canonical_independent_digest_and_scope_binding",
+      "crates/jj-store-http/src/contract/tests.rs#conflict_upload_contract_has_binary_body_exact_snapshot_and_write_permission"
+    ],
+    "runs": [
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle conflict_upload --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "Initial HTTP acceptance fails: upload endpoint returns 404 unknown_route."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo check -p jj-store-service --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "Initial implementation compile error: Repo trait import missing for native store access; fixed import."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo check -p jj-store-http",
+        "result": "fail",
+        "failures": 1,
+        "note": "Same native Repo import compile failure before correction; lockfile updated for existing tokio-util streaming adapter."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle conflict_upload --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "First integrated test aborts with a worker stack overflow. Replaced the new 64 KiB stack array in the async native verifier with a heap buffer; unchanged runtime stack configuration."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle conflict_upload --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Original end-to-end upload/native-byte/atomic-resolution acceptance passes after heap-buffer correction."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle conflict_upload --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Expanded five fixtures pass; removed one unused fixture parameter warning."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle conflict_upload --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All six final fixtures pass, including 600,000-byte binary upload and actual HTTP preview/apply, empty/structural/copy resolution, corrupt/missing data, scoped handles, checkpoint receipt replay, lost acknowledgement, revocation, bounded/failed streams and admission deadlines."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-service conflict_upload_record --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Canonical V1 record independent SHA-256 vector and scope-integrity cases pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All-target Clippy, rustfmt, spec/boundaries/progress, generated contracts and 43 actual HTTP/SSE samples, schema tests and zero Svelte diagnostics pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test",
+        "result": "pass",
+        "failures": 0,
+        "note": "299 Rust tests pass, zero failures, six opt-in external tests ignored; governance, harness, generated-contract and existing browser unit checks pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Existing browser asset build and full locked Rust workspace build pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 13 specification lanes pass, including mdBook, spec-first, rustfmt and full locked Rust tests."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm format:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rustfmt and all repository Prettier checks pass."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "fail",
+        "failures": 1,
+        "note": "Evidence incorrectly marked pass while retaining the audited M5 report gap; restored pending evidence status. Product checks passed independently."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "32 tasks validate with upload evidence pending only the explicit M5 report audit gap; all implementation checks already pass."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "M5 audit found a missing explicit remaining-conflict-path report; implement bounded preview/receipt reporting while preserving legacy V1 canonical receipt bytes before closing M5.3 or M5.",
+      "Real RustFS/TLS deployment evidence and deferred browser controls remain separate gates."
+    ],
+    "versions": "Rust 1.97.1 with rustfmt; jj-cli/jj-lib 0.45.1 at 7c41cdeb16b6b321c64e789a966b6adf723816a5; jj-native-0.45.1-v1.",
+    "formats": "Adds ConflictUploadId SHA-256 record V1, immutable repository/epoch/principal staging namespace, binary HTTP upload endpoint/capabilities and uploaded_file resolution variant. Native/WAL/RPC codecs and existing StoredResult V1/Prepared bytes unchanged. Existing released tokio-util is added to HTTP and lockfile. Only generated web API declarations change; UI remains Deferred M4.3. Enclosing Jujutsu change is the revision reference. Real RustFS/TLS SSE qualification remains blocked by the stopped shared Docker engine."
   }
 ]
 ```

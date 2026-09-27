@@ -2,8 +2,13 @@
 use super::*;
 use crate::{query::content::conflicts, roots};
 use jj_lib::{
-    matchers::FilesMatcher, merge::Merge, merged_tree_builder::MergedTreeBuilder,
-    object_id::ObjectId as _, repo::ReadonlyRepo, repo_path::RepoPathBuf,
+    backend as b,
+    matchers::FilesMatcher,
+    merge::Merge,
+    merged_tree_builder::MergedTreeBuilder,
+    object_id::ObjectId as _,
+    repo::{ReadonlyRepo, Repo as _},
+    repo_path::RepoPathBuf,
 };
 use std::collections::BTreeSet;
 
@@ -50,6 +55,7 @@ pub(super) async fn stage(
     paths: Vec<ConflictResolution>,
     principal: m::PrincipalId,
     budget: &Budget,
+    uploaded_files: &BTreeMap<m::ConflictUploadId, m::FileId>,
 ) -> Result<Arc<ReadonlyRepo>> {
     if id == roots::ROOT_COMMIT {
         return Err(Error::Root);
@@ -84,6 +90,41 @@ pub(super) async fn stage(
             return Err(Error::StaleConflict);
         }
         let replacement = match resolution.resolution {
+            Resolution::UploadedFile {
+                upload,
+                executable,
+                copy_from_term,
+            } => {
+                let file = uploaded_files.get(&upload).ok_or(Error::InvalidUpload)?;
+                let copy_id = match copy_from_term {
+                    None => b::CopyId::placeholder(),
+                    Some(term) => match value.iter().nth(term as usize) {
+                        Some(Some(b::TreeValue::File { copy_id, .. })) => copy_id.clone(),
+                        _ => return Err(Error::Invalid),
+                    },
+                };
+                // The service admits only scoped upload files into this command's
+                // read inventory. Read the complete verified native content before
+                // any tree write; storage framing and native ID are both checked.
+                let mut input = repo
+                    .store()
+                    .read_file(&path, &b::FileId::from_bytes(file.as_bytes()))
+                    .await
+                    .map_err(unavailable)?;
+                use futures::AsyncReadExt as _;
+                let mut buffer = vec![0; 64 * 1024];
+                loop {
+                    budget.check()?;
+                    if input.read(&mut buffer).await.map_err(unavailable)? == 0 {
+                        break;
+                    }
+                }
+                Some(b::TreeValue::File {
+                    id: b::FileId::from_bytes(file.as_bytes()),
+                    executable,
+                    copy_id,
+                })
+            }
             Resolution::Delete => None,
             Resolution::SelectTerm { term } => value
                 .iter()

@@ -254,3 +254,10 @@ unlabeled conflicts, partial resolution, descendant/reference/evolution updates,
 no-staging invalid batches, authorization, durable retry and HTTP conformance.
 Native codecs, stored reports and prior V1 receipt bytes are unchanged. This
 term/delete slice does not qualify uploaded replacements or deployed RustFS.
+
+[Authorized upload evidence](../../docs/evidence/m5-conflict-uploads.md) covers
+binary streaming, scoped record identity, atomic file replacement and
+copy-history selection, checkpoint/restart receipt recovery, lost upload
+acknowledgements, corrupt/missing data, authorization changes and HTTP limits.
+Native/WAL formats and older StoredResult V1 bytes remain unchanged. These
+native and fault-store proofs do not replace real RustFS/TLS deployment gates.

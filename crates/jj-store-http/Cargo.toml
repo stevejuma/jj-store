@@ -12,6 +12,7 @@ jj-store-model.workspace = true
 jj-store-service.workspace = true
 axum = { version = "0.8", default-features = false, features = ["json", "query", "tokio", "http1", "http2", "matched-path"] }
 http-body = "1"
+tokio-util = { version = "0.7", features = ["io"] }
 futures = "0.3"
 tokio = { version = "1", features = ["rt", "time", "sync"] }
 serde = { version = "1", features = ["derive"] }

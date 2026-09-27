@@ -9,7 +9,10 @@ use jj_store_jj::{
 };
 use jj_store_model as m;
 use jj_store_wal::{self as wal, publication::Snapshot};
-use std::{collections::BTreeSet, sync::Arc};
+use std::{
+    collections::{BTreeMap, BTreeSet},
+    sync::Arc,
+};
 
 struct Access {
     session: Arc<NativeSession>,
@@ -17,6 +20,7 @@ struct Access {
     principal: m::PrincipalId,
     operation: m::OperationId,
     inventory: BTreeSet<m::ObjectKey>,
+    uploads: BTreeMap<m::ConflictUploadId, m::FileId>,
 }
 fn error(error: wal::Error) -> query::Error {
     match error {
@@ -45,6 +49,9 @@ impl ReadAccess for Access {
 }
 #[async_trait::async_trait]
 impl MutationAccess for Access {
+    fn uploaded_files(&self) -> &BTreeMap<m::ConflictUploadId, m::FileId> {
+        &self.uploads
+    }
     fn principal(&self) -> m::PrincipalId {
         self.principal
     }
@@ -76,6 +83,7 @@ impl NativeSession {
     ) -> Result<Prepared> {
         tokio::time::timeout(self.limits.timeout, async {
             let principal = self.principal(Permission::Write).await.map_err(error)?;
+            command.validate()?;
             let before = self.snapshot().await.map_err(error)?;
             if before.manifest().snapshot() != *expected {
                 return Err(Error::Stale);
@@ -94,7 +102,7 @@ impl NativeSession {
                     *expected.heads.first().unwrap()
                 }
             };
-            let inventory = self
+            let mut inventory: BTreeSet<_> = self
                 .coordinator
                 .inventory(&before, self.limits.inventory_nodes)
                 .await
@@ -102,12 +110,17 @@ impl NativeSession {
                 .into_iter()
                 .map(|node| node.key)
                 .collect();
+            let uploads = crate::uploads::resolve(self, expected, &command).await?;
+            // This private command capability includes checked staged files only.
+            // Ordinary read capabilities still contain committed membership alone.
+            inventory.extend(uploads.values().copied().map(m::ObjectKey::File));
             let access = Arc::new(Access {
                 session: self.clone(),
                 expected: expected.clone(),
                 principal: principal.id(),
                 operation,
                 inventory,
+                uploads,
             });
             access.authorize_write().await?;
             let prepared = executor

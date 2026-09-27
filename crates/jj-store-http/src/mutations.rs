@@ -18,7 +18,7 @@ impl Pending {
         })
     }
 }
-pub(super) struct WriteContext(Context);
+pub(super) struct WriteContext(pub(super) Context);
 impl FromRequestParts<Arc<State>> for WriteContext {
     type Rejection = Error;
     async fn from_request_parts(parts: &mut Parts, state: &Arc<State>) -> Result<Self> {

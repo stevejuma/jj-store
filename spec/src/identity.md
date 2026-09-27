@@ -70,3 +70,9 @@ API schema traits describe the existing canonical hex serialization for owned
 IDs, object keys, copy references and publication positions. They do not alter
 native IDs, codecs or persisted payloads. Schema validation does not replace
 codec integrity and semantic checks.
+
+ConflictUploadId is a canonical 32-byte lowercase-hex staging-record digest,
+separate from native file IDs and envelope checksums. Its V1 SHA-256 domain is
+`jj-store/conflict-upload/v1\0`; canonical field order, scope binding and an
+independent golden vector are frozen in service upload tests. It is neither a
+native object ID nor a repository access capability.

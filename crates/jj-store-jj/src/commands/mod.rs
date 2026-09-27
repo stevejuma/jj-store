@@ -30,6 +30,8 @@ pub enum Error {
     NoChanges,
     #[error("selected conflict differs from the expected native terms")]
     StaleConflict,
+    #[error("upload does not belong to this authorized conflict context")]
+    InvalidUpload,
 }
 pub type Result<T> = std::result::Result<T, Error>;
 
@@ -82,7 +84,14 @@ pub struct ConflictResolution {
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(tag = "type", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Resolution {
-    SelectTerm { term: u32 },
+    UploadedFile {
+        upload: m::ConflictUploadId,
+        executable: bool,
+        copy_from_term: Option<u32>,
+    },
+    SelectTerm {
+        term: u32,
+    },
     Delete,
 }
 impl Command {
@@ -121,6 +130,7 @@ pub struct Prepared {
 /// Implemented by a checked service session, never deserialized from a request.
 #[async_trait::async_trait]
 pub trait MutationAccess: ReadAccess {
+    fn uploaded_files(&self) -> &BTreeMap<m::ConflictUploadId, m::FileId>;
     fn principal(&self) -> m::PrincipalId;
     fn heads(&self) -> &std::collections::BTreeSet<m::OperationId>;
     async fn authorize_write(&self) -> query::Result<()>;

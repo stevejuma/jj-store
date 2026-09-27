@@ -76,6 +76,10 @@ impl PreparedServer {
                     timeout,
                     ..Default::default()
                 },
+                uploads: jj_store_service::uploads::Limits {
+                    max_file_bytes: config.limits.max_blob_bytes.min(16 * 1024 * 1024),
+                    ..Default::default()
+                },
                 content: jj_store_service::reads::query::content::Limits {
                     timeout,
                     max_blob_bytes: config.limits.max_blob_bytes,

@@ -375,3 +375,10 @@ preflight validates every path before MergedTreeBuilder changes the tree. Native
 rewrite_commit/rebase_descendants maintain change identity, references and
 evolution. Ordered term selection retains file/copy/mode, symlink, submodule and
 directory values. It never invokes external conflict tools.
+
+UploadedFile resolution imports only service-checked upload files into its
+private command read inventory. The executor verifies their complete native
+content before tree writes and uses explicit executable/copy-term choices.
+Ordinary read inventories remain committed-only. Mixed uploaded/term/deletion
+batches share one original tree preflight, native descendant rewrite and guarded
+publication. No upstream trait or native codec changes are needed.

@@ -74,6 +74,10 @@ if (mode === "--check") {
         "content_acceptance::diff_acceptance::conflict_acceptance::resolve_acceptance::http_resolve_validates_atomic_fingerprints_permissions_and_selected_receipts",
         "JJ_STORE_RESOLVE_CONTRACT_CAPTURE",
       ],
+      [
+        "content_acceptance::diff_acceptance::conflict_acceptance::resolve_acceptance::uploads_acceptance::conflict_upload_http_stages_verified_binary_without_publication_then_resolves",
+        "JJ_STORE_UPLOAD_CONTRACT_CAPTURE",
+      ],
     ]) {
       const capture = join(directory, `${variable}.json`);
       const { stdout } = await run(

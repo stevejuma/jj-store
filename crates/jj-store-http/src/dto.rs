@@ -14,6 +14,8 @@ pub(crate) struct Capabilities {
     pub search: bool,
     pub typed_mutations: Vec<String>,
     pub mutation_request_bytes: usize,
+    pub conflict_upload_bytes: u64,
+    pub conflict_resolution_actions: Vec<String>,
     pub event_limits: EventLimits,
     pub limits: ReadLimits,
     pub log_context: LogContext,
@@ -65,6 +67,10 @@ impl From<&Config> for Capabilities {
             .map(str::to_owned)
             .to_vec(),
             mutation_request_bytes: crate::mutations::MAX_REQUEST_BYTES,
+            conflict_upload_bytes: config.uploads.max_file_bytes,
+            conflict_resolution_actions: ["select_term", "delete", "uploaded_file"]
+                .map(str::to_owned)
+                .to_vec(),
             event_limits: EventLimits {
                 streams: config.event_concurrency,
                 replay_window: config.events.replay_window,

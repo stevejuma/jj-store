@@ -384,5 +384,26 @@ ordered zero-based term index, or delete. A stale fingerprint or a path that is
 no longer a conflict returns HTTP 409 stale_conflict; malformed/overlapping
 paths and invalid term indices return 400. Preview/apply/status retain the
 existing authorization, limits, atomic snapshot and retry behavior. Uploaded
-replacement-file actions remain an explicit M5.3 gap and are rejected. Only API
+replacement-file actions use the authorized endpoint specified below. Only API
 declarations change under web; conflict editors remain deferred.
+
+## Conflict content uploads
+
+`POST /v1/repos/{repo}/conflict-uploads` takes application/octet-stream and
+strict query parameters epoch, position, operation, commit, path and
+fingerprint. The operation is the single expected head. Write authorization
+precedes parsing and body consumption; content encodings, wrong media types,
+malformed/duplicate headers, unknown query fields, excessive bodies and short
+declared transfers fail explicitly. Both streaming bytes and request duration
+are bounded. A 200 response supplies the server-computed native file ID, byte
+length, context and scoped upload handle; it is not a mutation receipt. Retry
+identical bytes and binding after a lost response. Uploads never publish native
+history.
+
+resolve_conflicts now also accepts uploaded_file with upload, executable and
+optional copy_from_term. It validates the complete authorized binding and file
+integrity before atomic native rewriting. Invalid handles return 409
+invalid_upload; stale snapshots and conflicts retain their existing errors.
+Capabilities expose the upload byte cap and supported resolution actions.
+Generated OpenAPI and TypeScript include binary upload and resolution contracts;
+no browser editor or other UI behavior changes.

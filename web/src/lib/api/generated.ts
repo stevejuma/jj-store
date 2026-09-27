@@ -337,6 +337,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/v1/repos/{repo}/conflict-uploads": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description Requires current repository write permission before body consumption. Binary staging only; never publishes history. Binding must name the exact current single-head snapshot and a committed target. Repeating identical bytes/binding returns the same scoped handle. Deadline or unavailable responses permit safe re-upload; no mutation receipt is created. Upload limits are advertised by capabilities. */
+    post: operations["conflict_upload"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/v1/repos/{repo}/mutations/{request_id}": {
     parameters: {
       query?: never;
@@ -407,6 +424,9 @@ export interface components {
       typed_mutations: string[];
       /** Format: uint */
       mutation_request_bytes: number;
+      /** Format: uint64 */
+      conflict_upload_bytes: number;
+      conflict_resolution_actions: string[];
       event_limits: components["schemas"]["EventLimits"];
       limits: components["schemas"]["ReadLimits"];
       log_context: components["schemas"]["LogContext"];
@@ -1165,6 +1185,22 @@ export interface components {
           /** @constant */
           status: "outcome_unknown";
         };
+    ConflictUpload: {
+      /** Format: uint32 */
+      version: number;
+      id: components["schemas"]["ConflictUploadId"];
+      file: components["schemas"]["FileId"];
+      /** Format: uint64 */
+      bytes: number;
+      binding: components["schemas"]["Binding"];
+    };
+    ConflictUploadId: string;
+    Binding: {
+      expected: components["schemas"]["Snapshot"];
+      commit: components["schemas"]["CommitId"];
+      path: string;
+      fingerprint: components["schemas"]["ConflictFingerprint"];
+    };
     Status:
       | {
           receipt: components["schemas"]["Receipt"];
@@ -1291,6 +1327,15 @@ export interface operations {
           "application/json": components["schemas"]["ErrorBody"];
         };
       };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
       /** @description Busy, unavailable, corrupt or incomplete history. */
       503: {
         headers: {
@@ -1387,6 +1432,13 @@ export interface operations {
       };
       /** @description Request or response resource limit exceeded. */
       413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
         headers: {
           [name: string]: unknown;
         };
@@ -1509,6 +1561,15 @@ export interface operations {
           "application/json": components["schemas"]["ErrorBody"];
         };
       };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
       /** @description Busy, unavailable, corrupt or incomplete history. */
       503: {
         headers: {
@@ -1605,6 +1666,13 @@ export interface operations {
       };
       /** @description Request or response resource limit exceeded. */
       413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
         headers: {
           [name: string]: unknown;
         };
@@ -1732,6 +1800,15 @@ export interface operations {
           "application/json": components["schemas"]["ErrorBody"];
         };
       };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
       /** @description Busy, unavailable, corrupt or incomplete history. */
       503: {
         headers: {
@@ -1833,6 +1910,13 @@ export interface operations {
       };
       /** @description Request or response resource limit exceeded. */
       413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
         headers: {
           [name: string]: unknown;
         };
@@ -1966,6 +2050,15 @@ export interface operations {
           "application/json": components["schemas"]["ErrorBody"];
         };
       };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
       /** @description Busy, unavailable, corrupt or incomplete history. */
       503: {
         headers: {
@@ -2073,6 +2166,13 @@ export interface operations {
       };
       /** @description Request or response resource limit exceeded. */
       413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
         headers: {
           [name: string]: unknown;
         };
@@ -2203,6 +2303,15 @@ export interface operations {
           "application/json": components["schemas"]["ErrorBody"];
         };
       };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
       /** @description Busy, unavailable, corrupt or incomplete history. */
       503: {
         headers: {
@@ -2307,6 +2416,13 @@ export interface operations {
       };
       /** @description Request or response resource limit exceeded. */
       413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
         headers: {
           [name: string]: unknown;
         };
@@ -2434,6 +2550,15 @@ export interface operations {
           "application/json": components["schemas"]["ErrorBody"];
         };
       };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
       /** @description Busy, unavailable, corrupt or incomplete history. */
       503: {
         headers: {
@@ -2535,6 +2660,13 @@ export interface operations {
       };
       /** @description Request or response resource limit exceeded. */
       413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
         headers: {
           [name: string]: unknown;
         };
@@ -2658,6 +2790,15 @@ export interface operations {
           "application/json": components["schemas"]["ErrorBody"];
         };
       };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
       /** @description Busy, unavailable, corrupt or incomplete history. */
       503: {
         headers: {
@@ -2755,6 +2896,13 @@ export interface operations {
       };
       /** @description Request or response resource limit exceeded. */
       413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
         headers: {
           [name: string]: unknown;
         };
@@ -2880,6 +3028,15 @@ export interface operations {
           "application/json": components["schemas"]["ErrorBody"];
         };
       };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
       /** @description Busy, unavailable, corrupt or incomplete history. */
       503: {
         headers: {
@@ -2979,6 +3136,13 @@ export interface operations {
       };
       /** @description Request or response resource limit exceeded. */
       413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
         headers: {
           [name: string]: unknown;
         };
@@ -3106,6 +3270,15 @@ export interface operations {
           "application/json": components["schemas"]["ErrorBody"];
         };
       };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
       /** @description Busy, unavailable, corrupt or incomplete history. */
       503: {
         headers: {
@@ -3207,6 +3380,13 @@ export interface operations {
       };
       /** @description Request or response resource limit exceeded. */
       413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
         headers: {
           [name: string]: unknown;
         };
@@ -3332,6 +3512,15 @@ export interface operations {
           "application/json": components["schemas"]["ErrorBody"];
         };
       };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
       /** @description Busy, unavailable, corrupt or incomplete history. */
       503: {
         headers: {
@@ -3431,6 +3620,13 @@ export interface operations {
       };
       /** @description Request or response resource limit exceeded. */
       413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
         headers: {
           [name: string]: unknown;
         };
@@ -3559,6 +3755,15 @@ export interface operations {
           "application/json": components["schemas"]["ErrorBody"];
         };
       };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
       /** @description Busy, unavailable, corrupt or incomplete history. */
       503: {
         headers: {
@@ -3661,6 +3866,13 @@ export interface operations {
       };
       /** @description Request or response resource limit exceeded. */
       413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
         headers: {
           [name: string]: unknown;
         };
@@ -3787,6 +3999,15 @@ export interface operations {
           "application/json": components["schemas"]["ErrorBody"];
         };
       };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
       /** @description Busy, unavailable, corrupt or incomplete history. */
       503: {
         headers: {
@@ -3887,6 +4108,13 @@ export interface operations {
       };
       /** @description Request or response resource limit exceeded. */
       413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
         headers: {
           [name: string]: unknown;
         };
@@ -4044,6 +4272,15 @@ export interface operations {
           "application/json": components["schemas"]["ErrorBody"];
         };
       };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
       /** @description Invalid or unsatisfiable byte range. */
       416: {
         headers: {
@@ -4189,6 +4426,13 @@ export interface operations {
         };
         content?: never;
       };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
       /** @description Invalid or unsatisfiable byte range. */
       416: {
         headers: {
@@ -4321,6 +4565,15 @@ export interface operations {
           "application/json": components["schemas"]["ErrorBody"];
         };
       };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
       /** @description Busy, unavailable, corrupt or incomplete history. */
       503: {
         headers: {
@@ -4423,6 +4676,13 @@ export interface operations {
       };
       /** @description Request or response resource limit exceeded. */
       413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
         headers: {
           [name: string]: unknown;
         };
@@ -4544,6 +4804,15 @@ export interface operations {
       };
       /** @description Request or response resource limit exceeded. */
       413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
         headers: {
           [name: string]: unknown;
         };
@@ -4673,6 +4942,15 @@ export interface operations {
           "application/json": components["schemas"]["ErrorBody"];
         };
       };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
       /** @description Busy, unavailable, corrupt or incomplete history. */
       503: {
         headers: {
@@ -4770,6 +5048,13 @@ export interface operations {
       };
       /** @description Request or response resource limit exceeded. */
       413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
         headers: {
           [name: string]: unknown;
         };
@@ -4893,6 +5178,15 @@ export interface operations {
           "application/json": components["schemas"]["ErrorBody"];
         };
       };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
       /** @description Busy, unavailable, corrupt or incomplete history. */
       503: {
         headers: {
@@ -4944,6 +5238,14 @@ export interface operations {
                   path: string;
                   fingerprint: string;
                   resolution:
+                    | {
+                        upload: string;
+                        executable: boolean;
+                        /** Format: uint32 */
+                        copy_from_term?: number | null;
+                        /** @constant */
+                        type: "uploaded_file";
+                      }
                     | {
                         /** Format: uint32 */
                         term: number;
@@ -5096,6 +5398,15 @@ export interface operations {
           "application/json": components["schemas"]["ErrorBody"];
         };
       };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
       /** @description Busy, unavailable, corrupt or incomplete history. */
       503: {
         headers: {
@@ -5147,6 +5458,14 @@ export interface operations {
                   path: string;
                   fingerprint: string;
                   resolution:
+                    | {
+                        upload: string;
+                        executable: boolean;
+                        /** Format: uint32 */
+                        copy_from_term?: number | null;
+                        /** @constant */
+                        type: "uploaded_file";
+                      }
                     | {
                         /** Format: uint32 */
                         term: number;
@@ -5299,6 +5618,156 @@ export interface operations {
           "application/json": components["schemas"]["ErrorBody"];
         };
       };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  conflict_upload: {
+    parameters: {
+      query: {
+        epoch: string;
+        position: number;
+        operation: string;
+        commit: string;
+        path: string;
+        fingerprint: string;
+      };
+      header?: never;
+      path: {
+        repo: components["schemas"]["RepositoryId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/octet-stream": string;
+      };
+    };
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ConflictUpload"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
       /** @description Busy, unavailable, corrupt or incomplete history. */
       503: {
         headers: {
@@ -5421,6 +5890,15 @@ export interface operations {
           "application/json": components["schemas"]["ErrorBody"];
         };
       };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
       /** @description Busy, unavailable, corrupt or incomplete history. */
       503: {
         headers: {
@@ -5518,6 +5996,13 @@ export interface operations {
       };
       /** @description Request or response resource limit exceeded. */
       413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
         headers: {
           [name: string]: unknown;
         };

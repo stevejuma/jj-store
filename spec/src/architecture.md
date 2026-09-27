@@ -131,3 +131,10 @@ The WAL snapshot DTO shares schema metadata with the typed application API using
 schemars. The locked dependency is schema infrastructure, with no HTTP/UI
 runtime dependency in storage or publication. HTTP native command execution
 shares the serving instance's native worker admission with read execution.
+
+Conflict-upload orchestration belongs to service, with HTTP adapting bounded
+binary streams using the existing released tokio-util dependency. Upload record
+identity belongs to model; native file verification and tree rewriting remain in
+JJ integration. This introduces a staging-record V1 format without changing
+native, WAL, RPC or existing mutation-result codecs. Dependency locks retain
+registry artifacts.

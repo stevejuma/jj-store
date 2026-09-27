@@ -7,6 +7,7 @@ mod dto;
 mod error;
 mod mutations;
 mod routes;
+mod uploads;
 use axum::{
     Router,
     body::Body,
@@ -46,6 +47,7 @@ pub struct Config {
     pub graph: q::Limits,
     pub content: q::content::Limits,
     pub commands: commands::Limits,
+    pub uploads: jj_store_service::uploads::Limits,
 }
 impl Default for Config {
     fn default() -> Self {
@@ -62,6 +64,7 @@ impl Default for Config {
             graph: Default::default(),
             content: Default::default(),
             commands: Default::default(),
+            uploads: Default::default(),
         }
     }
 }
@@ -75,6 +78,7 @@ struct State {
     directories: DirectoryPager,
     tasks: index_tasks::IndexTasks,
     commands: jj_store_service::mutations::CommandService,
+    uploads: jj_store_service::uploads::Uploads,
 }
 #[derive(Clone)]
 pub struct HttpApi(Arc<State>);
@@ -131,6 +135,8 @@ impl HttpApi {
             commands::Executor::with_workers(config.commands, queries.workers().clone())
                 .map_err(|_| "HTTP native command limits")?,
         );
+        let uploads = jj_store_service::uploads::Uploads::new(config.uploads)
+            .map_err(|_| "HTTP upload limits")?;
         Ok(Self(Arc::new(State {
             host,
             slots: Arc::new(Semaphore::new(config.concurrency)),
@@ -141,6 +147,7 @@ impl HttpApi {
             directories,
             tasks,
             commands,
+            uploads,
         })))
     }
     pub fn router(&self) -> Router {

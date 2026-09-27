@@ -188,12 +188,29 @@ impl From<jj_store_service::mutations::Error> for Error {
             E::Preparation(C::MultipleHeads) => {
                 Self::new(StatusCode::CONFLICT, "reconciliation_required")
             }
+            E::Preparation(C::InvalidUpload) => Self::new(StatusCode::CONFLICT, "invalid_upload"),
             E::Preparation(C::StaleConflict) => Self::new(StatusCode::CONFLICT, "stale_conflict"),
             E::Preparation(C::StaleBookmark) => Self::new(StatusCode::CONFLICT, "stale_bookmark"),
             E::Preparation(C::Root) => Self::denied(),
             E::Preparation(C::Hidden) => Self::new(StatusCode::NOT_FOUND, "not_found"),
             E::Preparation(C::Invalid) => Self::invalid(),
             E::Preparation(C::NoChanges) => Self::new(StatusCode::CONFLICT, "no_changes"),
+        }
+    }
+}
+
+impl From<jj_store_service::uploads::Error> for Error {
+    fn from(value: jj_store_service::uploads::Error) -> Self {
+        use jj_store_service::uploads::Error as E;
+        match value {
+            E::Denied => Self::denied(),
+            E::Stale => Self::new(StatusCode::CONFLICT, "stale_snapshot"),
+            E::Invalid => Self::invalid(),
+            E::InvalidUpload => Self::new(StatusCode::CONFLICT, "invalid_upload"),
+            E::Limit => Self::limit(),
+            E::Busy => Self::busy(),
+            E::Corrupt => Self::new(StatusCode::SERVICE_UNAVAILABLE, "corrupt_upload"),
+            E::Unavailable => Self::unavailable(),
         }
     }
 }

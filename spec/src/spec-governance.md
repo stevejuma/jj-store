@@ -129,3 +129,8 @@ Contract capture includes atomic conflict preview/apply and rejection responses.
 The generated command union exposes only implemented resolution actions; further
 upload support needs its own specification, security and acceptance evidence.
 Existing browser checks remain enabled while UI work is deferred.
+
+The generated-contract lane also captures actual binary-upload results and
+uploaded-file mutation responses. Upload IDs have canonical-width schema checks
+and the staging record has an independently calculated digest fixture. Adding
+these API declarations does not resume deferred UI work.

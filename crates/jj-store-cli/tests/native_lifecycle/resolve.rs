@@ -482,3 +482,6 @@ async fn http_resolve_validates_atomic_fingerprints_permissions_and_selected_rec
         }
     }).await;
 }
+
+#[path = "conflict_uploads.rs"]
+mod uploads_acceptance;

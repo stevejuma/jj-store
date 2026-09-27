@@ -105,6 +105,14 @@
               }
             }
           },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
           "503": {
             "description": "Busy, unavailable, corrupt or incomplete history.",
             "content": {
@@ -163,6 +171,9 @@
           },
           "413": {
             "description": "Request or response resource limit exceeded."
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding."
           },
           "503": {
             "description": "Busy, unavailable, corrupt or incomplete history."
@@ -269,6 +280,14 @@
               }
             }
           },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
           "503": {
             "description": "Busy, unavailable, corrupt or incomplete history.",
             "content": {
@@ -327,6 +346,9 @@
           },
           "413": {
             "description": "Request or response resource limit exceeded."
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding."
           },
           "503": {
             "description": "Busy, unavailable, corrupt or incomplete history."
@@ -472,6 +494,14 @@
               }
             }
           },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
           "503": {
             "description": "Busy, unavailable, corrupt or incomplete history.",
             "content": {
@@ -556,6 +586,9 @@
           },
           "413": {
             "description": "Request or response resource limit exceeded."
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding."
           },
           "503": {
             "description": "Busy, unavailable, corrupt or incomplete history."
@@ -701,6 +734,14 @@
               }
             }
           },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
           "503": {
             "description": "Busy, unavailable, corrupt or incomplete history.",
             "content": {
@@ -803,6 +844,9 @@
           },
           "413": {
             "description": "Request or response resource limit exceeded."
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding."
           },
           "503": {
             "description": "Busy, unavailable, corrupt or incomplete history."
@@ -983,6 +1027,14 @@
               }
             }
           },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
           "503": {
             "description": "Busy, unavailable, corrupt or incomplete history.",
             "content": {
@@ -1127,6 +1179,9 @@
           },
           "413": {
             "description": "Request or response resource limit exceeded."
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding."
           },
           "503": {
             "description": "Busy, unavailable, corrupt or incomplete history."
@@ -1300,6 +1355,14 @@
               }
             }
           },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
           "503": {
             "description": "Busy, unavailable, corrupt or incomplete history.",
             "content": {
@@ -1426,6 +1489,9 @@
           },
           "413": {
             "description": "Request or response resource limit exceeded."
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding."
           },
           "503": {
             "description": "Busy, unavailable, corrupt or incomplete history."
@@ -1561,6 +1627,14 @@
               }
             }
           },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
           "503": {
             "description": "Busy, unavailable, corrupt or incomplete history.",
             "content": {
@@ -1625,6 +1699,9 @@
           },
           "413": {
             "description": "Request or response resource limit exceeded."
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding."
           },
           "503": {
             "description": "Busy, unavailable, corrupt or incomplete history."
@@ -1752,6 +1829,14 @@
               }
             }
           },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
           "503": {
             "description": "Busy, unavailable, corrupt or incomplete history.",
             "content": {
@@ -1837,6 +1922,9 @@
           },
           "413": {
             "description": "Request or response resource limit exceeded."
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding."
           },
           "503": {
             "description": "Busy, unavailable, corrupt or incomplete history."
@@ -1998,6 +2086,14 @@
               }
             }
           },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
           "503": {
             "description": "Busy, unavailable, corrupt or incomplete history.",
             "content": {
@@ -2125,6 +2221,9 @@
           },
           "413": {
             "description": "Request or response resource limit exceeded."
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding."
           },
           "503": {
             "description": "Busy, unavailable, corrupt or incomplete history."
@@ -2274,6 +2373,14 @@
               }
             }
           },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
           "503": {
             "description": "Busy, unavailable, corrupt or incomplete history.",
             "content": {
@@ -2359,6 +2466,9 @@
           },
           "413": {
             "description": "Request or response resource limit exceeded."
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding."
           },
           "503": {
             "description": "Busy, unavailable, corrupt or incomplete history."
@@ -2521,6 +2631,14 @@
               }
             }
           },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
           "503": {
             "description": "Busy, unavailable, corrupt or incomplete history.",
             "content": {
@@ -2643,6 +2761,9 @@
           },
           "413": {
             "description": "Request or response resource limit exceeded."
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding."
           },
           "503": {
             "description": "Busy, unavailable, corrupt or incomplete history."
@@ -2794,6 +2915,14 @@
               }
             }
           },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
           "503": {
             "description": "Busy, unavailable, corrupt or incomplete history.",
             "content": {
@@ -2888,6 +3017,9 @@
           },
           "413": {
             "description": "Request or response resource limit exceeded."
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding."
           },
           "503": {
             "description": "Busy, unavailable, corrupt or incomplete history."
@@ -3091,6 +3223,14 @@
               }
             }
           },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
           "416": {
             "description": "Invalid or unsatisfiable byte range.",
             "headers": {
@@ -3254,6 +3394,9 @@
           },
           "413": {
             "description": "Request or response resource limit exceeded."
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding."
           },
           "416": {
             "description": "Invalid or unsatisfiable byte range.",
@@ -3434,6 +3577,14 @@
               }
             }
           },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
           "503": {
             "description": "Busy, unavailable, corrupt or incomplete history.",
             "content": {
@@ -3571,6 +3722,9 @@
           "413": {
             "description": "Request or response resource limit exceeded."
           },
+          "415": {
+            "description": "Unsupported request media type or content encoding."
+          },
           "503": {
             "description": "Busy, unavailable, corrupt or incomplete history."
           },
@@ -3693,6 +3847,14 @@
           },
           "413": {
             "description": "Request or response resource limit exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/ErrorBody" }
@@ -3845,6 +4007,14 @@
               }
             }
           },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
           "503": {
             "description": "Busy, unavailable, corrupt or incomplete history.",
             "content": {
@@ -3912,6 +4082,9 @@
           },
           "413": {
             "description": "Request or response resource limit exceeded."
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding."
           },
           "503": {
             "description": "Busy, unavailable, corrupt or incomplete history."
@@ -4021,6 +4194,14 @@
           },
           "413": {
             "description": "Request or response resource limit exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/ErrorBody" }
@@ -4144,6 +4325,14 @@
               }
             }
           },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
           "503": {
             "description": "Busy, unavailable, corrupt or incomplete history.",
             "content": {
@@ -4238,6 +4427,33 @@
                                 },
                                 "resolution": {
                                   "oneOf": [
+                                    {
+                                      "type": "object",
+                                      "properties": {
+                                        "upload": {
+                                          "type": "string",
+                                          "pattern": "^[0-9a-f]{64}$",
+                                          "minLength": 64,
+                                          "maxLength": 64
+                                        },
+                                        "executable": { "type": "boolean" },
+                                        "copy_from_term": {
+                                          "type": ["integer", "null"],
+                                          "format": "uint32",
+                                          "minimum": 0
+                                        },
+                                        "type": {
+                                          "type": "string",
+                                          "const": "uploaded_file"
+                                        }
+                                      },
+                                      "additionalProperties": false,
+                                      "required": [
+                                        "type",
+                                        "upload",
+                                        "executable"
+                                      ]
+                                    },
                                     {
                                       "type": "object",
                                       "properties": {
@@ -4523,6 +4739,14 @@
               }
             }
           },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
           "503": {
             "description": "Busy, unavailable, corrupt or incomplete history.",
             "content": {
@@ -4617,6 +4841,33 @@
                                 },
                                 "resolution": {
                                   "oneOf": [
+                                    {
+                                      "type": "object",
+                                      "properties": {
+                                        "upload": {
+                                          "type": "string",
+                                          "pattern": "^[0-9a-f]{64}$",
+                                          "minLength": 64,
+                                          "maxLength": 64
+                                        },
+                                        "executable": { "type": "boolean" },
+                                        "copy_from_term": {
+                                          "type": ["integer", "null"],
+                                          "format": "uint32",
+                                          "minimum": 0
+                                        },
+                                        "type": {
+                                          "type": "string",
+                                          "const": "uploaded_file"
+                                        }
+                                      },
+                                      "additionalProperties": false,
+                                      "required": [
+                                        "type",
+                                        "upload",
+                                        "executable"
+                                      ]
+                                    },
                                     {
                                       "type": "object",
                                       "properties": {
@@ -4808,6 +5059,243 @@
         }
       }
     },
+    "/v1/repos/{repo}/conflict-uploads": {
+      "post": {
+        "operationId": "conflict_upload",
+        "tags": ["mutations"],
+        "description": "Requires current repository write permission before body consumption. Binary staging only; never publishes history. Binding must name the exact current single-head snapshot and a committed target. Repeating identical bytes/binding returns the same scoped handle. Deadline or unavailable responses permit safe re-upload; no mutation receipt is created. Upload limits are advertised by capabilities.",
+        "parameters": [
+          {
+            "name": "repo",
+            "in": "path",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/RepositoryId" }
+          },
+          {
+            "name": "epoch",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{32}$",
+              "minLength": 32,
+              "maxLength": 32
+            },
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "position",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "integer", "format": "uint64", "minimum": 0 },
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "operation",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{128}$",
+              "minLength": 128,
+              "maxLength": 128
+            },
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "commit",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{128}$",
+              "minLength": 128,
+              "maxLength": 128
+            },
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "path",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" },
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "fingerprint",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{128}$",
+              "minLength": 128,
+              "maxLength": 128
+            },
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result at the reported snapshot.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ConflictUpload" }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request, unknown query field or invalid cursor.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing repository Bearer credential.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied, including revoked credentials or disallowed Origin.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "404": {
+            "description": "Object not committed in the selected snapshot or unknown route.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "405": {
+            "description": "Unsupported method.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "408": {
+            "description": "Native query canceled.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "409": {
+            "description": "Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "410": {
+            "description": "Index task expired or was lost on server restart.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "413": {
+            "description": "Request or response resource limit exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "503": {
+            "description": "Busy, unavailable, corrupt or incomplete history.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "504": {
+            "description": "Request or response deadline exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          }
+        },
+        "x-jj-store-query-schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "epoch": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{32}$",
+              "minLength": 32,
+              "maxLength": 32
+            },
+            "position": { "type": "integer", "format": "uint64", "minimum": 0 },
+            "operation": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{128}$",
+              "minLength": 128,
+              "maxLength": 128
+            },
+            "commit": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{128}$",
+              "minLength": 128,
+              "maxLength": 128
+            },
+            "path": { "type": "string" },
+            "fingerprint": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{128}$",
+              "minLength": 128,
+              "maxLength": 128
+            }
+          },
+          "required": [
+            "epoch",
+            "position",
+            "operation",
+            "commit",
+            "path",
+            "fingerprint"
+          ]
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/octet-stream": {
+              "schema": { "type": "string", "format": "binary" }
+            }
+          }
+        }
+      }
+    },
     "/v1/repos/{repo}/mutations/{request_id}": {
       "get": {
         "operationId": "mutation_status",
@@ -4908,6 +5396,14 @@
               }
             }
           },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
           "503": {
             "description": "Busy, unavailable, corrupt or incomplete history.",
             "content": {
@@ -4972,6 +5468,9 @@
           },
           "413": {
             "description": "Request or response resource limit exceeded."
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding."
           },
           "503": {
             "description": "Busy, unavailable, corrupt or incomplete history."
@@ -5110,6 +5609,15 @@
             "format": "uint",
             "minimum": 0
           },
+          "conflict_upload_bytes": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0
+          },
+          "conflict_resolution_actions": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
           "event_limits": { "$ref": "#/components/schemas/EventLimits" },
           "limits": { "$ref": "#/components/schemas/ReadLimits" },
           "log_context": { "$ref": "#/components/schemas/LogContext" }
@@ -5124,6 +5632,8 @@
           "search",
           "typed_mutations",
           "mutation_request_bytes",
+          "conflict_upload_bytes",
+          "conflict_resolution_actions",
           "event_limits",
           "limits",
           "log_context"
@@ -6891,6 +7401,34 @@
             "required": ["status", "request_id"]
           }
         ]
+      },
+      "ConflictUpload": {
+        "type": "object",
+        "properties": {
+          "version": { "type": "integer", "format": "uint32", "minimum": 0 },
+          "id": { "$ref": "#/components/schemas/ConflictUploadId" },
+          "file": { "$ref": "#/components/schemas/FileId" },
+          "bytes": { "type": "integer", "format": "uint64", "minimum": 0 },
+          "binding": { "$ref": "#/components/schemas/Binding" }
+        },
+        "required": ["version", "id", "file", "bytes", "binding"]
+      },
+      "ConflictUploadId": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$",
+        "minLength": 64,
+        "maxLength": 64
+      },
+      "Binding": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "expected": { "$ref": "#/components/schemas/Snapshot" },
+          "commit": { "$ref": "#/components/schemas/CommitId" },
+          "path": { "type": "string" },
+          "fingerprint": { "$ref": "#/components/schemas/ConflictFingerprint" }
+        },
+        "required": ["expected", "commit", "path", "fingerprint"]
       },
       "Status": {
         "oneOf": [

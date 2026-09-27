@@ -157,3 +157,21 @@ app for unknown API paths. Browser assets contain no deployment credentials.
 
 The shared listener returns HTTP 404 for unknown ordinary routes. Unknown native
 gRPC services retain the protocol-specific UNIMPLEMENTED status.
+
+Conflict uploads use a bounded raw binary endpoint with current write permission
+before body consumption and an exact snapshot/principal binding before remote
+writes and completion. Body errors, cancellation and revocation leave no
+publication. Server-computed files and canonical staging records are immutable;
+records are addressed within repository/epoch/principal namespaces and checked
+again for the exact commit/path/fingerprint on use. Native RPC's typed object
+keys cannot address staging records. Missing/wrong-context handles return the
+same invalid_upload category. No handle grants repository read access.
+
+Upload admission has a separate bounded pool (two streams by default), a 16 MiB
+per-file default, a hard 256 MiB ceiling and the session/HTTP deadline.
+Temporary spools can briefly use three times the file cap per admitted upload;
+concurrent streams bound that local disk usage. Uploaded files in one resolution
+are capped at 256 MiB in total and also consume existing native read/publication
+budgets. Records are bounded to 16 KiB. Staging is not a mutable repository side
+table and cannot advance history. Persisted orphan staging is retained;
+automated cleanup and destructive GC remain disabled.

@@ -14,3 +14,5 @@ pub mod reads;
 
 pub mod commands;
 pub mod mutations;
+
+pub mod uploads;

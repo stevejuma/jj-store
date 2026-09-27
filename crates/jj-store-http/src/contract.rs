@@ -98,6 +98,7 @@ impl Document {
             ),
             (410, "Index task expired or was lost on server restart."),
             (413, "Request or response resource limit exceeded."),
+            (415, "Unsupported request media type or content encoding."),
             (503, "Busy, unavailable, corrupt or incomplete history."),
             (504, "Request or response deadline exceeded."),
         ] {
@@ -157,6 +158,13 @@ impl Document {
             operation["responses"]["409"]["description"] = json!(
                 "stale_snapshot, stale_bookmark, stale_conflict, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt."
             );
+        }
+        if path.ends_with("/conflict-uploads") {
+            operation["tags"] = json!(["mutations"]);
+            operation["description"] = json!(
+                "Requires current repository write permission before body consumption. Binary staging only; never publishes history. Binding must name the exact current single-head snapshot and a committed target. Repeating identical bytes/binding returns the same scoped handle. Deadline or unavailable responses permit safe re-upload; no mutation receipt is created. Upload limits are advertised by capabilities."
+            );
+            operation["requestBody"] = json!({"required":true,"content":{"application/octet-stream":{"schema":{"type":"string","format":"binary"}}}});
         }
         let mut item = json!({method:operation});
         if method == "get" {

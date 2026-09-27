@@ -11,6 +11,19 @@ fn typed_ids_reject_width_and_noncanonical_hex() {
     assert!("aa".parse::<CommitId>().is_err());
     assert!(CommitId::from_slice(&[0; 63]).is_err());
     assert!(RepositoryId::from_slice(&[0; 64]).is_err());
+    let upload = ConflictUploadId::new([171; 32]);
+    assert_eq!(
+        upload.to_string().parse::<ConflictUploadId>().unwrap(),
+        upload
+    );
+    assert!(
+        upload
+            .to_string()
+            .to_uppercase()
+            .parse::<ConflictUploadId>()
+            .is_err()
+    );
+    assert!(ConflictUploadId::from_slice(&[0; 64]).is_err());
     let repo = RepositoryId::new([9; 16]);
     let file = ObjectKey::File(FileId::new([42; 64]));
     let commit = ObjectKey::Commit(id);

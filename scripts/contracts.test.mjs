@@ -23,6 +23,7 @@ test("native_hex_rejects_short_uppercase_and_untyped_values", () => {
     ["RepositoryId", 32],
     ["CommitId", 128],
     ["ConflictFingerprint", 128],
+    ["ConflictUploadId", 64],
   ]) {
     validate(schema(name), "ab".repeat(width / 2));
     for (const value of [
