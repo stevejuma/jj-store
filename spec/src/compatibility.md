@@ -261,3 +261,8 @@ copy-history selection, checkpoint/restart receipt recovery, lost upload
 acknowledgements, corrupt/missing data, authorization changes and HTTP limits.
 Native/WAL formats and older StoredResult V1 bytes remain unchanged. These
 native and fault-store proofs do not replace real RustFS/TLS deployment gates.
+
+Conflict-resolution report compatibility requires older V1 Prepared results to
+decode and reencode byte-for-byte with the added optional field absent. New
+previews and retained receipts enumerate the target and affected descendants
+without changing native object identities or WAL publication formats.

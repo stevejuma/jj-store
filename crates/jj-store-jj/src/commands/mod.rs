@@ -3,6 +3,7 @@ mod abandon;
 mod access;
 mod execute;
 mod reconcile;
+mod report;
 mod resolve;
 use crate::query::{self, ReadAccess, access::Budget, workers::Workers};
 use jj_store_model as m;
@@ -111,6 +112,13 @@ pub struct Change<T> {
     pub before: T,
     pub after: T,
 }
+/// Complete remaining native paths on the target and every changed result.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
+pub struct ConflictResolutionReport {
+    pub target: Change<m::CommitId>,
+    pub selected_paths: Vec<String>,
+    pub remaining: BTreeMap<m::CommitId, Vec<String>>,
+}
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 pub struct Prepared {
     pub version: u32,
@@ -126,6 +134,8 @@ pub struct Prepared {
     pub abandoned: Vec<m::CommitId>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub skipped_hidden: Vec<m::CommitId>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub conflict_resolution: Option<ConflictResolutionReport>,
 }
 /// Implemented by a checked service session, never deserialized from a request.
 #[async_trait::async_trait]

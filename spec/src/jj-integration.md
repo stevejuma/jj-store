@@ -382,3 +382,9 @@ content before tree writes and uses explicit executable/copy-term choices.
 Ordinary read inventories remain committed-only. Mixed uploaded/term/deletion
 batches share one original tree preflight, native descendant rewrite and guarded
 publication. No upstream trait or native codec changes are needed.
+
+Conflict-resolution impact reports enumerate native remaining paths on every
+resulting rewritten or created commit under the same command budget and current
+authorization. Sorted target/selected-path and per-result conflict data remain
+owned DTOs. An optional empty-skipped report extension preserves canonical bytes
+for older Prepared/StoredResult V1 receipts.

@@ -32,6 +32,78 @@ pub enum Error {
     #[error(transparent)]
     Preparation(commands::Error),
 }
+
+#[cfg(test)]
+mod report_compatibility {
+    use super::*;
+
+    #[test]
+    fn conflict_report_decodes_legacy_selected_v1_receipt_without_changing_bytes() {
+        let repository = m::RepositoryId::new([1; 16]);
+        let principal = m::PrincipalId::new([2; 16]);
+        let request_id = m::RequestId::new([3; 16]);
+        let operation = m::OperationId::new([4; 64]);
+        let epoch = m::EpochId::new([5; 16]);
+        let request = Request {
+            version: 1,
+            request_id,
+            expected: Snapshot {
+                epoch,
+                position: m::WalPosition(7),
+                heads: BTreeSet::from([m::OperationId::new([6; 64])]),
+            },
+            command: Command::ResolveConflicts {
+                commit: m::CommitId::new([7; 64]),
+                paths: vec![commands::ConflictResolution {
+                    path: "dir/file".into(),
+                    fingerprint: m::ConflictFingerprint::new([8; 64]),
+                    resolution: commands::Resolution::Delete,
+                }],
+            },
+        };
+        // Explicit pre-extension field order: do not construct Prepared and
+        // serialize it here, which would silently follow new encoding changes.
+        let legacy_result = format!(
+            concat!(
+                "{{\"version\":1,\"operation\":\"{}\",\"created\":[],\"rewrites\":[],",
+                "\"bookmarks\":{{}},\"workspaces\":{{}},",
+                "\"stats\":{{\"metadata_nodes\":0,\"predicate_file_bytes\":0,",
+                "\"predicate_lines\":0,\"object_reads\":0,\"object_bytes\":0,\"work\":0}},",
+                "\"staged_objects\":0,\"staged_bytes\":0}}"
+            ),
+            operation
+        );
+        let bytes = format!(
+            "{{\"version\":1,\"repository\":\"{repository}\",\"principal\":\"{principal}\",\"request\":{},\"result\":{legacy_result}}}",
+            serde_json::to_string(&request).unwrap()
+        )
+        .into_bytes();
+        let stored: StoredResult = serde_json::from_slice(&bytes).unwrap();
+        assert!(stored.result.conflict_resolution.is_none());
+        assert_eq!(encode(&stored, 1024 * 1024).unwrap(), bytes);
+        let receipt = wal::publication::Receipt {
+            principal,
+            request_id,
+            publication_id: publication_id(repository, principal, request_id),
+            intent: intent(repository, principal, &request)
+                .unwrap()
+                .digest(repository)
+                .unwrap(),
+            accepted: Snapshot {
+                epoch,
+                position: m::WalPosition(8),
+                heads: BTreeSet::from([operation]),
+            },
+            result: bytes,
+        };
+        let decoded = decode(repository, principal, request_id, receipt).unwrap();
+        assert!(decoded.result.conflict_resolution.is_none());
+        assert_eq!(
+            serde_json::to_string(&decoded.result).unwrap(),
+            legacy_result
+        );
+    }
+}
 pub type Result<T> = std::result::Result<T, Error>;
 impl From<wal::Error> for Error {
     fn from(error: wal::Error) -> Self {

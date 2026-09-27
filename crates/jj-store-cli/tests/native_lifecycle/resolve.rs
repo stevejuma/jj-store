@@ -211,6 +211,83 @@ struct CountWrites {
     inner: Arc<MemoryStore>,
     writes: std::sync::atomic::AtomicUsize,
 }
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn typed_resolve_report_limits_reject_without_publication_or_truncation() {
+    tokio::task::LocalSet::new()
+        .run_until(async {
+            let mut h = History::new().await;
+            let (read, _) = complex(&mut h).await;
+            let ds = read
+                .conflicts(
+                    &reader(),
+                    cf::Request {
+                        commit: h.commit,
+                        path: String::new(),
+                    },
+                )
+                .await
+                .unwrap();
+            let expected = h.f.session.snapshot().await.unwrap().manifest().snapshot();
+            let request = input(
+                expected.clone(),
+                h.commit,
+                json!([selection(&ds.conflicts[0], 0)]),
+            );
+            let Preview::Prepared { preview } = service()
+                .preview(h.f.session.clone(), &request)
+                .await
+                .unwrap()
+            else {
+                panic!("preview")
+            };
+            let mut legacy = preview.result.clone();
+            legacy.conflict_resolution = None;
+            let max_output_bytes = serde_json::to_vec(&legacy).unwrap().len() + 128;
+            assert!(serde_json::to_vec(&preview.result).unwrap().len() > max_output_bytes);
+            let limited = CommandService::new(
+                Executor::new(
+                    CommandLimits {
+                        query: q::Limits {
+                            max_output_bytes,
+                            ..Default::default()
+                        },
+                        ..Default::default()
+                    },
+                    1,
+                )
+                .unwrap(),
+            );
+            assert_eq!(
+                limited
+                    .preview(h.f.session.clone(), &request)
+                    .await
+                    .unwrap_err(),
+                jj_store_service::mutations::Error::Limit
+            );
+            assert_eq!(
+                limited
+                    .apply(h.f.session.clone(), &request)
+                    .await
+                    .unwrap_err(),
+                jj_store_service::mutations::Error::Limit
+            );
+            assert_eq!(
+                h.f.session.snapshot().await.unwrap().manifest().snapshot(),
+                expected
+            );
+            assert_eq!(
+                service()
+                    .status(h.f.session.clone(), request.request_id)
+                    .await
+                    .unwrap(),
+                jj_store_service::mutations::Status::NotKnown {
+                    request_id: request.request_id
+                }
+            );
+        })
+        .await;
+}
 #[async_trait::async_trait]
 impl jj_store_object::ObjectStore for CountWrites {
     async fn head(&self, key: &Key) -> jj_store_object::Result<jj_store_object::Metadata> {
@@ -291,6 +368,11 @@ async fn typed_resolve_accepts_multisided_base_absent_and_directory_terms() {
                     .await
                     .unwrap();
                 assert!(!new.tree().has_conflict());
+                let report = receipt.result.conflict_resolution.as_ref().unwrap();
+                assert_eq!(report.target.before, h.commit);
+                assert_eq!(report.target.after, cid(new.id()));
+                assert_eq!(report.selected_paths, ["file"]);
+                assert_eq!(report.remaining, BTreeMap::from([(cid(new.id()), vec![])]));
                 assert_eq!(
                     new.tree()
                         .path_value(&RepoPathBuf::from_internal_string("file").unwrap())
@@ -387,6 +469,11 @@ async fn typed_resolve_rebases_descendants_updates_references_and_preserves_evol
         tx.commit("descendant fixture").await.unwrap();
         let expected = h.f.session.snapshot().await.unwrap().manifest().snapshot();
         let request = input(expected.clone(),h.commit,json!([selection(descriptor,2)]));
+        let Preview::Prepared {preview} = service().preview(h.f.session.clone(),&request).await.unwrap() else {panic!("preview")};
+        let preview_json=serde_json::to_value(&preview.result).unwrap();
+        assert_eq!(preview_json["conflict_resolution"]["target"]["before"],json!(h.commit),"resolution preview must identify the original target");
+        assert_eq!(preview_json["conflict_resolution"]["selected_paths"],json!(["text"]));
+        assert_eq!(preview_json["conflict_resolution"]["remaining"].as_object().unwrap().len(),2);
         let Outcome::Committed {receipt} = service().apply(h.f.session.clone(),&request).await.unwrap() else {panic!("receipt")};
         let after = h.f.stores.load_at(&loader,receipt.result.operation).await.unwrap();
         let rewritten = after.store().get_commit(after.view().get_local_bookmark("target".as_ref()).as_normal().unwrap()).unwrap();
@@ -399,6 +486,16 @@ async fn typed_resolve_rebases_descendants_updates_references_and_preserves_evol
         for name in ["target-a","target-b"] {assert_eq!(after.view().get_wc_commit_id(name.as_ref()),Some(rewritten.id()));}
         assert_eq!(after.view().get_wc_commit_id("child".as_ref()),Some(descendant.id()));
         assert_eq!(receipt.result.rewrites.len(),2);
+        let report=serde_json::to_value(&receipt.result).unwrap()["conflict_resolution"].clone();
+        assert_eq!(report["target"],json!({"before":h.commit,"after":cid(rewritten.id())}));
+        assert_eq!(report["selected_paths"],json!(["text"]));
+        assert_eq!(report["remaining"].as_object().unwrap().len(),2);
+        for commit in [&rewritten,&descendant] {
+            let remaining:Vec<_>=commit.tree().conflicts().map(|(p,v)| {v.unwrap();p.as_internal_file_string().to_owned()}).collect();
+            assert_eq!(remaining.len(),7);
+            assert_eq!(report["remaining"][cid(commit.id()).to_string()],json!(remaining));
+        }
+
         for (new,old) in [(&rewritten,&old),(&descendant,&child)] {
             assert!(receipt.result.rewrites.iter().any(|r|r.commit==cid(new.id()) && r.predecessors==[cid(old.id())]));
             assert_eq!(after.operation().store_operation().commit_predecessors.as_ref().unwrap()[new.id()],vec![old.id().clone()]);

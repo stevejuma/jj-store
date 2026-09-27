@@ -137,8 +137,8 @@ through pinned native transactions. It loads one exact current operation, never
 implicitly reconciles heads, and leaves the resulting operation unpublished.
 Preparation requires current write permission before native reads, staging and
 return. It checks the complete expected epoch/position/head snapshot before and
-after execution. It is internal execution infrastructure, not yet the public
-preview/apply/status API or an authorization grant.
+after execution. It is internal execution infrastructure consumed by the durable
+preview/apply/status service below; a prepared report grants no authorization.
 
 New preserves ordered explicit parents and uses native tree merging. An optional
 existing logical workspace can move to the new commit with native edit behavior;
@@ -163,9 +163,9 @@ objects staged by that one command. Only conditional immutable native writes are
 possible; manifest writes and head publication are denied. Canceled workers
 retain their permit until they exit. Later application publication must pass the
 existing strict snapshot and semantic protection guard and durable retry flow.
-M5 completion still requires that flow, transport/UI integration,
-reconciliation, abandon and conflict resolution; M4 deployment qualification
-remains separate.
+The durable service below supplies that publication flow to each typed command
+and the HTTP transport. M4 deployment qualification and browser controls remain
+separate gates.
 
 The user deferred further UI work on 27 September 2026. M5 backend command,
 preview/apply/status, RPC policy and mutation API gates continue; their browser
@@ -310,3 +310,22 @@ mutation receipt replay precedes upload lookup, so checkpointing and later
 staging loss do not invalidate an acknowledged mutation. Native report and prior
 command receipt encodings remain unchanged. UI editors remain deferred under
 M4.3.
+
+## Conflict resolution reports
+
+A new resolution preview and selected receipt include a conflict_resolution
+report with exact before/after target IDs, sorted selected_paths and a remaining
+map keyed by every resulting rewritten or created commit ID. Each map value is
+the complete sorted native conflict-path list for that result, including an
+empty list when none remain. This covers the target and all affected
+descendants; it does not claim to scan untouched history. Tree/file conflicts
+remain one native path. Selecting a directory may reveal nested conflicts, which
+are reported instead of treating the selection itself as proof of resolution.
+
+Enumeration shares command authorization, metadata, work, output and deadline
+budgets. Oversized or unreadable results fail preparation without publication;
+there is no truncated success report. Preview IDs remain provisional and the
+selected receipt retains the actual report for status and retries. The optional
+field is absent from non-resolution reports and defaults to absent when decoding
+older receipts, preserving their canonical V1 bytes. Absence means no report was
+recorded; it does not mean conflict-free.

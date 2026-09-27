@@ -1,7 +1,8 @@
 //! Checked native preparation; durable public preview/apply/status follows here.
 use crate::{auth::Permission, native::NativeSession};
 pub use jj_store_jj::commands::{
-    Command, ConflictResolution, Error, Executor, Limits, Prepared, Resolution, Result,
+    Command, ConflictResolution, ConflictResolutionReport, Error, Executor, Limits, Prepared,
+    Resolution, Result,
 };
 use jj_store_jj::{
     commands::MutationAccess,

@@ -244,10 +244,14 @@ Native lifecycle acceptance now exercises typed conflict term selection and
 deletion through the service and HTTP API, including descendant/bookmark/logical
 workspace updates. Ordinary jj resolve remains an upstream client command;
 server typed commands never execute client editors or alter physical files.
-Uploaded typed replacements retain their own pending M5.3 acceptance gate.
+Uploaded typed replacements have separate scoped-content acceptance below.
 
 Typed upload/resolution acceptance covers the native service and HTTP transport;
 ordinary client-side jj resolve continues to use upstream checkout semantics.
 The server caps HTTP conflict uploads at the smaller of its configured native
 blob limit and the 16 MiB default. Failed streaming staging does not create a
 native operation or durable mutation receipt.
+
+Native conflict-resolution acceptance also checks complete bounded reports for
+the target and rewritten descendants, explicit empty remaining-path lists, and
+legacy receipt decoding. This API contract adds no browser or CLI editor.

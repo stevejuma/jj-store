@@ -174,6 +174,13 @@ pub(super) async fn run(
         .await
         .map_err(unavailable)?;
     budget.check()?;
+    let resolution = match &command {
+        Command::ResolveConflicts { commit, paths } => Some((
+            *commit,
+            paths.iter().map(|p| p.path.clone()).collect::<Vec<_>>(),
+        )),
+        _ => None,
+    };
     let mut abandoned = vec![];
     let mut skipped_hidden = vec![];
     let (staged, mut created) = match command {
@@ -273,6 +280,21 @@ pub(super) async fn run(
             workspaces.insert(name.as_str().to_owned(), Change { before, after });
         }
     }
+    let conflict_resolution = match resolution {
+        Some((before, paths)) => Some(
+            super::report::resolution(
+                &staged,
+                access.as_ref(),
+                before,
+                paths,
+                &rewrites,
+                &created,
+                &budget,
+            )
+            .await?,
+        ),
+        None => None,
+    };
     let (staged_objects, staged_bytes) = store.stats();
     let result = Prepared {
         version: 1,
@@ -286,6 +308,7 @@ pub(super) async fn run(
         staged_bytes,
         abandoned,
         skipped_hidden,
+        conflict_resolution,
     };
     budget.authorize(access.as_ref()).await?;
     budget.complete_output(&result)?;

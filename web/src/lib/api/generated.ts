@@ -1150,6 +1150,8 @@ export interface components {
       staged_bytes: number;
       abandoned?: components["schemas"]["CommitId"][];
       skipped_hidden?: components["schemas"]["CommitId"][];
+      conflict_resolution?:
+        components["schemas"]["ConflictResolutionReport"] | null;
     };
     Rewrite: {
       commit: components["schemas"]["CommitId"];
@@ -1163,6 +1165,18 @@ export interface components {
     Change2: {
       before: components["schemas"]["CommitId"] | null;
       after: components["schemas"]["CommitId"] | null;
+    };
+    /** @description Complete remaining native paths on the target and every changed result. */
+    ConflictResolutionReport: {
+      target: components["schemas"]["Change3"];
+      selected_paths: string[];
+      remaining: {
+        [key: string]: string[];
+      };
+    };
+    Change3: {
+      before: components["schemas"]["CommitId"];
+      after: components["schemas"]["CommitId"];
     };
     Receipt: {
       /** Format: uint32 */

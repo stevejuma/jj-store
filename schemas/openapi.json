@@ -7289,6 +7289,12 @@
           "skipped_hidden": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/CommitId" }
+          },
+          "conflict_resolution": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/ConflictResolutionReport" },
+              { "type": "null" }
+            ]
           }
         },
         "required": [
@@ -7354,6 +7360,33 @@
               { "type": "null" }
             ]
           }
+        },
+        "required": ["before", "after"]
+      },
+      "ConflictResolutionReport": {
+        "type": "object",
+        "properties": {
+          "target": { "$ref": "#/components/schemas/Change3" },
+          "selected_paths": { "type": "array", "items": { "type": "string" } },
+          "remaining": {
+            "type": "object",
+            "additionalProperties": false,
+            "patternProperties": {
+              "^[0-9a-f]{128}$": {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            }
+          }
+        },
+        "required": ["target", "selected_paths", "remaining"],
+        "description": "Complete remaining native paths on the target and every changed result."
+      },
+      "Change3": {
+        "type": "object",
+        "properties": {
+          "before": { "$ref": "#/components/schemas/CommitId" },
+          "after": { "$ref": "#/components/schemas/CommitId" }
         },
         "required": ["before", "after"]
       },

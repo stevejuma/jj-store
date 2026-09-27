@@ -56,10 +56,17 @@ async fn conflict_upload_http_stages_verified_binary_without_publication_then_re
         let (status,preview)=send(&router,crate::http_mutation_acceptance::request(&h.f.token,"mutations/preview",Some(&body))).await;
         assert_eq!(status,StatusCode::OK,"{preview}");
         assert_eq!(preview["status"],"prepared");
+        assert_eq!(preview["preview"]["result"]["conflict_resolution"]["selected_paths"],json!(["binary"]));
         assert_eq!(h.f.session.snapshot().await.unwrap().manifest().snapshot(),expected);
         let (status,accepted)=send(&router,crate::http_mutation_acceptance::request(&h.f.token,"mutations",Some(&body))).await;
         assert_eq!(status,StatusCode::OK,"{accepted}");
         let Outcome::Committed{receipt}=service().apply(h.f.session.clone(),&request).await.unwrap() else {panic!("receipt")};
+        let report=receipt.result.conflict_resolution.as_ref().unwrap();
+        assert_eq!(report.target.before,h.commit);
+        assert_eq!(report.selected_paths,["binary"]);
+        assert_eq!(report.remaining.len(),1);
+        assert_eq!(report.remaining[&report.target.after].len(),7);
+        assert_eq!(accepted["receipt"]["result"]["conflict_resolution"],json!(report));
         let new=h.native_store().get_commit_async(&b::CommitId::from_bytes(receipt.result.rewrites[0].commit.as_bytes())).await.unwrap();
         assert_eq!(new.tree().path_value(&RepoPathBuf::from_internal_string("binary").unwrap()).await.unwrap(),Merge::resolved(Some(b::TreeValue::File{id:b::FileId::from_bytes(native.as_bytes()),executable:true,copy_id:b::CopyId::placeholder()})));
         assert_eq!(service().apply(h.f.session.clone(),&request).await.unwrap(),Outcome::Committed{receipt:receipt.clone()});
@@ -386,6 +393,19 @@ async fn conflict_upload_atomic_mixed_resolution_retains_copy_history_and_other_
                 }))
             );
             assert_eq!(new.tree().conflicts().count(), 5);
+            let report = receipt.result.conflict_resolution.as_ref().unwrap();
+            assert_eq!(report.target.after, cid(new.id()));
+            assert_eq!(report.selected_paths, ["copy", "structural", "text"]);
+            assert_eq!(
+                report.remaining[&report.target.after],
+                new.tree()
+                    .conflicts()
+                    .map(|(p, v)| {
+                        v.unwrap();
+                        p.as_internal_file_string().to_owned()
+                    })
+                    .collect::<Vec<_>>()
+            );
             assert_eq!(
                 uploader
                     .stage(

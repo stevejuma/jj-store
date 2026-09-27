@@ -407,3 +407,11 @@ invalid_upload; stale snapshots and conflicts retain their existing errors.
 Capabilities expose the upload byte cap and supported resolution actions.
 Generated OpenAPI and TypeScript include binary upload and resolution contracts;
 no browser editor or other UI behavior changes.
+
+ResolveConflicts previews and retained results expose an optional
+conflict_resolution report: exact target before/after IDs, sorted selected_paths
+and complete remaining native conflict paths for every changed result commit.
+Empty lists explicitly mean no remaining conflicts on that result; absent
+reports are legacy or non-resolution responses. Preview IDs are provisional. The
+generated OpenAPI and TypeScript contracts describe this extension; browser
+controls remain deferred.
