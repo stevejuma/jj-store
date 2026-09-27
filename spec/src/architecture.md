@@ -46,3 +46,7 @@ The service crate owns repository/operator token policies and request-bound
 authorization. Its publication guard uses owned WAL snapshots/settings and
 requires an explicit native semantic validator, keeping authentication shared
 between future HTTP and RPC adapters.
+
+The development toolchain includes rustfmt with a tracked edition-2024 policy.
+Rust formatting is part of the shared formatting commands, normal checks and
+canonical specification checks.

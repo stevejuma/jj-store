@@ -11,7 +11,7 @@
   "type": "module",
   "scripts": {
     "build": "cargo build --workspace --locked",
-    "check": "pnpm spec:validate && pnpm check:boundaries && pnpm check:progress && cargo fmt --all -- --check && cargo clippy --workspace --all-targets --locked -- -D warnings",
+    "check": "pnpm spec:validate && pnpm check:boundaries && pnpm check:progress && pnpm format:rust:check && cargo clippy --workspace --all-targets --locked -- -D warnings",
     "check:boundaries": "node scripts/check-boundaries.mjs",
     "check:progress": "node scripts/check-progress.mjs",
     "test:governance": "node --test scripts/governance.test.mjs",
@@ -20,10 +20,12 @@
     "spec:check": "spec-validator check",
     "spec:first": "spec-validator first",
     "spec:validate": "spec-validator validate",
-    "format:check": "prettier --check .",
-    "format": "prettier --write .",
+    "format:check": "pnpm format:rust:check && prettier --check .",
+    "format": "pnpm format:rust && prettier --write .",
     "test:storage-harness": "python3 scripts/rustfs-contract.py --self-test",
-    "test:rustfs": "python3 scripts/rustfs-contract.py --run"
+    "test:rustfs": "python3 scripts/rustfs-contract.py --run",
+    "format:rust": "cargo fmt --all",
+    "format:rust:check": "cargo fmt --all -- --check"
   },
   "devDependencies": {
     "@lapismd/spec-validator": "^0.1.0",

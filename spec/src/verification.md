@@ -61,3 +61,4 @@ passing concrete tests linked from the progress ledger.
 | JST-GOV-003    | Implemented | `scripts/governance.test.mjs`; `scripts/check-progress.mjs`; `spec-validator.config.mjs`; [bootstrap evidence](milestones.md)                        |
 | JST-GOV-004    | Implemented | `scripts/governance.test.mjs`; `scripts/check-progress.mjs`; `spec-validator.config.mjs`; [bootstrap evidence](milestones.md)                        |
 | JST-GOV-005    | Implemented | `scripts/governance.test.mjs`; `scripts/check-progress.mjs`; `spec-validator.config.mjs`; [bootstrap evidence](milestones.md)                        |
+| JST-GOV-006    | Implemented | `rustfmt.toml`; `package.json`; `spec-validator.config.mjs`; [formatting evidence](milestones.md)                                                    |

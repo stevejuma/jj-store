@@ -16,9 +16,12 @@ repository server. No existing repository migration is provided.
 
 Use Rust 1.97.1, Node 22 or newer, pnpm 10.32.1, and mdBook. Install tooling
 with `pnpm install --frozen-lockfile`. Run `pnpm spec:check`, `pnpm check`,
-`pnpm test`, and `pnpm build`. `pnpm format:check` checks authored Markdown and
-tooling. Docker is required for isolated real RustFS conformance, not unit
-tests.
+`pnpm test`, and `pnpm build`. The pinned Rust toolchain includes rustfmt.
+`pnpm format` formats Rust, authored Markdown and tooling; `pnpm format:check`
+checks them without making changes. Use `pnpm format:rust` or
+`pnpm format:rust:check` for Rust only. Rust formatting also runs in both
+`pnpm check` and `pnpm spec:check`. Docker is required for isolated real RustFS
+conformance, not unit tests.
 
 Runtime binaries are added at the native integration milestone. Use explicit
 build paths; development never replaces the installed `jj`.

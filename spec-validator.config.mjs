@@ -48,6 +48,10 @@ export default defineConfig(tableRequirements(), {
       ],
       rules: [
         {
+          pattern: "^rustfmt\\.toml$",
+          chapters: ["spec/src/spec-governance.md"],
+        },
+        {
           pattern: "^crates/jj-store-model/",
           chapters: ["spec/src/identity.md"],
         },
@@ -100,12 +104,17 @@ export default defineConfig(tableRequirements(), {
         },
       ],
       protected: [
-        "^(?:crates/|bins/|web/|schemas/|fixtures/|proto/|scripts/|deploy/|docs/|Cargo\\.(?:toml|lock)$|rust-toolchain\\.toml$|package\\.json$|pnpm-lock\\.yaml$|README\\.md$|LICENSE\\.md$|AGENTS\\.md$|spec-validator\\.config\\.mjs$|spec/book\\.toml$|\\.gitignore$|\\.prettier)",
+        "^(?:rustfmt\\.toml$|crates/|bins/|web/|schemas/|fixtures/|proto/|scripts/|deploy/|docs/|Cargo\\.(?:toml|lock)$|rust-toolchain\\.toml$|package\\.json$|pnpm-lock\\.yaml$|README\\.md$|LICENSE\\.md$|AGENTS\\.md$|spec-validator\\.config\\.mjs$|spec/book\\.toml$|\\.gitignore$|\\.prettier)",
       ],
     },
   },
   check: {
     lanes: [
+      {
+        name: "rustfmt",
+        command: "cargo",
+        args: ["fmt", "--all", "--", "--check"],
+      },
       {
         name: "boundaries",
         command: "node",
