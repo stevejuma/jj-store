@@ -138,6 +138,12 @@ candidate; resolve and reopen remove the old status selection and add the new
 one. Generated pages and roots are internal candidates rather than
 client-controlled publication inputs.
 
+Read services may retain an audited `ReviewStoreSnapshot` only within bounded
+process-local cursor limits. The snapshot reports its selected closure-object
+count for that accounting, while enumeration and detail continue to follow only
+the selected root. This adds no staging, command, receipt or manifest-CAS
+capability and changes no stored ReviewStore bytes.
+
 Anchor placement is outside publication. A root-pinned read may load a selected
 anchor and run the bounded resolver against an explicit immutable target, but it
 cannot stage a root, append a WAL record or move manifest position. A future

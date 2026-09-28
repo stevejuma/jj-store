@@ -1208,7 +1208,7 @@
       "get": {
         "operationId": "agent_sessions",
         "tags": ["collaboration"],
-        "description": "Requires current repository read permission. Session rows resolve from one immutable AgentStore root. Signed process-local continuations retain that exact root and page size, reauthorize every page, and reset after expiry, restart or epoch replacement. Reads never dispatch an agent or publish repository state.",
+        "description": "Requires current repository read permission. Rows resolve from one immutable AgentStore or ReviewStore root. Signed process-local continuations retain that exact root and page size, reauthorize every page, and reset after expiry, restart or epoch replacement. Reads never dispatch an agent or publish repository state.",
         "parameters": [
           {
             "name": "repo",
@@ -1445,7 +1445,7 @@
       "get": {
         "operationId": "agent_session",
         "tags": ["collaboration"],
-        "description": "Requires current repository read permission. Session rows resolve from one immutable AgentStore root. Signed process-local continuations retain that exact root and page size, reauthorize every page, and reset after expiry, restart or epoch replacement. Reads never dispatch an agent or publish repository state.",
+        "description": "Requires current repository read permission. Rows resolve from one immutable AgentStore or ReviewStore root. Signed process-local continuations retain that exact root and page size, reauthorize every page, and reset after expiry, restart or epoch replacement. Reads never dispatch an agent or publish repository state.",
         "parameters": [
           {
             "name": "repo",
@@ -1634,7 +1634,7 @@
       "get": {
         "operationId": "agent_transcript",
         "tags": ["collaboration"],
-        "description": "Requires current repository read permission. Session rows resolve from one immutable AgentStore root. Signed process-local continuations retain that exact root and page size, reauthorize every page, and reset after expiry, restart or epoch replacement. Reads never dispatch an agent or publish repository state.",
+        "description": "Requires current repository read permission. Rows resolve from one immutable AgentStore or ReviewStore root. Signed process-local continuations retain that exact root and page size, reauthorize every page, and reset after expiry, restart or epoch replacement. Reads never dispatch an agent or publish repository state.",
         "parameters": [
           {
             "name": "repo",
@@ -1979,7 +1979,7 @@
       "get": {
         "operationId": "agent_associations",
         "tags": ["collaboration"],
-        "description": "Requires current repository read permission. Session rows resolve from one immutable AgentStore root. Signed process-local continuations retain that exact root and page size, reauthorize every page, and reset after expiry, restart or epoch replacement. Reads never dispatch an agent or publish repository state.",
+        "description": "Requires current repository read permission. Rows resolve from one immutable AgentStore or ReviewStore root. Signed process-local continuations retain that exact root and page size, reauthorize every page, and reset after expiry, restart or epoch replacement. Reads never dispatch an agent or publish repository state.",
         "parameters": [
           {
             "name": "repo",
@@ -2444,7 +2444,7 @@
       "get": {
         "operationId": "agent_checkpoints",
         "tags": ["collaboration"],
-        "description": "Requires current repository read permission. Session rows resolve from one immutable AgentStore root. Signed process-local continuations retain that exact root and page size, reauthorize every page, and reset after expiry, restart or epoch replacement. Reads never dispatch an agent or publish repository state.",
+        "description": "Requires current repository read permission. Rows resolve from one immutable AgentStore or ReviewStore root. Signed process-local continuations retain that exact root and page size, reauthorize every page, and reset after expiry, restart or epoch replacement. Reads never dispatch an agent or publish repository state.",
         "parameters": [
           {
             "name": "repo",
@@ -2681,7 +2681,7 @@
       "get": {
         "operationId": "agent_checkpoint",
         "tags": ["collaboration"],
-        "description": "Requires current repository read permission. Session rows resolve from one immutable AgentStore root. Signed process-local continuations retain that exact root and page size, reauthorize every page, and reset after expiry, restart or epoch replacement. Reads never dispatch an agent or publish repository state.",
+        "description": "Requires current repository read permission. Rows resolve from one immutable AgentStore or ReviewStore root. Signed process-local continuations retain that exact root and page size, reauthorize every page, and reset after expiry, restart or epoch replacement. Reads never dispatch an agent or publish repository state.",
         "parameters": [
           {
             "name": "repo",
@@ -2872,7 +2872,7 @@
       "get": {
         "operationId": "agent_checkpoint_version",
         "tags": ["collaboration"],
-        "description": "Requires current repository read permission. Session rows resolve from one immutable AgentStore root. Signed process-local continuations retain that exact root and page size, reauthorize every page, and reset after expiry, restart or epoch replacement. Reads never dispatch an agent or publish repository state.",
+        "description": "Requires current repository read permission. Rows resolve from one immutable AgentStore or ReviewStore root. Signed process-local continuations retain that exact root and page size, reauthorize every page, and reset after expiry, restart or epoch replacement. Reads never dispatch an agent or publish repository state.",
         "parameters": [
           {
             "name": "repo",
@@ -3029,6 +3029,432 @@
             "in": "path",
             "required": true,
             "schema": { "$ref": "#/components/schemas/AgentObjectId" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result at the reported snapshot."
+          },
+          "400": {
+            "description": "Invalid request, unknown query field or invalid cursor."
+          },
+          "401": { "description": "Missing repository Bearer credential." },
+          "403": {
+            "description": "Access denied, including revoked credentials or disallowed Origin."
+          },
+          "404": {
+            "description": "Object not committed in the selected snapshot or unknown route."
+          },
+          "405": { "description": "Unsupported method." },
+          "408": { "description": "Native query canceled." },
+          "409": {
+            "description": "cursor_reset after expiry, process restart, or repository epoch replacement."
+          },
+          "410": {
+            "description": "Index task expired or was lost on server restart."
+          },
+          "413": {
+            "description": "Request or response resource limit exceeded."
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding."
+          },
+          "503": {
+            "description": "Busy, unavailable, corrupt or incomplete history."
+          },
+          "504": { "description": "Request or response deadline exceeded." }
+        },
+        "x-jj-store-query-schema": {
+          "type": "object",
+          "additionalProperties": false
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
+      }
+    },
+    "/v1/repos/{repo}/reviews/threads": {
+      "get": {
+        "operationId": "review_threads",
+        "tags": ["collaboration"],
+        "description": "Requires current repository read permission. Rows resolve from one immutable AgentStore or ReviewStore root. Signed process-local continuations retain that exact root and page size, reauthorize every page, and reset after expiry, restart or epoch replacement. Reads never dispatch an agent or publish repository state.",
+        "parameters": [
+          {
+            "name": "repo",
+            "in": "path",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/RepositoryId" }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" },
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "uint",
+              "minimum": 0,
+              "default": 50
+            },
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result at the reported snapshot.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ReviewThreadPage" }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request, unknown query field or invalid cursor.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing repository Bearer credential.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied, including revoked credentials or disallowed Origin.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "404": {
+            "description": "Object not committed in the selected snapshot or unknown route.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "405": {
+            "description": "Unsupported method.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "408": {
+            "description": "Native query canceled.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "409": {
+            "description": "cursor_reset after expiry, process restart, or repository epoch replacement.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "410": {
+            "description": "Index task expired or was lost on server restart.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "413": {
+            "description": "Request or response resource limit exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "503": {
+            "description": "Busy, unavailable, corrupt or incomplete history.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "504": {
+            "description": "Request or response deadline exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          }
+        },
+        "x-jj-store-query-schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "cursor": { "type": ["string", "null"] },
+            "limit": {
+              "type": "integer",
+              "format": "uint",
+              "minimum": 0,
+              "default": 50
+            }
+          }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
+      },
+      "head": {
+        "operationId": "review_threads_head",
+        "tags": ["collaboration"],
+        "description": "Runs the same authorized GET validation and drops the body. No JSON, binary bytes or SSE frames are returned.",
+        "parameters": [
+          {
+            "name": "repo",
+            "in": "path",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/RepositoryId" }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" },
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "uint",
+              "minimum": 0,
+              "default": 50
+            },
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result at the reported snapshot."
+          },
+          "400": {
+            "description": "Invalid request, unknown query field or invalid cursor."
+          },
+          "401": { "description": "Missing repository Bearer credential." },
+          "403": {
+            "description": "Access denied, including revoked credentials or disallowed Origin."
+          },
+          "404": {
+            "description": "Object not committed in the selected snapshot or unknown route."
+          },
+          "405": { "description": "Unsupported method." },
+          "408": { "description": "Native query canceled." },
+          "409": {
+            "description": "cursor_reset after expiry, process restart, or repository epoch replacement."
+          },
+          "410": {
+            "description": "Index task expired or was lost on server restart."
+          },
+          "413": {
+            "description": "Request or response resource limit exceeded."
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding."
+          },
+          "503": {
+            "description": "Busy, unavailable, corrupt or incomplete history."
+          },
+          "504": { "description": "Request or response deadline exceeded." }
+        },
+        "x-jj-store-query-schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "cursor": { "type": ["string", "null"] },
+            "limit": {
+              "type": "integer",
+              "format": "uint",
+              "minimum": 0,
+              "default": 50
+            }
+          }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
+      }
+    },
+    "/v1/repos/{repo}/reviews/threads/{thread}": {
+      "get": {
+        "operationId": "review_thread",
+        "tags": ["collaboration"],
+        "description": "Requires current repository read permission. Rows resolve from one immutable AgentStore or ReviewStore root. Signed process-local continuations retain that exact root and page size, reauthorize every page, and reset after expiry, restart or epoch replacement. Reads never dispatch an agent or publish repository state.",
+        "parameters": [
+          {
+            "name": "repo",
+            "in": "path",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/RepositoryId" }
+          },
+          {
+            "name": "thread",
+            "in": "path",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/ReviewThreadId" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result at the reported snapshot.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ReviewThreadDetail" }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request, unknown query field or invalid cursor.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing repository Bearer credential.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied, including revoked credentials or disallowed Origin.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "404": {
+            "description": "Object not committed in the selected snapshot or unknown route.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "405": {
+            "description": "Unsupported method.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "408": {
+            "description": "Native query canceled.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "409": {
+            "description": "cursor_reset after expiry, process restart, or repository epoch replacement.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "410": {
+            "description": "Index task expired or was lost on server restart.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "413": {
+            "description": "Request or response resource limit exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "503": {
+            "description": "Busy, unavailable, corrupt or incomplete history.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "504": {
+            "description": "Request or response deadline exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          }
+        },
+        "x-jj-store-query-schema": {
+          "type": "object",
+          "additionalProperties": false
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
+      },
+      "head": {
+        "operationId": "review_thread_head",
+        "tags": ["collaboration"],
+        "description": "Runs the same authorized GET validation and drops the body. No JSON, binary bytes or SSE frames are returned.",
+        "parameters": [
+          {
+            "name": "repo",
+            "in": "path",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/RepositoryId" }
+          },
+          {
+            "name": "thread",
+            "in": "path",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/ReviewThreadId" }
           }
         ],
         "responses": {
@@ -11084,77 +11510,374 @@
           "associations"
         ]
       },
-      "CommittedEvent": {
+      "ReviewThreadPage": {
         "type": "object",
         "properties": {
           "version": { "type": "integer", "format": "uint32", "minimum": 0 },
-          "cursor": { "$ref": "#/components/schemas/EventCursor" }
+          "snapshot": { "$ref": "#/components/schemas/ReviewReadSnapshot" },
+          "threads": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ReviewThreadSummary" }
+          },
+          "next_cursor": { "type": ["string", "null"] }
         },
-        "required": ["version", "cursor"],
+        "required": ["version", "snapshot", "threads", "next_cursor"]
+      },
+      "ReviewReadSnapshot": {
+        "type": "object",
+        "properties": {
+          "repo_id": { "$ref": "#/components/schemas/RepositoryId" },
+          "epoch": { "$ref": "#/components/schemas/EpochId" },
+          "published_seq": { "$ref": "#/components/schemas/WalPosition" },
+          "manifest_revision": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0
+          },
+          "review_root": { "$ref": "#/components/schemas/RecordDigest" },
+          "review_state_version": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "repo_id",
+          "epoch",
+          "published_seq",
+          "manifest_revision",
+          "review_root",
+          "review_state_version"
+        ]
+      },
+      "ReviewThreadSummary": {
+        "type": "object",
+        "properties": {
+          "thread_id": { "$ref": "#/components/schemas/ReviewThreadId" },
+          "snapshot_id": { "$ref": "#/components/schemas/ReviewObjectId" },
+          "original_anchor_id": {
+            "$ref": "#/components/schemas/ReviewObjectId"
+          },
+          "event_page_root_id": {
+            "$ref": "#/components/schemas/ReviewObjectId"
+          },
+          "status": { "$ref": "#/components/schemas/ThreadStatusV1" },
+          "selected_workflow_action": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/ReviewActionId" },
+              { "type": "null" }
+            ]
+          },
+          "thread_version": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0
+          },
+          "content_version": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0
+          },
+          "workflow_version": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0
+          },
+          "comment_count": {
+            "type": "integer",
+            "format": "uint",
+            "minimum": 0
+          },
+          "last_event_sequence": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "thread_id",
+          "snapshot_id",
+          "original_anchor_id",
+          "event_page_root_id",
+          "status",
+          "selected_workflow_action",
+          "thread_version",
+          "content_version",
+          "workflow_version",
+          "comment_count",
+          "last_event_sequence"
+        ]
+      },
+      "ReviewThreadId": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{32}$",
+        "minLength": 32,
+        "maxLength": 32
+      },
+      "ReviewObjectId": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$",
+        "minLength": 64,
+        "maxLength": 64
+      },
+      "ThreadStatusV1": { "type": "string", "enum": ["open", "resolved"] },
+      "ReviewActionId": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{32}$",
+        "minLength": 32,
+        "maxLength": 32
+      },
+      "ReviewThreadDetail": {
+        "type": "object",
+        "properties": {
+          "version": { "type": "integer", "format": "uint32", "minimum": 0 },
+          "snapshot": { "$ref": "#/components/schemas/ReviewReadSnapshot" },
+          "thread": { "$ref": "#/components/schemas/ReviewThreadSummary" },
+          "anchor": { "$ref": "#/components/schemas/ReviewAnchor" },
+          "comments": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ReviewComment" }
+          },
+          "events": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ReviewEvent" }
+          }
+        },
+        "required": [
+          "version",
+          "snapshot",
+          "thread",
+          "anchor",
+          "comments",
+          "events"
+        ]
+      },
+      "ReviewAnchor": {
+        "type": "object",
+        "properties": {
+          "object_id": { "$ref": "#/components/schemas/ReviewObjectId" },
+          "value": { "$ref": "#/components/schemas/ArtifactAnchorV1" }
+        },
+        "required": ["object_id", "value"]
+      },
+      "ArtifactAnchorV1": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "schema_version": {
+            "type": "integer",
+            "format": "uint32",
+            "minimum": 0
+          },
+          "repository_id": { "$ref": "#/components/schemas/RepositoryId" },
+          "target": { "$ref": "#/components/schemas/ArtifactTargetV1" },
+          "created_context": {
+            "$ref": "#/components/schemas/CreatedContextV1"
+          },
+          "sensitivity": { "$ref": "#/components/schemas/SensitivityV1" }
+        },
+        "required": [
+          "schema_version",
+          "repository_id",
+          "target",
+          "created_context",
+          "sensitivity"
+        ]
+      },
+      "ArtifactTargetV1": {
         "oneOf": [
           {
             "type": "object",
             "properties": {
-              "snapshot": { "$ref": "#/components/schemas/HeadSnapshot" },
-              "type": { "type": "string", "const": "ready" }
+              "target": { "type": "string", "const": "code_text" },
+              "value": { "$ref": "#/components/schemas/CodeTextAnchorV1" }
             },
-            "required": ["type", "snapshot"]
-          },
-          {
-            "type": "object",
-            "properties": { "type": { "type": "string", "const": "changed" } },
-            "required": ["type"]
+            "required": ["target", "value"]
           },
           {
             "type": "object",
             "properties": {
-              "reason": { "$ref": "#/components/schemas/EventResetReason" },
-              "snapshot": { "$ref": "#/components/schemas/HeadSnapshot" },
-              "type": { "type": "string", "const": "reset" }
+              "target": { "type": "string", "const": "code_artifact" },
+              "value": { "$ref": "#/components/schemas/CodeArtifactAnchorV1" }
             },
-            "required": ["type", "reason", "snapshot"]
+            "required": ["target", "value"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "target": { "type": "string", "const": "agent_text" },
+              "value": { "$ref": "#/components/schemas/AgentTextAnchorV1" }
+            },
+            "required": ["target", "value"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "target": { "type": "string", "const": "agent_artifact" },
+              "value": { "$ref": "#/components/schemas/AgentArtifactAnchorV1" }
+            },
+            "required": ["target", "value"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "target": { "type": "string", "const": "revision" },
+              "value": {
+                "type": "object",
+                "properties": {
+                  "operation_id": {
+                    "$ref": "#/components/schemas/OperationId"
+                  },
+                  "commit_id": { "$ref": "#/components/schemas/CommitId" },
+                  "change_id": {
+                    "anyOf": [
+                      { "$ref": "#/components/schemas/ChangeId" },
+                      { "type": "null" }
+                    ]
+                  }
+                },
+                "required": ["operation_id", "commit_id", "change_id"]
+              }
+            },
+            "required": ["target", "value"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "target": { "type": "string", "const": "operation" },
+              "value": {
+                "type": "object",
+                "properties": {
+                  "operation_id": { "$ref": "#/components/schemas/OperationId" }
+                },
+                "required": ["operation_id"]
+              }
+            },
+            "required": ["target", "value"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "target": { "type": "string", "const": "repository" }
+            },
+            "required": ["target"]
           }
         ]
       },
-      "EventCursor": {
+      "CodeTextAnchorV1": {
         "type": "object",
+        "additionalProperties": false,
         "properties": {
-          "repository": { "$ref": "#/components/schemas/RepositoryId" },
-          "epoch": { "$ref": "#/components/schemas/EpochId" },
-          "position": { "$ref": "#/components/schemas/WalPosition" }
-        },
-        "required": ["repository", "epoch", "position"]
-      },
-      "EventResetReason": {
-        "type": "string",
-        "enum": ["epoch_changed", "future_position", "replay_window"]
-      },
-      "Envelope_ContentObject": {
-        "type": "object",
-        "properties": {
-          "snapshot": { "$ref": "#/components/schemas/ReadSnapshot" },
-          "data": { "$ref": "#/components/schemas/ContentObject" },
-          "next_cursor": { "type": ["string", "null"] }
-        },
-        "required": ["snapshot", "data", "next_cursor"]
-      },
-      "ContentObject": {
-        "type": "object",
-        "properties": {
-          "version": { "type": "integer", "format": "uint32", "minimum": 0 },
-          "profile": { "type": "string" },
-          "key": { "$ref": "#/components/schemas/ObjectKey" },
-          "virtual_object": { "type": "boolean" },
-          "data": { "$ref": "#/components/schemas/ContentObjectData" },
-          "stats": { "$ref": "#/components/schemas/GraphStats" }
+          "operation_id": { "$ref": "#/components/schemas/OperationId" },
+          "commit_id": { "$ref": "#/components/schemas/CommitId" },
+          "change_id": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/ChangeId" },
+              { "type": "null" }
+            ]
+          },
+          "path": { "type": "string" },
+          "file_id": { "$ref": "#/components/schemas/FileId" },
+          "value_kind": { "$ref": "#/components/schemas/CodeValueKind" },
+          "text": { "$ref": "#/components/schemas/TextSelectionV1" },
+          "diff_context": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/DiffContextV1" },
+              { "type": "null" }
+            ]
+          }
         },
         "required": [
-          "version",
-          "profile",
-          "key",
-          "virtual_object",
-          "data",
-          "stats"
+          "operation_id",
+          "commit_id",
+          "change_id",
+          "path",
+          "file_id",
+          "value_kind",
+          "text",
+          "diff_context"
+        ]
+      },
+      "CodeValueKind": {
+        "type": "string",
+        "enum": [
+          "file",
+          "binary_file",
+          "empty_file",
+          "symlink",
+          "gitlink",
+          "conflict_term",
+          "conflict_artifact"
+        ]
+      },
+      "TextSelectionV1": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "encoding": { "$ref": "#/components/schemas/TextEncoding" },
+          "start_byte": { "$ref": "#/components/schemas/ByteOffset" },
+          "end_byte": { "$ref": "#/components/schemas/ByteOffset" },
+          "selected_sha256": { "$ref": "#/components/schemas/ReviewDigest" }
+        },
+        "required": ["encoding", "start_byte", "end_byte", "selected_sha256"]
+      },
+      "TextEncoding": { "type": "string", "enum": ["utf8"] },
+      "ByteOffset": { "type": "string", "pattern": "^(0|[1-9][0-9]*)$" },
+      "ReviewDigest": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$",
+        "minLength": 64,
+        "maxLength": 64
+      },
+      "DiffContextV1": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "before_operation_id": { "$ref": "#/components/schemas/OperationId" },
+          "before_commit_id": { "$ref": "#/components/schemas/CommitId" },
+          "before_path": { "type": ["string", "null"] },
+          "after_operation_id": { "$ref": "#/components/schemas/OperationId" },
+          "after_commit_id": { "$ref": "#/components/schemas/CommitId" },
+          "after_path": { "type": ["string", "null"] },
+          "side": { "$ref": "#/components/schemas/DiffSide" },
+          "comparison": { "$ref": "#/components/schemas/ComparisonKind" }
+        },
+        "required": [
+          "before_operation_id",
+          "before_commit_id",
+          "before_path",
+          "after_operation_id",
+          "after_commit_id",
+          "after_path",
+          "side",
+          "comparison"
+        ]
+      },
+      "DiffSide": { "type": "string", "enum": ["before", "after"] },
+      "ComparisonKind": { "type": "string", "enum": ["explicit_pair"] },
+      "CodeArtifactAnchorV1": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "operation_id": { "$ref": "#/components/schemas/OperationId" },
+          "commit_id": { "$ref": "#/components/schemas/CommitId" },
+          "change_id": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/ChangeId" },
+              { "type": "null" }
+            ]
+          },
+          "path": { "type": "string" },
+          "object": { "$ref": "#/components/schemas/ObjectKey" },
+          "value_kind": { "$ref": "#/components/schemas/CodeValueKind" }
+        },
+        "required": [
+          "operation_id",
+          "commit_id",
+          "change_id",
+          "path",
+          "object",
+          "value_kind"
         ]
       },
       "ObjectKey": {
@@ -11247,6 +11970,424 @@
         "pattern": "^[0-9a-f]{128}$",
         "minLength": 128,
         "maxLength": 128
+      },
+      "AgentTextAnchorV1": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "session_id": { "$ref": "#/components/schemas/AgentSessionId" },
+          "session_snapshot": { "$ref": "#/components/schemas/AgentObjectRef" },
+          "owner": { "$ref": "#/components/schemas/AgentContentOwnerV1" },
+          "block_id": { "$ref": "#/components/schemas/BlockId" },
+          "block_version": { "$ref": "#/components/schemas/AgentObjectRef" },
+          "part": { "$ref": "#/components/schemas/AgentContentPart" },
+          "content": { "$ref": "#/components/schemas/AgentObjectRef" },
+          "representation_version": { "type": "string" },
+          "sanitizer_version": { "type": "string" },
+          "normalizer_version": { "type": "string" },
+          "source_coverage": {
+            "$ref": "#/components/schemas/SourceCoverageV1"
+          },
+          "text": { "$ref": "#/components/schemas/TextSelectionV1" }
+        },
+        "required": [
+          "session_id",
+          "session_snapshot",
+          "owner",
+          "block_id",
+          "block_version",
+          "part",
+          "content",
+          "representation_version",
+          "sanitizer_version",
+          "normalizer_version",
+          "source_coverage",
+          "text"
+        ]
+      },
+      "AgentObjectRef": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kind": { "$ref": "#/components/schemas/AgentObjectKind" },
+          "id": { "$ref": "#/components/schemas/AgentObjectId" }
+        },
+        "required": ["kind", "id"]
+      },
+      "AgentObjectKind": {
+        "type": "string",
+        "enum": [
+          "index_page",
+          "session_snapshot",
+          "turn_snapshot",
+          "message_snapshot",
+          "tool_snapshot",
+          "intent",
+          "observation_batch",
+          "event_batch",
+          "transcript_manifest",
+          "transcript_page",
+          "transcript_chunk",
+          "content",
+          "checkpoint_version",
+          "association",
+          "alias",
+          "relation_page",
+          "source_state",
+          "projection_catalog"
+        ]
+      },
+      "AgentContentOwnerV1": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "tool_call_id": { "$ref": "#/components/schemas/ToolCallId" },
+              "snapshot": { "$ref": "#/components/schemas/AgentObjectRef" },
+              "attempt_id": { "$ref": "#/components/schemas/ToolAttemptId" },
+              "kind": { "type": "string", "const": "tool" }
+            },
+            "required": ["kind", "tool_call_id", "snapshot", "attempt_id"]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "message_id": { "$ref": "#/components/schemas/MessageId" },
+              "snapshot": { "$ref": "#/components/schemas/AgentObjectRef" },
+              "kind": { "type": "string", "const": "message" }
+            },
+            "required": ["kind", "message_id", "snapshot"]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "block_id": { "$ref": "#/components/schemas/BlockId" },
+              "snapshot": { "$ref": "#/components/schemas/AgentObjectRef" },
+              "kind": { "type": "string", "const": "plan" }
+            },
+            "required": ["kind", "block_id", "snapshot"]
+          }
+        ]
+      },
+      "ToolAttemptId": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{32}$",
+        "minLength": 32,
+        "maxLength": 32
+      },
+      "MessageId": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{32}$",
+        "minLength": 32,
+        "maxLength": 32
+      },
+      "BlockId": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{32}$",
+        "minLength": 32,
+        "maxLength": 32
+      },
+      "AgentContentPart": {
+        "type": "string",
+        "enum": ["input", "output", "message", "plan", "exposed_summary"]
+      },
+      "SourceCoverageV1": {
+        "type": "string",
+        "enum": ["complete", "partial", "redacted", "truncated", "unknown"]
+      },
+      "AgentArtifactAnchorV1": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "session_id": { "$ref": "#/components/schemas/AgentSessionId" },
+          "session_snapshot": { "$ref": "#/components/schemas/AgentObjectRef" },
+          "owner": { "$ref": "#/components/schemas/AgentContentOwnerV1" }
+        },
+        "required": ["session_id", "session_snapshot", "owner"]
+      },
+      "CreatedContextV1": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "publication_position": {
+            "type": ["integer", "null"],
+            "format": "uint64",
+            "minimum": 0
+          },
+          "code_state_version": {
+            "type": ["integer", "null"],
+            "format": "uint64",
+            "minimum": 0
+          },
+          "agent_root": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/RecordDigest" },
+              { "type": "null" }
+            ]
+          }
+        },
+        "required": ["publication_position", "code_state_version", "agent_root"]
+      },
+      "SensitivityV1": {
+        "type": "string",
+        "enum": ["public", "repository", "restricted"]
+      },
+      "ReviewComment": {
+        "type": "object",
+        "properties": {
+          "comment_id": { "$ref": "#/components/schemas/CommentId" },
+          "revision_id": { "$ref": "#/components/schemas/ReviewObjectId" },
+          "parent_comment_id": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/CommentId" },
+              { "type": "null" }
+            ]
+          },
+          "author": { "$ref": "#/components/schemas/PrincipalId" },
+          "actor": { "$ref": "#/components/schemas/PrincipalId" },
+          "created_at_millis": { "type": "integer", "format": "int64" },
+          "previous_revision_id": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/ReviewObjectId" },
+              { "type": "null" }
+            ]
+          },
+          "content": { "$ref": "#/components/schemas/ReviewCommentContent" }
+        },
+        "required": [
+          "comment_id",
+          "revision_id",
+          "parent_comment_id",
+          "author",
+          "actor",
+          "created_at_millis",
+          "previous_revision_id",
+          "content"
+        ]
+      },
+      "CommentId": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{32}$",
+        "minLength": 32,
+        "maxLength": 32
+      },
+      "PrincipalId": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{32}$",
+        "minLength": 32,
+        "maxLength": 32
+      },
+      "ReviewCommentContent": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "body_id": { "$ref": "#/components/schemas/ReviewObjectId" },
+              "format": { "$ref": "#/components/schemas/ReviewBodyFormatV1" },
+              "text": { "type": "string" },
+              "sanitizer_version": { "type": "string" },
+              "state": { "type": "string", "const": "visible" }
+            },
+            "required": [
+              "state",
+              "body_id",
+              "format",
+              "text",
+              "sanitizer_version"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "reason": { "type": ["string", "null"] },
+              "state": { "type": "string", "const": "tombstoned" }
+            },
+            "required": ["state", "reason"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "reason": { "type": "string" },
+              "state": { "type": "string", "const": "hidden" }
+            },
+            "required": ["state", "reason"]
+          }
+        ]
+      },
+      "ReviewBodyFormatV1": {
+        "type": "string",
+        "enum": ["plain_text", "safe_markdown"]
+      },
+      "ReviewEvent": {
+        "type": "object",
+        "properties": {
+          "event_id": { "$ref": "#/components/schemas/ReviewObjectId" },
+          "sequence": { "type": "integer", "format": "uint64", "minimum": 0 },
+          "actor": { "$ref": "#/components/schemas/PrincipalId" },
+          "accepted_at_millis": { "type": "integer", "format": "int64" },
+          "event": { "$ref": "#/components/schemas/ReviewEventKind" }
+        },
+        "required": [
+          "event_id",
+          "sequence",
+          "actor",
+          "accepted_at_millis",
+          "event"
+        ]
+      },
+      "ReviewEventKind": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "anchor_id": { "$ref": "#/components/schemas/ReviewObjectId" },
+              "initial_comment_id": {
+                "$ref": "#/components/schemas/CommentId"
+              },
+              "initial_revision_id": {
+                "$ref": "#/components/schemas/ReviewObjectId"
+              },
+              "action": { "type": "string", "const": "created" }
+            },
+            "required": [
+              "action",
+              "anchor_id",
+              "initial_comment_id",
+              "initial_revision_id"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "comment_id": { "$ref": "#/components/schemas/CommentId" },
+              "parent_comment_id": {
+                "anyOf": [
+                  { "$ref": "#/components/schemas/CommentId" },
+                  { "type": "null" }
+                ]
+              },
+              "revision_id": { "$ref": "#/components/schemas/ReviewObjectId" },
+              "action": { "type": "string", "const": "reply_added" }
+            },
+            "required": [
+              "action",
+              "comment_id",
+              "parent_comment_id",
+              "revision_id"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "comment_id": { "$ref": "#/components/schemas/CommentId" },
+              "previous_revision_id": {
+                "$ref": "#/components/schemas/ReviewObjectId"
+              },
+              "revision_id": { "$ref": "#/components/schemas/ReviewObjectId" },
+              "action": { "type": "string", "const": "comment_revised" }
+            },
+            "required": [
+              "action",
+              "comment_id",
+              "previous_revision_id",
+              "revision_id"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "action_id": { "$ref": "#/components/schemas/ReviewActionId" },
+              "reason": { "type": ["string", "null"] },
+              "action": { "type": "string", "const": "resolved" }
+            },
+            "required": ["action", "action_id", "reason"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "action_id": { "$ref": "#/components/schemas/ReviewActionId" },
+              "reason": { "type": ["string", "null"] },
+              "action": { "type": "string", "const": "reopened" }
+            },
+            "required": ["action", "action_id", "reason"]
+          }
+        ]
+      },
+      "CommittedEvent": {
+        "type": "object",
+        "properties": {
+          "version": { "type": "integer", "format": "uint32", "minimum": 0 },
+          "cursor": { "$ref": "#/components/schemas/EventCursor" }
+        },
+        "required": ["version", "cursor"],
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "snapshot": { "$ref": "#/components/schemas/HeadSnapshot" },
+              "type": { "type": "string", "const": "ready" }
+            },
+            "required": ["type", "snapshot"]
+          },
+          {
+            "type": "object",
+            "properties": { "type": { "type": "string", "const": "changed" } },
+            "required": ["type"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "reason": { "$ref": "#/components/schemas/EventResetReason" },
+              "snapshot": { "$ref": "#/components/schemas/HeadSnapshot" },
+              "type": { "type": "string", "const": "reset" }
+            },
+            "required": ["type", "reason", "snapshot"]
+          }
+        ]
+      },
+      "EventCursor": {
+        "type": "object",
+        "properties": {
+          "repository": { "$ref": "#/components/schemas/RepositoryId" },
+          "epoch": { "$ref": "#/components/schemas/EpochId" },
+          "position": { "$ref": "#/components/schemas/WalPosition" }
+        },
+        "required": ["repository", "epoch", "position"]
+      },
+      "EventResetReason": {
+        "type": "string",
+        "enum": ["epoch_changed", "future_position", "replay_window"]
+      },
+      "Envelope_ContentObject": {
+        "type": "object",
+        "properties": {
+          "snapshot": { "$ref": "#/components/schemas/ReadSnapshot" },
+          "data": { "$ref": "#/components/schemas/ContentObject" },
+          "next_cursor": { "type": ["string", "null"] }
+        },
+        "required": ["snapshot", "data", "next_cursor"]
+      },
+      "ContentObject": {
+        "type": "object",
+        "properties": {
+          "version": { "type": "integer", "format": "uint32", "minimum": 0 },
+          "profile": { "type": "string" },
+          "key": { "$ref": "#/components/schemas/ObjectKey" },
+          "virtual_object": { "type": "boolean" },
+          "data": { "$ref": "#/components/schemas/ContentObjectData" },
+          "stats": { "$ref": "#/components/schemas/GraphStats" }
+        },
+        "required": [
+          "version",
+          "profile",
+          "key",
+          "virtual_object",
+          "data",
+          "stats"
+        ]
       },
       "ContentObjectData": {
         "oneOf": [

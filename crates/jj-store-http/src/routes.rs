@@ -190,6 +190,13 @@ struct AgentCheckpoints {
 }
 #[derive(Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
+struct ReviewThreads {
+    cursor: Option<String>,
+    #[serde(default = "limit")]
+    limit: usize,
+}
+#[derive(Deserialize, schemars::JsonSchema)]
+#[serde(deny_unknown_fields)]
 struct AgentTranscript {
     source: jj_store_service::collaboration::AgentSourceInstanceIdentity,
     generation: u64,
@@ -254,6 +261,8 @@ macro_rules! endpoints {
             (get, "/repos/{repo}/agent/checkpoints", agent_checkpoints, AgentCheckpoints, crate::collaboration::CheckpointPage, Reply::Json(200)),
             (get, "/repos/{repo}/agent/checkpoints/{checkpoint}", agent_checkpoint, Empty, crate::collaboration::CheckpointDetail, Reply::Json(200)),
             (get, "/repos/{repo}/agent/checkpoints/{checkpoint}/versions/{version}", agent_checkpoint_version, Empty, crate::collaboration::CheckpointDetail, Reply::Json(200)),
+            (get, "/repos/{repo}/reviews/threads", review_threads, ReviewThreads, crate::collaboration::ReviewPage, Reply::Json(200)),
+            (get, "/repos/{repo}/reviews/threads/{thread}", review_thread, Empty, crate::collaboration::ReviewDetail, Reply::Json(200)),
             (get, "/repos/{repo}/snapshot", snapshot, Empty, reads::HeadSnapshot, Reply::Json(200)),
             (get, "/repos/{repo}/events", events, Events, events::Event, Reply::Events),
             (get, "/repos/{repo}/objects/{kind}/{id}", object, Selection, Envelope<c::Object>, Reply::Json(200)),
@@ -443,6 +452,23 @@ async fn agent_checkpoint_version(
     let version_id = context.id("version")?;
     crate::collaboration::checkpoint_version(&state, context.session, checkpoint_id, version_id)
         .await
+}
+async fn review_threads(
+    ExtractState(state): ExtractState<Arc<State>>,
+    context: Context,
+    args: Input<ReviewThreads>,
+) -> Result<Response> {
+    let args = input(args)?;
+    crate::collaboration::review_threads(&state, context.session, args.cursor, args.limit).await
+}
+async fn review_thread(
+    ExtractState(state): ExtractState<Arc<State>>,
+    context: Context,
+    args: Input<Empty>,
+) -> Result<Response> {
+    input(args)?;
+    let thread_id = context.id("thread")?;
+    crate::collaboration::review_thread(&state, context.session, thread_id).await
 }
 async fn object(
     ExtractState(state): ExtractState<Arc<State>>,

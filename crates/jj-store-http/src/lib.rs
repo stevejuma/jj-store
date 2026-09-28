@@ -26,7 +26,7 @@ use jj_store_service::registry::RepositoryRegistry;
 use jj_store_service::{
     administration::RepositoryHost,
     auth::{BearerToken, Permission, SystemClock},
-    collaboration::AgentSessionPager,
+    collaboration::{AgentSessionPager, ReviewThreadPager},
     commands, events, index_tasks,
     native::NativeSession,
     pagination::{
@@ -140,6 +140,7 @@ struct State {
     browser: BrowserPager,
     operation_browser: OperationBrowserPager,
     agent_sessions: AgentSessionPager,
+    review_threads: ReviewThreadPager,
     tasks: index_tasks::IndexTasks,
     commands: jj_store_service::mutations::CommandService,
     uploads: jj_store_service::uploads::Uploads,
@@ -217,6 +218,8 @@ impl HttpApi {
             OperationBrowserPager::with_cursors(queries.content().clone(), cursors);
         let agent_sessions = AgentSessionPager::new(paging_limits, Arc::new(SystemClock))
             .map_err(|_| "HTTP collaboration cursor limits")?;
+        let review_threads = ReviewThreadPager::new(paging_limits, Arc::new(SystemClock))
+            .map_err(|_| "HTTP review cursor limits")?;
         let tasks = index_tasks::IndexTasks::new(
             queries.graph().clone(),
             index_tasks::Limits {
@@ -246,6 +249,7 @@ impl HttpApi {
             browser,
             operation_browser,
             agent_sessions,
+            review_threads,
             tasks,
             commands,
             uploads,

@@ -334,12 +334,14 @@ returns trusted source HTML.
 `GET /v1/repos/{repo}/agent/associations`,
 `GET /v1/repos/{repo}/agent/checkpoints`,
 `GET /v1/repos/{repo}/agent/checkpoints/{checkpoint}` and
-`GET /v1/repos/{repo}/agent/checkpoints/{checkpoint}/versions/{version}` are
-bounded collaboration routes. LocalTrusted admits them through the existing
-literal-loopback protection and installation principal, without a bearer
-credential. Authenticated deployments retain their repository bearer policy.
-Both modes require current repository read permission before and after every
-root-pinned read.
+`GET /v1/repos/{repo}/agent/checkpoints/{checkpoint}/versions/{version}`, plus
+`GET /v1/repos/{repo}/reviews/threads` and
+`GET /v1/repos/{repo}/reviews/threads/{thread}`, are bounded collaboration
+routes. LocalTrusted admits them through the existing literal-loopback
+protection and installation principal, without a bearer credential.
+Authenticated deployments retain their repository bearer policy. Both modes
+require current repository read permission before and after every root-pinned
+read.
 
 The JSON response contains version 1, an exact AgentStore read snapshot, bounded
 session summaries and an optional continuation. The snapshot carries repository,
@@ -391,6 +393,18 @@ returns 404 even when some other selected AgentStore object refers to it. Both
 detail routes pin the current root for the whole request and never reinterpret
 the stable checkpoint ID as an immutable object ID.
 
+The review collection enumerates stable thread IDs and their current immutable
+snapshots from one exact ReviewStore root. Its version 1 response carries the
+repository, epoch, publication position, manifest revision, ReviewStore root
+digest and state version. Thread summaries preserve exact snapshot, anchor and
+event-page object IDs, workflow state and version counters. Stable-thread detail
+returns the validated anchor value, ordered selected comment revisions with safe
+visible bodies or explicit tombstone/moderation states, and the complete bounded
+immutable event stream. The combined visible comment bodies in one detail
+response are limited to eight MiB. Each item retains its exact object identity
+and authenticated actor. Missing stable threads return 404; no route reads an
+arbitrary ReviewStore object or an unvalidated historical snapshot.
+
 `limit` defaults to the common page size and accepts 1 through 256. The opaque
 continuation is bound to the entire snapshot and original page size, retains its
 immutable root after later publications and is never suitable for a permanent
@@ -399,7 +413,9 @@ source instance, source generation, byte ceiling and last returned sequence.
 Association continuations additionally bind the complete typed relation subject
 and the root-local relation page and offset. A continuation for one subject
 cannot resume another subject. Checkpoint collection continuations bind the
-radix key after the last stable checkpoint in the selected catalog. Invalid or
+radix key after the last stable checkpoint in the selected catalog. Review
+thread continuations use a separate signature domain and bind the corresponding
+ReviewStore root/state version and last stable thread radix key. Invalid or
 query-mismatched continuations return `invalid_cursor`; expiry, process restart
 or epoch replacement returns `cursor_reset`. Request concurrency, retained pins,
 transitive closure objects and lifetime are bounded by the shared read limits.

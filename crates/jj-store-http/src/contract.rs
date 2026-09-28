@@ -54,6 +54,10 @@ impl Document {
                 .output
                 .subschema_for::<jj_store_service::collaboration::AgentCheckpointVersionIdentity>()
                 .to_value(),
+            "thread" => self
+                .output
+                .subschema_for::<jj_store_service::collaboration::ReviewThreadIdentity>()
+                .to_value(),
             "kind" => {
                 json!({"type":"string", "enum":["commit","tree","file","symlink","copy","view","operation"]})
             }
@@ -188,10 +192,10 @@ impl Document {
             operation["responses"]["503"]["description"] =
                 json!("search_not_ready, busy, unavailable, corrupt_index, or incomplete history.");
         }
-        if path.contains("/agent/") {
+        if path.contains("/agent/") || path.contains("/reviews/") {
             operation["tags"] = json!(["collaboration"]);
             operation["description"] = json!(
-                "Requires current repository read permission. Session rows resolve from one immutable AgentStore root. Signed process-local continuations retain that exact root and page size, reauthorize every page, and reset after expiry, restart or epoch replacement. Reads never dispatch an agent or publish repository state."
+                "Requires current repository read permission. Rows resolve from one immutable AgentStore or ReviewStore root. Signed process-local continuations retain that exact root and page size, reauthorize every page, and reset after expiry, restart or epoch replacement. Reads never dispatch an agent or publish repository state."
             );
             operation["responses"]["409"]["description"] = json!(
                 "cursor_reset after expiry, process restart, or repository epoch replacement."
@@ -305,5 +309,8 @@ pub fn openapi() -> Value {
     document.finish()
 }
 
+#[cfg(test)]
+#[path = "contract/review_tests.rs"]
+mod review_tests;
 #[cfg(test)]
 mod tests;

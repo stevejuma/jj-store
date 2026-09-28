@@ -7,10 +7,14 @@ mod agent_transcripts;
 mod checkpoint_models;
 mod cursor_position;
 mod models;
+mod review_cursors;
+mod review_models;
+mod review_threads;
 pub use agent_relations::AgentRelationRequest;
 pub use agent_transcripts::AgentTranscriptRequest;
 pub use checkpoint_models::*;
 pub use models::*;
+pub use review_models::*;
 
 use crate::{
     auth::{Clock, Permission},
@@ -51,6 +55,26 @@ pub type Result<T> = std::result::Result<T, Error>;
 
 pub struct AgentSessionPager {
     cursors: AgentCursorRegistry,
+}
+
+pub struct ReviewThreadPager {
+    cursors: review_cursors::ReviewCursorRegistry,
+}
+
+impl std::fmt::Debug for ReviewThreadPager {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("ReviewThreadPager")
+            .field("cursors", &self.cursors)
+            .finish()
+    }
+}
+
+impl ReviewThreadPager {
+    pub fn new(limits: pagination::Limits, clock: Arc<dyn Clock>) -> Result<Self> {
+        Ok(Self {
+            cursors: review_cursors::ReviewCursorRegistry::new(limits, clock)?,
+        })
+    }
 }
 
 impl std::fmt::Debug for AgentSessionPager {

@@ -50,8 +50,11 @@ harness self-tests or a source audit.
 M9 owns the LocalTrusted AgentStore and ReviewStore delivery. Its publication
 foundation is governed by `publication.md`; new domain crates and capture,
 anchor, review or collaboration behavior are governed by `collaboration.md`.
-Upstream Community and Design Core changes remain separate source-owned changes
-with consumer acceptance in this repository.
+Each separately registered captured-response fixture in `scripts/contracts.mjs`
+must be recorded here and in the M9 evidence ledger so generation cannot widen
+runtime acceptance without same-change governance review. Upstream Community and
+Design Core changes remain separate source-owned changes with consumer
+acceptance in this repository.
 
 ## M0 extension qualification
 

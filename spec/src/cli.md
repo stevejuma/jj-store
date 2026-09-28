@@ -450,5 +450,8 @@ association pages and exercises session, tool, operation, revision and
 checkpoint subjects, including rejection of contradictory selectors. Separate
 checkpoint collection, current-detail and exact-version captures verify root
 continuity after publication and reject an immutable version from another
-checkpoint chain. This adds no user-facing CLI command; ReviewStore operations
-and collaboration command presentation remain subsequent M9.4 work.
+checkpoint chain. A separate ReviewStore capture pages stable threads across a
+later review publication, resolves the current selected anchor, comments and
+events, and returns 404 for a missing stable thread. This adds no user-facing
+CLI command; ReviewStore writes and collaboration command presentation remain
+subsequent M9.4 work.

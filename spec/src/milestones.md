@@ -66,7 +66,7 @@ adds evidence here in its enclosing Jujutsu change.
 | M9.1        | Done        | M8a.4       | JST-PUB-007,JST-PUB-008                                                 | Independent code/agent/review roots, code-state fencing and non-destructive collaboration enablement                | Implement AgentStore typed root objects                 | E-M9-001                                                                                                                                                                                                                                                    |
 | M9.2        | Done        | M9.1        | JST-COLLAB-001,JST-COLLAB-002,JST-COLLAB-006                            | AgentStore model, immutable snapshots/catalogs, sanitized evidence and Codex/Cursor/OpenCode normalizers            | Implement M9.4 LocalTrusted APIs                        | E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009,E-M9-015,E-M9-016,E-M9-017,E-M9-018,E-M9-019,E-M9-020,E-M9-021,E-M9-022,E-M9-023                                                                                                    |
 | M9.3        | Done        | M9.2        | JST-COLLAB-001,JST-COLLAB-003,JST-PUB-009                               | ReviewStore exact anchors, stale-safe thread workflow, direct catalogs and conservative placement                   | Implement M9.4 LocalTrusted APIs                        | E-M9-010,E-M9-011,E-M9-012,E-M9-013,E-M9-014,E-M9-023                                                                                                                                                                                                       |
-| M9.4        | In progress | M9.2,M9.3   | JST-COLLAB-004                                                          | LocalTrusted bounded CLI/HTTP APIs, pagination, receipts and live collaboration hints                               | Add ReviewStore, writes and CLI surfaces                | E-M9-024,E-M9-025,E-M9-026,E-M9-027,E-M9-028                                                                                                                                                                                                                |
+| M9.4        | In progress | M9.2,M9.3   | JST-COLLAB-004                                                          | LocalTrusted bounded CLI/HTTP APIs, pagination, receipts and live collaboration hints                               | Add ReviewStore writes and CLI surfaces                 | E-M9-024,E-M9-025,E-M9-026,E-M9-027,E-M9-028,E-M9-029                                                                                                                                                                                                       |
 | M9.5        | Planned     | M9.4        | JST-COLLAB-005                                                          | Community-owned thread/agent widgets and Design Core exact diff selection integrated into the application           | Implement accessible virtualized application routes     | -                                                                                                                                                                                                                                                           |
 | M9.6        | Planned     | M9.5        | JST-COLLAB-002,JST-COLLAB-006,JST-COLLAB-007                            | Three harness qualification, cold recovery, three-root native copy and bounded fault/security/browser acceptance    | Execute real harness and native recovery gates          | -                                                                                                                                                                                                                                                           |
 
@@ -14759,6 +14759,120 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Rust 1.98.1; AgentStore schema v1; OpenAPI 3.1; TypeScript generated contracts; checkpoint page/detail response v1; cursor token jsa1.",
     "formats": "Adds three JSON GET checkpoint routes and generated schemas. Collection cursors bind the exact AgentStore root, page size and checkpoint radix key. Current detail resolves a stable 16-byte checkpoint ID; exact-version detail accepts a full 32-byte immutable object ID only within the selected checkpoint's bounded supersedes chain. Native objects, manifest format 2, WAL, receipts and AgentStore persistence remain unchanged."
+  },
+  {
+    "id": "E-M9-029",
+    "tasks": ["M9", "M9.4"],
+    "date": "2026-09-28",
+    "kind": "root-pinned-review-threads",
+    "files": [
+      "Cargo.lock",
+      "crates/jj-store-cli/Cargo.toml",
+      "crates/jj-store-cli/tests/native_lifecycle.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/http_collaboration_reviews.rs",
+      "crates/jj-store-http/src/collaboration.rs",
+      "crates/jj-store-http/src/contract.rs",
+      "crates/jj-store-http/src/contract/review_tests.rs",
+      "crates/jj-store-http/src/contract/tests.rs",
+      "crates/jj-store-http/src/lib.rs",
+      "crates/jj-store-http/src/routes.rs",
+      "crates/jj-store-service/Cargo.toml",
+      "crates/jj-store-service/src/collaboration.rs",
+      "crates/jj-store-service/src/collaboration/review_cursors.rs",
+      "crates/jj-store-service/src/collaboration/review_models.rs",
+      "crates/jj-store-service/src/collaboration/review_threads.rs",
+      "crates/jj-store-service/tests/review_threads.rs",
+      "crates/jj-store-wal/src/publication/review_catalog.rs",
+      "schemas/openapi.json",
+      "scripts/contracts.mjs",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/collaboration.md",
+      "spec/src/compatibility.md",
+      "spec/src/milestones.md",
+      "spec/src/mutations.md",
+      "spec/src/publication.md",
+      "spec/src/spec-governance.md",
+      "spec/src/verification.md",
+      "web/src/lib/api/generated.ts"
+    ],
+    "tests": [
+      "crates/jj-store-service/tests/review_threads.rs#review_threads_are_root_pinned_and_details_resolve_selected_objects",
+      "crates/jj-store-service/tests/review_threads.rs#review_thread_detail_limits_combined_visible_body_bytes",
+      "crates/jj-store-http/src/contract/review_tests.rs#collaboration_contract_exposes_root_pinned_review_threads",
+      "crates/jj-store-cli/tests/native_lifecycle/http_collaboration_reviews.rs#local_trusted_http_pages_root_pinned_review_threads_and_resolves_detail"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-http contract::review_tests::collaboration_contract_exposes_root_pinned_review_threads --locked -- --exact",
+        "result": "fail",
+        "failures": 1,
+        "note": "The test-first OpenAPI regression failed because ReviewStore thread collection and stable-thread detail routes were absent."
+      },
+      {
+        "command": "cargo test -p jj-store-service --test review_threads --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "The two focused service regressions prove cursor root continuity after a later review publication, current stable-thread detail, ordered anchor/comment/event resolution, the eight MiB combined visible-body ceiling, missing-thread behavior and rejection of tampered or page-size-mismatched cursors."
+      },
+      {
+        "command": "cargo test -p jj-store-http contract:: --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All ten focused HTTP contract tests pass, including both additive ReviewStore paths and service-owned page/detail schemas."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle http_collaboration_review_acceptance::local_trusted_http_pages_root_pinned_review_threads_and_resolves_detail --locked -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "The registered LocalTrusted handlers page the retained ReviewStore root without a bearer credential, resolve current detail after publication and return 404 for a missing stable thread."
+      },
+      {
+        "command": "CC=<pinned-clang> CXX=<pinned-clang++> CMAKE=<qualified-cmake> BOOST_ROOT=<qualified-boost> pnpm contracts:generate",
+        "result": "pass",
+        "failures": 0,
+        "note": "OpenAPI and TypeScript regenerate with the additive ReviewStore thread routes and owned response DTOs."
+      },
+      {
+        "command": "cargo fmt --all -- --check; cargo clippy -p jj-store-wal -p jj-store-service -p jj-store-http -p jj-store-cli --all-targets --locked -- -D warnings",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rust formatting and every affected WAL, service, HTTP and CLI target pass. New production modules contain at most 295 counted lines; focused tests stay below 500 physical lines."
+      },
+      {
+        "command": "pnpm contracts:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Generated OpenAPI and TypeScript match; 66 actual HTTP/SSE responses, including both review pages and current detail, conform and all six schema/client tests pass."
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "fail",
+        "failures": 1,
+        "note": "The first boundary run rejected a production service dependency on jj-review, proving the collaboration model must remain behind the WAL facade."
+      },
+      {
+        "command": "pnpm check:boundaries; cargo test -p jj-store-service --test review_threads --locked; cargo test -p jj-store-http contract::review_tests::collaboration_contract_exposes_root_pinned_review_threads --locked -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "The WAL facade now exports only the validated review value types required by the service; all 13 package boundaries and the exact service/contract regressions pass after removing the invalid production dependency."
+      },
+      {
+        "command": "pnpm check:architecture; pnpm spec:validate; pnpm spec:first; pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 198 governed web modules, 89 requirements, 21 protected files across nine canonical chapters and 61 progress tasks validate."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "ReviewStore typed writes, collaboration CLI commands, durable receipts and live hints remain M9.4 work.",
+      "Shared Community/Design Core presentation remains M9.5.",
+      "Real harness and cold native recovery remain M9.6."
+    ],
+    "versions": "Rust 1.98.1; ReviewStore schema v1; OpenAPI 3.1; TypeScript generated contracts; review thread page/detail response v1; cursor token jsr1.",
+    "formats": "Adds two JSON GET review-thread routes and generated schemas. Collection cursors bind repository, epoch, publication position, manifest revision, exact ReviewStore root/state version, page size and last thread radix key while retaining the audited closure in bounded process memory. Detail resolves only the current stable-thread selection and its exact anchor, selected comments/bodies and event stream, with combined visible bodies limited to eight MiB. Native objects, manifest format 2, WAL, receipts and ReviewStore persistence remain unchanged."
   }
 ]
 ```

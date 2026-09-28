@@ -96,7 +96,7 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /** @description Requires current repository read permission. Session rows resolve from one immutable AgentStore root. Signed process-local continuations retain that exact root and page size, reauthorize every page, and reset after expiry, restart or epoch replacement. Reads never dispatch an agent or publish repository state. */
+    /** @description Requires current repository read permission. Rows resolve from one immutable AgentStore or ReviewStore root. Signed process-local continuations retain that exact root and page size, reauthorize every page, and reset after expiry, restart or epoch replacement. Reads never dispatch an agent or publish repository state. */
     get: operations["agent_sessions"];
     put?: never;
     post?: never;
@@ -114,7 +114,7 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /** @description Requires current repository read permission. Session rows resolve from one immutable AgentStore root. Signed process-local continuations retain that exact root and page size, reauthorize every page, and reset after expiry, restart or epoch replacement. Reads never dispatch an agent or publish repository state. */
+    /** @description Requires current repository read permission. Rows resolve from one immutable AgentStore or ReviewStore root. Signed process-local continuations retain that exact root and page size, reauthorize every page, and reset after expiry, restart or epoch replacement. Reads never dispatch an agent or publish repository state. */
     get: operations["agent_session"];
     put?: never;
     post?: never;
@@ -132,7 +132,7 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /** @description Requires current repository read permission. Session rows resolve from one immutable AgentStore root. Signed process-local continuations retain that exact root and page size, reauthorize every page, and reset after expiry, restart or epoch replacement. Reads never dispatch an agent or publish repository state. */
+    /** @description Requires current repository read permission. Rows resolve from one immutable AgentStore or ReviewStore root. Signed process-local continuations retain that exact root and page size, reauthorize every page, and reset after expiry, restart or epoch replacement. Reads never dispatch an agent or publish repository state. */
     get: operations["agent_transcript"];
     put?: never;
     post?: never;
@@ -150,7 +150,7 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /** @description Requires current repository read permission. Session rows resolve from one immutable AgentStore root. Signed process-local continuations retain that exact root and page size, reauthorize every page, and reset after expiry, restart or epoch replacement. Reads never dispatch an agent or publish repository state. */
+    /** @description Requires current repository read permission. Rows resolve from one immutable AgentStore or ReviewStore root. Signed process-local continuations retain that exact root and page size, reauthorize every page, and reset after expiry, restart or epoch replacement. Reads never dispatch an agent or publish repository state. */
     get: operations["agent_associations"];
     put?: never;
     post?: never;
@@ -168,7 +168,7 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /** @description Requires current repository read permission. Session rows resolve from one immutable AgentStore root. Signed process-local continuations retain that exact root and page size, reauthorize every page, and reset after expiry, restart or epoch replacement. Reads never dispatch an agent or publish repository state. */
+    /** @description Requires current repository read permission. Rows resolve from one immutable AgentStore or ReviewStore root. Signed process-local continuations retain that exact root and page size, reauthorize every page, and reset after expiry, restart or epoch replacement. Reads never dispatch an agent or publish repository state. */
     get: operations["agent_checkpoints"];
     put?: never;
     post?: never;
@@ -186,7 +186,7 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /** @description Requires current repository read permission. Session rows resolve from one immutable AgentStore root. Signed process-local continuations retain that exact root and page size, reauthorize every page, and reset after expiry, restart or epoch replacement. Reads never dispatch an agent or publish repository state. */
+    /** @description Requires current repository read permission. Rows resolve from one immutable AgentStore or ReviewStore root. Signed process-local continuations retain that exact root and page size, reauthorize every page, and reset after expiry, restart or epoch replacement. Reads never dispatch an agent or publish repository state. */
     get: operations["agent_checkpoint"];
     put?: never;
     post?: never;
@@ -204,7 +204,7 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /** @description Requires current repository read permission. Session rows resolve from one immutable AgentStore root. Signed process-local continuations retain that exact root and page size, reauthorize every page, and reset after expiry, restart or epoch replacement. Reads never dispatch an agent or publish repository state. */
+    /** @description Requires current repository read permission. Rows resolve from one immutable AgentStore or ReviewStore root. Signed process-local continuations retain that exact root and page size, reauthorize every page, and reset after expiry, restart or epoch replacement. Reads never dispatch an agent or publish repository state. */
     get: operations["agent_checkpoint_version"];
     put?: never;
     post?: never;
@@ -212,6 +212,42 @@ export interface paths {
     options?: never;
     /** @description Runs the same authorized GET validation and drops the body. No JSON, binary bytes or SSE frames are returned. */
     head: operations["agent_checkpoint_version_head"];
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/repos/{repo}/reviews/threads": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description Requires current repository read permission. Rows resolve from one immutable AgentStore or ReviewStore root. Signed process-local continuations retain that exact root and page size, reauthorize every page, and reset after expiry, restart or epoch replacement. Reads never dispatch an agent or publish repository state. */
+    get: operations["review_threads"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    /** @description Runs the same authorized GET validation and drops the body. No JSON, binary bytes or SSE frames are returned. */
+    head: operations["review_threads_head"];
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/repos/{repo}/reviews/threads/{thread}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description Requires current repository read permission. Rows resolve from one immutable AgentStore or ReviewStore root. Signed process-local continuations retain that exact root and page size, reauthorize every page, and reset after expiry, restart or epoch replacement. Reads never dispatch an agent or publish repository state. */
+    get: operations["review_thread"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    /** @description Runs the same authorized GET validation and drops the body. No JSON, binary bytes or SSE frames are returned. */
+    head: operations["review_thread_head"];
     patch?: never;
     trace?: never;
   };
@@ -1094,6 +1130,357 @@ export interface components {
       tools: components["schemas"]["AgentToolLink"][];
       associations: components["schemas"]["AgentObjectId"][];
     };
+    ReviewThreadPage: {
+      /** Format: uint32 */
+      version: number;
+      snapshot: components["schemas"]["ReviewReadSnapshot"];
+      threads: components["schemas"]["ReviewThreadSummary"][];
+      next_cursor: string | null;
+    };
+    ReviewReadSnapshot: {
+      repo_id: components["schemas"]["RepositoryId"];
+      epoch: components["schemas"]["EpochId"];
+      published_seq: components["schemas"]["WalPosition"];
+      /** Format: uint64 */
+      manifest_revision: number;
+      review_root: components["schemas"]["RecordDigest"];
+      /** Format: uint64 */
+      review_state_version: number;
+    };
+    ReviewThreadSummary: {
+      thread_id: components["schemas"]["ReviewThreadId"];
+      snapshot_id: components["schemas"]["ReviewObjectId"];
+      original_anchor_id: components["schemas"]["ReviewObjectId"];
+      event_page_root_id: components["schemas"]["ReviewObjectId"];
+      status: components["schemas"]["ThreadStatusV1"];
+      selected_workflow_action: components["schemas"]["ReviewActionId"] | null;
+      /** Format: uint64 */
+      thread_version: number;
+      /** Format: uint64 */
+      content_version: number;
+      /** Format: uint64 */
+      workflow_version: number;
+      /** Format: uint */
+      comment_count: number;
+      /** Format: uint64 */
+      last_event_sequence: number;
+    };
+    ReviewThreadId: string;
+    ReviewObjectId: string;
+    /** @enum {string} */
+    ThreadStatusV1: "open" | "resolved";
+    ReviewActionId: string;
+    ReviewThreadDetail: {
+      /** Format: uint32 */
+      version: number;
+      snapshot: components["schemas"]["ReviewReadSnapshot"];
+      thread: components["schemas"]["ReviewThreadSummary"];
+      anchor: components["schemas"]["ReviewAnchor"];
+      comments: components["schemas"]["ReviewComment"][];
+      events: components["schemas"]["ReviewEvent"][];
+    };
+    ReviewAnchor: {
+      object_id: components["schemas"]["ReviewObjectId"];
+      value: components["schemas"]["ArtifactAnchorV1"];
+    };
+    ArtifactAnchorV1: {
+      /** Format: uint32 */
+      schema_version: number;
+      repository_id: components["schemas"]["RepositoryId"];
+      target: components["schemas"]["ArtifactTargetV1"];
+      created_context: components["schemas"]["CreatedContextV1"];
+      sensitivity: components["schemas"]["SensitivityV1"];
+    };
+    ArtifactTargetV1:
+      | {
+          /** @constant */
+          target: "code_text";
+          value: components["schemas"]["CodeTextAnchorV1"];
+        }
+      | {
+          /** @constant */
+          target: "code_artifact";
+          value: components["schemas"]["CodeArtifactAnchorV1"];
+        }
+      | {
+          /** @constant */
+          target: "agent_text";
+          value: components["schemas"]["AgentTextAnchorV1"];
+        }
+      | {
+          /** @constant */
+          target: "agent_artifact";
+          value: components["schemas"]["AgentArtifactAnchorV1"];
+        }
+      | {
+          /** @constant */
+          target: "revision";
+          value: {
+            operation_id: components["schemas"]["OperationId"];
+            commit_id: components["schemas"]["CommitId"];
+            change_id: components["schemas"]["ChangeId"] | null;
+          };
+        }
+      | {
+          /** @constant */
+          target: "operation";
+          value: {
+            operation_id: components["schemas"]["OperationId"];
+          };
+        }
+      | {
+          /** @constant */
+          target: "repository";
+        };
+    CodeTextAnchorV1: {
+      operation_id: components["schemas"]["OperationId"];
+      commit_id: components["schemas"]["CommitId"];
+      change_id: components["schemas"]["ChangeId"] | null;
+      path: string;
+      file_id: components["schemas"]["FileId"];
+      value_kind: components["schemas"]["CodeValueKind"];
+      text: components["schemas"]["TextSelectionV1"];
+      diff_context: components["schemas"]["DiffContextV1"] | null;
+    };
+    /** @enum {string} */
+    CodeValueKind:
+      | "file"
+      | "binary_file"
+      | "empty_file"
+      | "symlink"
+      | "gitlink"
+      | "conflict_term"
+      | "conflict_artifact";
+    TextSelectionV1: {
+      encoding: components["schemas"]["TextEncoding"];
+      start_byte: components["schemas"]["ByteOffset"];
+      end_byte: components["schemas"]["ByteOffset"];
+      selected_sha256: components["schemas"]["ReviewDigest"];
+    };
+    /** @enum {string} */
+    TextEncoding: "utf8";
+    ByteOffset: string;
+    ReviewDigest: string;
+    DiffContextV1: {
+      before_operation_id: components["schemas"]["OperationId"];
+      before_commit_id: components["schemas"]["CommitId"];
+      before_path: string | null;
+      after_operation_id: components["schemas"]["OperationId"];
+      after_commit_id: components["schemas"]["CommitId"];
+      after_path: string | null;
+      side: components["schemas"]["DiffSide"];
+      comparison: components["schemas"]["ComparisonKind"];
+    };
+    /** @enum {string} */
+    DiffSide: "before" | "after";
+    /** @enum {string} */
+    ComparisonKind: "explicit_pair";
+    CodeArtifactAnchorV1: {
+      operation_id: components["schemas"]["OperationId"];
+      commit_id: components["schemas"]["CommitId"];
+      change_id: components["schemas"]["ChangeId"] | null;
+      path: string;
+      object: components["schemas"]["ObjectKey"];
+      value_kind: components["schemas"]["CodeValueKind"];
+    };
+    ObjectKey:
+      | {
+          /** @constant */
+          kind: "commit";
+          id: components["schemas"]["CommitId"];
+        }
+      | {
+          /** @constant */
+          kind: "tree";
+          id: components["schemas"]["TreeId"];
+        }
+      | {
+          /** @constant */
+          kind: "file";
+          id: components["schemas"]["FileId"];
+        }
+      | {
+          /** @constant */
+          kind: "symlink";
+          id: components["schemas"]["SymlinkId"];
+        }
+      | {
+          /** @constant */
+          kind: "copy";
+          id: components["schemas"]["CopyId"];
+        }
+      | {
+          /** @constant */
+          kind: "view";
+          id: components["schemas"]["ViewId"];
+        }
+      | {
+          /** @constant */
+          kind: "operation";
+          id: components["schemas"]["OperationId"];
+        };
+    TreeId: string;
+    SymlinkId: string;
+    CopyId: string;
+    ViewId: string;
+    AgentTextAnchorV1: {
+      session_id: components["schemas"]["AgentSessionId"];
+      session_snapshot: components["schemas"]["AgentObjectRef"];
+      owner: components["schemas"]["AgentContentOwnerV1"];
+      block_id: components["schemas"]["BlockId"];
+      block_version: components["schemas"]["AgentObjectRef"];
+      part: components["schemas"]["AgentContentPart"];
+      content: components["schemas"]["AgentObjectRef"];
+      representation_version: string;
+      sanitizer_version: string;
+      normalizer_version: string;
+      source_coverage: components["schemas"]["SourceCoverageV1"];
+      text: components["schemas"]["TextSelectionV1"];
+    };
+    AgentObjectRef: {
+      kind: components["schemas"]["AgentObjectKind"];
+      id: components["schemas"]["AgentObjectId"];
+    };
+    /** @enum {string} */
+    AgentObjectKind:
+      | "index_page"
+      | "session_snapshot"
+      | "turn_snapshot"
+      | "message_snapshot"
+      | "tool_snapshot"
+      | "intent"
+      | "observation_batch"
+      | "event_batch"
+      | "transcript_manifest"
+      | "transcript_page"
+      | "transcript_chunk"
+      | "content"
+      | "checkpoint_version"
+      | "association"
+      | "alias"
+      | "relation_page"
+      | "source_state"
+      | "projection_catalog";
+    AgentContentOwnerV1:
+      | {
+          tool_call_id: components["schemas"]["ToolCallId"];
+          snapshot: components["schemas"]["AgentObjectRef"];
+          attempt_id: components["schemas"]["ToolAttemptId"];
+          /** @constant */
+          kind: "tool";
+        }
+      | {
+          message_id: components["schemas"]["MessageId"];
+          snapshot: components["schemas"]["AgentObjectRef"];
+          /** @constant */
+          kind: "message";
+        }
+      | {
+          block_id: components["schemas"]["BlockId"];
+          snapshot: components["schemas"]["AgentObjectRef"];
+          /** @constant */
+          kind: "plan";
+        };
+    ToolAttemptId: string;
+    MessageId: string;
+    BlockId: string;
+    /** @enum {string} */
+    AgentContentPart:
+      "input" | "output" | "message" | "plan" | "exposed_summary";
+    /** @enum {string} */
+    SourceCoverageV1:
+      "complete" | "partial" | "redacted" | "truncated" | "unknown";
+    AgentArtifactAnchorV1: {
+      session_id: components["schemas"]["AgentSessionId"];
+      session_snapshot: components["schemas"]["AgentObjectRef"];
+      owner: components["schemas"]["AgentContentOwnerV1"];
+    };
+    CreatedContextV1: {
+      /** Format: uint64 */
+      publication_position: number | null;
+      /** Format: uint64 */
+      code_state_version: number | null;
+      agent_root: components["schemas"]["RecordDigest"] | null;
+    };
+    /** @enum {string} */
+    SensitivityV1: "public" | "repository" | "restricted";
+    ReviewComment: {
+      comment_id: components["schemas"]["CommentId"];
+      revision_id: components["schemas"]["ReviewObjectId"];
+      parent_comment_id: components["schemas"]["CommentId"] | null;
+      author: components["schemas"]["PrincipalId"];
+      actor: components["schemas"]["PrincipalId"];
+      /** Format: int64 */
+      created_at_millis: number;
+      previous_revision_id: components["schemas"]["ReviewObjectId"] | null;
+      content: components["schemas"]["ReviewCommentContent"];
+    };
+    CommentId: string;
+    PrincipalId: string;
+    ReviewCommentContent:
+      | {
+          body_id: components["schemas"]["ReviewObjectId"];
+          format: components["schemas"]["ReviewBodyFormatV1"];
+          text: string;
+          sanitizer_version: string;
+          /** @constant */
+          state: "visible";
+        }
+      | {
+          reason: string | null;
+          /** @constant */
+          state: "tombstoned";
+        }
+      | {
+          reason: string;
+          /** @constant */
+          state: "hidden";
+        };
+    /** @enum {string} */
+    ReviewBodyFormatV1: "plain_text" | "safe_markdown";
+    ReviewEvent: {
+      event_id: components["schemas"]["ReviewObjectId"];
+      /** Format: uint64 */
+      sequence: number;
+      actor: components["schemas"]["PrincipalId"];
+      /** Format: int64 */
+      accepted_at_millis: number;
+      event: components["schemas"]["ReviewEventKind"];
+    };
+    ReviewEventKind:
+      | {
+          anchor_id: components["schemas"]["ReviewObjectId"];
+          initial_comment_id: components["schemas"]["CommentId"];
+          initial_revision_id: components["schemas"]["ReviewObjectId"];
+          /** @constant */
+          action: "created";
+        }
+      | {
+          comment_id: components["schemas"]["CommentId"];
+          parent_comment_id: components["schemas"]["CommentId"] | null;
+          revision_id: components["schemas"]["ReviewObjectId"];
+          /** @constant */
+          action: "reply_added";
+        }
+      | {
+          comment_id: components["schemas"]["CommentId"];
+          previous_revision_id: components["schemas"]["ReviewObjectId"];
+          revision_id: components["schemas"]["ReviewObjectId"];
+          /** @constant */
+          action: "comment_revised";
+        }
+      | {
+          action_id: components["schemas"]["ReviewActionId"];
+          reason: string | null;
+          /** @constant */
+          action: "resolved";
+        }
+      | {
+          action_id: components["schemas"]["ReviewActionId"];
+          reason: string | null;
+          /** @constant */
+          action: "reopened";
+        };
     CommittedEvent: {
       /** Format: uint32 */
       version: number;
@@ -1136,46 +1523,6 @@ export interface components {
       data: components["schemas"]["ContentObjectData"];
       stats: components["schemas"]["GraphStats"];
     };
-    ObjectKey:
-      | {
-          /** @constant */
-          kind: "commit";
-          id: components["schemas"]["CommitId"];
-        }
-      | {
-          /** @constant */
-          kind: "tree";
-          id: components["schemas"]["TreeId"];
-        }
-      | {
-          /** @constant */
-          kind: "file";
-          id: components["schemas"]["FileId"];
-        }
-      | {
-          /** @constant */
-          kind: "symlink";
-          id: components["schemas"]["SymlinkId"];
-        }
-      | {
-          /** @constant */
-          kind: "copy";
-          id: components["schemas"]["CopyId"];
-        }
-      | {
-          /** @constant */
-          kind: "view";
-          id: components["schemas"]["ViewId"];
-        }
-      | {
-          /** @constant */
-          kind: "operation";
-          id: components["schemas"]["OperationId"];
-        };
-    TreeId: string;
-    SymlinkId: string;
-    CopyId: string;
-    ViewId: string;
     ContentObjectData:
       | {
           /** @constant */
@@ -4820,6 +5167,482 @@ export interface operations {
         repo: components["schemas"]["RepositoryId"];
         checkpoint: components["schemas"]["AgentCheckpointId"];
         version: components["schemas"]["AgentObjectId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description cursor_reset after expiry, process restart, or repository epoch replacement. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  review_threads: {
+    parameters: {
+      query?: {
+        cursor?: string;
+        limit?: number;
+      };
+      header?: never;
+      path: {
+        repo: components["schemas"]["RepositoryId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ReviewThreadPage"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description cursor_reset after expiry, process restart, or repository epoch replacement. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  review_threads_head: {
+    parameters: {
+      query?: {
+        cursor?: string;
+        limit?: number;
+      };
+      header?: never;
+      path: {
+        repo: components["schemas"]["RepositoryId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description cursor_reset after expiry, process restart, or repository epoch replacement. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  review_thread: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        repo: components["schemas"]["RepositoryId"];
+        thread: components["schemas"]["ReviewThreadId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ReviewThreadDetail"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description cursor_reset after expiry, process restart, or repository epoch replacement. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  review_thread_head: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        repo: components["schemas"]["RepositoryId"];
+        thread: components["schemas"]["ReviewThreadId"];
       };
       cookie?: never;
     };

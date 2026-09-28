@@ -399,3 +399,10 @@ persistence-format, WAL, receipt or native-ID change. Captured LocalTrusted
 responses validate all seven handlers as part of contract drift checking. A
 continuation intentionally resets across server restart, expiry and epoch
 replacement and is not a durable compatibility token.
+
+M9.4 also additively registers ReviewStore thread collection and stable-thread
+detail routes. Their generated schemas own the review read snapshot, thread
+summary/page/detail, anchor, selected comment content and immutable event DTOs.
+Collection continuations use the distinct `jsr1` signature domain; existing
+`jsa1` AgentStore continuations and every persistence format remain unchanged.
+Captured LocalTrusted responses validate both handlers.

@@ -42,7 +42,12 @@ pub use jj_agent::{
     SourceInstanceId, SourceKind, SourceTrust, ToolCallId, TranscriptChunkV1, TranscriptManifestV1,
     TranscriptPageV1, TranscriptStreamV1, TurnId,
 };
-pub use jj_review::{ReviewDeltaV1, ReviewObjectRef, ReviewObjectV1, ReviewRootV1};
+pub use jj_review::{
+    ArtifactAnchorV1, CommentId, CommentRevisionContentV1, CommentSelectionV1, ReviewActionId,
+    ReviewBodyFormatV1, ReviewCatalogKey, ReviewDeltaV1, ReviewObjectId, ReviewObjectRef,
+    ReviewObjectV1, ReviewRootV1, ReviewThreadEventKindV1, ReviewThreadId, ReviewThreadSnapshotV1,
+    ThreadStatusV1,
+};
 pub use reader::SelectedRecord;
 pub use review_catalog::ReviewStoreSnapshot;
 pub use review_commands::{ReviewCommandError, ReviewCommandRequest};

@@ -15,6 +15,9 @@ pub struct ReviewStoreSnapshot {
     objects: BTreeSet<ReviewObjectRef>,
 }
 impl ReviewStoreSnapshot {
+    pub fn object_count(&self) -> usize {
+        self.objects.len()
+    }
     pub fn reference(&self) -> RecordRef {
         self.reference
     }

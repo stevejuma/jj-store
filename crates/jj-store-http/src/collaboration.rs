@@ -2,7 +2,8 @@ use crate::*;
 use jj_store_service::collaboration::{
     AgentCheckpointDetail, AgentCheckpointIdentity, AgentCheckpointPage,
     AgentCheckpointVersionIdentity, AgentRelationPage, AgentRelationRequest, AgentSessionDetail,
-    AgentSessionPage, AgentTranscriptPage, AgentTranscriptRequest,
+    AgentSessionPage, AgentTranscriptPage, AgentTranscriptRequest, ReviewThreadDetail,
+    ReviewThreadIdentity, ReviewThreadPage,
 };
 
 pub(super) async fn sessions(
@@ -114,9 +115,33 @@ pub(super) async fn checkpoint_version(
     )
 }
 
+pub(super) async fn review_threads(
+    state: &State,
+    session: Arc<NativeSession>,
+    cursor: Option<String>,
+    limit: usize,
+) -> Result<Response> {
+    let page = if let Some(cursor) = cursor {
+        state.review_threads.resume(session, &cursor, limit).await?
+    } else {
+        state.review_threads.begin(session, limit).await?
+    };
+    state.json(&page)
+}
+
+pub(super) async fn review_thread(
+    state: &State,
+    session: Arc<NativeSession>,
+    thread_id: ReviewThreadIdentity,
+) -> Result<Response> {
+    state.json(&state.review_threads.detail(session, thread_id).await?)
+}
+
 pub(super) type SessionPage = AgentSessionPage;
 pub(super) type SessionDetail = AgentSessionDetail;
 pub(super) type TranscriptPage = AgentTranscriptPage;
 pub(super) type RelationPage = AgentRelationPage;
 pub(super) type CheckpointPage = AgentCheckpointPage;
 pub(super) type CheckpointDetail = AgentCheckpointDetail;
+pub(super) type ReviewPage = ReviewThreadPage;
+pub(super) type ReviewDetail = ReviewThreadDetail;

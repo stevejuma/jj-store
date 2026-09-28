@@ -1109,6 +1109,9 @@ mod http_collaboration_acceptance;
 #[path = "native_lifecycle/http_collaboration_checkpoints.rs"]
 mod http_collaboration_checkpoint_acceptance;
 
+#[path = "native_lifecycle/http_collaboration_reviews.rs"]
+mod http_collaboration_review_acceptance;
+
 #[path = "native_lifecycle/events.rs"]
 mod event_acceptance;
 

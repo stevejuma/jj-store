@@ -410,6 +410,13 @@ replacement, correction, expected selection, command identity or publication
 request. Reading a prior version therefore cannot reselect it or supersede the
 current checkpoint.
 
+Review thread collection and detail are read-only under the same separation.
+Their cursor retains an audited ReviewStore snapshot without a credential or
+publication handle. Detail resolves only the stable thread's current catalog
+selection and its already selected anchor, comment and event objects. The routes
+accept no expected version, review command, request/publication identity or
+typed delta, so they cannot reply, edit, resolve, re-anchor or publish.
+
 ## Browser mutation orchestration
 
 The authenticated browser constructs only the existing typed V1 command union.

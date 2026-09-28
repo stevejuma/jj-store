@@ -55,6 +55,7 @@ name = "jj-store"
 path = "src/server_main.rs"
 
 [dev-dependencies]
+jj-review.workspace = true
 jj-store-tantivy.workspace = true
 jj-store-adapters.workspace = true
 reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "http2", "json"] }
