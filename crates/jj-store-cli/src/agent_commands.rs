@@ -1,7 +1,9 @@
 use crate::{
     agent_integrations::{AgentDeviceStatusV1, AgentIntegrationRegistry},
     agent_sanitization::warm_kingfisher_cache,
-    agent_setup::{SetupRequestV1, audit_installations, require_setup_ready, setup},
+    agent_setup::{
+        RemoveRequestV1, SetupRequestV1, audit_installations, remove, require_setup_ready, setup,
+    },
     commands::{Format, error},
     presentation,
 };
@@ -43,6 +45,14 @@ pub enum AgentCommand {
         #[arg(value_enum)]
         agent: AgentName,
         /// Preview the target change without writing configuration or ownership state
+        #[arg(long)]
+        dry_run: bool,
+    },
+    /// Remove one exact jj-store-owned project hook or plugin
+    Remove {
+        #[arg(value_enum)]
+        agent: AgentName,
+        /// Preview exact restoration without changing project or registry state
         #[arg(long)]
         dry_run: bool,
     },
@@ -142,6 +152,29 @@ pub async fn run(ui: &mut Ui, helper: &CommandHelper, args: AgentArgs) -> Result
                     "Agent integration {:?}: {:?} at {}{}\n",
                     result.integration,
                     result.setup,
+                    result.target.display(),
+                    if result.dry_run { " (dry run)" } else { "" }
+                ),
+            );
+        }
+        AgentCommand::Remove { agent, dry_run } => {
+            let result = remove(
+                &mut registry,
+                RemoveRequestV1 {
+                    integration: IntegrationId::from(agent),
+                    dry_run,
+                },
+            )
+            .map_err(error)?;
+            return presentation::result(
+                ui,
+                helper,
+                args.format,
+                &serde_json::to_value(&result).map_err(error)?,
+                &format!(
+                    "Agent integration {:?}: {} at {}{}\n",
+                    result.integration,
+                    if result.changed { "removed" } else { "absent" },
                     result.target.display(),
                     if result.dry_run { " (dry run)" } else { "" }
                 ),

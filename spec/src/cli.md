@@ -155,6 +155,15 @@ target, preserves unrelated JSON values, rejects configuration symlinks and
 becomes idempotent after success. Status audits the installed hash on restart;
 drift is reported and blocks replacement.
 
+`jj agent remove <codex|cursor|opencode> [--dry-run]` does not require the
+harness executable or supported version to remain installed. It accepts only a
+validated ownership record and target matching either the exact owned hash or
+the already restored original hash. Removal atomically restores exact original
+bytes or deletes a target created by setup, retires the ownership directory
+through a recoverable tombstone and records disabled/not-installed state.
+Changed bytes and symlinked paths fail closed without touching project content;
+dry-run and repeated removal are non-mutating.
+
 The installed `jj agent hook <codex|cursor|opencode>` command reads at most four
 MiB plus one overflow byte from standard input and produces no normal output. It
 requires the exact enabled registry entry, current owned setup hash and warmed

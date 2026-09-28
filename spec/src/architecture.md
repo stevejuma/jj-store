@@ -190,8 +190,11 @@ mutation it atomically stores exact original bytes plus original and intended
 SHA-256 ownership hashes under the locked device registry. Project writes are
 bounded, atomic and reject symlinked configuration paths. Restart can complete
 an interrupted original-to-owned transition; later user edits are reported as
-drift and never overwritten. Hook ingestion remains a separate boundary and is
-not implied by installed setup state.
+drift and never overwritten. Removal restores the exact recorded original or
+deletes only a target created by setup, atomically retires the ownership record
+and then disables desired policy. Its tombstone recovery is idempotent, while a
+changed target or unsafe path blocks every mutation. Hook ingestion remains a
+separate boundary and is not implied by installed setup state.
 
 The CLI builds both development executables. Repository creation is a durable
 client workflow that provisions its OS-held admin credential before remote

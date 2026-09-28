@@ -28,6 +28,12 @@ intended content hash in the device-local registry area. Repeated setup is
 idempotent. Status reports a later edit as drifted, and setup refuses to replace
 it. Symlinked project configuration paths fail closed.
 
+`jj agent remove <codex|cursor|opencode> [--dry-run]` disables one integration
+and removes only its recorded jj-store-owned artifact. It restores the exact
+backed-up project file, or deletes a plugin file that did not exist before
+setup. Changed target bytes and symlinked paths fail closed. Interrupted cleanup
+resumes from the private ownership record; repeated removal is harmless.
+
 Installed hooks call the internal `jj agent hook <codex|cursor|opencode>`
 entrypoint. It verifies the enabled registry state, exact owned project artifact
 and warmed Kingfisher cache, then sanitizes one bounded standard-input event

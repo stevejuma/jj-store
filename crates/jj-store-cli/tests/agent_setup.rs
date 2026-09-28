@@ -1,7 +1,7 @@
 use jj_agent::IntegrationId;
 use jj_store_cli::{
-    agent_integrations::{AgentIntegrationRegistry, IntegrationSetupV1},
-    agent_setup::{SetupRequestV1, audit_installations, setup},
+    agent_integrations::{AgentIntegrationRegistry, IntegrationSetupV1, IntegrationStateV1},
+    agent_setup::{RemoveRequestV1, SetupRequestV1, audit_installations, remove, setup},
 };
 use jj_store_model::RepositoryId;
 use serde_json::Value;
@@ -223,6 +223,173 @@ fn setup_rejects_project_configuration_symlinks() {
     assert!(!state.join("install/codex").exists());
 }
 
+#[cfg(unix)]
+#[test]
+fn removal_restores_exact_original_and_disables_integration() {
+    let temporary = tempfile::tempdir().unwrap();
+    let workspace = temporary.path().join("workspace");
+    let state = temporary.path().join("state");
+    let bin = temporary.path().join("bin");
+    fs::create_dir_all(workspace.join(".codex")).unwrap();
+    fs::create_dir_all(&bin).unwrap();
+    executable(&bin.join("codex"), "0.156.1");
+    executable(&bin.join("cursor-agent"), "3.22.7");
+    executable(&bin.join("opencode"), "1.18.30");
+    let original = br#"{"hooks":{"SessionStart":[{"hooks":[{"command":"./keep"}]}]}}"#;
+    let target = workspace.join(".codex/hooks.json");
+    fs::write(&target, original).unwrap();
+    let mut registry = registry(&state, &workspace, &bin);
+    setup(
+        &mut registry,
+        SetupRequestV1 {
+            integration: IntegrationId::Codex,
+            executable: Path::new("/usr/local/bin/jj").into(),
+            dry_run: false,
+        },
+    )
+    .unwrap();
+    let owned = fs::read(&target).unwrap();
+
+    let preview = remove(
+        &mut registry,
+        RemoveRequestV1 {
+            integration: IntegrationId::Codex,
+            dry_run: true,
+        },
+    )
+    .unwrap();
+    assert!(preview.changed && preview.dry_run);
+    assert_eq!(fs::read(&target).unwrap(), owned);
+
+    let outcome = remove(
+        &mut registry,
+        RemoveRequestV1 {
+            integration: IntegrationId::Codex,
+            dry_run: false,
+        },
+    )
+    .unwrap();
+    assert!(outcome.changed);
+    assert_eq!(outcome.setup, IntegrationSetupV1::NotInstalled);
+    assert_eq!(fs::read(&target).unwrap(), original);
+    assert!(!state.join("install/codex").exists());
+    let status = registry.status().integration(IntegrationId::Codex).unwrap();
+    assert_eq!(status.state, IntegrationStateV1::Disabled);
+    assert_eq!(status.setup, IntegrationSetupV1::NotInstalled);
+
+    let repeated = remove(
+        &mut registry,
+        RemoveRequestV1 {
+            integration: IntegrationId::Codex,
+            dry_run: false,
+        },
+    )
+    .unwrap();
+    assert!(!repeated.changed);
+    assert_eq!(fs::read(&target).unwrap(), original);
+
+    registry.enable(&[IntegrationId::Codex], false).unwrap();
+    setup(
+        &mut registry,
+        SetupRequestV1 {
+            integration: IntegrationId::Codex,
+            executable: Path::new("/usr/local/bin/jj").into(),
+            dry_run: false,
+        },
+    )
+    .unwrap();
+    fs::write(&target, original).unwrap();
+    fs::rename(
+        state.join("install/codex"),
+        state.join("install/.removed-codex"),
+    )
+    .unwrap();
+    let recovered = remove(
+        &mut registry,
+        RemoveRequestV1 {
+            integration: IntegrationId::Codex,
+            dry_run: false,
+        },
+    )
+    .unwrap();
+    assert!(recovered.changed);
+    assert!(!state.join("install/.removed-codex").exists());
+    assert_eq!(fs::read(&target).unwrap(), original);
+}
+
+#[cfg(unix)]
+#[test]
+fn removal_rejects_drift_and_deletes_only_an_owned_new_target() {
+    let temporary = tempfile::tempdir().unwrap();
+    let workspace = temporary.path().join("workspace");
+    let state = temporary.path().join("state");
+    let bin = temporary.path().join("bin");
+    fs::create_dir_all(&workspace).unwrap();
+    fs::create_dir_all(&bin).unwrap();
+    executable(&bin.join("codex"), "0.156.1");
+    executable(&bin.join("cursor-agent"), "3.22.7");
+    executable(&bin.join("opencode"), "1.18.30");
+    let mut registry = registry(&state, &workspace, &bin);
+    setup(
+        &mut registry,
+        SetupRequestV1 {
+            integration: IntegrationId::OpenCode,
+            executable: Path::new("/usr/local/bin/jj").into(),
+            dry_run: false,
+        },
+    )
+    .unwrap();
+    let target = workspace.join(".opencode/plugins/jj-store-agent.ts");
+    let owned = fs::read(&target).unwrap();
+    fs::write(&target, b"user replacement").unwrap();
+
+    assert!(
+        remove(
+            &mut registry,
+            RemoveRequestV1 {
+                integration: IntegrationId::OpenCode,
+                dry_run: false,
+            }
+        )
+        .is_err()
+    );
+    assert_eq!(fs::read(&target).unwrap(), b"user replacement");
+    assert!(state.join("install/opencode").exists());
+    assert_eq!(
+        registry
+            .status()
+            .integration(IntegrationId::OpenCode)
+            .unwrap()
+            .setup,
+        IntegrationSetupV1::Drifted
+    );
+
+    fs::write(&target, owned).unwrap();
+    fs::write(state.join("install/opencode/unexpected"), b"unsafe").unwrap();
+    assert!(
+        remove(
+            &mut registry,
+            RemoveRequestV1 {
+                integration: IntegrationId::OpenCode,
+                dry_run: false,
+            }
+        )
+        .is_err()
+    );
+    assert!(target.exists());
+    fs::remove_file(state.join("install/opencode/unexpected")).unwrap();
+    remove(
+        &mut registry,
+        RemoveRequestV1 {
+            integration: IntegrationId::OpenCode,
+            dry_run: false,
+        },
+    )
+    .unwrap();
+    assert!(!target.exists());
+    assert!(!state.join("install/opencode").exists());
+}
+
 #[test]
 fn setup_command_selects_one_explicit_integration() {
     use clap::Parser as _;
@@ -235,5 +402,16 @@ fn setup_command_selects_one_explicit_integration() {
         panic!("expected setup command");
     };
     assert_eq!(agent, jj_store_cli::agent_commands::AgentName::Opencode);
+    assert!(dry_run);
+
+    let parsed = Cli::try_parse_from(["jj", "agent", "remove", "cursor", "--dry-run"]).unwrap();
+    let jj_store_cli::commands::Extension::Agent(args) = parsed.command else {
+        panic!("expected agent extension");
+    };
+    let Some(jj_store_cli::agent_commands::AgentCommand::Remove { agent, dry_run }) = args.command
+    else {
+        panic!("expected remove command");
+    };
+    assert_eq!(agent, jj_store_cli::agent_commands::AgentName::Cursor);
     assert!(dry_run);
 }

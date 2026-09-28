@@ -183,6 +183,17 @@ impl AgentIntegrationRegistry {
         self.save()
     }
 
+    pub(crate) fn set_removed(&mut self, integration: IntegrationId) -> AuthorityResult<()> {
+        let status = self
+            .status
+            .integrations
+            .get_mut(&integration)
+            .ok_or("unsupported agent integration")?;
+        status.state = IntegrationStateV1::Disabled;
+        status.setup = IntegrationSetupV1::NotInstalled;
+        self.save()
+    }
+
     pub fn refresh(&mut self, search: &[PathBuf]) -> AuthorityResult<AgentDeviceStatusV1> {
         for integration in INTEGRATIONS {
             let state = self

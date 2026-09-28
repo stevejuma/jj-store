@@ -14,6 +14,8 @@ use jj_store_jj::operation_stores::AuthorityResult;
 use serde::Serialize;
 use std::path::{Path, PathBuf};
 
+pub use crate::agent_removal::{RemoveOutcomeV1, RemoveRequestV1, remove};
+
 #[derive(Clone, Debug)]
 pub struct SetupRequestV1 {
     pub integration: IntegrationId,
@@ -185,7 +187,10 @@ fn outcome(
     }
 }
 
-fn target_path(workspace: &Path, integration: IntegrationId) -> AuthorityResult<PathBuf> {
+pub(crate) fn target_path(
+    workspace: &Path,
+    integration: IntegrationId,
+) -> AuthorityResult<PathBuf> {
     let relative = match integration {
         IntegrationId::Codex => ".codex/hooks.json",
         IntegrationId::Cursor => ".cursor/hooks.json",

@@ -472,10 +472,21 @@ values and reject symlinked target directories. Restart recognizes either the
 exact original-to-owned transition or the installed hash; any other bytes are
 drift and block replacement. Dry-run writes nothing.
 
+Owned removal is independent of current executable detection so an absent or
+upgraded harness can still be disconnected safely. It accepts only the exact
+owned target or an exact original already restored before interruption. The
+former is atomically replaced by the recorded original, or deleted when setup
+created it; the latter resumes ownership cleanup. A synchronized tombstone makes
+record retirement restart-safe. Only after target and ownership cleanup does the
+registry record disabled/not-installed state. Drift, symlinks and unexpected
+ownership files fail closed, while dry-run and completed retries do not modify
+project bytes.
+
 The Codex contract follows `openai/codex` tag `rust-v0.156.1` at source revision
 `b412ff32c417f855c2b2d1581b77058eed87c84b`; the OpenCode plugin contract follows
 `anomalyco/opencode` tag `v1.18.30` at source revision
 `3104c1428ec91f809e5ab86631300de41eb6952e`. Cursor uses the documented version-1
 project hooks shape, but remains synthetic setup acceptance because the local
 agent reports `2026.09.26-dd393fe` rather than qualified `3.22.7`. Drift-safe
-removal and the publication loop remain unfinished M9.2 work.
+removal and source-ordered exact publication are implemented; pinned
+real-harness qualification remains M9.6 work.

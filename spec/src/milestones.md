@@ -14109,6 +14109,94 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Rust 1.98.1; capture spool format v1; native RPC package jj_store.native.v1; AgentStore delta schema v1; manifest format 2.",
     "formats": "Adds no serialized format. Separate SHA-256 domains derive 16-byte request and publication IDs from repository plus capture batch ID; the bounded receipt result carries a fixed version tag and exact batch ID. The worker persists the returned AgentDeltaRequest before exact publication and removes it only for a matching committed receipt."
+  },
+  {
+    "id": "E-M9-022",
+    "tasks": ["M9", "M9.2"],
+    "date": "2026-09-28",
+    "kind": "implementation",
+    "files": [
+      "crates/jj-store-cli/src/agent_commands.rs",
+      "crates/jj-store-cli/src/agent_integrations.rs",
+      "crates/jj-store-cli/src/agent_removal.rs",
+      "crates/jj-store-cli/src/agent_setup.rs",
+      "crates/jj-store-cli/src/agent_setup_files.rs",
+      "crates/jj-store-cli/src/lib.rs",
+      "crates/jj-store-cli/tests/agent_setup.rs",
+      "docs/cli/agent.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/collaboration.md",
+      "spec/src/milestones.md",
+      "spec/src/verification.md"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/agent_setup.rs#removal_restores_exact_original_and_disables_integration",
+      "crates/jj-store-cli/tests/agent_setup.rs#removal_rejects_drift_and_deletes_only_an_owned_new_target",
+      "crates/jj-store-cli/tests/agent_setup.rs#setup_command_selects_one_explicit_integration"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-cli --test agent_setup --locked",
+        "result": "fail",
+        "failures": 2,
+        "note": "The test-first compile proved that neither the removal request/function nor the remove command variant existed."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test agent_setup --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "The first implementation compile found one server-policy error that needed explicit coercion into the CLI authority error boundary."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test agent_setup --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All six focused setup and removal cases pass, including exact restoration, created-file deletion, disabled policy, dry-run, idempotence, crash tombstone recovery and drift preservation."
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 13 package dependency boundaries pass with removal retained inside the CLI-owned device lifecycle."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "fail",
+        "failures": 1,
+        "note": "The test-first specification gate required the changed agent command and setup boundary to update its mapped canonical CLI chapter."
+      },
+      {
+        "command": "pnpm check:boundaries; pnpm spec:validate; pnpm spec:first; pnpm check:progress",
+        "result": "fail",
+        "failures": 2,
+        "note": "Boundary and specification gates passed; the progress checker caught that renaming the existing setup grammar test invalidated two historical evidence references, so the stable test name was retained."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test agent_setup --test agent_integrations --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All six setup/removal regressions and three registry regressions pass, including exact restoration, created-file deletion, disabled policy, dry-run, idempotence, crash tombstone recovery, drift and unexpected ownership-file preservation, and unchanged integration discovery."
+      },
+      {
+        "command": "cargo clippy -p jj-store-cli --lib --test agent_setup --test agent_integrations --locked -- -D warnings; cargo fmt --all -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "The changed CLI library and both directly affected regressions are warning-free and formatted. Production modules remain at or below 266 physical lines and the setup regression has 417."
+      },
+      {
+        "command": "pnpm check:boundaries; pnpm spec:validate; pnpm spec:first; pnpm check:progress; pnpm exec prettier --check docs/cli/agent.md spec/src/architecture.md spec/src/cli.md spec/src/collaboration.md spec/src/milestones.md spec/src/verification.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 13 package boundaries, 89 requirements, eight protected files across four canonical chapters and 61 progress tasks pass; every changed document is formatted."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Execute pinned real-harness capability and smoke tests in M9.6; Cursor remains unsupported on the current host"
+    ],
+    "versions": "Rust 1.98.1; setup ownership record v1; Codex 0.156.1; Cursor project hooks version 1 with synthetic 3.22.7 acceptance; OpenCode 1.18.30.",
+    "formats": "Adds no serialized format. Removal consumes the existing exact ownership record, restores or deletes the target before atomically renaming ownership state to an integration-specific private tombstone, synchronizes its parent and records disabled/not-installed policy only after cleanup."
   }
 ]
 ```

@@ -72,6 +72,15 @@ pub(crate) fn read_record(
     if !metadata.is_dir() || metadata.file_type().is_symlink() {
         return Err("agent setup ownership path must be a directory".into());
     }
+    for entry in fs::read_dir(install)? {
+        let entry = entry?;
+        let name = entry.file_name();
+        let kind = entry.file_type()?;
+        if !kind.is_file() || kind.is_symlink() || (name != "record.json" && name != "original.bin")
+        {
+            return Err("unexpected agent setup ownership entry".into());
+        }
+    }
     let record: InstallRecordV1 = serde_json::from_slice(&jj_store_server::policy::read_regular(
         &install.join("record.json"),
         64 * 1024,
@@ -110,6 +119,7 @@ pub(crate) fn persist_record(
     owned_sha256: &str,
 ) -> AuthorityResult<()> {
     let root = private_directory(&state.join("install"))?;
+    recover_removed_record(state, integration)?;
     let destination = root.join(integration_name(integration)?);
     if destination.exists() {
         return Err("agent setup ownership record already exists".into());
@@ -134,6 +144,65 @@ pub(crate) fn persist_record(
     sync_dir(temporary.path())?;
     fs::rename(temporary.keep(), &destination)?;
     sync_dir(&root)
+}
+
+pub(crate) fn original_bytes(
+    install: &Path,
+    record: &InstallRecordV1,
+) -> AuthorityResult<Option<Vec<u8>>> {
+    Ok(record
+        .original_sha256
+        .as_ref()
+        .map(|_| {
+            jj_store_server::policy::read_regular(&install.join("original.bin"), MAX_CONFIG_BYTES)
+        })
+        .transpose()?)
+}
+
+pub(crate) fn recover_removed_record(
+    state: &Path,
+    integration: IntegrationId,
+) -> AuthorityResult<()> {
+    let root = state.join("install");
+    let Ok(root_metadata) = fs::symlink_metadata(&root) else {
+        return Ok(());
+    };
+    if !root_metadata.is_dir() || root_metadata.file_type().is_symlink() {
+        return Err("agent setup state must be a directory".into());
+    }
+    let removed = root.join(format!(".removed-{}", integration_name(integration)?));
+    if !removed.exists() {
+        return Ok(());
+    }
+    let metadata = fs::symlink_metadata(&removed)?;
+    if !metadata.is_dir() || metadata.file_type().is_symlink() {
+        return Err("invalid removed agent setup state".into());
+    }
+    for entry in fs::read_dir(&removed)? {
+        let entry = entry?;
+        let name = entry.file_name();
+        let kind = entry.file_type()?;
+        if !kind.is_file() || kind.is_symlink() || (name != "record.json" && name != "original.bin")
+        {
+            return Err("invalid removed agent setup state".into());
+        }
+        fs::remove_file(entry.path())?;
+    }
+    fs::remove_dir(removed)?;
+    sync_dir(&root)
+}
+
+pub(crate) fn remove_record(state: &Path, integration: IntegrationId) -> AuthorityResult<()> {
+    recover_removed_record(state, integration)?;
+    let root = state.join("install");
+    let install = root.join(integration_name(integration)?);
+    if !install.exists() {
+        return Ok(());
+    }
+    let removed = root.join(format!(".removed-{}", integration_name(integration)?));
+    fs::rename(install, removed)?;
+    sync_dir(&root)?;
+    recover_removed_record(state, integration)
 }
 
 fn private_directory(path: &Path) -> AuthorityResult<PathBuf> {
