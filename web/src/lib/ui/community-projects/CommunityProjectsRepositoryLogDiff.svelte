@@ -197,6 +197,19 @@
               >Binary or unavailable text diff for {path}.</Empty.Description
             >
           </Empty.Header>
+        </Empty.Root>{:else}<Empty.Root
+          class="community-projects-repository-log-diff__empty"
+          role="status"
+        >
+          <Empty.Header>
+            <Empty.Media variant="icon">
+              <FileSearchIcon aria-hidden="true" />
+            </Empty.Media>
+            <Empty.Title>No file selected</Empty.Title>
+            <Empty.Description
+              >Select a changed file to preview the diff.</Empty.Description
+            >
+          </Empty.Header>
         </Empty.Root>{/if}
     </ColumnCanvas.Body>
   {/if}

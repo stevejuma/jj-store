@@ -142,5 +142,5 @@ async function seedDivergence(jj) {
     "-m",
     "Divergent layout beta",
   ]);
-  await jj(["new", "experiment/layout", "-m", "Working copy"]);
+  await jj(["new", "experiment/layout"]);
 }

@@ -42,7 +42,7 @@ export function presentReferences(
           workspace,
           commitId: target.commit,
           changeId: target.change,
-          message: target.description || "No description",
+          message: target.description || "(empty) (no description set)",
           createdAt: seconds(target.committer.timestamp.millis),
           author: target.author.name || target.author.email,
           authorEmail: target.author.email,

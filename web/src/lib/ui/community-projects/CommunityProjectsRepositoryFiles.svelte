@@ -23,7 +23,6 @@
   } from "../layout-storage.js";
   import { untrack } from "svelte";
   import "./repository-files.css";
-  import "./repository-directory.css";
   let {
     controller,
     now,

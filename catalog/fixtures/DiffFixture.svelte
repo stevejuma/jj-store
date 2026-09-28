@@ -3,7 +3,7 @@
   import { createRepositoryLogCanvas } from "../../web/src/lib/projects/repository-log-canvas.js";
   import CommunityProjectsRepositoryLogDiff from "../../web/src/lib/ui/community-projects/CommunityProjectsRepositoryLogDiff.svelte";
   import { sampleDetail } from "./repository.js";
-  let { path = "README.md" }: { path?: string } = $props();
+  let { path = "README.md" }: { path?: string | null } = $props();
   const canvas = createRepositoryLogCanvas();
   canvas.select(0, "revision");
   canvas.select(1, "README.md");
@@ -13,7 +13,7 @@
   <ColumnCanvas.Root controller={canvas}
     ><CommunityProjectsRepositoryLogDiff
       {path}
-      patch={sampleDetail.patches[path]}
+      patch={path ? sampleDetail.patches[path] : undefined}
       files={sampleDetail.files}
     /></ColumnCanvas.Root
   >

@@ -364,6 +364,13 @@ widths are retained in JSON schemas. Browser clients must reject unsafe integer
 conversion or use lossless parsing when native values exceed JavaScript's exact
 integer range; generated TypeScript number types alone do not guarantee this.
 
+Browser presentation preserves empty native descriptions rather than replacing
+them with an invented commit message. The working-copy view renders the explicit
+`(empty) (no description set)` label while retaining the full native commit and
+change identities. Repository landing-document ordering, bookmark-filter empty
+states and no-file diff states are client presentation rules and do not change
+the read DTOs or transport format.
+
 ## Browser read client
 
 The served Svelte application selects a repository by full ID and authenticates

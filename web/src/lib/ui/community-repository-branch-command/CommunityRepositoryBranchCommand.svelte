@@ -8,6 +8,7 @@
   import CommunityRelativeTime from "../community-relative-time/CommunityRelativeTime.svelte";
   import type { Bookmark } from "../../projects/presentation.js";
   import type { RepositoryWorkingCopy } from "../../projects/repository-log.js";
+  import CommunityRepositoryBranchEmpty from "./CommunityRepositoryBranchEmpty.svelte";
   let {
     bookmarks,
     workingCopies = [],
@@ -32,7 +33,8 @@
     onLoadMore?: () => void;
   } = $props();
   let query = $state(""),
-    filter = $state("all");
+    filter = $state("all"),
+    commandValue = $state("");
   const visible = $derived.by(() => {
     const search = query.trim().toLocaleLowerCase();
     return bookmarks.filter((bookmark) => {
@@ -97,6 +99,7 @@
 {/snippet}
 
 <CommandView.Root
+  bind:value={commandValue}
   label="Bookmarks"
   class="community-bookmark-cards"
   shouldFilter={false}
@@ -136,6 +139,7 @@
   {/each}
   <CommandView.Filters
     bind:value={filter}
+    onValueChange={() => (commandValue = "")}
     label="Bookmark filters"
     tabs={[
       { id: "all", label: "All" },
@@ -150,7 +154,7 @@
   />
   <CommandView.List>
     {#if visible.length === 0}
-      <CommandView.Empty>No matching bookmarks</CommandView.Empty>
+      <CommunityRepositoryBranchEmpty {filter} {query} />
     {:else}
       <CommandView.Group heading="Bookmarks">
         <CommunityProjectsVirtualRows
@@ -172,6 +176,7 @@
   :global(.community-bookmark-cards) {
     --ui-command-view-list-max-height: max(12rem, calc(100dvh - 16rem));
     --ui-command-view-list-padding: 0;
+    --ui-command-view-item-radius: 0px;
   }
   :global(.community-bookmark-cards [data-ui-part="command-group"]) {
     padding: 0;
@@ -213,6 +218,10 @@
   .community-working-copy-card__description {
     color: var(--muted-foreground);
     font-size: var(--community-text-body);
+  }
+  .community-working-copy-card .community-bookmark-card__heading > strong {
+    font-size: var(--community-text-body);
+    font-weight: 650;
   }
   :global(.community-bookmark-card[data-ui-part="item"]) {
     position: relative;

@@ -20,6 +20,7 @@
   import CommunityProjectsRepositoryBranchSelector from "./CommunityProjectsRepositoryBranchSelector.svelte";
   import CommunityProjectsRepositoryDirectoryRows from "./CommunityProjectsRepositoryDirectoryRows.svelte";
   import CommunityProjectsRevisionGraphIds from "./CommunityProjectsRevisionGraphIds.svelte";
+  import "./repository-directory.css";
 
   let {
     fileTreeOpen = $bindable(false),
@@ -90,6 +91,12 @@
               !document.binary &&
               !document.too_large &&
               document.contents !== undefined,
+          )
+          .sort(
+            (left, right) =>
+              Number(left.label !== "README") -
+                Number(right.label !== "README") ||
+              left.path.localeCompare(right.path),
           ),
   );
   let selectedLandingDocument = $state("");
@@ -216,6 +223,10 @@
                 <FileIcon data-icon="inline-start" aria-hidden="true" />
               {/if}
               {document.label}
+              <span
+                class="community-projects__repository-document-tab-indicator"
+                aria-hidden="true"
+              ></span>
             </Tabs.Trigger>
           {/each}
         </Tabs.List>

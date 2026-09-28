@@ -38,3 +38,15 @@
 <Story name="Binary file"
   >{#snippet template()}<DiffFixture path="assets/logo.bin" />{/snippet}</Story
 >
+
+<Story
+  name="No file selected"
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const empty = canvas.getByRole("status");
+    await expect(empty).toHaveTextContent("No file selected");
+    await expect(
+      empty.querySelector('[data-ui-part="empty-media"] svg'),
+    ).not.toBeNull();
+  }}>{#snippet template()}<DiffFixture path={null} />{/snippet}</Story
+>

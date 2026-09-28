@@ -83,6 +83,14 @@ every target and a deleted bookmark produces an empty graph. Route restoration
 loads references before resolving this scope, so reload and Back/Forward cannot
 briefly substitute the repository-wide default log.
 
+Working-copy cards use the same title size as bookmark cards. A native empty
+working-copy description is presented as `(empty) (no description set)` while
+the workspace chip supplies its identity. Bookmark cards and their final visible
+item remain square with a bottom divider. Empty Workspace and Conflicted filter
+results use the shared Design Core shadcn Empty composition with icon media and
+filter-specific guidance; changing a filter clears any command selection that is
+no longer rendered.
+
 JJ Log rows render local bookmarks as accent chips, remote bookmarks as neutral
 `name@remote` chips, working-copy associations as success chips, divergence as a
 warning and conflicts as danger. Op Log rows use the same working-copy chip,
@@ -139,9 +147,10 @@ while the file-diff card keeps its file header and view controls underneath.
 Parent operation navigation remains available without opening a standalone
 details column. Missing selected-file diffs and binary or unavailable diffs use
 the shared shadcn Empty composition with icon media rather than plain status
-text. Files opens the copied Community directory table until a file is selected;
-directory, file and snapshot navigation participate in the in-memory
-Back/Forward history.
+text. An open standalone diff column with no selected file uses the same icon
+Empty composition. Files opens the copied Community directory table until a file
+is selected; directory, file and snapshot navigation participate in the
+in-memory Back/Forward history.
 
 Branch cards retain themed bottom dividers, including the final visible card in
 filtered lists, and keep square lower corners. Branches, JJ Log and Op Log omit
@@ -160,14 +169,15 @@ toggle remains beside the author avatar and the snapshot selector is aligned on
 the right side of the same row. The table column-header row uses a neighboring
 theme grey distinct from the summary row. Root directory views show a
 GitHub-style README/LICENSE preview card only when those files exist in the
-selected fixture snapshot; its tabs are left aligned with document icons and an
-active underline. Selecting a file renders a stacked source preview: copied
-commit metadata, deterministic file statistics, then the selected content.
-Markdown files open in safe preview mode with a Preview/Source toggle; source
-mode uses the public Design Core CodeBlock with the filename/source body on the
-theme background. Rust source previews use CodeBlock's public custom-tokenizer
-extension point so `.rs` files highlight in the catalog while retaining the
-shared code component.
+selected fixture snapshot. README is ordered first regardless of API order; its
+tabs are left aligned with document icons, use a rounded theme-grey hover and
+selected treatment, and keep a visible active underline. Selecting a file
+renders a stacked source preview: copied commit metadata, deterministic file
+statistics, then the selected content. Markdown files open in safe preview mode
+with a Preview/Source toggle; source mode uses the public Design Core CodeBlock
+with the filename/source body on the theme background. Rust source previews use
+CodeBlock's public custom-tokenizer extension point so `.rs` files highlight in
+the catalog while retaining the shared code component.
 
 M4.10 completes the bounded authenticated data contracts required by the shared
 repository presentation: reference lookup, recursive path windows, exact

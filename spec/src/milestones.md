@@ -33,7 +33,7 @@ adds evidence here in its enclosing Jujutsu change.
 | M4.5        | Done     | M4.4        | JST-UI-002                                                              | Community shell mechanics and navigation acceptance                                                                 | Implement repository fixture views                      | E-UI-002                                                                                                                                                                                                                   |
 | M4.6        | Done     | M4.5        | JST-UI-003                                                              | Native fixture graph/file/diff drill-down and accessibility                                                         | Visual review; live UI remains deferred                 | E-UI-003                                                                                                                                                                                                                   |
 | M4.7        | Done     | M4.6        | JST-UI-004                                                              | Complete in-memory application, snapshot file browser and profile footer                                            | Retain fixture acceptance; live UI remains deferred     | E-UI-004                                                                                                                                                                                                                   |
-| M4.8        | Done     | M4.7        | JST-UI-002,JST-UI-003,JST-UI-004                                        | Reviewed shell/card/header styling and directory navigation pass interaction, accessibility and cold catalog checks | Visual review pending; live UI remains deferred         | E-UI-005,E-UI-006,E-UI-009,E-UI-010                                                                                                                                                                                        |
+| M4.8        | Done     | M4.7        | JST-UI-002,JST-UI-003,JST-UI-004                                        | Reviewed shell/card/header styling and directory navigation pass interaction, accessibility and cold catalog checks | Visual review pending; live UI remains deferred         | E-UI-005,E-UI-006,E-UI-009,E-UI-010,E-UI-022                                                                                                                                                                               |
 | M4.9        | Done     | M4.8        | JST-ARCH-004,JST-UI-005                                                 | Shared production components/controller and no-growth architecture checks                                           | Retain source ownership and proceed to bounded APIs     | E-UI-007,E-UI-008                                                                                                                                                                                                          |
 | M4.10       | Done     | M4.9        | JST-API-001,JST-API-002,JST-API-006                                     | Bounded bookmark, directory metadata and operation-change contracts                                                 | Implement M4.11 authenticated browser data/controller   | E-M4-018                                                                                                                                                                                                                   |
 | M4.11       | Deferred | M4.10       | JST-API-004,JST-API-005,JST-UI-005                                      | Shared authenticated connection and final registry-only browser acceptance                                          | Future shared/package release                           | E-UI-011                                                                                                                                                                                                                   |
@@ -11781,6 +11781,94 @@ and named tests are checked by the progress gate.
     "remaining": [],
     "versions": "jj-lib 0.45.1; OpenAPI 3.1; TypeScript generated contracts; @lapismd/design-core 0.2.0; Svelte 5.57.1; Storybook 10.5.7; Vitest 4.1.11; Playwright 1.63.x.",
     "formats": "GraphBookmark adds one required nullable remote name in OpenAPI and generated TypeScript. Native commit graph DTOs now retain local and remote bookmarks separately plus existing workspace, conflict and divergence metadata; operation rows retain snapshot/workspace/head metadata. Branch selection sends exact target-bound ancestry revsets and working-copy selection stores full commit/change identities in the existing hash route. Native objects, manifest, WAL, receipt, credential and browser layout formats are unchanged. Stories remain visual-pending and visual baselines were skipped by user direction."
+  },
+  {
+    "id": "E-UI-022",
+    "tasks": ["M4", "M4.8"],
+    "date": "2026-09-28",
+    "kind": "implementation",
+    "files": [
+      "catalog/components/community-projects/CommunityProjectsRepositoryDirectory.stories.svelte",
+      "catalog/components/community-projects/CommunityProjectsRepositoryLogDiff.stories.svelte",
+      "catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte",
+      "catalog/fixtures/DiffFixture.svelte",
+      "scripts/dev-demo-repository.mjs",
+      "spec/src/api.md",
+      "spec/src/milestones.md",
+      "spec/src/spec-governance.md",
+      "spec/src/ui.md",
+      "web/src/lib/controller/native-presentation.ts",
+      "web/src/lib/ui/community-projects/CommunityProjectsRepositoryDirectory.svelte",
+      "web/src/lib/ui/community-projects/CommunityProjectsRepositoryFiles.svelte",
+      "web/src/lib/ui/community-projects/CommunityProjectsRepositoryLogDiff.svelte",
+      "web/src/lib/ui/community-projects/repository-directory.css",
+      "web/src/lib/ui/community-repository-branch-command/CommunityRepositoryBranchCommand.svelte",
+      "web/src/lib/ui/community-repository-branch-command/CommunityRepositoryBranchEmpty.svelte",
+      "web/tests/production-store-loaders.test.ts"
+    ],
+    "tests": [
+      "web/tests/production-store-loaders.test.ts#empty working copies use the native no-description label"
+    ],
+    "runs": [
+      {
+        "command": "pnpm exec tsx --test web/tests/production-store-loaders.test.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "The focused loader regression returned No description for an empty native working-copy description instead of the required explicit label."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryDirectory.stories.svelte",
+        "result": "fail",
+        "failures": 2,
+        "note": "The focused stories reproduced the inherited branch-card radius and LICENSE-first repository-document order; one existing interaction passed."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLogDiff.stories.svelte",
+        "result": "fail",
+        "failures": 2,
+        "note": "The two new empty-state stories reproduced plain bookmark-empty text and an empty standalone diff body; four existing interactions passed."
+      },
+      {
+        "command": "pnpm exec tsx --test web/tests/production-store-loaders.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "All eight focused presentation and paging tests pass, including the exact empty working-copy label."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryDirectory.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLogDiff.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "All seven focused interaction and accessibility stories pass for square branch cards, matched title sizing, shadcn icon Empty states, README-first document tabs, selected styling, hover interaction and diff fallback. Visual baselines were skipped by user direction."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture; pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Production and catalog diagnostics report no warnings, architecture budgets pass across 196 modules and the production bundle builds with only the existing Design Core global-selector and bundle-size warnings."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm dev:restart",
+        "result": "pass",
+        "failures": 0,
+        "note": "The LocalTrusted demo restarted with repository 96435f1d43aed5050d6edd20d84acb63, no credentials, persistent embedded RustFS, 11546 ms cold startup and 410 ms restart."
+      },
+      {
+        "command": "live in-app browser verification at http://127.0.0.1:7460/",
+        "result": "pass",
+        "failures": 0,
+        "note": "The live working-copy fallback is exact; working-copy and branch titles both compute to 14px; the final bookmark card has a 1px divider and zero lower radii; README precedes LICENSE with a selected theme background, 6px radius and visible 2px underline."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:first && pnpm check:progress && DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm format:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Same-change governance maps every protected file to the four updated canonical chapters, validates evidence bookkeeping and confirms Rust plus Prettier formatting without running unrelated aggregate suites."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "versions": "@lapismd/design-core 0.2.0; Svelte 5.57.1; Storybook 10.5.7; Vitest 4.1.11.",
+    "formats": "Empty native working-copy descriptions use an explicit presentation fallback. Repository-document order and branch/diff empty states remain client presentation. The demo seed now ends on a descriptionless working copy. Native IDs, OpenAPI, object, manifest, WAL, receipt, route and browser-layout formats are unchanged. Stories remain visual-pending and visual baselines were skipped by user direction."
   }
 ]
 ```

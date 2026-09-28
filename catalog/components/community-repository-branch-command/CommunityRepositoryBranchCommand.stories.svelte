@@ -30,6 +30,21 @@
         Node.DOCUMENT_POSITION_FOLLOWING,
       ),
     ).toBe(true);
+    const root = canvasElement.querySelector<HTMLElement>(
+      ".community-bookmark-cards",
+    )!;
+    await expect(
+      getComputedStyle(root)
+        .getPropertyValue("--ui-command-view-item-radius")
+        .trim(),
+    ).toBe("0px");
+    const workingCopyTitle = workingCopy.querySelector("strong")!;
+    const branchTitle = canvas
+      .getByRole("option", { name: "main" })
+      .querySelector('[data-ui-part="item-label"]')!;
+    await expect(getComputedStyle(workingCopyTitle).fontSize).toBe(
+      getComputedStyle(branchTitle).fontSize,
+    );
     await userEvent.click(workingCopy);
     await expect(args.onSelectWorkingCopy).toHaveBeenLastCalledWith(
       workingCopies[0]!.commitId,
@@ -75,3 +90,29 @@
   }}
 />
 <Story name="Empty bookmarks" args={{ bookmarks: [] }} />
+
+<Story
+  name="Empty filter states"
+  args={{
+    bookmarks: bookmarks.filter(
+      (bookmark) => bookmark.name === "feature/native-objects",
+    ),
+  }}
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(canvas.getByRole("tab", { name: "Workspace" }));
+    const workspaceEmpty = canvas.getByRole("status");
+    await expect(workspaceEmpty).toHaveTextContent("No workspace bookmarks");
+    await expect(
+      workspaceEmpty.querySelector('[data-ui-part="empty-media"] svg'),
+    ).not.toBeNull();
+
+    await userEvent.click(canvas.getByRole("tab", { name: "Conflicted" }));
+    const conflictedEmpty = canvas.getByRole("status");
+    await expect(conflictedEmpty).toHaveTextContent("No conflicted bookmarks");
+    await expect(
+      conflictedEmpty.querySelector('[data-ui-part="empty-media"] svg'),
+    ).not.toBeNull();
+  }}
+/>

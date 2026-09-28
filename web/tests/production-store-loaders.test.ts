@@ -149,6 +149,35 @@ test("native presentation preserves conflicting targets and exact identifiers", 
   assert.equal(paths.files.get("src/lib.rs"), file);
 });
 
+test("empty working copies use the native no-description label", () => {
+  const references = presentReferences([
+    {
+      kind: "bookmark",
+      name: "main",
+      terms: [after],
+      conflicted: false,
+      workspaces: ["default"],
+      targets: [
+        {
+          commit: after,
+          change,
+          parents: [before],
+          description: "",
+          author: signature,
+          committer: signature,
+          conflicted: false,
+          workspaces: ["default"],
+        },
+      ],
+    },
+  ] as Model<"Reference">[]);
+
+  assert.equal(
+    references.workingCopies[0]?.message,
+    "(empty) (no description set)",
+  );
+});
+
 test("path pages isolate lazy directories from recursive listing views", () => {
   const root = {
     path: "src",

@@ -205,7 +205,9 @@ file retains JJ conflict terms, while the divergent history presents distinct
 commit IDs under one change ID. Focused real-browser acceptance asserts those
 full identities through production controls. Catalog graph units separately
 prove stable lane geometry, so native divergence is not inferred from color or
-screen position.
+screen position. The final seeded working copy intentionally has an empty native
+description so the production fallback is exercised without fixture-only
+presentation data.
 
 The tracked pnpm hook may substitute an available sibling Design Core source for
 dependency, development-dependency and optional-dependency fields only. Peer
