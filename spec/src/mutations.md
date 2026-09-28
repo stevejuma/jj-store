@@ -389,6 +389,13 @@ summary and immutable-link DTOs. Missing sessions return no object data; a path
 ID, selected snapshot ID or returned dependency ID grants no read or publication
 capability.
 
+Transcript paging verifies that the selected session owns the requested manifest
+and source generation, then converts only already-sanitized chunks into bounded
+service DTOs. Its signed continuation retains an immutable root and range
+position but no credential, typed delta, request/publication identity or receipt
+capability. Reading or resuming a transcript cannot stage or publish a
+collaboration object.
+
 ## Browser mutation orchestration
 
 The authenticated browser constructs only the existing typed V1 command union.

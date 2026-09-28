@@ -278,3 +278,11 @@ link types needed for service DTO conversion. Stable-session detail derives the
 session catalog key, resolves it through `AgentStoreSnapshot::lookup` and reads
 only the selected immutable session object in that audited closure. These facade
 types and reads add no reverse service dependency or new durable encoding.
+
+Bounded transcript reads accept only a manifest already selected by that
+session, an exact source instance/generation, record limit, byte ceiling and
+optional last sequence. `AgentStoreSnapshot::transcript_range` verifies linked
+page and chunk kinds, stream identity and strictly increasing sequence before
+returning sanitized immutable chunks. The higher-layer signed cursor pins this
+existing audited snapshot; it does not add a manifest pointer, WAL record,
+receipt or publication transition.

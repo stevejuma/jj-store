@@ -134,6 +134,32 @@ fn collaboration_contract_exposes_root_pinned_agent_session_pages() {
                 .contains(&json!(field))
         );
     }
+
+    let transcript =
+        &doc["paths"]["/v1/repos/{repo}/agent/sessions/{session}/transcripts/{transcript}"]["get"];
+    assert_eq!(transcript["tags"], json!(["collaboration"]));
+    let parameters = transcript["parameters"].as_array().unwrap();
+    for required in ["source", "generation", "limit", "max_bytes"] {
+        assert!(parameters.iter().any(|value| value["name"] == required));
+    }
+    assert!(parameters.iter().any(|value| value["name"] == "cursor"));
+    assert_eq!(
+        transcript["responses"]["200"]["content"]["application/json"]["schema"]["$ref"],
+        "#/components/schemas/AgentTranscriptPage"
+    );
+    let page = &doc["components"]["schemas"]["AgentTranscriptPage"];
+    for field in [
+        "version",
+        "snapshot",
+        "session_id",
+        "transcript_id",
+        "source_instance_id",
+        "source_generation",
+        "chunks",
+        "next_cursor",
+    ] {
+        assert!(page["required"].as_array().unwrap().contains(&json!(field)));
+    }
 }
 
 #[test]
@@ -145,7 +171,7 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
         json!(["authenticated", "local_trusted"])
     );
     let paths = doc["paths"].as_object().unwrap();
-    assert_eq!(paths.len(), 31);
+    assert_eq!(paths.len(), 32);
     let mut ids = std::collections::BTreeSet::new();
     for (name, path) in paths {
         for (method, operation) in path.as_object().unwrap() {

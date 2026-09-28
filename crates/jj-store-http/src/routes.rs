@@ -181,6 +181,16 @@ struct AgentSessions {
     #[serde(default = "limit")]
     limit: usize,
 }
+#[derive(Deserialize, schemars::JsonSchema)]
+#[serde(deny_unknown_fields)]
+struct AgentTranscript {
+    source: jj_store_service::collaboration::AgentSourceInstanceIdentity,
+    generation: u64,
+    cursor: Option<String>,
+    #[serde(default = "limit")]
+    limit: usize,
+    max_bytes: usize,
+}
 
 // One declaration registers both executable routes and their generated contracts.
 macro_rules! endpoints {
@@ -191,6 +201,7 @@ macro_rules! endpoints {
             (get, "/repos/{repo}/search/status", search_status, Empty, search_paging::Status, Reply::Json(200)),
             (get, "/repos/{repo}/agent/sessions", agent_sessions, AgentSessions, crate::collaboration::SessionPage, Reply::Json(200)),
             (get, "/repos/{repo}/agent/sessions/{session}", agent_session, Empty, crate::collaboration::SessionDetail, Reply::Json(200)),
+            (get, "/repos/{repo}/agent/sessions/{session}/transcripts/{transcript}", agent_transcript, AgentTranscript, crate::collaboration::TranscriptPage, Reply::Json(200)),
             (get, "/repos/{repo}/snapshot", snapshot, Empty, reads::HeadSnapshot, Reply::Json(200)),
             (get, "/repos/{repo}/events", events, Events, events::Event, Reply::Events),
             (get, "/repos/{repo}/objects/{kind}/{id}", object, Selection, Envelope<c::Object>, Reply::Json(200)),
@@ -311,6 +322,29 @@ async fn agent_session(
         .parse()
         .map_err(|_| Error::invalid())?;
     crate::collaboration::detail(&state, context.session, session_id).await
+}
+async fn agent_transcript(
+    ExtractState(state): ExtractState<Arc<State>>,
+    context: Context,
+    args: Input<AgentTranscript>,
+) -> Result<Response> {
+    let args = input(args)?;
+    let session_id = context.id("session")?;
+    let transcript_id = context.id("transcript")?;
+    crate::collaboration::transcript(
+        &state,
+        context.session,
+        args.cursor,
+        jj_store_service::collaboration::AgentTranscriptRequest {
+            session_id,
+            transcript_id,
+            source_instance_id: args.source,
+            source_generation: args.generation,
+            limit: args.limit,
+            max_bytes: args.max_bytes,
+        },
+    )
+    .await
 }
 async fn object(
     ExtractState(state): ExtractState<Arc<State>>,

@@ -3,17 +3,20 @@ use jj_store_model as m;
 use jj_store_object::memory::MemoryStore;
 use jj_store_service::{
     auth::{Permission, SystemClock},
-    collaboration::{AgentSessionPager, Error},
+    collaboration::{AgentSessionPager, AgentTranscriptRequest, Error},
     native::{NativeSession, SessionLimits, create_repository_local_trusted},
     pagination,
 };
 use jj_store_wal::publication::{
-    CaptureBatchId, IntegrationId, NormalizerProfileV1, ObservationId, SanitizedMediaType,
-    SanitizedObservationBatchV1, SanitizedObservationV1, SanitizedPayloadV1,
-    SanitizedRepresentation, SourceInstanceId, SourceKind, SourceTrust,
+    AgentCatalogEditV1, AgentCatalogKey, AgentCatalogKind, AgentDeltaRequest, AgentDeltaV1,
+    AgentObjectV1, AgentSessionId, AgentSessionSnapshotV1, CaptureBatchId, CompletenessV1,
+    Coordinator, CoverageV1, IntegrationId, NormalizerProfileV1, ObservationId, PublicationGuard,
+    SanitizedMediaType, SanitizedObservationBatchV1, SanitizedObservationV1, SanitizedPayloadV1,
+    SanitizedRepresentation, SessionState, SourceInstanceId, SourceKind, SourceTrust,
+    TranscriptChunkV1, TranscriptManifestV1, TranscriptPageV1, TranscriptStreamV1,
 };
 use jj_store_wal::publication::{Limits, PublishOutcome};
-use std::{collections::BTreeSet, sync::Arc};
+use std::{collections::BTreeMap, collections::BTreeSet, sync::Arc};
 
 const REPOSITORY: m::RepositoryId = m::RepositoryId::new([41; 16]);
 const EPOCH: m::EpochId = m::EpochId::new([42; 16]);
@@ -46,7 +49,33 @@ fn batch(seed: u8, native_session: &str) -> SanitizedObservationBatchV1 {
     }
 }
 
-async fn fixture() -> Arc<NativeSession> {
+struct NoPublication;
+#[async_trait::async_trait]
+impl PublicationGuard for NoPublication {
+    async fn authorize(
+        &self,
+        _: &jj_store_wal::publication::ManifestSnapshot,
+        _: &jj_store_wal::publication::Request,
+    ) -> jj_store_wal::Result<()> {
+        Err(jj_store_wal::Error::Denied)
+    }
+
+    async fn validate_transition(
+        &self,
+        _: &jj_store_wal::publication::ManifestSnapshot,
+        _: &jj_store_wal::publication::Request,
+        _: &jj_store_wal::publication::Snapshot,
+    ) -> jj_store_wal::Result<()> {
+        Err(jj_store_wal::Error::Denied)
+    }
+}
+
+struct Fixture {
+    session: Arc<NativeSession>,
+    staging: Coordinator,
+}
+
+async fn fixture() -> Fixture {
     let store = Arc::new(MemoryStore::default());
     let objects = Arc::new(NativeObjects::new(store.clone(), REPOSITORY, 1024 * 1024).unwrap());
     create_repository_local_trusted(
@@ -58,7 +87,15 @@ async fn fixture() -> Arc<NativeSession> {
     )
     .await
     .unwrap();
-    Arc::new(
+    let staging = Coordinator::new(
+        store.clone(),
+        REPOSITORY,
+        objects.clone(),
+        Arc::new(NoPublication),
+        Limits::default(),
+    )
+    .unwrap();
+    let session = Arc::new(
         NativeSession::new_local_trusted(
             store,
             objects,
@@ -69,7 +106,8 @@ async fn fixture() -> Arc<NativeSession> {
             SessionLimits::default(),
         )
         .unwrap(),
-    )
+    );
+    Fixture { session, staging }
 }
 
 async fn publish(session: &NativeSession, seed: u8, native_session: &str) {
@@ -91,7 +129,8 @@ async fn publish(session: &NativeSession, seed: u8, native_session: &str) {
 
 #[tokio::test]
 async fn session_pages_retain_one_agent_root_across_later_publication() {
-    let session = fixture().await;
+    let fixture = fixture().await;
+    let session = fixture.session;
     publish(&session, 11, "native-session-1").await;
     publish(&session, 21, "native-session-2").await;
     let pager =
@@ -137,7 +176,8 @@ async fn session_pages_retain_one_agent_root_across_later_publication() {
 
 #[tokio::test]
 async fn session_detail_resolves_current_stable_identity_and_exact_links() {
-    let session = fixture().await;
+    let fixture = fixture().await;
+    let session = fixture.session;
     publish(&session, 41, "native-detail-session").await;
     let pager =
         AgentSessionPager::new(pagination::Limits::default(), Arc::new(SystemClock)).unwrap();
@@ -165,5 +205,185 @@ async fn session_detail_resolves_current_stable_identity_and_exact_links() {
             .await
             .unwrap_err(),
         Error::NotFound
+    );
+}
+
+async fn publish_transcript(
+    fixture: &Fixture,
+) -> (
+    AgentSessionId,
+    jj_store_wal::publication::AgentObjectId,
+    SourceInstanceId,
+) {
+    let source = SourceInstanceId::new([81; 16]);
+    let session_id = AgentSessionId::new([82; 16]);
+    let first = fixture
+        .staging
+        .stage_agent_object(&AgentObjectV1::TranscriptChunk(TranscriptChunkV1 {
+            schema_version: 1,
+            source_instance_id: source,
+            source_generation: 4,
+            sequence: 10,
+            payload: SanitizedPayloadV1::new(SanitizedMediaType::Text, b"first\n").unwrap(),
+        }))
+        .await
+        .unwrap();
+    let second = fixture
+        .staging
+        .stage_agent_object(&AgentObjectV1::TranscriptChunk(TranscriptChunkV1 {
+            schema_version: 1,
+            source_instance_id: source,
+            source_generation: 4,
+            sequence: 11,
+            payload: SanitizedPayloadV1::new(SanitizedMediaType::Text, b"second\n").unwrap(),
+        }))
+        .await
+        .unwrap();
+    let tail = fixture
+        .staging
+        .stage_agent_object(&AgentObjectV1::TranscriptPage(TranscriptPageV1 {
+            schema_version: 1,
+            source_instance_id: source,
+            source_generation: 4,
+            chunks: vec![second],
+            next: None,
+        }))
+        .await
+        .unwrap();
+    let head = fixture
+        .staging
+        .stage_agent_object(&AgentObjectV1::TranscriptPage(TranscriptPageV1 {
+            schema_version: 1,
+            source_instance_id: source,
+            source_generation: 4,
+            chunks: vec![first],
+            next: Some(tail),
+        }))
+        .await
+        .unwrap();
+    let transcript = fixture
+        .staging
+        .stage_agent_object(&AgentObjectV1::TranscriptManifest(TranscriptManifestV1 {
+            schema_version: 1,
+            session_id,
+            streams: vec![TranscriptStreamV1 {
+                source_instance_id: source,
+                source_generation: 4,
+                source_format: "codex-jsonl".into(),
+                decoder_version: "codex-0.156.1/v1".into(),
+                sanitizer_version: "mongodb-kingfisher@2.7.0/builtin-medium/v1".into(),
+                representation: SanitizedRepresentation::SanitizedNative,
+                ordered_chunk_root: head,
+                logical_byte_length: 13,
+                record_count: 2,
+                gaps: 0,
+            }],
+            coverage: CoverageV1 {
+                completeness: CompletenessV1::Complete,
+                gaps: 0,
+                redacted_fields: 0,
+                truncated: false,
+            },
+        }))
+        .await
+        .unwrap();
+    let snapshot = fixture
+        .staging
+        .stage_agent_object(&AgentObjectV1::SessionSnapshot(AgentSessionSnapshotV1 {
+            schema_version: 1,
+            session_id,
+            integration: IntegrationId::Codex,
+            state: SessionState::Ended,
+            parent_session_id: None,
+            evidence: vec![],
+            event_batches: vec![],
+            transcripts: vec![transcript],
+            tools: BTreeMap::new(),
+            coverage: CoverageV1 {
+                completeness: CompletenessV1::Complete,
+                gaps: 0,
+                redacted_fields: 0,
+                truncated: false,
+            },
+        }))
+        .await
+        .unwrap();
+    let delta = AgentDeltaV1 {
+        schema_version: 1,
+        edits: vec![AgentCatalogEditV1 {
+            catalog: AgentCatalogKind::Sessions,
+            key: AgentCatalogKey::derive("session", session_id.as_bytes()).unwrap(),
+            expected: None,
+            replacement: Some(snapshot),
+        }],
+    };
+    let request = AgentDeltaRequest::new(
+        PRINCIPAL,
+        m::RequestId::new([83; 16]),
+        m::PublicationId::new([84; 16]),
+        delta,
+        b"published transcript fixture".to_vec(),
+    )
+    .unwrap();
+    assert!(matches!(
+        fixture.session.publish_agent_delta(&request).await.unwrap(),
+        PublishOutcome::Committed(_)
+    ));
+    (session_id, transcript.id, source)
+}
+
+#[tokio::test]
+async fn transcript_pages_retain_exact_root_and_validate_stream_cursor() {
+    let fixture = fixture().await;
+    let (session_id, transcript_id, source_instance_id) = publish_transcript(&fixture).await;
+    let pager =
+        AgentSessionPager::new(pagination::Limits::default(), Arc::new(SystemClock)).unwrap();
+    let request = AgentTranscriptRequest {
+        session_id,
+        transcript_id,
+        source_instance_id,
+        source_generation: 4,
+        limit: 1,
+        max_bytes: 1024,
+    };
+    let detail = pager
+        .detail(fixture.session.clone(), session_id)
+        .await
+        .unwrap();
+    assert_eq!(detail.transcripts.len(), 1);
+    assert_eq!(detail.transcripts[0].transcript_id, transcript_id);
+    assert_eq!(detail.transcripts[0].source_format, "codex-jsonl");
+
+    let first = pager
+        .begin_transcript(fixture.session.clone(), request)
+        .await
+        .unwrap();
+    assert_eq!(first.chunks[0].sequence, 10);
+    assert_eq!(first.chunks[0].content, "first\n");
+    let cursor = first.next_cursor.clone().unwrap();
+
+    publish(&fixture.session, 91, "later-session").await;
+    let second = pager
+        .resume_transcript(fixture.session.clone(), &cursor, request)
+        .await
+        .unwrap();
+    assert_eq!(second.snapshot, first.snapshot);
+    assert_eq!(second.chunks[0].sequence, 11);
+    assert_eq!(second.chunks[0].content, "second\n");
+    assert!(second.next_cursor.is_none());
+
+    assert_eq!(
+        pager
+            .resume_transcript(
+                fixture.session,
+                &cursor,
+                AgentTranscriptRequest {
+                    max_bytes: 2048,
+                    ..request
+                },
+            )
+            .await
+            .unwrap_err(),
+        Error::InvalidCursor
     );
 }

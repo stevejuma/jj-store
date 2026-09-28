@@ -39,7 +39,29 @@ impl AgentSessionPager {
         {
             return Err(Error::Corrupt);
         }
+        let mut transcripts = Vec::new();
+        for transcript in &snapshot.transcripts {
+            let AgentObjectV1::TranscriptManifest(manifest) =
+                pin.store.read_object(*transcript).await.map_err(map_wal)?
+            else {
+                return Err(Error::Corrupt);
+            };
+            if manifest.session_id != session_id {
+                return Err(Error::Corrupt);
+            }
+            transcripts.extend(
+                manifest
+                    .streams
+                    .iter()
+                    .map(|stream| models::transcript_descriptor(transcript.id, stream)),
+            );
+        }
         authorize_epoch(&session, pin.snapshot.epoch).await?;
-        Ok(models::detail(pin.snapshot, reference, snapshot))
+        Ok(models::detail(
+            pin.snapshot,
+            reference,
+            snapshot,
+            transcripts,
+        ))
     }
 }

@@ -328,9 +328,10 @@ returns trusted source HTML.
 
 ## Collaboration read transport
 
-`GET /v1/repos/{repo}/agent/sessions` and
-`GET /v1/repos/{repo}/agent/sessions/{session}` are the first bounded
-collaboration routes. LocalTrusted admits them through the existing
+`GET /v1/repos/{repo}/agent/sessions`,
+`GET /v1/repos/{repo}/agent/sessions/{session}` and
+`GET /v1/repos/{repo}/agent/sessions/{session}/transcripts/{transcript}` are
+bounded collaboration routes. LocalTrusted admits them through the existing
 literal-loopback protection and installation principal, without a bearer
 credential. Authenticated deployments retain their repository bearer policy.
 Both modes require current repository read permission before and after every
@@ -346,15 +347,29 @@ counts are service-owned presentation data rather than serialized WAL records.
 The detail route accepts one canonical full stable session ID. It resolves that
 key only through the current selected AgentStore session catalog and returns 404
 when no matching selection exists. Its response repeats the exact read snapshot
-and session summary, then supplies ordered immutable IDs for evidence batches,
-event batches and transcript manifests plus stable tool-call to immutable
-tool-snapshot links. It never fetches unselected objects, returns native capture
-payloads or treats an immutable snapshot ID as a stable session route.
+and session summary, then supplies ordered immutable IDs for evidence and event
+batches, stream descriptors for each selected transcript manifest and stable
+tool-call to immutable tool-snapshot links. Each transcript descriptor retains
+the manifest and source identities, generation, source/decoder/sanitizer
+versions, representation, logical byte count, record count and gaps. It never
+fetches unselected objects, returns native capture payloads or treats an
+immutable snapshot ID as a stable session route.
+
+The transcript route requires the full stable session ID, immutable transcript
+manifest ID, source instance, generation and a caller-selected byte ceiling. It
+first proves that the current or cursor-pinned session selects that manifest and
+that the manifest owns the requested source generation. Version 1 pages return
+only service-owned sequence, media type and UTF-8 sanitized content DTOs. A page
+contains at most 256 records and eight MiB; a record that cannot fit the
+selected budget fails explicitly instead of being truncated. Missing sessions,
+transcripts or streams return 404.
 
 `limit` defaults to the common page size and accepts 1 through 256. The opaque
 continuation is bound to the entire snapshot and original page size, retains its
 immutable root after later publications and is never suitable for a permanent
-URL. Invalid or query-mismatched continuations return `invalid_cursor`; expiry,
+URL. Transcript continuations additionally bind the stable session, manifest,
+source instance, source generation, byte ceiling and last returned sequence.
+Invalid or query-mismatched continuations return `invalid_cursor`; expiry,
 process restart or epoch replacement returns `cursor_reset`. Request
 concurrency, retained pins, transitive closure objects and lifetime are bounded
 by the shared read limits. The route has no request body, mutation capability,

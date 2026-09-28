@@ -386,11 +386,13 @@ wire downgrade is promised. The explicit collaboration-enable publication is the
 only supported format-1 adoption path and never rewrites native objects.
 
 M9.4 additively registers `GET /v1/repos/{repo}/agent/sessions` and
-`GET /v1/repos/{repo}/agent/sessions/{session}` with their owned AgentStore
-snapshot, coverage, session-summary, detail, link and page schemas in OpenAPI
-and the generated TypeScript declarations. Responses preserve native repository
-and AgentStore identity widths; the collection uses an opaque process-local
-continuation. There is no persistence-format, WAL, receipt or native-ID change.
-Captured LocalTrusted responses validate both handlers as part of contract drift
+`GET /v1/repos/{repo}/agent/sessions/{session}` plus the bounded
+`GET /v1/repos/{repo}/agent/sessions/{session}/transcripts/{transcript}` range
+with owned AgentStore snapshot, coverage, summary, detail, transcript
+descriptor, chunk and page schemas in OpenAPI and the generated TypeScript
+declarations. Responses preserve native repository and AgentStore identity
+widths; collection and transcript ranges use opaque process-local continuations.
+There is no persistence-format, WAL, receipt or native-ID change. Captured
+LocalTrusted responses validate all three handlers as part of contract drift
 checking. A continuation intentionally resets across server restart, expiry and
 epoch replacement and is not a durable compatibility token.

@@ -1,10 +1,10 @@
+use super::cursor_position::{Claims, Entry, Position};
 use super::{AgentReadSnapshot, Error, Result};
 use crate::{auth::Clock, pagination::Limits};
 use base64::{Engine as _, engine::general_purpose::URL_SAFE_NO_PAD};
 use hmac::{Hmac, Mac as _};
 use jj_store_model as m;
-use jj_store_wal::publication::{AgentCatalogKey, AgentStoreSnapshot};
-use serde::{Deserialize, Serialize};
+use jj_store_wal::publication::AgentStoreSnapshot;
 use sha2::Sha256;
 use std::{collections::BTreeMap, fmt, sync::Mutex};
 use tokio::sync::{Semaphore, SemaphorePermit};
@@ -18,66 +18,6 @@ type Signature = Hmac<Sha256>;
 pub(super) struct AgentPin {
     pub snapshot: AgentReadSnapshot,
     pub store: AgentStoreSnapshot,
-}
-
-#[derive(Clone)]
-pub(super) struct Entry {
-    pub pin: AgentPin,
-    page_size: usize,
-    issued: u64,
-    expires: u64,
-    objects: usize,
-}
-
-#[derive(Clone, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub(super) struct Claims {
-    version: u32,
-    pin: [u8; 16],
-    repository: m::RepositoryId,
-    epoch: m::EpochId,
-    position: m::WalPosition,
-    revision: u64,
-    agent_root: m::RecordDigest,
-    agent_state_version: u64,
-    page_size: usize,
-    pub after: AgentCatalogKey,
-    issued: u64,
-    expires: u64,
-}
-
-impl Claims {
-    fn new(id: [u8; 16], entry: &Entry, after: AgentCatalogKey) -> Self {
-        let snapshot = &entry.pin.snapshot;
-        Self {
-            version: 1,
-            pin: id,
-            repository: snapshot.repo_id,
-            epoch: snapshot.epoch,
-            position: snapshot.published_seq,
-            revision: snapshot.manifest_revision,
-            agent_root: snapshot.agent_root,
-            agent_state_version: snapshot.agent_state_version,
-            page_size: entry.page_size,
-            after,
-            issued: entry.issued,
-            expires: entry.expires,
-        }
-    }
-
-    fn matches(&self, entry: &Entry) -> bool {
-        let expected = Self::new(self.pin, entry, self.after);
-        self.version == expected.version
-            && self.repository == expected.repository
-            && self.epoch == expected.epoch
-            && self.position == expected.position
-            && self.revision == expected.revision
-            && self.agent_root == expected.agent_root
-            && self.agent_state_version == expected.agent_state_version
-            && self.page_size == expected.page_size
-            && self.issued == expected.issued
-            && self.expires == expected.expires
-    }
 }
 
 #[derive(Default)]
@@ -154,12 +94,7 @@ impl AgentCursorRegistry {
         }
     }
 
-    pub fn retain(
-        &self,
-        pin: AgentPin,
-        page_size: usize,
-        after: AgentCatalogKey,
-    ) -> Result<String> {
+    pub fn retain(&self, pin: AgentPin, page_size: usize, position: Position) -> Result<String> {
         let now = self.now()?;
         let objects = pin.store.object_count();
         self.validate_pin(&pin)?;
@@ -183,7 +118,7 @@ impl AgentCursorRegistry {
         if entries.values.contains_key(&id) {
             return Err(Error::Unavailable);
         }
-        let token = self.sign(&Claims::new(id, &entry, after))?;
+        let token = self.sign(&Claims::new(id, &entry, position))?;
         entries.objects = retained;
         entries.values.insert(id, entry);
         Ok(token)
@@ -196,7 +131,7 @@ impl AgentCursorRegistry {
         page_size: usize,
     ) -> Result<(Claims, Entry)> {
         let claims = self.verify(token)?;
-        if claims.repository != repository || claims.page_size != page_size {
+        if claims.repository != repository || claims.page_size() != page_size {
             return Err(Error::InvalidCursor);
         }
         let entry = {
@@ -218,14 +153,14 @@ impl AgentCursorRegistry {
         &self,
         claims: &Claims,
         entry: &Entry,
-        after: Option<AgentCatalogKey>,
+        position: Option<Position>,
     ) -> Result<Option<String>> {
         let now = self.now()?;
         if now < entry.issued || now >= entry.expires {
             return Err(Error::CursorReset);
         }
-        after
-            .map(|after| self.sign(&Claims::new(claims.pin, entry, after)))
+        position
+            .map(|position| self.sign(&Claims::new(claims.pin, entry, position)))
             .transpose()
     }
 
@@ -279,10 +214,10 @@ impl AgentCursorRegistry {
             .map_err(|_| Error::InvalidCursor)?;
         let claims: Claims = serde_json::from_slice(&bytes).map_err(|_| Error::InvalidCursor)?;
         let now = self.now()?;
-        if claims.version != 1 {
+        if !claims.valid_version() {
             return Err(Error::InvalidCursor);
         }
-        if now < claims.issued || now >= claims.expires {
+        if now < claims.issued() || now >= claims.expires() {
             return Err(Error::CursorReset);
         }
         Ok(claims)

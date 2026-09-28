@@ -1,12 +1,15 @@
 use jj_store_model as m;
 use jj_store_wal::publication::{
     AgentObjectId, AgentObjectRef, AgentSessionId, AgentSessionSnapshotV1, CompletenessV1,
-    IntegrationId, SessionState, ToolCallId,
+    IntegrationId, SanitizedMediaType, SanitizedRepresentation, SessionState, SourceInstanceId,
+    ToolCallId, TranscriptStreamV1,
 };
 use schemars::JsonSchema;
 use serde::Serialize;
 
 pub type AgentSessionIdentity = AgentSessionId;
+pub type AgentTranscriptIdentity = AgentObjectId;
+pub type AgentSourceInstanceIdentity = SourceInstanceId;
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, JsonSchema)]
 pub struct AgentReadSnapshot {
@@ -55,13 +58,46 @@ pub struct AgentToolLink {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, JsonSchema)]
+pub struct AgentTranscriptDescriptor {
+    pub transcript_id: AgentObjectId,
+    pub source_instance_id: SourceInstanceId,
+    pub source_generation: u64,
+    pub source_format: String,
+    pub decoder_version: String,
+    pub sanitizer_version: String,
+    pub representation: SanitizedRepresentation,
+    pub logical_byte_length: u64,
+    pub record_count: u64,
+    pub gaps: u32,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, JsonSchema)]
+pub struct AgentTranscriptChunk {
+    pub sequence: u64,
+    pub media_type: SanitizedMediaType,
+    pub content: String,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, JsonSchema)]
+pub struct AgentTranscriptPage {
+    pub version: u32,
+    pub snapshot: AgentReadSnapshot,
+    pub session_id: AgentSessionId,
+    pub transcript_id: AgentObjectId,
+    pub source_instance_id: SourceInstanceId,
+    pub source_generation: u64,
+    pub chunks: Vec<AgentTranscriptChunk>,
+    pub next_cursor: Option<String>,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, JsonSchema)]
 pub struct AgentSessionDetail {
     pub version: u32,
     pub snapshot: AgentReadSnapshot,
     pub session: AgentSessionSummary,
     pub evidence: Vec<AgentObjectId>,
     pub event_batches: Vec<AgentObjectId>,
-    pub transcripts: Vec<AgentObjectId>,
+    pub transcripts: Vec<AgentTranscriptDescriptor>,
     pub tools: Vec<AgentToolLink>,
 }
 
@@ -92,6 +128,7 @@ pub(super) fn detail(
     snapshot: AgentReadSnapshot,
     reference: AgentObjectRef,
     session: AgentSessionSnapshotV1,
+    transcripts: Vec<AgentTranscriptDescriptor>,
 ) -> AgentSessionDetail {
     AgentSessionDetail {
         version: 1,
@@ -99,7 +136,7 @@ pub(super) fn detail(
         session: summary(reference, &session),
         evidence: session.evidence.iter().map(|value| value.id).collect(),
         event_batches: session.event_batches.iter().map(|value| value.id).collect(),
-        transcripts: session.transcripts.iter().map(|value| value.id).collect(),
+        transcripts,
         tools: session
             .tools
             .iter()
@@ -108,5 +145,23 @@ pub(super) fn detail(
                 snapshot_id: value.id,
             })
             .collect(),
+    }
+}
+
+pub(super) fn transcript_descriptor(
+    transcript_id: AgentObjectId,
+    stream: &TranscriptStreamV1,
+) -> AgentTranscriptDescriptor {
+    AgentTranscriptDescriptor {
+        transcript_id,
+        source_instance_id: stream.source_instance_id,
+        source_generation: stream.source_generation,
+        source_format: stream.source_format.clone(),
+        decoder_version: stream.decoder_version.clone(),
+        sanitizer_version: stream.sanitizer_version.clone(),
+        representation: stream.representation,
+        logical_byte_length: stream.logical_byte_length,
+        record_count: stream.record_count,
+        gaps: stream.gaps,
     }
 }

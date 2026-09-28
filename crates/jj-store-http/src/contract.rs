@@ -42,6 +42,10 @@ impl Document {
                 .output
                 .subschema_for::<jj_store_service::collaboration::AgentSessionIdentity>()
                 .to_value(),
+            "transcript" => self
+                .output
+                .subschema_for::<jj_store_service::collaboration::AgentTranscriptIdentity>()
+                .to_value(),
             "kind" => {
                 json!({"type":"string", "enum":["commit","tree","file","symlink","copy","view","operation"]})
             }

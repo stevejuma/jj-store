@@ -1,7 +1,10 @@
 //! Bounded, manifest-root-pinned collaboration reads.
 mod agent_cursors;
 mod agent_details;
+mod agent_transcripts;
+mod cursor_position;
 mod models;
+pub use agent_transcripts::AgentTranscriptRequest;
 pub use models::*;
 
 use crate::{
@@ -10,6 +13,7 @@ use crate::{
     pagination,
 };
 use agent_cursors::{AgentCursorRegistry, AgentPin};
+use cursor_position::Position;
 use jj_store_model as m;
 use jj_store_wal::{
     self as wal,
@@ -85,7 +89,10 @@ impl AgentSessionPager {
         authorize_epoch(&session, snapshot.epoch).await?;
         let next_cursor = page
             .next_after
-            .map(|after| self.cursors.retain(pin, limit, after))
+            .map(|after| {
+                self.cursors
+                    .retain(pin, limit, Position::Sessions { after })
+            })
             .transpose()?;
         Ok(AgentSessionPage {
             version: 1,
@@ -118,16 +125,23 @@ impl AgentSessionPager {
     ) -> Result<AgentSessionPage> {
         authorize(&session).await?;
         let (claims, entry) = self.cursors.lookup(session.repository, cursor, limit)?;
+        let Position::Sessions { after } = claims.position else {
+            return Err(Error::InvalidCursor);
+        };
         authorize_epoch(&session, entry.pin.snapshot.epoch).await?;
         let page = entry
             .pin
             .store
-            .list_sessions(Some(claims.after), limit)
+            .list_sessions(Some(after), limit)
             .await
             .map_err(map_wal)?;
         let sessions = resolve(&entry.pin.store, page.selections).await?;
         authorize_epoch(&session, entry.pin.snapshot.epoch).await?;
-        let next_cursor = self.cursors.next(&claims, &entry, page.next_after)?;
+        let next_cursor = self.cursors.next(
+            &claims,
+            &entry,
+            page.next_after.map(|after| Position::Sessions { after }),
+        )?;
         Ok(AgentSessionPage {
             version: 1,
             snapshot: entry.pin.snapshot,

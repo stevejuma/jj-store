@@ -125,6 +125,24 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/v1/repos/{repo}/agent/sessions/{session}/transcripts/{transcript}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description Requires current repository read permission. Session rows resolve from one immutable AgentStore root. Signed process-local continuations retain that exact root and page size, reauthorize every page, and reset after expiry, restart or epoch replacement. Reads never dispatch an agent or publish repository state. */
+    get: operations["agent_transcript"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    /** @description Runs the same authorized GET validation and drops the body. No JSON, binary bytes or SSE frames are returned. */
+    head: operations["agent_transcript_head"];
+    patch?: never;
+    trace?: never;
+  };
   "/v1/repos/{repo}/snapshot": {
     parameters: {
       query?: never;
@@ -845,14 +863,53 @@ export interface components {
       session: components["schemas"]["AgentSessionSummary"];
       evidence: components["schemas"]["AgentObjectId"][];
       event_batches: components["schemas"]["AgentObjectId"][];
-      transcripts: components["schemas"]["AgentObjectId"][];
+      transcripts: components["schemas"]["AgentTranscriptDescriptor"][];
       tools: components["schemas"]["AgentToolLink"][];
     };
+    AgentTranscriptDescriptor: {
+      transcript_id: components["schemas"]["AgentObjectId"];
+      source_instance_id: components["schemas"]["SourceInstanceId"];
+      /** Format: uint64 */
+      source_generation: number;
+      source_format: string;
+      decoder_version: string;
+      sanitizer_version: string;
+      representation: components["schemas"]["SanitizedRepresentation"];
+      /** Format: uint64 */
+      logical_byte_length: number;
+      /** Format: uint64 */
+      record_count: number;
+      /** Format: uint32 */
+      gaps: number;
+    };
+    SourceInstanceId: string;
+    /** @enum {string} */
+    SanitizedRepresentation: "sanitized_native" | "canonical_producer";
     AgentToolLink: {
       tool_call_id: components["schemas"]["ToolCallId"];
       snapshot_id: components["schemas"]["AgentObjectId"];
     };
     ToolCallId: string;
+    AgentTranscriptPage: {
+      /** Format: uint32 */
+      version: number;
+      snapshot: components["schemas"]["AgentReadSnapshot"];
+      session_id: components["schemas"]["AgentSessionId"];
+      transcript_id: components["schemas"]["AgentObjectId"];
+      source_instance_id: components["schemas"]["SourceInstanceId"];
+      /** Format: uint64 */
+      source_generation: number;
+      chunks: components["schemas"]["AgentTranscriptChunk"][];
+      next_cursor: string | null;
+    };
+    AgentTranscriptChunk: {
+      /** Format: uint64 */
+      sequence: number;
+      media_type: components["schemas"]["SanitizedMediaType"];
+      content: string;
+    };
+    /** @enum {string} */
+    SanitizedMediaType: "json" | "text";
     CommittedEvent: {
       /** Format: uint32 */
       version: number;
@@ -3363,6 +3420,256 @@ export interface operations {
       path: {
         repo: components["schemas"]["RepositoryId"];
         session: components["schemas"]["AgentSessionId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description cursor_reset after expiry, process restart, or repository epoch replacement. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  agent_transcript: {
+    parameters: {
+      query: {
+        source: string;
+        generation: number;
+        cursor?: string;
+        limit?: number;
+        max_bytes: number;
+      };
+      header?: never;
+      path: {
+        repo: components["schemas"]["RepositoryId"];
+        session: components["schemas"]["AgentSessionId"];
+        transcript: components["schemas"]["AgentObjectId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AgentTranscriptPage"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description cursor_reset after expiry, process restart, or repository epoch replacement. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  agent_transcript_head: {
+    parameters: {
+      query: {
+        source: string;
+        generation: number;
+        cursor?: string;
+        limit?: number;
+        max_bytes: number;
+      };
+      header?: never;
+      path: {
+        repo: components["schemas"]["RepositoryId"];
+        session: components["schemas"]["AgentSessionId"];
+        transcript: components["schemas"]["AgentObjectId"];
       };
       cookie?: never;
     };

@@ -4,13 +4,17 @@ use axum::{
     http::{Request, StatusCode},
 };
 use jj_agent::{
-    CaptureBatchId, IntegrationId, NormalizerProfileV1, ObservationId, SanitizedMediaType,
+    AgentCatalogEditV1, AgentCatalogKey, AgentCatalogKind, AgentDeltaV1, AgentObjectV1,
+    AgentSessionId, AgentSessionSnapshotV1, CaptureBatchId, CompletenessV1, CoverageV1,
+    IntegrationId, NormalizerProfileV1, ObservationId, SanitizedMediaType,
     SanitizedObservationBatchV1, SanitizedObservationV1, SanitizedPayloadV1,
-    SanitizedRepresentation, SourceInstanceId, SourceKind, SourceTrust,
+    SanitizedRepresentation, SessionState, SourceInstanceId, SourceKind, SourceTrust,
+    TranscriptChunkV1, TranscriptManifestV1, TranscriptPageV1, TranscriptStreamV1,
 };
 use jj_store_http::{Access, Config, HttpApi};
 use jj_store_service::administration::{OperatorPolicies, RepositoryHost};
 use serde_json::Value;
+use std::collections::BTreeMap;
 use tower::ServiceExt as _;
 
 struct NoOperators;
@@ -18,6 +22,27 @@ struct NoOperators;
 impl OperatorPolicies for NoOperators {
     async fn current(&self) -> jj_store_service::auth::Result<TokenPolicy> {
         panic!("LocalTrusted collaboration read accessed operator policy")
+    }
+}
+
+struct NoPublication;
+#[async_trait::async_trait]
+impl PublicationGuard for NoPublication {
+    async fn authorize(
+        &self,
+        _: &ManifestSnapshot,
+        _: &wal::publication::Request,
+    ) -> wal::Result<()> {
+        Err(wal::Error::Denied)
+    }
+
+    async fn validate_transition(
+        &self,
+        _: &ManifestSnapshot,
+        _: &wal::publication::Request,
+        _: &Snapshot,
+    ) -> wal::Result<()> {
+        Err(wal::Error::Denied)
     }
 }
 
@@ -63,6 +88,127 @@ async fn publish(session: &NativeSession, seed: u8, native_session: &str) {
         session.publish_agent_delta(&request).await.unwrap(),
         PublishOutcome::Committed(_)
     ));
+}
+
+async fn publish_transcript(
+    fixture: &Fixture,
+) -> (AgentSessionId, AgentObjectId, SourceInstanceId) {
+    let staging = Coordinator::new(
+        fixture.store.clone(),
+        REPO,
+        fixture.objects.clone(),
+        Arc::new(NoPublication),
+        Limits::default(),
+    )
+    .unwrap();
+    let source = SourceInstanceId::new([71; 16]);
+    let session_id = AgentSessionId::new([72; 16]);
+    let first = staging
+        .stage_agent_object(&AgentObjectV1::TranscriptChunk(TranscriptChunkV1 {
+            schema_version: 1,
+            source_instance_id: source,
+            source_generation: 5,
+            sequence: 10,
+            payload: SanitizedPayloadV1::new(SanitizedMediaType::Text, b"first\n").unwrap(),
+        }))
+        .await
+        .unwrap();
+    let second = staging
+        .stage_agent_object(&AgentObjectV1::TranscriptChunk(TranscriptChunkV1 {
+            schema_version: 1,
+            source_instance_id: source,
+            source_generation: 5,
+            sequence: 11,
+            payload: SanitizedPayloadV1::new(SanitizedMediaType::Text, b"second\n").unwrap(),
+        }))
+        .await
+        .unwrap();
+    let tail = staging
+        .stage_agent_object(&AgentObjectV1::TranscriptPage(TranscriptPageV1 {
+            schema_version: 1,
+            source_instance_id: source,
+            source_generation: 5,
+            chunks: vec![second],
+            next: None,
+        }))
+        .await
+        .unwrap();
+    let head = staging
+        .stage_agent_object(&AgentObjectV1::TranscriptPage(TranscriptPageV1 {
+            schema_version: 1,
+            source_instance_id: source,
+            source_generation: 5,
+            chunks: vec![first],
+            next: Some(tail),
+        }))
+        .await
+        .unwrap();
+    let transcript = staging
+        .stage_agent_object(&AgentObjectV1::TranscriptManifest(TranscriptManifestV1 {
+            schema_version: 1,
+            session_id,
+            streams: vec![TranscriptStreamV1 {
+                source_instance_id: source,
+                source_generation: 5,
+                source_format: "codex-jsonl".into(),
+                decoder_version: "codex-0.156.1/v1".into(),
+                sanitizer_version: "mongodb-kingfisher@2.7.0/builtin-medium/v1".into(),
+                representation: SanitizedRepresentation::SanitizedNative,
+                ordered_chunk_root: head,
+                logical_byte_length: 13,
+                record_count: 2,
+                gaps: 0,
+            }],
+            coverage: CoverageV1 {
+                completeness: CompletenessV1::Complete,
+                gaps: 0,
+                redacted_fields: 0,
+                truncated: false,
+            },
+        }))
+        .await
+        .unwrap();
+    let snapshot = staging
+        .stage_agent_object(&AgentObjectV1::SessionSnapshot(AgentSessionSnapshotV1 {
+            schema_version: 1,
+            session_id,
+            integration: IntegrationId::Codex,
+            state: SessionState::Ended,
+            parent_session_id: None,
+            evidence: vec![],
+            event_batches: vec![],
+            transcripts: vec![transcript],
+            tools: BTreeMap::new(),
+            coverage: CoverageV1 {
+                completeness: CompletenessV1::Complete,
+                gaps: 0,
+                redacted_fields: 0,
+                truncated: false,
+            },
+        }))
+        .await
+        .unwrap();
+    let request = AgentDeltaRequest::new(
+        ACTOR,
+        m::RequestId::new([73; 16]),
+        m::PublicationId::new([74; 16]),
+        AgentDeltaV1 {
+            schema_version: 1,
+            edits: vec![AgentCatalogEditV1 {
+                catalog: AgentCatalogKind::Sessions,
+                key: AgentCatalogKey::derive("session", session_id.as_bytes()).unwrap(),
+                expected: None,
+                replacement: Some(snapshot),
+            }],
+        },
+        b"published transcript fixture".to_vec(),
+    )
+    .unwrap();
+    assert!(matches!(
+        fixture.session.publish_agent_delta(&request).await.unwrap(),
+        PublishOutcome::Committed(_)
+    ));
+    (session_id, transcript.id, source)
 }
 
 fn request(path: &str) -> Request<Body> {
@@ -136,6 +282,37 @@ async fn local_trusted_http_lists_root_pinned_agent_sessions_without_bearer_cred
 
     let (status, missing) = json(&router, &format!("agent/sessions/{}", "99".repeat(16))).await;
     assert_eq!(status, StatusCode::NOT_FOUND, "{missing}");
+
+    let (transcript_session, transcript_id, source) = publish_transcript(&fixture).await;
+    let (status, transcript_detail) =
+        json(&router, &format!("agent/sessions/{transcript_session}")).await;
+    assert_eq!(status, StatusCode::OK, "{transcript_detail}");
+    assert_eq!(
+        transcript_detail["transcripts"][0]["transcript_id"],
+        transcript_id.to_string()
+    );
+    assert_eq!(
+        transcript_detail["transcripts"][0]["source_format"],
+        "codex-jsonl"
+    );
+    let transcript_path = format!(
+        "agent/sessions/{transcript_session}/transcripts/{transcript_id}?source={source}&generation=5&limit=1&max_bytes=1024"
+    );
+    let (status, transcript_first) = json(&router, &transcript_path).await;
+    assert_eq!(status, StatusCode::OK, "{transcript_first}");
+    assert_eq!(transcript_first["chunks"][0]["content"], "first\n");
+    let transcript_cursor = transcript_first["next_cursor"].as_str().unwrap();
+    publish(&fixture.session, 81, "later-http-session").await;
+    let (status, transcript_second) = json(
+        &router,
+        &format!("{transcript_path}&cursor={transcript_cursor}"),
+    )
+    .await;
+    assert_eq!(status, StatusCode::OK, "{transcript_second}");
+    assert_eq!(transcript_second["snapshot"], transcript_first["snapshot"]);
+    assert_eq!(transcript_second["chunks"][0]["content"], "second\n");
+    assert!(transcript_second["next_cursor"].is_null());
+
     if let Some(path) = std::env::var_os("JJ_STORE_COLLABORATION_CONTRACT_CAPTURE") {
         let pages = [first, second].map(|data| {
             serde_json::json!({
@@ -154,6 +331,22 @@ async fn local_trusted_http_lists_root_pinned_agent_sessions_without_bearer_cred
             "media": "application/json",
             "data": detail,
         }));
+        samples.push(serde_json::json!({
+            "path": "/v1/repos/{repo}/agent/sessions/{session}",
+            "method": "get",
+            "status": 200,
+            "media": "application/json",
+            "data": transcript_detail,
+        }));
+        for data in [transcript_first, transcript_second] {
+            samples.push(serde_json::json!({
+                "path": "/v1/repos/{repo}/agent/sessions/{session}/transcripts/{transcript}",
+                "method": "get",
+                "status": 200,
+                "media": "application/json",
+                "data": data,
+            }));
+        }
         std::fs::write(path, serde_json::to_vec(&samples).unwrap()).unwrap();
     }
 }

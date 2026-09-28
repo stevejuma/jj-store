@@ -1630,6 +1630,351 @@
         "security": [{ "repositoryBearer": [] }, {}]
       }
     },
+    "/v1/repos/{repo}/agent/sessions/{session}/transcripts/{transcript}": {
+      "get": {
+        "operationId": "agent_transcript",
+        "tags": ["collaboration"],
+        "description": "Requires current repository read permission. Session rows resolve from one immutable AgentStore root. Signed process-local continuations retain that exact root and page size, reauthorize every page, and reset after expiry, restart or epoch replacement. Reads never dispatch an agent or publish repository state.",
+        "parameters": [
+          {
+            "name": "repo",
+            "in": "path",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/RepositoryId" }
+          },
+          {
+            "name": "session",
+            "in": "path",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/AgentSessionId" }
+          },
+          {
+            "name": "transcript",
+            "in": "path",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/AgentObjectId" }
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{32}$",
+              "minLength": 32,
+              "maxLength": 32
+            },
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "generation",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "integer", "format": "uint64", "minimum": 0 },
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" },
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "uint",
+              "minimum": 0,
+              "default": 50
+            },
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "max_bytes",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "integer", "format": "uint", "minimum": 0 },
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result at the reported snapshot.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AgentTranscriptPage" }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request, unknown query field or invalid cursor.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing repository Bearer credential.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied, including revoked credentials or disallowed Origin.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "404": {
+            "description": "Object not committed in the selected snapshot or unknown route.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "405": {
+            "description": "Unsupported method.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "408": {
+            "description": "Native query canceled.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "409": {
+            "description": "cursor_reset after expiry, process restart, or repository epoch replacement.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "410": {
+            "description": "Index task expired or was lost on server restart.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "413": {
+            "description": "Request or response resource limit exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "503": {
+            "description": "Busy, unavailable, corrupt or incomplete history.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "504": {
+            "description": "Request or response deadline exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          }
+        },
+        "x-jj-store-query-schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "source": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{32}$",
+              "minLength": 32,
+              "maxLength": 32
+            },
+            "generation": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0
+            },
+            "cursor": { "type": ["string", "null"] },
+            "limit": {
+              "type": "integer",
+              "format": "uint",
+              "minimum": 0,
+              "default": 50
+            },
+            "max_bytes": { "type": "integer", "format": "uint", "minimum": 0 }
+          },
+          "required": ["source", "generation", "max_bytes"]
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
+      },
+      "head": {
+        "operationId": "agent_transcript_head",
+        "tags": ["collaboration"],
+        "description": "Runs the same authorized GET validation and drops the body. No JSON, binary bytes or SSE frames are returned.",
+        "parameters": [
+          {
+            "name": "repo",
+            "in": "path",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/RepositoryId" }
+          },
+          {
+            "name": "session",
+            "in": "path",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/AgentSessionId" }
+          },
+          {
+            "name": "transcript",
+            "in": "path",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/AgentObjectId" }
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{32}$",
+              "minLength": 32,
+              "maxLength": 32
+            },
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "generation",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "integer", "format": "uint64", "minimum": 0 },
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" },
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "uint",
+              "minimum": 0,
+              "default": 50
+            },
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "max_bytes",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "integer", "format": "uint", "minimum": 0 },
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result at the reported snapshot."
+          },
+          "400": {
+            "description": "Invalid request, unknown query field or invalid cursor."
+          },
+          "401": { "description": "Missing repository Bearer credential." },
+          "403": {
+            "description": "Access denied, including revoked credentials or disallowed Origin."
+          },
+          "404": {
+            "description": "Object not committed in the selected snapshot or unknown route."
+          },
+          "405": { "description": "Unsupported method." },
+          "408": { "description": "Native query canceled." },
+          "409": {
+            "description": "cursor_reset after expiry, process restart, or repository epoch replacement."
+          },
+          "410": {
+            "description": "Index task expired or was lost on server restart."
+          },
+          "413": {
+            "description": "Request or response resource limit exceeded."
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding."
+          },
+          "503": {
+            "description": "Busy, unavailable, corrupt or incomplete history."
+          },
+          "504": { "description": "Request or response deadline exceeded." }
+        },
+        "x-jj-store-query-schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "source": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{32}$",
+              "minLength": 32,
+              "maxLength": 32
+            },
+            "generation": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0
+            },
+            "cursor": { "type": ["string", "null"] },
+            "limit": {
+              "type": "integer",
+              "format": "uint",
+              "minimum": 0,
+              "default": 50
+            },
+            "max_bytes": { "type": "integer", "format": "uint", "minimum": 0 }
+          },
+          "required": ["source", "generation", "max_bytes"]
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
+      }
+    },
     "/v1/repos/{repo}/snapshot": {
       "get": {
         "operationId": "snapshot",
@@ -9246,7 +9591,9 @@
           },
           "transcripts": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/AgentObjectId" }
+            "items": {
+              "$ref": "#/components/schemas/AgentTranscriptDescriptor"
+            }
           },
           "tools": {
             "type": "array",
@@ -9263,6 +9610,59 @@
           "tools"
         ]
       },
+      "AgentTranscriptDescriptor": {
+        "type": "object",
+        "properties": {
+          "transcript_id": { "$ref": "#/components/schemas/AgentObjectId" },
+          "source_instance_id": {
+            "$ref": "#/components/schemas/SourceInstanceId"
+          },
+          "source_generation": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0
+          },
+          "source_format": { "type": "string" },
+          "decoder_version": { "type": "string" },
+          "sanitizer_version": { "type": "string" },
+          "representation": {
+            "$ref": "#/components/schemas/SanitizedRepresentation"
+          },
+          "logical_byte_length": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0
+          },
+          "record_count": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0
+          },
+          "gaps": { "type": "integer", "format": "uint32", "minimum": 0 }
+        },
+        "required": [
+          "transcript_id",
+          "source_instance_id",
+          "source_generation",
+          "source_format",
+          "decoder_version",
+          "sanitizer_version",
+          "representation",
+          "logical_byte_length",
+          "record_count",
+          "gaps"
+        ]
+      },
+      "SourceInstanceId": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{32}$",
+        "minLength": 32,
+        "maxLength": 32
+      },
+      "SanitizedRepresentation": {
+        "type": "string",
+        "enum": ["sanitized_native", "canonical_producer"]
+      },
       "AgentToolLink": {
         "type": "object",
         "properties": {
@@ -9277,6 +9677,48 @@
         "minLength": 32,
         "maxLength": 32
       },
+      "AgentTranscriptPage": {
+        "type": "object",
+        "properties": {
+          "version": { "type": "integer", "format": "uint32", "minimum": 0 },
+          "snapshot": { "$ref": "#/components/schemas/AgentReadSnapshot" },
+          "session_id": { "$ref": "#/components/schemas/AgentSessionId" },
+          "transcript_id": { "$ref": "#/components/schemas/AgentObjectId" },
+          "source_instance_id": {
+            "$ref": "#/components/schemas/SourceInstanceId"
+          },
+          "source_generation": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0
+          },
+          "chunks": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AgentTranscriptChunk" }
+          },
+          "next_cursor": { "type": ["string", "null"] }
+        },
+        "required": [
+          "version",
+          "snapshot",
+          "session_id",
+          "transcript_id",
+          "source_instance_id",
+          "source_generation",
+          "chunks",
+          "next_cursor"
+        ]
+      },
+      "AgentTranscriptChunk": {
+        "type": "object",
+        "properties": {
+          "sequence": { "type": "integer", "format": "uint64", "minimum": 0 },
+          "media_type": { "$ref": "#/components/schemas/SanitizedMediaType" },
+          "content": { "type": "string" }
+        },
+        "required": ["sequence", "media_type", "content"]
+      },
+      "SanitizedMediaType": { "type": "string", "enum": ["json", "text"] },
       "CommittedEvent": {
         "type": "object",
         "properties": {
