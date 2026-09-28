@@ -176,6 +176,11 @@
       await body.findByRole("option", { name: "feature/native-objects" }),
     );
     await expect(
+      canvas.getByRole("combobox", {
+        name: "Repository bookmark or change",
+      }),
+    ).toHaveTextContent("feature/native-objects");
+    await expect(
       canvas.getByRole("table", { name: "Repository files" }),
     ).toBeVisible();
     await userEvent.click(canvas.getByRole("button", { name: "src/lib.rs" }));
@@ -218,6 +223,11 @@
         name: /34343434 · Preserve concurrent publication history/,
       }),
     );
+    await expect(
+      canvas.getByRole("combobox", {
+        name: "Repository bookmark or change",
+      }),
+    ).toHaveTextContent(/· 34343434/);
     await userEvent.click(canvas.getByRole("button", { name: "src/lib.rs" }));
     await waitFor(() =>
       expect(

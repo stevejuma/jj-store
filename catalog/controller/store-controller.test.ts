@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 import { createInMemoryStoreController } from "./in-memory-store-controller.svelte.js";
-import { IDS } from "../fixtures/repository.js";
+import { IDS, revisions } from "../fixtures/repository.js";
 test("controller_restores_snapshot_history", () => {
   const controller = createInMemoryStoreController();
   controller.actions.openRepository("jj-store");
@@ -15,6 +15,19 @@ test("controller_restores_snapshot_history", () => {
   expect(controller.state.snapshot?.id).toBe(IDS.left);
   controller.actions.navigate(1);
   expect(controller.state.snapshot?.id).toBe(IDS.current);
+});
+test("snapshot_reference_selection_keeps_reference_and_commit_identity", () => {
+  const controller = createInMemoryStoreController("files");
+  controller.actions.selectRef("bookmark:feature/native-objects");
+  expect(controller.state.route.bookmark).toBe("feature/native-objects");
+  expect(controller.state.route.commitId).toBe(IDS.left);
+  expect(controller.state.route.changeId).toBeNull();
+  controller.actions.selectRef(`commit:${IDS.right}`);
+  expect(controller.state.route.bookmark).toBe("");
+  expect(controller.state.route.commitId).toBe(IDS.right);
+  expect(controller.state.route.changeId).toBe(
+    revisions.find((revision) => revision.eventId === IDS.right)?.changeId,
+  );
 });
 test("working_copy_card_scopes_branch_history_to_its_native_commit", () => {
   const controller = createInMemoryStoreController();

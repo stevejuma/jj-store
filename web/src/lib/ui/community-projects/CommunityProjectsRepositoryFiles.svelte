@@ -74,11 +74,19 @@
     Object.fromEntries(entries.map((entry) => [entry.path, latestCommit])),
   );
 
-  const selectedSnapshot = $derived(
-    view.route.commitId
-      ? `commit:${view.route.commitId}`
-      : `bookmark:${view.route.bookmark}`,
-  );
+  const selectedSnapshot = $derived.by(() => {
+    if (view.route.bookmark) return `bookmark:${view.route.bookmark}`;
+    if (!view.route.changeId) return "";
+    return (
+      view.choices.find(
+        (choice) =>
+          choice.kind === "change" &&
+          (choice.value === `change:${view.route.changeId}` ||
+            (view.route.commitId !== null &&
+              choice.targets.includes(view.route.commitId))),
+      )?.value ?? `change:${view.route.changeId}`
+    );
+  });
   const previewDocuments = $derived(
     (view.snapshot?.files ?? []).filter(
       (file) =>

@@ -118,12 +118,15 @@ complete-response graph, tree, operation-difference or file-difference APIs.
 `GET /references` searches real local bookmarks and visible native change IDs;
 bookmark conflict terms, every explicit target, target metadata and logical
 workspace associations remain intact. The route never assumes a `main` bookmark
-and cannot manufacture deleted-bookmark history. `GET /commits/{commit}/paths`
-returns direct file and directory terms for a nonrecursive path window, while a
-recursive query walks leaf paths only as far as the requested forward window
-plus a bounded probe. It reports exact native terms and batches bounded
-last-change attribution. Merge ambiguity and the fixed ancestry budget are
-explicit unavailable states rather than substitutions with the selected commit.
+and cannot manufacture deleted-bookmark history. Browser state retains the
+selected bookmark or change identity separately from the commit resolved from
+that reference; resolving one target must not replace the selected reference.
+`GET /commits/{commit}/paths` returns direct file and directory terms for a
+nonrecursive path window, while a recursive query walks leaf paths only as far
+as the requested forward window plus a bounded probe. It reports exact native
+terms and batches bounded last-change attribution. Merge ambiguity and the fixed
+ancestry budget are explicit unavailable states rather than substitutions with
+the selected commit.
 
 Each browsing response carries signed `previous_cursor` and `next_cursor` values
 over the same retained snapshot registry as graph and directory pages. Their

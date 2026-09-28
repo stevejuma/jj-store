@@ -166,9 +166,11 @@ full-height divider, small inner padding, keyboard-resizable width and the
 shared file listing view-mode toggle. The copied directory table is a bordered,
 radiused card with a commit/action summary as the first row; the file-tree
 toggle remains beside the author avatar and the snapshot selector is aligned on
-the right side of the same row. The table column-header row uses a neighboring
-theme grey distinct from the summary row. Root directory views show a
-GitHub-style README/LICENSE preview card only when those files exist in the
+the right side of the same row. Its resting label tracks the selected bookmark
+or change after that reference resolves to a commit; the resolved commit must
+not replace the selected reference identity. The table column-header row uses a
+neighboring theme grey distinct from the summary row. Root directory views show
+a GitHub-style README/LICENSE preview card only when those files exist in the
 selected fixture snapshot. README is ordered first regardless of API order; its
 tabs are left aligned with document icons, use a rounded theme-grey hover and
 selected treatment, and keep a visible active underline. Selecting a file

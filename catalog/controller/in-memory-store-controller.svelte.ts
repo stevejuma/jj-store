@@ -192,22 +192,23 @@ export function createInMemoryStoreController(
         (choice) => choice.value === value,
       );
       if (!choice) throw new Error("Unknown fixture reference");
-      if (choice.kind === "bookmark") actions.selectBookmark(choice.label);
-      else
-        push({
-          ...route,
-          bookmark: "",
-          inspectedOperationId: null,
-          commitId: choice.targets[0]!,
-          changeId:
-            repositoryData.revisions.find(
-              (revision) => revision.eventId === choice.targets[0],
-            )?.changeId ?? null,
-          comparisonParentId: null,
-          comparisonGroupId: null,
-          path: null,
-          directory: "",
-        });
+      push({
+        ...route,
+        bookmark: choice.kind === "bookmark" ? choice.label : "",
+        inspectedOperationId: null,
+        commitId:
+          choice.targets.length === 1 ? (choice.targets[0] ?? null) : null,
+        changeId:
+          choice.kind === "change"
+            ? (repositoryData.revisions.find(
+                (revision) => revision.eventId === choice.targets[0],
+              )?.changeId ?? null)
+            : null,
+        comparisonParentId: null,
+        comparisonGroupId: null,
+        path: null,
+        directory: "",
+      });
     },
     signIn() {
       authenticated = true;
