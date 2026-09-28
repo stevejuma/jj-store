@@ -49,6 +49,13 @@ The external compiled-storage lane is explicitly opt-in with the isolated RustFS
 harness. Its immutable report records the command and actual test output; normal
 test output must report this deployment test as ignored, not passed.
 
+The opt-in `pnpm web:test:real` lane is distinct from captured-response browser
+tests. It must cold-build and start the checkout-owned pinned RustFS and native
+server, publish from another native CLI process, observe SSE without automatic
+snapshot replacement, complete an explicit refresh and clean up its owned
+services. It receives ephemeral credentials only through process memory and
+records no secret in Playwright artifacts or canonical evidence.
+
 Publication faults are exercised in the normal WAL tests. The opt-in deployment
 lane records both the initial compiled native publication run and a separate
 post-kill recovery process; neither is inferred from normal ignored tests.

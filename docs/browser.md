@@ -64,6 +64,13 @@ real native HTTP responses and launches an isolated Rust asset server on
 port 7458. It refuses an existing listener. API responses in this browser lane
 use those captured fixtures plus explicit race/error variants.
 
+Run `pnpm web:test:real` for the separate native deployment lane. It uses
+`pnpm dev:restart` to build the UI and binaries, starts the owned pinned RustFS
+and native server, publishes through another CLI process, and verifies that SSE
+announces the new history without changing the displayed snapshot until the user
+refreshes. The test preserves the selected bookmark across that refresh and
+removes the disposable stack when it finishes.
+
 This cold interaction/accessibility lane checks the production CSP and asset
 router. It is separate from RustFS/TLS deployment qualification. Screenshot
 review is visual-pending and does not approve a baseline. `pnpm spec:check` runs

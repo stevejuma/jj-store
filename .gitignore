@@ -11,6 +11,7 @@
 *.key
 .DS_Store
 /web/test-results/
+/web/test-results-real/
 /web/playwright-report/
 /storybook-static/
 /catalog/test-results/

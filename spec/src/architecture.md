@@ -135,6 +135,13 @@ startup with fixed bounds, so requests do not read arbitrary disk paths. The
 Rust workspace remains buildable without a frontend toolchain; pnpm build builds
 the browser bundle before the Rust executables.
 
+The development demo orchestrator owns one labelled pinned RustFS container, one
+recorded native server process, the built browser bundle and one disposable
+native checkout under the operating system temporary directory. The real browser
+acceptance runner consumes its one-time credential in child-process memory,
+publishes through a separate CLI process and removes the owned stack. It refuses
+unowned listeners, containers and process identities.
+
 The user deferred further UI changes on 27 September 2026. Existing browser code
 remains intact while backend/API/CLI/storage/search and operational work
 continue. M4.3 in the progress ledger retains the uncompleted UI requirements;

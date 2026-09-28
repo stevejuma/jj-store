@@ -402,6 +402,13 @@ does not change browser request contracts, static-asset policy or runtime
 transport behavior. Clean environments without the sibling source use the
 registry range and committed registry lockfile.
 
+Real browser deployment acceptance is a separate opt-in lane from captured
+response tests. It starts the built bundle and native server against the pinned
+RustFS image, opens authenticated SSE, publishes through another native CLI
+process, and requires explicit refresh before the displayed operation changes.
+The selected bookmark, commit and change identities must survive that refresh.
+Ephemeral repository credentials pass only through process memory.
+
 ## Typed mutation HTTP transport
 
 `POST /v1/repos/{repo}/mutations/preview` and `POST .../mutations` accept a
