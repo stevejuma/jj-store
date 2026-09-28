@@ -75,12 +75,14 @@
           : undefined}
         hasMoreBookmarks={state.canLoadMoreBookmarks}
         hasMoreGraph={state.canLoadMoreGraph}
+        hasMoreFiles={state.canLoadMoreDetail}
         unavailableComparisonCount={state.unavailableComparisonCount}
         loading={state.status.graph === "loading" ||
           state.status.graph === "refreshing" ||
           state.status.bookmarks === "loading" ||
           state.status.bookmarks === "refreshing"}
         detailLoading={state.status.detail === "loading"}
+        filesLoading={state.status.detail === "refreshing"}
         now={state.now}
         {layoutStorage}
         onSelectBranch={controller.actions.selectBookmark}
@@ -88,6 +90,7 @@
         onSelectPath={controller.actions.selectFile}
         onLoadMoreBookmarks={() => controller.actions.loadMore("bookmarks")}
         onLoadMoreGraph={() => controller.actions.loadMore("graph")}
+        onLoadMoreFiles={() => controller.actions.loadMore("detail")}
       />{/if}
   {/snippet}
   {#snippet details()}

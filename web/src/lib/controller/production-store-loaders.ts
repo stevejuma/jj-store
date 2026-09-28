@@ -1,4 +1,4 @@
-import { ApiError, fullId, type Model, type Snapshot } from "../api/client.js";
+import { fullId, type Model, type Snapshot } from "../api/client.js";
 import type { RepositoryLogGraph } from "../projects/repository-log.js";
 import type { Bookmark, RevisionDetail } from "../projects/presentation.js";
 import type {
@@ -7,6 +7,11 @@ import type {
   RepositorySnapshot,
 } from "./contracts.js";
 import type { StoreDataSource } from "./native-data-source.js";
+import {
+  startOperationInspection,
+  type InspectionContinuation,
+} from "./production-inspection-pages.js";
+import { assertPinned, assertSameSnapshot } from "./production-snapshot.js";
 import {
   presentChangedFiles,
   presentGraph,
@@ -18,28 +23,6 @@ export interface Comparison {
   from: string;
   to: string;
   group?: string;
-}
-
-export function assertPinned(
-  value: Snapshot,
-  source: StoreDataSource,
-  operation: string,
-) {
-  if (value.repo_id !== source.repository || value.operation_id !== operation)
-    throw new ApiError("snapshot_mismatch");
-}
-
-export function assertSameSnapshot(value: Snapshot, expected?: Snapshot) {
-  if (!expected) return;
-  const same =
-    value.repo_id === expected.repo_id &&
-    value.epoch === expected.epoch &&
-    String(value.published_seq) === String(expected.published_seq) &&
-    String(value.manifest_revision) === String(expected.manifest_revision) &&
-    value.operation_id === expected.operation_id &&
-    value.heads.length === expected.heads.length &&
-    value.heads.every((head, index) => head === expected.heads[index]);
-  if (!same) throw new ApiError("pagination_snapshot_mismatch");
 }
 
 export async function readReferences(
@@ -163,6 +146,7 @@ export async function readCommitInspection(
   detail: RevisionDetail;
   comparisons: Map<string, Comparison>;
   conflictCount: number;
+  continuation: InspectionContinuation | null;
 }> {
   const value = await source.commit(id, operation);
   assertPinned(value.snapshot, source, operation);
@@ -180,6 +164,17 @@ export async function readCommitInspection(
       changes.map((change) => [change.path, { from: parent!, to: id }]),
     ),
     conflictCount: conflicts.data.conflicts.length,
+    continuation:
+      parent && paths?.next_cursor
+        ? {
+            kind: "commit",
+            operation,
+            from: parent,
+            to: id,
+            cursor: paths.next_cursor,
+            snapshot: paths.snapshot,
+          }
+        : null,
   };
 }
 
@@ -193,6 +188,7 @@ export async function readOperationInspection(
   parents: string[];
   selectedParent: string | null;
   unavailableComparisons: number;
+  continuation: InspectionContinuation | null;
 }> {
   const [operation, difference] = await Promise.all([
     source.operation(id),
@@ -207,6 +203,7 @@ export async function readOperationInspection(
       parents: difference.data.data.parents,
       selectedParent: null,
       unavailableComparisons: 0,
+      continuation: null,
     };
   if (difference.data.data.status !== "difference")
     return {
@@ -215,42 +212,23 @@ export async function readOperationInspection(
       parents: [],
       selectedParent: null,
       unavailableComparisons: 0,
+      continuation: null,
     };
   const selectedParent = difference.data.data.parent;
   const groups = await source.operationChanges(id, selectedParent);
-  assertPinned(groups.snapshot, source, id);
-  const exact = groups.data.groups.flatMap((group) =>
-    group.comparison.status === "exact"
-      ? [{ group, comparison: group.comparison }]
-      : [],
+  const page = await startOperationInspection(
+    source,
+    id,
+    selectedParent,
+    groups,
   );
-  const pages = await Promise.all(
-    exact.map(({ comparison }) =>
-      source.diffPaths(id, comparison.from, comparison.to),
-    ),
-  );
-  for (const page of pages) assertPinned(page.snapshot, source, id);
-  const changes = pages.flatMap((page) => page.data.changes);
   return {
-    detail: { files: presentChangedFiles(changes), patches: {} },
-    comparisons: new Map(
-      exact.flatMap(({ group, comparison }, index) =>
-        pages[index]!.data.changes.map(
-          (change) =>
-            [
-              change.path,
-              {
-                from: comparison.from,
-                to: comparison.to,
-                group: group.change,
-              },
-            ] as const,
-        ),
-      ),
-    ),
+    detail: { files: page.files, patches: {} },
+    comparisons: page.comparisons,
     parents: [],
     selectedParent,
-    unavailableComparisons: groups.data.groups.length - exact.length,
+    unavailableComparisons: page.unavailableComparisons,
+    continuation: page.continuation,
   };
 }
 

@@ -194,3 +194,11 @@ each directory's cursor-paged children only when the host discloses or navigates
 to it. List and package modes use a separate recursive root window. Storybook's
 in-memory controller exercises the same controlled view and disclosure actions
 without transport.
+
+Selected commit and operation changed-file collections use the same virtual
+end-of-list continuation contract. Commit comparisons retain their opaque
+changed-path cursor and captured snapshot. Operation comparisons retain the
+affected-change cursor plus each exact comparison's changed-path cursor, fetch
+one exact group at a time, and keep ambiguous groups explicit. Empty exact pages
+and metadata-only groups advance without presenting invented files; every
+visible path remains bound to its precise native comparison.

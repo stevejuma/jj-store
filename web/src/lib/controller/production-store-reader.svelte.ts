@@ -2,6 +2,11 @@ import { fullId } from "../api/client.js";
 import type { StoreDataSource } from "./native-data-source.js";
 import { createProductionFileReader } from "./production-file-reader.svelte.js";
 import {
+  normalizeInspectionContinuation,
+  readMoreCommitInspection,
+  readMoreOperationInspection,
+} from "./production-inspection-pages.js";
+import {
   readCommitInspection,
   readGraph,
   readOperationInspection,
@@ -95,6 +100,7 @@ export function createProductionStoreReader(context: ReaderContext) {
       data.detail = value.detail;
       data.comparisons = value.comparisons;
       data.conflictCount = value.conflictCount;
+      data.inspectionContinuation = value.continuation;
       data.status.detail = "ready";
     } catch (cause) {
       if (!context.current(ticket, source)) return;
@@ -113,6 +119,9 @@ export function createProductionStoreReader(context: ReaderContext) {
       data.comparisons = value.comparisons;
       data.comparisonParents = value.parents;
       data.unavailableComparisonCount = value.unavailableComparisons;
+      data.inspectionContinuation = normalizeInspectionContinuation(
+        value.continuation,
+      );
       history.replace({
         ...history.route,
         comparisonParentId: value.selectedParent,
@@ -148,6 +157,34 @@ export function createProductionStoreReader(context: ReaderContext) {
       if (context.current(ticket, source)) context.report(cause);
     }
   }
+  async function loadMoreDetail() {
+    const continuation = data.inspectionContinuation,
+      source = context.source(),
+      ticket = context.version();
+    if (!continuation || !data.detail) return;
+    data.status.detail = "refreshing";
+    try {
+      const page =
+        continuation.kind === "commit"
+          ? await readMoreCommitInspection(source, continuation)
+          : await readMoreOperationInspection(source, continuation);
+      if (!context.current(ticket, source) || !data.detail) return;
+      data.detail = {
+        files: [...data.detail.files, ...page.files],
+        patches: data.detail.patches,
+      };
+      data.comparisons = new Map([...data.comparisons, ...page.comparisons]);
+      data.unavailableComparisonCount += page.unavailableComparisons;
+      data.inspectionContinuation = normalizeInspectionContinuation(
+        page.continuation,
+      );
+      data.status.detail = data.detail.files.length ? "ready" : "empty";
+    } catch (cause) {
+      if (!context.current(ticket, source)) return;
+      context.report(cause);
+      data.status.detail = "failed";
+    }
+  }
   async function selectRef(value: string, push = true) {
     const choice = data.choices.find((item) => item.value === value);
     if (!choice) return;
@@ -173,6 +210,7 @@ export function createProductionStoreReader(context: ReaderContext) {
     loadCommit,
     loadOperation,
     loadPatch,
+    loadMoreDetail,
     selectRef,
   };
   return {

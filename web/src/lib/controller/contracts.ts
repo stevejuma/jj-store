@@ -72,6 +72,7 @@ export interface StoreControllerState {
   readonly canLoadMoreBookmarks: boolean;
   readonly canLoadMoreGraph: boolean;
   readonly canLoadMoreFiles: boolean;
+  readonly canLoadMoreDetail: boolean;
   readonly fileViewMode: FileListingViewMode;
   readonly collapsedDirectoryPaths: ReadonlySet<string>;
   readonly graph: RepositoryLogGraph;
@@ -97,7 +98,9 @@ export interface StoreController {
     selectOperation(id: string): Promise<void>;
     selectComparisonParent(id: string): Promise<void>;
     prepareIndex(): Promise<void>;
-    loadMore(collection: "bookmarks" | "graph" | "files"): Promise<void>;
+    loadMore(
+      collection: "bookmarks" | "graph" | "files" | "detail",
+    ): Promise<void>;
     setFileViewMode(mode: FileListingViewMode): void | Promise<void>;
     toggleDirectory(path: string): void | Promise<void>;
     openRepository(id: string): void | Promise<void>;

@@ -6,7 +6,6 @@ import {
 } from "./http-store-data-source.js";
 import type { StoreDataSource } from "./native-data-source.js";
 import { followProductionStoreEvents } from "./production-store-events.js";
-import { nextPathPage } from "./production-file-pages.js";
 import { createProductionStoreReader } from "./production-store-reader.svelte.js";
 import {
   clearProductionStoreView,
@@ -15,6 +14,7 @@ import {
 } from "./production-store-state.svelte.js";
 import { createStoreQueryClient } from "./store-query-client.js";
 import { createStoreRouteHistory } from "./store-route-history.svelte.js";
+import { productionStoreView } from "./production-store-view.js";
 
 export function createProductionStoreController(
   options: { fetcher?: typeof fetch; now?: () => number } = {},
@@ -169,7 +169,11 @@ export function createProductionStoreController(
           ?.changeId ?? null,
       path: null,
     });
-    Object.assign(data, { detail: undefined, blob: undefined });
+    Object.assign(data, {
+      detail: undefined,
+      blob: undefined,
+      inspectionContinuation: null,
+    });
     if (!id) return;
     if (page === "oplog") await reader.loadOperation(id);
     else if (page === "files") await reader.loadFiles(id);
@@ -201,6 +205,7 @@ export function createProductionStoreController(
       if (collection === "graph" && data.graphCursor)
         await reader.loadGraph(true);
       if (collection === "files") await reader.loadMoreFiles();
+      if (collection === "detail") await reader.loadMoreDetail();
     },
     setFileViewMode: reader.setFileViewMode,
     toggleDirectory: reader.toggleDirectory,
@@ -256,50 +261,13 @@ export function createProductionStoreController(
 
   return {
     get state() {
-      const repository = source?.repository ?? history.route.repository;
-      return {
-        route: history.route,
-        canNavigateBack: history.canBack,
-        canNavigateForward: history.canForward,
-        repositories: data.repositories,
-        repository: { id: repository, name: repository },
-        operationHeads: data.heads,
-        comparisonParents: data.comparisonParents,
-        conflictCount: data.conflictCount,
-        unavailableComparisonCount: data.unavailableComparisonCount,
-        canLoadMoreBookmarks: data.refsCursor !== null,
-        canLoadMoreGraph: data.graphCursor !== null,
-        canLoadMoreFiles: Boolean(
-          nextPathPage(
-            data.pathPages,
-            data.fileViewMode,
-            history.route.directory,
-          ),
-        ),
-        fileViewMode: data.fileViewMode,
-        collapsedDirectoryPaths: data.collapsedDirectoryPaths,
-        graph: data.graph,
+      return productionStoreView(data, history.route, {
+        connected: source !== null,
+        repository: source?.repository ?? history.route.repository,
+        canBack: history.canBack,
+        canForward: history.canForward,
         now: options.now?.() ?? Math.floor(Date.now() / 1000),
-        detail: data.detail,
-        bookmarks: data.bookmarks,
-        choices: data.choices,
-        targets: data.targets,
-        snapshot: data.snapshot,
-        blob: data.blob,
-        authenticated:
-          source !== null && data.status.connection === "connected",
-        member: {
-          id: repository || "disconnected",
-          name: source ? "Repository connected" : "Disconnected",
-          handle: source ? repository.slice(0, 12) : "Connect",
-          initials: source ? "JJ" : "—",
-          presence: source ? ("online" as const) : ("offline" as const),
-          status: source
-            ? `${data.status.live} · token held in memory`
-            : "No repository session",
-        },
-        status: data.status,
-      };
+      });
     },
     actions,
   };

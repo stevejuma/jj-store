@@ -1,13 +1,5 @@
 import type { FileListingViewMode } from "@lapismd/design-core/diff";
-import {
-  IDS,
-  NOW,
-  bookmarks,
-  fixtureGraph,
-  operations,
-  revisions,
-  sampleDetail,
-} from "../fixtures/repository.js";
+import * as fixture from "../fixtures/repository.js";
 import {
   choices,
   repositories,
@@ -33,16 +25,16 @@ export function createInMemoryStoreController(
   initialPage: StorePage = "branches",
   options: { large?: boolean } = {},
 ): StoreController {
-  const fixtureBookmarks = options.large ? largeBookmarks : bookmarks;
+  const fixtureBookmarks = options.large ? largeBookmarks : fixture.bookmarks;
   const fixtureChoices = options.large ? largeChoices : choices;
-  const fixtureRevisions = options.large ? largeRevisions : revisions;
+  const fixtureRevisions = options.large ? largeRevisions : fixture.revisions;
   const revisionGraph = options.large ? largeGraph : undefined;
   let history = $state<StoreRoute[]>([
     {
       page: initialPage,
       repository: "jj-store",
       bookmark: initialPage === "files" ? "main" : "",
-      snapshotOperationId: IDS.opLeft,
+      snapshotOperationId: fixture.IDS.opLeft,
       inspectedOperationId: null,
       commitId: null,
       changeId: null,
@@ -61,7 +53,7 @@ export function createInMemoryStoreController(
     route.commitId
       ? [route.commitId]
       : (fixtureBookmarks.find((bookmark) => bookmark.name === route.bookmark)
-          ?.targets ?? (route.page === "files" ? [IDS.current] : [])),
+          ?.targets ?? (route.page === "files" ? [fixture.IDS.current] : [])),
   );
   const snapshot = $derived(
     targets.length === 1 &&
@@ -105,7 +97,7 @@ export function createInMemoryStoreController(
         page: "files",
         repository: id,
         bookmark: "main",
-        snapshotOperationId: IDS.opLeft,
+        snapshotOperationId: fixture.IDS.opLeft,
         inspectedOperationId: null,
         commitId: null,
         changeId: null,
@@ -150,7 +142,7 @@ export function createInMemoryStoreController(
     selectRevision(id) {
       if (
         id &&
-        ![...fixtureRevisions, ...operations.revisions].some(
+        ![...fixtureRevisions, ...fixture.operations.revisions].some(
           (revision) => revision.eventId === id,
         )
       )
@@ -228,13 +220,14 @@ export function createInMemoryStoreController(
         canNavigateForward: index < history.length - 1,
         repositories,
         repository: repositories.find((repo) => repo.id === route.repository)!,
-        operationHeads: [IDS.opLeft, IDS.opRight],
+        operationHeads: [fixture.IDS.opLeft, fixture.IDS.opRight],
         comparisonParents: [],
         conflictCount: null,
         unavailableComparisonCount: 0,
         canLoadMoreBookmarks: false,
         canLoadMoreGraph: false,
         canLoadMoreFiles: false,
+        canLoadMoreDetail: false,
         fileViewMode,
         collapsedDirectoryPaths,
         bookmarks: fixtureBookmarks,
@@ -244,17 +237,17 @@ export function createInMemoryStoreController(
         blob: snapshot?.files.find((file) => file.path === route.path),
         graph:
           route.page === "oplog"
-            ? operations
+            ? fixture.operations
             : (revisionGraph ??
-              fixtureGraph(
+              fixture.fixtureGraph(
                 route.page === "branches" && route.bookmark
                   ? route.bookmark
                   : undefined,
               )),
-        now: NOW,
+        now: fixture.NOW,
         detail:
           (route.commitId || route.inspectedOperationId) &&
-          ![...fixtureRevisions, ...operations.revisions].find(
+          ![...fixtureRevisions, ...fixture.operations.revisions].find(
             (revision) =>
               revision.eventId ===
               (route.page === "oplog"
@@ -263,7 +256,7 @@ export function createInMemoryStoreController(
           )?.empty
             ? options.large
               ? largeDetail
-              : sampleDetail
+              : fixture.sampleDetail
             : undefined,
         authenticated,
         member: authenticated

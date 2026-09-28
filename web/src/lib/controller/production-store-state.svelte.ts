@@ -9,6 +9,7 @@ import type {
   StoreControllerStatus,
 } from "./contracts.js";
 import type { Comparison } from "./production-store-loaders.js";
+import type { InspectionContinuation } from "./production-inspection-pages.js";
 import type { StoredPathPage } from "./production-file-pages.js";
 
 type MutableStatus = {
@@ -38,6 +39,7 @@ export interface ProductionStoreState {
   collapsedDirectoryPaths: Set<string>;
   fileTerms: Map<string, string>;
   comparisons: Map<string, Comparison>;
+  inspectionContinuation: InspectionContinuation | null;
   neededIndex: Snapshot | null;
   refsPageSnapshot: Snapshot | null;
   graphPageSnapshot: Snapshot | null;
@@ -85,6 +87,7 @@ export function createProductionStoreState(): ProductionStoreState {
     collapsedDirectoryPaths: new Set(),
     fileTerms: new Map(),
     comparisons: new Map(),
+    inspectionContinuation: null,
     neededIndex: null,
     refsPageSnapshot: null,
     graphPageSnapshot: null,
@@ -112,6 +115,7 @@ export function clearProductionStoreView(state: ProductionStoreState) {
   state.collapsedDirectoryPaths = new Set();
   state.fileTerms = new Map();
   state.comparisons = new Map();
+  state.inspectionContinuation = null;
   state.refsPageSnapshot = null;
   state.graphPageSnapshot = null;
 }

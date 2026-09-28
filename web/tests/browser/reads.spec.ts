@@ -3,14 +3,107 @@ import AxeBuilder from "@axe-core/playwright";
 import {
   api,
   connect,
+  diffPathsPage,
   graph,
   operation,
+  operationChangesPage,
   pathsPage,
   repo,
   sample,
   samples,
   token,
 } from "./native-browser-fixture.js";
+
+test("changed-file collections consume commit, group and path cursors", async ({
+  page,
+}) => {
+  await api(page);
+  let phase: "commit" | "operation" = "commit";
+  let operationPathPages = 0;
+  const pathCursors: (string | null)[] = [];
+  const groupCursors: (string | null)[] = [];
+  await page.route("**/diff/paths?**", async (route) => {
+    const cursor = new URL(route.request().url()).searchParams.get("cursor");
+    pathCursors.push(cursor);
+    const first = phase === "commit" ? "src/first.rs" : "src/op-first.rs";
+    const second = phase === "commit" ? "src/second.rs" : "src/op-second.rs";
+    const next = phase === "commit" && cursor === null ? "paths-2" : null;
+    const result = diffPathsPage(undefined, next);
+    result.data.from = new URL(route.request().url()).searchParams.get("from")!;
+    result.data.to = new URL(route.request().url()).searchParams.get("to")!;
+    result.data.changes[0].path =
+      phase === "commit"
+        ? cursor === null
+          ? first
+          : second
+        : operationPathPages++ === 0
+          ? first
+          : second;
+    await route.fulfill({ json: result });
+  });
+  await page.route("**/operations/*/changes?**", async (route) => {
+    const cursor = new URL(route.request().url()).searchParams.get("cursor");
+    groupCursors.push(cursor);
+    const result = operationChangesPage(undefined, cursor ? null : "groups-2");
+    if (!cursor) {
+      result.data.groups[0].comparison = {
+        status: "exact",
+        from: "11".repeat(64),
+        to: "22".repeat(64),
+      };
+    } else {
+      result.data.groups[0].change = "ef".repeat(16);
+      result.data.groups[0].comparison = {
+        status: "exact",
+        from: "ab".repeat(64),
+        to: "ef".repeat(64),
+      };
+    }
+    await route.fulfill({ json: result });
+  });
+
+  await connect(page);
+  await page.getByRole("option", { name: "main", exact: true }).click();
+  await page
+    .getByRole("button", { name: /binary <script>/u })
+    .first()
+    .click();
+  const commitFiles = page.getByRole("region", { name: "Changed files" });
+  await commitFiles.getByRole("radio", { name: "Show files as list" }).click();
+  await commitFiles
+    .locator(".community-revision-graph-files__body")
+    .evaluate((node) => {
+      node.scrollTop = node.scrollHeight;
+      node.dispatchEvent(new Event("scroll"));
+    });
+  await expect.poll(() => pathCursors.slice(0, 2)).toEqual([null, "paths-2"]);
+  await expect(
+    commitFiles.getByRole("button", { name: "src/second.rs" }),
+  ).toBeVisible();
+
+  phase = "operation";
+  pathCursors.length = 0;
+  await page.getByRole("button", { name: "Op Log", exact: true }).click();
+  await page
+    .getByRole("button", { name: "content fixture", exact: true })
+    .click();
+  const operationFiles = page.getByRole("region", {
+    name: "Changed files in operation",
+  });
+  await operationFiles
+    .getByRole("radio", { name: "Show files as list" })
+    .click();
+  await operationFiles
+    .locator(".community-revision-graph-files__body")
+    .evaluate((node) => {
+      node.scrollTop = node.scrollHeight;
+      node.dispatchEvent(new Event("scroll"));
+    });
+  await expect.poll(() => groupCursors).toEqual([null, "groups-2"]);
+  await expect(
+    operationFiles.getByRole("button", { name: "src/op-second.rs" }),
+  ).toBeVisible();
+});
 test("native_graphs_files_and_source_rendering_are_accessible", async ({
   page,
 }) => {

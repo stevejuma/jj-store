@@ -146,6 +146,12 @@ comparison; multiple candidates require explicit selection. Removed-only
 visibility has no invented file comparison. Operations whose view changes no
 visible commits return no groups, including metadata-only operations.
 
+Each affected-change continuation remains bound to the selected operation and
+parent. Every exact group's `GET /diff/paths` continuation remains separately
+bound to that group's full from/to commit identities and the same captured read
+snapshot. Clients consume these opaque cursors independently; they do not reuse
+a path cursor across groups or substitute an operation ID for a commit ID.
+
 Native-ID order makes set deltas deterministic; this order is not topological
 ordering or publication order. Commit visits, storage reads, work, response
 bytes and elapsed time are bounded. A difference is complete or fails

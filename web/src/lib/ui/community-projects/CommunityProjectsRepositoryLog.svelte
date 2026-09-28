@@ -26,9 +26,11 @@
     patch,
     hasMoreBookmarks = false,
     hasMoreGraph = false,
+    hasMoreFiles = false,
     unavailableComparisonCount = 0,
     loading = false,
     detailLoading = false,
+    filesLoading = false,
     error = "",
     now,
     layoutStorage,
@@ -37,6 +39,7 @@
     onSelectPath,
     onLoadMoreBookmarks = () => {},
     onLoadMoreGraph = () => {},
+    onLoadMoreFiles = () => {},
   }: {
     page?: StorePage;
     graph: RepositoryLogGraph;
@@ -48,9 +51,11 @@
     patch?: string;
     hasMoreBookmarks?: boolean;
     hasMoreGraph?: boolean;
+    hasMoreFiles?: boolean;
     unavailableComparisonCount?: number;
     loading?: boolean;
     detailLoading?: boolean;
+    filesLoading?: boolean;
     error?: string;
     now: number;
     layoutStorage?: Storage;
@@ -59,6 +64,7 @@
     onSelectPath: (path: string | null) => void;
     onLoadMoreBookmarks?: () => void | Promise<void>;
     onLoadMoreGraph?: () => void | Promise<void>;
+    onLoadMoreFiles?: () => void | Promise<void>;
   } = $props();
   const storage = untrack(() => resolveLayoutStorage(layoutStorage));
   const canvas = createRepositoryLogCanvas(
@@ -202,7 +208,10 @@
                     title={changedFilesTitle}
                     {files}
                     {selectedPath}
+                    hasMore={hasMoreFiles}
+                    loading={filesLoading}
                     onSelectPath={selectFile}
+                    onLoadMore={() => void onLoadMoreFiles()}
                   />{/if}
               {/snippet}
             </CommunityProjectsRevisionGraph>{/if}

@@ -20,10 +20,10 @@ import {
   presentReferences,
 } from "../src/lib/controller/native-presentation.js";
 import {
-  assertSameSnapshot,
   readOperationInspection,
   readReferences,
 } from "../src/lib/controller/production-store-loaders.js";
+import { assertSameSnapshot } from "../src/lib/controller/production-snapshot.js";
 import {
   nextPathPage,
   storePathPage,

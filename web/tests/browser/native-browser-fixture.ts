@@ -118,35 +118,47 @@ export function pathsPage(
     next_cursor,
   );
 }
-function operationChangesPage() {
-  return windowPage({
-    version: 1,
-    operation,
-    parent,
-    groups: [
-      {
-        change: commitNode.change_id,
-        before: [parent],
-        after: [commit],
-        comparison: { status: "exact", from: parent, to: commit },
-      },
-    ],
-    previous: null,
-    next: null,
-    stats,
-  });
+export function operationChangesPage(
+  groups = [
+    {
+      change: commitNode.change_id,
+      before: [parent],
+      after: [commit],
+      comparison: { status: "exact", from: parent, to: commit },
+    },
+  ],
+  next: string | null = null,
+) {
+  return windowPage(
+    {
+      version: 1,
+      operation,
+      parent,
+      groups,
+      previous: null,
+      next,
+      stats,
+    },
+    next,
+  );
 }
-function diffPathsPage() {
-  return windowPage({
-    version: 1,
-    from: parent,
-    to: commit,
-    path: "",
-    changes: [structuredClone(textChange)],
-    previous: null,
-    next: null,
-    stats,
-  });
+export function diffPathsPage(
+  changes = [structuredClone(textChange)],
+  next: string | null = null,
+) {
+  return windowPage(
+    {
+      version: 1,
+      from: parent,
+      to: commit,
+      path: "",
+      changes,
+      previous: null,
+      next,
+      stats,
+    },
+    next,
+  );
 }
 function diffPage() {
   const value = sample("diff");

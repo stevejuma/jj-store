@@ -1,8 +1,9 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
-  import { expect, fn, userEvent, within } from "storybook/test";
+  import { expect, fn, userEvent, waitFor, within } from "storybook/test";
   import CommunityProjectsRepositoryLogFiles from "../../../web/src/lib/ui/community-projects/CommunityProjectsRepositoryLogFiles.svelte";
   import FilesFixture from "../../fixtures/FilesFixture.svelte";
+  import { sampleDetail } from "../../fixtures/repository.js";
   const { Story } = defineMeta({
     title: "JJ Store/Components/Changed files",
     component: CommunityProjectsRepositoryLogFiles,
@@ -36,6 +37,25 @@
 >
 
 <Story name="Empty" args={{ files: [], onSelectPath: fn() }} />
+<Story
+  name="Paged"
+  args={{
+    files: sampleDetail.files,
+    compact: true,
+    hasMore: true,
+    onSelectPath: fn(),
+    onLoadMore: fn(),
+  }}
+  play={async ({ canvasElement, args }) => {
+    const body = canvasElement.querySelector<HTMLElement>(
+      ".community-revision-graph-files__body",
+    );
+    if (!body) throw new Error("Expected the changed-file scroll body");
+    body.scrollTop = body.scrollHeight;
+    body.dispatchEvent(new Event("scroll"));
+    await waitFor(() => expect(args.onLoadMore).toHaveBeenCalledTimes(1));
+  }}
+/>
 <Story
   name="Error"
   args={{
