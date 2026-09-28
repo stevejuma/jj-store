@@ -24,3 +24,9 @@ Tantivy 0.26.2, MIT (Quickwit contributors), is consumed as a released crates.io
 dependency with checksum in Cargo.lock. Its source license remains available at
 https://github.com/quickwit-oss/tantivy/blob/72d1ef9a6468aa68bbc69dcc80cdf60aaf64364d/LICENSE.
 No upstream Tantivy implementation source is copied.
+
+MongoDB Kingfisher v2.7.0, Apache-2.0 (MongoDB, Inc.), is consumed unmodified as
+in-process Rust library crates from source revision
+`63dccba231b6b01990c84319d25f92f49428a431`. Its matching vendored Vectorscan
+fork is selected at the same revision. No Kingfisher implementation source is
+copied into jj-store.

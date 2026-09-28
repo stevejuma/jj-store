@@ -98,12 +98,17 @@ validate typed roots and immutable objects before shared publication. The
 boundary checker admits the exact `jj-store-wal` to `jj-review` dependency and
 continues to reject review dependencies on WAL or higher layers.
 
-Capture tooling consumes the public Agent Redaction contract through a
-publishable semver dependency. The local pnpm hook may substitute the sibling
-source for development validation without changing the manifest range. Its
-focused tests must prove both sibling resolution and the no-sibling fallback.
-The capture sanitizer script must remain below the production line budget and
-return only sanitized, allowlisted DTOs or package-safe omission reasons.
+Capture tooling owns the pinned MongoDB Kingfisher Rust integration directly in
+the CLI crate. The local pnpm hook has no agent-redaction package exception, and
+its focused tests continue to prove Design Core sibling resolution and the
+no-sibling fallback. The in-process sanitizer module stays below the production
+line budget and returns only validated sanitized payloads with the fixed policy
+identity or a fixed omission state.
+
+Evidence entries can explicitly identify removed files and retired named tests.
+The progress checker accepts historical references only when a later entry
+records the exact removal, verifies removed files are absent and keeps every
+other historical evidence path and named regression live.
 
 Server composition has an explicit layer in the boundary checker. Regression
 coverage rejects dependencies on CLI presentation and direct upstream JJ types,

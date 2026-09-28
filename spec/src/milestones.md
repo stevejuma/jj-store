@@ -61,9 +61,9 @@ adds evidence here in its enclosing Jujutsu change.
 | M7          | Deferred    | M8a         | JST-ADAPT-005                                                           | Complete read-only replica through applied position                                                                 | After first release                                     | -                                                                                                                                                                                                                          |
 | M7.1        | Deferred    | M8a.4       | JST-ADAPT-006                                                           | Asynchronous verified S3 backup remains independent from passive serving and promotion                              | Future backup release after local application           | -                                                                                                                                                                                                                          |
 | M8b         | Deferred    | M8a         | JST-COMPAT-004                                                          | Verified lossless import with source safety                                                                         | Separate migration release                              | -                                                                                                                                                                                                                          |
-| M9          | Partial     | M8a.4       | JST-COLLAB-001,JST-COLLAB-005                                           | Repository-native agent activity and exact review discussions in the LocalTrusted application                       | Implement LocalTrusted collaboration APIs               | E-M9-001,E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009,E-M9-010,E-M9-011,E-M9-012,E-M9-013,E-M9-014,E-M9-015,E-M9-016,E-M9-017                                                                   |
+| M9          | Partial     | M8a.4       | JST-COLLAB-001,JST-COLLAB-005                                           | Repository-native agent activity and exact review discussions in the LocalTrusted application                       | Implement LocalTrusted collaboration APIs               | E-M9-001,E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009,E-M9-010,E-M9-011,E-M9-012,E-M9-013,E-M9-014,E-M9-015,E-M9-016,E-M9-017,E-M9-018                                                          |
 | M9.1        | Done        | M8a.4       | JST-PUB-007,JST-PUB-008                                                 | Independent code/agent/review roots, code-state fencing and non-destructive collaboration enablement                | Implement AgentStore typed root objects                 | E-M9-001                                                                                                                                                                                                                   |
-| M9.2        | In progress | M9.1        | JST-COLLAB-001,JST-COLLAB-002,JST-COLLAB-006                            | AgentStore model, immutable snapshots/catalogs, sanitized evidence and Codex/Cursor/OpenCode normalizers            | Wire packaged hook ingestion and publication recovery   | E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009,E-M9-015,E-M9-016,E-M9-017                                                                                                                         |
+| M9.2        | In progress | M9.1        | JST-COLLAB-001,JST-COLLAB-002,JST-COLLAB-006                            | AgentStore model, immutable snapshots/catalogs, sanitized evidence and Codex/Cursor/OpenCode normalizers            | Wire packaged hook ingestion and publication recovery   | E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009,E-M9-015,E-M9-016,E-M9-017,E-M9-018                                                                                                                |
 | M9.3        | In progress | M9.2        | JST-COLLAB-001,JST-COLLAB-003,JST-PUB-009                               | ReviewStore exact anchors, stale-safe thread workflow, direct catalogs and conservative placement                   | Await M9.2, then implement LocalTrusted APIs            | E-M9-010,E-M9-011,E-M9-012,E-M9-013,E-M9-014                                                                                                                                                                               |
 | M9.4        | Planned     | M9.2,M9.3   | JST-COLLAB-004                                                          | LocalTrusted bounded CLI/HTTP APIs, pagination, receipts and live collaboration hints                               | Wire first-party service and generated contracts        | -                                                                                                                                                                                                                          |
 | M9.5        | Planned     | M9.4        | JST-COLLAB-005                                                          | Community-owned thread/agent widgets and Design Core exact diff selection integrated into the application           | Implement accessible virtualized application routes     | -                                                                                                                                                                                                                          |
@@ -13561,6 +13561,105 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Rust 1.98.1; setup ownership record v1; Codex 0.156.1 from openai/codex rust-v0.156.1 source b412ff32c417f855c2b2d1581b77058eed87c84b; Cursor project hooks version 1 with synthetic 3.22.7 acceptance; OpenCode 1.18.30 from anomalyco/opencode v1.18.30 source 3104c1428ec91f809e5ab86631300de41eb6952e.",
     "formats": "Project-scoped Codex and Cursor JSON documents retain unrelated keys and append only the owned hook command. OpenCode uses one namespaced TypeScript plugin and an argv spawn. The private ownership record binds integration, exact target, original optional SHA-256, owned SHA-256 and exact original bytes; setup writes the record before atomic project replacement, resumes only the recorded original-to-owned transition and treats every other state as drift."
+  },
+  {
+    "id": "E-M9-018",
+    "tasks": ["M9", "M9.2"],
+    "date": "2026-09-28",
+    "kind": "implementation",
+    "files": [
+      "Cargo.toml",
+      "Cargo.lock",
+      "crates/jj-store-cli/Cargo.toml",
+      "crates/jj-store-cli/src/agent_commands.rs",
+      "crates/jj-store-cli/src/agent_sanitization.rs",
+      "crates/jj-store-cli/src/lib.rs",
+      "crates/jj-store-cli/tests/agent_capture_spool.rs",
+      "crates/jj-store-cli/tests/agent_kingfisher.rs",
+      "docs/cli/agent.md",
+      "docs/licenses/NOTICE.md",
+      "docs/upstream-lock.md",
+      "package.json",
+      "pnpm-lock.yaml",
+      "scripts/check-progress.mjs",
+      "scripts/governance.test.mjs",
+      "scripts/local-package-pnpmfile.cjs",
+      "scripts/local-package-pnpmfile.test.mjs",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/collaboration.md",
+      "spec/src/compatibility.md",
+      "spec/src/milestones.md",
+      "spec/src/spec-governance.md"
+    ],
+    "removed_files": [
+      "scripts/agent-capture-sanitizer.mjs",
+      "scripts/agent-capture-sanitizer.test.mjs"
+    ],
+    "removed_tests": [
+      "scripts/local-package-pnpmfile.test.mjs#local package hook uses available agent redaction source"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/agent_kingfisher.rs#kingfisher_redacts_secrets_and_normalizes_workspace_paths",
+      "crates/jj-store-cli/tests/agent_kingfisher.rs#kingfisher_cached_scan_child",
+      "crates/jj-store-cli/tests/agent_kingfisher.rs#invalid_or_oversized_hook_payload_is_omitted_without_source_details",
+      "crates/jj-store-cli/tests/agent_capture_spool.rs#sanitized_capture_and_prepared_publication_survive_restart",
+      "crates/jj-store-cli/tests/agent_setup.rs#setup_command_selects_one_explicit_integration",
+      "scripts/local-package-pnpmfile.test.mjs#local package hook uses available Design Core source",
+      "scripts/local-package-pnpmfile.test.mjs#local package hook retains registry range when source is absent"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-cli --test agent_kingfisher --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Three focused regressions pass. A cold medium-rule cache build plus scan took 94.37 seconds; the child-process cache reuse scan took 3.55 seconds and stayed within the installed five-second hook budget. Secrets and canonical workspace paths are removed, while invalid and oversized inputs return only the fixed omitted state."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test agent_setup --locked; cargo clippy -p jj-store-cli --test agent_kingfisher --test agent_setup --locked -- -D warnings; node --test scripts/local-package-pnpmfile.test.mjs; cargo fmt --all -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All four existing setup regressions and both remaining local-package hook regressions pass; the affected CLI and focused tests are warning-free and the Rust workspace is formatted."
+      },
+      {
+        "command": "pnpm install --lockfile-only --ignore-scripts",
+        "result": "pass",
+        "failures": 0,
+        "note": "The lockfile no longer contains the superseded JavaScript redaction package or its transitive dependency closure."
+      },
+      {
+        "command": "pnpm check:boundaries; pnpm spec:validate; pnpm spec:first",
+        "result": "fail",
+        "failures": 1,
+        "note": "Package boundaries and the canonical requirements passed; spec-first identified the missing spec-governance mapping update for removal of the JavaScript sanitizer tooling."
+      },
+      {
+        "command": "pnpm check:boundaries; pnpm spec:validate; pnpm spec:first; pnpm check:progress",
+        "result": "fail",
+        "failures": 3,
+        "note": "The mapped chapter passed after the governance update; the progress checker then exposed that historical evidence could not represent two removed files and one retired named test."
+      },
+      {
+        "command": "node --test scripts/governance.test.mjs scripts/local-package-pnpmfile.test.mjs; pnpm check:boundaries; pnpm spec:validate; pnpm spec:first; pnpm check:progress; pnpm exec prettier --check <changed files>",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 23 focused governance and local-package regressions pass. Thirteen package boundaries, 85 canonical requirements, 16 protected-file mappings, all 60 progress tasks and changed-file formatting pass. Historical evidence remains verifiable through explicit removed-file and retired-test records."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test agent_capture_spool --locked; pnpm spec:validate; pnpm spec:first; pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "All three durable spool regressions pass with the Kingfisher policy identity. The upstream source/license record, 19 protected-file mappings, 85 requirements and all 60 progress tasks pass their focused checks."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Wire jj agent hook ingestion into the durable capture spool and publication recovery",
+      "Add drift-safe owned removal after ingesting setup is qualified",
+      "Execute pinned real-harness capability and smoke tests in M9.6; Cursor remains unsupported on the current host"
+    ],
+    "versions": "Rust 1.98.1; MongoDB Kingfisher v2.7.0 at source revision 63dccba231b6b01990c84319d25f92f49428a431 under Apache-2.0; scanner default features disabled; matching Vectorscan fork pinned at the same revision.",
+    "formats": "Sanitization policy mongodb-kingfisher@2.7.0/builtin-medium/v1 accepts one bounded JSON object, canonicalizes workspace paths, scans only in memory with Base64 decoding disabled, merges finding byte ranges, emits canonical JSON with [REDACTED] substitutions and fails closed to a fixed omitted state. Real setup prewarms a user-restricted compiled-rule cache; no raw temporary input file or JavaScript sanitizer remains."
   }
 ]
 ```

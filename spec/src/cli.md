@@ -145,12 +145,13 @@ enablement and exact-version support. Codex setup merges only owned command
 handlers into `.codex/hooks.json`; Cursor setup uses the version-1
 `.cursor/hooks.json` events; OpenCode installs only
 `.opencode/plugins/jj-store-agent.ts`. Dry-run creates no directories, backups,
-registry records or project files. A real setup atomically records exact
-original bytes and content hashes before replacing the bounded regular target,
-preserves unrelated JSON values, rejects configuration symlinks and becomes
-idempotent after success. Status audits the installed hash on restart; drift is
-reported and blocks replacement. The packaged hook ingestion path and durable
-publication loop remain pending M9.2 work.
+registry records, rule cache or project files. A real setup first builds the
+user-restricted MongoDB Kingfisher compiled-rule cache, then atomically records
+exact original bytes and content hashes before replacing the bounded regular
+target, preserves unrelated JSON values, rejects configuration symlinks and
+becomes idempotent after success. Status audits the installed hash on restart;
+drift is reported and blocks replacement. The packaged hook ingestion path and
+durable publication loop remain pending M9.2 work.
 
 `store init` provisions a new repository using a separate operator credential,
 durably retaining generated repository/epoch IDs before contacting the server.

@@ -65,6 +65,8 @@ export function validateLedger({
   const { tasks, entries } = parsed;
   const byId = new Map(tasks.map((t) => [t.id, t]));
   const evidence = new Map(entries.map((e) => [e.id, e]));
+  const removedFiles = new Set(entries.flatMap((e) => e.removed_files ?? []));
+  const removedTests = new Set(entries.flatMap((e) => e.removed_tests ?? []));
   if (!tasks.length) errors.push("ledger has no tasks");
   if (byId.size !== tasks.length) errors.push("duplicate task ID");
   if (evidence.size !== entries.length) errors.push("duplicate evidence ID");
@@ -76,7 +78,8 @@ export function validateLedger({
     try {
       return read(path);
     } catch {
-      errors.push(`missing evidence file: ${path}`);
+      if (!removedFiles.has(path))
+        errors.push(`missing evidence file: ${path}`);
     }
   };
   for (const entry of entries) {
@@ -91,12 +94,29 @@ export function validateLedger({
     if (!Array.isArray(entry.files) || !entry.files.length)
       errors.push(`${entry.id}: missing changed files`);
     for (const file of entry.files ?? []) checkFile(file);
+    for (const file of entry.removed_files ?? []) {
+      if (isAbsolute(file) || file.split(/[\\/]/).includes("..")) {
+        errors.push(`unsafe removed evidence path: ${file}`);
+      } else {
+        try {
+          read(file);
+          errors.push(
+            `${entry.id}: removed evidence file still exists: ${file}`,
+          );
+        } catch {}
+      }
+    }
+    for (const test of entry.removed_tests ?? []) {
+      const [path, name, extra] = test.split("#");
+      if (!path || !name || extra)
+        errors.push(`${entry.id}: invalid removed test reference ${test}`);
+    }
     for (const test of entry.tests ?? []) {
       const [path, name, extra] = test.split("#");
       const text = checkFile(path);
       if (!name || extra)
         errors.push(`${entry.id}: invalid test reference ${test}`);
-      else if (text !== undefined) {
+      else if (text !== undefined && !removedTests.has(test)) {
         const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
         const definition = new RegExp(
           `(?:\\bfn\\s+${escaped}\\b|\\bdef\\s+${escaped}\\b|\\btest\\(["']${escaped}["'])`,

@@ -5,6 +5,7 @@ mod agent_capture_files;
 pub mod agent_commands;
 pub mod agent_integrations;
 mod agent_probe;
+pub mod agent_sanitization;
 pub mod agent_setup;
 mod agent_setup_files;
 mod agent_setup_templates;

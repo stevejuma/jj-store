@@ -68,6 +68,35 @@ test("rejects_missing_named_test", () =>
     ).join(),
     /missing named test/,
   ));
+test("accepts_evidence_superseded by tracked removals", () => {
+  const retired = {
+    ...entry,
+    id: "E-TEST-002",
+    files: ["removed.js", "test.rs"],
+    tests: ["removed.js#old_proof", "test.rs#old_proof"],
+  };
+  const replacement = {
+    ...entry,
+    removed_files: ["removed.js"],
+    removed_tests: ["test.rs#old_proof"],
+  };
+  assert.deepEqual(
+    validateLedger(
+      fixture(
+        "| Bootstrap | Done | - | JST-GOV-001 | gate | continue | E-TEST-001,E-TEST-002 |",
+        [retired, replacement],
+      ),
+    ),
+    [],
+  );
+});
+test("rejects_removed_evidence_that_still_exists", () =>
+  assert.match(
+    validateLedger(
+      fixture(undefined, [{ ...entry, removed_files: ["test.rs"] }]),
+    ).join(),
+    /removed evidence file still exists/,
+  ));
 test("rejects_invented_test_mention", () =>
   assert.match(
     validateLedger(

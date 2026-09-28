@@ -14,6 +14,10 @@ their existing hook documents; OpenCode receives the namespaced
 preserved. Use `--dry-run` to preview the target without creating directories,
 backups, ownership state, or hooks.
 
+A real setup compiles and caches MongoDB Kingfisher's pinned in-process rules
+before installing the hook. The first setup can take longer; later hook
+processes reuse the private device-local cache.
+
 The registry is user-restricted, contains no credentials or transcript content,
 and is bound to one native repository, physical workspace, and stable device
 identity. A missing executable, failed probe, or different version is reported

@@ -307,11 +307,15 @@ recursive-path, operation-change and diff-summary contracts add no presentation,
 fixture or mutation dependency, and their cursors remain service-owned rather
 than becoming native repository state.
 
-The local pnpm hook follows the workspace source-first boundary for Design Core
-and Agent Redaction. When the sibling source exists it resolves the declared
-dependency from that checkout for development validation; otherwise it leaves
-the semver range intact. It never rewrites peer ranges. The publishable manifest
-retains registry ranges while a locally installed lock records the explicit
-sibling source. Final dependency integration still requires released registry
-versions; `@lapismd/agent-redaction` 0.1.0 is currently validated from sibling
-revision `9583b512` because the package is not yet available from the registry.
+The local pnpm hook follows the workspace source-first boundary for Design Core.
+When the sibling source exists it resolves the declared dependency from that
+checkout for development validation; otherwise it leaves the semver range
+intact. It never rewrites peer ranges. The publishable manifest retains registry
+ranges while a locally installed lock records the explicit sibling source.
+
+Agent capture uses MongoDB Kingfisher 2.7.0 in-process at source revision
+`63dccba231b6b01990c84319d25f92f49428a431`. The scanner is compiled without
+default features, so validation and network-backed checks are unavailable. The
+workspace pins Kingfisher's matching Vectorscan fork because Cargo does not
+inherit a Git dependency's workspace patch. No JavaScript redaction package or
+temporary raw-input file participates in the capture boundary.

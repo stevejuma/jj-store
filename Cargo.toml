@@ -31,3 +31,9 @@ debug = 0
 
 [profile.test]
 debug = 0
+
+[patch.crates-io]
+# Kingfisher v2.7.0 uses these additions from its pinned vendored Vectorscan
+# fork. Cargo patches are not inherited by Git library consumers, so select
+# that exact source explicitly rather than the incompatible crates.io build.
+vectorscan-rs = { git = "https://github.com/mongodb/kingfisher", rev = "63dccba231b6b01990c84319d25f92f49428a431" }

@@ -6,6 +6,7 @@ use jj_agent::{
     SourceKind, SourcePositionV1, SourceTrust,
 };
 use jj_store_cli::agent_capture::{AgentCaptureSpool, PendingCaptureStateV1};
+use jj_store_cli::agent_sanitization::KINGFISHER_POLICY;
 use jj_store_model::{PrincipalId, PublicationId, RepositoryId, RequestId};
 use jj_store_wal::publication::AgentDeltaRequest;
 
@@ -15,7 +16,7 @@ fn batch() -> SanitizedObservationBatchV1 {
         batch_id: CaptureBatchId::new([1; 16]),
         integration: IntegrationId::Codex,
         source_instance_id: SourceInstanceId::new([2; 16]),
-        sanitizer_version: "agent-redaction@0.1.0".into(),
+        sanitizer_version: KINGFISHER_POLICY.into(),
         representation: SanitizedRepresentation::SanitizedNative,
         observations: vec![SanitizedObservationV1 {
             observation_id: ObservationId::new([3; 16]),

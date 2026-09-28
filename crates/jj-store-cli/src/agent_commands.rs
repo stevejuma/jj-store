@@ -1,5 +1,6 @@
 use crate::{
     agent_integrations::{AgentDeviceStatusV1, AgentIntegrationRegistry},
+    agent_sanitization::warm_kingfisher_cache,
     agent_setup::{SetupRequestV1, audit_installations, setup},
     commands::{Format, error},
     presentation,
@@ -102,6 +103,9 @@ pub fn run(ui: &mut Ui, helper: &CommandHelper, args: AgentArgs) -> Result<(), C
         }
         AgentCommand::Setup { agent, dry_run } => {
             let integration = IntegrationId::from(agent);
+            if !dry_run {
+                warm_kingfisher_cache(&state.join("kingfisher-cache")).map_err(error)?;
+            }
             let result = setup(
                 &mut registry,
                 SetupRequestV1 {

@@ -20,7 +20,7 @@ reading a comment never dispatches an agent.
 | JST-COLLAB-003 | Review threads MUST target exact immutable artifact versions and validated UTF-8 byte ranges, with stale-safe replies, edits, tombstones, resolve/reopen and conservative explicit re-anchoring.                |
 | JST-COLLAB-004 | LocalTrusted CLI and HTTP APIs MUST provide bounded root-pinned reads, typed writes, pagination and live hints without bearer credentials, public listeners or implicit controller dispatch.                    |
 | JST-COLLAB-005 | The application MUST reuse Community-owned thread/comment/agent presentation and Design Core diff extension points, with accessible interactions, virtualization and pinned-code versus live-activity state.    |
-| JST-COLLAB-006 | Sanitization MUST occur before every durable capture copy through the qualified packaged redaction helper; credentials, unrelated sessions and unsafe rendered content MUST fail closed.                        |
+| JST-COLLAB-006 | Sanitization MUST occur before every durable capture copy through the qualified in-process redaction library; credentials, unrelated sessions and unsafe rendered content MUST fail closed.                     |
 | JST-COLLAB-007 | Cold recovery and native copy MUST verify code, agent and review closures directly; search and other projections remain rebuildable, and unsupported remote/export/backup behavior stays deferred.              |
 
 ## Initial delivery boundaries
@@ -128,19 +128,27 @@ relation traversal and transcript streaming do not depend on Tantivy.
 
 ## Capture sanitization boundary
 
-The Node capture boundary uses `@lapismd/agent-redaction` 0.1.0 at source
-revision `9583b512`. It submits the complete untrusted observation to the
-package before reading capture fields, then rebuilds an allowlisted DTO from the
-sanitized result. Accessors, unsupported values and unknown integration IDs are
-omitted without forwarding source values or diagnostics. The returned DTO
-records the package policy identity and sanitization summary; disposal is
-mandatory after every observation.
+The capture boundary uses MongoDB Kingfisher 2.7.0 in-process at source revision
+`63dccba231b6b01990c84319d25f92f49428a431` under Apache-2.0. Scanner default
+features are disabled, so validation and network calls are not compiled. Base64
+decoding is also disabled. The fixed policy identity is
+`mongodb-kingfisher@2.7.0/builtin-medium/v1`.
 
-This boundary currently admits only `codex`, `cursor` and `opencode` integration
-identifiers and the source-kind vocabulary owned by `SanitizedObservationV1`. It
-proves the pre-spool sanitization contract but does not yet qualify local
-discovery, a durable spool or an installed harness adapter. Those remain M9.2
-work and support is not claimed from the adapter test alone.
+Each hook submits one bounded JSON object. The boundary canonicalizes the
+object, normalizes the canonical workspace path to `$WORKSPACE`, scans those
+in-memory bytes with the built-in medium-confidence rules and replaces merged
+finding byte ranges with `[REDACTED]`. It reparses the result before
+constructing the bounded sanitized payload. Invalid JSON, oversized input or
+output, scanner/cache errors and invalid finding ranges produce a fixed omitted
+state without returning raw values or secret-bearing diagnostics. The raw hook
+payload is never copied to a temporary file or durable state. A user-restricted
+compiled-rule cache is warmed during real integration setup and reused by hook
+processes.
+
+This boundary proves pre-spool sanitization and policy identity. The packaged
+hook still has to allocate durable source order, write the sanitized observation
+to the capture spool and recover publication before M9.2 capture support can be
+claimed.
 
 ## Version-bound normalization
 

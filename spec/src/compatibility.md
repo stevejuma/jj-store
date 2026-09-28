@@ -27,6 +27,13 @@ browser integration and package publication are deferred independently. Windows
 remains unsupported for LocalTrusted because its required Unix peer boundary is
 absent.
 
+Local agent capture pins MongoDB Kingfisher v2.7.0 at source revision
+`63dccba231b6b01990c84319d25f92f49428a431` under Apache-2.0. The scanner uses no
+default features or Base64 decoding, and Cargo selects Kingfisher's matching
+Vectorscan fork at the same revision. Qualification covers bounded in-memory
+redaction, fail-closed omission and fresh-process compiled-cache startup; it
+does not enable Kingfisher validation or network access.
+
 ## M0 audit evidence
 
 The pinned reference/license and field audit is recorded in
