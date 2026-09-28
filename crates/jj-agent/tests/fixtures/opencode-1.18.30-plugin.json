@@ -1,0 +1,132 @@
+[
+  {
+    "hook": "event",
+    "input": {
+      "event": {
+        "type": "session.created",
+        "properties": {
+          "info": {
+            "id": "ses_demo",
+            "projectID": "project_demo",
+            "directory": "<workspace>",
+            "title": "Demo",
+            "version": "1.18.30",
+            "time": { "created": 1725000000000, "updated": 1725000000000 }
+          }
+        }
+      }
+    }
+  },
+  {
+    "hook": "chat.message",
+    "input": { "sessionID": "ses_demo", "messageID": "msg_user_1" },
+    "output": {
+      "message": {
+        "id": "msg_user_1",
+        "sessionID": "ses_demo",
+        "role": "user",
+        "time": { "created": 1725000000001 },
+        "agent": "build",
+        "model": { "providerID": "openai", "modelID": "gpt-6-sol" }
+      },
+      "parts": [{ "id": "part_1", "type": "text", "text": "Update the parser" }]
+    }
+  },
+  {
+    "hook": "tool.execute.after",
+    "input": {
+      "tool": "bash",
+      "sessionID": "ses_demo",
+      "callID": "shell_1",
+      "args": { "command": "cargo test" }
+    },
+    "output": { "title": "Tests", "output": "test failed", "metadata": { "exit": 1 } }
+  },
+  {
+    "hook": "tool.execute.before",
+    "input": { "tool": "bash", "sessionID": "ses_demo", "callID": "shell_1" },
+    "output": { "args": { "command": "cargo test" } }
+  },
+  {
+    "hook": "event",
+    "input": {
+      "event": {
+        "type": "message.part.updated",
+        "properties": {
+          "part": {
+            "id": "part_shell_1",
+            "sessionID": "ses_demo",
+            "messageID": "msg_assistant_1",
+            "type": "tool",
+            "callID": "shell_1",
+            "tool": "bash",
+            "state": {
+              "status": "error",
+              "input": { "command": "cargo test" },
+              "error": "test failed",
+              "metadata": { "exit": 1 },
+              "time": { "start": 1725000000002, "end": 1725000000003 }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "hook": "tool.execute.before",
+    "input": { "tool": "edit", "sessionID": "ses_demo", "callID": "edit_1" },
+    "output": { "args": { "filePath": "<workspace>/src/lib.rs", "newString": "fn main() {}" } }
+  },
+  {
+    "hook": "tool.execute.after",
+    "input": {
+      "tool": "edit",
+      "sessionID": "ses_demo",
+      "callID": "edit_1",
+      "args": { "filePath": "<workspace>/src/lib.rs", "newString": "fn main() {}" }
+    },
+    "output": { "title": "Edited", "output": "Done", "metadata": { "success": true } }
+  },
+  {
+    "hook": "tool.execute.before",
+    "input": { "tool": "read", "sessionID": "ses_demo", "callID": "read_1" },
+    "output": { "args": { "filePath": "<workspace>/src/lib.rs" } }
+  },
+  {
+    "hook": "tool.execute.after",
+    "input": {
+      "tool": "read",
+      "sessionID": "ses_demo",
+      "callID": "read_1",
+      "args": { "filePath": "<workspace>/src/lib.rs" }
+    },
+    "output": { "title": "Read", "output": "fn main() {}", "metadata": { "success": true } }
+  },
+  {
+    "hook": "event",
+    "input": {
+      "event": {
+        "type": "session.idle",
+        "properties": { "sessionID": "ses_demo" }
+      }
+    }
+  },
+  {
+    "hook": "event",
+    "input": {
+      "event": {
+        "type": "session.deleted",
+        "properties": {
+          "info": {
+            "id": "ses_demo",
+            "projectID": "project_demo",
+            "directory": "<workspace>",
+            "title": "Demo",
+            "version": "1.18.30",
+            "time": { "created": 1725000000000, "updated": 1725000000100 }
+          }
+        }
+      }
+    }
+  }
+]

@@ -61,9 +61,9 @@ adds evidence here in its enclosing Jujutsu change.
 | M7          | Deferred    | M8a         | JST-ADAPT-005                                                           | Complete read-only replica through applied position                                                                 | After first release                                     | -                                                                                                                                                                                                                          |
 | M7.1        | Deferred    | M8a.4       | JST-ADAPT-006                                                           | Asynchronous verified S3 backup remains independent from passive serving and promotion                              | Future backup release after local application           | -                                                                                                                                                                                                                          |
 | M8b         | Deferred    | M8a         | JST-COMPAT-004                                                          | Verified lossless import with source safety                                                                         | Separate migration release                              | -                                                                                                                                                                                                                          |
-| M9          | Partial     | M8a.4       | JST-COLLAB-001,JST-COLLAB-005                                           | Repository-native agent activity and exact review discussions in the LocalTrusted application                       | Add harness normalizers and ReviewStore                 | E-M9-001,E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007                                                                                                                                                             |
+| M9          | Partial     | M8a.4       | JST-COLLAB-001,JST-COLLAB-005                                           | Repository-native agent activity and exact review discussions in the LocalTrusted application                       | Add capture publication and ReviewStore                 | E-M9-001,E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008                                                                                                                                                    |
 | M9.1        | Done        | M8a.4       | JST-PUB-007,JST-PUB-008                                                 | Independent code/agent/review roots, code-state fencing and non-destructive collaboration enablement                | Implement AgentStore typed root objects                 | E-M9-001                                                                                                                                                                                                                   |
-| M9.2        | In progress | M9.1        | JST-COLLAB-001,JST-COLLAB-002,JST-COLLAB-006                            | AgentStore model, immutable snapshots/catalogs, sanitized evidence and Codex/Cursor/OpenCode normalizers            | Add version-bound harness normalizers                   | E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007                                                                                                                                                                      |
+| M9.2        | In progress | M9.1        | JST-COLLAB-001,JST-COLLAB-002,JST-COLLAB-006                            | AgentStore model, immutable snapshots/catalogs, sanitized evidence and Codex/Cursor/OpenCode normalizers            | Add owned capture publication path                      | E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008                                                                                                                                                             |
 | M9.3        | Planned     | M9.2        | JST-COLLAB-001,JST-COLLAB-003                                           | ReviewStore exact artifact anchors and stale-safe thread/comment workflow                                           | Add exact anchors and review command store              | -                                                                                                                                                                                                                          |
 | M9.4        | Planned     | M9.2,M9.3   | JST-COLLAB-004                                                          | LocalTrusted bounded CLI/HTTP APIs, pagination, receipts and live collaboration hints                               | Wire first-party service and generated contracts        | -                                                                                                                                                                                                                          |
 | M9.5        | Planned     | M9.4        | JST-COLLAB-005                                                          | Community-owned thread/agent widgets and Design Core exact diff selection integrated into the application           | Implement accessible virtualized application routes     | -                                                                                                                                                                                                                          |
@@ -12706,6 +12706,78 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Rust 1.98.1; AgentStore schema v1; Codex CLI 0.156.1; Cursor 3.22.7; OpenCode 1.18.30.",
     "formats": "AliasV1, RelationPageV1, CaptureSourceStateV1 and ProjectionCatalogV1 populate the four remaining typed catalogs. Root-pinned reads page radix catalogs by stable key, relations by page/offset and transcript chunks by source generation and sequence under explicit count and byte ceilings."
+  },
+  {
+    "id": "E-M9-008",
+    "tasks": ["M9", "M9.2"],
+    "date": "2026-09-28",
+    "kind": "implementation",
+    "files": [
+      "crates/jj-agent/src/lib.rs",
+      "crates/jj-agent/src/normalize.rs",
+      "crates/jj-agent/src/reducer.rs",
+      "crates/jj-agent/src/normalizers/mod.rs",
+      "crates/jj-agent/src/normalizers/codex.rs",
+      "crates/jj-agent/src/normalizers/cursor.rs",
+      "crates/jj-agent/src/normalizers/cursor_tool.rs",
+      "crates/jj-agent/src/normalizers/opencode.rs",
+      "crates/jj-agent/src/normalizers/opencode_tools.rs",
+      "crates/jj-agent/tests/fixtures/codex-0.156.1-hooks.json",
+      "crates/jj-agent/tests/fixtures/cursor-3.22.7-hooks.json",
+      "crates/jj-agent/tests/fixtures/opencode-1.18.30-plugin.json",
+      "crates/jj-agent/tests/normalizers.rs",
+      "spec/src/collaboration.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "crates/jj-agent/tests/normalizers.rs#pinned_harness_fixtures_normalize_to_common_activity",
+      "crates/jj-agent/tests/normalizers.rs#lifecycle_records_share_ids_and_reducer_never_regresses_terminal_state",
+      "crates/jj-agent/tests/normalizers.rs#unsupported_versions_degrade_without_parsing_native_records",
+      "crates/jj-agent/tests/normalizers.rs#resumed_sessions_and_mixed_sources_keep_stable_ids",
+      "crates/jj-agent/tests/normalizers.rs#cursor_file_observations_do_not_invent_tools_and_unknown_tools_stay_other",
+      "crates/jj-agent/tests/normalizers.rs#malformed_unknown_and_embedded_version_failures_are_safe_diagnostics",
+      "crates/jj-agent/tests/normalizers.rs#reducer_keeps_conflicting_terminal_states_explicit"
+    ],
+    "runs": [
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-agent --test normalizers --locked",
+        "result": "fail",
+        "failures": 3,
+        "note": "The test-first compile exposed the missing public normalizer profile, normalized record/batch, diagnostic, dispatch and reducer APIs."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-agent --test normalizers --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Seven focused tests pass for all three pinned fixtures, deterministic replay, stable resumed-session IDs, output-before-input reduction, terminal conflict reporting, conservative file/tool handling and safe version or malformed-record diagnostics."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo fmt --all -- --check",
+        "result": "fail",
+        "failures": 1,
+        "note": "The focused formatter reported mechanical Rust wrapping after the first implementation pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-agent --locked; DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo clippy -p jj-agent --all-targets --locked -- -D warnings; DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo fmt --all -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All AgentStore model and normalizer tests pass; the affected crate is warning-free and formatted. Every new production module is below 300 physical lines and the normalizer test is below 500."
+      },
+      {
+        "command": "pnpm check:boundaries; pnpm test:governance; pnpm spec:validate; pnpm spec:first; pnpm check:progress; pnpm spec:build; pnpm exec prettier --check spec/src/collaboration.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Package boundaries, governance, canonical requirement and progress checks pass; the canonical book builds and changed specification prose is formatted."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Owned integration discovery, durable spool and capture publication path",
+      "Released registry acceptance for @lapismd/agent-redaction",
+      "Pinned real-harness capability matrix and smoke tests in M9.6"
+    ],
+    "versions": "Rust 1.98.1; Codex CLI 0.156.1 installed contract; Cursor 3.22.7 synthetic contract fixture only; OpenCode plugin/SDK 1.18.30 with recorded npm integrity; @lapismd/agent-redaction 0.1.0 remains sibling-resolved.",
+    "formats": "NormalizerProfileV1 dispatches exact version pairs. NormalizationBatchV1 retains source-ordered lifecycle records, scoped stable IDs, explicit aliases and safe diagnostics. ReducedToolsV1 enriches stable tools without terminal regression or implicit conflict resolution."
   }
 ]
 ```
