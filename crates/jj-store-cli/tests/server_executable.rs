@@ -204,6 +204,7 @@ fn standalone_help_configuration_completions_and_build_info_are_consistent() {
         vec!["help"],
         vec!["help", "-k", "config"],
         vec!["config", "--help"],
+        vec!["init", "--help"],
         vec!["run", "--help"],
         vec!["operator", "--help"],
     ] {
@@ -248,6 +249,59 @@ fn standalone_help_configuration_completions_and_build_info_are_consistent() {
     assert_eq!(check["valid"], true);
     assert_eq!(check["storage_readiness"], "not checked");
     assert!(!f.root.path().join("state").exists());
+}
+
+#[test]
+fn local_init_and_configuration_migration_are_explicit_and_non_destructive() {
+    let root = tempfile::tempdir().unwrap();
+    let state = root.path().join("local");
+    let initialized: serde_json::Value = serde_json::from_str(&success(
+        command()
+            .args([
+                "init",
+                "--local",
+                "--state-dir",
+                state.to_str().unwrap(),
+                "--rustfs-executable",
+                env!("CARGO_BIN_EXE_jj-store"),
+                "--format=json",
+            ])
+            .output()
+            .unwrap(),
+    ))
+    .unwrap();
+    assert_eq!(
+        initialized["state_dir"],
+        state.canonicalize().unwrap().to_string_lossy().as_ref()
+    );
+    let text = fs::read_to_string(state.join("server.toml")).unwrap();
+    assert!(text.contains("mode = \"local-trusted\""));
+    assert!(text.contains("mode = \"embedded-rustfs\""));
+    assert!(!text.contains("secret_key"));
+
+    let source = root.path().join("format-1.toml");
+    let output = root.path().join("format-2.toml");
+    fs::write(&source, jj_store_server::config::FORMAT_1_EXAMPLE).unwrap();
+    success(
+        command()
+            .args([
+                "config",
+                "migrate",
+                "--config",
+                source.to_str().unwrap(),
+                "--output",
+                output.to_str().unwrap(),
+            ])
+            .output()
+            .unwrap(),
+    );
+    assert_eq!(
+        fs::read_to_string(&source).unwrap(),
+        jj_store_server::config::FORMAT_1_EXAMPLE
+    );
+    let migrated = fs::read_to_string(output).unwrap();
+    assert!(migrated.contains("format = 2"));
+    assert!(migrated.contains("mode = \"external-s3\""));
 }
 #[test]
 fn operator_commands_provision_list_and_revoke_without_exposing_credentials() {

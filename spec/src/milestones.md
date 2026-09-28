@@ -50,10 +50,10 @@ adds evidence here in its enclosing Jujutsu change.
 | M6          | Done        | M5          | JST-ADAPT-001,JST-ADAPT-002,JST-ADAPT-003,JST-ADAPT-004                 | Replay-equivalent searchable projection with freshness                                                              | Retain snapshot, search and deployment conformance      | E-M6-001,E-M6-002,E-M6-003,E-M6-004,E-M6-005,E-M6-006,E-M6-007,E-M6-008,E-M6-009,E-M6-010                                                                                                                                  |
 | M6.1        | Done        | M5          | JST-ADAPT-001,JST-ADAPT-002                                             | Ordered committed reader and durable replay-safe checkpoints                                                        | Implement Tantivy projection and search                 | E-M6-001                                                                                                                                                                                                                   |
 | M6.2        | Done        | M6.1        | JST-ADAPT-003,JST-ADAPT-004                                             | Tantivy crash/rebuild/generation and revocation tests                                                               | Retain snapshot, search and deployment conformance      | E-SCOPE-001,E-M6-002,E-M6-003,E-M6-004,E-M6-005,E-M6-006,E-M6-007,E-M6-008,E-M6-009,E-M6-010                                                                                                                               |
-| M8a         | In progress | M6,M4.3     | JST-COMPAT-003,JST-COMPAT-005,JST-SEC-005,JST-SEC-006                   | Pinned release, managed local authority, verified backup/restore, security, performance and cold UI evidence        | Complete A0-A5 while retaining deferred UI gate         | E-SCOPE-001,E-M8A-001                                                                                                                                                                                                      |
+| M8a         | In progress | M6,M4.3     | JST-COMPAT-003,JST-COMPAT-005,JST-SEC-005,JST-SEC-006                   | Pinned release, managed local authority, verified backup/restore, security, performance and cold UI evidence        | Implement A2 LocalTrusted access and browser protection | E-SCOPE-001,E-M8A-001,E-M8A-002                                                                                                                                                                                            |
 | M8a.1       | Planned     | M6          | JST-COMPAT-003,JST-SEC-005                                              | Local/shared examples, diagnostics, restore and request budgets                                                     | Run non-UI release acceptance                           | E-SCOPE-001                                                                                                                                                                                                                |
 | M8a.2       | Done        | M6          | JST-COMPAT-005,JST-OBJ-005                                              | A0: Rust 1.98.1, exact embedded RustFS pin, lifecycle starter, capability report and platform plan                  | Implement A1 format-2 local authority lifecycle         | E-M8A-001                                                                                                                                                                                                                  |
-| M8a.3       | Planned     | M8a.2       | JST-OBJ-005,JST-CLI-005                                                 | A1: format-2 configuration, local initialization, locked volume, sentinel and managed storage lifecycle             | Implement after A0                                      | -                                                                                                                                                                                                                          |
+| M8a.3       | Done        | M8a.2       | JST-OBJ-005,JST-CLI-005                                                 | A1: format-2 configuration, local initialization, locked volume, sentinel and managed storage lifecycle             | Implement A2 LocalTrusted access and browser protection | E-M8A-002                                                                                                                                                                                                                  |
 | M8a.4       | Planned     | M8a.3       | JST-SEC-006,JST-API-007,JST-UI-010,JST-CLI-005                          | A2: LocalTrusted policy, Unix RPC, loopback HTTP protections, bootstrap/catalog and local application               | Implement after A1                                      | -                                                                                                                                                                                                                          |
 | M8a.5       | Planned     | M8a.4       | JST-ADAPT-006,JST-COMPAT-005                                            | A3: wal-copy projection and pinned generic-S3 transfer qualification                                                | Implement after A2                                      | -                                                                                                                                                                                                                          |
 | M8a.6       | Planned     | M8a.5       | JST-ADAPT-006,JST-CLI-005,JST-COMPAT-005                                | A4: immutable verified inventories/certificates, fault qualification and offline restore                            | Implement after A3                                      | -                                                                                                                                                                                                                          |
@@ -11085,6 +11085,123 @@ and named tests are checked by the progress gate.
     "remaining": [],
     "versions": "Rust 1.98.1; rustfs crate 1.0.0 with default features disabled, crates.io checksum ecfecedc774cfa9f40fb0b475e2605cbff858282d18e52927a57ccb5105e5dd4 and published source revision d47f54bfb2f39f48bd1adda334bd27e151fe85b8; external RustFS image rustfs/rustfs@sha256:b7014e0ce2bc703c1316b3ef760e29dfae61fe4a50d1a66fa89638e0f8ea211f; generic-S3 target cgr.dev/chainguard/minio@sha256:6a1d0b45c8669726bba580ced0bfa4cb9fdeed1ed636dfabd81d1577beb6937b remains unqualified until A3.",
     "formats": "No native object, WAL, receipt, manifest, API, or configuration format change in A0. The embedded runtime has a separate Cargo lock because released RustFS and jj-cli have incompatible unconditional mimalloc link packages. Credentials pass only through the owned child environment; readiness and shutdown use private stdio. Absolute executable and volume paths remove working-directory ambiguity, and the helper's 8 MiB worker stack matches the upstream debug runtime policy."
+  },
+  {
+    "id": "E-M8A-002",
+    "tasks": ["M8a", "M8a.3"],
+    "date": "2026-09-28",
+    "kind": "managed-local-storage",
+    "files": [
+      "Cargo.lock",
+      "crates/jj-store-object/src/s3.rs",
+      "crates/jj-store-server/Cargo.toml",
+      "crates/jj-store-server/src/config.rs",
+      "crates/jj-store-server/src/config/types.rs",
+      "crates/jj-store-server/src/config/format-1-example.toml",
+      "crates/jj-store-server/src/config/format-2-example.toml",
+      "crates/jj-store-server/src/installation.rs",
+      "crates/jj-store-server/src/storage.rs",
+      "crates/jj-store-server/src/storage/embedded.rs",
+      "crates/jj-store-server/src/process.rs",
+      "crates/jj-store-server/src/lib.rs",
+      "crates/jj-store-server/tests/configuration.rs",
+      "crates/jj-store-server/tests/local_installation.rs",
+      "crates/jj-store-server/tests/embedded_storage.rs",
+      "crates/jj-store-cli/src/server_commands.rs",
+      "crates/jj-store-cli/tests/server_executable.rs",
+      "docs/cli/server-config.md",
+      "docs/cli/server-commands.md",
+      "package.json",
+      "spec/src/object-store.md",
+      "spec/src/cli.md",
+      "spec/src/security.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "crates/jj-store-server/tests/configuration.rs#format_one_remains_authenticated_external_s3_and_migrates_without_retargeting_authority",
+      "crates/jj-store-server/tests/configuration.rs#format_two_backup_targets_are_tagged_bounded_and_strict",
+      "crates/jj-store-server/tests/local_installation.rs#local_initialization_is_atomic_private_and_restart_stable",
+      "crates/jj-store-server/tests/embedded_storage.rs#managed_local_storage_locks_verifies_and_fails_closed",
+      "crates/jj-store-cli/tests/server_executable.rs#local_init_and_configuration_migration_are_explicit_and_non_destructive"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-server --test configuration --test local_installation --locked",
+        "result": "fail",
+        "failures": 8,
+        "note": "Test-first boundary: format-2 access/storage types, migration and the local installation API did not exist."
+      },
+      {
+        "command": "cargo test -p jj-store-server --test configuration --test local_installation --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Nine strict configuration cases and two atomic local-installation cases pass, covering format-1 preservation, separate migration, tagged backup targets, private installation state and checkout rejection."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test server_executable local_init_and_configuration_migration_are_explicit_and_non_destructive --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "The real executable creates a secret-free local format-2 installation and migrates a format-1 source without changing it."
+      },
+      {
+        "command": "pnpm test:managed-rustfs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Pinned embedded RustFS passes lifetime-lock, exact sentinel, conditional write, graceful/abrupt restart, prepared-server shutdown, missing volume/identity/bucket, private credential and occupied-port acceptance."
+      },
+      {
+        "command": "pnpm test:rustfs",
+        "result": "pass",
+        "failures": 0,
+        "note": "The isolated pinned external RustFS lane passes all eight create/CAS, stale-token, range/checksum, interrupted-upload, unknown-outcome, restart and conditional-delete probes."
+      },
+      {
+        "command": "cargo test -p jj-store-server -p jj-store-cli --locked",
+        "result": "fail",
+        "failures": 3,
+        "note": "The widened lane exposed three TLS fixtures whose exact commented template anchor was omitted from the new example; restoring that format-2 example guidance fixed the compatibility regression."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test server_executable --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 12 runnable cold executable cases pass after the compatibility repair; the declared external-container case remains ignored in this ordinary lane."
+      },
+      {
+        "command": "VITEST_MAX_WORKERS=1 pnpm test",
+        "result": "fail",
+        "failures": 1,
+        "note": "The first aggregate exposed the A0 low-level embedded test's obsolete implicit bucket-provisioning assumption after startup and provisioning became separate owned phases; the test now provisions explicitly before its transport write."
+      },
+      {
+        "command": "pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All specification, boundary, 186-module architecture, progress, formatting, embedded-helper Clippy, contract, browser/catalog diagnostic and locked-workspace Clippy checks pass."
+      },
+      {
+        "command": "VITEST_MAX_WORKERS=1 pnpm test",
+        "result": "pass",
+        "failures": 0,
+        "note": "The non-visual aggregate passes 23 governance tests, three harness tests, both real embedded RustFS acceptances, six contracts, 40 browser units, 34 catalog units, 68 Storybook interaction/accessibility cases, cold catalog acceptance and the complete locked Rust workspace."
+      },
+      {
+        "command": "pnpm build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Cold Storybook and production browser bundles, the separately locked embedded RustFS helper and the complete workspace build pass. Existing Design Core :global and bundle-size diagnostics remain non-failing warnings."
+      },
+      {
+        "command": "VITEST_MAX_WORKERS=1 pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 18 canonical lanes pass, including spec-first mapping, functional Storybook interaction/accessibility, cold catalog/browser acceptance and the locked Rust suite. Visual baselines were skipped by user direction."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "versions": "Rust 1.98.1; rustfs crate 1.0.0 with default features disabled and source revision d47f54bfb2f39f48bd1adda334bd27e151fe85b8; external RustFS image rustfs/rustfs@sha256:b7014e0ce2bc703c1316b3ef760e29dfae61fe4a50d1a66fa89638e0f8ea211f; format 1 remains authenticated external S3.",
+    "formats": "Adds strict TOML configuration format 2 with tagged access, authoritative storage and optional repeated wal-copy targets. Local initialization state uses bounded JSON version 1 identity, empty catalog, internal credentials and ownership records, plus an immutable S3 sentinel at _jj_store/v1/installation-sentinel. Native object, WAL, receipt, manifest and public API formats are unchanged. Backups remain disabled by default and A2 owns LocalTrusted authorization and browser behavior."
   }
 ]
 ```

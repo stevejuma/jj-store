@@ -1,6 +1,6 @@
 use jj_store_model::{PrincipalId, RepositoryId};
 use jj_store_server::{
-    config::{Config, EXAMPLE},
+    config::{Access, Config, EXAMPLE, FORMAT_1_EXAMPLE, Storage},
     policy::{PolicyFile, exclusive_lock, outside_checkout},
 };
 use jj_store_service::{
@@ -24,10 +24,10 @@ fn configuration_is_bounded_strict_and_resolves_paths_without_creating_state() {
     );
     assert!(!config.state_dir.exists());
     for text in [
-        EXAMPLE.replace("format = 1", "format = 2"),
+        EXAMPLE.replace("format = 2", "format = 3"),
         EXAMPLE.replace(
-            "format = 1",
-            "secret_key = 'must-not-echo-secret'\nformat = 1",
+            "format = 2",
+            "secret_key = 'must-not-echo-secret'\nformat = 2",
         ),
         "a".repeat(65537),
         EXAMPLE.replace("request_seconds = 30", "request_seconds = 0"),
@@ -38,6 +38,63 @@ fn configuration_is_bounded_strict_and_resolves_paths_without_creating_state() {
         let error = load(root.path(), &text).unwrap_err().to_string();
         assert!(!error.contains("must-not-echo-secret"));
     }
+}
+
+#[test]
+fn format_one_remains_authenticated_external_s3_and_migrates_without_retargeting_authority() {
+    let root = tempfile::tempdir().unwrap();
+    let legacy = load(root.path(), FORMAT_1_EXAMPLE).unwrap();
+    assert_eq!(legacy.format, 1);
+    assert!(matches!(legacy.access, Access::Authenticated));
+    let Storage::ExternalS3 {
+        endpoint, bucket, ..
+    } = &legacy.storage
+    else {
+        panic!("format one must remain external S3")
+    };
+    assert_eq!(endpoint, "http://127.0.0.1:9000/");
+    assert_eq!(bucket, "jj-store");
+    assert!(legacy.backup.is_empty());
+
+    let source = root.path().join("legacy.toml");
+    let destination = root.path().join("migrated.toml");
+    fs::write(&source, FORMAT_1_EXAMPLE).unwrap();
+    Config::migrate(&source, &destination).unwrap();
+    assert_eq!(fs::read_to_string(&source).unwrap(), FORMAT_1_EXAMPLE);
+    let migrated = Config::load(&destination).unwrap();
+    assert_eq!(migrated.format, 2);
+    assert!(matches!(migrated.access, Access::Authenticated));
+    assert!(matches!(migrated.storage, Storage::ExternalS3 { .. }));
+    assert!(Config::migrate(&source, &destination).is_err());
+}
+
+#[test]
+fn format_two_backup_targets_are_tagged_bounded_and_strict() {
+    let root = tempfile::tempdir().unwrap();
+    let backup = r#"
+[[backup]]
+driver = "wal-copy"
+name = "offsite"
+endpoint = "https://backup.example.test/"
+bucket = "jj-store-backup"
+region = "us-east-1"
+
+[backup.credentials]
+source = "environment"
+access_key = "JJ_STORE_BACKUP_ACCESS_KEY"
+secret_key = "JJ_STORE_BACKUP_SECRET_KEY"
+"#;
+    let config = load(root.path(), &format!("{EXAMPLE}{backup}")).unwrap();
+    assert_eq!(config.backup.len(), 1);
+    assert_eq!(config.backup[0].name(), "offsite");
+    assert!(load(root.path(), &format!("{EXAMPLE}{backup}{backup}")).is_err());
+    assert!(
+        load(
+            root.path(),
+            &format!("{EXAMPLE}{}", backup.replace("wal-copy", "replicate"))
+        )
+        .is_err()
+    );
 }
 #[test]
 fn insecure_shared_endpoints_credentials_and_checkout_control_paths_are_rejected() {

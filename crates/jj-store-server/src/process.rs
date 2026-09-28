@@ -2,6 +2,7 @@ use crate::{
     Error, Result,
     config::Config,
     policy::{self, PolicyFile},
+    storage::AuthoritativeStorage,
 };
 use jj_store_http::{Config as HttpConfig, HttpApi};
 use jj_store_model::RepositoryId;
@@ -25,7 +26,8 @@ pub struct PreparedServer {
     concurrent: usize,
     timeout: Duration,
     search: crate::search::PreparedSearch,
-    _lock: File,
+    storage: AuthoritativeStorage,
+    _state_lock: Option<File>,
 }
 impl PreparedServer {
     pub async fn prepare(config: &Config, require_loopback: bool) -> Result<Self> {
@@ -44,7 +46,15 @@ impl PreparedServer {
         } else {
             None
         };
-        let host = config.host()?;
+        let state = policy::outside_checkout(&config.state_dir)?;
+        let state_lock = if matches!(config.storage, crate::config::Storage::ExternalS3 { .. }) {
+            fs::create_dir_all(&state)?;
+            Some(policy::exclusive_lock(&state.join("server.lock"))?)
+        } else {
+            None
+        };
+        let storage = AuthoritativeStorage::start(config).await?;
+        let host = config.host(storage.store())?;
         let rpc = NativeRpc::hosted(
             host.clone(),
             Limits {
@@ -55,9 +65,6 @@ impl PreparedServer {
             },
         )
         .map_err(|_| Error::Config("RPC limits"))?;
-        let state = policy::outside_checkout(&config.state_dir)?;
-        fs::create_dir_all(&state)?;
-        let lock = policy::exclusive_lock(&state.join("server.lock"))?;
         let timeout = Duration::from_secs(config.limits.request_seconds);
         let (search, indexes) = crate::search::PreparedSearch::new(
             &host,
@@ -114,7 +121,8 @@ impl PreparedServer {
             concurrent: config.limits.concurrent_requests,
             timeout,
             search,
-            _lock: lock,
+            storage,
+            _state_lock: state_lock,
         })
     }
     pub fn address(&self) -> Result<SocketAddr> {
@@ -154,7 +162,8 @@ impl PreparedServer {
             }
         };
         let stopped = search.shutdown().await;
-        result.and(stopped)
+        let storage = self.storage.shutdown().await;
+        result.and(stopped).and(storage)
     }
 }
 /// Install handlers synchronously, before the caller announces readiness.
@@ -190,32 +199,38 @@ pub async fn doctor(
     token: BearerToken,
 ) -> Result<Diagnosis> {
     PolicyFile::new(config.operator_policy.clone())?.read()?;
-    let session = config
-        .host()?
-        .endpoint(repository)
-        .map_err(|_| Error::Service("native endpoint"))?
-        .bind(token.clone())
-        .map_err(|_| Error::Service("native authorization"))?;
-    let heads = tokio::time::timeout(
-        Duration::from_secs(config.limits.request_seconds),
-        session.heads(),
-    )
-    .await
-    .map_err(|_| Error::Service("storage readiness deadline"))?
-    .map_err(|_| Error::Service("repository access or authoritative storage unavailable"))?;
-    let search = crate::search::diagnose(config, repository, &token).await;
-    Ok(Diagnosis {
-        version: 1,
-        repository,
-        storage_ready: true,
-        heads,
-        adapters: if search.configured {
-            "search configured"
-        } else {
-            "not configured"
-        },
-        search,
-    })
+    let storage = AuthoritativeStorage::start(config).await?;
+    let result = async {
+        let session = config
+            .host(storage.store())?
+            .endpoint(repository)
+            .map_err(|_| Error::Service("native endpoint"))?
+            .bind(token.clone())
+            .map_err(|_| Error::Service("native authorization"))?;
+        let heads = tokio::time::timeout(
+            Duration::from_secs(config.limits.request_seconds),
+            session.heads(),
+        )
+        .await
+        .map_err(|_| Error::Service("storage readiness deadline"))?
+        .map_err(|_| Error::Service("repository access or authoritative storage unavailable"))?;
+        let search = crate::search::diagnose(config, repository, &token).await;
+        Ok(Diagnosis {
+            version: 1,
+            repository,
+            storage_ready: true,
+            heads,
+            adapters: if search.configured {
+                "search configured"
+            } else {
+                "not configured"
+            },
+            search,
+        })
+    }
+    .await;
+    let stopped = storage.shutdown().await;
+    stopped.and(result)
 }
 
 // Tonic's default fallback uses HTTP 200 for gRPC errors. Ordinary HTTP

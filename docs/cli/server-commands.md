@@ -1,7 +1,9 @@
 # Server commands
 
+- `init --local --state-dir PATH`: create a private managed local installation.
 - `run`: serve configured storage in the foreground.
-- `config example` and `config check`: print or validate server configuration.
+- `config example`, `config check`, and `config migrate`: print, validate, or
+  emit a separate reviewed format-2 configuration.
 - `doctor`: check authenticated access to a known repository.
 - `operator init`, `grant`, `list`, `revoke`: manage the local creation policy.
 - `version`: display build information.

@@ -1,6 +1,7 @@
 //! Foreground server composition, with no command parser or upstream JJ imports.
 #![forbid(unsafe_code)]
 pub mod config;
+pub mod installation;
 mod listener;
 pub mod policy;
 pub mod process;

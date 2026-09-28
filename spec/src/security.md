@@ -86,13 +86,16 @@ category. Credential-bearing creation/grant messages redact Debug and erase
 decoded plaintext after parsing. Request limits and permits apply to
 administration as well as object transfers.
 
-Server configuration rejects unknown keys, embedded secrets, invalid resource
-budgets and insecure shared listeners. RustFS secrets come only from the server
-environment. Operator policy and process state paths must be outside Git/JJ
-checkouts. Operator policy files contain only verifiers, use bounded canonical
-encoding, and reject symlinks. Local policy updates lock a stable sibling lock,
-atomically replace the file and sync it; each creation request reloads policy.
-The foreground process holds an exclusive local state-directory lock. Shared
+Server configuration rejects unknown keys, embedded secret values, invalid
+resource budgets and insecure shared listeners. External S3 credentials use
+explicit environment or OS-credential references. Managed RustFS reads its
+restricted internal credential file from private installation state and never
+serializes those bytes into configuration or diagnostics. Operator policy,
+credential, volume and process-state paths must be outside Git/JJ checkouts.
+Operator policy files contain only verifiers, use bounded canonical encoding,
+and reject symlinks. Local policy updates lock a stable sibling lock, atomically
+replace the file and sync it; each creation request reloads policy. The storage
+runtime holds the exclusive installation lock through child shutdown. Shared
 storage still requires a single configured serving instance; this lock does not
 claim distributed fencing or automatic failover.
 

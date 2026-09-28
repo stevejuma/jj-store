@@ -31,6 +31,15 @@ pub struct ServerCli {
 }
 #[derive(Debug, Subcommand)]
 pub enum ServerCommand {
+    /// Create a new private local installation with managed RustFS storage
+    Init {
+        #[arg(long, required = true)]
+        local: bool,
+        #[arg(long)]
+        state_dir: PathBuf,
+        #[arg(long)]
+        rustfs_executable: Option<PathBuf>,
+    },
     /// List, grant, revoke and recover repository token requests
     #[command(long_about=include_str!("../../../docs/cli/tokens.md"))]
     Token(crate::token_commands::TokenArgs),
@@ -82,6 +91,13 @@ pub enum ConfigCommand {
     Check {
         #[arg(long)]
         config: PathBuf,
+    },
+    /// Write a separate reviewed format-2 configuration
+    Migrate {
+        #[arg(long)]
+        config: PathBuf,
+        #[arg(long)]
+        output: PathBuf,
     },
 }
 #[derive(Debug, Subcommand)]
@@ -266,6 +282,30 @@ async fn run(ui: &Ui, cli: ServerCli) -> AuthorityResult<()> {
         return help(ui, no_pager, &[]);
     };
     match command {
+        ServerCommand::Init {
+            local,
+            state_dir,
+            rustfs_executable,
+        } => {
+            if !local {
+                return Err("only explicit --local initialization is supported".into());
+            }
+            let runtime = embedded_runtime(rustfs_executable)?;
+            let initialized =
+                jj_store_server::installation::initialize_local(&state_dir, &runtime)?;
+            let text = format!(
+                "Local installation created at {}\nConfiguration: {}\nBackups: disabled\n",
+                initialized.state_dir.display(),
+                initialized.config.display()
+            );
+            emit(
+                ui,
+                format,
+                no_pager,
+                serde_json::to_value(initialized)?,
+                &text,
+            )
+        }
         ServerCommand::Run {
             config,
             loopback_only,
@@ -293,6 +333,21 @@ async fn run(ui: &Ui, cli: ServerCli) -> AuthorityResult<()> {
                 no_pager,
                 json!({"version":1,"valid":true,"configuration":config,"storage_readiness":"not checked"}),
                 "Configuration is valid; storage readiness has not been checked.\n",
+            )
+        }
+        ServerCommand::Config {
+            command: ConfigCommand::Migrate { config, output },
+        } => {
+            Config::migrate(&config, &output)?;
+            emit(
+                ui,
+                format,
+                no_pager,
+                json!({"version":1,"source":config,"output":output,"format":2}),
+                &format!(
+                    "Format-2 configuration written to {}. The source was not modified.\n",
+                    output.display()
+                ),
             )
         }
         ServerCommand::Doctor { config, repo_id } => {
@@ -413,6 +468,30 @@ async fn run(ui: &Ui, cli: ServerCli) -> AuthorityResult<()> {
             }
         }
     }
+}
+
+fn embedded_runtime(explicit: Option<PathBuf>) -> AuthorityResult<PathBuf> {
+    let executable = std::env::current_exe()?;
+    let mut candidates = Vec::new();
+    if let Some(path) = explicit {
+        candidates.push(path);
+    }
+    if let Some(path) = std::env::var_os("JJ_STORE_RUSTFS_RUNTIME") {
+        candidates.push(path.into());
+    }
+    if let Some(parent) = executable.parent() {
+        candidates.push(parent.join("jj-store-rustfs"));
+        if let Some(root) = parent.parent().and_then(std::path::Path::parent) {
+            candidates.push(root.join("runtime/embedded-rustfs/target/debug/jj-store-rustfs"));
+        }
+    }
+    candidates
+        .into_iter()
+        .find_map(|path| path.canonicalize().ok().filter(|path| path.is_file()))
+        .ok_or_else(|| {
+            "embedded RustFS runtime not found; install the paired executable or pass --rustfs-executable"
+                .into()
+        })
 }
 
 fn page(ui: &Ui, text: &str, no_pager: bool) -> AuthorityResult<()> {

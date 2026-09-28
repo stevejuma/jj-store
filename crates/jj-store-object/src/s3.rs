@@ -169,6 +169,27 @@ impl S3Store {
             status => Err(Error::Rejected(status.as_u16())),
         }
     }
+
+    /// Verify that a previously provisioned bucket remains present.
+    pub async fn bucket_exists(&self) -> Result<bool> {
+        let mut url = self.endpoint.clone();
+        url.set_path(&format!("/{}", self.config.bucket));
+        let response = self
+            .signed_request(
+                Method::HEAD,
+                url,
+                Sha256::digest([]).into(),
+                BTreeMap::new(),
+            )
+            .send()
+            .await
+            .map_err(|_| Error::Transport)?;
+        match response.status() {
+            StatusCode::OK | StatusCode::NO_CONTENT => Ok(true),
+            StatusCode::NOT_FOUND => Ok(false),
+            status => Err(Error::Rejected(status.as_u16())),
+        }
+    }
 }
 fn version(response: &Response) -> Result<VersionToken> {
     VersionToken::new(

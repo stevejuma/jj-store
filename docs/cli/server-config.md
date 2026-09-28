@@ -1,12 +1,25 @@
 # Server configuration
 
-Use `config example` for the TOML template and `config check --config PATH` to
-validate it. Paths are relative to the configuration file. Keep state and
-operator policy outside Git/JJ checkouts. Unknown keys and invalid budgets fail.
+Use `config example` for the strict format-2 TOML template and
+`config check --config PATH` to validate it.
+`config migrate --config OLD --output NEW` converts format 1 into a separate
+reviewable format-2 file and never changes the source or turns an external
+authority into embedded storage. Paths are relative to the configuration file.
+Keep state and operator policy outside Git/JJ checkouts. Unknown keys and
+invalid budgets fail.
 
-`JJ_STORE_S3_ACCESS_KEY` and `JJ_STORE_S3_SECRET_KEY` supply server-only storage
-credentials. `JJ_STORE_S3_SESSION_TOKEN` supports temporary credentials. These
-values are never accepted in TOML. The bucket must already exist.
+Format 2 tags `[access]` and `[storage]`, and accepts repeated `[[backup]]`
+targets. Format 1 remains authenticated external S3. Run
+`init --local --state-dir PATH` for a new LocalTrusted installation with managed
+RustFS, private installation identity and credentials, an empty local repository
+catalog, an explicit persistent volume, and backups disabled.
+
+The format-1 `JJ_STORE_S3_ACCESS_KEY` and `JJ_STORE_S3_SECRET_KEY` references
+remain unchanged; `JJ_STORE_S3_SESSION_TOKEN` supports temporary credentials.
+Format 2 names its environment or OS-credential references explicitly. Secret
+values are never accepted in TOML. External buckets must already exist. A new
+managed installation creates its bucket once, publishes and verifies the
+installation sentinel, then requires both on every restart.
 
 Shared listeners require TLS certificate and private-key paths. Plain HTTP is
 allowed only for an explicitly enabled literal loopback listener and endpoint.

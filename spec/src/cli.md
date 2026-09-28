@@ -74,13 +74,20 @@ acceptance below.
 listener only after validating configuration, TLS and the operator policy.
 `jj store serve-local --server-config PATH` uses the same composition and
 requires a literal loopback bind address. Both stop on interrupt/termination and
-bound graceful shutdown. Neither installs a daemon nor launches RustFS. On Unix,
-both shutdown handlers are installed before the listening event is flushed.
-Immediate interrupt or termination after that event must enter graceful
-shutdown, even before the listener or search worker future is first polled.
+bound graceful shutdown. Format-1 and external format-2 storage use the existing
+S3 authority; embedded format-2 storage launches and owns the configured pinned
+RustFS helper without installing a daemon. On Unix, both shutdown handlers are
+installed before the listening event is flushed. Immediate interrupt or
+termination after that event must enter graceful shutdown, even before the
+listener or search worker future is first polled.
 
-`jj-store config example` prints the configuration template, while
-`config check` validates it without contacting storage.
+`jj-store config example` prints the format-2 configuration template, while
+`config check` validates it without contacting storage. `config migrate` reads
+format 1 as authenticated external S3 and writes a new format-2 file without
+changing the source or retargeting authority.
+`jj-store init --local --state-dir` atomically creates a new private
+LocalTrusted installation, empty discovery catalog and managed RustFS volume
+with backup disabled; it refuses existing state and paths inside a checkout.
 `doctor --config PATH --repo-id ID` checks the configured repository through the
 in-process authenticated service. It does not publish operations.
 `operator init` persists a verifier for an environment-injected or OS-held

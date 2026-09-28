@@ -113,6 +113,14 @@ files, RustFS construction, process exclusivity and the foreground listener.
 Both executable entry points live in the CLI crate to share presentation and OS
 credentials; server composition never depends on command presentation.
 
+Configuration format 2 keeps access policy, authoritative storage and backup
+projection as independent tagged settings. The storage runtime always returns
+the existing owned `S3Store` contract: external mode resolves explicit
+credential references, while embedded mode additionally owns installation state,
+the RustFS child, readiness, sentinel verification, shutdown and the lifetime
+filesystem lock. Format 1 normalizes only to authenticated external S3 and can
+be migrated only into a separate reviewable file.
+
 The CLI owns resumable physical attachment journals and atomic metadata staging.
 They retain no credentials and are not authority; publication acknowledgements
 continue to come from the native service's manifest-selected receipts.

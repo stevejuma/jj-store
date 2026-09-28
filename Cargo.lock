@@ -3532,6 +3532,8 @@ dependencies = [
  "async-trait",
  "axum",
  "futures 0.3.34",
+ "getrandom 0.4.3",
+ "hex",
  "jj-store-adapters",
  "jj-store-http",
  "jj-store-jj",
