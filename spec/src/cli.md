@@ -318,3 +318,11 @@ references, bidirectional signed cursors, recursive paths, operation-change
 grouping and changed-path summaries. It proves authorization, exact snapshot
 pinning, restart reset and zero publication without adding or changing a CLI
 command.
+
+The browser mutation acceptance reuses the native lifecycle fixture and
+development `jj` binary for create, describe, bookmark, abandon, reconcile and
+resolve semantics; it does not add a parallel command implementation. The
+`pnpm dev:restart` task cold-builds the UI and binaries, replaces only its
+labelled disposable services, seeds a native repository and prints the URL,
+repository ID and one-time in-memory browser token. `pnpm dev:stop` removes only
+that owned stack.

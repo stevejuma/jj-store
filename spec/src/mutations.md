@@ -352,3 +352,20 @@ paths, operation-change groups and changed-path summaries. It accepts no command
 intent, stages no native object or upload, creates no receipt and cannot invoke
 publication. Mutation authorization and guarded apply semantics remain
 unchanged.
+
+## Browser mutation orchestration
+
+The authenticated browser constructs only the existing typed V1 command union.
+Preview, apply and durable status use one stable request ID and exact captured
+epoch, position and operation heads. A preview is provisional, an unknown
+outcome retains the request for retry or status lookup, and only a committed
+receipt can refresh the selected snapshot. Disconnect, token replacement and
+revocation cancel outstanding work and prevent late responses from restoring
+protected state.
+
+Semantic protection is distinct from authentication failure at the HTTP
+boundary. A protected bookmark, commit or root transition returns the typed 409
+`protected_transition` code and keeps the authenticated session active. Invalid
+or revoked credentials remain 401/403 `access_denied`; the browser disconnects
+and clears protected cache state for those responses. Both cases publish
+nothing.

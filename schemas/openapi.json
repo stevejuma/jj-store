@@ -6430,7 +6430,7 @@
             }
           },
           "409": {
-            "description": "stale_snapshot, stale_bookmark, stale_conflict, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt.",
+            "description": "stale_snapshot, stale_bookmark, stale_conflict, protected_transition, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt.",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/ErrorBody" }
@@ -6844,7 +6844,7 @@
             }
           },
           "409": {
-            "description": "stale_snapshot, stale_bookmark, stale_conflict, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt.",
+            "description": "stale_snapshot, stale_bookmark, stale_conflict, protected_transition, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt.",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/ErrorBody" }
@@ -7501,7 +7501,7 @@
             }
           },
           "409": {
-            "description": "stale_snapshot, stale_bookmark, stale_conflict, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt.",
+            "description": "stale_snapshot, stale_bookmark, stale_conflict, protected_transition, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt.",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/ErrorBody" }
@@ -7589,7 +7589,7 @@
           "405": { "description": "Unsupported method." },
           "408": { "description": "Native query canceled." },
           "409": {
-            "description": "stale_snapshot, stale_bookmark, stale_conflict, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt."
+            "description": "stale_snapshot, stale_bookmark, stale_conflict, protected_transition, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt."
           },
           "410": {
             "description": "Index task expired or was lost on server restart."

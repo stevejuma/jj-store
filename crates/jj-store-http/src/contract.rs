@@ -156,7 +156,7 @@ impl Document {
                 "Requires current repository write permission, including status. Strict typed commands only. Preview does not publish. Apply may return outcome_unknown; status not_known never proves rejection. Retain the original request ID across every retry or transport failure. Request bytes are capped at 524288. Stale snapshots, bookmark expectations, multiple heads and changed intent return distinct 409 codes; protected transitions return 403. Browser mutation work remains deferred."
             );
             operation["responses"]["409"]["description"] = json!(
-                "stale_snapshot, stale_bookmark, stale_conflict, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt."
+                "stale_snapshot, stale_bookmark, stale_conflict, protected_transition, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt."
             );
         }
         if path.ends_with("/search") || path.ends_with("/search/status") {

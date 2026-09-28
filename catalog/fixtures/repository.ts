@@ -118,15 +118,20 @@ export const bookmarks: Bookmark[] = [
     targets: [],
   },
 ];
-export function fixtureGraph(bookmark?: string): RepositoryLogGraph {
-  const selected = bookmarks.find((b) => b.name === bookmark);
+export function fixtureGraph(
+  bookmark?: string,
+  sourceBookmarks: readonly Bookmark[] = bookmarks,
+  sourceRevisions: readonly RepositoryLogRevision[] = revisions,
+  sourceTargets: readonly string[] = [IDS.current],
+): RepositoryLogGraph {
+  const selected = sourceBookmarks.find((b) => b.name === bookmark);
   const visible = ancestorsOf(
-    collapseRepositoryLogRevisions(revisions),
-    selected?.targets ?? [IDS.current],
+    collapseRepositoryLogRevisions(sourceRevisions),
+    selected?.targets ?? sourceTargets,
   );
   return {
     revisions: orderNewestFirst(visible),
-    devices: bookmarks.flatMap((b) =>
+    devices: sourceBookmarks.flatMap((b) =>
       b.targets
         .filter((id) => visible.some((r) => r.eventId === id))
         .map((id) => ({

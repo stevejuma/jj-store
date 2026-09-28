@@ -33,8 +33,10 @@ The user subsequently reopened production browsing integration. M4.9–M4.14
 promote the reviewed Storybook application into the served browser, add missing
 bounded read contracts, typed hash restoration, explicit SSE refresh,
 virtualized collections and persistent layout. M4.15 adds the authenticated
-repository command search against the selected Tantivy snapshot. Mutation and
-conflict-editing controls remain deferred within M4.3.
+repository command search against the selected Tantivy snapshot. M4.16 adds
+preview/apply/status controls for core repository commands using the durable
+native mutation contract. Conflict-editing controls remain deferred within M4.3
+under M4.17.
 
 M4.10 adds separate signed browsing windows for bookmark/change lookup,
 recursive paths with bounded last-change attribution, operation changes grouped

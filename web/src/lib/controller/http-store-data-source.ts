@@ -3,6 +3,7 @@ import {
   ApiError,
   Client,
   fullId,
+  pretty,
   type Envelope,
   type Graph,
   type Head,
@@ -15,6 +16,7 @@ import type {
   SearchQuery,
   StoreDataSource,
 } from "./native-data-source.js";
+import type { StoreMutationRequest } from "./store-mutation-types.js";
 import { storeQueryKeys, type StoreQueryScope } from "./store-query-keys.js";
 
 export class HttpStoreDataSource implements StoreDataSource {
@@ -211,6 +213,25 @@ export class HttpStoreDataSource implements StoreDataSource {
       (signal) => this.#client.request("search", query, { signal }),
     );
   }
+  previewMutation(request: StoreMutationRequest) {
+    return this.#client.request<Model<"Preview">>(
+      "mutations/preview",
+      {},
+      mutationInit(request),
+    );
+  }
+  applyMutation(request: StoreMutationRequest) {
+    return this.#client.request<Model<"Outcome">>(
+      "mutations",
+      {},
+      mutationInit(request),
+    );
+  }
+  mutationStatus(requestId: string) {
+    return this.#client.request<Model<"Status">>(
+      `mutations/${fullId(requestId, 32)}`,
+    );
+  }
   prepareIndex(operation: string) {
     return this.#client.request<Task>(
       "index/tasks",
@@ -238,6 +259,14 @@ export class HttpStoreDataSource implements StoreDataSource {
     void this.queryClient.cancelQueries();
     this.queryClient.clear();
   }
+}
+
+function mutationInit(request: StoreMutationRequest): RequestInit {
+  return {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: pretty(request),
+  };
 }
 
 export function storeErrorMessage(cause: unknown): string {

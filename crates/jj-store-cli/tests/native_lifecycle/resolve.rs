@@ -509,7 +509,7 @@ async fn typed_resolve_rebases_descendants_updates_references_and_preserves_evol
         forbidden.request_id=m::RequestId::new([162;16]);
         for preview in [true,false] {
             let error = if preview {service().preview(protected.clone(),&forbidden).await.unwrap_err()} else {service().apply(protected.clone(),&forbidden).await.unwrap_err()};
-            assert_eq!(error,jj_store_service::mutations::Error::Denied);
+            assert_eq!(error,jj_store_service::mutations::Error::Protected);
         }
         assert_eq!(h.f.session.snapshot().await.unwrap().manifest().snapshot(),receipt.accepted);
         let mut changed = request.clone();

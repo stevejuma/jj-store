@@ -180,6 +180,7 @@ impl From<jj_store_service::mutations::Error> for Error {
         use jj_store_service::{commands::Error as C, mutations::Error as E};
         match error {
             E::Denied => Self::denied(),
+            E::Protected => Self::new(StatusCode::CONFLICT, "protected_transition"),
             E::Stale => Self::new(StatusCode::CONFLICT, "stale_snapshot"),
             E::IntentConflict => Self::new(StatusCode::CONFLICT, "intent_conflict"),
             E::Limit => Self::limit(),
@@ -194,7 +195,7 @@ impl From<jj_store_service::mutations::Error> for Error {
             E::Preparation(C::InvalidUpload) => Self::new(StatusCode::CONFLICT, "invalid_upload"),
             E::Preparation(C::StaleConflict) => Self::new(StatusCode::CONFLICT, "stale_conflict"),
             E::Preparation(C::StaleBookmark) => Self::new(StatusCode::CONFLICT, "stale_bookmark"),
-            E::Preparation(C::Root) => Self::denied(),
+            E::Preparation(C::Root) => Self::new(StatusCode::CONFLICT, "protected_transition"),
             E::Preparation(C::Hidden) => Self::new(StatusCode::NOT_FOUND, "not_found"),
             E::Preparation(C::Invalid) => Self::invalid(),
             E::Preparation(C::NoChanges) => Self::new(StatusCode::CONFLICT, "no_changes"),

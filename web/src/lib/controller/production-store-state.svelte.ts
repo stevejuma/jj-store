@@ -1,5 +1,5 @@
 import type { FileListingViewMode } from "@lapismd/design-core/diff";
-import type { Snapshot } from "../api/client.js";
+import type { Head, Snapshot } from "../api/client.js";
 import type { RepositoryLogGraph } from "../projects/repository-log.js";
 import type { Bookmark, RevisionDetail } from "../projects/presentation.js";
 import type {
@@ -12,6 +12,10 @@ import type {
 import type { Comparison } from "./production-store-loaders.js";
 import type { InspectionContinuation } from "./production-inspection-pages.js";
 import type { StoredPathPage } from "./production-file-pages.js";
+import {
+  initialStoreMutationState,
+  type MutableStoreMutationState,
+} from "./store-mutation-types.js";
 
 type MutableStatus = {
   -readonly [K in keyof StoreControllerStatus]: StoreControllerStatus[K];
@@ -52,6 +56,8 @@ export interface ProductionStoreState {
   searchError: string;
   refsPageSnapshot: Snapshot | null;
   graphPageSnapshot: Snapshot | null;
+  head: Head | null;
+  mutation: MutableStoreMutationState;
 }
 
 export const emptyGraph = (): RepositoryLogGraph => ({
@@ -109,6 +115,8 @@ export function createProductionStoreState(): ProductionStoreState {
     searchError: "",
     refsPageSnapshot: null,
     graphPageSnapshot: null,
+    head: null,
+    mutation: initialStoreMutationState(),
   });
   return state;
 }

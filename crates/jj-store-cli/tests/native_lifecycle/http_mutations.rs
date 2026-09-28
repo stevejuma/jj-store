@@ -330,12 +330,9 @@ async fn http_mutations_enforce_protection_revocation_and_principal_scoped_statu
     rewrite["command"] = json!({"type":"describe", "commit":commit, "description":"forbidden"});
     let before = f.session.snapshot().await.unwrap().manifest().clone();
     for path in ["mutations", "mutations/preview"] {
-        assert_eq!(
-            send(&protected, request(&f.token, path, Some(&rewrite)))
-                .await
-                .0,
-            StatusCode::FORBIDDEN
-        );
+        let (status, rejection) = send(&protected, request(&f.token, path, Some(&rewrite))).await;
+        assert_eq!(status, StatusCode::CONFLICT);
+        assert_eq!(rejection["code"], "protected_transition");
     }
     assert_eq!(*f.session.snapshot().await.unwrap().manifest(), before);
     let writer = BearerToken::generate().unwrap();

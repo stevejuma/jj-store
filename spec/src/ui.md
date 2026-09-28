@@ -1,23 +1,24 @@
 # Storybook presentation catalog
 
 The reviewed catalog application is the presentation authority for the served
-browser. Production integration is reopened for the browsing portion of M4.3;
-typed mutation and conflict-editing controls remain deferred. Reusable
-components receive presentation data and callbacks, while HTTP and in-memory
-controllers supply the same asynchronous contract. Deterministic fixtures remain
-catalog-only.
+browser. Production browsing, typed mutation and conflict-editing integration
+are open under M4.3. Reusable components receive presentation data and
+callbacks, while HTTP and in-memory controllers supply the same asynchronous
+contract. Deterministic fixtures remain catalog-only.
 
 ## Requirements
 
-| ID         | Requirement                                                                                                                                                                                                                                                       |
-| ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| JST-UI-001 | The catalog MUST build and run independently using registry dependencies, deterministic fixtures, isolated story state, runtime diagnostics and blocking interaction/accessibility checks.                                                                        |
-| JST-UI-002 | The shell MUST directly adapt Community shell/navigation composition and preserve desktop/mobile, sidebar, header, focus and navigation mechanics using public Design Core exports.                                                                               |
-| JST-UI-003 | Branches, JJ Log and Op Log MUST reuse Community graph/row/file/diff compositions, preserve native identities and conflicting targets, and support fixture-only drill-down without transport or mutation capabilities.                                            |
-| JST-UI-004 | The complete catalog application MUST expose a typed state/actions controller with independent in-memory navigation, repository snapshots, file contents and profile actions, using copied Community file-browser and footer compositions without backend access. |
-| JST-UI-005 | The served browser MUST use the reviewed shell and repository components through an authenticated asynchronous controller with cursor paging, representative page and detail loading skeletons, explicit snapshot refresh and typed hash restoration.             |
-| JST-UI-006 | Large repository collections MUST use bounded virtual rows, all resizable shell/canvas regions MUST persist versioned layout state, and catalog stories MUST exercise the production components.                                                                  |
-| JST-UI-007 | Repository search MUST use the released Design Core Command View in a Community-adapted overlay, query the selected authenticated operation snapshot, represent readiness and paging states, and navigate results with stable full identities.                    |
+| ID         | Requirement                                                                                                                                                                                                                                                                            |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| JST-UI-001 | The catalog MUST build and run independently using registry dependencies, deterministic fixtures, isolated story state, runtime diagnostics and blocking interaction/accessibility checks.                                                                                             |
+| JST-UI-002 | The shell MUST directly adapt Community shell/navigation composition and preserve desktop/mobile, sidebar, header, focus and navigation mechanics using public Design Core exports.                                                                                                    |
+| JST-UI-003 | Branches, JJ Log and Op Log MUST reuse Community graph/row/file/diff compositions, preserve native identities and conflicting targets, and support fixture-only drill-down without transport or mutation capabilities.                                                                 |
+| JST-UI-004 | The complete catalog application MUST expose a typed state/actions controller with independent in-memory navigation, repository snapshots, file contents and profile actions, using copied Community file-browser and footer compositions without backend access.                      |
+| JST-UI-005 | The served browser MUST use the reviewed shell and repository components through an authenticated asynchronous controller with cursor paging, representative page and detail loading skeletons, explicit snapshot refresh and typed hash restoration.                                  |
+| JST-UI-006 | Large repository collections MUST use bounded virtual rows, all resizable shell/canvas regions MUST persist versioned layout state, and catalog stories MUST exercise the production components.                                                                                       |
+| JST-UI-007 | Repository search MUST use the released Design Core Command View in a Community-adapted overlay, query the selected authenticated operation snapshot, represent readiness and paging states, and navigate results with stable full identities.                                         |
+| JST-UI-008 | Authenticated repository commands MUST use Community-adapted action menus and Design Core form/confirmation dialogs, preview the exact typed request before apply, preserve its request ID through unknown outcomes, and advance the displayed snapshot only from a committed receipt. |
+| JST-UI-009 | Conflict editing MUST present the native path, terms, fingerprints and supported resolution actions without flattening conflicts, stage bounded uploads separately, preview the atomic selection, and retain unsupported or stale states explicitly.                                   |
 
 The catalog uses Storybook 10.5.7, Svelte CSF 5.1.2, Vitest browser 4.1.11 and
 Design Core ^0.2.0 with the existing Svelte 5/Vite 8 toolchain. Direct
@@ -213,3 +214,21 @@ degraded and truncated states. Selecting an operation, commit or file pushes an
 Op Log, JJ Log or Files route containing full stable native identities. Query
 text and expiring search cursors stay out of permanent hashes. Storybook uses an
 in-memory source while the cold native lane exercises the real Tantivy worker.
+
+M4.16 adapts Community's action-menu, `DialogFrame` and `ConfirmButton`
+contracts for native repository writes. New/describe, bookmark
+create/move/delete, operation reconciliation and abandon construct strict V1
+commands from the current captured head. Preview and apply retain one request ID
+and exact request bytes; outcome-unknown keeps retry/status controls available.
+A committed receipt captures the accepted head before the application refreshes
+protected queries and restores valid route selections. Destructive commands
+require the compact awaited confirmation contract. Fixture stories exercise
+prepared, committed, rejected and outcome-unknown states without production
+transport.
+
+M4.17 owns native conflict editing. The editor loads complete descriptors for
+the selected commit, identifies every term and fingerprint, disables unsupported
+editor shapes with their native reason, and offers only server-advertised term,
+delete or bounded uploaded-file actions. The complete multi-path selection is
+previewed and applied atomically through the same durable request workflow;
+stale fingerprints never trigger an implicit reread or partial publication.

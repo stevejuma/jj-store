@@ -7234,7 +7234,7 @@ export interface operations {
           "application/json": components["schemas"]["ErrorBody"];
         };
       };
-      /** @description stale_snapshot, stale_bookmark, stale_conflict, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt. */
+      /** @description stale_snapshot, stale_bookmark, stale_conflict, protected_transition, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt. */
       409: {
         headers: {
           [name: string]: unknown;
@@ -7454,7 +7454,7 @@ export interface operations {
           "application/json": components["schemas"]["ErrorBody"];
         };
       };
-      /** @description stale_snapshot, stale_bookmark, stale_conflict, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt. */
+      /** @description stale_snapshot, stale_bookmark, stale_conflict, protected_transition, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt. */
       409: {
         headers: {
           [name: string]: unknown;
@@ -7726,7 +7726,7 @@ export interface operations {
           "application/json": components["schemas"]["ErrorBody"];
         };
       };
-      /** @description stale_snapshot, stale_bookmark, stale_conflict, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt. */
+      /** @description stale_snapshot, stale_bookmark, stale_conflict, protected_transition, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt. */
       409: {
         headers: {
           [name: string]: unknown;
@@ -7843,7 +7843,7 @@ export interface operations {
         };
         content?: never;
       };
-      /** @description stale_snapshot, stale_bookmark, stale_conflict, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt. */
+      /** @description stale_snapshot, stale_bookmark, stale_conflict, protected_transition, reconciliation_required, no_changes, epoch_changed or intent_conflict. No publication by this rejected attempt. */
       409: {
         headers: {
           [name: string]: unknown;

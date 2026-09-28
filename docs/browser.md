@@ -1,10 +1,9 @@
 # Repository browser
 
-The current browser supports authenticated repository reads and repository
-search. It shows commits, operations and evolution, native metadata,
-directories, bounded file previews, structured file differences and conflict
-descriptors. Mutation and conflict editing remain deferred in the progress
-ledger.
+The current browser supports authenticated repository reads, repository search
+and core repository commands. It shows commits, operations and evolution, native
+metadata, directories, bounded file previews, structured file differences and
+conflict descriptors. Conflict editing remains deferred in the progress ledger.
 
 ## Build and serve
 
@@ -57,6 +56,21 @@ cursors never enter the hash route. Indexing, degraded, truncated, empty,
 unavailable and failed states remain explicit. Closing search leaves the current
 route unchanged.
 
+## Repository commands
+
+Use the repository action menu in the application header to create or describe a
+change, create/move/delete bookmarks, abandon a change, or reconcile concurrent
+operation heads when the connected token authorizes that command. The dialog
+first prepares and displays the exact typed native request. Apply reuses the
+same request ID and captured heads; destructive commands add a separate
+confirmation. A committed receipt advances the displayed snapshot and restores
+valid route selections. An unknown publication outcome keeps the same request
+available for retry or durable status lookup.
+
+Semantic policy denials, including protected bookmarks or commits, remain in the
+authenticated session and display as command failures. Revoked or otherwise
+invalid credentials disconnect the session and clear protected cache state.
+
 ## Development acceptance
 
 For local interactive review, `pnpm dev:restart` builds and starts the complete
@@ -82,7 +96,8 @@ and native server with search worker, proves authenticated native Tantivy
 results, publishes through another CLI process, and verifies that SSE announces
 the new history without changing the displayed snapshot until the user
 refreshes. The test preserves the selected bookmark across that refresh and
-removes the disposable stack when it finishes.
+previews and applies one native browser mutation before removing the disposable
+stack.
 
 This cold interaction/accessibility lane checks the production CSP and asset
 router. It is separate from RustFS/TLS deployment qualification. Screenshot

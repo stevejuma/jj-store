@@ -154,3 +154,53 @@ test("external publication waits for explicit refresh and preserves selection", 
     await page.evaluate(() => JSON.stringify({ ...localStorage })),
   ).not.toContain(token);
 });
+
+test("browser mutation previews and publishes one native request", async ({
+  page,
+}) => {
+  const requests: any[] = [];
+  page.on("request", (request) => {
+    const path = new URL(request.url()).pathname;
+    if (path.endsWith("/mutations/preview") || path.endsWith("/mutations"))
+      requests.push(request.postDataJSON());
+  });
+  await connect(page);
+  const previousOperation = routeQuery(page.url()).get("at_op");
+  await page.getByRole("button", { name: "Repository actions" }).click();
+  await page.getByRole("menuitem", { name: "Create change" }).click();
+  const dialog = page.getByRole("dialog", { name: "Create change" });
+  await dialog
+    .getByLabel("Description")
+    .fill("Create a durable browser mutation");
+  await dialog.getByRole("button", { name: "Preview change" }).click();
+  await expect(dialog.getByText("Preview prepared")).toBeVisible();
+  await dialog.getByRole("button", { name: "Apply command" }).click();
+  await expect(dialog.getByText("Repository updated")).toBeVisible();
+
+  expect(requests).toHaveLength(2);
+  expect(requests[1]).toEqual(requests[0]);
+  expect(requests[0].request_id).toMatch(/^[0-9a-f]{32}$/u);
+  expect(requests[0].expected.heads).toEqual([previousOperation]);
+  await expect
+    .poll(() => routeQuery(page.url()).get("at_op"))
+    .not.toBe(previousOperation);
+  await dialog
+    .getByRole("button", { name: "Close", exact: true })
+    .last()
+    .click();
+  await expect(dialog).not.toBeVisible();
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () => getComputedStyle(document.documentElement).pointerEvents,
+      ),
+    )
+    .not.toBe("none");
+  await page.getByRole("button", { name: "JJ Log", exact: true }).click();
+  await expect(
+    page.getByRole("button", {
+      name: "Create a durable browser mutation",
+      exact: true,
+    }),
+  ).toBeVisible();
+});

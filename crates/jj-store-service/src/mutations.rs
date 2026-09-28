@@ -17,6 +17,8 @@ use std::{collections::BTreeSet, sync::Arc};
 pub enum Error {
     #[error("mutation is not authorized")]
     Denied,
+    #[error("mutation changes protected native history")]
+    Protected,
     #[error("mutation requires the exact current snapshot")]
     Stale,
     #[error("request identity was already used for different intent")]
@@ -127,6 +129,12 @@ impl From<commands::Error> for Error {
             commands::Error::Query(Q::Unavailable) => Self::Unavailable,
             _ => Self::Preparation(error),
         }
+    }
+}
+fn semantic(error: wal::Error) -> Error {
+    match error {
+        wal::Error::Denied => Error::Protected,
+        error => error.into(),
     }
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
@@ -356,7 +364,8 @@ impl CommandService {
             session
                 .coordinator
                 .validate_application(&intent, BTreeSet::from([prepared.operation]))
-                .await?;
+                .await
+                .map_err(semantic)?;
             reauthorize(&session, principal, request.expected.epoch).await?;
             Ok(Preview::Prepared {
                 preview: PreviewReport {
@@ -421,7 +430,8 @@ impl CommandService {
         match session
             .coordinator
             .publish_application(&intent, heads, result)
-            .await?
+            .await
+            .map_err(semantic)?
         {
             PublishOutcome::Committed(receipt) => {
                 session.events.published(session.repository);

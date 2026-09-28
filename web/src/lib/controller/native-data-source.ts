@@ -1,4 +1,10 @@
 import type { Envelope, Graph, Head, Model, Task } from "../api/client.js";
+import type {
+  StoreMutationOutcome,
+  StoreMutationPreview,
+  StoreMutationRequest,
+  StoreMutationStatusResponse,
+} from "./store-mutation-types.js";
 
 export interface GraphQuery {
   operation: string;
@@ -77,6 +83,9 @@ export interface StoreDataSource {
     commit: string,
   ): Promise<Envelope<Model<"ConflictResponse">>>;
   search(query: SearchQuery): Promise<Model<"SearchPage">>;
+  previewMutation(request: StoreMutationRequest): Promise<StoreMutationPreview>;
+  applyMutation(request: StoreMutationRequest): Promise<StoreMutationOutcome>;
+  mutationStatus(requestId: string): Promise<StoreMutationStatusResponse>;
   prepareIndex(operation: string): Promise<Task>;
   indexTask(id: string): Promise<Task>;
   events(

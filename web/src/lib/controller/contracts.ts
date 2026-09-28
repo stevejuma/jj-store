@@ -3,6 +3,10 @@ import type { CommunityMemberModel } from "../ui/community-workspace/model.js";
 import type { StorePage } from "../ui/community-navigation/model.js";
 import type { RepositoryLogGraph } from "../projects/repository-log.js";
 import type { Bookmark, RevisionDetail } from "../projects/presentation.js";
+import type {
+  StoreMutationCommand,
+  StoreMutationState,
+} from "./store-mutation-types.js";
 export interface RepositoryBlob {
   path: string;
   contents?: string;
@@ -111,6 +115,7 @@ export interface StoreControllerState {
   readonly snapshot: RepositorySnapshot | undefined;
   readonly blob: RepositoryBlob | undefined;
   readonly search: StoreSearchState;
+  readonly mutation: StoreMutationState;
   readonly authenticated: boolean;
   readonly member: CommunityMemberModel;
   readonly status: StoreControllerStatus;
@@ -131,6 +136,10 @@ export interface StoreController {
     ): Promise<void>;
     search(query: string): Promise<void>;
     selectSearchResult(result: StoreSearchResult): Promise<void>;
+    previewMutation(command: StoreMutationCommand): Promise<void>;
+    applyMutation(): Promise<void>;
+    checkMutationStatus(): Promise<void>;
+    resetMutation(): void;
     setFileViewMode(mode: FileListingViewMode): void | Promise<void>;
     toggleDirectory(path: string): void | Promise<void>;
     openRepository(id: string): void | Promise<void>;

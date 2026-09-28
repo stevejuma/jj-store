@@ -8,24 +8,30 @@ export const repositories = [
   { id: "jj-store", name: "jj-store" },
   { id: "native-demo", name: "native-demo" },
 ];
-export const choices: readonly RepositoryChoice[] = [
-  ...bookmarks.map((bookmark) => ({
-    value: `bookmark:${bookmark.name}`,
-    label: bookmark.name,
-    kind: "bookmark" as const,
-    targets: bookmark.targets,
-  })),
-  ...revisions.map((revision) => ({
-    value: `commit:${revision.eventId}`,
-    label: `${encodeJjChangeId(revision.changeId ?? "").slice(0, 8)} · ${revision.eventId.slice(0, 8)} · ${revision.message}`,
-    kind: "change" as const,
-    searchTerms: [
-      revision.changeId ?? "",
-      encodeJjChangeId(revision.changeId ?? ""),
-    ],
-    targets: [revision.eventId],
-  })),
-];
+export function repositoryChoices(
+  sourceBookmarks = bookmarks,
+  sourceRevisions = revisions,
+): readonly RepositoryChoice[] {
+  return [
+    ...sourceBookmarks.map((bookmark) => ({
+      value: `bookmark:${bookmark.name}`,
+      label: bookmark.name,
+      kind: "bookmark" as const,
+      targets: bookmark.targets,
+    })),
+    ...sourceRevisions.map((revision) => ({
+      value: `commit:${revision.eventId}`,
+      label: `${encodeJjChangeId(revision.changeId ?? "").slice(0, 8)} · ${revision.eventId.slice(0, 8)} · ${revision.message}`,
+      kind: "change" as const,
+      searchTerms: [
+        revision.changeId ?? "",
+        encodeJjChangeId(revision.changeId ?? ""),
+      ],
+      targets: [revision.eventId],
+    })),
+  ];
+}
+export const choices: readonly RepositoryChoice[] = repositoryChoices();
 export function repositorySnapshot(
   repository: string,
   id: string,

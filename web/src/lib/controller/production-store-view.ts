@@ -51,6 +51,7 @@ export function productionStoreView(
       degraded: data.searchDegraded,
       truncated: data.searchTruncated,
     },
+    mutation: data.mutation,
     authenticated: options.connected && data.status.connection === "connected",
     member: {
       id: repository || "disconnected",

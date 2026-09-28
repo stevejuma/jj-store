@@ -16,6 +16,7 @@ import { createStoreQueryClient } from "./store-query-client.js";
 import { createStoreRouteHistory } from "./store-route-history.svelte.js";
 import { productionStoreView } from "./production-store-view.js";
 import { createProductionStoreSearch } from "./production-store-search-controller.js";
+import { createProductionStoreMutations } from "./production-store-mutations.js";
 
 export function createProductionStoreController(
   options: { fetcher?: typeof fetch; now?: () => number } = {},
@@ -71,7 +72,9 @@ export function createProductionStoreController(
     feed.abort();
     source?.close();
     source = null;
-    Object.assign(data, { heads: [], repositories: [] });
+    Object.assign(data, { heads: [], repositories: [], head: null });
+    mutations.configure([]);
+    mutations.reset();
     data.searchAvailable = false;
     search.clear();
     clearProductionStoreView(data);
@@ -105,6 +108,8 @@ export function createProductionStoreController(
       const captured = await active.snapshot();
       if (!current(ticket, active)) return;
       data.heads = [...captured.heads];
+      data.head = captured;
+      mutations.configure(capabilities.typed_mutations);
       const selected = data.heads.length === 1 ? data.heads[0]! : null;
       data.repositories = [{ id: active.repository, name: active.repository }];
       data.searchAvailable = capabilities.search;
@@ -131,6 +136,7 @@ export function createProductionStoreController(
     feed.abort();
     const captured = await active.snapshot(true);
     data.heads = [...captured.heads];
+    data.head = captured;
     const selected = data.heads.length === 1 ? data.heads[0]! : null;
     version += 1;
     clearProductionStoreView(data);
@@ -146,6 +152,13 @@ export function createProductionStoreController(
     );
     if (selected) await reader.restorePage();
   }
+  const mutations = createProductionStoreMutations({
+    state: data.mutation,
+    source: activeSource,
+    head: () => data.head,
+    current: (active) => active === source,
+    committed: refresh,
+  });
   async function selectOperation(id: string) {
     if (!data.heads.includes(id)) return;
     version += 1;
@@ -224,6 +237,7 @@ export function createProductionStoreController(
     },
     search: search.run,
     selectSearchResult: search.select,
+    ...mutations.actions,
     setFileViewMode: reader.setFileViewMode,
     toggleDirectory: reader.toggleDirectory,
     async openRepository(id) {

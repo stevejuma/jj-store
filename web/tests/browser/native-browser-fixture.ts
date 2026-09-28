@@ -15,6 +15,18 @@ export const sample = (path: string) =>
       (s: any) => s.path === `/v1/repos/{repo}/${path}` && s.status === 200,
     ).data,
   );
+export const mutationSample = (
+  path: "mutations/preview" | "mutations" | "mutations/{request_id}",
+  status: "prepared" | "committed" | "outcome_unknown" | "not_known",
+) =>
+  structuredClone(
+    samples.find(
+      (s: any) =>
+        s.path === `/v1/repos/{repo}/${path}` &&
+        s.status === 200 &&
+        s.data.status === status,
+    ).data,
+  );
 const snapshot = sample("snapshot");
 export const repo = snapshot.repo_id;
 export const operation = snapshot.heads[0];
@@ -311,7 +323,8 @@ export async function api(
     }
     const template = path
       ?.replace(/commits\/[0-9a-f]+/, "commits/{commit}")
-      .replace(/operations\/[0-9a-f]+/, "operations/{operation}");
+      .replace(/operations\/[0-9a-f]+/, "operations/{operation}")
+      .replace(/mutations\/[0-9a-f]+/, "mutations/{request_id}");
     const found = samples.find(
       (s: any) =>
         s.path === `/v1/repos/{repo}/${template}` &&

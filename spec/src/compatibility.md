@@ -329,3 +329,11 @@ operation-change groups and changed-path summaries. Generated contracts are
 checked against 51 captured registered-handler responses; existing complete read
 routes remain compatible. This local native/API evidence does not replace the
 separate built-browser and pinned RustFS qualification in M4.14.
+
+M4.16 keeps the V1 mutation request, prepared result, committed receipt and
+durable status shapes intact. Generated and captured contracts add the semantic
+409 `protected_transition` error code without changing native identities, stored
+receipts or WAL bytes; 401/403 remain credential failures. Captured browser
+fixtures merge real registered-handler read and mutation responses, while the
+separate pinned RustFS lane proves one mutation through the built application
+and native repository.

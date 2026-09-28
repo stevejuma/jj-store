@@ -544,11 +544,11 @@ async fn typed_abandon_rejects_root_protected_unknown_and_invalid_batches_atomic
                         .preview(session.clone(), &request)
                         .await
                         .unwrap_err(),
-                    jj_store_service::mutations::Error::Denied
+                    jj_store_service::mutations::Error::Protected
                 );
                 assert_eq!(
                     service().apply(session, &request).await.unwrap_err(),
-                    jj_store_service::mutations::Error::Denied
+                    jj_store_service::mutations::Error::Protected
                 );
                 assert_eq!(
                     f.session.snapshot().await.unwrap().manifest().snapshot(),

@@ -6,10 +6,8 @@
     createLocalStorageAppShellLayoutPersistence,
     type AppShellDisplayMode,
   } from "@lapismd/design-core/shell";
-  import { Button } from "@lapismd/design-core/shadcn/button";
   import * as Breadcrumb from "@lapismd/design-core/shadcn/breadcrumb";
   import { onDestroy, untrack, type Snippet } from "svelte";
-  import CommunitySidebarToggleIcon from "../community-app-shell/CommunitySidebarToggleIcon.svelte";
   import "./repository-breadcrumb.css";
   import "./store-application.css";
   import { repositoryBreadcrumbSegments } from "../community-projects/repository-browser.js";
@@ -23,9 +21,9 @@
   } from "../community-navigation/model.js";
   import type { StoreController } from "../../controller/contracts.js";
   import CommunityProfileMenu from "../community-profile-menu/CommunityProfileMenu.svelte";
-  import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
   import StoreRepositoryDetails from "./StoreRepositoryDetails.svelte";
   import StoreSearchOverlay from "../store-search/StoreSearchOverlay.svelte";
+  import StoreApplicationHeaderActions from "./StoreApplicationHeaderActions.svelte";
   import {
     loadRepositoryShellLayout,
     repositoryShellStorageKey,
@@ -147,28 +145,12 @@
       </Breadcrumb.Root>
     </div>
   {/snippet}
-  {#snippet headerEnd()}<Button
-      variant={controller.state.status.refreshAvailable ? "outline" : "ghost"}
-      size="icon-sm"
-      aria-label={controller.state.status.refreshAvailable
-        ? "Refresh snapshot (new history available)"
-        : "Refresh snapshot"}
-      title="Refresh snapshot"
-      disabled={controller.state.status.connection !== "connected"}
-      onclick={() => controller.actions.refresh()}
-      ><RefreshCwIcon aria-hidden="true" /></Button
-    ><Button
-      variant="ghost"
-      size="icon-sm"
-      aria-label="Toggle details"
-      aria-expanded={!shell.right.closed}
-      onclick={() =>
+  {#snippet headerEnd()}<StoreApplicationHeaderActions
+      {controller}
+      detailsOpen={!shell.right.closed}
+      toggleDetails={() =>
         shell.right.closed ? shell.right.open() : shell.right.close()}
-      ><CommunitySidebarToggleIcon
-        side="right"
-        expanded={!shell.right.closed}
-      /></Button
-    >{/snippet}
+    />{/snippet}
   <AppShell.Sidebar
     side="left"
     label="Repository navigation sidebar"

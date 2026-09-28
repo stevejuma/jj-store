@@ -228,7 +228,7 @@ async fn typed_reconciliation_resource_and_protection_failures_preserve_heads() 
                         .await
                         .unwrap_err()
                 };
-                assert_eq!(error, jj_store_service::mutations::Error::Denied);
+                assert_eq!(error, jj_store_service::mutations::Error::Protected);
             }
             let limited = CommandService::new(
                 Executor::new(

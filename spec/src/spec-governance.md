@@ -125,10 +125,11 @@ accessibility failures remain blocking; visual review is separate and remains
 visual-pending. Browser sources and tooling require same-change ledger evidence.
 
 User-requested scope deferrals must retain original requirements and evidence.
-The 27 September 2026 browsing resumption is limited to M4.9–M4.14. Mutation,
-conflict-editing and search controls remain deferred without disabling existing
-functional checks or treating deferred acceptance as passed. Backend tasks may
-depend on completed API foundations independently of browser progress.
+The 27 September 2026 browsing resumption covers M4.9–M4.14; M4.15 and M4.16
+subsequently reopen search and core repository mutations. Conflict editing
+remains deferred under M4.17 without disabling existing functional checks or
+treating deferred acceptance as passed. Backend tasks may depend on completed
+API foundations independently of browser progress.
 
 Contract checks validate both read/SSE and typed mutation responses captured
 from real registered handlers. Mutation request schemas and generated TypeScript
@@ -220,3 +221,12 @@ verify that the prefix, dots and suffix are visible immediately at rest.
 The default split-copy control stays within 122px width and 27px height at the
 standard root scale, including active and independent feedback states, with
 balanced inline padding.
+
+M4.16 mutation catalog stories exercise real menu, form, preview, confirmation,
+apply, status and close controls against an isolated in-memory controller. The
+production browser lane separately proves captured HTTP requests and a cold
+native RustFS-backed mutation. Because the application canvas already owns
+scrolling, repository menus and dialogs disable redundant body scroll locks and
+tests require body pointer/overflow state to be restored before navigation.
+Visual tests remain skipped at the user's request and stories remain
+visual-pending.

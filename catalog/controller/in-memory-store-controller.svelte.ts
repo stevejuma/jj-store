@@ -1,10 +1,6 @@
 import type { FileListingViewMode } from "@lapismd/design-core/diff";
 import * as fixture from "../fixtures/repository.js";
-import {
-  choices,
-  repositories,
-  repositorySnapshot,
-} from "../fixtures/snapshots.js";
+import { repositories, repositorySnapshot } from "../fixtures/snapshots.js";
 import type {
   StoreController,
   StoreControllerState,
@@ -12,39 +8,30 @@ import type {
 } from "../../web/src/lib/controller/contracts.js";
 import type { StorePage } from "../../web/src/lib/ui/community-navigation/model.js";
 import {
-  largeBookmarks,
-  largeChoices,
   largeDetail,
   largeGraph,
   largeRepositorySnapshot,
-  largeRevisions,
 } from "../fixtures/large-repository.js";
 import { createInMemoryStoreSearch } from "./in-memory-store-search.svelte.js";
+import { createInMemoryStoreMutations } from "./in-memory-store-mutations.svelte.js";
+import {
+  initialStoreRoute,
+  mutationCommittedRoute,
+} from "./in-memory-store-route.js";
+import { createInMemoryStoreRepository } from "./in-memory-store-repository.svelte.js";
+import { inMemoryStoreMember } from "./in-memory-store-member.js";
 
 /** Each story owns this instance. It has no persistence or transport effects. */
 export function createInMemoryStoreController(
   initialPage: StorePage = "branches",
-  options: { large?: boolean } = {},
+  options: {
+    large?: boolean;
+    mutationOutcome?: "committed" | "unknown";
+  } = {},
 ): StoreController {
-  const fixtureBookmarks = options.large ? largeBookmarks : fixture.bookmarks;
-  const fixtureChoices = options.large ? largeChoices : choices;
-  const fixtureRevisions = options.large ? largeRevisions : fixture.revisions;
+  const repositoryData = createInMemoryStoreRepository(options.large);
   const revisionGraph = options.large ? largeGraph : undefined;
-  let history = $state<StoreRoute[]>([
-    {
-      page: initialPage,
-      repository: "jj-store",
-      bookmark: initialPage === "files" ? "main" : "",
-      snapshotOperationId: fixture.IDS.opLeft,
-      inspectedOperationId: null,
-      commitId: null,
-      changeId: null,
-      comparisonParentId: null,
-      comparisonGroupId: null,
-      path: null,
-      directory: "",
-    },
-  ]);
+  let history = $state<StoreRoute[]>([initialStoreRoute(initialPage)]);
   let index = $state(0);
   let authenticated = $state(true);
   let fileViewMode = $state<FileListingViewMode>("tree");
@@ -53,12 +40,15 @@ export function createInMemoryStoreController(
   const targets = $derived(
     route.commitId
       ? [route.commitId]
-      : (fixtureBookmarks.find((bookmark) => bookmark.name === route.bookmark)
-          ?.targets ?? (route.page === "files" ? [fixture.IDS.current] : [])),
+      : (repositoryData.bookmarks.find(
+          (bookmark) => bookmark.name === route.bookmark,
+        )?.targets ?? (route.page === "files" ? [fixture.IDS.current] : [])),
   );
   const snapshot = $derived(
     targets.length === 1 &&
-      fixtureRevisions.some((revision) => revision.eventId === targets[0])
+      repositoryData.revisions.some(
+        (revision) => revision.eventId === targets[0],
+      )
       ? options.large
         ? largeRepositorySnapshot(route.repository, targets[0]!)
         : repositorySnapshot(route.repository, targets[0]!)
@@ -70,6 +60,14 @@ export function createInMemoryStoreController(
     index++;
   }
   const search = createInMemoryStoreSearch(() => route, push);
+  const mutations = createInMemoryStoreMutations({
+    onCommitted(command, result) {
+      const change = repositoryData.commit(command, result, route.commitId);
+      const next = mutationCommittedRoute(route, change);
+      if (next) push(next);
+    },
+    firstApply: options.mutationOutcome,
+  });
   const actions: StoreController["actions"] = {
     async connect() {
       authenticated = true;
@@ -85,6 +83,7 @@ export function createInMemoryStoreController(
     async loadMore() {},
     search: search.search,
     selectSearchResult: search.select,
+    ...mutations.actions,
     setFileViewMode(mode) {
       fileViewMode = mode;
     },
@@ -129,7 +128,7 @@ export function createInMemoryStoreController(
       index = Math.max(0, Math.min(history.length - 1, index + delta));
     },
     selectBookmark(name) {
-      if (!fixtureBookmarks.some((bookmark) => bookmark.name === name))
+      if (!repositoryData.bookmarks.some((bookmark) => bookmark.name === name))
         throw new Error("Unknown fixture bookmark");
       push({
         ...route,
@@ -146,7 +145,7 @@ export function createInMemoryStoreController(
     selectRevision(id) {
       if (
         id &&
-        ![...fixtureRevisions, ...fixture.operations.revisions].some(
+        ![...repositoryData.revisions, ...fixture.operations.revisions].some(
           (revision) => revision.eventId === id,
         )
       )
@@ -158,8 +157,9 @@ export function createInMemoryStoreController(
         changeId:
           route.page === "oplog"
             ? null
-            : (fixtureRevisions.find((revision) => revision.eventId === id)
-                ?.changeId ?? null),
+            : (repositoryData.revisions.find(
+                (revision) => revision.eventId === id,
+              )?.changeId ?? null),
         comparisonParentId: null,
         comparisonGroupId: null,
         path: null,
@@ -190,7 +190,9 @@ export function createInMemoryStoreController(
       push({ ...route, directory, path: null });
     },
     selectRef(value) {
-      const choice = fixtureChoices.find((choice) => choice.value === value);
+      const choice = repositoryData.choices.find(
+        (choice) => choice.value === value,
+      );
       if (!choice) throw new Error("Unknown fixture reference");
       if (choice.kind === "bookmark") actions.selectBookmark(choice.label);
       else
@@ -200,7 +202,7 @@ export function createInMemoryStoreController(
           inspectedOperationId: null,
           commitId: choice.targets[0]!,
           changeId:
-            fixtureRevisions.find(
+            repositoryData.revisions.find(
               (revision) => revision.eventId === choice.targets[0],
             )?.changeId ?? null,
           comparisonParentId: null,
@@ -224,7 +226,7 @@ export function createInMemoryStoreController(
         canNavigateForward: index < history.length - 1,
         repositories,
         repository: repositories.find((repo) => repo.id === route.repository)!,
-        operationHeads: [fixture.IDS.opLeft, fixture.IDS.opRight],
+        operationHeads: repositoryData.operationHeads,
         comparisonParents: [],
         conflictCount: null,
         unavailableComparisonCount: 0,
@@ -234,12 +236,13 @@ export function createInMemoryStoreController(
         canLoadMoreDetail: false,
         fileViewMode,
         collapsedDirectoryPaths,
-        bookmarks: fixtureBookmarks,
-        choices: fixtureChoices,
+        bookmarks: repositoryData.bookmarks,
+        choices: repositoryData.choices,
         targets,
         snapshot,
         blob: snapshot?.files.find((file) => file.path === route.path),
         search: search.state,
+        mutation: mutations.state,
         graph:
           route.page === "oplog"
             ? fixture.operations
@@ -248,11 +251,14 @@ export function createInMemoryStoreController(
                 route.page === "branches" && route.bookmark
                   ? route.bookmark
                   : undefined,
+                repositoryData.bookmarks,
+                repositoryData.revisions,
+                route.commitId ? [route.commitId] : undefined,
               )),
         now: fixture.NOW,
         detail:
           (route.commitId || route.inspectedOperationId) &&
-          ![...fixtureRevisions, ...fixture.operations.revisions].find(
+          ![...repositoryData.revisions, ...fixture.operations.revisions].find(
             (revision) =>
               revision.eventId ===
               (route.page === "oplog"
@@ -264,27 +270,12 @@ export function createInMemoryStoreController(
               : fixture.sampleDetail
             : undefined,
         authenticated,
-        member: authenticated
-          ? {
-              id: "maya",
-              name: "Maya Chen",
-              handle: "maya",
-              initials: "MC",
-              presence: "online" as const,
-              status: "Local fixture account",
-            }
-          : {
-              id: "guest",
-              name: "Guest",
-              handle: "guest",
-              initials: "G",
-              presence: "offline" as const,
-            },
+        member: inMemoryStoreMember(authenticated),
         status: {
           connection: authenticated ? "connected" : "disconnected",
           navigation: "ready",
           repositories: "ready",
-          bookmarks: fixtureBookmarks.length ? "ready" : "empty",
+          bookmarks: repositoryData.bookmarks.length ? "ready" : "empty",
           graph: "ready",
           files: snapshot?.files.length ? "ready" : "empty",
           detail:

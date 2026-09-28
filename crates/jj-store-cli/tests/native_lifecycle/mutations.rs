@@ -188,11 +188,11 @@ async fn typed_mutations_reject_stale_intent_conflicts_readers_and_protected_pre
             .preview(protected.clone(), &rewrite)
             .await
             .unwrap_err(),
-        Error::Denied
+        Error::Protected
     );
     assert_eq!(
         commands.apply(protected, &rewrite).await.unwrap_err(),
-        Error::Denied
+        Error::Protected
     );
     assert_eq!(
         f.session.snapshot().await.unwrap().manifest().snapshot(),
