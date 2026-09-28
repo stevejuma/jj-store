@@ -410,6 +410,14 @@ Committed receipts and unknown outcomes retain the same identities, while a
 different peer principal, changed retry or stale same-source edit is rejected.
 Preparing again after an unpersisted response may stage a fresh intent, but a
 persisted prepared entry is never restaged under its existing receipt identity.
+The CLI worker validates every pending entry against the active repository
+before its first network call. It orders by integration, source instance,
+generation, first source sequence and batch ID, derives domain-separated stable
+request and publication IDs from repository plus batch ID, and uses a bounded
+batch acknowledgement as the receipt result. Only a matching committed receipt
+removes the synchronized prepared entry. Unknown outcomes stop the drain;
+transport errors, staleness, rejection and mismatched replies retain the exact
+entry and prevent later captures from passing it.
 
 ## Installed hook ingestion
 
@@ -433,8 +441,10 @@ local-plugin trust. Every batch records the exact Kingfisher policy and matching
 version-bound normalizer profile. Concurrent hook processes share the allocator
 without opening the registry's exclusive administrative lock. Raw input,
 findings and secret-bearing errors are never written or logged. Pending batches
-remain in the existing capture spool until the M9.2 publication worker prepares
-and commits their exact AgentStore delta and receipt identity.
+remain in the existing capture spool until the hook's bounded best-effort
+publication worker prepares and commits their exact AgentStore delta and receipt
+identity. A server outage or three-second hook budget expiry preserves the
+capture and defers another attempt to a later hook invocation.
 
 ## Device-local integration registry
 

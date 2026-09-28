@@ -113,6 +113,13 @@ delta after an unknown outcome is not a substitute for a durable pending spool.
 Repeated or overlapping source receipts fail stale, and updating this domain
 does not move code or review state.
 
+The capture recovery worker derives separate request and publication identities
+from the repository and durable batch ID. It persists the server-prepared delta
+before publishing and submits that exact request on every restart. It completes
+the local entry only for a receipt whose principal, request ID, publication ID
+and result match the prepared request. Unknown or mismatched outcomes retain the
+entry and stop source-ordered progress rather than rebuilding a later delta.
+
 The publication facade exports the validated normalizer profile, sanitized batch
 and exact delta request types needed by the service prepare/publish boundary.
 Service and RPC layers consume those owned facade types rather than importing

@@ -77,7 +77,7 @@ pub async fn run(
     command: Extension,
 ) -> Result<(), CommandError> {
     let args = match command {
-        Extension::Agent(args) => return crate::agent_commands::run(ui, helper, args),
+        Extension::Agent(args) => return crate::agent_commands::run(ui, helper, args).await,
         Extension::Store(args) => args,
     };
     let Some(command) = args.command else {

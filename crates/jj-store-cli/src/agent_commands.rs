@@ -71,7 +71,7 @@ impl From<AgentName> for IntegrationId {
     }
 }
 
-pub fn run(ui: &mut Ui, helper: &CommandHelper, args: AgentArgs) -> Result<(), CommandError> {
+pub async fn run(ui: &mut Ui, helper: &CommandHelper, args: AgentArgs) -> Result<(), CommandError> {
     let Some(command) = args.command else {
         return presentation::help(ui, helper, &["agent".into()]);
     };
@@ -90,6 +90,7 @@ pub fn run(ui: &mut Ui, helper: &CommandHelper, args: AgentArgs) -> Result<(), C
             IntegrationId::from(*agent),
         )
         .map_err(error)?;
+        crate::agent_hook::publish_pending_best_effort(&state, &connection).await;
         return Ok(());
     }
     let mut registry =

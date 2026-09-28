@@ -34,4 +34,7 @@ and warmed Kingfisher cache, then sanitizes one bounded standard-input event
 before allocating durable source order and enqueuing the sanitized observation.
 Invalid or oversized input is represented only by a fixed omission record. Hook
 commands produce no normal output and never persist raw input. Pending capture
-publication remains a separate recovery step.
+publication is attempted for three seconds after durable enqueue. An unavailable
+server, unknown outcome, stale request, or timeout leaves the capture in the
+private spool without failing the hook; the next hook invocation retries the
+oldest exact source-ordered request before later observations.

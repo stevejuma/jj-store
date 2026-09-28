@@ -30,6 +30,7 @@ use std::{
 
 const MAX_SPOOL_BYTES: u64 = 64 * 1024 * 1024;
 const LOCK_WAIT: Duration = Duration::from_millis(750);
+const PUBLISH_WAIT: Duration = Duration::from_secs(3);
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct HookCaptureAck {
@@ -50,6 +51,20 @@ struct HookSourceStateV1 {
 
 fn capture_spool_path(state: &Path) -> AuthorityResult<PathBuf> {
     Ok(jj_store_server::policy::outside_checkout(state)?.join("capture/spool"))
+}
+
+pub(crate) async fn publish_pending_best_effort(
+    state: &Path,
+    connection: &crate::binding::Connection,
+) {
+    let publish = async {
+        let client = connection.connect().await?;
+        let mut spool = AgentCaptureSpool::open(&capture_spool_path(state)?, MAX_SPOOL_BYTES)?;
+        crate::agent_publication::drain_capture_spool(&mut spool, connection.repository, &client)
+            .await?;
+        AuthorityResult::Ok(())
+    };
+    let _ = tokio::time::timeout(PUBLISH_WAIT, publish).await;
 }
 
 pub fn ingest_stdin(

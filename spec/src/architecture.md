@@ -168,7 +168,12 @@ The native transport exposes that authority as separate prepare and publish
 calls: the server owns current-root selection, peer principal and activation
 time, while the CLI owns crash-safe persistence between them. Canonical JSON
 payloads are explicitly byte bounded inside the protobuf envelope, and an
-unknown manifest outcome remains a typed response requiring an exact retry.
+unknown manifest outcome remains a typed response requiring an exact retry. The
+CLI recovery worker preflights one repository binding for the complete spool,
+orders integrations, source instances, generations and native sequences, and
+derives separate stable request and publication IDs from the repository and
+capture batch. A prepared response is synchronized before its publish call; no
+later source entry passes an unknown, stale, rejected or failed publication.
 
 The same CLI boundary owns a device-local integration registry outside the
 checkout. It binds one stable random device identity and explicit desired

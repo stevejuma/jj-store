@@ -162,10 +162,11 @@ Kingfisher cache before capture. A fixed omission observation represents invalid
 or oversized input without retaining source details. A bounded lock serializes
 source-sequence allocation across hook processes; reservations are synchronized
 before the sanitized batch is atomically enqueued, so interrupted attempts can
-leave a gap but can never reuse a sequence. The command does not yet publish the
-pending batch. The native service now prepares and publishes exact peer-bound
-AgentStore requests, but the CLI recovery worker that drains captured/prepared
-entries in source order remains M9.2 work.
+leave a gap but can never reuse a sequence. After durable enqueue the command
+gives its recovery worker three seconds to drain captured or prepared entries
+through the native AgentStore RPC. Transport failure, rejection, timeout or an
+unknown outcome never fails the already successful hook capture and never
+removes its spool entry; a later hook retries the oldest exact prepared request.
 
 `store init` provisions a new repository using a separate operator credential,
 durably retaining generated repository/epoch IDs before contacting the server.
