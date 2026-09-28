@@ -210,6 +210,45 @@ noncanonical round trips. The anchor ID hashes those validated canonical bytes.
 Conservative placement mapping into later artifacts, ReviewStore thread state,
 commands and publication remain subsequent M9.3 slices.
 
+## Immutable ReviewStore objects
+
+`ReviewRootV1` selects independent COW catalog roots for threads, comments,
+thread events, original-anchor relations, artifact relations, statuses, work
+requests, external aliases and accepted source positions. The canonical empty
+root omits all page references. Every populated root entry must select a typed
+review index page; leaves contain at most 32 stable-key selections and branches
+at most sixteen lowercase-hex children.
+
+The registered v1 object kinds are index page, anchor, comment body, comment
+revision, thread event, event page and thread snapshot. Review objects use
+bounded canonical encoding, typed review-object references and explicit native
+or AgentStore dependencies. Anchors forward their exact external retention
+edges; other review objects can only point through declared ReviewStore kinds.
+Root, revision, event and snapshot content IDs hash their validated canonical
+forms and remain separate from stable workflow identities.
+
+Comment bodies are bounded safe Markdown or plain UTF-8 text with an explicit
+sanitizer version. Empty bodies, disallowed control characters and oversized
+content fail closed. A comment revision retains stable thread/comment IDs,
+original author, acting principal and accepted time. Visible edits select a body
+object; tombstones and moderated hides require a prior revision, preserving
+auditable history rather than deleting prior bytes.
+
+Thread events have repository-accepted, strictly positive per-thread sequence
+numbers and authenticated actors. Creation binds the original anchor and first
+comment revision. Replies and revisions bind exact selected comment objects;
+resolve/reopen actions retain their stable action identity and optional bounded
+reason. Event pages contain at most 256 distinct, contiguous sequence entries
+and a typed continuation, avoiding an unbounded reverse-linked event chain.
+
+A thread snapshot selects one immutable original anchor, ordered unique comment
+revisions, one event-page root, the last accepted sequence, open/resolved state
+and selected workflow action. Its overall thread version advances for every
+accepted event, while content and workflow versions remain distinct monotonic
+preconditions. Parent comments must already occur in the selected order and a
+resolved snapshot must identify its workflow action. Cross-object loading will
+add thread-ID and event-history agreement checks in the root-pinned store slice.
+
 ## Root-pinned capture projection
 
 The publication coordinator can stage one validated sanitized batch and its

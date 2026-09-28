@@ -97,9 +97,32 @@ id!(ThreadSnapshotId, 32);
 id!(ReviewRootId, 32);
 id!(ReviewWorkRequestVersionId, 32);
 id!(ReviewDigest, 32);
+id!(ReviewObjectId, 32);
+id!(ReviewCatalogKey, 32);
 
 impl ReviewDigest {
     pub fn sha256(bytes: &[u8]) -> Self {
         Self::new(Sha256::digest(bytes).into())
+    }
+}
+
+impl ReviewCatalogKey {
+    pub fn derive(namespace: &str, value: &[u8]) -> crate::Result<Self> {
+        if namespace.is_empty()
+            || namespace.len() > 32
+            || !namespace.bytes().all(|byte| {
+                byte.is_ascii_lowercase() || byte.is_ascii_digit() || b"-_".contains(&byte)
+            })
+            || value.is_empty()
+            || value.len() > 1024
+        {
+            return Err(crate::Error::Invalid("review catalog key"));
+        }
+        let mut hash = Sha256::new_with_prefix(b"jj-store/review-catalog-key/v1\0");
+        hash.update((namespace.len() as u64).to_be_bytes());
+        hash.update(namespace.as_bytes());
+        hash.update((value.len() as u64).to_be_bytes());
+        hash.update(value);
+        Ok(Self::new(hash.finalize().into()))
     }
 }
