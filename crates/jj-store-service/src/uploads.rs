@@ -397,6 +397,7 @@ mod tests {
                 expected: Snapshot {
                     epoch: m::EpochId::new([3; 16]),
                     position: m::WalPosition(7),
+                    code_state_version: 0,
                     heads: std::collections::BTreeSet::from([m::OperationId::new([4; 64])]),
                 },
                 commit: m::CommitId::new([5; 64]),

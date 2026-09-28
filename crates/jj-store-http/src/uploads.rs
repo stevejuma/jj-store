@@ -8,6 +8,7 @@ use jj_store_service::uploads as service;
 pub(super) struct Query {
     epoch: m::EpochId,
     position: u64,
+    code_state_version: u64,
     operation: m::OperationId,
     commit: m::CommitId,
     path: String,
@@ -52,6 +53,7 @@ pub(super) async fn stage(
         expected: service::Snapshot {
             epoch: args.epoch,
             position: m::WalPosition(args.position),
+            code_state_version: args.code_state_version,
             heads: std::collections::BTreeSet::from([args.operation]),
         },
         commit: args.commit,

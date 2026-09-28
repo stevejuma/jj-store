@@ -367,3 +367,10 @@ resolve semantics; it does not add a parallel command implementation. The
 labelled disposable services, seeds a native repository, starts its LocalTrusted
 search worker and prints the URL and repository ID with `Credentials: none`.
 `pnpm dev:stop` removes only that owned stack.
+
+The existing native administration RPC and CLI clients retain the selected
+code-state version in snapshot preconditions. This prepares the command layer
+for `jj agent enable` and later review commands without treating agent/review
+WAL activity as native code movement. The user-facing collaboration command
+family remains M9.4 work; this publication slice adds no hidden installer,
+daemon or controller dispatch.

@@ -25,6 +25,7 @@ status; reports hold immutable evidence rather than competing status summaries.
 | `^crates/jj-store-model/`                                                                                                                                                                                                                      | `identity.md`        |
 | `^crates/jj-store-object/`                                                                                                                                                                                                                     | `object-store.md`    |
 | `^crates/jj-store-wal/`                                                                                                                                                                                                                        | `publication.md`     |
+| `^crates/jj-(?:agent\|review)/`                                                                                                                                                                                                                | `collaboration.md`   |
 | `^crates/jj-store-jj/`                                                                                                                                                                                                                         | `jj-integration.md`  |
 | `^crates/jj-store-service/`                                                                                                                                                                                                                    | `mutations.md`       |
 | `^crates/jj-store-rpc/`                                                                                                                                                                                                                        | `jj-integration.md`  |
@@ -39,6 +40,12 @@ status; reports hold immutable evidence rather than competing status summaries.
 The M0 contract harness is validated in both normal tests and spec checks. Real
 storage qualification remains an explicit lane and cannot be inferred from the
 harness self-tests or a source audit.
+
+M9 owns the LocalTrusted AgentStore and ReviewStore delivery. Its publication
+foundation is governed by `publication.md`; new domain crates and capture,
+anchor, review or collaboration behavior are governed by `collaboration.md`.
+Upstream Community and Design Core changes remain separate source-owned changes
+with consumer acceptance in this repository.
 
 ## M0 extension qualification
 

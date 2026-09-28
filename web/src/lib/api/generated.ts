@@ -518,6 +518,8 @@ export interface components {
       published_seq: components["schemas"]["WalPosition"];
       /** Format: uint64 */
       manifest_revision: number;
+      /** Format: uint64 */
+      code_state_version: number;
       heads: components["schemas"]["OperationId"][];
       operation_id: components["schemas"]["OperationId"];
     };
@@ -537,6 +539,8 @@ export interface components {
       published_seq: components["schemas"]["WalPosition"];
       /** Format: uint64 */
       manifest_revision: number;
+      /** Format: uint64 */
+      code_state_version: number;
       heads: components["schemas"]["OperationId"][];
     };
     SearchStatus: {
@@ -1522,6 +1526,8 @@ export interface components {
     Snapshot: {
       epoch: components["schemas"]["EpochId"];
       position: components["schemas"]["WalPosition"];
+      /** Format: uint64 */
+      code_state_version?: number;
       heads: components["schemas"]["OperationId"][];
     };
     Prepared: {
@@ -7386,6 +7392,8 @@ export interface operations {
              * @description Publication order is distinct from native operation ancestry.
              */
             position: number;
+            /** Format: uint64 */
+            code_state_version?: number;
             heads: string[];
           };
           command:
@@ -7606,6 +7614,8 @@ export interface operations {
              * @description Publication order is distinct from native operation ancestry.
              */
             position: number;
+            /** Format: uint64 */
+            code_state_version?: number;
             heads: string[];
           };
           command:
@@ -7809,6 +7819,7 @@ export interface operations {
       query: {
         epoch: string;
         position: number;
+        code_state_version: number;
         operation: string;
         commit: string;
         path: string;

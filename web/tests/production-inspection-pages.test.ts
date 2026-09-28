@@ -25,6 +25,7 @@ const snapshot = (): Snapshot => ({
   epoch: "epoch-a",
   published_seq: 1,
   manifest_revision: 1,
+  code_state_version: 1,
   operation_id: operation,
   heads: [operation],
 });

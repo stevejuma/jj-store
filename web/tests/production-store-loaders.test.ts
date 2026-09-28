@@ -57,6 +57,7 @@ function snapshot(id = operation): Snapshot {
     epoch: "epoch-a",
     published_seq: 1,
     manifest_revision: 1,
+    code_state_version: 1,
     operation_id: id,
     heads: [id],
   };

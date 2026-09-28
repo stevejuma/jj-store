@@ -377,3 +377,10 @@ boundary. A protected bookmark, commit or root transition returns the typed 409
 or revoked credentials remain 401/403 `access_denied`; the browser disconnects
 and clears protected cache state for those responses. Both cases publish
 nothing.
+
+Strict code mutations compare epoch, code-state version and exact native heads.
+The global WAL position remains receipt and ordering evidence but is not itself
+a code-staleness predicate, because AgentStore and ReviewStore publications may
+advance it without changing native code. Conflict uploads carry the same
+code-state token as their captured head, while zero-valued legacy receipt and
+upload snapshots retain their original canonical bytes.

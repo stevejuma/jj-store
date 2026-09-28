@@ -37,6 +37,16 @@ function fixture(
 }
 test("accepts_verified_task", () =>
   assert.deepEqual(validateLedger(fixture()), []));
+test("accepts_m9_delivery_tasks", () =>
+  assert.deepEqual(
+    validateLedger(
+      fixture(
+        "| M9 | Planned | - | JST-GOV-001 | collaboration | continue | - |",
+        [],
+      ),
+    ),
+    [],
+  ));
 test("rejects_missing_evidence", () =>
   assert.match(
     validateLedger(fixture(undefined, [])).join(),

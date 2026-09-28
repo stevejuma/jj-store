@@ -30,7 +30,10 @@ impl ApplicationIntent {
         {
             return Err(Error::Limit("application intent"));
         }
-        if kind == SemanticKind::SettingsChanged {
+        if !matches!(
+            kind,
+            SemanticKind::OperationPublished | SemanticKind::HeadsNormalized
+        ) {
             return Err(Error::Corrupt("application intent kind"));
         }
         Ok(Self {
@@ -142,7 +145,7 @@ impl Coordinator {
         tokio::time::timeout(self.limits.timeout, async {
             let before = self.read().await?;
             self.guard.authorize(&before, &request).await?;
-            if before.manifest.snapshot() != intent.expected {
+            if !same_code_state(&before.manifest.snapshot(), &intent.expected) {
                 return Err(Error::Stale);
             }
             let after = Snapshot {
@@ -155,6 +158,15 @@ impl Coordinator {
                         .checked_add(1)
                         .ok_or(Error::Limit("publication sequence"))?,
                 ),
+                code_state_version: if before.manifest.format == 2 {
+                    intent
+                        .expected
+                        .code_state_version
+                        .checked_add(1)
+                        .ok_or(Error::Limit("code state version"))?
+                } else {
+                    0
+                },
                 heads,
             };
             self.guard
@@ -167,7 +179,7 @@ impl Coordinator {
             .await?;
             let latest = self.read().await?;
             self.guard.authorize(&latest, &request).await?;
-            if latest.manifest.snapshot() != before.manifest.snapshot() {
+            if !same_code_state(&latest.manifest.snapshot(), &before.manifest.snapshot()) {
                 return Err(Error::Stale);
             }
             Ok(())

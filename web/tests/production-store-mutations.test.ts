@@ -17,6 +17,7 @@ const head: Head = {
   epoch: "cd".repeat(16),
   published_seq: 7,
   manifest_revision: 9,
+  code_state_version: 5,
   heads: ["12".repeat(64)],
 };
 
@@ -87,6 +88,7 @@ function fixture() {
     accepted: {
       epoch: head.epoch,
       position: 8,
+      code_state_version: 6,
       heads: ["34".repeat(64)],
     },
     result: prepared(request),
@@ -120,7 +122,12 @@ test("preview and apply retain one exact request through commitment", async () =
       version: 1,
       request_id: "",
       request_digest: "ab".repeat(32),
-      expected: { epoch: head.epoch, position: 7, heads: [...head.heads] },
+      expected: {
+        epoch: head.epoch,
+        position: 7,
+        code_state_version: head.code_state_version,
+        heads: [...head.heads],
+      },
       result: prepared({} as StoreMutationRequest),
     },
   });
@@ -131,6 +138,7 @@ test("preview and apply retain one exact request through commitment", async () =
   assert.deepEqual(request.expected, {
     epoch: head.epoch,
     position: head.published_seq,
+    code_state_version: head.code_state_version,
     heads: head.heads,
   });
   f.setApply({ status: "committed", receipt: f.makeReceipt(request) });
@@ -148,7 +156,12 @@ test("unknown outcomes keep the request identity for status recovery", async () 
       version: 1,
       request_id: "",
       request_digest: "ab".repeat(32),
-      expected: { epoch: head.epoch, position: 7, heads: [...head.heads] },
+      expected: {
+        epoch: head.epoch,
+        position: 7,
+        code_state_version: head.code_state_version,
+        heads: [...head.heads],
+      },
       result: prepared({} as StoreMutationRequest),
     },
   });
@@ -175,7 +188,12 @@ test("late preview responses cannot repopulate a departed session", async () => 
       version: 1,
       request_id: f.requests[0]!.request_id,
       request_digest: "ab".repeat(32),
-      expected: { epoch: head.epoch, position: 7, heads: [...head.heads] },
+      expected: {
+        epoch: head.epoch,
+        position: 7,
+        code_state_version: head.code_state_version,
+        heads: [...head.heads],
+      },
       result: prepared(f.requests[0]!),
     },
   });

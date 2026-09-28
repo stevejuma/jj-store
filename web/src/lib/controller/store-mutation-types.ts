@@ -56,6 +56,7 @@ export function mutationRequest(
     expected: {
       epoch: head.epoch,
       position: head.published_seq,
+      code_state_version: head.code_state_version,
       heads: [...head.heads],
     },
     command,

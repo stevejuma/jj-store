@@ -64,14 +64,13 @@ browser/lifecycle changes. Visual baselines require explicit approval.
 
 ## Current execution scope
 
-The user reopened production browser integration on 27 September 2026.
-M4.9–M4.14 promote the reviewed catalog application into the served browser, add
-the bounded native read contracts it needs, connect an authenticated
-asynchronous controller, restore typed hash routes, consume explicit SSE
-freshness, and qualify virtualized persistent layouts against an isolated real
-repository. Browsing is first: files, bookmarks, JJ log, Op Log, evolution and
-existing read surfaces. Mutation controls, conflict editing and search UI remain
-deferred.
+The LocalTrusted application, native browsing, search, typed mutations and
+conflict editing are implemented. M9 now adds repository-native AgentStore and
+ReviewStore capabilities through the existing immutable object, WAL, receipt and
+manifest authority. The active sequence is independent publication roots,
+sanitized Codex/Cursor/OpenCode capture, exact review anchors and concurrency,
+LocalTrusted CLI/API, shared Community and Design Core presentation, then cold
+native recovery and real-harness qualification.
 
 Production components live under `web/src/lib`; catalog fixtures and harnesses
 may import them, while production MUST remain independent of catalog state.
@@ -80,7 +79,9 @@ components. Fix a shared-library deficiency in its owning repository and consume
 only a released registry version in jj-store. Credentials stay memory-only; SSE
 announces freshness and displayed snapshots change only on explicit refresh.
 Stories remain visual-pending; baseline approval is separate from interaction
-and accessibility acceptance.
+and accessibility acceptance. Authenticated/shared serving, controller dispatch,
+remote replication, backup/restore, Git/Nostr export, other harnesses and CRDT
+semantics remain deferred.
 
 ## Local execution
 

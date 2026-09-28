@@ -10,6 +10,7 @@ const head: Head = {
   epoch: "cd".repeat(16),
   published_seq: 7,
   manifest_revision: 9,
+  code_state_version: 5,
   heads: ["12".repeat(64)],
 };
 
@@ -24,6 +25,7 @@ test("conflict uploads bind bytes to the captured head commit path and fingerpri
       expected: {
         epoch: head.epoch,
         position: head.published_seq,
+        code_state_version: head.code_state_version,
         heads: [...head.heads],
       },
       commit: "78".repeat(64),

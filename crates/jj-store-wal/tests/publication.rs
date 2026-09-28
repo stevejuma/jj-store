@@ -6,7 +6,7 @@ use jj_store_wal::{
     catalog::Catalog,
     inventory::{DependencySource, Representation, SourceScope, VerifiedNode},
     publication::*,
-    records::{RecordKind, Records},
+    records::{RecordKind, RecordRef, Records},
 };
 use std::{
     collections::{BTreeMap, BTreeSet},
@@ -25,6 +25,16 @@ impl PublicationGuard for Permit {
         _: &ManifestSnapshot,
         _: &Request,
         _: &Snapshot,
+    ) -> wal::Result<()> {
+        Ok(())
+    }
+    async fn authorize_domain(&self, _: &ManifestSnapshot, _: &DomainRequest) -> wal::Result<()> {
+        Ok(())
+    }
+    async fn authorize_collaboration(
+        &self,
+        _: &ManifestSnapshot,
+        _: &CollaborationRequest,
     ) -> wal::Result<()> {
         Ok(())
     }
@@ -175,6 +185,147 @@ async fn fixture() -> (Arc<FaultStore>, Coordinator) {
         .unwrap();
     (store, c)
 }
+
+#[derive(serde::Serialize)]
+struct LegacyManifest {
+    format: u32,
+    repository: RepositoryId,
+    epoch: EpochId,
+    revision: u64,
+    published: WalPosition,
+    heads: BTreeSet<OperationId>,
+    tail: Option<RecordRef>,
+    inventory: Option<RecordRef>,
+    receipts: Option<RecordRef>,
+    history: Option<RecordRef>,
+    checkpoint: Option<RecordRef>,
+    initial_settings: RecordRef,
+    settings: RecordRef,
+}
+
+async fn legacy_fixture() -> (Arc<FaultStore>, Coordinator) {
+    let (store, coordinator) = fixture().await;
+    let current = coordinator.read().await.unwrap();
+    let manifest = current.manifest();
+    let legacy = LegacyManifest {
+        format: 1,
+        repository: manifest.repository,
+        epoch: manifest.epoch,
+        revision: manifest.revision,
+        published: manifest.published,
+        heads: manifest.heads.clone(),
+        tail: manifest.tail,
+        inventory: manifest.inventory,
+        receipts: manifest.receipts,
+        history: manifest.history,
+        checkpoint: manifest.checkpoint,
+        initial_settings: manifest.initial_settings,
+        settings: manifest.settings,
+    };
+    let bytes = serde_json::to_vec(&legacy).unwrap();
+    let key = coordinator.manifest_key();
+    let version = store.head(&key).await.unwrap().version;
+    let upload = StagedUpload::from_bytes(&bytes, 128 * 1024).await.unwrap();
+    assert!(matches!(
+        store
+            .put(&key, Condition::Matches(version), &upload)
+            .await
+            .unwrap(),
+        WriteOutcome::Applied(_)
+    ));
+    assert_eq!(coordinator.read().await.unwrap().manifest().format, 1);
+    (store, coordinator)
+}
+
+#[tokio::test]
+async fn domain_publications_preserve_roots_without_staling_code() {
+    let (_, c) = fixture().await;
+    let initial = c.read().await.unwrap();
+    let code_expected = initial.manifest().snapshot();
+    let review_initial = initial.manifest().domain_state(Domain::Review).unwrap();
+    let agent_initial = initial.manifest().domain_state(Domain::Agent).unwrap();
+    assert_eq!(initial.manifest().format, 2);
+    assert_eq!(initial.manifest().code_state_version, 0);
+
+    let agent_root = c
+        .stage_domain_root(Domain::Agent, b"agent root one")
+        .await
+        .unwrap();
+    let agent = DomainRequest::new(
+        PrincipalId::new([3; 16]),
+        RequestId::new([90; 16]),
+        PublicationId::new([90; 16]),
+        Domain::Agent,
+        agent_initial,
+        agent_root,
+        b"agent accepted".to_vec(),
+    )
+    .unwrap();
+    committed(c.publish_domain(&agent).await.unwrap());
+
+    let after_agent = c.read().await.unwrap();
+    assert_eq!(after_agent.manifest().published, WalPosition(1));
+    assert_eq!(after_agent.manifest().code_state_version, 0);
+    assert_eq!(
+        after_agent.manifest().domain_state(Domain::Review).unwrap(),
+        review_initial
+    );
+
+    let code = Request {
+        transition: Some(Transition::Strict {
+            expected: code_expected,
+            heads: BTreeSet::from([op(1)]),
+        }),
+        ..request(91, &[0], 1)
+    };
+    committed(c.publish(&code).await.unwrap());
+    let after_code = c.read().await.unwrap();
+    assert_eq!(after_code.manifest().published, WalPosition(2));
+    assert_eq!(after_code.manifest().code_state_version, 1);
+    assert_eq!(
+        after_code
+            .manifest()
+            .domain_state(Domain::Agent)
+            .unwrap()
+            .root,
+        agent_root
+    );
+
+    let review_root = c
+        .stage_domain_root(Domain::Review, b"review root one")
+        .await
+        .unwrap();
+    let review = DomainRequest::new(
+        PrincipalId::new([3; 16]),
+        RequestId::new([92; 16]),
+        PublicationId::new([92; 16]),
+        Domain::Review,
+        review_initial,
+        review_root,
+        b"review accepted".to_vec(),
+    )
+    .unwrap();
+    committed(c.publish_domain(&review).await.unwrap());
+    let recovered = c.recover(100).await.unwrap();
+    assert_eq!(recovered.manifest().published, WalPosition(3));
+    assert_eq!(recovered.manifest().code_state_version, 1);
+    assert_eq!(
+        recovered
+            .manifest()
+            .domain_state(Domain::Agent)
+            .unwrap()
+            .root,
+        agent_root
+    );
+    assert_eq!(
+        recovered
+            .manifest()
+            .domain_state(Domain::Review)
+            .unwrap()
+            .root,
+        review_root
+    );
+}
 fn request(n: u8, remove: &[u8], add: u8) -> Request {
     Request {
         principal: PrincipalId::new([3; 16]),
@@ -193,6 +344,109 @@ fn committed(outcome: PublishOutcome) -> Receipt {
     match outcome {
         PublishOutcome::Committed(receipt) => receipt,
         other => panic!("expected committed: {other:?}"),
+    }
+}
+
+fn enabled(outcome: CollaborationOutcome) -> Receipt {
+    match outcome {
+        CollaborationOutcome::Enabled(receipt) => receipt,
+        other => panic!("expected enabled: {other:?}"),
+    }
+}
+
+#[tokio::test]
+async fn legacy_repository_enables_collaboration_without_rewriting_code_history() {
+    let (store, c) = legacy_fixture().await;
+    committed(c.publish(&request(70, &[0], 1)).await.unwrap());
+    let legacy = c.read().await.unwrap();
+    let code_expected = legacy.manifest().snapshot();
+    assert_eq!(legacy.manifest().format, 1);
+    assert_eq!(legacy.manifest().published, WalPosition(1));
+    assert_eq!(legacy.manifest().code_state_version, 0);
+
+    let enable = CollaborationRequest::new(
+        PrincipalId::new([3; 16]),
+        RequestId::new([71; 16]),
+        PublicationId::new([71; 16]),
+        b"collaboration enabled".to_vec(),
+    )
+    .unwrap();
+    let receipt = enabled(c.enable_collaboration(&enable).await.unwrap());
+    assert_eq!(receipt.accepted.position, WalPosition(2));
+    assert_eq!(receipt.accepted.code_state_version, 0);
+    assert_eq!(
+        enabled(c.enable_collaboration(&enable).await.unwrap()),
+        receipt
+    );
+
+    let enabled_snapshot = c.read().await.unwrap();
+    let manifest = enabled_snapshot.manifest();
+    assert_eq!(manifest.format, 2);
+    assert_eq!(manifest.domain_history_start, 2);
+    assert_eq!(manifest.heads, BTreeSet::from([op(1)]));
+    assert_eq!(manifest.code_state_version, 0);
+    let domains = manifest.domains().unwrap();
+    assert_eq!(domains.agent.version, 0);
+    assert_eq!(domains.review.version, 0);
+    let another = CollaborationRequest::new(
+        PrincipalId::new([3; 16]),
+        RequestId::new([72; 16]),
+        PublicationId::new([72; 16]),
+        Vec::new(),
+    )
+    .unwrap();
+    assert_eq!(
+        c.enable_collaboration(&another).await.unwrap(),
+        CollaborationOutcome::AlreadyEnabled(domains)
+    );
+
+    let code = Request {
+        transition: Some(Transition::Strict {
+            expected: code_expected,
+            heads: BTreeSet::from([op(2)]),
+        }),
+        ..request(73, &[1], 2)
+    };
+    committed(c.publish(&code).await.unwrap());
+    let recovered = c.recover(100).await.unwrap();
+    assert_eq!(recovered.manifest().published, WalPosition(3));
+    assert_eq!(recovered.manifest().code_state_version, 1);
+    let selected = recovered
+        .selected_records(store, WalPosition(0), 10)
+        .await
+        .unwrap();
+    assert_eq!(selected.len(), 3);
+    assert!(selected[0].transaction().before_domains.is_none());
+    assert_eq!(
+        selected[1].transaction().kind,
+        SemanticKind::CollaborationEnabled
+    );
+    assert!(selected[1].transaction().before_domains.is_none());
+    assert_eq!(selected[1].transaction().after_domains, Some(domains));
+    assert_eq!(selected[2].transaction().before_domains, Some(domains));
+}
+
+#[tokio::test]
+async fn collaboration_enablement_resolves_unknown_manifest_outcomes() {
+    for fault in [Fault::Before, Fault::After] {
+        let (store, c) = legacy_fixture().await;
+        let request = CollaborationRequest::new(
+            PrincipalId::new([3; 16]),
+            RequestId::new([74; 16]),
+            PublicationId::new([74; 16]),
+            Vec::new(),
+        )
+        .unwrap();
+        store.arm("/manifest.json", fault);
+        let first = c.enable_collaboration(&request).await.unwrap();
+        if matches!(fault, Fault::Before) {
+            assert!(matches!(first, CollaborationOutcome::OutcomeUnknown { .. }));
+        } else {
+            assert!(matches!(first, CollaborationOutcome::Enabled(_)));
+        }
+        let retry = c.enable_collaboration(&request).await.unwrap();
+        assert!(matches!(retry, CollaborationOutcome::Enabled(_)));
+        assert_eq!(c.recover(100).await.unwrap().manifest().format, 2);
     }
 }
 

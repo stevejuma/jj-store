@@ -572,3 +572,14 @@ Paired native-ID labels default to four leading characters alone. Hover or
 keyboard focus reveals the longer prefix, two dots and final two characters. A
 single identifier shows that longer abbreviation immediately; configuring the
 display never changes clipboard values.
+
+## Code-state mutation fencing
+
+Head and read snapshots expose `code_state_version` separately from the global
+publication sequence and manifest revision. Typed mutation requests and
+conflict-upload bindings return that token with the captured epoch and heads.
+Agent, review, settings and checkpoint publications may advance repository
+position without invalidating a prepared code command; any native code-state
+change advances the token and makes the command stale. Generated OpenAPI and
+TypeScript contracts carry the field without weakening existing exact snapshot
+validation.

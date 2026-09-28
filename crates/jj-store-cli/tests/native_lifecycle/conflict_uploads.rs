@@ -14,6 +14,10 @@ fn upload_request(
     let query = url::form_urlencoded::Serializer::new(String::new())
         .append_pair("epoch", &expected.epoch.to_string())
         .append_pair("position", &expected.position.0.to_string())
+        .append_pair(
+            "code_state_version",
+            &expected.code_state_version.to_string(),
+        )
         .append_pair("operation", &expected.heads.first().unwrap().to_string())
         .append_pair("commit", &commit.to_string())
         .append_pair("path", &descriptor.path)

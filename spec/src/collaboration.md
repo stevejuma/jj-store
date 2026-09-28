@@ -1,0 +1,38 @@
+# Agent activity and repository reviews
+
+AgentStore and ReviewStore are first-party repository capabilities. They share
+the existing object envelopes, WAL, receipts and manifest publication service,
+but retain independent models, authorization and state versions. They are not
+upstream JJ traits, Tantivy indexes, Nostr projections or agent executors.
+
+The first release is LocalTrusted. It captures Codex, Cursor and OpenCode
+through qualified integrations, stores sanitized evidence before normalized
+views and supports exact discussions on immutable code, diff and agent
+artifacts. Review task context is explicit and version-bound; replaying or
+reading a comment never dispatches an agent.
+
+## Requirements
+
+| ID             | Requirement                                                                                                                                                                                                     |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| JST-COLLAB-001 | The repository facade MUST expose independent root-pinned AgentStore and ReviewStore services backed only by the existing immutable object, WAL, receipt and manifest publication authority.                    |
+| JST-COLLAB-002 | Capture MUST preserve stable session/turn/tool/checkpoint identities, sanitized native evidence, deterministic normalized activity and explicit evidence-backed JJ associations for Codex, Cursor and OpenCode. |
+| JST-COLLAB-003 | Review threads MUST target exact immutable artifact versions and validated UTF-8 byte ranges, with stale-safe replies, edits, tombstones, resolve/reopen and conservative explicit re-anchoring.                |
+| JST-COLLAB-004 | LocalTrusted CLI and HTTP APIs MUST provide bounded root-pinned reads, typed writes, pagination and live hints without bearer credentials, public listeners or implicit controller dispatch.                    |
+| JST-COLLAB-005 | The application MUST reuse Community-owned thread/comment/agent presentation and Design Core diff extension points, with accessible interactions, virtualization and pinned-code versus live-activity state.    |
+| JST-COLLAB-006 | Sanitization MUST occur before every durable capture copy through the qualified packaged redaction helper; credentials, unrelated sessions and unsafe rendered content MUST fail closed.                        |
+| JST-COLLAB-007 | Cold recovery and native copy MUST verify code, agent and review closures directly; search and other projections remain rebuildable, and unsupported remote/export/backup behavior stays deferred.              |
+
+## Initial delivery boundaries
+
+The active sequence is publication foundation, AgentStore model and capture,
+ReviewStore exact anchors, LocalTrusted API/CLI integrations, shared UI, then
+cold recovery and real-harness qualification. Codex CLI 0.156.1, Cursor 3.22.7
+and OpenCode 1.18.30 are the initial compatibility surfaces; each still requires
+sanitized fixtures and an executed capability matrix before support is claimed.
+
+Authenticated/shared serving, remote replication, backup/restore, Git or Nostr
+export, controller job dispatch, arbitrary cross-repository targets, CRDT/edit
+identity, advanced semantic re-anchoring, other harnesses and visual baselines
+are deferred. Tantivy may index committed collaboration records later but never
+becomes their authority.

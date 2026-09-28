@@ -418,3 +418,10 @@ selection for merge operations. Diff summaries retain exact before/after terms,
 copy and rename sources, conflicts and binary/oversized reasons; selected file
 content remains a separate verified read. These read-only queries cannot stage
 objects, reconcile heads or publish repository state.
+
+Native RPC V1 snapshot messages include the repository code-state version in
+addition to epoch, global publication position and heads. Administration clients
+round-trip the field so collaboration-only WAL activity does not make a strict
+native policy or code request stale. A missing field decodes as zero for
+pre-feature canonical snapshots; new current snapshots always return the
+selected value.

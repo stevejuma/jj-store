@@ -210,6 +210,7 @@ export class HttpStoreDataSource implements StoreDataSource {
       {
         epoch: head.epoch,
         position: head.published_seq,
+        code_state_version: head.code_state_version,
         operation: fullId(head.heads[0]!),
         commit: fullId(commit),
         path,

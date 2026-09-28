@@ -95,7 +95,7 @@ pub(super) async fn selected(
                 .ok_or(Error::Corrupt("historical position missing"))?,
         )
     };
-    let mut previous_snapshot = if let Some(reference) = previous {
+    let (mut previous_snapshot, mut previous_domains) = if let Some(reference) = previous {
         let prior: PublishedTransaction = records.get(reference, RecordKind::Wal).await?;
         if prior.repository != manifest.repository
             || prior.after.epoch != manifest.epoch
@@ -103,13 +103,29 @@ pub(super) async fn selected(
         {
             return Err(Error::Corrupt("previous log position"));
         }
-        prior.after
+        let domains = if manifest.format == 2 && after.0 >= manifest.domain_history_start {
+            Some(
+                prior
+                    .after_domains
+                    .ok_or(Error::Corrupt("domain history missing"))?,
+            )
+        } else {
+            if prior.before_domains.is_some() || prior.after_domains.is_some() {
+                return Err(Error::Corrupt("unexpected legacy domain history"));
+            }
+            None
+        };
+        (prior.after, domains)
     } else {
-        Snapshot {
-            epoch: manifest.epoch,
-            position: WalPosition(0),
-            heads: BTreeSet::from([OperationId::new([0; 64])]),
-        }
+        (
+            Snapshot {
+                epoch: manifest.epoch,
+                position: WalPosition(0),
+                code_state_version: 0,
+                heads: BTreeSet::from([OperationId::new([0; 64])]),
+            },
+            None,
+        )
     };
     for offset in 1..=count {
         let position = WalPosition(after.0 + offset);
@@ -129,6 +145,24 @@ pub(super) async fn selected(
         {
             return Err(Error::Corrupt("committed log chain"));
         }
+        if manifest.format == 2 && position.0 >= manifest.domain_history_start {
+            let after_domains = transaction
+                .after_domains
+                .ok_or(Error::Corrupt("domain history missing"))?;
+            match (previous_domains, transaction.before_domains) {
+                (Some(prior), Some(before)) if prior == before => {}
+                (None, None)
+                    if transaction.kind == SemanticKind::CollaborationEnabled
+                        && after_domains.agent.version == 0
+                        && after_domains.review.version == 0 => {}
+                (None, Some(before)) if before.agent.version == 0 && before.review.version == 0 => {
+                }
+                _ => return Err(Error::Corrupt("domain history chain")),
+            }
+            previous_domains = Some(after_domains);
+        } else if transaction.before_domains.is_some() || transaction.after_domains.is_some() {
+            return Err(Error::Corrupt("unexpected legacy domain history"));
+        }
         let receipt: Receipt = records
             .get(transaction.receipt, RecordKind::Receipt)
             .await?;
@@ -144,7 +178,11 @@ pub(super) async fn selected(
         });
     }
     if after.0 + count == manifest.published.0
-        && (previous != manifest.tail || previous_snapshot != manifest.snapshot())
+        && (previous != manifest.tail
+            || previous_snapshot != manifest.snapshot()
+            || (manifest.format == 2
+                && manifest.published.0 >= manifest.domain_history_start
+                && previous_domains != manifest.domains()))
     {
         return Err(Error::Corrupt("manifest tail disagreement"));
     }

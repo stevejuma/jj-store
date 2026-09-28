@@ -16,6 +16,8 @@ pub enum RecordKind {
     Wal,
     Checkpoint,
     Settings,
+    AgentRoot,
+    ReviewRoot,
 }
 impl RecordKind {
     fn path(self) -> &'static str {
@@ -26,6 +28,8 @@ impl RecordKind {
             Self::Wal => "wal",
             Self::Checkpoint => "checkpoints",
             Self::Settings => "settings",
+            Self::AgentRoot => "agent-roots",
+            Self::ReviewRoot => "review-roots",
         }
     }
 }

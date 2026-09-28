@@ -48,6 +48,7 @@ pub(crate) fn snapshot(value: Option<wire::Snapshot>) -> Result<a::Administratio
     Ok(a::AdministrationSnapshot {
         epoch: m::EpochId::from_slice(&value.epoch).map_err(|_| invalid())?,
         position: m::WalPosition(value.position),
+        code_state_version: value.code_state_version,
         heads,
     })
 }
@@ -55,6 +56,7 @@ pub(crate) fn wire_snapshot(value: a::AdministrationSnapshot) -> wire::Snapshot 
     wire::Snapshot {
         epoch: value.epoch.as_bytes().to_vec(),
         position: value.position.0,
+        code_state_version: value.code_state_version,
         heads: value
             .heads
             .into_iter()
@@ -257,6 +259,7 @@ mod tests {
             expected: a::AdministrationSnapshot {
                 epoch: m::EpochId::new([2; 16]),
                 position: m::WalPosition(7),
+                code_state_version: 0,
                 heads: [m::OperationId::new([0; 64])].into(),
             },
             change: a::TokenChange::Revoke {
@@ -311,6 +314,7 @@ mod tests {
         let snapshot = wire::Snapshot {
             epoch: vec![1; 16],
             position: 0,
+            code_state_version: 0,
             heads: vec![vec![0; 64]],
         };
         let token = wire::TokenDescription {

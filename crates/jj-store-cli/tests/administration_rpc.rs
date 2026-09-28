@@ -365,6 +365,7 @@ async fn rpc_rejects_malformed_admin_requests_without_publication_and_redacts_se
         expected: Some(wire::Snapshot {
             epoch: EPOCH.as_bytes().to_vec(),
             position: 0,
+            code_state_version: 0,
             heads: initial
                 .heads
                 .iter()

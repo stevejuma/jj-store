@@ -363,3 +363,11 @@ receipts or WAL bytes; 401/403 remain credential failures. Captured browser
 fixtures merge real registered-handler read and mutation responses, while the
 separate pinned RustFS lane proves one mutation through the built application
 and native repository.
+
+Manifest format 2 adds selected AgentStore/ReviewStore roots and independent
+state versions. Zero-valued extension fields and absent domain history remain
+canonically omitted, so retained format-1 manifests, WAL records, receipts and
+mutation/upload intent bytes still decode byte-for-byte. Native RPC and OpenAPI
+snapshots add `code_state_version`; this repository is unreleased, so no public
+wire downgrade is promised. The explicit collaboration-enable publication is the
+only supported format-1 adoption path and never rewrites native objects.

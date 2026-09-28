@@ -61,6 +61,13 @@ adds evidence here in its enclosing Jujutsu change.
 | M7          | Deferred | M8a         | JST-ADAPT-005                                                           | Complete read-only replica through applied position                                                                 | After first release                                     | -                                                                                                                                                                                                                          |
 | M7.1        | Deferred | M8a.4       | JST-ADAPT-006                                                           | Asynchronous verified S3 backup remains independent from passive serving and promotion                              | Future backup release after local application           | -                                                                                                                                                                                                                          |
 | M8b         | Deferred | M8a         | JST-COMPAT-004                                                          | Verified lossless import with source safety                                                                         | Separate migration release                              | -                                                                                                                                                                                                                          |
+| M9          | Partial  | M8a.4       | JST-COLLAB-001,JST-COLLAB-005                                           | Repository-native agent activity and exact review discussions in the LocalTrusted application                       | Implement AgentStore models and sanitized capture       | E-M9-001                                                                                                                                                                                                                   |
+| M9.1        | Done     | M8a.4       | JST-PUB-007,JST-PUB-008                                                 | Independent code/agent/review roots, code-state fencing and non-destructive collaboration enablement                | Implement AgentStore typed root objects                 | E-M9-001                                                                                                                                                                                                                   |
+| M9.2        | Planned  | M9.1        | JST-COLLAB-001,JST-COLLAB-002,JST-COLLAB-006                            | AgentStore model, immutable snapshots/catalogs, sanitized evidence and Codex/Cursor/OpenCode normalizers            | Add owned model/store and packaged sanitizer            | -                                                                                                                                                                                                                          |
+| M9.3        | Planned  | M9.2        | JST-COLLAB-001,JST-COLLAB-003                                           | ReviewStore exact artifact anchors and stale-safe thread/comment workflow                                           | Add exact anchors and review command store              | -                                                                                                                                                                                                                          |
+| M9.4        | Planned  | M9.2,M9.3   | JST-COLLAB-004                                                          | LocalTrusted bounded CLI/HTTP APIs, pagination, receipts and live collaboration hints                               | Wire first-party service and generated contracts        | -                                                                                                                                                                                                                          |
+| M9.5        | Planned  | M9.4        | JST-COLLAB-005                                                          | Community-owned thread/agent widgets and Design Core exact diff selection integrated into the application           | Implement accessible virtualized application routes     | -                                                                                                                                                                                                                          |
+| M9.6        | Planned  | M9.5        | JST-COLLAB-002,JST-COLLAB-006,JST-COLLAB-007                            | Three harness qualification, cold recovery, three-root native copy and bounded fault/security/browser acceptance    | Execute real harness and native recovery gates          | -                                                                                                                                                                                                                          |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -81,6 +88,14 @@ M4's registry/package and shared-deployment finalization is also deferred;
 functional local browser acceptance is owned by M8a.1 and does not require
 package publication or visual baselines. Explicitly configured LocalTrusted
 search is part of the local application and uses no bearer credential.
+
+M9 implements the accepted repository-native agent and review plan for the
+LocalTrusted application. The first release covers Codex, Cursor and OpenCode,
+exact immutable review anchors and live collaboration hints while code remains
+pinned until explicit refresh. Reviews prepare explicit task context; controller
+job dispatch is deferred. Authenticated/shared access, remote replication,
+backup/restore, Git/Nostr export, other harnesses, CRDT identity and visual
+baselines remain deferred.
 
 ## Evidence ledger
 
@@ -12074,6 +12089,159 @@ and named tests are checked by the progress gate.
     "remaining": [],
     "versions": "Rust 1.98.1; jj-lib 0.45.1; Tantivy 0.26.2; embedded rustfs 1.0.0 with default features disabled; Node.js 22 or newer.",
     "formats": "Format-2 search entries now require token_environment only for authenticated access and omit it for LocalTrusted access. Local workers use a stable installation-derived read-only principal. Native objects, manifest, WAL, receipts, IDs, HTTP routes and browser storage formats are unchanged. Visual baselines were skipped by user direction."
+  },
+  {
+    "id": "E-M9-001",
+    "tasks": ["M9", "M9.1"],
+    "date": "2026-09-28",
+    "kind": "implementation",
+    "files": [
+      "AGENTS.md",
+      "crates/jj-store-cli/tests/administration_rpc.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/conflict_uploads.rs",
+      "crates/jj-store-http/src/uploads.rs",
+      "crates/jj-store-rpc/proto/native.proto",
+      "crates/jj-store-rpc/src/administration.rs",
+      "crates/jj-store-service/src/mutations.rs",
+      "crates/jj-store-service/src/reads.rs",
+      "crates/jj-store-service/src/uploads.rs",
+      "crates/jj-store-wal/src/publication.rs",
+      "crates/jj-store-wal/src/publication/application.rs",
+      "crates/jj-store-wal/src/publication/collaboration.rs",
+      "crates/jj-store-wal/src/publication/domains.rs",
+      "crates/jj-store-wal/src/publication/reader.rs",
+      "crates/jj-store-wal/src/records.rs",
+      "crates/jj-store-wal/tests/publication.rs",
+      "schemas/openapi.json",
+      "scripts/check-progress.mjs",
+      "scripts/governance.test.mjs",
+      "spec-validator.config.mjs",
+      "spec/src/SUMMARY.md",
+      "spec/src/api.md",
+      "spec/src/cli.md",
+      "spec/src/collaboration.md",
+      "spec/src/compatibility.md",
+      "spec/src/jj-integration.md",
+      "spec/src/milestones.md",
+      "spec/src/mutations.md",
+      "spec/src/publication.md",
+      "spec/src/spec-governance.md",
+      "spec/src/verification.md",
+      "web/src/lib/api/generated.ts",
+      "web/src/lib/controller/http-store-data-source.ts",
+      "web/src/lib/controller/store-mutation-types.ts",
+      "web/tests/production-inspection-pages.test.ts",
+      "web/tests/production-store-conflicts.test.ts",
+      "web/tests/production-store-loaders.test.ts",
+      "web/tests/production-store-mutations.test.ts"
+    ],
+    "tests": [
+      "crates/jj-store-wal/tests/publication.rs#domain_publications_preserve_roots_without_staling_code",
+      "crates/jj-store-wal/tests/publication.rs#legacy_repository_enables_collaboration_without_rewriting_code_history",
+      "crates/jj-store-wal/tests/publication.rs#collaboration_enablement_resolves_unknown_manifest_outcomes"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-wal --test publication domain_publications_preserve_roots_without_staling_code --locked",
+        "result": "fail",
+        "failures": 28,
+        "note": "The test-first compile proved that the repository had no independent domain-root publication contract."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-wal --test publication legacy_repository_enables_collaboration_without_rewriting_code_history --locked -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "A repository with committed format-1 history gains canonical empty agent/review roots through one receipt-bearing WAL event; an already prepared unchanged-code mutation then commits and cold recovery preserves all records."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-wal --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 30 WAL inventory/publication tests pass, including domain isolation, enablement retries, before/after unknown manifest outcomes and selected-history recovery."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo check --workspace --all-targets --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Every Rust workspace target compiles with the code-state token propagated through service, HTTP and RPC contracts."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-service conflict_ --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both canonical legacy receipt and conflict-upload digest regressions remain byte-stable when code_state_version is zero."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-rpc administration --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both administration snapshot and credential-safety tests pass with the new RPC field."
+      },
+      {
+        "command": "pnpm contracts:generate",
+        "result": "fail",
+        "failures": 1,
+        "note": "The first generation attempt reached the linker under the unaccepted full-Xcode developer directory; no contract assertion ran."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm contracts:generate && pnpm test:contracts",
+        "result": "pass",
+        "failures": 0,
+        "note": "OpenAPI and TypeScript contracts regenerate and all six schema/client validation tests pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm contracts:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "The complete contract-capture lane exposed that its conflict-upload HTTP fixture did not yet send the required code_state_version query binding; the request failed closed with HTTP 400."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test --locked -p jj-store-cli --test native_lifecycle content_acceptance::diff_acceptance::conflict_acceptance::resolve_acceptance::uploads_acceptance::conflict_upload_http_stages_verified_binary_without_publication_then_resolves -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "The exact contract-capture regression passes after binding the upload fixture to the selected snapshot code-state version."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm contracts:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Generated OpenAPI and TypeScript artifacts match, all 51 captured HTTP/SSE responses conform, and all six contract tests pass."
+      },
+      {
+        "command": "pnpm exec tsx --test web/tests/production-store-mutations.test.ts web/tests/production-store-conflicts.test.ts web/tests/production-store-loaders.test.ts web/tests/production-inspection-pages.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 15 directly affected controller tests pass with exact code-state mutation and conflict-upload bindings."
+      },
+      {
+        "command": "node scripts/web-architecture.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 196 governed web modules remain within the Community-derived size and dependency boundaries."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "fail",
+        "failures": 5,
+        "note": "The mapped gate required API, CLI, compatibility, JJ integration and mutation chapters for the propagated code-state contracts."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm format:rust:check; pnpm exec prettier --check <changed files>",
+        "result": "fail",
+        "failures": 2,
+        "note": "Rustfmt reported the new modules and tests, while Prettier reported the four new/extended canonical chapters; all formatting was applied through reviewed patches."
+      },
+      {
+        "command": "pnpm spec:first; pnpm test:governance; pnpm check:progress; pnpm web:check; DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm format:rust:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Nine mapped canonical chapters, 24 governance tests, all 60 ledger tasks, production Svelte diagnostics and Rust formatting pass."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "versions": "Rust 1.98.1; jj-lib/jj-cli 0.45.1; manifest format 2; OpenAPI 3.1; native RPC v1.",
+    "formats": "Manifest format 2 selects independent code, agent and review state with a domain-history boundary. New repositories start with canonical empty agent/review roots; format-1 repositories adopt them through a receipt-bearing CollaborationEnabled WAL event without native ID or history rewrite. Snapshot code_state_version is omitted at zero for canonical legacy bytes and carried by current HTTP/RPC contracts. AgentStore and ReviewStore object schemas remain pending M9.2/M9.3."
   }
 ]
 ```

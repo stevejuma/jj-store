@@ -52,6 +52,7 @@ mod report_compatibility {
             expected: Snapshot {
                 epoch,
                 position: m::WalPosition(7),
+                code_state_version: 0,
                 heads: BTreeSet::from([m::OperationId::new([6; 64])]),
             },
             command: Command::ResolveConflicts {
@@ -94,6 +95,7 @@ mod report_compatibility {
             accepted: Snapshot {
                 epoch,
                 position: m::WalPosition(8),
+                code_state_version: 0,
                 heads: BTreeSet::from([operation]),
             },
             result: bytes,

@@ -53,6 +53,7 @@ pub struct HeadSnapshot {
     pub epoch: m::EpochId,
     pub published_seq: m::WalPosition,
     pub manifest_revision: u64,
+    pub code_state_version: u64,
     pub heads: BTreeSet<m::OperationId>,
 }
 impl From<&Manifest> for HeadSnapshot {
@@ -63,6 +64,7 @@ impl From<&Manifest> for HeadSnapshot {
             epoch: manifest.epoch,
             published_seq: manifest.published,
             manifest_revision: manifest.revision,
+            code_state_version: manifest.code_state_version,
             heads: manifest.heads.clone(),
         }
     }

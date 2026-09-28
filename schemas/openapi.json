@@ -6724,6 +6724,11 @@
                         "format": "uint64",
                         "minimum": 0
                       },
+                      "code_state_version": {
+                        "type": "integer",
+                        "format": "uint64",
+                        "minimum": 0
+                      },
                       "heads": {
                         "type": "array",
                         "uniqueItems": true,
@@ -7139,6 +7144,11 @@
                         "format": "uint64",
                         "minimum": 0
                       },
+                      "code_state_version": {
+                        "type": "integer",
+                        "format": "uint64",
+                        "minimum": 0
+                      },
                       "heads": {
                         "type": "array",
                         "uniqueItems": true,
@@ -7431,6 +7441,14 @@
             "explode": true
           },
           {
+            "name": "code_state_version",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "integer", "format": "uint64", "minimum": 0 },
+            "style": "form",
+            "explode": true
+          },
+          {
             "name": "operation",
             "in": "query",
             "required": true,
@@ -7595,6 +7613,11 @@
               "maxLength": 32
             },
             "position": { "type": "integer", "format": "uint64", "minimum": 0 },
+            "code_state_version": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0
+            },
             "operation": {
               "type": "string",
               "pattern": "^[0-9a-f]{128}$",
@@ -7618,6 +7641,7 @@
           "required": [
             "epoch",
             "position",
+            "code_state_version",
             "operation",
             "commit",
             "path",
@@ -7872,6 +7896,11 @@
             "format": "uint64",
             "minimum": 0
           },
+          "code_state_version": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0
+          },
           "heads": {
             "type": "array",
             "uniqueItems": true,
@@ -7885,6 +7914,7 @@
           "epoch",
           "published_seq",
           "manifest_revision",
+          "code_state_version",
           "heads",
           "operation_id"
         ]
@@ -7925,6 +7955,11 @@
             "format": "uint64",
             "minimum": 0
           },
+          "code_state_version": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0
+          },
           "heads": {
             "type": "array",
             "uniqueItems": true,
@@ -7937,6 +7972,7 @@
           "epoch",
           "published_seq",
           "manifest_revision",
+          "code_state_version",
           "heads"
         ]
       },
@@ -10244,6 +10280,11 @@
         "properties": {
           "epoch": { "$ref": "#/components/schemas/EpochId" },
           "position": { "$ref": "#/components/schemas/WalPosition" },
+          "code_state_version": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0
+          },
           "heads": {
             "type": "array",
             "uniqueItems": true,

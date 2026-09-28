@@ -16,6 +16,8 @@ destructive GC, automated promotion, or multi-writer serving in v1.
 | JST-PUB-004 | Request identity and canonical intent digest MUST provide durable retry receipts and detect conflicting reuse across restarts and checkpoint compaction.                             |
 | JST-PUB-005 | Unknown outcomes MUST resolve through committed receipt/history lookup or return OUTCOME_UNKNOWN under the original request ID; absence alone MUST NOT prove rejection.              |
 | JST-PUB-006 | Checkpoints MUST preserve newer tails, retained history, evolution dependencies, and receipt lookup; empty server caches MUST recover acknowledged authority from object storage.    |
+| JST-PUB-007 | One manifest CAS MUST select code, AgentStore and ReviewStore roots with independent monotonic state versions; publishing one domain MUST preserve the other two domains.            |
+| JST-PUB-008 | Collaboration enablement MUST install canonical empty roots through an authorized receipt-bearing WAL publication without rewriting native history or staling unchanged code state.  |
 
 ## Verified dependency inventories
 
@@ -56,10 +58,29 @@ paths. Old roots and records remain readable and are never deleted.
 
 A bounded manifest selects the catalog roots, exact tail, nonempty operation
 heads and immutable settings together. Strict requests bind the logical snapshot
-(epoch, published sequence and heads), independent of checkpoint-only manifest
-revisions. Native/token canonical intent covers the complete publication
-request; request and publication identity indexes share a durable result
-receipt. Duplicate lookup precedes stale-snapshot checks and head changes.
+(epoch, code-state version and heads), independent of agent/review publications
+and checkpoint-only manifest revisions. The global publication sequence still
+orders every committed domain event. Native/token canonical intent covers the
+complete publication request; request and publication identity indexes share a
+durable result receipt. Duplicate lookup precedes stale-snapshot checks and head
+changes.
+
+Format 2 manifests select canonical AgentStore and ReviewStore roots alongside
+native code state. Each domain has an independent version, while one global WAL
+sequence and manifest revision retain total publication order. Code transitions
+preserve both collaboration roots; agent and review transitions preserve native
+heads, settings, inventories and the sibling collaboration root. Cold recovery
+verifies selected current and historical roots without Tantivy, Nostr or a
+second manifest.
+
+An authorized collaboration-enable request upgrades a format 1 manifest by
+appending a receipt-bearing WAL event. The event selects deterministic empty
+agent and review roots, records the exact boundary at which domain history
+begins and leaves native heads and code-state version unchanged. Existing WAL,
+inventories, settings, receipts, checkpoints and native IDs remain immutable.
+CAS conflicts retry from the new base; an unknown manifest outcome resolves by
+the original request/publication identity or remains explicitly unknown. A code
+command prepared against unchanged pre-enable code state remains valid.
 
 A checkpoint stores the folded state and selected catalog roots at its captured
 position. Selecting it changes only manifest representation/revision and keeps

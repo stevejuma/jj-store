@@ -1,7 +1,11 @@
 //! One manifest CAS selects immutable native inventory, history and receipts.
 mod application;
+mod collaboration;
+mod domains;
 mod reader;
 pub use application::ApplicationIntent;
+pub use collaboration::{CollaborationOutcome, CollaborationRequest};
+pub use domains::{Domain, DomainRequest, DomainState, RepositoryDomains};
 pub use reader::SelectedRecord;
 
 use crate::{
@@ -30,6 +34,8 @@ const MAX_MANIFEST: u64 = 128 * 1024;
 pub struct Snapshot {
     pub epoch: EpochId,
     pub position: WalPosition,
+    #[serde(default, skip_serializing_if = "is_zero")]
+    pub code_state_version: u64,
     pub heads: BTreeSet<OperationId>,
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -48,17 +54,43 @@ pub struct Manifest {
     pub checkpoint: Option<RecordRef>,
     pub initial_settings: RecordRef,
     pub settings: RecordRef,
+    #[serde(default, skip_serializing_if = "is_zero")]
+    pub code_state_version: u64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub agent_root: Option<RecordRef>,
+    #[serde(default, skip_serializing_if = "is_zero")]
+    pub agent_state_version: u64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub review_root: Option<RecordRef>,
+    #[serde(default, skip_serializing_if = "is_zero")]
+    pub review_state_version: u64,
+    #[serde(default, skip_serializing_if = "is_zero")]
+    pub domain_history_start: u64,
 }
 impl Manifest {
     pub fn snapshot(&self) -> Snapshot {
         Snapshot {
             epoch: self.epoch,
             position: self.published,
+            code_state_version: self.code_state_version,
             heads: self.heads.clone(),
         }
     }
+    pub fn domain_state(&self, domain: Domain) -> Option<DomainState> {
+        let (root, version) = match domain {
+            Domain::Agent => (self.agent_root, self.agent_state_version),
+            Domain::Review => (self.review_root, self.review_state_version),
+        };
+        root.map(|root| DomainState { root, version })
+    }
+    pub fn domains(&self) -> Option<RepositoryDomains> {
+        Some(RepositoryDomains {
+            agent: self.domain_state(Domain::Agent)?,
+            review: self.domain_state(Domain::Review)?,
+        })
+    }
     fn validate(&self, repository: RepositoryId) -> Result<()> {
-        if self.format != 1
+        if !matches!(self.format, 1 | 2)
             || self.repository != repository
             || self.heads.is_empty()
             || self.heads.len() > MAX_HEADS
@@ -67,6 +99,33 @@ impl Manifest {
             || self.settings.kind != RecordKind::Settings
         {
             return Err(Error::Corrupt("manifest fields"));
+        }
+        match self.format {
+            1 if self.code_state_version != 0
+                || self.agent_root.is_some()
+                || self.agent_state_version != 0
+                || self.review_root.is_some()
+                || self.review_state_version != 0
+                || self.domain_history_start != 0 =>
+            {
+                return Err(Error::Corrupt("legacy manifest domains"));
+            }
+            2 if self.domains().is_none()
+                || self
+                    .agent_root
+                    .is_some_and(|r| r.kind != RecordKind::AgentRoot || r.attempt.is_some())
+                || self
+                    .review_root
+                    .is_some_and(|r| r.kind != RecordKind::ReviewRoot || r.attempt.is_some())
+                || self.domain_history_start == 0
+                || self.domain_history_start > self.published.0.saturating_add(1)
+                || self.code_state_version > self.published.0
+                || self.agent_state_version > self.published.0
+                || self.review_state_version > self.published.0 =>
+            {
+                return Err(Error::Corrupt("manifest domain state"));
+            }
+            _ => {}
         }
         if self.published.0 > self.revision
             || (self.published.0 == 0) != self.tail.is_none()
@@ -179,6 +238,9 @@ pub enum SemanticKind {
     OperationPublished,
     HeadsNormalized,
     SettingsChanged,
+    CollaborationEnabled,
+    AgentStateChanged,
+    ReviewStateChanged,
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -248,6 +310,10 @@ pub struct PublishedTransaction {
     pub settings: RecordRef,
     pub kind: SemanticKind,
     pub published_operations: BTreeSet<OperationId>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub before_domains: Option<RepositoryDomains>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub after_domains: Option<RepositoryDomains>,
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum PublishOutcome {
@@ -290,6 +356,20 @@ impl Default for Limits {
 #[async_trait::async_trait]
 pub trait PublicationGuard: Send + Sync {
     async fn authorize(&self, base: &ManifestSnapshot, request: &Request) -> Result<()>;
+    async fn authorize_domain(
+        &self,
+        _base: &ManifestSnapshot,
+        _request: &DomainRequest,
+    ) -> Result<()> {
+        Err(Error::Denied)
+    }
+    async fn authorize_collaboration(
+        &self,
+        _base: &ManifestSnapshot,
+        _request: &CollaborationRequest,
+    ) -> Result<()> {
+        Err(Error::Denied)
+    }
     async fn validate_transition(
         &self,
         base: &ManifestSnapshot,
@@ -351,8 +431,10 @@ impl Coordinator {
                 .records
                 .put(RecordKind::Settings, None, &Settings { data: settings })
                 .await?;
+            let agent_root = self.stage_domain_root(Domain::Agent, &[]).await?;
+            let review_root = self.stage_domain_root(Domain::Review, &[]).await?;
             let manifest = Manifest {
-                format: 1,
+                format: 2,
                 repository: self.records.repository,
                 epoch,
                 revision: 0,
@@ -365,6 +447,12 @@ impl Coordinator {
                 checkpoint: None,
                 initial_settings: settings,
                 settings,
+                code_state_version: 0,
+                agent_root: Some(agent_root),
+                agent_state_version: 0,
+                review_root: Some(review_root),
+                review_state_version: 0,
+                domain_history_start: 1,
             };
             let bytes = records::encode(&manifest, MAX_MANIFEST)?;
             let upload = StagedUpload::from_bytes(&bytes, MAX_MANIFEST).await?;
@@ -429,7 +517,7 @@ impl Coordinator {
                     heads
                 }
                 Some(Transition::Strict { expected, heads }) => {
-                    if *expected != base.manifest.snapshot() {
+                    if !same_code_state(expected, &base.manifest.snapshot()) {
                         return Err(Error::Stale);
                     }
                     heads.clone()
@@ -438,6 +526,14 @@ impl Coordinator {
             if heads.is_empty() || heads.len() > MAX_HEADS {
                 return Err(Error::Limit("operation heads"));
             }
+            let code_state_version = if request.transition.is_some() && base.manifest.format == 2 {
+                base.manifest
+                    .code_state_version
+                    .checked_add(1)
+                    .ok_or(Error::Limit("code state version"))?
+            } else {
+                base.manifest.code_state_version
+            };
             let guarded_after = Snapshot {
                 epoch: base.manifest.epoch,
                 position: WalPosition(
@@ -447,6 +543,7 @@ impl Coordinator {
                         .checked_add(1)
                         .ok_or(Error::Limit("publication sequence"))?,
                 ),
+                code_state_version,
                 heads: heads.clone(),
             };
             self.guard
@@ -478,6 +575,7 @@ impl Coordinator {
             let after = Snapshot {
                 epoch: base.manifest.epoch,
                 position,
+                code_state_version,
                 heads: heads.clone(),
             };
             let receipt = Receipt {
@@ -523,6 +621,8 @@ impl Coordinator {
                         _ => None,
                     })
                     .collect(),
+                before_domains: base.manifest.domains(),
+                after_domains: base.manifest.domains(),
             };
             let tail = self
                 .records
@@ -548,6 +648,7 @@ impl Coordinator {
                 receipts,
                 history,
                 settings,
+                code_state_version,
                 ..base.manifest
             };
             let bytes = records::encode(&manifest, MAX_MANIFEST)?;
@@ -609,11 +710,24 @@ impl Coordinator {
         request: &Request,
         intent: IntentDigest,
     ) -> Result<Option<Receipt>> {
-        let (r, p) = self.receipt_keys(
+        self.lookup_identity(
+            manifest,
             request.principal,
             request.request_id,
             request.publication_id,
-        );
+            intent,
+        )
+        .await
+    }
+    async fn lookup_identity(
+        &self,
+        manifest: &Manifest,
+        principal: PrincipalId,
+        request_id: RequestId,
+        publication_id: PublicationId,
+        intent: IntentDigest,
+    ) -> Result<Option<Receipt>> {
+        let (r, p) = self.receipt_keys(principal, request_id, publication_id);
         let a = self.catalog.get(manifest.receipts, r).await?;
         let b = self.catalog.get(manifest.receipts, p).await?;
         if a.is_some() && b.is_some() && a != b {
@@ -624,9 +738,9 @@ impl Coordinator {
         };
         let receipt: Receipt = self.records.get(reference, RecordKind::Receipt).await?;
         if receipt.intent != intent
-            || receipt.principal != request.principal
-            || receipt.request_id != request.request_id
-            || receipt.publication_id != request.publication_id
+            || receipt.principal != principal
+            || receipt.request_id != request_id
+            || receipt.publication_id != publication_id
         {
             return Err(Error::IntentConflict);
         }
@@ -635,6 +749,32 @@ impl Coordinator {
             return Err(Error::Corrupt("receipt companion index missing"));
         }
         Ok(Some(receipt))
+    }
+    async fn write_manifest(
+        &self,
+        base: &ManifestSnapshot,
+        manifest: Manifest,
+    ) -> Result<Option<ManifestSnapshot>> {
+        let bytes = records::encode(&manifest, MAX_MANIFEST)?;
+        let upload = StagedUpload::from_bytes(&bytes, MAX_MANIFEST).await?;
+        match self
+            .records
+            .store
+            .put(
+                &self.manifest_key(),
+                Condition::Matches(base.version.clone()),
+                &upload,
+            )
+            .await?
+        {
+            WriteOutcome::Applied(version) => Ok(Some(ManifestSnapshot {
+                manifest,
+                digest: records::digest(&bytes),
+                version,
+            })),
+            WriteOutcome::PreconditionFailed => Ok(None),
+            WriteOutcome::Unknown => Err(Error::OutcomeUnknown),
+        }
     }
     fn validate_receipt_position(&self, manifest: &Manifest, receipt: &Receipt) -> Result<()> {
         if receipt.result.len() > 1024 * 1024
@@ -882,6 +1022,12 @@ impl Coordinator {
                 .get(manifest.initial_settings, RecordKind::Settings)
                 .await?;
             self.settings(&snapshot).await?;
+            if let Some(domains) = manifest.domains() {
+                self.read_domain_root(Domain::Agent, domains.agent.root)
+                    .await?;
+                self.read_domain_root(Domain::Review, domains.review.root)
+                    .await?;
+            }
             let inventory = self.inventory(&snapshot, max_entries).await?;
             let mut remaining = self.limits.inventory.max_new_bytes;
             for expected in inventory {
@@ -958,6 +1104,12 @@ impl Coordinator {
                         && (tx.inventory != manifest.inventory || tx.settings != manifest.settings)
                     {
                         return Err(Error::Corrupt("manifest folded state"));
+                    }
+                    for domains in [tx.before_domains, tx.after_domains].into_iter().flatten() {
+                        self.read_domain_root(Domain::Agent, domains.agent.root)
+                            .await?;
+                        self.read_domain_root(Domain::Review, domains.review.root)
+                            .await?;
                     }
                     after = tx.after.position;
                 }
@@ -1043,4 +1195,14 @@ fn sequence_key(position: WalPosition) -> RecordDigest {
     let mut hash = Sha256::new_with_prefix(b"jj-store/position/v1");
     hash.update(position.0.to_be_bytes());
     RecordDigest::new(hash.finalize().into())
+}
+
+fn same_code_state(expected: &Snapshot, current: &Snapshot) -> bool {
+    expected.epoch == current.epoch
+        && expected.code_state_version == current.code_state_version
+        && expected.heads == current.heads
+}
+
+fn is_zero(value: &u64) -> bool {
+    *value == 0
 }

@@ -18,7 +18,12 @@ service NativeStore {
 }
 // The caller retains all three creation values across uncertain outcomes.
 message CreateRepositoryRequest { bytes repository = 1; bytes epoch = 2; string admin_credential = 3; }
-message Snapshot { bytes epoch = 1; uint64 position = 2; repeated bytes heads = 3; }
+message Snapshot {
+  bytes epoch = 1;
+  uint64 position = 2;
+  repeated bytes heads = 3;
+  uint64 code_state_version = 4;
+}
 enum TokenPermission { PERMISSION_UNSPECIFIED = 0; READ = 1; WRITE = 2; ADMIN = 3; }
 message TokenDescription { bytes id = 1; bytes principal = 2; TokenPermission permission = 3; optional uint64 expires_at = 4; }
 message TokenListing { Snapshot snapshot = 1; repeated TokenDescription tokens = 2; }
