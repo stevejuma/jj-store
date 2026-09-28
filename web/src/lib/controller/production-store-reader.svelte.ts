@@ -1,13 +1,11 @@
 import { fullId } from "../api/client.js";
 import type { StoreDataSource } from "./native-data-source.js";
+import { createProductionFileReader } from "./production-file-reader.svelte.js";
 import {
-  readBlob,
   readCommitInspection,
   readGraph,
-  readLandingDocuments,
   readOperationInspection,
   readPatch,
-  readPaths,
   readReferences,
 } from "./production-store-loaders.js";
 import type { ProductionStoreState } from "./production-store-state.svelte.js";
@@ -26,6 +24,7 @@ interface ReaderContext {
 
 export function createProductionStoreReader(context: ReaderContext) {
   const { data, history } = context;
+  const fileReader = createProductionFileReader(context);
   async function loadReferences(more = false) {
     const source = context.source(),
       operation = fullId(context.operation() ?? ""),
@@ -83,57 +82,6 @@ export function createProductionStoreReader(context: ReaderContext) {
       if (!context.current(ticket, source)) return;
       context.report(cause);
       data.status.graph = "failed";
-    }
-  }
-  async function loadFiles(commit: string, more = false) {
-    const source = context.source(),
-      operation = fullId(context.operation() ?? ""),
-      ticket = context.version();
-    data.status.files = more ? "refreshing" : "loading";
-    try {
-      const value = await readPaths(
-        source,
-        operation,
-        commit,
-        data.pathEntries,
-        more ? (data.pathsCursor ?? undefined) : undefined,
-        more ? (data.pathsPageSnapshot ?? undefined) : undefined,
-      );
-      if (!context.current(ticket, source)) return;
-      data.pathEntries = value.entries;
-      data.fileTerms = value.files;
-      data.pathsCursor = value.cursor;
-      data.pathsPageSnapshot = value.readSnapshot;
-      data.snapshot = await readLandingDocuments(
-        source,
-        operation,
-        value.snapshot,
-        value.files,
-      );
-      if (!context.current(ticket, source)) return;
-      data.status.files = data.snapshot.files.length ? "ready" : "empty";
-    } catch (cause) {
-      if (!context.current(ticket, source)) return;
-      context.report(cause);
-      data.status.files = "failed";
-    }
-  }
-  async function loadBlob(path: string) {
-    const source = context.source(),
-      id = data.fileTerms.get(path),
-      operation = context.operation(),
-      ticket = context.version();
-    if (!id || !operation) return;
-    data.status.detail = "loading";
-    try {
-      const value = await readBlob(source, operation, path, id);
-      if (!context.current(ticket, source)) return;
-      data.blob = value;
-      data.status.detail = "ready";
-    } catch (cause) {
-      if (!context.current(ticket, source)) return;
-      context.report(cause);
-      data.status.detail = "failed";
     }
   }
   async function loadCommit(id: string) {
@@ -216,13 +164,12 @@ export function createProductionStoreReader(context: ReaderContext) {
     push ? history.push(next) : history.replace(next);
     data.snapshot = undefined;
     data.blob = undefined;
-    if (commit) await loadFiles(commit);
+    if (commit) await fileReader.loadFiles(commit);
   }
   const reads = {
     loadReferences,
     loadGraph,
-    loadFiles,
-    loadBlob,
+    ...fileReader,
     loadCommit,
     loadOperation,
     loadPatch,

@@ -84,15 +84,22 @@ function referencesPage(next_cursor: string | null = null) {
     next_cursor,
   );
 }
-export function pathsPage(next_cursor: string | null = null) {
+export function pathsPage(
+  next_cursor: string | null = null,
+  options: {
+    path?: string;
+    recursive?: boolean;
+    entries?: any[];
+  } = {},
+) {
   return windowPage(
     {
       version: 1,
       commit,
-      path: "",
-      recursive: true,
-      entries: tree.data.entries.map((entry: any) => ({
-        path: entry.name,
+      path: options.path ?? "",
+      recursive: options.recursive ?? false,
+      entries: (options.entries ?? tree.data.entries).map((entry: any) => ({
+        path: entry.path ?? entry.name,
         terms: structuredClone(entry.terms),
         conflicted: entry.conflicted,
         last_change: {
@@ -186,7 +193,12 @@ export async function api(
       return;
     }
     if (path?.startsWith("commits/") && path.endsWith("/paths")) {
-      await route.fulfill({ json: pathsPage() });
+      await route.fulfill({
+        json: pathsPage(null, {
+          path: url.searchParams.get("path") ?? "",
+          recursive: url.searchParams.get("recursive") === "true",
+        }),
+      });
       return;
     }
     if (path?.startsWith("operations/") && path.endsWith("/changes")) {

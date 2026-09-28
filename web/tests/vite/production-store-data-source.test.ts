@@ -116,3 +116,57 @@ test("closing a source aborts requests and clears protected cache entries", asyn
   expect(observedSignal?.aborted).toBe(true);
   expect(queryClient.getQueryCache().getAll()).toHaveLength(0);
 });
+
+test("path reads preserve directory, recursive, and opaque cursor queries", async () => {
+  const queryClient = createStoreQueryClient();
+  const requests: URL[] = [];
+  const source = new HttpStoreDataSource(
+    repository,
+    "token-a",
+    queryClient,
+    "session-a",
+    () => {},
+    async (input) => {
+      requests.push(
+        new URL(
+          typeof input === "string"
+            ? input
+            : input instanceof URL
+              ? input
+              : input.url,
+          "http://jj-store.test",
+        ),
+      );
+      return json({});
+    },
+  );
+  const operation = "cd".repeat(64);
+  const commit = "ef".repeat(64);
+
+  await source.paths(commit, operation);
+  await source.paths(commit, operation, { path: "src", recursive: false });
+  await source.paths(commit, operation, {
+    recursive: true,
+    cursor: "opaque-cursor",
+  });
+
+  expect(requests.map((request) => request.pathname)).toEqual([
+    `/v1/repos/${repository}/commits/${commit}/paths`,
+    `/v1/repos/${repository}/commits/${commit}/paths`,
+    `/v1/repos/${repository}/commits/${commit}/paths`,
+  ]);
+  expect(
+    requests.map((request) => Object.fromEntries(request.searchParams)),
+  ).toEqual([
+    { at_op: operation, path: "", recursive: "false", limit: "50" },
+    { at_op: operation, path: "src", recursive: "false", limit: "50" },
+    {
+      at_op: operation,
+      path: "",
+      recursive: "true",
+      limit: "50",
+      cursor: "opaque-cursor",
+    },
+  ]);
+  source.close();
+});

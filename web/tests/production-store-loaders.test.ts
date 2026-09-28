@@ -24,6 +24,11 @@ import {
   readOperationInspection,
   readReferences,
 } from "../src/lib/controller/production-store-loaders.js";
+import {
+  nextPathPage,
+  storePathPage,
+  visiblePathEntries,
+} from "../src/lib/controller/production-file-pages.js";
 
 const repository = "ab".repeat(16);
 const operation = "cd".repeat(64);
@@ -115,14 +120,73 @@ test("native presentation preserves conflicting targets and exact identifiers", 
 
   const paths = presentPaths(after, [
     {
+      path: "src",
+      terms: [{ type: "tree", id: before }],
+      conflicted: false,
+      last_change: { status: "unavailable", reason: "directory" },
+    },
+    {
       path: "src/lib.rs",
       terms: [{ type: "file", id: file, executable: false }],
       conflicted: false,
       last_change: { status: "unavailable", reason: "budget" },
     },
   ] as Model<"Entry">[]);
+  assert.deepEqual(paths.snapshot.directories, [{ path: "src" }]);
   assert.deepEqual(paths.snapshot.files, [{ path: "src/lib.rs" }]);
   assert.equal(paths.files.get("src/lib.rs"), file);
+});
+
+test("path pages isolate lazy directories from recursive listing views", () => {
+  const root = {
+    path: "src",
+    terms: [{ type: "tree", id: before }],
+    conflicted: false,
+  } as Model<"Entry">;
+  const child = {
+    path: "src/lib.rs",
+    terms: [{ type: "file", id: file, executable: false }],
+    conflicted: false,
+  } as Model<"Entry">;
+  let pages = new Map();
+  pages = storePathPage(
+    pages,
+    {
+      path: "",
+      recursive: false,
+      entries: [root],
+      cursor: "root-next",
+      snapshot: snapshot(),
+    },
+    false,
+  );
+  pages = storePathPage(
+    pages,
+    {
+      path: "src",
+      recursive: false,
+      entries: [child],
+      cursor: "src-next",
+      snapshot: snapshot(),
+    },
+    false,
+  );
+  pages = storePathPage(
+    pages,
+    {
+      path: "",
+      recursive: true,
+      entries: [child],
+      cursor: "recursive-next",
+      snapshot: snapshot(),
+    },
+    false,
+  );
+
+  assert.deepEqual(visiblePathEntries(pages, "tree"), [root, child]);
+  assert.deepEqual(visiblePathEntries(pages, "list"), [child]);
+  assert.equal(nextPathPage(pages, "tree", "src")?.cursor, "src-next");
+  assert.equal(nextPathPage(pages, "package", "")?.cursor, "recursive-next");
 });
 
 test("graph and diff presentation retain native edges and text statistics", () => {

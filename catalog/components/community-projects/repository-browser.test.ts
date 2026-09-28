@@ -44,6 +44,12 @@ describe("repositoryBrowserEntries", () => {
       { type: "blob", name: "index.ts", path: "src/index.ts" },
     ]);
   });
+
+  it("renders an explicit directory before its children are loaded", () => {
+    expect(
+      repositoryBrowserEntries([{ name: "src", path: "src", type: "tree" }]),
+    ).toEqual([{ type: "tree", name: "src", path: "src" }]);
+  });
 });
 
 describe("repository path helpers", () => {

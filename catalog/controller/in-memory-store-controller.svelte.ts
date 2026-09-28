@@ -1,3 +1,4 @@
+import type { FileListingViewMode } from "@lapismd/design-core/diff";
 import {
   IDS,
   NOW,
@@ -27,13 +28,10 @@ import {
   largeRevisions,
 } from "../fixtures/large-repository.js";
 
-export interface InMemoryStoreControllerOptions {
-  large?: boolean;
-}
 /** Each story owns this instance. It has no persistence or transport effects. */
 export function createInMemoryStoreController(
   initialPage: StorePage = "branches",
-  options: InMemoryStoreControllerOptions = {},
+  options: { large?: boolean } = {},
 ): StoreController {
   const fixtureBookmarks = options.large ? largeBookmarks : bookmarks;
   const fixtureChoices = options.large ? largeChoices : choices;
@@ -56,6 +54,8 @@ export function createInMemoryStoreController(
   ]);
   let index = $state(0);
   let authenticated = $state(true);
+  let fileViewMode = $state<FileListingViewMode>("tree");
+  let collapsedDirectoryPaths = $state(new Set<string>());
   const route = $derived(history[index]!);
   const targets = $derived(
     route.commitId
@@ -89,6 +89,15 @@ export function createInMemoryStoreController(
     async selectComparisonParent() {},
     async prepareIndex() {},
     async loadMore() {},
+    setFileViewMode(mode) {
+      fileViewMode = mode;
+    },
+    toggleDirectory(path) {
+      const next = new Set(collapsedDirectoryPaths);
+      if (next.has(path)) next.delete(path);
+      else next.add(path);
+      collapsedDirectoryPaths = next;
+    },
     openRepository(id) {
       if (!repositories.some((repo) => repo.id === id))
         throw new Error("Unknown fixture repository");
@@ -226,6 +235,8 @@ export function createInMemoryStoreController(
         canLoadMoreBookmarks: false,
         canLoadMoreGraph: false,
         canLoadMoreFiles: false,
+        fileViewMode,
+        collapsedDirectoryPaths,
         bookmarks: fixtureBookmarks,
         choices: fixtureChoices,
         targets,

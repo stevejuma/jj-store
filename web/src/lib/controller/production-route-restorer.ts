@@ -5,7 +5,10 @@ import type { createStoreRouteHistory } from "./store-route-history.svelte.js";
 interface RouteReads {
   loadReferences(): Promise<void>;
   loadGraph(): Promise<void>;
-  loadFiles(commit: string): Promise<void>;
+  loadFiles(
+    commit: string,
+    options?: { path?: string; recursive?: boolean; more?: boolean },
+  ): Promise<boolean>;
   loadBlob(path: string): Promise<void>;
   loadCommit(id: string): Promise<void>;
   loadOperation(id: string, parent?: string): Promise<void>;
@@ -85,6 +88,11 @@ async function restoreFiles(
   };
   history.replace(next);
   await reads.loadFiles(commit);
+  if (desired.directory)
+    await reads.loadFiles(commit, {
+      path: desired.directory,
+      recursive: false,
+    });
   if (!desired.path) return;
   if (!data.snapshot?.files.some((file) => file.path === desired.path)) {
     unavailable(data, "detail", "The requested file is unavailable.");

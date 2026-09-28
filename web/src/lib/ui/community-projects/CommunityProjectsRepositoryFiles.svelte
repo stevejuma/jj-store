@@ -51,11 +51,18 @@
   );
   const entries = $derived(
     repositoryBrowserEntries(
-      (view.snapshot?.files ?? []).map((file) => ({
-        ...file,
-        name: file.path,
-        type: "blob" as const,
-      })),
+      [
+        ...(view.snapshot?.directories ?? []).map((directory) => ({
+          ...directory,
+          name: directory.path,
+          type: "tree" as const,
+        })),
+        ...(view.snapshot?.files ?? []).map((file) => ({
+          ...file,
+          name: file.path,
+          type: "blob" as const,
+        })),
+      ],
       view.route.directory,
     ),
   );
@@ -143,11 +150,17 @@
         label="Loading repository file tree"
       />{:else}<CommunityProjectsRepositoryFileTree
         files={view.snapshot?.files ?? []}
+        directories={view.snapshot?.directories ?? []}
+        mode={view.fileViewMode}
+        collapsedDirectoryPaths={view.collapsedDirectoryPaths}
         selectedPath={view.route.path ?? ""}
         hasMore={view.canLoadMoreFiles}
         loading={view.status.files === "refreshing"}
         onSelectPath={controller.actions.selectFile}
         onLoadMore={() => void controller.actions.loadMore("files")}
+        onModeChange={(mode) => void controller.actions.setFileViewMode(mode)}
+        onDirectoryToggle={(path) =>
+          void controller.actions.toggleDirectory(path)}
       />{/if}
   </AppShell.Body.Sidebar>
   <button

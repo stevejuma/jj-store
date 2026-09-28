@@ -13,6 +13,7 @@ type GraphPage = Model<"GraphPage">;
 type PathEntry = Model<"Entry">;
 type DiffChange = Model<"FileDiffChange">;
 type FileTreeValue = Extract<Model<"NativeTreeValue">, { type: "file" }>;
+type DirectoryTreeValue = Extract<Model<"NativeTreeValue">, { type: "tree" }>;
 
 export interface PresentedReferences {
   bookmarks: Bookmark[];
@@ -141,18 +142,27 @@ function soleFile(entry: PathEntry): FileTreeValue | undefined {
     : undefined;
 }
 
+function soleDirectory(entry: PathEntry): DirectoryTreeValue | undefined {
+  return entry.terms.length === 1 && entry.terms[0]?.type === "tree"
+    ? entry.terms[0]
+    : undefined;
+}
+
 export function presentPaths(
   commit: string,
   entries: readonly PathEntry[],
 ): PresentedPaths {
   const files = new Map<string, string>();
+  const directories = entries.flatMap((entry) =>
+    soleDirectory(entry) ? [{ path: entry.path }] : [],
+  );
   const blobs = entries.flatMap((entry) => {
     const file = soleFile(entry);
     if (!file) return [];
     files.set(entry.path, file.id);
     return [{ path: entry.path }];
   });
-  return { snapshot: { id: commit, files: blobs }, files };
+  return { snapshot: { id: commit, files: blobs, directories }, files };
 }
 
 const lineCount = (value: string) =>

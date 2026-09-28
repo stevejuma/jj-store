@@ -1,3 +1,4 @@
+import type { FileListingViewMode } from "@lapismd/design-core/diff";
 import type { CommunityMemberModel } from "../ui/community-workspace/model.js";
 import type { StorePage } from "../ui/community-navigation/model.js";
 import type { RepositoryLogGraph } from "../projects/repository-log.js";
@@ -11,6 +12,7 @@ export interface RepositoryBlob {
 export interface RepositorySnapshot {
   id: string;
   files: readonly RepositoryBlob[];
+  directories?: readonly { path: string }[];
 }
 export interface RepositoryChoice {
   value: string;
@@ -70,6 +72,8 @@ export interface StoreControllerState {
   readonly canLoadMoreBookmarks: boolean;
   readonly canLoadMoreGraph: boolean;
   readonly canLoadMoreFiles: boolean;
+  readonly fileViewMode: FileListingViewMode;
+  readonly collapsedDirectoryPaths: ReadonlySet<string>;
   readonly graph: RepositoryLogGraph;
   readonly now: number;
   readonly detail: RevisionDetail | undefined;
@@ -94,6 +98,8 @@ export interface StoreController {
     selectComparisonParent(id: string): Promise<void>;
     prepareIndex(): Promise<void>;
     loadMore(collection: "bookmarks" | "graph" | "files"): Promise<void>;
+    setFileViewMode(mode: FileListingViewMode): void | Promise<void>;
+    toggleDirectory(path: string): void | Promise<void>;
     openRepository(id: string): void | Promise<void>;
     selectPage(page: StorePage): void | Promise<void>;
     navigate(delta: -1 | 1): void | Promise<void>;

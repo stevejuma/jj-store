@@ -1,5 +1,4 @@
 import { ApiError } from "../api/client.js";
-import type { StorePage } from "../ui/community-navigation/model.js";
 import type { StoreController } from "./contracts.js";
 import {
   HttpStoreDataSource,
@@ -7,6 +6,7 @@ import {
 } from "./http-store-data-source.js";
 import type { StoreDataSource } from "./native-data-source.js";
 import { followProductionStoreEvents } from "./production-store-events.js";
+import { nextPathPage } from "./production-file-pages.js";
 import { createProductionStoreReader } from "./production-store-reader.svelte.js";
 import {
   clearProductionStoreView,
@@ -62,8 +62,7 @@ export function createProductionStoreController(
     feed.abort();
     source?.close();
     source = null;
-    data.heads = [];
-    data.repositories = [];
+    Object.assign(data, { heads: [], repositories: [] });
     clearProductionStoreView(data);
     Object.assign(data.status, initialStatus(), {
       connection: denied ? "denied" : "disconnected",
@@ -159,10 +158,6 @@ export function createProductionStoreController(
       await reader.restorePage();
     }
   }
-  async function selectPage(page: StorePage) {
-    history.page(page);
-    await restoreRoute();
-  }
   async function selectRevision(id: string | null) {
     const page = history.route.page;
     history.push({
@@ -174,8 +169,7 @@ export function createProductionStoreController(
           ?.changeId ?? null,
       path: null,
     });
-    data.detail = undefined;
-    data.blob = undefined;
+    Object.assign(data, { detail: undefined, blob: undefined });
     if (!id) return;
     if (page === "oplog") await reader.loadOperation(id);
     else if (page === "files") await reader.loadFiles(id);
@@ -206,15 +200,19 @@ export function createProductionStoreController(
         await reader.loadReferences(true);
       if (collection === "graph" && data.graphCursor)
         await reader.loadGraph(true);
-      if (collection === "files" && data.pathsCursor && history.route.commitId)
-        await reader.loadFiles(history.route.commitId, true);
+      if (collection === "files") await reader.loadMoreFiles();
     },
+    setFileViewMode: reader.setFileViewMode,
+    toggleDirectory: reader.toggleDirectory,
     async openRepository(id) {
       if (id !== source?.repository) return;
       history.page("files");
       await restoreRoute();
     },
-    selectPage,
+    async selectPage(page) {
+      history.page(page);
+      await restoreRoute();
+    },
     async navigate(delta) {
       if (history.navigate(delta)) await restoreRoute();
     },
@@ -239,9 +237,7 @@ export function createProductionStoreController(
       if (history.route.page === "files") await reader.loadBlob(path);
       else await reader.loadPatch(path);
     },
-    selectDirectory(directory) {
-      history.push({ ...history.route, directory, path: null });
-    },
+    selectDirectory: reader.selectDirectory,
     selectRef: (value) => reader.selectRef(value),
     signIn() {},
     signOut: () => disconnect(),
@@ -273,7 +269,15 @@ export function createProductionStoreController(
         unavailableComparisonCount: data.unavailableComparisonCount,
         canLoadMoreBookmarks: data.refsCursor !== null,
         canLoadMoreGraph: data.graphCursor !== null,
-        canLoadMoreFiles: data.pathsCursor !== null,
+        canLoadMoreFiles: Boolean(
+          nextPathPage(
+            data.pathPages,
+            data.fileViewMode,
+            history.route.directory,
+          ),
+        ),
+        fileViewMode: data.fileViewMode,
+        collapsedDirectoryPaths: data.collapsedDirectoryPaths,
         graph: data.graph,
         now: options.now?.() ?? Math.floor(Date.now() / 1000),
         detail: data.detail,

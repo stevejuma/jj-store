@@ -9927,6 +9927,150 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Registry Design Core ^0.2.0 with guarded local source validation at a9820137 and fddad817; pinned RustFS b7014e0ce2bc703c1316b3ef760e29dfae61fe4a50d1a66fa89638e0f8ea211f; @tanstack/svelte-virtual 3.17.11; Svelte 5.57.1; Storybook 10.5.7; Vitest 4.1.11; Playwright 1.63.x. Enclosing Jujutsu change is the revision reference.",
     "formats": "Versioned jj-store/layout/v1 localStorage keys contain only shell/sidebar, per-page Column Canvas and file-tree layout state. Storybook uses per-instance memory storage. Large catalog fixtures use 600 deterministic records with native identifier widths. The disposable development runtime stores only public process/container/repository metadata under the OS temporary directory; operator policy and creation journals contain verifiers/public token IDs, while each fresh bearer token is printed once and never written to the checkout or URL. package.json and pnpm-lock.yaml remain registry-resolved. No repository identity, selection, cursor, credential, content, native storage, publication or HTTP schema is persisted by the browser slice. Stories remain visual-pending and visual tests were skipped at the user request."
+  },
+  {
+    "id": "E-UI-014",
+    "tasks": ["M4", "M4.3", "M4.13"],
+    "date": "2026-09-28",
+    "kind": "implementation",
+    "files": [
+      "catalog/components/community-projects/repository-browser.test.ts",
+      "catalog/controller/in-memory-store-controller.svelte.ts",
+      "spec/src/api.md",
+      "spec/src/milestones.md",
+      "spec/src/ui.md",
+      "web/src/lib/controller/contracts.ts",
+      "web/src/lib/controller/http-store-data-source.ts",
+      "web/src/lib/controller/native-data-source.ts",
+      "web/src/lib/controller/native-presentation.ts",
+      "web/src/lib/controller/production-file-pages.ts",
+      "web/src/lib/controller/production-file-reader.svelte.ts",
+      "web/src/lib/controller/production-route-restorer.ts",
+      "web/src/lib/controller/production-store-controller.svelte.ts",
+      "web/src/lib/controller/production-store-loaders.ts",
+      "web/src/lib/controller/production-store-reader.svelte.ts",
+      "web/src/lib/controller/production-store-state.svelte.ts",
+      "web/src/lib/ui/community-projects/CommunityProjectsRepositoryFileTree.svelte",
+      "web/src/lib/ui/community-projects/CommunityProjectsRepositoryFiles.svelte",
+      "web/src/lib/ui/community-projects/repository-browser.ts",
+      "web/tests/browser/native-browser-fixture.ts",
+      "web/tests/browser/reads.spec.ts",
+      "web/tests/production-store-loaders.test.ts",
+      "web/tests/vite/production-store-data-source.test.ts"
+    ],
+    "tests": [
+      "web/tests/vite/production-store-data-source.test.ts#path reads preserve directory, recursive, and opaque cursor queries",
+      "web/tests/production-store-loaders.test.ts#native presentation preserves conflicting targets and exact identifiers",
+      "web/tests/production-store-loaders.test.ts#path pages isolate lazy directories from recursive listing views",
+      "web/tests/browser/reads.spec.ts#repository directories load lazily and flat views request recursive paths",
+      "web/tests/browser/reads.spec.ts#graph_and_directory_pages_retain_exact_snapshots_and_query_context"
+    ],
+    "runs": [
+      {
+        "command": "pnpm install --force --offline --frozen-lockfile",
+        "result": "fail",
+        "failures": 1,
+        "note": "The guarded local Design Core refresh was rejected with ERR_PNPM_LOCKFILE_CONFIG_MISMATCH because the validation-only file dependency differs from the registry-resolved lock configuration. The release manifest and lockfile were not changed."
+      },
+      {
+        "command": "pnpm install --force --offline --lockfile=false",
+        "result": "pass",
+        "failures": 0,
+        "note": "The guarded pnpm hook installed the sibling Design Core source for local acceptance without reading or rewriting the release lockfile."
+      },
+      {
+        "command": "pnpm checks",
+        "result": "pass",
+        "failures": 0,
+        "note": "Design Core source acceptance passes specification, formatting and strict type checks, 715 unit tests, the cold static catalog, 638 interaction/accessibility tests, 14 workspace browser tests, 11 shell browser tests, 3 AI browser tests and 35 shadcn browser tests with one declared WebKit-only skip. The public FileListingDirectory barrel correction is committed at 6f8ee457 on top of lazy-directory support 4725befb and cold-docs repair c7937794."
+      },
+      {
+        "command": "pnpm catalog:test web/tests/vite/production-store-data-source.test.ts catalog/components/community-projects/repository-browser.test.ts; pnpm web:test",
+        "result": "pass",
+        "failures": 0,
+        "note": "The focused controller and browser-presentation boundary passes 10/10 and the Node browser unit lane passes 21/21, including query forwarding, explicit directories and isolated tree versus recursive pages."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture",
+        "result": "fail",
+        "failures": 2,
+        "note": "Production and catalog types passed after the upstream public export refresh. Architecture then found the in-memory and production controllers at 303 and 304 counted lines; existing actions were simplified without raising the 300-line budget."
+      },
+      {
+        "command": "pnpm check:architecture; pnpm web:check; pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "The 144-module architecture scan and both Svelte diagnostics pass with zero warnings after the composition roots returned below their fixed budgets."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm web:test:browser --grep repository directories load lazily|graph_and_directory_pages",
+        "result": "fail",
+        "failures": 1,
+        "note": "The snapshot-bound pagination regression passed. The new lazy-directory scenario proved expansion but initially queried the Design Core view toggle as a button instead of its accessible radio role; the product behavior was unchanged and the test was corrected."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm exec playwright test --config web/playwright.config.ts --grep repository directories load lazily",
+        "result": "pass",
+        "failures": 0,
+        "note": "The exact built-browser regression passes 1/1: root paths are nonrecursive, src/lib.rs is absent until src disclosure loads it, and list mode requests a recursive root window."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "fail",
+        "failures": 2,
+        "note": "Spec-first validation rejected the first evidence draft because the changed canonical API and UI chapters were not yet mapped in the implementation entry. Both authored chapters are now recorded in this slice."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/RepositoryReview.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "All three focused repository-review interaction and accessibility stories pass against the shared lazy-directory controller contract."
+      },
+      {
+        "command": "pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 18 canonical lanes pass, including governance, cold Storybook browser acceptance, interactions/accessibility, production unit/browser tests, generated contracts, architecture, complete Rust workspace and spec-first validation."
+      },
+      {
+        "command": "pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Specification, package, 144-module architecture and progress boundaries, rustfmt, generated contracts, production/catalog Svelte diagnostics and all-target Clippy pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools VITEST_MAX_WORKERS=1 pnpm test",
+        "result": "pass",
+        "failures": 0,
+        "note": "The serialized aggregate passes 23 governance tests, 3 storage-harness self-tests, 6 contract tests, 21 production browser units, 32 catalog units, 56 Storybook interaction/accessibility tests, the cold catalog browser contract and the full Rust workspace. Declared external RustFS and OS-credential cases remain ignored in the normal lane."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Cold Storybook, production browser and complete Rust workspace builds pass. Existing upstream Design Core :global minifier and bundle-size warnings remain non-failing."
+      },
+      {
+        "command": "pnpm format:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rustfmt and Prettier pass across the complete authored tree."
+      },
+      {
+        "command": "pnpm dev:restart; curl -fsS http://127.0.0.1:7460/",
+        "result": "pass",
+        "failures": 0,
+        "note": "The single restart task rebuilt the production UI and native binaries, replaced only the labelled checkout-owned pinned RustFS container, started the native server, seeded a fresh repository and printed its URL, repository ID and one-time token. The browser root returned HTTP 200 and the credential remains outside the checkout, URL and browser storage."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Continue commit changed-path pagination and operation change-group and per-group changed-path pagination.",
+      "Consume the Design Core extension from a separately approved registry release; package.json and pnpm-lock.yaml remain registry-resolved.",
+      "Run M4.14 external CLI publication, SSE notification and explicit-refresh acceptance against the isolated native repository and pinned RustFS."
+    ],
+    "versions": "Registry Design Core ^0.2.0 with guarded local source validation at c7937794, 4725befb and 6f8ee457; @tanstack/svelte-query 6.3.0; Svelte 5.57.1; Storybook 10.5.7; Vitest 4.1.11; Playwright 1.63.x. Enclosing Jujutsu change is the revision reference.",
+    "formats": "Tree mode keeps opaque cursor-paged nonrecursive pages per directory and loads children only on disclosure or directory navigation. List and package modes request a separate recursive root window. Directory rows and file terms preserve native IDs and the selected operation snapshot. The in-memory catalog controller uses the same controlled view/disclosure contract without transport. Registry manifests and the lockfile are unchanged. Stories remain visual-pending and visual tests were skipped at the user request."
   }
 ]
 ```

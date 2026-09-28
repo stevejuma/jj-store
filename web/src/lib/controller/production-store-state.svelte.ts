@@ -1,4 +1,5 @@
-import type { Model, Snapshot } from "../api/client.js";
+import type { FileListingViewMode } from "@lapismd/design-core/diff";
+import type { Snapshot } from "../api/client.js";
 import type { RepositoryLogGraph } from "../projects/repository-log.js";
 import type { Bookmark, RevisionDetail } from "../projects/presentation.js";
 import type {
@@ -8,6 +9,7 @@ import type {
   StoreControllerStatus,
 } from "./contracts.js";
 import type { Comparison } from "./production-store-loaders.js";
+import type { StoredPathPage } from "./production-file-pages.js";
 
 type MutableStatus = {
   -readonly [K in keyof StoreControllerStatus]: StoreControllerStatus[K];
@@ -30,14 +32,15 @@ export interface ProductionStoreState {
   refsCursor: string | null;
   graphCursor: string | null;
   graphAtTimeMillis: number | null;
-  pathsCursor: string | null;
-  pathEntries: Model<"Entry">[];
+  fileViewMode: FileListingViewMode;
+  pathPages: Map<string, StoredPathPage>;
+  knownDirectories: Set<string>;
+  collapsedDirectoryPaths: Set<string>;
   fileTerms: Map<string, string>;
   comparisons: Map<string, Comparison>;
   neededIndex: Snapshot | null;
   refsPageSnapshot: Snapshot | null;
   graphPageSnapshot: Snapshot | null;
-  pathsPageSnapshot: Snapshot | null;
 }
 
 export const emptyGraph = (): RepositoryLogGraph => ({
@@ -59,7 +62,7 @@ export const initialStatus = (): MutableStatus => ({
 });
 
 export function createProductionStoreState(): ProductionStoreState {
-  const state = $state({
+  const state: ProductionStoreState = $state({
     heads: [],
     repositories: [],
     bookmarks: [],
@@ -76,14 +79,15 @@ export function createProductionStoreState(): ProductionStoreState {
     refsCursor: null,
     graphCursor: null,
     graphAtTimeMillis: null,
-    pathsCursor: null,
-    pathEntries: [],
+    fileViewMode: "tree",
+    pathPages: new Map(),
+    knownDirectories: new Set(),
+    collapsedDirectoryPaths: new Set(),
     fileTerms: new Map(),
     comparisons: new Map(),
     neededIndex: null,
     refsPageSnapshot: null,
     graphPageSnapshot: null,
-    pathsPageSnapshot: null,
   });
   return state;
 }
@@ -102,11 +106,12 @@ export function clearProductionStoreView(state: ProductionStoreState) {
   state.refsCursor = null;
   state.graphCursor = null;
   state.graphAtTimeMillis = null;
-  state.pathsCursor = null;
-  state.pathEntries = [];
+  state.fileViewMode = "tree";
+  state.pathPages = new Map();
+  state.knownDirectories = new Set();
+  state.collapsedDirectoryPaths = new Set();
   state.fileTerms = new Map();
   state.comparisons = new Map();
   state.refsPageSnapshot = null;
   state.graphPageSnapshot = null;
-  state.pathsPageSnapshot = null;
 }

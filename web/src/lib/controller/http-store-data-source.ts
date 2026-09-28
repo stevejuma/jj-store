@@ -9,7 +9,11 @@ import {
   type Model,
   type Task,
 } from "../api/client.js";
-import type { GraphQuery, StoreDataSource } from "./native-data-source.js";
+import type {
+  GraphQuery,
+  PathQuery,
+  StoreDataSource,
+} from "./native-data-source.js";
 import { storeQueryKeys, type StoreQueryScope } from "./store-query-keys.js";
 
 export class HttpStoreDataSource implements StoreDataSource {
@@ -103,8 +107,14 @@ export class HttpStoreDataSource implements StoreDataSource {
       (signal) => this.#client.request(`commits/${id}`, query, { signal }),
     );
   }
-  paths(commit: string, operation: string, cursor?: string) {
-    const query = { at_op: operation, recursive: true, limit: 50, cursor };
+  paths(commit: string, operation: string, input: PathQuery = {}) {
+    const query = {
+      at_op: fullId(operation),
+      path: input.path ?? "",
+      recursive: input.recursive ?? false,
+      limit: input.limit ?? 50,
+      cursor: input.cursor,
+    };
     return this.#query<Model<"Window3">>(
       "paths",
       operation,

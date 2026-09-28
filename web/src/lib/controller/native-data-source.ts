@@ -11,6 +11,13 @@ export interface GraphQuery {
   commit?: string;
 }
 
+export interface PathQuery {
+  path?: string;
+  recursive?: boolean;
+  cursor?: string;
+  limit?: number;
+}
+
 export interface StoreDataSource {
   readonly repository: string;
   capabilities(): Promise<Model<"Capabilities">>;
@@ -27,7 +34,7 @@ export interface StoreDataSource {
   paths(
     commit: string,
     operation: string,
-    cursor?: string,
+    query?: PathQuery,
   ): Promise<Model<"Window3">>;
   file(
     id: string,

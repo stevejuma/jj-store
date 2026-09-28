@@ -26,22 +26,22 @@ function entryPath(entry: ProjectForgeTreeEntry): string {
 }
 
 function directChildren(
-  files: readonly ProjectForgeTreeEntry[],
+  entries: readonly ProjectForgeTreeEntry[],
   directory: string,
 ): { directories: string[]; files: ProjectForgeTreeEntry[] } {
   const prefix = directory ? `${directory}/` : "";
   const directories = new Set<string>();
   const immediateFiles: ProjectForgeTreeEntry[] = [];
 
-  for (const file of files) {
-    const path = entryPath(file);
+  for (const entry of entries) {
+    const path = entryPath(entry);
     if (!path.startsWith(prefix)) continue;
     const relativePath = path.slice(prefix.length);
     if (!relativePath) continue;
     const [child, ...remaining] = relativePath.split("/");
     if (!child) continue;
-    if (remaining.length > 0) directories.add(child);
-    else immediateFiles.push(file);
+    if (remaining.length > 0 || entry.type === "tree") directories.add(child);
+    else immediateFiles.push(entry);
   }
 
   return {
@@ -63,15 +63,14 @@ export function repositoryBrowserEntries(
   currentPath = "",
 ): RepositoryBrowserEntry[] {
   const directory = normalizeRepositoryPath(currentPath);
-  const files = entries.filter((entry) => entry.type === "blob");
-  const children = directChildren(files, directory);
+  const children = directChildren(entries, directory);
 
   const directories = children.directories.map((name) => {
     const segments = [name];
     let path = [directory, name].filter(Boolean).join("/");
 
     while (true) {
-      const nested = directChildren(files, path);
+      const nested = directChildren(entries, path);
       if (nested.files.length > 0 || nested.directories.length !== 1) break;
       const [onlyDirectory] = nested.directories;
       if (!onlyDirectory) break;

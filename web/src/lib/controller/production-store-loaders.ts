@@ -11,7 +11,6 @@ import {
   presentChangedFiles,
   presentGraph,
   presentPatch,
-  presentPaths,
   presentReferences,
 } from "./native-presentation.js";
 
@@ -95,25 +94,26 @@ export async function readPaths(
   source: StoreDataSource,
   operation: string,
   commit: string,
-  previous: readonly Model<"Entry">[],
-  cursor?: string,
-  expected?: Snapshot,
+  query: {
+    path: string;
+    recursive: boolean;
+    cursor?: string;
+    expected?: Snapshot;
+  },
 ): Promise<{
   entries: Model<"Entry">[];
-  snapshot: RepositorySnapshot;
-  files: Map<string, string>;
+  path: string;
+  recursive: boolean;
   cursor: string | null;
   readSnapshot: Snapshot;
 }> {
-  const value = await source.paths(commit, operation, cursor);
+  const value = await source.paths(commit, operation, query);
   assertPinned(value.snapshot, source, operation);
-  assertSameSnapshot(value.snapshot, expected);
-  const entries = cursor
-    ? [...previous, ...value.data.entries]
-    : value.data.entries;
+  assertSameSnapshot(value.snapshot, query.expected);
   return {
-    ...presentPaths(commit, entries),
-    entries,
+    entries: value.data.entries,
+    path: value.data.path,
+    recursive: value.data.recursive,
     cursor: value.next_cursor,
     readSnapshot: value.snapshot,
   };

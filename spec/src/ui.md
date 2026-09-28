@@ -189,4 +189,8 @@ lists, directory tables and the repository file tree use measured virtual rows
 against their existing accessible scroll viewport. Large fixtures MUST keep the
 mounted row count bounded while preserving keyboard selection, graph geometry
 and cursor-edge callbacks. Headers, filters, metadata and details remain outside
-the virtual row stream.
+the virtual row stream. Tree mode requests a nonrecursive root window and loads
+each directory's cursor-paged children only when the host discloses or navigates
+to it. List and package modes use a separate recursive root window. Storybook's
+in-memory controller exercises the same controlled view and disclosure actions
+without transport.

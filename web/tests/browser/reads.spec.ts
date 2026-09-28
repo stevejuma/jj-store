@@ -218,6 +218,73 @@ test("graph_and_directory_pages_retain_exact_snapshots_and_query_context", async
   );
 });
 
+test("repository directories load lazily and flat views request recursive paths", async ({
+  page,
+}) => {
+  await api(page);
+  const queries: URLSearchParams[] = [];
+  await page.route("**/commits/*/paths?**", async (route) => {
+    const query = new URL(route.request().url()).searchParams;
+    queries.push(query);
+    const path = query.get("path") ?? "";
+    const recursive = query.get("recursive") === "true";
+    const entries = recursive
+      ? [
+          {
+            path: "src/lib.rs",
+            terms: [{ type: "file", id: "fe".repeat(64), executable: false }],
+            conflicted: false,
+          },
+        ]
+      : path === "src"
+        ? [
+            {
+              path: "src/lib.rs",
+              terms: [{ type: "file", id: "fe".repeat(64), executable: false }],
+              conflicted: false,
+            },
+          ]
+        : [
+            {
+              path: "src",
+              terms: [{ type: "tree", id: "dc".repeat(64) }],
+              conflicted: false,
+            },
+          ];
+    await route.fulfill({
+      json: pathsPage(null, { path, recursive, entries }),
+    });
+  });
+
+  await connect(page);
+  await page.getByRole("link", { name: repo, exact: true }).click();
+  await expect(
+    page.getByRole("button", { name: "src", exact: true }),
+  ).toHaveAttribute("aria-expanded", "false");
+  await expect(
+    page.getByRole("button", { name: "src/lib.rs", exact: true }),
+  ).toHaveCount(0);
+  await page.getByRole("button", { name: "src", exact: true }).click();
+  await expect(
+    page.getByRole("button", { name: "src/lib.rs", exact: true }),
+  ).toBeVisible();
+  await page.getByRole("radio", { name: "Show files as list" }).click();
+  await expect
+    .poll(() => queries.some((query) => query.get("recursive") === "true"))
+    .toBe(true);
+
+  expect(
+    queries.map((query) => ({
+      path: query.get("path"),
+      recursive: query.get("recursive"),
+    })),
+  ).toEqual([
+    { path: "", recursive: "false" },
+    { path: "src", recursive: "false" },
+    { path: "", recursive: "true" },
+  ]);
+});
+
 test("index_preparation_retries_the_original_query_after_context_edits", async ({
   page,
 }) => {
