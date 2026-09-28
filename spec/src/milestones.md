@@ -61,9 +61,9 @@ adds evidence here in its enclosing Jujutsu change.
 | M7          | Deferred    | M8a         | JST-ADAPT-005                                                           | Complete read-only replica through applied position                                                                 | After first release                                     | -                                                                                                                                                                                                                          |
 | M7.1        | Deferred    | M8a.4       | JST-ADAPT-006                                                           | Asynchronous verified S3 backup remains independent from passive serving and promotion                              | Future backup release after local application           | -                                                                                                                                                                                                                          |
 | M8b         | Deferred    | M8a         | JST-COMPAT-004                                                          | Verified lossless import with source safety                                                                         | Separate migration release                              | -                                                                                                                                                                                                                          |
-| M9          | Partial     | M8a.4       | JST-COLLAB-001,JST-COLLAB-005                                           | Repository-native agent activity and exact review discussions in the LocalTrusted application                       | Implement LocalTrusted collaboration APIs               | E-M9-001,E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009,E-M9-010,E-M9-011,E-M9-012,E-M9-013,E-M9-014,E-M9-015,E-M9-016,E-M9-017,E-M9-018                                                          |
+| M9          | Partial     | M8a.4       | JST-COLLAB-001,JST-COLLAB-005                                           | Repository-native agent activity and exact review discussions in the LocalTrusted application                       | Implement LocalTrusted collaboration APIs               | E-M9-001,E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009,E-M9-010,E-M9-011,E-M9-012,E-M9-013,E-M9-014,E-M9-015,E-M9-016,E-M9-017,E-M9-018,E-M9-019                                                 |
 | M9.1        | Done        | M8a.4       | JST-PUB-007,JST-PUB-008                                                 | Independent code/agent/review roots, code-state fencing and non-destructive collaboration enablement                | Implement AgentStore typed root objects                 | E-M9-001                                                                                                                                                                                                                   |
-| M9.2        | In progress | M9.1        | JST-COLLAB-001,JST-COLLAB-002,JST-COLLAB-006                            | AgentStore model, immutable snapshots/catalogs, sanitized evidence and Codex/Cursor/OpenCode normalizers            | Wire packaged hook ingestion and publication recovery   | E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009,E-M9-015,E-M9-016,E-M9-017,E-M9-018                                                                                                                |
+| M9.2        | In progress | M9.1        | JST-COLLAB-001,JST-COLLAB-002,JST-COLLAB-006                            | AgentStore model, immutable snapshots/catalogs, sanitized evidence and Codex/Cursor/OpenCode normalizers            | Wire packaged hook ingestion and publication recovery   | E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009,E-M9-015,E-M9-016,E-M9-017,E-M9-018,E-M9-019                                                                                                       |
 | M9.3        | In progress | M9.2        | JST-COLLAB-001,JST-COLLAB-003,JST-PUB-009                               | ReviewStore exact anchors, stale-safe thread workflow, direct catalogs and conservative placement                   | Await M9.2, then implement LocalTrusted APIs            | E-M9-010,E-M9-011,E-M9-012,E-M9-013,E-M9-014                                                                                                                                                                               |
 | M9.4        | Planned     | M9.2,M9.3   | JST-COLLAB-004                                                          | LocalTrusted bounded CLI/HTTP APIs, pagination, receipts and live collaboration hints                               | Wire first-party service and generated contracts        | -                                                                                                                                                                                                                          |
 | M9.5        | Planned     | M9.4        | JST-COLLAB-005                                                          | Community-owned thread/agent widgets and Design Core exact diff selection integrated into the application           | Implement accessible virtualized application routes     | -                                                                                                                                                                                                                          |
@@ -13660,6 +13660,79 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Rust 1.98.1; MongoDB Kingfisher v2.7.0 at source revision 63dccba231b6b01990c84319d25f92f49428a431 under Apache-2.0; scanner default features disabled; matching Vectorscan fork pinned at the same revision.",
     "formats": "Sanitization policy mongodb-kingfisher@2.7.0/builtin-medium/v1 accepts one bounded JSON object, canonicalizes workspace paths, scans only in memory with Base64 decoding disabled, merges finding byte ranges, emits canonical JSON with [REDACTED] substitutions and fails closed to a fixed omitted state. Real setup prewarms a user-restricted compiled-rule cache; no raw temporary input file or JavaScript sanitizer remains."
+  },
+  {
+    "id": "E-M9-019",
+    "tasks": ["M9", "M9.2"],
+    "date": "2026-09-28",
+    "kind": "implementation",
+    "files": [
+      "crates/jj-store-cli/src/agent_commands.rs",
+      "crates/jj-store-cli/src/agent_hook.rs",
+      "crates/jj-store-cli/src/agent_integrations.rs",
+      "crates/jj-store-cli/src/agent_sanitization.rs",
+      "crates/jj-store-cli/src/agent_setup.rs",
+      "crates/jj-store-cli/src/lib.rs",
+      "crates/jj-store-cli/tests/agent_hook.rs",
+      "docs/cli/agent.md",
+      "spec/src/cli.md",
+      "spec/src/collaboration.md",
+      "spec/src/milestones.md",
+      "spec/src/verification.md"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/agent_hook.rs#hook_ingestion_survives_restart_orders_sequences_and_never_persists_raw_input",
+      "crates/jj-store-cli/tests/agent_hook.rs#hook_command_selects_one_supported_integration",
+      "crates/jj-store-cli/tests/agent_hook.rs#hook_rejects_disabled_integrations_before_capture_state_exists",
+      "crates/jj-store-cli/tests/agent_integrations.rs#registry_probes_pinned_harnesses_and_persists_explicit_enablement",
+      "crates/jj-store-cli/tests/agent_setup.rs#setup_recovers_owned_state_and_refuses_drifted_configuration"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-cli --test agent_hook --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "The test-first compile reported the intentionally missing agent_hook module and ingestion boundary."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test agent_hook --locked",
+        "result": "fail",
+        "failures": 2,
+        "note": "The first implementation compile found Rust 1.98's typed TryLockError and the deliberately hidden Hook command's required exhaustive match arm; both were corrected without weakening lock or dispatch behavior."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test agent_hook --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "The initial end-to-end hook regression passed in 92.52 seconds including one cold Kingfisher rule-cache build and three independent hook invocations."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test agent_hook --locked hook_command_selects_one_supported_integration; cargo test -p jj-store-cli --test agent_hook --locked hook_rejects_disabled_integrations_before_capture_state_exists; cargo test -p jj-store-cli --test agent_setup --test agent_integrations --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "The hidden command grammar and pre-capture disabled rejection pass, along with all four setup and all three registry regressions after extraction of the read-only installation-state check."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test agent_hook --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All three final hook regressions pass in 91.47 seconds. The end-to-end case proves restart-stable source identity, sequences one through eleven including eight concurrent omissions, fixed omission bytes, exact Kingfisher policy and absence of the synthetic raw secret from every durable state file."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test agent_setup --locked; cargo clippy -p jj-store-cli --test agent_hook --test agent_setup --test agent_integrations --locked -- -D warnings; cargo fmt --all -- --check; pnpm spec:validate; pnpm spec:first; pnpm check:progress; pnpm exec prettier --check <changed files>",
+        "result": "pass",
+        "failures": 0,
+        "note": "All four setup regressions pass after setup readiness was moved ahead of the cold cache build. The affected CLI and tests are warning-free and formatted; 85 requirements, eight protected-file mappings, all 60 progress tasks and changed prose formatting pass. Production modules contain 298 or fewer physical lines and the hook regression contains 178."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Prepare normalized pending captures and retry their exact AgentStore publication through the existing receipt path",
+      "Add drift-safe owned integration removal after ingesting setup is qualified",
+      "Execute pinned real-harness capability and smoke tests in M9.6; Cursor remains unsupported on the current host"
+    ],
+    "versions": "Rust 1.98.1; capture hook source state v1; MongoDB Kingfisher policy mongodb-kingfisher@2.7.0/builtin-medium/v1; exact normalizer profiles from E-M9-008.",
+    "formats": "The hidden hook command reads at most four MiB plus one overflow byte, verifies enabled and currently installed device policy without taking the administrative registry lock, sanitizes in memory, reserves a synchronized monotonic source sequence and atomically enqueues one SanitizedObservationBatchV1. Invalid input emits only a fixed omission payload. Reservations survive restart and may leave gaps after interrupted enqueue but are never reused; derived batch and observation IDs are domain-separated by stable source, generation and sequence."
   }
 ]
 ```

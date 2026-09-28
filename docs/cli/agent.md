@@ -28,6 +28,10 @@ intended content hash in the device-local registry area. Repeated setup is
 idempotent. Status reports a later edit as drifted, and setup refuses to replace
 it. Symlinked project configuration paths fail closed.
 
-Hook/plugin installation and capture ingestion are separate steps. Installed
-means the owned project artifact matches its recorded hash; capture becomes
-active only after the hook ingestion command is available and qualified.
+Installed hooks call the internal `jj agent hook <codex|cursor|opencode>`
+entrypoint. It verifies the enabled registry state, exact owned project artifact
+and warmed Kingfisher cache, then sanitizes one bounded standard-input event
+before allocating durable source order and enqueuing the sanitized observation.
+Invalid or oversized input is represented only by a fixed omission record. Hook
+commands produce no normal output and never persist raw input. Pending capture
+publication remains a separate recovery step.

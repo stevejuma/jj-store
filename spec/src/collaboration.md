@@ -145,10 +145,10 @@ payload is never copied to a temporary file or durable state. A user-restricted
 compiled-rule cache is warmed during real integration setup and reused by hook
 processes.
 
-This boundary proves pre-spool sanitization and policy identity. The packaged
-hook still has to allocate durable source order, write the sanitized observation
-to the capture spool and recover publication before M9.2 capture support can be
-claimed.
+The packaged hook applies this boundary before capture-state creation. It writes
+only a validated sanitized payload or fixed `{"status":"omitted"}` object into
+the durable spool. Publication recovery remains required before M9.2 capture
+support can be claimed.
 
 ## Version-bound normalization
 
@@ -400,6 +400,31 @@ only a prepared entry whose request and publication IDs match the committed
 outcome, then synchronizes the directory. An unprepared capture cannot be
 discarded through the completion path.
 
+## Installed hook ingestion
+
+`jj agent hook <codex|cursor|opencode>` is the owned, noninteractive ingestion
+entrypoint installed by setup. It accepts no caller-selected repository or
+source identity. Before sanitization it reads the device registry and verifies
+the repository, canonical workspace, explicit enablement, exact qualified
+version, recorded installed state and current owned project-file hash. A missing
+compiled-rule cache fails closed and does not trigger a cold hook-time build.
+
+Standard input is bounded to four MiB plus one overflow byte. After in-memory
+sanitization, a dedicated bounded lock allocates a strictly increasing native
+sequence under one stable random source instance and generation. The source
+reservation is atomically synchronized before spool enqueue; a failed or
+interrupted enqueue can leave an explicit sequence gap, while restart and
+unknown outcomes cannot reuse the sequence. Batch and observation IDs are
+domain-separated hashes of source identity, generation and sequence.
+
+Codex and Cursor observations use local-hook trust; OpenCode observations use
+local-plugin trust. Every batch records the exact Kingfisher policy and matching
+version-bound normalizer profile. Concurrent hook processes share the allocator
+without opening the registry's exclusive administrative lock. Raw input,
+findings and secret-bearing errors are never written or logged. Pending batches
+remain in the existing capture spool until the M9.2 publication worker prepares
+and commits their exact AgentStore delta and receipt identity.
+
 ## Device-local integration registry
 
 The CLI owns a versioned registry outside the checkout for each native
@@ -432,5 +457,4 @@ The Codex contract follows `openai/codex` tag `rust-v0.156.1` at source revision
 `3104c1428ec91f809e5ab86631300de41eb6952e`. Cursor uses the documented version-1
 project hooks shape, but remains synthetic setup acceptance because the local
 agent reports `2026.09.26-dd393fe` rather than qualified `3.22.7`. Drift-safe
-removal, packaged hook ingestion and the publication loop remain unfinished M9.2
-work.
+removal and the publication loop remain unfinished M9.2 work.

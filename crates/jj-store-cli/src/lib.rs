@@ -3,6 +3,7 @@
 pub mod agent_capture;
 mod agent_capture_files;
 pub mod agent_commands;
+pub mod agent_hook;
 pub mod agent_integrations;
 mod agent_probe;
 pub mod agent_sanitization;

@@ -8,7 +8,7 @@ use kingfisher_scanner::{Scanner, ScannerConfig};
 use serde_json::Value;
 use std::{fs, path::Path, sync::Arc};
 
-const MAX_HOOK_BYTES: usize = 4 * 1024 * 1024;
+pub const MAX_HOOK_BYTES: usize = 4 * 1024 * 1024;
 pub const KINGFISHER_POLICY: &str = "mongodb-kingfisher@2.7.0/builtin-medium/v1";
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -26,6 +26,19 @@ pub fn sanitize_hook_payload(raw: &[u8], workspace: &Path, cache: &Path) -> Sani
 
 pub fn warm_kingfisher_cache(cache: &Path) -> AuthorityResult<()> {
     scanner(cache).map(|_| ())
+}
+
+pub fn kingfisher_cache_ready(cache: &Path) -> bool {
+    fs::symlink_metadata(cache).is_ok_and(|value| value.is_dir() && !value.file_type().is_symlink())
+        && fs::read_dir(cache).is_ok_and(|entries| {
+            entries.filter_map(Result::ok).any(|entry| {
+                entry
+                    .path()
+                    .extension()
+                    .is_some_and(|value| value == "vscdb")
+                    && entry.file_type().is_ok_and(|value| value.is_file())
+            })
+        })
 }
 
 fn sanitize(raw: &[u8], workspace: &Path, cache: &Path) -> Option<SanitizedHookPayload> {

@@ -34,16 +34,7 @@ pub fn setup(
     registry: &mut AgentIntegrationRegistry,
     request: SetupRequestV1,
 ) -> AuthorityResult<SetupOutcomeV1> {
-    let status = registry
-        .status()
-        .integration(request.integration)
-        .ok_or("unsupported agent integration")?;
-    if status.support != HarnessSupportV1::Supported {
-        return Err("agent integration version is not supported".into());
-    }
-    if status.state != IntegrationStateV1::Enabled {
-        return Err("agent integration must be enabled before setup".into());
-    }
+    require_setup_ready(registry, request.integration)?;
     let target = target_path(&registry.status().workspace, request.integration)?;
     validate_target_parent(&registry.status().workspace, &target)?;
     let current = read_target(&target)?;
@@ -126,6 +117,23 @@ pub fn setup(
     ))
 }
 
+pub(crate) fn require_setup_ready(
+    registry: &AgentIntegrationRegistry,
+    integration: IntegrationId,
+) -> AuthorityResult<()> {
+    let status = registry
+        .status()
+        .integration(integration)
+        .ok_or("unsupported agent integration")?;
+    if status.support != HarnessSupportV1::Supported {
+        return Err("agent integration version is not supported".into());
+    }
+    if status.state != IntegrationStateV1::Enabled {
+        return Err("agent integration must be enabled before setup".into());
+    }
+    Ok(())
+}
+
 pub fn audit_installations(
     registry: &mut AgentIntegrationRegistry,
 ) -> AuthorityResult<AgentDeviceStatusV1> {
@@ -134,23 +142,32 @@ pub fn audit_installations(
         IntegrationId::Cursor,
         IntegrationId::OpenCode,
     ] {
-        let target = target_path(&registry.status().workspace, integration)?;
-        validate_target_parent(&registry.status().workspace, &target)?;
-        let install = install_path(registry.state_directory(), integration)?;
-        let setup = if install.exists() {
-            let record = read_record(&install, integration, &target)?;
-            let current = read_target(&target)?.bytes;
-            if current.as_deref().map(digest).as_deref() == Some(&record.owned_sha256) {
-                IntegrationSetupV1::Installed
-            } else {
-                IntegrationSetupV1::Drifted
-            }
-        } else {
-            IntegrationSetupV1::NotInstalled
-        };
+        let setup = installation_state(registry.status(), registry.state_directory(), integration)?;
         registry.set_setup(integration, setup)?;
     }
     Ok(registry.status().clone())
+}
+
+pub(crate) fn installation_state(
+    status: &AgentDeviceStatusV1,
+    state: &Path,
+    integration: IntegrationId,
+) -> AuthorityResult<IntegrationSetupV1> {
+    let target = target_path(&status.workspace, integration)?;
+    validate_target_parent(&status.workspace, &target)?;
+    let install = install_path(state, integration)?;
+    if !install.exists() {
+        return Ok(IntegrationSetupV1::NotInstalled);
+    }
+    let record = read_record(&install, integration, &target)?;
+    let current = read_target(&target)?.bytes;
+    Ok(
+        if current.as_deref().map(digest).as_deref() == Some(&record.owned_sha256) {
+            IntegrationSetupV1::Installed
+        } else {
+            IntegrationSetupV1::Drifted
+        },
+    )
 }
 
 fn outcome(

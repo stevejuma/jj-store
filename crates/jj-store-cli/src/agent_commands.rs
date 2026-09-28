@@ -1,7 +1,7 @@
 use crate::{
     agent_integrations::{AgentDeviceStatusV1, AgentIntegrationRegistry},
     agent_sanitization::warm_kingfisher_cache,
-    agent_setup::{SetupRequestV1, audit_installations, setup},
+    agent_setup::{SetupRequestV1, audit_installations, require_setup_ready, setup},
     commands::{Format, error},
     presentation,
 };
@@ -46,6 +46,12 @@ pub enum AgentCommand {
         #[arg(long)]
         dry_run: bool,
     },
+    /// Receive one bounded project hook event
+    #[command(hide = true)]
+    Hook {
+        #[arg(value_enum)]
+        agent: AgentName,
+    },
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, ValueEnum)]
@@ -76,6 +82,16 @@ pub fn run(ui: &mut Ui, helper: &CommandHelper, args: AgentArgs) -> Result<(), C
         .state_dir
         .map(|path| helper.cwd().join(path))
         .unwrap_or_else(|| default_state(&workspace, connection.repository));
+    if let AgentCommand::Hook { agent } = &command {
+        crate::agent_hook::ingest_stdin(
+            &workspace,
+            &state,
+            connection.repository,
+            IntegrationId::from(*agent),
+        )
+        .map_err(error)?;
+        return Ok(());
+    }
     let mut registry =
         AgentIntegrationRegistry::open(&state, &workspace, connection.repository).map_err(error)?;
     registry.refresh_environment().map_err(error)?;
@@ -103,6 +119,7 @@ pub fn run(ui: &mut Ui, helper: &CommandHelper, args: AgentArgs) -> Result<(), C
         }
         AgentCommand::Setup { agent, dry_run } => {
             let integration = IntegrationId::from(agent);
+            require_setup_ready(&registry, integration).map_err(error)?;
             if !dry_run {
                 warm_kingfisher_cache(&state.join("kingfisher-cache")).map_err(error)?;
             }
@@ -129,6 +146,7 @@ pub fn run(ui: &mut Ui, helper: &CommandHelper, args: AgentArgs) -> Result<(), C
                 ),
             );
         }
+        AgentCommand::Hook { .. } => return Err(error("agent hook dispatch failed")),
     };
     present(ui, helper, args.format, &status, action)
 }

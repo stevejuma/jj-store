@@ -150,8 +150,17 @@ user-restricted MongoDB Kingfisher compiled-rule cache, then atomically records
 exact original bytes and content hashes before replacing the bounded regular
 target, preserves unrelated JSON values, rejects configuration symlinks and
 becomes idempotent after success. Status audits the installed hash on restart;
-drift is reported and blocks replacement. The packaged hook ingestion path and
-durable publication loop remain pending M9.2 work.
+drift is reported and blocks replacement.
+
+The installed `jj agent hook <codex|cursor|opencode>` command reads at most four
+MiB plus one overflow byte from standard input and produces no normal output. It
+requires the exact enabled registry entry, current owned setup hash and warmed
+Kingfisher cache before capture. A fixed omission observation represents invalid
+or oversized input without retaining source details. A bounded lock serializes
+source-sequence allocation across hook processes; reservations are synchronized
+before the sanitized batch is atomically enqueued, so interrupted attempts can
+leave a gap but can never reuse a sequence. The command does not yet publish the
+pending batch; publication recovery remains M9.2 work.
 
 `store init` provisions a new repository using a separate operator credential,
 durably retaining generated repository/epoch IDs before contacting the server.

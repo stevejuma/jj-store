@@ -108,7 +108,7 @@ impl AgentDeviceStatusV1 {
         self.integrations.get(&integration)
     }
 
-    fn validate(&self) -> AuthorityResult<()> {
+    pub(crate) fn validate(&self) -> AuthorityResult<()> {
         let expected = INTEGRATIONS.into_iter().collect::<BTreeSet<_>>();
         if self.schema_version != 1
             || self.device_id == DeviceId::new([0; 16])
