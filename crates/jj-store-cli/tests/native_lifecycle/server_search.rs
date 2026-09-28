@@ -4,9 +4,11 @@ use axum::{
     body::{Body, to_bytes},
     http::{Request, StatusCode},
 };
+use jj_store_object::Key;
 use jj_store_server::search::{PreparedSearch, Repository};
 use jj_store_service::administration::{OperatorPolicies, RepositoryHost};
 use serde_json::{Value, json};
+use sha2::{Digest as _, Sha256};
 use tower::ServiceExt as _;
 struct NoOperators;
 #[async_trait::async_trait]
@@ -27,7 +29,7 @@ fn host(f: &Fixture) -> RepositoryHost {
     .unwrap()
 }
 fn entries() -> Vec<Repository> {
-    serde_json::from_value(json!([{"repository":REPO,"token_environment":"JJ_STORE_SEARCH_TOKEN_FIXTURE","poll_millis":10,"source":{"scopes":{"main":{"kind":"bookmark","name":"main"}}}}])).unwrap()
+    serde_json::from_value(json!([{"repository":REPO,"token_environment":"JJ_STORE_SEARCH_TOKEN_FIXTURE","poll_millis":10,"snapshot_every":1,"source":{"scopes":{"main":{"kind":"bookmark","name":"main"}}}}])).unwrap()
 }
 fn prepare(f: &Fixture, root: &std::path::Path) -> (PreparedSearch, Router) {
     let host = host(f);
@@ -73,8 +75,30 @@ async fn wait_index(router: &Router, token: &BearerToken, position: u64) -> Valu
     assert_eq!(page["indexed_position"], position);
     page
 }
+async fn wait_snapshot(f: &Fixture, expected: &Value) {
+    let identity = entries().remove(0).source.identity().unwrap();
+    let identity_digest =
+        m::RecordDigest::new(Sha256::digest(serde_json::to_vec(&identity).unwrap()).into());
+    let epoch = f.session.snapshot().await.unwrap().manifest().epoch;
+    let key = Key::new(format!(
+        "repos/{REPO}/adapters/v1/{}/snapshots/v1/{epoch}/{identity_digest}/snapshot.json",
+        identity.name
+    ))
+    .unwrap();
+    for _ in 0..200 {
+        if let Ok(download) = f.store.get(&key, None).await {
+            let bytes = download.read_bounded(16 * 1024).await.unwrap();
+            let pointer: Value = serde_json::from_slice(&bytes).unwrap();
+            if pointer["checkpoint"]["artifact"] == *expected {
+                return;
+            }
+        }
+        tokio::time::sleep(std::time::Duration::from_millis(10)).await;
+    }
+    panic!("search snapshot was not published for generation {expected}");
+}
 #[tokio::test(flavor = "multi_thread", worker_threads = 4)]
-async fn server_search_runs_recovers_and_rebuilds_after_cache_loss() {
+async fn server_search_runs_recovers_and_restores_after_cache_loss() {
     tokio::task::LocalSet::new()
         .run_until(async {
             let f = Fixture::new().await;
@@ -94,6 +118,7 @@ async fn server_search_runs_recovers_and_rebuilds_after_cache_loss() {
             publish_text_scope(&f, first, 2, &[("code.rs", b"updated signal")]).await;
             let second = wait_index(&router, &f.reader, 2).await;
             assert_ne!(initial["index_generation"], second["index_generation"]);
+            wait_snapshot(&f, &second["index_generation"]).await;
             let authority = f.session.snapshot().await.unwrap().manifest().clone();
             let (status, source) = get(&router, &f.reader, "search?q=updated&scope=main").await;
             assert_eq!(status, StatusCode::OK);
@@ -133,18 +158,18 @@ async fn server_search_runs_recovers_and_rebuilds_after_cache_loss() {
             std::fs::remove_dir_all(root.path().join("search")).unwrap();
             let (prepared, router) = prepare(&f, root.path());
             let running = prepared.start();
-            let rebuilt = wait_index(&router, &f.reader, 2).await;
-            assert_ne!(rebuilt["index_generation"], recovered["index_generation"]);
-            // Equal-score ties may use different document addresses after a
-            // rebuild. Compare every document field independent of tie order;
-            // reopening the exact generation above retains exact page order.
+            let restored = wait_index(&router, &f.reader, 2).await;
+            assert_eq!(restored["index_generation"], recovered["index_generation"]);
+            // Remote restore retains the exact committed generation and page
+            // ordering after complete local cache loss.
             let rows = |page: &Value| {
                 let mut rows = page["results"].as_array().unwrap().clone();
                 rows.sort_by_key(|row| row["key"].to_string());
                 rows
             };
-            assert_eq!(rows(&rebuilt), rows(&recovered));
-            assert_eq!(rebuilt["scope_snapshots"], recovered["scope_snapshots"]);
+            assert_eq!(rows(&restored), rows(&recovered));
+            assert_eq!(restored["results"], recovered["results"]);
+            assert_eq!(restored["scope_snapshots"], recovered["scope_snapshots"]);
             assert_eq!(authority, *f.session.snapshot().await.unwrap().manifest());
             running.shutdown().await.unwrap();
             drop(router);

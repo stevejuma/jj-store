@@ -28,13 +28,15 @@ include `index_source`, `include_prefixes`, `exclude_prefixes`,
 native prefixes; exclusions affect only the derived index. Changed source
 configuration rebuilds the index at restart before serving it.
 
-Per-entry defaults are `poll_millis = 1000`, `timeout_seconds = 60` and
-`index_bytes = 536870912` per generation. At most eight repositories may be
-configured. Each runner uses one native extraction worker and a 32 MiB Tantivy
-writer, retains at most 16 generations, and admits at most 100,000 documents.
-Each batch caps 100,000 requests, 256 MiB transferred and 16 MiB per object;
-server inventory limits also apply. Pinned pages can retain old generations, so
-provision disk for retained generations plus a staging generation.
+Per-entry defaults are `poll_millis = 1000`, `timeout_seconds = 60`,
+`index_bytes = 536870912` per generation and `snapshot_every = 32` committed
+source positions. Set `snapshot_every = 0` to disable optional immutable remote
+index snapshots. At most eight repositories may be configured. Each runner uses
+one native extraction worker and a 32 MiB Tantivy writer, retains at most 16
+generations, and admits at most 100,000 documents. Each batch caps 100,000
+requests, 256 MiB transferred and 16 MiB per object; server inventory limits
+also apply. Pinned pages can retain old generations, so provision disk for
+retained generations plus a staging generation.
 
 Indexes live under `state_dir/search/<repository>`, with private directory
 permissions; writer leases live under `state_dir/adapters`. The running server

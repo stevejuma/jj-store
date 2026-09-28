@@ -30,6 +30,8 @@ pub struct Repository {
     pub timeout_seconds: u64,
     #[serde(default = "index_bytes")]
     pub index_bytes: u64,
+    #[serde(default = "snapshot_every")]
+    pub snapshot_every: u64,
 }
 fn poll_millis() -> u64 {
     1000
@@ -39,6 +41,9 @@ fn timeout_seconds() -> u64 {
 }
 fn index_bytes() -> u64 {
     512 * 1024 * 1024
+}
+fn snapshot_every() -> u64 {
+    32
 }
 pub(crate) fn validate(entries: &[Repository]) -> Result<()> {
     if entries.len() > 8 {
@@ -62,6 +67,7 @@ pub(crate) fn validate(entries: &[Repository]) -> Result<()> {
             || !(10..=60000).contains(&entry.poll_millis)
             || !(1..=300).contains(&entry.timeout_seconds)
             || !(1..=2 * 1024 * 1024 * 1024).contains(&entry.index_bytes)
+            || entry.snapshot_every > 1_000_000
             || entry.source.identity().is_err()
         {
             return Err(Error::Config(
@@ -133,6 +139,10 @@ impl PreparedSearch {
             )
             .map_err(|_| Error::Config("search index ownership or local state"))?;
             let poll = Duration::from_millis(entry.poll_millis);
+            let transfer_bytes = entry
+                .index_bytes
+                .saturating_mul(2)
+                .min(2 * 1024 * 1024 * 1024);
             let runner = Runner::new(
                 session.adapter_source(),
                 identity,
@@ -143,6 +153,9 @@ impl PreparedSearch {
                     max_backoff: poll.max(Duration::from_secs(30)),
                     timeout: Duration::from_secs(entry.timeout_seconds),
                     inventory_nodes: server_limits.inventory_nodes,
+                    bytes: transfer_bytes,
+                    object_bytes: entry.index_bytes,
+                    snapshot_every: entry.snapshot_every,
                     ..Default::default()
                 },
             )

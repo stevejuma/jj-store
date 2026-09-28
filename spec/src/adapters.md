@@ -74,9 +74,9 @@ local copying for simple crash-safe reader isolation.
 
 Core search pins an immutable generation and rechecks repository authorization
 and epoch before and after every request, including pagination. It exposes no
-unauthorized counts or stored content. HTTP cursors and serving configuration
-require additional integration acceptance; the storage engine alone does not
-close the search milestone.
+unauthorized counts or stored content. HTTP cursors, serving configuration, cold
+process recovery and the pinned RustFS deployment are qualified separately from
+the storage-engine fixtures.
 
 Native extraction can read bounded selected history and earlier complete
 inventories through the delivered snapshot. Both stop at that snapshot's
@@ -152,7 +152,8 @@ handles and runner health receivers. It constructs pagers with the shared native
 content worker pool and caps search output to the HTTP response budget. Route
 availability does not imply an index is ready; status distinguishes durable and
 served positions, and a missing reader returns search_not_ready. Server runner
-configuration and remote snapshot restoration require separate acceptance.
+configuration and remote snapshot restoration are covered by the M6 deployment
+acceptance.
 
 ## Configuration identity before recovery
 
@@ -206,3 +207,26 @@ path traversal; bounded descriptors reject unknown fields and noncanonical
 encoding. Missing, corrupt or incompatible snapshots are unusable acceleration,
 not evidence that local index files have survived. Tantivy restore must still
 verify its payload, schema and actual index readability before activation.
+
+The foreground runner restores a compatible selected snapshot before native
+bootstrap. Tantivy downloads every declared generation file into private
+staging, verifies file lengths and checksums, canonical descriptor bytes,
+adapter identity, schema, source position, commit payload, document limit and
+actual index readability, then atomically installs the original generation and
+active pointer. An older compatible generation catches up through ordinary
+selected batches. Missing or unusable snapshots rebuild from native history and
+repair the remote pointer; repository publication remains independent.
+
+`snapshot_every` schedules optional exports by committed source position; zero
+disables them. Export pins the active committed generation and streams only its
+declared files through the selected snapshot capability. Optional snapshot I/O
+failure reports degradation and is retried without failing repository writes;
+revocation and cancellation remain fatal to the worker. Transfer budgets derive
+from the configured per-generation index budget.
+
+The pinned single-node RustFS/TLS deployment deletes all local server and search
+state, restarts both RustFS and the server, and requires the exact generation
+digest and search results to return. Its recorded cold rebuild was 5.436 seconds
+and exact restore was 2.007 seconds, both within the published 30-second test
+budget. This measured fixture proves the restore path avoided a rebuild for its
+bounded repository; it is not a general throughput claim.

@@ -301,8 +301,9 @@ current-view ambiguity, bounded freshness waits, admission, revocation, expiry,
 serving restart, output/retention budgets and durable-versus-visible
 degradation. Reader catch-up tests prepare durable artifacts separately; an
 invented one-second index-build expectation is not a release performance
-requirement. HTTP routes, cold server wiring and real RustFS remain separate
-gates.
+requirement. HTTP routes and cold server wiring are covered by
+registered-handler and executable fixtures; pinned RustFS qualification is
+recorded separately.
 
 Search HTTP compatibility uses real registered Axum handlers with a native
 repository and local Tantivy projection. Generated OpenAPI/client shapes are
@@ -317,14 +318,20 @@ positions; a restart must not activate incompatible source projections.
 Server-search acceptance combines strict configuration and cold executable
 checks with native repositories, real local Tantivy files and background-runner
 HTTP fixtures. Cache loss/reopen and token revocation require observed status
-transitions, not sleeps alone. Real RustFS/TLS search deployment remains a
-separate qualification from these local lifecycle fixtures.
+transitions, not sleeps alone. The pinned RustFS/TLS process fixture
+additionally deletes all local search state and requires exact remote-generation
+restoration.
 
 Optional adapter snapshot artifacts use a repository/epoch/full-identity
 namespace and a V1 canonical descriptor and pointer. Their stream, corruption,
 revocation, cancellation and competing-pointer fixtures are deterministic memory
-storage evidence. They do not establish Tantivy restore or RustFS deployment
-conformance and change no native identity, WAL, receipt or replay cursor format.
+storage evidence. Tantivy fixtures export committed generations, restore older
+generations before incremental replay, validate complete payload/schema/index
+readability and rebuild plus repair an unusable snapshot. The pinned RustFS/TLS
+fixture then removes local server/search state, restarts storage and the server,
+and restores the exact generation and results. It records a 5.436-second cold
+rebuild and 2.007-second restore against a 30-second budget. Snapshot support
+changes no native identity, WAL, receipt, replay cursor or HTTP format.
 
 M4.10 adds four browsing routes for reference lookup, recursive paths,
 operation-change groups and changed-path summaries. Generated contracts are

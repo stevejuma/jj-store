@@ -172,6 +172,7 @@ impl Captured {
         }
     }
 }
+#[derive(Clone)]
 pub struct Snapshot {
     captured: Captured,
     bound: Position,
@@ -269,6 +270,7 @@ impl Snapshot {
         ))
     }
 }
+#[derive(Clone)]
 pub struct Batch {
     pub before: Position,
     pub records: Vec<SelectedRecord>,

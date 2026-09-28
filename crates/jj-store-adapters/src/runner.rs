@@ -13,6 +13,26 @@ pub trait Projection: Send {
     fn validate_identity(&self, identity: &Identity) -> Result<()> {
         identity.validate()
     }
+    fn supports_snapshots(&self) -> bool {
+        false
+    }
+    async fn restore_snapshot(
+        &mut self,
+        _snapshot: &Snapshot,
+        _identity: &Identity,
+        _context: Context,
+    ) -> Result<Option<Checkpoint>> {
+        Ok(None)
+    }
+    async fn publish_snapshot(
+        &mut self,
+        _snapshot: &Snapshot,
+        _checkpoint: &Checkpoint,
+        _identity: &Identity,
+        _context: Context,
+    ) -> Result<()> {
+        Ok(())
+    }
     async fn recover(&mut self, context: Context) -> Result<Option<Checkpoint>>;
     async fn bootstrap(
         &mut self,
@@ -44,6 +64,9 @@ pub struct Runner<P> {
     lease: Arc<Lease>,
     slots: Arc<Semaphore>,
     health: watch::Sender<Health>,
+    snapshot_checked: bool,
+    snapshot_pending: Option<Checkpoint>,
+    snapshot_error: Option<Error>,
 }
 impl<P: Projection> Runner<P> {
     pub fn new(
@@ -56,6 +79,9 @@ impl<P: Projection> Runner<P> {
         identity.validate()?;
         projection.validate_identity(&identity)?;
         limits.validate()?;
+        if limits.snapshot_every > 0 && !projection.supports_snapshots() {
+            return Err(Error::Invalid);
+        }
         let lease = Lease::acquire(owner_root, source.repository(), &identity.name)?;
         Ok(Self {
             source,
@@ -65,6 +91,9 @@ impl<P: Projection> Runner<P> {
             lease,
             slots: Arc::new(Semaphore::new(1)),
             health: watch::channel(Health::default()).0,
+            snapshot_checked: false,
+            snapshot_pending: None,
+            snapshot_error: None,
         })
     }
     /// Wait for work retained by canceled/timed-out callbacks to release its
@@ -85,9 +114,15 @@ impl<P: Projection> Runner<P> {
             Ok(context) => context.until(self.step_inner(&context)).await,
             Err(e) => Err(e),
         };
-        self.health.send_modify(|health| {
-            health.degraded = result.is_err();
-            health.last_error = result.as_ref().err().cloned();
+        self.health.send_modify(|health| match &result {
+            Ok(()) => {
+                health.degraded = self.snapshot_error.is_some();
+                health.last_error = self.snapshot_error.clone();
+            }
+            Err(error) => {
+                health.degraded = true;
+                health.last_error = Some(error.clone());
+            }
         });
         result.map(|()| self.health())
     }
@@ -112,6 +147,7 @@ impl<P: Projection> Runner<P> {
             .send_modify(|health| health.remote = remote.checkpoint.clone());
         let recovered = self.projection.recover(context.clone()).await?;
         let mut local = None;
+        let mut selected_snapshot = None;
         if let Some(checkpoint) = recovered {
             checkpoint.validate()?;
             if checkpoint.source.repository != current.repository {
@@ -122,26 +158,56 @@ impl<P: Projection> Runner<P> {
                 local = Some(checkpoint);
             }
         }
+        if local.is_none() && self.limits.snapshot_every > 0 {
+            let snapshot = source.bootstrap().await?;
+            if let Some(checkpoint) = self
+                .projection
+                .restore_snapshot(&snapshot, &self.identity, context.clone())
+                .await?
+            {
+                checkpoint.validate()?;
+                if checkpoint.identity != self.identity
+                    || checkpoint.source.repository != current.repository
+                    || checkpoint.source.epoch != current.epoch
+                    || checkpoint.source.position.0 > current.position.0
+                {
+                    return Err(Error::Corrupt);
+                }
+                source.validate_position(&checkpoint.source).await?;
+                if self.projection.recover(context.clone()).await?.as_ref() != Some(&checkpoint) {
+                    return Err(Error::Corrupt);
+                }
+                local = Some(checkpoint);
+                self.snapshot_checked = true;
+                self.snapshot_error = None;
+            }
+            selected_snapshot = Some(snapshot);
+        }
         self.set_applied(local.as_ref(), &current);
-        let (target, checkpoint) = if let Some(local) = local {
+        let previous = local.clone();
+        let (target, checkpoint, snapshot) = if let Some(local) = local {
             if let Some(batch) = source.batch(&local.source).await? {
+                let snapshot = batch.snapshot.clone();
                 let target = batch.snapshot.position.clone();
                 let checkpoint = self
                     .projection
                     .apply(batch, &self.identity, context.clone())
                     .await?;
-                (target, checkpoint)
+                (target, checkpoint, Some(snapshot))
             } else {
-                (local.source.clone(), local)
+                (local.source.clone(), local, selected_snapshot)
             }
         } else {
-            let snapshot = source.bootstrap().await?;
+            let snapshot = match selected_snapshot {
+                Some(snapshot) => snapshot,
+                None => source.bootstrap().await?,
+            };
             let target = snapshot.position.clone();
             let checkpoint = self
                 .projection
-                .bootstrap(snapshot, &self.identity, context.clone())
+                .bootstrap(snapshot.clone(), &self.identity, context.clone())
                 .await?;
-            (target, checkpoint)
+            (target, checkpoint, Some(snapshot))
         };
         checkpoint.validate()?;
         if checkpoint.identity != self.identity || checkpoint.source != target {
@@ -151,6 +217,41 @@ impl<P: Projection> Runner<P> {
         // must already be able to recover the same durable local artifact.
         if self.projection.recover(context.clone()).await?.as_ref() != Some(&checkpoint) {
             return Err(Error::Corrupt);
+        }
+        if self.limits.snapshot_every > 0 {
+            let interval = self.limits.snapshot_every;
+            let crossed = previous.as_ref().is_none_or(|old| {
+                old.source.position.0 / interval < checkpoint.source.position.0 / interval
+            });
+            if !self.snapshot_checked || crossed || self.snapshot_pending.is_some() {
+                self.snapshot_pending = Some(checkpoint.clone());
+            }
+            self.snapshot_checked = true;
+            if self.snapshot_pending.as_ref() == Some(&checkpoint) {
+                let snapshot = match snapshot {
+                    Some(snapshot) if snapshot.position == checkpoint.source => snapshot,
+                    _ => {
+                        let current = source.bootstrap().await?;
+                        if current.position == checkpoint.source {
+                            current
+                        } else {
+                            current.at(checkpoint.source.position).await?
+                        }
+                    }
+                };
+                match self
+                    .projection
+                    .publish_snapshot(&snapshot, &checkpoint, &self.identity, context.clone())
+                    .await
+                {
+                    Ok(()) => {
+                        self.snapshot_pending = None;
+                        self.snapshot_error = None;
+                    }
+                    Err(error @ (Error::Denied | Error::Canceled)) => return Err(error),
+                    Err(error) => self.snapshot_error = Some(error),
+                }
+            }
         }
         source.store.authorize().await?;
         self.set_applied(Some(&checkpoint), &current);

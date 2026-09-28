@@ -22,7 +22,7 @@ zeroize = "1"
 thiserror = "2"
 tantivy = { version = "=0.26.2", default-features = false, features = ["mmap", "lz4-compression"] }
 tempfile = "3"
-tokio = { version = "1", features = ["rt", "sync", "time"] }
+tokio = { version = "1", features = ["fs", "rt", "sync", "time"] }
 uuid = { version = "1", features = ["v4"] }
 
 [dev-dependencies]

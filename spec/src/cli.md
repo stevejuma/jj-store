@@ -299,6 +299,12 @@ source scopes/exclusions and bounded polling, batch duration and per-generation
 disk capacity. Tokens are never accepted in TOML or command arguments. Config
 checks validate settings without reading credentials or starting indexers.
 
+Each entry may set `snapshot_every` to an interval of committed source
+positions; the default is 32 and zero disables optional remote index snapshots.
+The interval is bounded at one million. Snapshot transfer budgets derive from
+the configured generation capacity, and credentials remain available only
+through the entry's environment-variable name.
+
 The foreground server prepares private local indexes beneath its state
 directory, then starts their committed-log runners alongside the listener.
 Preparation fails for missing/malformed credentials or invalid local

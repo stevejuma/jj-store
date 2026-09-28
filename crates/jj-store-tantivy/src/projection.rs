@@ -144,6 +144,48 @@ impl<E: Extractor> Projection for TantivyProjection<E> {
         }
         self.extractor.validate_identity(identity)
     }
+    fn supports_snapshots(&self) -> bool {
+        true
+    }
+    async fn restore_snapshot(
+        &mut self,
+        snapshot: &Snapshot,
+        identity: &Identity,
+        context: Context,
+    ) -> Result<Option<Checkpoint>> {
+        let result =
+            snapshots::restore(self.owner.clone(), self.limits, snapshot, identity, context).await;
+        let generation = match result {
+            Ok(generation) => generation,
+            Err(Error::Invalid | Error::Corrupt | Error::Unavailable | Error::Projection) => {
+                return Ok(None);
+            }
+            Err(error) => return Err(error),
+        };
+        let Some(generation) = generation else {
+            return Ok(None);
+        };
+        let checkpoint = generation.checkpoint.clone();
+        self.activate(generation)?;
+        Ok(Some(checkpoint))
+    }
+    async fn publish_snapshot(
+        &mut self,
+        snapshot: &Snapshot,
+        checkpoint: &Checkpoint,
+        identity: &Identity,
+        context: Context,
+    ) -> Result<()> {
+        snapshots::publish(
+            self.owner.clone(),
+            self.limits,
+            snapshot,
+            checkpoint,
+            identity,
+            context,
+        )
+        .await
+    }
     async fn recover(&mut self, context: Context) -> Result<Option<Checkpoint>> {
         let result = async {
             let recovered = self.recover_inner(context).await?;

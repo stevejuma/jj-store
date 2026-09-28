@@ -6,6 +6,7 @@ pub mod native;
 pub mod paging;
 mod projection;
 mod search;
+mod snapshots;
 pub use document::{Document, DocumentKey, ScopeSnapshot, ScopeState, Update};
 use jj_store_adapters::{Error, Result};
 use jj_store_model as m;

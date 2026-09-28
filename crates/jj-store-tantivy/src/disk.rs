@@ -265,10 +265,19 @@ fn load(
     context: &Context,
 ) -> Result<Arc<Generation>> {
     let path = owner.root.join(name);
-    let descriptor = descriptor(&path, limits, context)?;
-    if descriptor.payload.generation != name {
+    let generation = load_path(owner, path, limits, context)?;
+    if generation.payload.generation != name {
         return Err(Error::Corrupt);
     }
+    Ok(generation)
+}
+fn load_path(
+    owner: Arc<Owner>,
+    path: PathBuf,
+    limits: Limits,
+    context: &Context,
+) -> Result<Arc<Generation>> {
+    let descriptor = descriptor(&path, limits, context)?;
     let index = tv(Index::open_in_dir(&path))?;
     let fields = Fields::new();
     if index.schema() != fields.schema {
@@ -296,6 +305,73 @@ fn load(
         retired: AtomicBool::new(false),
         _owner: owner,
     }))
+}
+pub(crate) struct SnapshotFiles {
+    pub generation: Arc<Generation>,
+    pub files: Vec<(String, u64)>,
+}
+pub(crate) fn snapshot_files(
+    owner: Arc<Owner>,
+    limits: Limits,
+    context: &Context,
+) -> Result<SnapshotFiles> {
+    let generation = recover(owner, limits, context)?.ok_or(Error::Corrupt)?;
+    let descriptor = descriptor(&generation.path, limits, context)?;
+    let mut files: Vec<_> = descriptor
+        .files
+        .into_iter()
+        .map(|(name, info)| (name, info.bytes))
+        .collect();
+    let info = transfer(
+        &generation.path.join("generation.json"),
+        None,
+        limits.index_bytes,
+        context,
+    )?;
+    files.push(("generation.json".into(), info.bytes));
+    if files.len() > limits.index_files + 1 {
+        return Err(Error::Limit);
+    }
+    Ok(SnapshotFiles { generation, files })
+}
+pub(crate) fn install_snapshot(
+    owner: Arc<Owner>,
+    staging: tempfile::TempDir,
+    expected: &Checkpoint,
+    limits: Limits,
+    context: &Context,
+) -> Result<Arc<Generation>> {
+    context.check()?;
+    let candidate = load_path(owner.clone(), staging.path().to_owned(), limits, context)?;
+    if &candidate.checkpoint != expected {
+        return Err(Error::Corrupt);
+    }
+    let name = candidate.payload.generation.clone();
+    drop(candidate);
+    let destination = owner.root.join(&name);
+    if destination.exists() {
+        let existing = load(owner, &name, limits, context)?;
+        if &existing.checkpoint != expected {
+            return Err(Error::Corrupt);
+        }
+        return Ok(existing);
+    }
+    let staging = staging.keep();
+    io(fs::rename(staging, &destination))?;
+    sync_dir(&owner.root)?;
+    let loaded = load(owner.clone(), &name, limits, context)?;
+    if &loaded.checkpoint != expected {
+        return Err(Error::Corrupt);
+    }
+    let mut pointer = io(tempfile::NamedTempFile::new_in(&owner.root))?;
+    io(pointer.write_all(name.as_bytes()))?;
+    io(pointer.as_file().sync_all())?;
+    context.check()?;
+    pointer
+        .persist(owner.root.join("active"))
+        .map_err(|_| Error::Unavailable)?;
+    sync_dir(&owner.root)?;
+    Ok(loaded)
 }
 fn copy_generation(source: &Path, target: &Path, limits: Limits, context: &Context) -> Result<()> {
     let descriptor = descriptor(source, limits, context)?;

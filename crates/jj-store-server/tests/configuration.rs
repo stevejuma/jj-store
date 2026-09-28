@@ -185,12 +185,14 @@ name = "main"
     assert_eq!(config.search.len(), 1);
     assert_eq!(config.search[0].source.scopes.len(), 1);
     assert_eq!(config.search[0].index_bytes, 512 * 1024 * 1024);
+    assert_eq!(config.search[0].snapshot_every, 32);
     assert!(!config.state_dir.exists());
     for bad in [
         search.replace("JJ_STORE_SEARCH_TOKEN_EXAMPLE", "JJ_STORE_TOKEN"),
         search.replace("poll_millis = 100", "poll_millis = 0"),
         search.replace("poll_millis = 100", "index_bytes = 0"),
         search.replace("poll_millis = 100", "timeout_seconds = 301"),
+        search.replace("poll_millis = 100", "snapshot_every = 1000001"),
         search.replace("poll_millis = 100", "token = 'must-not-echo-secret'"),
         search.replace(
             "[search.source.scopes.main]",

@@ -50,6 +50,7 @@ commits = []
 # poll_millis = 1000
 # timeout_seconds = 60
 # index_bytes = 536870912
+# snapshot_every = 32 # committed source positions; zero disables snapshots
 # [search.source]
 # index_source = true
 # exclude_prefixes = ["private"]

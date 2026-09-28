@@ -783,6 +783,18 @@ async fn real_rustfs_server_cli_restart_and_revocation() {
         &admin,
         &["-R", "other", "new", "main", "-m", "independent workspace"],
     ));
+    running.terminate();
+    fs::write(
+        &f.config,
+        format!(
+            "{}\n[[search]]\nrepository = \"{repository}\"\ntoken_environment = \"JJ_STORE_SEARCH_TOKEN_FIXTURE\"\npoll_millis = 10\ntimeout_seconds = 30\nsnapshot_every = 1\n\n[search.source.scopes.main]\nkind = \"bookmark\"\nname = \"main\"\n",
+            fs::read_to_string(&f.config).unwrap()
+        ),
+    )
+    .unwrap();
+    f.search = Some(admin.clone());
+    let rebuild_started = Instant::now();
+    running = f.start(false);
     let http = reqwest::Client::builder()
         .no_proxy()
         .http1_only()
@@ -791,6 +803,20 @@ async fn real_rustfs_server_cli_restart_and_revocation() {
         .build()
         .unwrap();
     let base = format!("{endpoint}/v1/repos/{repository}");
+    let rebuilt_search = wait_search_ready(&http, &admin, &base).await;
+    let rebuilt_generation = rebuilt_search["index_generation"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    let rebuilt_page = http_json(
+        &http,
+        &admin,
+        &format!("{base}/search?q=durable&scope=main"),
+    )
+    .await;
+    assert!(!rebuilt_page["results"].as_array().unwrap().is_empty());
+    wait_search_snapshot(&storage_endpoint, repository, epoch, &rebuilt_generation).await;
+    let rebuild_millis = rebuild_started.elapsed().as_millis();
     let snapshot = http_json(&http, &admin, &format!("{base}/snapshot")).await;
     let at_op = snapshot["heads"].as_array().unwrap()[0].as_str().unwrap();
     let log_url = format!("{base}/log?at_op={at_op}&at_time_millis=1790000000000&revset=all()");
@@ -909,6 +935,18 @@ async fn real_rustfs_server_cli_restart_and_revocation() {
     ))
     .unwrap();
     assert_eq!(diagnosis["storage_ready"], true);
+    let rebuilt_search = wait_search_ready(&http, &admin, &base).await;
+    let rebuilt_generation = rebuilt_search["index_generation"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    let rebuilt_page = http_json(
+        &http,
+        &admin,
+        &format!("{base}/search?q=durable&scope=main"),
+    )
+    .await;
+    wait_search_snapshot(&storage_endpoint, repository, epoch, &rebuilt_generation).await;
     // Kill the actual server, remove its rebuildable local state, then kill and
     // restart the uniquely owned RustFS container supplied by the harness.
     running.child.kill().unwrap();
@@ -952,6 +990,7 @@ async fn real_rustfs_server_cli_restart_and_revocation() {
     .unwrap();
     let mut restarted = f.start(false);
     assert_eq!(restarted.event["address"], address);
+    let restore_started = Instant::now();
     let deadline = Instant::now() + Duration::from_secs(30);
     loop {
         let output = f
@@ -969,6 +1008,28 @@ async fn real_rustfs_server_cli_restart_and_revocation() {
         );
         tokio::time::sleep(Duration::from_millis(100)).await;
     }
+    let restored_search = wait_search_ready(&http, &admin, &base).await;
+    let restore_millis = restore_started.elapsed().as_millis();
+    assert_eq!(restored_search["index_generation"], rebuilt_generation);
+    let restored_page = http_json(
+        &http,
+        &admin,
+        &format!("{base}/search?q=durable&scope=main"),
+    )
+    .await;
+    assert_eq!(restored_page["index_generation"], rebuilt_generation);
+    assert_eq!(restored_page["results"], rebuilt_page["results"]);
+    println!(
+        "{}",
+        serde_json::json!({
+            "event": "search_snapshot_qualification",
+            "rebuild_millis": rebuild_millis,
+            "restore_millis": restore_millis,
+            "budget_millis": 30_000,
+            "generation": rebuilt_generation,
+            "exact_generation_restored": true
+        })
+    );
     let mut resumed = http
         .get(&events_url)
         .bearer_auth(admin.expose().as_str())
@@ -1228,6 +1289,89 @@ async fn http_json(client: &reqwest::Client, token: &BearerToken, url: &str) -> 
     let json = response.json::<serde_json::Value>().await.unwrap();
     assert_eq!(status, reqwest::StatusCode::OK, "{json}");
     json
+}
+
+async fn wait_search_ready(
+    client: &reqwest::Client,
+    token: &BearerToken,
+    base: &str,
+) -> serde_json::Value {
+    let deadline = Instant::now() + Duration::from_secs(30);
+    loop {
+        let response = client
+            .get(format!("{base}/search/status"))
+            .bearer_auth(token.expose().as_str())
+            .send()
+            .await
+            .unwrap();
+        let status = response.status();
+        let value = response.json::<serde_json::Value>().await.unwrap();
+        if status == reqwest::StatusCode::OK
+            && value["is_stale"] == false
+            && value["degraded"] == false
+            && value["index_generation"].is_string()
+        {
+            return value;
+        }
+        assert!(
+            Instant::now() < deadline,
+            "search did not become ready: {value}"
+        );
+        tokio::time::sleep(Duration::from_millis(50)).await;
+    }
+}
+
+async fn wait_search_snapshot(
+    endpoint: &str,
+    repository: jj_store_model::RepositoryId,
+    epoch: jj_store_model::EpochId,
+    expected_generation: &str,
+) {
+    use jj_store_object::{Key, ObjectStore as _, s3};
+    use sha2::{Digest as _, Sha256};
+
+    let source: jj_store_tantivy::native::Config = serde_json::from_value(serde_json::json!({
+        "scopes": {"main": {"kind": "bookmark", "name": "main"}}
+    }))
+    .unwrap();
+    let identity = source.identity().unwrap();
+    let digest = jj_store_model::RecordDigest::new(
+        Sha256::digest(serde_json::to_vec(&identity).unwrap()).into(),
+    );
+    let key = Key::new(format!(
+        "repos/{repository}/adapters/v1/{}/snapshots/v1/{epoch}/{digest}/snapshot.json",
+        identity.name
+    ))
+    .unwrap();
+    let store = s3::S3Store::new(s3::Config {
+        endpoint: format!("{}/", endpoint.trim_end_matches('/')),
+        bucket: "jj-store-contract".into(),
+        region: "us-east-1".into(),
+        credentials: s3::Credentials {
+            access_key: std::env::var("JST_TEST_ACCESS_KEY").unwrap(),
+            secret_key: std::env::var("JST_TEST_SECRET_KEY").unwrap(),
+            session_token: None,
+        },
+        allow_http_loopback: true,
+        max_object_bytes: 512 * 1024 * 1024,
+        timeout: Duration::from_secs(30),
+    })
+    .unwrap();
+    let deadline = Instant::now() + Duration::from_secs(30);
+    loop {
+        if let Ok(download) = store.get(&key, None).await {
+            let pointer: serde_json::Value =
+                serde_json::from_slice(&download.read_bounded(16 * 1024).await.unwrap()).unwrap();
+            if pointer["checkpoint"]["artifact"] == expected_generation {
+                return;
+            }
+        }
+        assert!(
+            Instant::now() < deadline,
+            "remote search snapshot did not select generation {expected_generation}"
+        );
+        tokio::time::sleep(Duration::from_millis(50)).await;
+    }
 }
 
 fn event_cursor(event: &serde_json::Value) -> String {

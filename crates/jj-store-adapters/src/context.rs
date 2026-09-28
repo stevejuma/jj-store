@@ -23,6 +23,9 @@ pub struct Limits {
     pub timeout: Duration,
     pub poll: Duration,
     pub max_backoff: Duration,
+    /// Zero disables remote projection snapshots. Otherwise publish after at
+    /// most this many committed source positions, plus one startup check.
+    pub snapshot_every: u64,
 }
 impl Default for Limits {
     fn default() -> Self {
@@ -35,6 +38,7 @@ impl Default for Limits {
             timeout: Duration::from_secs(60),
             poll: Duration::from_secs(1),
             max_backoff: Duration::from_secs(30),
+            snapshot_every: 0,
         }
     }
 }
@@ -52,6 +56,7 @@ impl Limits {
             || self.poll < Duration::from_millis(10)
             || self.max_backoff < self.poll
             || self.max_backoff > Duration::from_secs(60)
+            || self.snapshot_every > 1_000_000
         {
             return Err(Error::Invalid);
         }
