@@ -12,7 +12,12 @@ mod domains;
 mod reader;
 mod review;
 mod review_audit;
+mod review_audit_events;
 mod review_catalog;
+mod review_command_apply;
+mod review_command_history;
+mod review_command_update;
+mod review_commands;
 mod review_reads;
 pub use agent_catalog::AgentStoreSnapshot;
 pub use agent_delta::AgentDeltaRequest;
@@ -24,6 +29,7 @@ pub use jj_agent::{AgentDeltaV1, AgentObjectRef, AgentObjectV1, AgentRootV1};
 pub use jj_review::{ReviewDeltaV1, ReviewObjectRef, ReviewObjectV1, ReviewRootV1};
 pub use reader::SelectedRecord;
 pub use review_catalog::ReviewStoreSnapshot;
+pub use review_commands::{ReviewCommandError, ReviewCommandRequest};
 pub use review_reads::ReviewCatalogPage;
 
 use crate::{

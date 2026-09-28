@@ -8,16 +8,17 @@ destructive GC, automated promotion, or multi-writer serving in v1.
 
 ## Requirements
 
-| ID          | Requirement                                                                                                                                                                          |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| JST-PUB-001 | Only one manifest CAS MUST publish a head transition together with its exact WAL candidate, complete dependency inventory, and durable mutation receipt.                             |
-| JST-PUB-002 | Candidates MUST use attempt-unique immutable keys; readers and adapters MUST follow selected manifest/catalog references and never infer commitment from sequence filenames or LIST. |
-| JST-PUB-003 | Native head updates MUST preserve concurrent siblings; strict mutations MUST reject stale snapshots, and late duplicate publications MUST NOT resurrect obsolete heads.              |
-| JST-PUB-004 | Request identity and canonical intent digest MUST provide durable retry receipts and detect conflicting reuse across restarts and checkpoint compaction.                             |
-| JST-PUB-005 | Unknown outcomes MUST resolve through committed receipt/history lookup or return OUTCOME_UNKNOWN under the original request ID; absence alone MUST NOT prove rejection.              |
-| JST-PUB-006 | Checkpoints MUST preserve newer tails, retained history, evolution dependencies, and receipt lookup; empty server caches MUST recover acknowledged authority from object storage.    |
-| JST-PUB-007 | One manifest CAS MUST select code, AgentStore and ReviewStore roots with independent monotonic state versions; publishing one domain MUST preserve the other two domains.            |
-| JST-PUB-008 | Collaboration enablement MUST install canonical empty roots through an authorized receipt-bearing WAL publication without rewriting native history or staling unchanged code state.  |
+| ID          | Requirement                                                                                                                                                                              |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| JST-PUB-001 | Only one manifest CAS MUST publish a head transition together with its exact WAL candidate, complete dependency inventory, and durable mutation receipt.                                 |
+| JST-PUB-002 | Candidates MUST use attempt-unique immutable keys; readers and adapters MUST follow selected manifest/catalog references and never infer commitment from sequence filenames or LIST.     |
+| JST-PUB-003 | Native head updates MUST preserve concurrent siblings; strict mutations MUST reject stale snapshots, and late duplicate publications MUST NOT resurrect obsolete heads.                  |
+| JST-PUB-004 | Request identity and canonical intent digest MUST provide durable retry receipts and detect conflicting reuse across restarts and checkpoint compaction.                                 |
+| JST-PUB-005 | Unknown outcomes MUST resolve through committed receipt/history lookup or return OUTCOME_UNKNOWN under the original request ID; absence alone MUST NOT prove rejection.                  |
+| JST-PUB-006 | Checkpoints MUST preserve newer tails, retained history, evolution dependencies, and receipt lookup; empty server caches MUST recover acknowledged authority from object storage.        |
+| JST-PUB-007 | One manifest CAS MUST select code, AgentStore and ReviewStore roots with independent monotonic state versions; publishing one domain MUST preserve the other two domains.                |
+| JST-PUB-008 | Collaboration enablement MUST install canonical empty roots through an authorized receipt-bearing WAL publication without rewriting native history or staling unchanged code state.      |
+| JST-PUB-009 | Review commands MUST authorize and replay matching receipts before entity preconditions, then reapply typed per-thread or per-comment intent to the current review root after CAS races. |
 
 ## Verified dependency inventories
 
@@ -115,11 +116,28 @@ does not move code or review state.
 Review staging likewise accepts typed `ReviewDeltaV1` edits against a pinned
 ReviewStore root. It copy-on-write updates thread, comment and thread-event
 catalog paths, rejects changed expected selections and stages a complete root
-whose native and AgentStore dependencies have been verified. The generated pages
-and root are candidates rather than client-controlled publication inputs; the
-stale-safe command and receipt layer remains responsible for retaining and
-publishing the original semantic intent. Code and AgentStore roots are preserved
-by review-only publication.
+whose native and AgentStore dependencies have been verified. Generated pages and
+roots are internal candidates rather than client-controlled publication inputs.
+
+The receipt-backed review command boundary hashes repository, principal,
+request/publication identities and the validated semantic command before it
+generates server acceptance time or immutable candidate references. It
+authorizes the current review domain and checks the matching receipt before any
+thread, workflow or comment precondition. A later retry therefore returns the
+original committed result even after newer review activity; altered content
+under the same retained identity is an intent conflict.
+
+Create, reply, revision and workflow commands apply typed expected/replacement
+edits to the current root. A reply binds only the workflow version; an edit,
+tombstone or hide binds the exact comment-revision ID; resolve/reopen binds the
+complete thread-snapshot ID. If the manifest CAS races, the coordinator reloads
+and reapplies those semantic preconditions. It retries a changed review root
+only when the bound entity state remains valid, never overwrites the stale whole
+root and never treats a workflow/content conflict as an automatic merge. Review
+publication increments only the review state version and preserves native code,
+settings and AgentStore state from the successful CAS base. Unknown outcomes
+retain the original request/publication and deterministically derived entity
+identities for receipt resolution.
 
 An authorized collaboration-enable request upgrades a format 1 manifest by
 appending a receipt-bearing WAL event. The event selects deterministic empty

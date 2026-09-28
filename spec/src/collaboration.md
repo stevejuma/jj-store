@@ -207,8 +207,8 @@ object edges.
 
 Canonical JSON encoding rejects unknown fields, alternate byte-offset forms and
 noncanonical round trips. The anchor ID hashes those validated canonical bytes.
-Conservative placement mapping into later artifacts, ReviewStore thread state,
-commands and publication remain subsequent M9.3 slices.
+Conservative placement mapping into later artifacts remains a subsequent M9.3
+slice. Immutable thread state and its receipt-backed commands are defined below.
 
 ## Immutable ReviewStore objects
 
@@ -246,10 +246,13 @@ revisions, one event-page root, the last accepted sequence, open/resolved state
 and selected workflow action. Its overall thread version advances for every
 accepted event, while content and workflow versions remain distinct monotonic
 preconditions. Parent comments must already occur in the selected order and a
-resolved snapshot must identify its workflow action. Cross-object loading
-rejects comment revisions from another thread, event-page or event
-thread/sequence mismatches, missing creation identity and an event tail that
-disagrees with the snapshot.
+resolved snapshot must identify its workflow action, while an open snapshot has
+none. Cross-object loading reconstructs the ordered comments, selected
+revisions, open/resolved state and content/workflow counters from the immutable
+event stream. It rejects comment revisions from another thread, invalid reply
+parents or revision predecessors, repeated workflow transitions, event-page or
+event thread/sequence mismatches, missing creation identity and any
+reconstructed state that disagrees with the snapshot.
 
 ## Root-pinned review store
 
@@ -273,6 +276,37 @@ and object reads to the selected root closure. Reading an unselected staged
 object returns stale. Catalog enumeration accepts at most 256 selections per
 call and uses the last returned stable catalog key for continuation. Old
 snapshots retain their original roots and selections after later COW updates.
+
+## Stale-safe review commands
+
+`ReviewCommandV1` admits only create thread, append reply, edit comment,
+tombstone comment, moderated hide, resolve thread and reopen thread. A create
+stages its validated anchor, safe body, initial revision, creation event,
+bounded event pages and first snapshot atomically. No staged subset is visible
+until the shared manifest CAS selects the replacement review root.
+
+The authenticated principal is the author and actor for new comments and the
+actor for later revisions or workflow actions. The command has no client author
+or accepted-time field. Stable thread, comment and action IDs are derived from
+the repository plus authenticated request/publication identity before retry, and
+server acceptance time is frozen for the command attempt. Receipt results return
+those stable IDs and the exact committed event, comment revision and thread
+snapshot references.
+
+Concurrency is scoped to the entity being changed. Replies require the observed
+workflow version and an open thread, so two replies can reapply to a newer
+content version and both survive while workflow state is unchanged. Edits,
+tombstones and hides require the exact selected comment revision. Resolve and
+reopen require the complete observed thread snapshot ID, including all visible
+comment activity. Resolution therefore rejects an unseen reply; a reply that
+loses to resolution returns `thread_resolved` until an exact-snapshot reopen
+commits.
+
+Each accepted action appends one immutable event. The coordinator reads the
+bounded selected event stream and rebuilds pages with at most 256 entries rather
+than appending one reverse-linked page per action. Comment revisions retain the
+prior revision edge and original author. Tombstone and moderated-hide records
+remain auditable selected history rather than erasing prior bytes.
 
 ## Root-pinned capture projection
 

@@ -1,10 +1,10 @@
 use jj_review::{
     ArtifactAnchorV1, ArtifactTargetV1, CommentRevisionContentV1, CommentSelectionV1,
-    CreatedContextV1, ReviewBodyFormatV1, ReviewCatalogEditV1, ReviewCatalogKey, ReviewCatalogKind,
-    ReviewCommentBodyV1, ReviewCommentRevisionV1, ReviewDeltaV1, ReviewEventPageV1,
-    ReviewEventSelectionV1, ReviewIndexPageV1, ReviewObjectKind, ReviewObjectRef, ReviewObjectV1,
-    ReviewRootV1, ReviewThreadEventKindV1, ReviewThreadEventV1, ReviewThreadId,
-    ReviewThreadSnapshotV1, SensitivityV1, ThreadStatusV1,
+    CreatedContextV1, ReviewActionId, ReviewBodyFormatV1, ReviewCatalogEditV1, ReviewCatalogKey,
+    ReviewCatalogKind, ReviewCommentBodyV1, ReviewCommentRevisionV1, ReviewDeltaV1,
+    ReviewEventPageV1, ReviewEventSelectionV1, ReviewIndexPageV1, ReviewObjectKind,
+    ReviewObjectRef, ReviewObjectV1, ReviewRootV1, ReviewThreadEventKindV1, ReviewThreadEventV1,
+    ReviewThreadId, ReviewThreadSnapshotV1, SensitivityV1, ThreadStatusV1,
 };
 use jj_store_model::{EpochId, ObjectKey, OperationId, PrincipalId, RepositoryId};
 use jj_store_object::memory::MemoryStore;
@@ -84,6 +84,7 @@ struct ThreadObjects {
     thread_id: ReviewThreadId,
     comment_id: jj_review::CommentId,
     snapshot: ReviewObjectRef,
+    snapshot_value: ReviewThreadSnapshotV1,
     revision: ReviewObjectRef,
     events: ReviewObjectRef,
 }
@@ -159,25 +160,26 @@ async fn stage_thread(
         }))
         .await
         .unwrap();
+    let snapshot_value = ReviewThreadSnapshotV1 {
+        schema_version: 1,
+        thread_id,
+        original_anchor: anchor,
+        comments: vec![CommentSelectionV1 {
+            comment_id,
+            revision,
+            parent_comment_id: None,
+        }],
+        event_page_root: events,
+        last_event_sequence: 1,
+        status: ThreadStatusV1::Open,
+        selected_workflow_action: None,
+        thread_version: 1,
+        content_version: 1,
+        workflow_version: 1,
+    };
     let snapshot = coordinator
         .stage_review_object(&ReviewObjectV1::ThreadSnapshot(Box::new(
-            ReviewThreadSnapshotV1 {
-                schema_version: 1,
-                thread_id,
-                original_anchor: anchor,
-                comments: vec![CommentSelectionV1 {
-                    comment_id,
-                    revision,
-                    parent_comment_id: None,
-                }],
-                event_page_root: events,
-                last_event_sequence: 1,
-                status: ThreadStatusV1::Open,
-                selected_workflow_action: None,
-                thread_version: 1,
-                content_version: 1,
-                workflow_version: 1,
-            },
+            snapshot_value.clone(),
         )))
         .await
         .unwrap();
@@ -185,6 +187,7 @@ async fn stage_thread(
         thread_id,
         comment_id,
         snapshot,
+        snapshot_value,
         revision,
         events,
     }
@@ -299,6 +302,38 @@ async fn selecting_a_thread_rejects_cross_object_thread_identity_mismatch() {
         )
         .await;
     assert!(matches!(result, Err(wal::Error::Corrupt(_))));
+}
+
+#[tokio::test]
+async fn review_root_rejects_snapshot_state_not_reconstructed_by_events() {
+    let coordinator = fixture().await;
+    let manifest = coordinator.read().await.unwrap();
+    let initial = coordinator
+        .review_store(manifest.manifest().review_root.unwrap())
+        .await
+        .unwrap();
+    let thread = stage_thread(&coordinator, 82, None).await;
+    let mut snapshot = thread.snapshot_value.clone();
+    snapshot.status = ThreadStatusV1::Resolved;
+    snapshot.selected_workflow_action = Some(ReviewActionId::new([83; 16]));
+    let tampered = coordinator
+        .stage_review_object(&ReviewObjectV1::ThreadSnapshot(Box::new(snapshot)))
+        .await
+        .unwrap();
+    let mut selected = edits(&thread);
+    selected[0].replacement = Some(tampered);
+    assert!(matches!(
+        coordinator
+            .stage_review_delta(
+                &initial,
+                &ReviewDeltaV1 {
+                    schema_version: 1,
+                    edits: selected,
+                },
+            )
+            .await,
+        Err(wal::Error::Corrupt(_))
+    ));
 }
 
 #[tokio::test]

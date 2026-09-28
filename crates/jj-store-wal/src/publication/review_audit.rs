@@ -1,8 +1,7 @@
 //! Cross-object ReviewStore invariants that require a loaded closure.
 use super::*;
 use jj_review::{
-    ReviewIndexPageV1, ReviewObjectKind, ReviewRootV1, ReviewThreadEventKindV1,
-    ReviewThreadSnapshotV1,
+    ReviewIndexPageV1, ReviewObjectKind, ReviewRootV1, ReviewThreadSnapshotV1, ThreadStatusV1,
 };
 
 impl Coordinator {
@@ -98,6 +97,11 @@ impl Coordinator {
         let mut page = Some(snapshot.event_page_root);
         let mut expected_sequence = 1;
         let mut pages = BTreeSet::new();
+        let mut comments = Vec::new();
+        let mut status = ThreadStatusV1::Open;
+        let mut workflow_action = None;
+        let mut content_version = 0;
+        let mut workflow_version = 0;
         while let Some(reference) = page {
             require_selected(closure, reference)?;
             if !pages.insert(reference) || pages.len() > 4096 {
@@ -122,36 +126,40 @@ impl Coordinator {
                 if event.thread_id != snapshot.thread_id || event.sequence != selected.sequence {
                     return Err(Error::Corrupt("review event selection identity"));
                 }
-                if expected_sequence == 1 {
-                    let ReviewThreadEventKindV1::Created {
-                        anchor,
-                        initial_comment_id,
-                        ..
-                    } = event.event
-                    else {
-                        return Err(Error::Corrupt("review first event"));
-                    };
-                    if anchor != snapshot.original_anchor
-                        || snapshot.comments.first().map(|value| value.comment_id)
-                            != Some(initial_comment_id)
-                    {
-                        return Err(Error::Corrupt("review creation identity"));
-                    }
-                }
+                self.reduce_review_audit_event(
+                    snapshot,
+                    &mut comments,
+                    &mut status,
+                    &mut workflow_action,
+                    &mut content_version,
+                    &mut workflow_version,
+                    *event,
+                    closure,
+                )
+                .await?;
                 expected_sequence = expected_sequence
                     .checked_add(1)
                     .ok_or(Error::Limit("review event sequence"))?;
             }
             page = value.next;
         }
-        if expected_sequence - 1 != snapshot.last_event_sequence {
+        if expected_sequence - 1 != snapshot.last_event_sequence
+            || comments != snapshot.comments
+            || status != snapshot.status
+            || workflow_action != snapshot.selected_workflow_action
+            || content_version != snapshot.content_version
+            || workflow_version != snapshot.workflow_version
+        {
             return Err(Error::Corrupt("review event history tail"));
         }
         Ok(())
     }
 }
 
-fn require_selected(closure: &BTreeSet<ReviewObjectRef>, reference: ReviewObjectRef) -> Result<()> {
+pub(super) fn require_selected(
+    closure: &BTreeSet<ReviewObjectRef>,
+    reference: ReviewObjectRef,
+) -> Result<()> {
     if closure.contains(&reference) {
         Ok(())
     } else {

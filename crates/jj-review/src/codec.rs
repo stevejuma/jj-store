@@ -1,9 +1,10 @@
-use crate::{ArtifactAnchorV1, Error, Result, ReviewObjectV1, ReviewRootV1};
+use crate::{ArtifactAnchorV1, Error, Result, ReviewCommandResultV1, ReviewObjectV1, ReviewRootV1};
 use serde::{Serialize, de::DeserializeOwned};
 
 const MAX_ANCHOR_BYTES: u64 = 1024 * 1024;
 const MAX_ROOT_BYTES: u64 = 1024 * 1024;
 const MAX_OBJECT_BYTES: u64 = 16 * 1024 * 1024;
+const MAX_COMMAND_RESULT_BYTES: u64 = 1024 * 1024;
 
 pub fn encode_anchor(anchor: &ArtifactAnchorV1) -> Result<Vec<u8>> {
     anchor.validate()?;
@@ -36,6 +37,17 @@ pub fn decode_object(bytes: &[u8]) -> Result<ReviewObjectV1> {
     let object: ReviewObjectV1 = decode(bytes, MAX_OBJECT_BYTES)?;
     object.validate()?;
     Ok(object)
+}
+
+pub fn encode_command_result(value: &ReviewCommandResultV1) -> Result<Vec<u8>> {
+    value.validate()?;
+    encode(value, MAX_COMMAND_RESULT_BYTES)
+}
+
+pub fn decode_command_result(bytes: &[u8]) -> Result<ReviewCommandResultV1> {
+    let value: ReviewCommandResultV1 = decode(bytes, MAX_COMMAND_RESULT_BYTES)?;
+    value.validate()?;
+    Ok(value)
 }
 
 fn encode<T: Serialize>(value: &T, limit: u64) -> Result<Vec<u8>> {

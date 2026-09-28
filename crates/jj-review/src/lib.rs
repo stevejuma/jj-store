@@ -4,6 +4,7 @@
 mod anchors;
 mod catalog;
 mod codec;
+mod commands;
 mod comments;
 mod delta;
 mod dependencies;
@@ -16,6 +17,7 @@ mod validation;
 pub use anchors::*;
 pub use catalog::*;
 pub use codec::*;
+pub use commands::*;
 pub use comments::*;
 pub use delta::*;
 pub use ids::*;

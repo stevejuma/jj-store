@@ -212,7 +212,7 @@ impl ReviewThreadSnapshotV1 {
             || self.content_version > self.thread_version
             || self.workflow_version == 0
             || self.workflow_version > self.thread_version
-            || (self.status == ThreadStatusV1::Resolved && self.selected_workflow_action.is_none())
+            || (self.status == ThreadStatusV1::Resolved) != self.selected_workflow_action.is_some()
         {
             return Err(Error::Invalid("review thread snapshot"));
         }

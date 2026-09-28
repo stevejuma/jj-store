@@ -61,10 +61,10 @@ adds evidence here in its enclosing Jujutsu change.
 | M7          | Deferred    | M8a         | JST-ADAPT-005                                                           | Complete read-only replica through applied position                                                                 | After first release                                     | -                                                                                                                                                                                                                          |
 | M7.1        | Deferred    | M8a.4       | JST-ADAPT-006                                                           | Asynchronous verified S3 backup remains independent from passive serving and promotion                              | Future backup release after local application           | -                                                                                                                                                                                                                          |
 | M8b         | Deferred    | M8a         | JST-COMPAT-004                                                          | Verified lossless import with source safety                                                                         | Separate migration release                              | -                                                                                                                                                                                                                          |
-| M9          | Partial     | M8a.4       | JST-COLLAB-001,JST-COLLAB-005                                           | Repository-native agent activity and exact review discussions in the LocalTrusted application                       | Add durable capture ingress and ReviewStore             | E-M9-001,E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009,E-M9-010,E-M9-011,E-M9-012                                                                                                                |
+| M9          | Partial     | M8a.4       | JST-COLLAB-001,JST-COLLAB-005                                           | Repository-native agent activity and exact review discussions in the LocalTrusted application                       | Add durable capture ingress and ReviewStore             | E-M9-001,E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009,E-M9-010,E-M9-011,E-M9-012,E-M9-013                                                                                                       |
 | M9.1        | Done        | M8a.4       | JST-PUB-007,JST-PUB-008                                                 | Independent code/agent/review roots, code-state fencing and non-destructive collaboration enablement                | Implement AgentStore typed root objects                 | E-M9-001                                                                                                                                                                                                                   |
 | M9.2        | In progress | M9.1        | JST-COLLAB-001,JST-COLLAB-002,JST-COLLAB-006                            | AgentStore model, immutable snapshots/catalogs, sanitized evidence and Codex/Cursor/OpenCode normalizers            | Add durable capture ingress and setup                   | E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009                                                                                                                                                    |
-| M9.3        | In progress | M9.2        | JST-COLLAB-001,JST-COLLAB-003                                           | ReviewStore exact artifact anchors and stale-safe thread/comment workflow                                           | Add stale-safe thread and comment commands              | E-M9-010,E-M9-011,E-M9-012                                                                                                                                                                                                 |
+| M9.3        | In progress | M9.2        | JST-COLLAB-001,JST-COLLAB-003,JST-PUB-009                               | ReviewStore exact artifact anchors and stale-safe thread/comment workflow                                           | Add typed relation/status catalogs and re-anchoring     | E-M9-010,E-M9-011,E-M9-012,E-M9-013                                                                                                                                                                                        |
 | M9.4        | Planned     | M9.2,M9.3   | JST-COLLAB-004                                                          | LocalTrusted bounded CLI/HTTP APIs, pagination, receipts and live collaboration hints                               | Wire first-party service and generated contracts        | -                                                                                                                                                                                                                          |
 | M9.5        | Planned     | M9.4        | JST-COLLAB-005                                                          | Community-owned thread/agent widgets and Design Core exact diff selection integrated into the application           | Implement accessible virtualized application routes     | -                                                                                                                                                                                                                          |
 | M9.6        | Planned     | M9.5        | JST-COLLAB-002,JST-COLLAB-006,JST-COLLAB-007                            | Three harness qualification, cold recovery, three-root native copy and bounded fault/security/browser acceptance    | Execute real harness and native recovery gates          | -                                                                                                                                                                                                                          |
@@ -13082,6 +13082,129 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Rust 1.98.1; ReviewDeltaV1 and ReviewStore root/object schema v1; 32 selections per persistent catalog leaf; 256-row bounded catalog reads.",
     "formats": "Typed review objects use repository-bound ReviewObject records. ReviewStoreSnapshot pins one audited root closure; ReviewDeltaV1 copy-on-write updates thread, comment and thread-event catalogs while preserving old roots and rejecting stale or semantically mismatched selections."
+  },
+  {
+    "id": "E-M9-013",
+    "tasks": ["M9", "M9.3"],
+    "date": "2026-09-28",
+    "kind": "implementation",
+    "files": [
+      "crates/jj-review/src/codec.rs",
+      "crates/jj-review/src/commands.rs",
+      "crates/jj-review/src/lib.rs",
+      "crates/jj-review/src/threads.rs",
+      "crates/jj-store-wal/src/publication.rs",
+      "crates/jj-store-wal/src/publication/review_audit.rs",
+      "crates/jj-store-wal/src/publication/review_audit_events.rs",
+      "crates/jj-store-wal/src/publication/review_command_apply.rs",
+      "crates/jj-store-wal/src/publication/review_command_history.rs",
+      "crates/jj-store-wal/src/publication/review_command_update.rs",
+      "crates/jj-store-wal/src/publication/review_commands.rs",
+      "crates/jj-store-wal/tests/review_catalog.rs",
+      "crates/jj-store-wal/tests/review_commands.rs",
+      "spec/src/collaboration.md",
+      "spec/src/publication.md",
+      "spec/src/verification.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "crates/jj-store-wal/tests/review_commands.rs#create_thread_is_atomic_replayable_and_preserves_sibling_roots",
+      "crates/jj-store-wal/tests/review_commands.rs#replies_with_the_same_workflow_version_both_survive",
+      "crates/jj-store-wal/tests/review_commands.rs#edit_requires_the_exact_selected_comment_revision",
+      "crates/jj-store-wal/tests/review_commands.rs#tombstone_and_moderated_hide_keep_append_only_history",
+      "crates/jj-store-wal/tests/review_commands.rs#reply_losing_a_race_with_resolve_is_rejected",
+      "crates/jj-store-wal/tests/review_commands.rs#resolve_rejects_an_unseen_reply",
+      "crates/jj-store-wal/tests/review_commands.rs#reopen_must_commit_before_another_reply",
+      "crates/jj-store-wal/tests/review_catalog.rs#review_root_rejects_snapshot_state_not_reconstructed_by_events"
+    ],
+    "runs": [
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-wal --test review_commands --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "The test-first compile reported the missing typed review commands, receipt-backed publication entry point, command result codec and thread lookup APIs."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-wal --test review_commands --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All seven focused command regressions pass for atomic create and late receipt replay, independent replies, exact edit conflicts, tombstone/hide history, resolve/reply races, reopen sequencing and sibling-root preservation."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-wal --test review_catalog --locked; DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-review --test objects --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All three root-pinned catalog regressions and four immutable ReviewStore object regressions pass after event-stream state reconstruction was added."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo clippy -p jj-review -p jj-store-wal --all-targets --locked -- -D warnings",
+        "result": "fail",
+        "failures": 1,
+        "note": "The first focused Clippy run identified the new append-reply helper as intentionally exceeding the default argument-count heuristic; its reviewed command-boundary signature now carries an explicit narrow allowance."
+      },
+      {
+        "command": "pnpm test:governance; pnpm spec:validate",
+        "result": "fail",
+        "failures": 1,
+        "note": "All 26 governance tests passed, then the canonical validator rejected JST-PUB-009 until its concrete review-command verification row was added."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-review --locked; DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-wal --locked; DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo clippy -p jj-review -p jj-store-wal --all-targets --locked -- -D warnings; DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo fmt --all -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 10 ReviewStore model tests and 46 WAL inventory, publication, recovery, catalog and command tests pass; both crates are warning-free and formatted. Production modules contain at most 294 physical lines and the command regression contains 435 lines."
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 13 workspace package boundaries pass; the command and publication implementation remains within the existing jj-review to model/agent and jj-store-wal to jj-review ownership edges."
+      },
+      {
+        "command": "pnpm test:governance; pnpm spec:validate; pnpm spec:first; pnpm check:progress; pnpm spec:build; pnpm exec prettier --check spec/src/collaboration.md spec/src/publication.md spec/src/verification.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 26 governance tests and 85 canonical requirements pass; spec-first maps twelve protected implementation files to three canonical chapters, all 60 progress tasks are consistent, the canonical book builds and changed prose is formatted."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo fmt --all -- --check; DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-wal --test review_commands --locked; DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo clippy -p jj-store-wal --lib --locked -- -D warnings",
+        "result": "pass",
+        "failures": 0,
+        "note": "The final resolved-thread event-audit guard is formatted, all seven command regressions still pass and the WAL library remains warning-free."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-wal --test review_catalog --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "The new malformed-snapshot regression first compiled against an intentionally private raw-object reader; the fixture now retains its staged snapshot value instead of widening the production API."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-wal --test review_catalog --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All four root-pinned ReviewStore catalog tests pass, including rejection when a model-valid snapshot claims resolved state that its selected event stream reconstructs as open."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md; pnpm spec:validate; pnpm spec:first; pnpm check:progress; pnpm exec prettier --check spec/src/collaboration.md spec/src/publication.md spec/src/verification.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 85 canonical requirements validate; spec-first maps thirteen protected implementation files to three canonical chapters, all 60 progress tasks are consistent and changed prose remains formatted."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-wal --test review_commands --test review_catalog --locked; DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo clippy -p jj-review -p jj-store-wal --all-targets --locked -- -D warnings; DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo fmt --all -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All eleven focused command/catalog regressions pass after replacing logically infallible production key derivation assertions with typed fail-closed errors; both crates remain warning-free and formatted."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Typed relation/status catalogs and conservative explicit re-anchoring",
+      "LocalTrusted CLI/HTTP contracts and shared Community/Design Core presentation",
+      "Cold three-root recovery and native copy qualification"
+    ],
+    "versions": "Rust 1.98.1; ReviewCommandV1 and ReviewCommandResultV1 schema v1; ReviewStore object/root schema v1.",
+    "formats": "Review command intent binds repository, principal and stable request/publication identity plus the typed semantic command. Stable thread/comment/action IDs are deterministic per request; committed receipts return exact event, revision and snapshot references. Replies bind workflow version, comment revisions bind exact selected revision IDs, and workflow transitions bind exact thread snapshot IDs."
   }
 ]
 ```
