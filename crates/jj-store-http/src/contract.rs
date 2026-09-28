@@ -38,6 +38,10 @@ impl Document {
             "request_id" => self.output.subschema_for::<m::RequestId>().to_value(),
             "file" => self.output.subschema_for::<m::FileId>().to_value(),
             "operation" => self.output.subschema_for::<m::OperationId>().to_value(),
+            "session" => self
+                .output
+                .subschema_for::<jj_store_service::collaboration::AgentSessionIdentity>()
+                .to_value(),
             "kind" => {
                 json!({"type":"string", "enum":["commit","tree","file","symlink","copy","view","operation"]})
             }

@@ -440,10 +440,10 @@ WAL activity as native code movement. The user-facing collaboration command
 family remains M9.4 work; this publication slice adds no hidden installer,
 daemon or controller dispatch.
 
-The first M9.4 native-lifecycle fixture hosts the registered LocalTrusted HTTP
-application and lists root-pinned AgentStore sessions without a bearer
-credential. It executes the same repository host, literal-loopback admission and
-service pager used by the standalone server, and captures both pages for
-contract validation. This adds no user-facing CLI command; session detail,
-transcripts, relations, checkpoints, ReviewStore operations and collaboration
-command presentation remain subsequent M9.4 work.
+The M9.4 native-lifecycle fixture hosts the registered LocalTrusted HTTP
+application, lists root-pinned AgentStore sessions and resolves one current-root
+session detail without a bearer credential. It executes the same repository
+host, literal-loopback admission and service pager used by the standalone
+server, and captures both pages plus detail for contract validation. This adds
+no user-facing CLI command; transcripts, relations, checkpoints, ReviewStore
+operations and collaboration command presentation remain subsequent M9.4 work.

@@ -31,11 +31,11 @@ pub use application::ApplicationIntent;
 pub use collaboration::{CollaborationOutcome, CollaborationRequest};
 pub use domains::{Domain, DomainRequest, DomainState, RepositoryDomains};
 pub use jj_agent::{
-    AgentCatalogKey, AgentDeltaV1, AgentObjectId, AgentObjectRef, AgentObjectV1, AgentRootV1,
-    AgentSessionId, CaptureBatchId, CompletenessV1, IntegrationId, NormalizerProfileV1,
-    ObservationId, SanitizedMediaType, SanitizedObservationBatchV1, SanitizedObservationV1,
-    SanitizedPayloadV1, SanitizedRepresentation, SessionState, SourceInstanceId, SourceKind,
-    SourceTrust,
+    AgentCatalogKey, AgentCatalogKind, AgentDeltaV1, AgentObjectId, AgentObjectRef, AgentObjectV1,
+    AgentRootV1, AgentSessionId, AgentSessionSnapshotV1, CaptureBatchId, CompletenessV1,
+    IntegrationId, NormalizerProfileV1, ObservationId, SanitizedMediaType,
+    SanitizedObservationBatchV1, SanitizedObservationV1, SanitizedPayloadV1,
+    SanitizedRepresentation, SessionState, SourceInstanceId, SourceKind, SourceTrust, ToolCallId,
 };
 pub use jj_review::{ReviewDeltaV1, ReviewObjectRef, ReviewObjectV1, ReviewRootV1};
 pub use reader::SelectedRecord;

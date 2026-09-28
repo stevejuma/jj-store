@@ -328,11 +328,13 @@ returns trusted source HTML.
 
 ## Collaboration read transport
 
-`GET /v1/repos/{repo}/agent/sessions` is the first bounded collaboration route.
-LocalTrusted admits it through the existing literal-loopback protection and
-installation principal, without a bearer credential. Authenticated deployments
-retain their repository bearer policy. Both modes require current repository
-read permission on the initial request and every resumed page.
+`GET /v1/repos/{repo}/agent/sessions` and
+`GET /v1/repos/{repo}/agent/sessions/{session}` are the first bounded
+collaboration routes. LocalTrusted admits them through the existing
+literal-loopback protection and installation principal, without a bearer
+credential. Authenticated deployments retain their repository bearer policy.
+Both modes require current repository read permission before and after every
+root-pinned read.
 
 The JSON response contains version 1, an exact AgentStore read snapshot, bounded
 session summaries and an optional continuation. The snapshot carries repository,
@@ -340,6 +342,14 @@ epoch, publication position, manifest revision, AgentStore root digest and state
 version. Session rows keep full stable session and immutable snapshot
 identities; integration, state, optional parent, coverage and bounded object
 counts are service-owned presentation data rather than serialized WAL records.
+
+The detail route accepts one canonical full stable session ID. It resolves that
+key only through the current selected AgentStore session catalog and returns 404
+when no matching selection exists. Its response repeats the exact read snapshot
+and session summary, then supplies ordered immutable IDs for evidence batches,
+event batches and transcript manifests plus stable tool-call to immutable
+tool-snapshot links. It never fetches unselected objects, returns native capture
+payloads or treats an immutable snapshot ID as a stable session route.
 
 `limit` defaults to the common page size and accepts 1 through 256. The opaque
 continuation is bound to the entire snapshot and original page size, retains its

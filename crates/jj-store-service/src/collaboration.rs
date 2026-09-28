@@ -1,5 +1,8 @@
 //! Bounded, manifest-root-pinned collaboration reads.
 mod agent_cursors;
+mod agent_details;
+mod models;
+pub use models::*;
 
 use crate::{
     auth::{Clock, Permission},
@@ -10,13 +13,8 @@ use agent_cursors::{AgentCursorRegistry, AgentPin};
 use jj_store_model as m;
 use jj_store_wal::{
     self as wal,
-    publication::{
-        AgentCatalogKey, AgentObjectId, AgentObjectRef, AgentObjectV1, AgentSessionId,
-        CompletenessV1, Domain, IntegrationId, SessionState,
-    },
+    publication::{AgentCatalogKey, AgentObjectRef, AgentObjectV1, Domain},
 };
-use schemars::JsonSchema;
-use serde::Serialize;
 use std::sync::Arc;
 
 const MAX_PAGE: usize = 256;
@@ -27,6 +25,8 @@ pub enum Error {
     Denied,
     #[error("invalid collaboration cursor or changed page size")]
     InvalidCursor,
+    #[error("collaboration object was not found in the selected root")]
+    NotFound,
     #[error("collaboration cursor expired or its serving instance changed")]
     CursorReset,
     #[error("collaboration read resource limit exceeded")]
@@ -39,46 +39,6 @@ pub enum Error {
     Unavailable,
 }
 pub type Result<T> = std::result::Result<T, Error>;
-
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, JsonSchema)]
-pub struct AgentReadSnapshot {
-    pub repo_id: m::RepositoryId,
-    pub epoch: m::EpochId,
-    pub published_seq: m::WalPosition,
-    pub manifest_revision: u64,
-    pub agent_root: m::RecordDigest,
-    pub agent_state_version: u64,
-}
-
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, JsonSchema)]
-pub struct AgentCoverage {
-    pub completeness: CompletenessV1,
-    pub gaps: u32,
-    pub redacted_fields: u32,
-    pub truncated: bool,
-}
-
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, JsonSchema)]
-pub struct AgentSessionSummary {
-    pub session_id: AgentSessionId,
-    pub snapshot_id: AgentObjectId,
-    pub integration: IntegrationId,
-    pub state: SessionState,
-    pub parent_session_id: Option<AgentSessionId>,
-    pub coverage: AgentCoverage,
-    pub evidence_count: usize,
-    pub event_batch_count: usize,
-    pub transcript_count: usize,
-    pub tool_count: usize,
-}
-
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, JsonSchema)]
-pub struct AgentSessionPage {
-    pub version: u32,
-    pub snapshot: AgentReadSnapshot,
-    pub sessions: Vec<AgentSessionSummary>,
-    pub next_cursor: Option<String>,
-}
 
 pub struct AgentSessionPager {
     cursors: AgentCursorRegistry,
@@ -114,28 +74,8 @@ impl AgentSessionPager {
         session: Arc<NativeSession>,
         limit: usize,
     ) -> Result<AgentSessionPage> {
-        authorize(&session).await?;
-        let selected = session.snapshot().await.map_err(map_wal)?;
-        let manifest = selected.manifest();
-        let domain = manifest.domain_state(Domain::Agent).ok_or(Error::Corrupt)?;
-        let snapshot = AgentReadSnapshot {
-            repo_id: manifest.repository,
-            epoch: manifest.epoch,
-            published_seq: manifest.published,
-            manifest_revision: manifest.revision,
-            agent_root: domain.root.digest,
-            agent_state_version: domain.version,
-        };
-        let store = session
-            .coordinator
-            .agent_store(domain.root)
-            .await
-            .map_err(map_wal)?;
-        let pin = AgentPin {
-            snapshot: snapshot.clone(),
-            store,
-        };
-        self.cursors.validate_pin(&pin)?;
+        let pin = self.pin(&session).await?;
+        let snapshot = pin.snapshot.clone();
         let page = pin
             .store
             .list_sessions(None, limit)
@@ -211,25 +151,35 @@ async fn resolve(
         if session.catalog_key().map_err(|_| Error::Corrupt)? != key {
             return Err(Error::Corrupt);
         }
-        rows.push(AgentSessionSummary {
-            session_id: session.session_id,
-            snapshot_id: reference.id,
-            integration: session.integration,
-            state: session.state,
-            parent_session_id: session.parent_session_id,
-            coverage: AgentCoverage {
-                completeness: session.coverage.completeness,
-                gaps: session.coverage.gaps,
-                redacted_fields: session.coverage.redacted_fields,
-                truncated: session.coverage.truncated,
-            },
-            evidence_count: session.evidence.len(),
-            event_batch_count: session.event_batches.len(),
-            transcript_count: session.transcripts.len(),
-            tool_count: session.tools.len(),
-        });
+        rows.push(models::summary(reference, &session));
     }
     Ok(rows)
+}
+
+impl AgentSessionPager {
+    async fn pin(&self, session: &NativeSession) -> Result<AgentPin> {
+        authorize(session).await?;
+        let selected = session.snapshot().await.map_err(map_wal)?;
+        let manifest = selected.manifest();
+        let domain = manifest.domain_state(Domain::Agent).ok_or(Error::Corrupt)?;
+        let pin = AgentPin {
+            snapshot: AgentReadSnapshot {
+                repo_id: manifest.repository,
+                epoch: manifest.epoch,
+                published_seq: manifest.published,
+                manifest_revision: manifest.revision,
+                agent_root: domain.root.digest,
+                agent_state_version: domain.version,
+            },
+            store: session
+                .coordinator
+                .agent_store(domain.root)
+                .await
+                .map_err(map_wal)?,
+        };
+        self.cursors.validate_pin(&pin)?;
+        Ok(pin)
+    }
 }
 
 fn valid_limit(limit: usize) -> Result<()> {

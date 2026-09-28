@@ -383,6 +383,12 @@ The pager exposes neither a typed AgentStore delta nor a request/publication ID,
 receipt lookup, staging method or publication coordinator. Resuming a cursor
 therefore cannot create a collaboration write or dispatch an agent.
 
+Stable-session detail uses the same current-root pin and authorization boundary.
+It performs one typed session-catalog lookup and returns only service-owned
+summary and immutable-link DTOs. Missing sessions return no object data; a path
+ID, selected snapshot ID or returned dependency ID grants no read or publication
+capability.
+
 ## Browser mutation orchestration
 
 The authenticated browser constructs only the existing typed V1 command union.

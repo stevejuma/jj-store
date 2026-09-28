@@ -116,6 +116,7 @@ async fn local_trusted_http_lists_root_pinned_agent_sessions_without_bearer_cred
     assert_eq!(first["snapshot"]["repo_id"], REPO.to_string());
     assert!(first["snapshot"]["agent_root"].is_string());
     assert_eq!(first["sessions"].as_array().unwrap().len(), 1);
+    let session_id = first["sessions"][0]["session_id"].as_str().unwrap();
     let cursor = first["next_cursor"].as_str().unwrap();
 
     let (status, second) = json(&router, &format!("agent/sessions?limit=1&cursor={cursor}")).await;
@@ -123,8 +124,20 @@ async fn local_trusted_http_lists_root_pinned_agent_sessions_without_bearer_cred
     assert_eq!(second["snapshot"], first["snapshot"]);
     assert_eq!(second["sessions"].as_array().unwrap().len(), 1);
     assert!(second["next_cursor"].is_null());
+
+    let (status, detail) = json(&router, &format!("agent/sessions/{session_id}")).await;
+    assert_eq!(status, StatusCode::OK, "{detail}");
+    assert_eq!(detail["snapshot"], first["snapshot"]);
+    assert_eq!(detail["session"], first["sessions"][0]);
+    assert!(detail["evidence"].is_array());
+    assert!(detail["event_batches"].is_array());
+    assert!(detail["transcripts"].is_array());
+    assert!(detail["tools"].is_array());
+
+    let (status, missing) = json(&router, &format!("agent/sessions/{}", "99".repeat(16))).await;
+    assert_eq!(status, StatusCode::NOT_FOUND, "{missing}");
     if let Some(path) = std::env::var_os("JJ_STORE_COLLABORATION_CONTRACT_CAPTURE") {
-        let samples = [first, second].map(|data| {
+        let pages = [first, second].map(|data| {
             serde_json::json!({
                 "path": "/v1/repos/{repo}/agent/sessions",
                 "method": "get",
@@ -133,6 +146,14 @@ async fn local_trusted_http_lists_root_pinned_agent_sessions_without_bearer_cred
                 "data": data,
             })
         });
+        let mut samples = pages.to_vec();
+        samples.push(serde_json::json!({
+            "path": "/v1/repos/{repo}/agent/sessions/{session}",
+            "method": "get",
+            "status": 200,
+            "media": "application/json",
+            "data": detail,
+        }));
         std::fs::write(path, serde_json::to_vec(&samples).unwrap()).unwrap();
     }
 }

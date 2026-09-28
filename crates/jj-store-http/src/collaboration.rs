@@ -1,5 +1,5 @@
 use crate::*;
-use jj_store_service::collaboration::AgentSessionPage;
+use jj_store_service::collaboration::{AgentSessionDetail, AgentSessionPage};
 
 pub(super) async fn sessions(
     state: &State,
@@ -15,4 +15,13 @@ pub(super) async fn sessions(
     state.json(&page)
 }
 
+pub(super) async fn detail(
+    state: &State,
+    session: Arc<NativeSession>,
+    session_id: jj_store_service::collaboration::AgentSessionIdentity,
+) -> Result<Response> {
+    state.json(&state.agent_sessions.detail(session, session_id).await?)
+}
+
 pub(super) type SessionPage = AgentSessionPage;
+pub(super) type SessionDetail = AgentSessionDetail;

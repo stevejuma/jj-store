@@ -134,3 +134,36 @@ async fn session_pages_retain_one_agent_root_across_later_publication() {
         Error::InvalidCursor
     );
 }
+
+#[tokio::test]
+async fn session_detail_resolves_current_stable_identity_and_exact_links() {
+    let session = fixture().await;
+    publish(&session, 41, "native-detail-session").await;
+    let pager =
+        AgentSessionPager::new(pagination::Limits::default(), Arc::new(SystemClock)).unwrap();
+    let page = pager.begin(session.clone(), 10).await.unwrap();
+    let summary = page.sessions.first().unwrap();
+
+    let detail = pager
+        .detail(session.clone(), summary.session_id)
+        .await
+        .unwrap();
+    assert_eq!(detail.version, 1);
+    assert_eq!(detail.snapshot, page.snapshot);
+    assert_eq!(&detail.session, summary);
+    assert_eq!(detail.evidence.len(), summary.evidence_count);
+    assert_eq!(detail.event_batches.len(), summary.event_batch_count);
+    assert_eq!(detail.transcripts.len(), summary.transcript_count);
+    assert_eq!(detail.tools.len(), summary.tool_count);
+
+    assert_eq!(
+        pager
+            .detail(
+                session,
+                jj_store_wal::publication::AgentSessionId::new([99; 16])
+            )
+            .await
+            .unwrap_err(),
+        Error::NotFound
+    );
+}

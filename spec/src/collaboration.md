@@ -128,13 +128,17 @@ relation traversal and transcript streaming do not depend on Tantivy.
 
 ## LocalTrusted collaboration reads
 
-The first M9.4 service surface lists AgentStore sessions from one exact selected
-root. Its owned response identifies the repository, epoch, publication position,
-manifest revision, AgentStore root digest and AgentStore state version. Each row
-retains the complete stable session ID and immutable session-snapshot object ID,
-then exposes only bounded integration, lifecycle, parent, coverage and
-referenced object counts. Transport DTOs do not expose WAL objects or
-reinterpret stable session identities as immutable object identities.
+The first M9.4 service surfaces list AgentStore sessions from one exact selected
+root and resolve one stable session against the current selected root. Their
+owned responses identify the repository, epoch, publication position, manifest
+revision, AgentStore root digest and AgentStore state version. Each row retains
+the complete stable session ID and immutable session-snapshot object ID, then
+exposes only bounded integration, lifecycle, parent, coverage and referenced
+object counts. Detail also returns the exact immutable observation-batch,
+event-batch, transcript-manifest and tool-snapshot IDs selected by that session;
+tool links retain their full stable tool-call IDs. Transport DTOs do not expose
+WAL objects or reinterpret stable entity identities as immutable object
+identities.
 
 Initial and resumed pages require current repository read permission. Page sizes
 are limited to 1 through 256. An opaque signed continuation binds repository,
@@ -146,10 +150,9 @@ every page and resets after expiry, server restart or epoch replacement.
 Tampering, repository reuse and page-size changes fail explicitly. Reads neither
 dispatch an agent nor stage or publish repository state.
 
-Session detail, transcript, relation and checkpoint reads, ReviewStore reads and
-typed writes, user-facing CLI commands, durable receipts and live collaboration
-hints remain later M9.4 slices. This session collection alone does not complete
-JST-COLLAB-004.
+Transcript, relation and checkpoint reads, ReviewStore reads and typed writes,
+user-facing CLI commands, durable receipts and live collaboration hints remain
+later M9.4 slices. Session list and detail alone do not complete JST-COLLAB-004.
 
 ## Capture sanitization boundary
 

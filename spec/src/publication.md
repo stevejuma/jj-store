@@ -272,3 +272,9 @@ does not enumerate bucket state, stage an object, construct a delta or expose a
 publication method. Root-pinned session paging keeps that snapshot alive across
 later publications without changing the manifest, WAL, receipts, domain version
 or repository position.
+
+The publication facade re-exports the owned AgentStore identity and immutable
+link types needed for service DTO conversion. Stable-session detail derives the
+session catalog key, resolves it through `AgentStoreSnapshot::lookup` and reads
+only the selected immutable session object in that audited closure. These facade
+types and reads add no reverse service dependency or new durable encoding.

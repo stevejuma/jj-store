@@ -147,6 +147,7 @@ impl From<jj_store_service::collaboration::Error> for Error {
             E::Denied => Self::denied(),
             E::InvalidCursor => Self::new(StatusCode::BAD_REQUEST, "invalid_cursor"),
             E::CursorReset => Self::new(StatusCode::CONFLICT, "cursor_reset"),
+            E::NotFound => Self::new(StatusCode::NOT_FOUND, "not_found"),
             E::Limit => Self::limit(),
             E::Busy => Self::busy(),
             E::Corrupt => Self::new(StatusCode::SERVICE_UNAVAILABLE, "corrupt_history"),

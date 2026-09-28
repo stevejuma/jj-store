@@ -110,6 +110,30 @@ fn collaboration_contract_exposes_root_pinned_agent_session_pages() {
                 .contains(&json!(field))
         );
     }
+
+    let detail = &doc["paths"]["/v1/repos/{repo}/agent/sessions/{session}"]["get"];
+    assert_eq!(detail["tags"], json!(["collaboration"]));
+    assert_eq!(
+        detail["responses"]["200"]["content"]["application/json"]["schema"]["$ref"],
+        "#/components/schemas/AgentSessionDetail"
+    );
+    let schema = &doc["components"]["schemas"]["AgentSessionDetail"];
+    for field in [
+        "version",
+        "snapshot",
+        "session",
+        "evidence",
+        "event_batches",
+        "transcripts",
+        "tools",
+    ] {
+        assert!(
+            schema["required"]
+                .as_array()
+                .unwrap()
+                .contains(&json!(field))
+        );
+    }
 }
 
 #[test]
@@ -121,7 +145,7 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
         json!(["authenticated", "local_trusted"])
     );
     let paths = doc["paths"].as_object().unwrap();
-    assert_eq!(paths.len(), 30);
+    assert_eq!(paths.len(), 31);
     let mut ids = std::collections::BTreeSet::new();
     for (name, path) in paths {
         for (method, operation) in path.as_object().unwrap() {

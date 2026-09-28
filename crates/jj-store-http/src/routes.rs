@@ -190,6 +190,7 @@ macro_rules! endpoints {
             (get, "/repos/{repo}/search", search, SearchQuery, search_paging::Page, Reply::Json(200)),
             (get, "/repos/{repo}/search/status", search_status, Empty, search_paging::Status, Reply::Json(200)),
             (get, "/repos/{repo}/agent/sessions", agent_sessions, AgentSessions, crate::collaboration::SessionPage, Reply::Json(200)),
+            (get, "/repos/{repo}/agent/sessions/{session}", agent_session, Empty, crate::collaboration::SessionDetail, Reply::Json(200)),
             (get, "/repos/{repo}/snapshot", snapshot, Empty, reads::HeadSnapshot, Reply::Json(200)),
             (get, "/repos/{repo}/events", events, Events, events::Event, Reply::Events),
             (get, "/repos/{repo}/objects/{kind}/{id}", object, Selection, Envelope<c::Object>, Reply::Json(200)),
@@ -298,6 +299,18 @@ async fn agent_sessions(
 ) -> Result<Response> {
     let args = input(args)?;
     crate::collaboration::sessions(&state, context.session, args.cursor, args.limit).await
+}
+async fn agent_session(
+    ExtractState(state): ExtractState<Arc<State>>,
+    context: Context,
+    args: Input<Empty>,
+) -> Result<Response> {
+    input(args)?;
+    let session_id = context
+        .value("session")?
+        .parse()
+        .map_err(|_| Error::invalid())?;
+    crate::collaboration::detail(&state, context.session, session_id).await
 }
 async fn object(
     ExtractState(state): ExtractState<Arc<State>>,
