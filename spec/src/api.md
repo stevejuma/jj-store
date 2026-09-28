@@ -505,8 +505,10 @@ returns 409 index_lag with currently authorized search_status. Expired or
 restarted cursor state returns cursor_reset; multi-head queries require explicit
 selection. Current authorization precedes lookup and parsing of search inputs;
 revoked access returns no freshness, counts or index metadata. These GETs never
-publish history. Generated contracts include responses and errors; UI remains
-deferred.
+publish history. Generated contracts include responses and errors. M4.15 wires
+the browser command overlay to this existing endpoint with selected-operation
+queries and opaque in-memory continuations; it introduces no new transport
+shape.
 
 Browser native-ID controls derive their compact labels from the complete DTO
 identities, preserving the suffix rather than using caller-truncated labels.

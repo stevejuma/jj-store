@@ -15,6 +15,7 @@ import {
 import { createStoreQueryClient } from "./store-query-client.js";
 import { createStoreRouteHistory } from "./store-route-history.svelte.js";
 import { productionStoreView } from "./production-store-view.js";
+import { createProductionStoreSearch } from "./production-store-search-controller.js";
 
 export function createProductionStoreController(
   options: { fetcher?: typeof fetch; now?: () => number } = {},
@@ -57,12 +58,22 @@ export function createProductionStoreController(
     await reader.restorePage();
   }
 
+  const search = createProductionStoreSearch({
+    data,
+    history,
+    source: activeSource,
+    isCurrent: (active) => active === source,
+    restoreRoute,
+  });
+
   function disconnect(message = "", denied = false) {
     version += 1;
     feed.abort();
     source?.close();
     source = null;
     Object.assign(data, { heads: [], repositories: [] });
+    data.searchAvailable = false;
+    search.clear();
     clearProductionStoreView(data);
     Object.assign(data.status, initialStatus(), {
       connection: denied ? "denied" : "disconnected",
@@ -90,12 +101,13 @@ export function createProductionStoreController(
     );
     source = active;
     try {
-      await active.capabilities();
+      const capabilities = await active.capabilities();
       const captured = await active.snapshot();
       if (!current(ticket, active)) return;
       data.heads = [...captured.heads];
       const selected = data.heads.length === 1 ? data.heads[0]! : null;
       data.repositories = [{ id: active.repository, name: active.repository }];
+      data.searchAvailable = capabilities.search;
       history.connect(active.repository, selected);
       data.status.connection = "connected";
       data.status.repositories = "ready";
@@ -122,6 +134,7 @@ export function createProductionStoreController(
     const selected = data.heads.length === 1 ? data.heads[0]! : null;
     version += 1;
     clearProductionStoreView(data);
+    search.clear();
     history.refresh(selected);
     data.status.refreshAvailable = false;
     feed = new AbortController();
@@ -137,6 +150,7 @@ export function createProductionStoreController(
     if (!data.heads.includes(id)) return;
     version += 1;
     clearProductionStoreView(data);
+    search.clear();
     history.selectSnapshot(id);
     await reader.restorePage();
   }
@@ -206,7 +220,10 @@ export function createProductionStoreController(
         await reader.loadGraph(true);
       if (collection === "files") await reader.loadMoreFiles();
       if (collection === "detail") await reader.loadMoreDetail();
+      if (collection === "search" && data.searchCursor) await search.loadMore();
     },
+    search: search.run,
+    selectSearchResult: search.select,
     setFileViewMode: reader.setFileViewMode,
     toggleDirectory: reader.toggleDirectory,
     async openRepository(id) {

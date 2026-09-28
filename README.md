@@ -39,12 +39,14 @@ workspace. Use explicit build paths; development never replaces the installed
 
 For the browser UI, `pnpm dev:restart` rebuilds the UI and development binaries,
 restarts an owned pinned RustFS container and native server, creates a fresh
-native demo repository, then prints its URL, repository ID and one-time token.
-The isolated runtime and credentials stay under the operating system temporary
-directory. Use `pnpm dev:stop` to stop and remove the owned services.
-`pnpm web:test:real` cold-starts that same stack, publishes a change through a
-separate native CLI process, verifies SSE notification and explicit browser
-refresh through the built UI, then removes the disposable services.
+native demo repository, restarts the server with its repository-specific Tantivy
+worker, waits for the index to become current, then prints the URL, repository
+ID and one-time token. The isolated runtime and credentials stay under the
+operating system temporary directory. Use `pnpm dev:stop` to stop and remove the
+owned services. `pnpm web:test:real` cold-starts that same stack, publishes a
+change through a separate native CLI process, verifies SSE notification and
+explicit browser refresh through the built UI, then removes the disposable
+services.
 
 On macOS with Xcode license prompts, prefix checks with
 `DEVELOPER_DIR=/Library/Developer/CommandLineTools` to use the installed Command

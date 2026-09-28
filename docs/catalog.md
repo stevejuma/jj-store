@@ -24,6 +24,13 @@ revision `a2e4b21b`. They adapt the repository log, repository pane and shared
 skeleton geometry while continuing to consume Design Core's released Skeleton
 primitive.
 
+Repository command search was inspected at Community revision `9d82df59` and
+Design Core revision `94a1b70a`. The jj-store adaptation keeps Community's
+sidebar trigger, keyboard shortcut, dialog/Command View composition and grouped
+results. It replaces rooms, messages and members with snapshot-bound native
+operations, commits and files, and consumes the released Design Core Command
+View and Dialog exports without copying them.
+
 | Community source                                                                                                                                                                                                    | jj-store destination                                                                         | Adaptation                                                                                                                                               |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `src/components/community-chip/CommunityChip.svelte`                                                                                                                                                                | `web/src/lib/ui/community-chip/CommunityChip.svelte`                                         | Direct copy; catalog-local imports where needed.                                                                                                         |

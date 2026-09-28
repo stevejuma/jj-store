@@ -25,6 +25,7 @@
   import CommunityProfileMenu from "../community-profile-menu/CommunityProfileMenu.svelte";
   import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
   import StoreRepositoryDetails from "./StoreRepositoryDetails.svelte";
+  import StoreSearchOverlay from "../store-search/StoreSearchOverlay.svelte";
   import {
     loadRepositoryShellLayout,
     repositoryShellStorageKey,
@@ -70,6 +71,7 @@
   });
   onDestroy(() => void shell.dispose());
   const current = $derived(controller.state.route);
+  let searchOpen = $state(false);
   const canNavigateBack = $derived(controller.state.canNavigateBack);
   const canNavigateForward = $derived(controller.state.canNavigateForward);
   const filesBreadcrumbPath = $derived(current.path ?? current.directory);
@@ -183,6 +185,7 @@
         : current.page}
       {compact}
       onSelect={select}
+      onSearch={() => (searchOpen = true)}
     >
       {#snippet footer()}<CommunityProfileMenu
           member={controller.state.member}
@@ -292,3 +295,4 @@
     >
   </AppShell.Sidebar>
 </CommunityAppShell>
+<StoreSearchOverlay {controller} bind:open={searchOpen} />

@@ -7,6 +7,7 @@ import type {
   RepositoryChoice,
   RepositorySnapshot,
   StoreControllerStatus,
+  StoreSearchResult,
 } from "./contracts.js";
 import type { Comparison } from "./production-store-loaders.js";
 import type { InspectionContinuation } from "./production-inspection-pages.js";
@@ -41,6 +42,14 @@ export interface ProductionStoreState {
   comparisons: Map<string, Comparison>;
   inspectionContinuation: InspectionContinuation | null;
   neededIndex: Snapshot | null;
+  searchAvailable: boolean;
+  searchQuery: string;
+  searchResults: StoreSearchResult[];
+  searchCursor: string | null;
+  searchStale: boolean;
+  searchDegraded: boolean;
+  searchTruncated: boolean;
+  searchError: string;
   refsPageSnapshot: Snapshot | null;
   graphPageSnapshot: Snapshot | null;
 }
@@ -58,6 +67,7 @@ export const initialStatus = (): MutableStatus => ({
   graph: "idle",
   files: "idle",
   detail: "idle",
+  search: "idle",
   live: "disconnected",
   refreshAvailable: false,
   error: "",
@@ -89,6 +99,14 @@ export function createProductionStoreState(): ProductionStoreState {
     comparisons: new Map(),
     inspectionContinuation: null,
     neededIndex: null,
+    searchAvailable: false,
+    searchQuery: "",
+    searchResults: [],
+    searchCursor: null,
+    searchStale: false,
+    searchDegraded: false,
+    searchTruncated: false,
+    searchError: "",
     refsPageSnapshot: null,
     graphPageSnapshot: null,
   });

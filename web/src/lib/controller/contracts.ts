@@ -21,6 +21,32 @@ export interface RepositoryChoice {
   searchTerms?: readonly string[];
   targets: readonly string[];
 }
+export type StoreSearchResultKind = "operation" | "commit" | "file";
+export interface StoreSearchResult {
+  id: string;
+  kind: StoreSearchResultKind;
+  title: string;
+  description: string;
+  author: string;
+  timestamp: number;
+  operationId: string | null;
+  commitId: string | null;
+  changeId: string | null;
+  scope: string | null;
+  path: string | null;
+  hasConflict: boolean;
+}
+export interface StoreSearchState {
+  readonly available: boolean;
+  readonly query: string;
+  readonly results: readonly StoreSearchResult[];
+  readonly status: StoreLoadStatus;
+  readonly error: string;
+  readonly canLoadMore: boolean;
+  readonly isStale: boolean;
+  readonly degraded: boolean;
+  readonly truncated: boolean;
+}
 export interface StoreRoute {
   page: StorePage;
   repository: string;
@@ -51,6 +77,7 @@ export interface StoreControllerStatus {
   readonly graph: StoreLoadStatus;
   readonly files: StoreLoadStatus;
   readonly detail: StoreLoadStatus;
+  readonly search: StoreLoadStatus;
   readonly live: "disconnected" | "connecting" | "live" | "reconnecting";
   readonly refreshAvailable: boolean;
   readonly error: string;
@@ -83,6 +110,7 @@ export interface StoreControllerState {
   readonly targets: readonly string[];
   readonly snapshot: RepositorySnapshot | undefined;
   readonly blob: RepositoryBlob | undefined;
+  readonly search: StoreSearchState;
   readonly authenticated: boolean;
   readonly member: CommunityMemberModel;
   readonly status: StoreControllerStatus;
@@ -99,8 +127,10 @@ export interface StoreController {
     selectComparisonParent(id: string): Promise<void>;
     prepareIndex(): Promise<void>;
     loadMore(
-      collection: "bookmarks" | "graph" | "files" | "detail",
+      collection: "bookmarks" | "graph" | "files" | "detail" | "search",
     ): Promise<void>;
+    search(query: string): Promise<void>;
+    selectSearchResult(result: StoreSearchResult): Promise<void>;
     setFileViewMode(mode: FileListingViewMode): void | Promise<void>;
     toggleDirectory(path: string): void | Promise<void>;
     openRepository(id: string): void | Promise<void>;

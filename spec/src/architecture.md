@@ -206,6 +206,14 @@ renderer and builder versions are aligned in the registry lockfile. The served
 browser composes the same production modules through an authenticated
 asynchronous controller; catalog checks reject API clients and network calls.
 
+Repository search keeps transport and cache ownership in the controller layer.
+Presentation consumes only the shared search state/actions contract, and the
+catalog supplies a transport-free in-memory source. Search query keys bind the
+authentication session, repository and selected operation snapshot; query text
+and opaque continuations remain memory-only. The development orchestrator owns
+the configured Tantivy worker with the server lifecycle and waits for its first
+current generation before reporting the stack ready.
+
 M4.9 separates snapshot operation, inspected operation, commit, change and
 comparison identities in the shared controller contract. Loading, refreshing,
 paging, empty, failed and unavailable states are explicit. M4.10–M4.14 add the

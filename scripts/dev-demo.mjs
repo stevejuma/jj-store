@@ -3,7 +3,7 @@
 import { randomBytes } from "node:crypto";
 import { spawn } from "node:child_process";
 import { openSync } from "node:fs";
-import { chmod, mkdir, rm, writeFile } from "node:fs/promises";
+import { appendFile, chmod, mkdir, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import {
@@ -110,6 +110,60 @@ async function seedRepository(adminToken, operatorToken, origin) {
   return repositoryId;
 }
 
+function startServer(serverConfig, logHandle, environment = {}) {
+  const server = spawn(
+    resolve(repositoryRoot, "target/debug/jj-store"),
+    ["run", "--config", serverConfig, "--format=json"],
+    {
+      cwd: repositoryRoot,
+      detached: true,
+      env: {
+        ...process.env,
+        JJ_STORE_S3_ACCESS_KEY: accessKey,
+        JJ_STORE_S3_SECRET_KEY: secretKey,
+        ...environment,
+      },
+      stdio: ["ignore", logHandle, logHandle],
+    },
+  );
+  server.unref();
+  return server;
+}
+
+async function stopServer(server) {
+  if (!server.pid) return;
+  process.kill(server.pid, "SIGTERM");
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    try {
+      process.kill(server.pid, 0);
+      await new Promise((resolveWait) => setTimeout(resolveWait, 100));
+    } catch {
+      return;
+    }
+  }
+  throw new Error("temporary native server did not stop");
+}
+
+async function waitForSearch(origin, repositoryId, token) {
+  for (let attempt = 0; attempt < 300; attempt += 1) {
+    try {
+      const response = await fetch(
+        `${origin}v1/repos/${repositoryId}/search/status`,
+        { headers: { authorization: `Bearer ${token}` } },
+      );
+      if (response.ok) {
+        const status = await response.json();
+        if (status.indexed_position !== null && status.is_stale === false)
+          return;
+      } else await response.body?.cancel();
+    } catch {
+      // The search worker is rebuilding its first generation.
+    }
+    await new Promise((resolveWait) => setTimeout(resolveWait, 100));
+  }
+  throw new Error("jj-store search worker did not become ready");
+}
+
 async function restart() {
   await stopPrevious({
     containerName,
@@ -184,23 +238,19 @@ async function restart() {
   );
   const logPath = join(runtimeRoot, "server.log");
   const logHandle = openSync(logPath, "a", 0o600);
-  const server = spawn(
-    resolve(repositoryRoot, "target/debug/jj-store"),
-    ["run", "--config", serverConfig, "--format=json"],
-    {
-      cwd: repositoryRoot,
-      detached: true,
-      env: {
-        ...process.env,
-        JJ_STORE_S3_ACCESS_KEY: accessKey,
-        JJ_STORE_S3_SECRET_KEY: secretKey,
-      },
-      stdio: ["ignore", logHandle, logHandle],
-    },
-  );
-  server.unref();
+  let server = startServer(serverConfig, logHandle);
   await waitForServer(origin);
   const repositoryId = await seedRepository(adminToken, operatorToken, origin);
+  await stopServer(server);
+  await appendFile(
+    serverConfig,
+    `\n[[search]]\nrepository = "${repositoryId}"\ntoken_environment = "JJ_STORE_SEARCH_TOKEN_DEMO"\npoll_millis = 50\ntimeout_seconds = 30\nindex_bytes = 67108864\n\n[search.source]\nindex_source = true\nmax_text_bytes = 262144\nmax_files = 10000\nmax_work = 100000\nmax_output_bytes = 16777216\n\n[search.source.scopes.main]\nkind = "bookmark"\nname = "main"\n`,
+  );
+  server = startServer(serverConfig, logHandle, {
+    JJ_STORE_SEARCH_TOKEN_DEMO: adminToken,
+  });
+  await waitForServer(origin);
+  await waitForSearch(origin, repositoryId, adminToken);
   const runtime = {
     format: 1,
     serverPid: server.pid,

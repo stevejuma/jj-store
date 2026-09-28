@@ -13,7 +13,9 @@ export function createStoreQueryClient(): QueryClient {
         gcTime: STORE_QUERY_GC_TIME_MS,
         refetchOnWindowFocus: false,
         retry: (failures, error) =>
-          !(error instanceof ApiError) && failures < 1,
+          error instanceof ApiError
+            ? error.code === "busy" && failures < 2
+            : failures < 1,
       },
     },
   });

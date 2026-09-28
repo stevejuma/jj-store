@@ -168,6 +168,63 @@ function diffPage() {
   value.data.changes = [structuredClone(textChange)];
   return value;
 }
+function searchDocument(kind: "commit" | "file" | "operation") {
+  const common = {
+    body: "",
+    actor: kind === "operation" ? "Maya Chen" : null,
+    author: "Maya Chen",
+    workspace: "demo",
+    operation,
+    commit: kind === "operation" ? null : commit,
+    change: kind === "operation" ? null : commitNode.change_id,
+    file: kind === "file" ? tree.data.entries[0].terms[0].id : null,
+    parents: kind === "commit" ? [...commitNode.parents] : [],
+    predecessors: [],
+    attributes: {},
+    language: kind === "file" ? "text" : null,
+    has_conflict: false,
+    timestamp_millis: commitNode.committer.timestamp.millis,
+  };
+  if (kind === "operation")
+    return {
+      ...common,
+      key: { kind, id: operation },
+      title: "Captured native operation",
+    };
+  if (kind === "commit")
+    return {
+      ...common,
+      key: { kind, id: commit },
+      title: commitNode.description,
+    };
+  return {
+    ...common,
+    key: { kind, scope: "main", path: "bin" },
+    title: "bin",
+  };
+}
+function searchPage(query: string) {
+  const kind = query.includes("file")
+    ? "file"
+    : query.includes("operation")
+      ? "operation"
+      : "commit";
+  return {
+    version: 1,
+    repository: repo,
+    epoch: graph.snapshot.epoch,
+    repository_position: graph.snapshot.published_seq,
+    indexed_position: graph.snapshot.published_seq,
+    index_generation: "aa".repeat(32),
+    selected_view: structuredClone(graph.snapshot),
+    scope_snapshots: {},
+    results: [searchDocument(kind)],
+    is_stale: false,
+    degraded: false,
+    next_cursor: null,
+    truncated: false,
+  };
+}
 export async function api(
   page: Page,
   options: { multi?: boolean; changed?: boolean; delayLog?: boolean } = {},
@@ -198,6 +255,18 @@ export async function api(
       const value = sample("snapshot");
       if (options.multi) value.heads.push("ab".repeat(64));
       await route.fulfill({ json: value });
+      return;
+    }
+    if (path === "capabilities") {
+      const value = sample("capabilities");
+      value.search = true;
+      await route.fulfill({ json: value });
+      return;
+    }
+    if (path === "search") {
+      await route.fulfill({
+        json: searchPage(url.searchParams.get("q") ?? ""),
+      });
       return;
     }
     if (path === "references") {

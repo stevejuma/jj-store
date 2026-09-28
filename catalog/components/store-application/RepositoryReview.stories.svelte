@@ -19,9 +19,15 @@
   name="Shell and graph alignment"
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    const navigationHeader = canvasElement.querySelector<HTMLElement>(
+      ".lc-community-navigation__header",
+    )!;
     await expect(
-      canvasElement.querySelector(".lc-community-navigation__header"),
-    ).toBeNull();
+      within(navigationHeader).getByRole("button", {
+        name: "Search repository",
+      }),
+    ).toBeVisible();
+    await expect(within(navigationHeader).queryByText("jj-store")).toBeNull();
     const details = canvas.getByRole("button", { name: "Toggle details" });
     await expect(
       details.querySelector(

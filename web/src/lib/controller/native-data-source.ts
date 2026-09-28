@@ -18,6 +18,13 @@ export interface PathQuery {
   limit?: number;
 }
 
+export interface SearchQuery {
+  query: string;
+  operation: string;
+  cursor?: string;
+  limit?: number;
+}
+
 export interface StoreDataSource {
   readonly repository: string;
   capabilities(): Promise<Model<"Capabilities">>;
@@ -69,6 +76,7 @@ export interface StoreDataSource {
     operation: string,
     commit: string,
   ): Promise<Envelope<Model<"ConflictResponse">>>;
+  search(query: SearchQuery): Promise<Model<"SearchPage">>;
   prepareIndex(operation: string): Promise<Task>;
   indexTask(id: string): Promise<Task>;
   events(

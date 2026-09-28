@@ -12,6 +12,7 @@
     graph: "idle",
     files: "idle",
     detail: "idle",
+    search: "idle",
     live: "disconnected",
     refreshAvailable: false,
     error: "",

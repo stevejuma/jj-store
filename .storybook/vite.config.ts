@@ -26,10 +26,13 @@ export default defineConfig({
       "@lucide/svelte/icons/code-xml",
       "@lucide/svelte/icons/eye",
       "@lucide/svelte/icons/file",
+      "@lucide/svelte/icons/file-code-2",
       "@lucide/svelte/icons/file-search",
       "@lucide/svelte/icons/file-warning",
       "@lucide/svelte/icons/folder",
       "@lucide/svelte/icons/chevron-down",
+      "@lucide/svelte/icons/loader-circle",
+      "@lucide/svelte/icons/search",
       "@tanstack/svelte-virtual",
     ],
     exclude: [

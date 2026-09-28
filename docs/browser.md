@@ -1,9 +1,10 @@
 # Repository browser
 
-The current browser supports authenticated repository reads. It shows commits,
-operations and evolution, native metadata, directories, bounded file previews,
-structured file differences and conflict descriptors. Mutation editing and
-search arrive with M5 and M6; their absence is recorded in the progress ledger.
+The current browser supports authenticated repository reads and repository
+search. It shows commits, operations and evolution, native metadata,
+directories, bounded file previews, structured file differences and conflict
+descriptors. Mutation and conflict editing remain deferred in the progress
+ledger.
 
 ## Build and serve
 
@@ -46,15 +47,26 @@ Index preparation is explicit and cancelable. It retries the original captured
 query when ready. The graph display is bounded; narrow a query for large
 history.
 
+## Repository search
+
+Use the sidebar search control or `Command+K`/`Control+K` to open repository
+search. The command overlay queries the selected operation snapshot through the
+authenticated Tantivy endpoint and groups operations, commits and files. A
+result navigates with its full stable native identities; queries and opaque
+cursors never enter the hash route. Indexing, degraded, truncated, empty,
+unavailable and failed states remain explicit. Closing search leaves the current
+route unchanged.
+
 ## Development acceptance
 
 For local interactive review, `pnpm dev:restart` builds and starts the complete
 loopback stack: an owned pinned RustFS container, the native server, the built
-browser and a fresh native demo repository. It prints the repository ID and
-one-time admin token needed by the in-memory browser session. Runtime files and
-credentials stay outside the checkout under the operating system temporary
-directory. The command refuses an unowned listener or Docker container rather
-than stopping it. `pnpm dev:stop` removes only the stack it owns.
+browser, a fresh native demo repository and its Tantivy worker. It does not
+return until the repository index is current. The command prints the repository
+ID and one-time admin token needed by the in-memory browser session. Runtime
+files and credentials stay outside the checkout under the operating system
+temporary directory. The command refuses an unowned listener or Docker container
+rather than stopping it. `pnpm dev:stop` removes only the stack it owns.
 
 `pnpm web:check` checks Svelte/TypeScript; `pnpm web:test` covers bounded
 parsing, credentials and graph layout. Install the matching test browser with
@@ -66,8 +78,9 @@ use those captured fixtures plus explicit race/error variants.
 
 Run `pnpm web:test:real` for the separate native deployment lane. It uses
 `pnpm dev:restart` to build the UI and binaries, starts the owned pinned RustFS
-and native server, publishes through another CLI process, and verifies that SSE
-announces the new history without changing the displayed snapshot until the user
+and native server with search worker, proves authenticated native Tantivy
+results, publishes through another CLI process, and verifies that SSE announces
+the new history without changing the displayed snapshot until the user
 refreshes. The test preserves the selected bookmark across that refresh and
 removes the disposable stack when it finishes.
 

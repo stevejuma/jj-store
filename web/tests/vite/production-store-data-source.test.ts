@@ -69,7 +69,7 @@ test("query keys isolate credentials that reconnect to the same repository", asy
   second.close();
 });
 
-test("authorization and API failures are never retried", async () => {
+test("authorization and nontransient API failures are never retried", async () => {
   const queryClient = createStoreQueryClient();
   let attempts = 0;
 
@@ -84,6 +84,24 @@ test("authorization and API failures are never retried", async () => {
   ).rejects.toThrow("access denied");
 
   expect(attempts).toBe(1);
+  queryClient.clear();
+});
+
+test("temporary repository busy responses are retried", async () => {
+  const queryClient = createStoreQueryClient();
+  let attempts = 0;
+
+  const result = await queryClient.fetchQuery({
+    queryKey: ["busy-then-ready"],
+    queryFn: () => {
+      attempts += 1;
+      if (attempts === 1) throw new ApiError("busy");
+      return "ready";
+    },
+  });
+
+  expect(result).toBe("ready");
+  expect(attempts).toBe(2);
   queryClient.clear();
 });
 
@@ -166,6 +184,52 @@ test("path reads preserve directory, recursive, and opaque cursor queries", asyn
       recursive: "true",
       limit: "50",
       cursor: "opaque-cursor",
+    },
+  ]);
+  source.close();
+});
+
+test("search pages preserve the snapshot query and opaque cursor", async () => {
+  const queryClient = createStoreQueryClient();
+  const requests: URL[] = [];
+  const source = new HttpStoreDataSource(
+    repository,
+    "token-a",
+    queryClient,
+    "session-a",
+    () => {},
+    async (input) => {
+      requests.push(new URL(String(input), "http://jj-store.test"));
+      return json({ results: [], next_cursor: null });
+    },
+  );
+  const operation = "cd".repeat(64);
+  await source.search({ query: "native storage", operation });
+  await source.search({
+    query: "native storage",
+    operation,
+    cursor: "opaque-search-cursor",
+  });
+
+  expect(requests.map((request) => request.pathname)).toEqual([
+    `/v1/repos/${repository}/search`,
+    `/v1/repos/${repository}/search`,
+  ]);
+  expect(
+    requests.map((request) => Object.fromEntries(request.searchParams)),
+  ).toEqual([
+    {
+      q: "native storage",
+      mode: "visible_commits",
+      at_op: operation,
+      page_size: "50",
+    },
+    {
+      q: "native storage",
+      mode: "visible_commits",
+      at_op: operation,
+      page_size: "50",
+      cursor: "opaque-search-cursor",
     },
   ]);
   source.close();

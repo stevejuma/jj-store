@@ -19,6 +19,7 @@ import {
   largeRepositorySnapshot,
   largeRevisions,
 } from "../fixtures/large-repository.js";
+import { createInMemoryStoreSearch } from "./in-memory-store-search.svelte.js";
 
 /** Each story owns this instance. It has no persistence or transport effects. */
 export function createInMemoryStoreController(
@@ -68,6 +69,7 @@ export function createInMemoryStoreController(
     history = [...history.slice(0, index + 1), next];
     index++;
   }
+  const search = createInMemoryStoreSearch(() => route, push);
   const actions: StoreController["actions"] = {
     async connect() {
       authenticated = true;
@@ -81,6 +83,8 @@ export function createInMemoryStoreController(
     async selectComparisonParent() {},
     async prepareIndex() {},
     async loadMore() {},
+    search: search.search,
+    selectSearchResult: search.select,
     setFileViewMode(mode) {
       fileViewMode = mode;
     },
@@ -235,6 +239,7 @@ export function createInMemoryStoreController(
         targets,
         snapshot,
         blob: snapshot?.files.find((file) => file.path === route.path),
+        search: search.state,
         graph:
           route.page === "oplog"
             ? fixture.operations
@@ -284,6 +289,7 @@ export function createInMemoryStoreController(
           files: snapshot?.files.length ? "ready" : "empty",
           detail:
             route.commitId || route.inspectedOperationId ? "ready" : "idle",
+          search: search.state.status,
           live: authenticated ? "live" : "disconnected",
           refreshAvailable: false,
           error: "",

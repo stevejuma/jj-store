@@ -12,6 +12,7 @@
   import HistoryIcon from "@lucide/svelte/icons/history";
   import FolderGit2Icon from "@lucide/svelte/icons/folder-git-2";
   import { type Component, type Snippet } from "svelte";
+  import CommunityNavigationSearch from "./CommunityNavigationSearch.svelte";
   import {
     type CommunityNavigationItemModel,
     type CommunityNavigationModel,
@@ -24,7 +25,7 @@
     compact = false,
     sectionOpen = $bindable<Record<string, boolean>>({}),
     onSelect,
-    headerStart,
+    onSearch,
     footer,
   }: {
     model: CommunityNavigationModel;
@@ -32,7 +33,7 @@
     compact?: boolean;
     sectionOpen?: Record<string, boolean>;
     onSelect: (item: CommunityNavigationItemModel) => void;
-    headerStart?: Snippet;
+    onSearch?: (query: string) => void;
     footer?: Snippet;
   } = $props();
   let itemOpen = $state<Record<string, boolean>>({});
@@ -122,11 +123,7 @@
 {#snippet itemIcon(item: CommunityNavigationItemModel)}
   {@const Icon = iconFor(item)}<Icon aria-hidden="true" />
 {/snippet}
-{#if headerStart}<AppShell.Sidebar.Header
-    class="lc-community-navigation__header"
-  >
-    {@render headerStart()}
-  </AppShell.Sidebar.Header>{/if}
+{#if onSearch}<CommunityNavigationSearch {compact} {onSearch} />{/if}
 <AppShell.Sidebar.Body class="lc-community-navigation__body">
   <Tooltip.Provider>
     <nav aria-label="Repository navigation" data-compact={compact || undefined}>

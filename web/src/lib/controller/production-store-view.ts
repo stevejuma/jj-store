@@ -40,6 +40,17 @@ export function productionStoreView(
     targets: data.targets,
     snapshot: data.snapshot,
     blob: data.blob,
+    search: {
+      available: data.searchAvailable,
+      query: data.searchQuery,
+      results: data.searchResults,
+      status: data.status.search,
+      error: data.searchError,
+      canLoadMore: data.searchCursor !== null,
+      isStale: data.searchStale,
+      degraded: data.searchDegraded,
+      truncated: data.searchTruncated,
+    },
     authenticated: options.connected && data.status.connection === "connected",
     member: {
       id: repository || "disconnected",

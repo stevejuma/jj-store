@@ -2,7 +2,7 @@
 
 The reviewed catalog application is the presentation authority for the served
 browser. Production integration is reopened for the browsing portion of M4.3;
-typed mutation, conflict-editing and search controls remain deferred. Reusable
+typed mutation and conflict-editing controls remain deferred. Reusable
 components receive presentation data and callbacks, while HTTP and in-memory
 controllers supply the same asynchronous contract. Deterministic fixtures remain
 catalog-only.
@@ -17,6 +17,7 @@ catalog-only.
 | JST-UI-004 | The complete catalog application MUST expose a typed state/actions controller with independent in-memory navigation, repository snapshots, file contents and profile actions, using copied Community file-browser and footer compositions without backend access. |
 | JST-UI-005 | The served browser MUST use the reviewed shell and repository components through an authenticated asynchronous controller with cursor paging, representative page and detail loading skeletons, explicit snapshot refresh and typed hash restoration.             |
 | JST-UI-006 | Large repository collections MUST use bounded virtual rows, all resizable shell/canvas regions MUST persist versioned layout state, and catalog stories MUST exercise the production components.                                                                  |
+| JST-UI-007 | Repository search MUST use the released Design Core Command View in a Community-adapted overlay, query the selected authenticated operation snapshot, represent readiness and paging states, and navigate results with stable full identities.                    |
 
 The catalog uses Storybook 10.5.7, Svelte CSF 5.1.2, Vitest browser 4.1.11 and
 Design Core ^0.2.0 with the existing Svelte 5/Vite 8 toolchain. Direct
@@ -202,3 +203,13 @@ affected-change cursor plus each exact comparison's changed-path cursor, fetch
 one exact group at a time, and keep ambiguous groups explicit. Empty exact pages
 and metadata-only groups advance without presenting invented files; every
 visible path remains bound to its precise native comparison.
+
+M4.15 adapts Community's global search trigger and command dialog to native
+repository search. `Command+K`/`Control+K` and the sidebar open the same
+overlay. The production controller debounces queries, caches snapshot-bound
+requests, ignores late responses, appends opaque cursor pages with identity
+deduplication, and represents loading, empty, unavailable, failed, stale,
+degraded and truncated states. Selecting an operation, commit or file pushes an
+Op Log, JJ Log or Files route containing full stable native identities. Query
+text and expiring search cursors stay out of permanent hashes. Storybook uses an
+in-memory source while the cold native lane exercises the real Tantivy worker.

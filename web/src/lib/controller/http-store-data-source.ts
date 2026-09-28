@@ -12,6 +12,7 @@ import {
 import type {
   GraphQuery,
   PathQuery,
+  SearchQuery,
   StoreDataSource,
 } from "./native-data-source.js";
 import { storeQueryKeys, type StoreQueryScope } from "./store-query-keys.js";
@@ -193,6 +194,21 @@ export class HttpStoreDataSource implements StoreDataSource {
           { at_op: operation },
           { signal },
         ),
+    );
+  }
+  search(input: SearchQuery) {
+    const query = {
+      q: input.query,
+      mode: "visible_commits",
+      at_op: fullId(input.operation),
+      page_size: input.limit ?? 50,
+      cursor: input.cursor,
+    };
+    return this.#query<Model<"SearchPage">>(
+      "search",
+      input.operation,
+      query,
+      (signal) => this.#client.request("search", query, { signal }),
     );
   }
   prepareIndex(operation: string) {
