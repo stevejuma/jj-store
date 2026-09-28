@@ -405,6 +405,17 @@ response are limited to eight MiB. Each item retains its exact object identity
 and authenticated actor. Missing stable threads return 404; no route reads an
 arbitrary ReviewStore object or an unvalidated historical snapshot.
 
+`POST /v1/repos/{repo}/reviews/commands` accepts a strict version-1 request ID
+and one typed ReviewStore command. The authenticated session supplies the actor
+and derives a repository-bound publication ID before the existing ReviewStore
+WAL publication path runs. A committed response returns the exact selected WAL
+receipt and immutable result identities; a timeout or unavailable publication
+returns `outcome_unknown` with the original request ID.
+`GET /v1/repos/{repo}/reviews/commands/{request_id}` reauthorizes current write
+access and resolves that durable receipt after server reconstruction.
+`not_known` never proves rejection. Both routes reject caller-authored
+principals, publication IDs and unknown fields.
+
 `limit` defaults to the common page size and accepts 1 through 256. The opaque
 continuation is bound to the entire snapshot and original page size, retains its
 immutable root after later publications and is never suitable for a permanent

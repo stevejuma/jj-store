@@ -190,9 +190,19 @@ ReviewStore state version, page size and the radix key after the last row. They
 retain the exact audited ReviewStore closure within the same snapshot, object,
 concurrency, lifetime and authorization bounds.
 
-ReviewStore typed writes, user-facing CLI commands, durable receipts and live
-collaboration hints remain later M9.4 slices. Read-only AgentStore and
-ReviewStore surfaces alone do not complete JST-COLLAB-004.
+ReviewStore commands accept a versioned request ID plus one validated typed
+create, reply, edit, tombstone, moderation, resolve or reopen command. The
+service derives the authenticated principal and a repository-bound publication
+ID; neither is caller-authored. Successful responses decode the
+manifest-selected WAL receipt into exact accepted snapshot and ReviewStore
+object identities. Identical retries and status after service reconstruction
+return that durable receipt. An unavailable or timed-out apply remains
+`outcome_unknown`; a missing status remains `not_known`, which never proves
+rejection. Stale workflow and thread-version preconditions fail without
+publication.
+
+User-facing CLI commands and live collaboration hints remain later M9.4 slices.
+Read-only and HTTP ReviewStore surfaces alone do not complete JST-COLLAB-004.
 
 ## Capture sanitization boundary
 

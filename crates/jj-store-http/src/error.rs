@@ -155,6 +155,24 @@ impl From<jj_store_service::collaboration::Error> for Error {
         }
     }
 }
+
+impl From<jj_store_service::review_mutations::Error> for Error {
+    fn from(error: jj_store_service::review_mutations::Error) -> Self {
+        use jj_store_service::review_mutations::Error as E;
+        match error {
+            E::Denied => Self::denied(),
+            E::Stale => Self::new(StatusCode::CONFLICT, "stale_review"),
+            E::IntentConflict => Self::new(StatusCode::CONFLICT, "intent_conflict"),
+            E::ThreadResolved => Self::new(StatusCode::CONFLICT, "thread_resolved"),
+            E::ThreadOpen => Self::new(StatusCode::CONFLICT, "thread_open"),
+            E::NotFound => Self::new(StatusCode::NOT_FOUND, "not_found"),
+            E::Invalid => Self::invalid(),
+            E::Corrupt => Self::new(StatusCode::SERVICE_UNAVAILABLE, "corrupt_receipt"),
+            E::Limit => Self::limit(),
+            E::Unavailable => Self::unavailable(),
+        }
+    }
+}
 impl From<transport::Error> for Error {
     fn from(e: transport::Error) -> Self {
         match e {

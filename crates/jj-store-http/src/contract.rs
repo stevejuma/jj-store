@@ -192,7 +192,15 @@ impl Document {
             operation["responses"]["503"]["description"] =
                 json!("search_not_ready, busy, unavailable, corrupt_index, or incomplete history.");
         }
-        if path.contains("/agent/") || path.contains("/reviews/") {
+        if path.contains("/reviews/commands") {
+            operation["tags"] = json!(["collaboration"]);
+            operation["description"] = json!(
+                "Requires current repository write permission. The authenticated session supplies the actor and repository-bound publication identity. Apply returns a manifest-selected durable receipt or outcome_unknown; status reauthorizes and returns that receipt after restart. not_known never proves rejection. Stale review preconditions, changed retries and cross-principal identities fail without publication."
+            );
+            operation["responses"]["409"]["description"] = json!(
+                "stale_review, thread_resolved, thread_open, or intent_conflict. No publication by this rejected attempt."
+            );
+        } else if path.contains("/agent/") || path.contains("/reviews/") {
             operation["tags"] = json!(["collaboration"]);
             operation["description"] = json!(
                 "Requires current repository read permission. Rows resolve from one immutable AgentStore or ReviewStore root. Signed process-local continuations retain that exact root and page size, reauthorize every page, and reset after expiry, restart or epoch replacement. Reads never dispatch an agent or publish repository state."

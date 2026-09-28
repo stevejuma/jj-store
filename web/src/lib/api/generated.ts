@@ -251,6 +251,41 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/v1/repos/{repo}/reviews/commands": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description Requires current repository write permission. The authenticated session supplies the actor and repository-bound publication identity. Apply returns a manifest-selected durable receipt or outcome_unknown; status reauthorizes and returns that receipt after restart. not_known never proves rejection. Stale review preconditions, changed retries and cross-principal identities fail without publication. */
+    post: operations["review_command_apply"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/repos/{repo}/reviews/commands/{request_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description Requires current repository write permission. The authenticated session supplies the actor and repository-bound publication identity. Apply returns a manifest-selected durable receipt or outcome_unknown; status reauthorizes and returns that receipt after restart. not_known never proves rejection. Stale review preconditions, changed retries and cross-principal identities fail without publication. */
+    get: operations["review_command_status"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    /** @description Runs the same authorized GET validation and drops the body. No JSON, binary bytes or SSE frames are returned. */
+    head: operations["review_command_status_head"];
+    patch?: never;
+    trace?: never;
+  };
   "/v1/repos/{repo}/snapshot": {
     parameters: {
       query?: never;
@@ -1481,6 +1516,77 @@ export interface components {
           /** @constant */
           action: "reopened";
         };
+    ReviewCommandOutcome:
+      | {
+          receipt: components["schemas"]["ReviewCommandReceipt"];
+          /** @constant */
+          status: "committed";
+        }
+      | {
+          request_id: components["schemas"]["RequestId"];
+          /** @constant */
+          status: "outcome_unknown";
+        };
+    ReviewCommandReceipt: {
+      /** Format: uint32 */
+      version: number;
+      request_id: components["schemas"]["RequestId"];
+      publication_id: components["schemas"]["PublicationId"];
+      request_digest: components["schemas"]["IntentDigest"];
+      accepted: components["schemas"]["Snapshot"];
+      result: components["schemas"]["ReviewCommandResultV1"];
+    };
+    RequestId: string;
+    PublicationId: string;
+    IntentDigest: string;
+    Snapshot: {
+      epoch: components["schemas"]["EpochId"];
+      position: components["schemas"]["WalPosition"];
+      /** Format: uint64 */
+      code_state_version?: number;
+      heads: components["schemas"]["OperationId"][];
+    };
+    ReviewCommandResultV1: {
+      /** Format: uint32 */
+      schema_version: number;
+      thread_id: components["schemas"]["ReviewThreadId"];
+      comment_id: components["schemas"]["CommentId"] | null;
+      action_id: components["schemas"]["ReviewActionId"] | null;
+      thread_snapshot: components["schemas"]["ReviewObjectRef"];
+      comment_revision: components["schemas"]["ReviewObjectRef"] | null;
+      event: components["schemas"]["ReviewObjectRef"];
+    };
+    ReviewObjectRef: {
+      kind: components["schemas"]["ReviewObjectKind"];
+      id: components["schemas"]["ReviewObjectId"];
+    };
+    /** @enum {string} */
+    ReviewObjectKind:
+      | "index_page"
+      | "anchor"
+      | "comment_body"
+      | "comment_revision"
+      | "thread_event"
+      | "event_page"
+      | "thread_snapshot"
+      | "relation_page"
+      | "status_page";
+    ReviewCommandStatus:
+      | {
+          receipt: components["schemas"]["ReviewCommandReceipt"];
+          /** @constant */
+          status: "committed";
+        }
+      | {
+          request_id: components["schemas"]["RequestId"];
+          /** @constant */
+          status: "not_known";
+        }
+      | {
+          request_id: components["schemas"]["RequestId"];
+          /** @constant */
+          status: "outcome_unknown";
+        };
     CommittedEvent: {
       /** Format: uint32 */
       version: number;
@@ -2237,15 +2343,6 @@ export interface components {
       /** @description Provisional native IDs; apply revalidates and may produce different IDs. */
       result: components["schemas"]["Prepared"];
     };
-    RequestId: string;
-    IntentDigest: string;
-    Snapshot: {
-      epoch: components["schemas"]["EpochId"];
-      position: components["schemas"]["WalPosition"];
-      /** Format: uint64 */
-      code_state_version?: number;
-      heads: components["schemas"]["OperationId"][];
-    };
     Prepared: {
       /** Format: uint32 */
       version: number;
@@ -2302,7 +2399,6 @@ export interface components {
       accepted: components["schemas"]["Snapshot"];
       result: components["schemas"]["Prepared"];
     };
-    PublicationId: string;
     Outcome:
       | {
           receipt: components["schemas"]["Receipt"];
@@ -5698,6 +5794,883 @@ export interface operations {
         content?: never;
       };
       /** @description cursor_reset after expiry, process restart, or repository epoch replacement. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  review_command_apply: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        repo: components["schemas"]["RepositoryId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          /** Format: uint32 */
+          version: number;
+          request_id: string;
+          command:
+            | {
+                anchor: {
+                  /** Format: uint32 */
+                  schema_version: number;
+                  repository_id: string;
+                  target:
+                    | {
+                        /** @constant */
+                        target: "code_text";
+                        value: {
+                          operation_id: string;
+                          commit_id: string;
+                          change_id?: string | null;
+                          path: string;
+                          file_id: string;
+                          /** @enum {string} */
+                          value_kind:
+                            | "file"
+                            | "binary_file"
+                            | "empty_file"
+                            | "symlink"
+                            | "gitlink"
+                            | "conflict_term"
+                            | "conflict_artifact";
+                          text: {
+                            /** @enum {string} */
+                            encoding: "utf8";
+                            start_byte: string;
+                            end_byte: string;
+                            selected_sha256: string;
+                          };
+                          diff_context?: {
+                            before_operation_id: string;
+                            before_commit_id: string;
+                            before_path?: string | null;
+                            after_operation_id: string;
+                            after_commit_id: string;
+                            after_path?: string | null;
+                            /** @enum {string} */
+                            side: "before" | "after";
+                            /** @enum {string} */
+                            comparison: "explicit_pair";
+                          } | null;
+                        };
+                      }
+                    | {
+                        /** @constant */
+                        target: "code_artifact";
+                        value: {
+                          operation_id: string;
+                          commit_id: string;
+                          change_id?: string | null;
+                          path: string;
+                          object:
+                            | {
+                                /** @constant */
+                                kind: "commit";
+                                id: string;
+                              }
+                            | {
+                                /** @constant */
+                                kind: "tree";
+                                id: string;
+                              }
+                            | {
+                                /** @constant */
+                                kind: "file";
+                                id: string;
+                              }
+                            | {
+                                /** @constant */
+                                kind: "symlink";
+                                id: string;
+                              }
+                            | {
+                                /** @constant */
+                                kind: "copy";
+                                id: string;
+                              }
+                            | {
+                                /** @constant */
+                                kind: "view";
+                                id: string;
+                              }
+                            | {
+                                /** @constant */
+                                kind: "operation";
+                                id: string;
+                              };
+                          /** @enum {string} */
+                          value_kind:
+                            | "file"
+                            | "binary_file"
+                            | "empty_file"
+                            | "symlink"
+                            | "gitlink"
+                            | "conflict_term"
+                            | "conflict_artifact";
+                        };
+                      }
+                    | {
+                        /** @constant */
+                        target: "agent_text";
+                        value: {
+                          session_id: string;
+                          session_snapshot: {
+                            /** @enum {string} */
+                            kind:
+                              | "index_page"
+                              | "session_snapshot"
+                              | "turn_snapshot"
+                              | "message_snapshot"
+                              | "tool_snapshot"
+                              | "intent"
+                              | "observation_batch"
+                              | "event_batch"
+                              | "transcript_manifest"
+                              | "transcript_page"
+                              | "transcript_chunk"
+                              | "content"
+                              | "checkpoint_version"
+                              | "association"
+                              | "alias"
+                              | "relation_page"
+                              | "source_state"
+                              | "projection_catalog";
+                            id: string;
+                          };
+                          owner:
+                            | {
+                                tool_call_id: string;
+                                snapshot: {
+                                  /** @enum {string} */
+                                  kind:
+                                    | "index_page"
+                                    | "session_snapshot"
+                                    | "turn_snapshot"
+                                    | "message_snapshot"
+                                    | "tool_snapshot"
+                                    | "intent"
+                                    | "observation_batch"
+                                    | "event_batch"
+                                    | "transcript_manifest"
+                                    | "transcript_page"
+                                    | "transcript_chunk"
+                                    | "content"
+                                    | "checkpoint_version"
+                                    | "association"
+                                    | "alias"
+                                    | "relation_page"
+                                    | "source_state"
+                                    | "projection_catalog";
+                                  id: string;
+                                };
+                                attempt_id: string;
+                                /** @constant */
+                                kind: "tool";
+                              }
+                            | {
+                                message_id: string;
+                                snapshot: {
+                                  /** @enum {string} */
+                                  kind:
+                                    | "index_page"
+                                    | "session_snapshot"
+                                    | "turn_snapshot"
+                                    | "message_snapshot"
+                                    | "tool_snapshot"
+                                    | "intent"
+                                    | "observation_batch"
+                                    | "event_batch"
+                                    | "transcript_manifest"
+                                    | "transcript_page"
+                                    | "transcript_chunk"
+                                    | "content"
+                                    | "checkpoint_version"
+                                    | "association"
+                                    | "alias"
+                                    | "relation_page"
+                                    | "source_state"
+                                    | "projection_catalog";
+                                  id: string;
+                                };
+                                /** @constant */
+                                kind: "message";
+                              }
+                            | {
+                                block_id: string;
+                                snapshot: {
+                                  /** @enum {string} */
+                                  kind:
+                                    | "index_page"
+                                    | "session_snapshot"
+                                    | "turn_snapshot"
+                                    | "message_snapshot"
+                                    | "tool_snapshot"
+                                    | "intent"
+                                    | "observation_batch"
+                                    | "event_batch"
+                                    | "transcript_manifest"
+                                    | "transcript_page"
+                                    | "transcript_chunk"
+                                    | "content"
+                                    | "checkpoint_version"
+                                    | "association"
+                                    | "alias"
+                                    | "relation_page"
+                                    | "source_state"
+                                    | "projection_catalog";
+                                  id: string;
+                                };
+                                /** @constant */
+                                kind: "plan";
+                              };
+                          block_id: string;
+                          block_version: {
+                            /** @enum {string} */
+                            kind:
+                              | "index_page"
+                              | "session_snapshot"
+                              | "turn_snapshot"
+                              | "message_snapshot"
+                              | "tool_snapshot"
+                              | "intent"
+                              | "observation_batch"
+                              | "event_batch"
+                              | "transcript_manifest"
+                              | "transcript_page"
+                              | "transcript_chunk"
+                              | "content"
+                              | "checkpoint_version"
+                              | "association"
+                              | "alias"
+                              | "relation_page"
+                              | "source_state"
+                              | "projection_catalog";
+                            id: string;
+                          };
+                          /** @enum {string} */
+                          part:
+                            | "input"
+                            | "output"
+                            | "message"
+                            | "plan"
+                            | "exposed_summary";
+                          content: {
+                            /** @enum {string} */
+                            kind:
+                              | "index_page"
+                              | "session_snapshot"
+                              | "turn_snapshot"
+                              | "message_snapshot"
+                              | "tool_snapshot"
+                              | "intent"
+                              | "observation_batch"
+                              | "event_batch"
+                              | "transcript_manifest"
+                              | "transcript_page"
+                              | "transcript_chunk"
+                              | "content"
+                              | "checkpoint_version"
+                              | "association"
+                              | "alias"
+                              | "relation_page"
+                              | "source_state"
+                              | "projection_catalog";
+                            id: string;
+                          };
+                          representation_version: string;
+                          sanitizer_version: string;
+                          normalizer_version: string;
+                          /** @enum {string} */
+                          source_coverage:
+                            | "complete"
+                            | "partial"
+                            | "redacted"
+                            | "truncated"
+                            | "unknown";
+                          text: {
+                            /** @enum {string} */
+                            encoding: "utf8";
+                            start_byte: string;
+                            end_byte: string;
+                            selected_sha256: string;
+                          };
+                        };
+                      }
+                    | {
+                        /** @constant */
+                        target: "agent_artifact";
+                        value: {
+                          session_id: string;
+                          session_snapshot: {
+                            /** @enum {string} */
+                            kind:
+                              | "index_page"
+                              | "session_snapshot"
+                              | "turn_snapshot"
+                              | "message_snapshot"
+                              | "tool_snapshot"
+                              | "intent"
+                              | "observation_batch"
+                              | "event_batch"
+                              | "transcript_manifest"
+                              | "transcript_page"
+                              | "transcript_chunk"
+                              | "content"
+                              | "checkpoint_version"
+                              | "association"
+                              | "alias"
+                              | "relation_page"
+                              | "source_state"
+                              | "projection_catalog";
+                            id: string;
+                          };
+                          owner:
+                            | {
+                                tool_call_id: string;
+                                snapshot: {
+                                  /** @enum {string} */
+                                  kind:
+                                    | "index_page"
+                                    | "session_snapshot"
+                                    | "turn_snapshot"
+                                    | "message_snapshot"
+                                    | "tool_snapshot"
+                                    | "intent"
+                                    | "observation_batch"
+                                    | "event_batch"
+                                    | "transcript_manifest"
+                                    | "transcript_page"
+                                    | "transcript_chunk"
+                                    | "content"
+                                    | "checkpoint_version"
+                                    | "association"
+                                    | "alias"
+                                    | "relation_page"
+                                    | "source_state"
+                                    | "projection_catalog";
+                                  id: string;
+                                };
+                                attempt_id: string;
+                                /** @constant */
+                                kind: "tool";
+                              }
+                            | {
+                                message_id: string;
+                                snapshot: {
+                                  /** @enum {string} */
+                                  kind:
+                                    | "index_page"
+                                    | "session_snapshot"
+                                    | "turn_snapshot"
+                                    | "message_snapshot"
+                                    | "tool_snapshot"
+                                    | "intent"
+                                    | "observation_batch"
+                                    | "event_batch"
+                                    | "transcript_manifest"
+                                    | "transcript_page"
+                                    | "transcript_chunk"
+                                    | "content"
+                                    | "checkpoint_version"
+                                    | "association"
+                                    | "alias"
+                                    | "relation_page"
+                                    | "source_state"
+                                    | "projection_catalog";
+                                  id: string;
+                                };
+                                /** @constant */
+                                kind: "message";
+                              }
+                            | {
+                                block_id: string;
+                                snapshot: {
+                                  /** @enum {string} */
+                                  kind:
+                                    | "index_page"
+                                    | "session_snapshot"
+                                    | "turn_snapshot"
+                                    | "message_snapshot"
+                                    | "tool_snapshot"
+                                    | "intent"
+                                    | "observation_batch"
+                                    | "event_batch"
+                                    | "transcript_manifest"
+                                    | "transcript_page"
+                                    | "transcript_chunk"
+                                    | "content"
+                                    | "checkpoint_version"
+                                    | "association"
+                                    | "alias"
+                                    | "relation_page"
+                                    | "source_state"
+                                    | "projection_catalog";
+                                  id: string;
+                                };
+                                /** @constant */
+                                kind: "plan";
+                              };
+                        };
+                      }
+                    | {
+                        /** @constant */
+                        target: "revision";
+                        value: {
+                          operation_id: string;
+                          commit_id: string;
+                          change_id?: string | null;
+                        };
+                      }
+                    | {
+                        /** @constant */
+                        target: "operation";
+                        value: {
+                          operation_id: string;
+                        };
+                      }
+                    | {
+                        /** @constant */
+                        target: "repository";
+                      };
+                  created_context: {
+                    /** Format: uint64 */
+                    publication_position?: number | null;
+                    /** Format: uint64 */
+                    code_state_version?: number | null;
+                    agent_root?: string | null;
+                  };
+                  /** @enum {string} */
+                  sensitivity: "public" | "repository" | "restricted";
+                };
+                body: {
+                  /** Format: uint32 */
+                  schema_version: number;
+                  /** @enum {string} */
+                  format: "plain_text" | "safe_markdown";
+                  text: string;
+                  sanitizer_version: string;
+                };
+                /** @constant */
+                command: "create_thread";
+              }
+            | {
+                thread_id: string;
+                /** Format: uint64 */
+                expected_workflow_version: number;
+                parent_comment_id?: string | null;
+                body: {
+                  /** Format: uint32 */
+                  schema_version: number;
+                  /** @enum {string} */
+                  format: "plain_text" | "safe_markdown";
+                  text: string;
+                  sanitizer_version: string;
+                };
+                /** @constant */
+                command: "append_reply";
+              }
+            | {
+                comment_id: string;
+                expected_revision_id: string;
+                replacement_body: {
+                  /** Format: uint32 */
+                  schema_version: number;
+                  /** @enum {string} */
+                  format: "plain_text" | "safe_markdown";
+                  text: string;
+                  sanitizer_version: string;
+                };
+                /** @constant */
+                command: "edit_comment";
+              }
+            | {
+                comment_id: string;
+                expected_revision_id: string;
+                reason?: string | null;
+                /** @constant */
+                command: "tombstone_comment";
+              }
+            | {
+                comment_id: string;
+                expected_revision_id: string;
+                moderation_reason: string;
+                /** @constant */
+                command: "hide_comment";
+              }
+            | {
+                thread_id: string;
+                expected_thread_version: string;
+                reason?: string | null;
+                /** @constant */
+                command: "resolve_thread";
+              }
+            | {
+                thread_id: string;
+                expected_thread_version: string;
+                reason?: string | null;
+                /** @constant */
+                command: "reopen_thread";
+              };
+        };
+      };
+    };
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ReviewCommandOutcome"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description stale_review, thread_resolved, thread_open, or intent_conflict. No publication by this rejected attempt. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  review_command_status: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        repo: components["schemas"]["RepositoryId"];
+        request_id: components["schemas"]["RequestId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ReviewCommandStatus"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description stale_review, thread_resolved, thread_open, or intent_conflict. No publication by this rejected attempt. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  review_command_status_head: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        repo: components["schemas"]["RepositoryId"];
+        request_id: components["schemas"]["RequestId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description stale_review, thread_resolved, thread_open, or intent_conflict. No publication by this rejected attempt. */
       409: {
         headers: {
           [name: string]: unknown;

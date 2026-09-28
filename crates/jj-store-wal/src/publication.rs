@@ -44,9 +44,10 @@ pub use jj_agent::{
 };
 pub use jj_review::{
     ArtifactAnchorV1, CommentId, CommentRevisionContentV1, CommentSelectionV1, ReviewActionId,
-    ReviewBodyFormatV1, ReviewCatalogKey, ReviewDeltaV1, ReviewObjectId, ReviewObjectRef,
-    ReviewObjectV1, ReviewRootV1, ReviewThreadEventKindV1, ReviewThreadId, ReviewThreadSnapshotV1,
-    ThreadStatusV1,
+    ReviewBodyFormatV1, ReviewCatalogKey, ReviewCommandResultV1, ReviewCommandV1, ReviewDeltaV1,
+    ReviewObjectId, ReviewObjectRef, ReviewObjectV1, ReviewRootV1, ReviewThreadEventKindV1,
+    ReviewThreadId, ReviewThreadSnapshotV1, ThreadStatusV1, decode_command_result,
+    encode_command_result,
 };
 pub use reader::SelectedRecord;
 pub use review_catalog::ReviewStoreSnapshot;

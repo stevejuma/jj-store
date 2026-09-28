@@ -157,6 +157,12 @@ thread, workflow or comment precondition. A later retry therefore returns the
 original committed result even after newer review activity; altered content
 under the same retained identity is an intent conflict.
 
+The transport service accepts no caller-authored actor or publication ID. It
+derives the latter from repository, authorized principal and request ID, then
+uses this same command intent for publication and replay validation. Durable
+status reads the manifest-selected receipt and validates its identity and
+canonical result bytes without reapplying the command.
+
 Create, reply, revision and workflow commands apply typed expected/replacement
 edits to the current root. A reply binds only the workflow version; an edit,
 tombstone or hide binds the exact comment-revision ID; resolve/reopen binds the

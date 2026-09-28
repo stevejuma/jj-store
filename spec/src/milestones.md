@@ -66,7 +66,7 @@ adds evidence here in its enclosing Jujutsu change.
 | M9.1        | Done        | M8a.4       | JST-PUB-007,JST-PUB-008                                                 | Independent code/agent/review roots, code-state fencing and non-destructive collaboration enablement                | Implement AgentStore typed root objects                 | E-M9-001                                                                                                                                                                                                                                                    |
 | M9.2        | Done        | M9.1        | JST-COLLAB-001,JST-COLLAB-002,JST-COLLAB-006                            | AgentStore model, immutable snapshots/catalogs, sanitized evidence and Codex/Cursor/OpenCode normalizers            | Implement M9.4 LocalTrusted APIs                        | E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009,E-M9-015,E-M9-016,E-M9-017,E-M9-018,E-M9-019,E-M9-020,E-M9-021,E-M9-022,E-M9-023                                                                                                    |
 | M9.3        | Done        | M9.2        | JST-COLLAB-001,JST-COLLAB-003,JST-PUB-009                               | ReviewStore exact anchors, stale-safe thread workflow, direct catalogs and conservative placement                   | Implement M9.4 LocalTrusted APIs                        | E-M9-010,E-M9-011,E-M9-012,E-M9-013,E-M9-014,E-M9-023                                                                                                                                                                                                       |
-| M9.4        | In progress | M9.2,M9.3   | JST-COLLAB-004                                                          | LocalTrusted bounded CLI/HTTP APIs, pagination, receipts and live collaboration hints                               | Add ReviewStore writes and CLI surfaces                 | E-M9-024,E-M9-025,E-M9-026,E-M9-027,E-M9-028,E-M9-029                                                                                                                                                                                                       |
+| M9.4        | In progress | M9.2,M9.3   | JST-COLLAB-004                                                          | LocalTrusted bounded CLI/HTTP APIs, pagination, receipts and live collaboration hints                               | Add collaboration CLI surfaces and live hints           | E-M9-024,E-M9-025,E-M9-026,E-M9-027,E-M9-028,E-M9-029,E-M9-030                                                                                                                                                                                              |
 | M9.5        | Planned     | M9.4        | JST-COLLAB-005                                                          | Community-owned thread/agent widgets and Design Core exact diff selection integrated into the application           | Implement accessible virtualized application routes     | -                                                                                                                                                                                                                                                           |
 | M9.6        | Planned     | M9.5        | JST-COLLAB-002,JST-COLLAB-006,JST-COLLAB-007                            | Three harness qualification, cold recovery, three-root native copy and bounded fault/security/browser acceptance    | Execute real harness and native recovery gates          | -                                                                                                                                                                                                                                                           |
 
@@ -14873,6 +14873,99 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Rust 1.98.1; ReviewStore schema v1; OpenAPI 3.1; TypeScript generated contracts; review thread page/detail response v1; cursor token jsr1.",
     "formats": "Adds two JSON GET review-thread routes and generated schemas. Collection cursors bind repository, epoch, publication position, manifest revision, exact ReviewStore root/state version, page size and last thread radix key while retaining the audited closure in bounded process memory. Detail resolves only the current stable-thread selection and its exact anchor, selected comments/bodies and event stream, with combined visible bodies limited to eight MiB. Native objects, manifest format 2, WAL, receipts and ReviewStore persistence remain unchanged."
+  },
+  {
+    "id": "E-M9-030",
+    "tasks": ["M9", "M9.4"],
+    "date": "2026-09-28",
+    "kind": "receipt-backed-review-commands",
+    "files": [
+      "crates/jj-store-cli/tests/native_lifecycle/http_collaboration_reviews.rs",
+      "crates/jj-store-http/src/contract.rs",
+      "crates/jj-store-http/src/contract/review_tests.rs",
+      "crates/jj-store-http/src/contract/tests.rs",
+      "crates/jj-store-http/src/error.rs",
+      "crates/jj-store-http/src/lib.rs",
+      "crates/jj-store-http/src/mutations.rs",
+      "crates/jj-store-http/src/review_mutations.rs",
+      "crates/jj-store-http/src/routes.rs",
+      "crates/jj-store-service/src/lib.rs",
+      "crates/jj-store-service/src/review_mutations.rs",
+      "crates/jj-store-wal/src/publication.rs",
+      "crates/jj-store-wal/src/publication/review_commands.rs",
+      "schemas/openapi.json",
+      "spec/src/api.md",
+      "spec/src/cli.md",
+      "spec/src/collaboration.md",
+      "spec/src/compatibility.md",
+      "spec/src/milestones.md",
+      "spec/src/mutations.md",
+      "spec/src/publication.md",
+      "spec/src/spec-governance.md",
+      "web/src/lib/api/generated.ts"
+    ],
+    "tests": [
+      "crates/jj-store-http/src/contract/review_tests.rs#collaboration_contract_exposes_receipt_backed_review_commands",
+      "crates/jj-store-cli/tests/native_lifecycle/http_collaboration_reviews.rs#local_trusted_http_pages_root_pinned_review_threads_and_resolves_detail"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-http contract::review_tests::collaboration_contract_exposes_receipt_backed_review_commands --locked -- --exact",
+        "result": "fail",
+        "failures": 1,
+        "note": "The test-first contract regression failed because the typed ReviewStore command and durable-status routes were absent."
+      },
+      {
+        "command": "cargo test -p jj-store-http contract::review_tests::collaboration_contract_exposes_receipt_backed_review_commands --locked -- --exact; cargo test -p jj-store-http contract:: --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "The exact new contract and all 11 collaboration/shared HTTP contract tests pass. The strict request has seven typed command variants and generated apply/status response schemas."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle http_collaboration_review_acceptance::local_trusted_http_pages_root_pinned_review_threads_and_resolves_detail --locked -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "The LocalTrusted fixture applies create and reply, reconstructs HTTP composition, returns the durable receipt from status and identical replay, rejects changed intent and stale workflow state, denies read-only publication, and preserves the root-pinned read behavior."
+      },
+      {
+        "command": "CC=<pinned-clang> CXX=<pinned-clang++> CMAKE=<qualified-cmake> BOOST_ROOT=<qualified-boost> pnpm contracts:generate; pnpm contracts:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Generated OpenAPI and TypeScript match; 70 actual HTTP/SSE responses including committed review commands, durable status, replay and not_known conform, and all six schema/client tests pass."
+      },
+      {
+        "command": "cargo fmt --all -- --check; cargo clippy -p jj-store-wal -p jj-store-service -p jj-store-http -p jj-store-cli --all-targets --locked -- -D warnings",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rust formatting and every affected WAL, service, HTTP and CLI target pass. New production modules contain 237 and 55 physical lines; the extended lifecycle regression remains below 500."
+      },
+      {
+        "command": "pnpm check:boundaries; pnpm check:architecture; pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 13 package boundaries, 198 governed web modules and 89 canonical requirements pass. The service consumes ReviewStore commands only through the WAL facade."
+      },
+      {
+        "command": "pnpm spec:first; pnpm exec prettier --check <changed specification files>",
+        "result": "fail",
+        "failures": 5,
+        "note": "The first final governance run identified two missing mapped chapter updates and formatting drift in three edited canonical files."
+      },
+      {
+        "command": "pnpm spec:first; pnpm check:progress; pnpm exec prettier --check <changed specification files>",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 15 protected files map to eight updated canonical chapters, all 61 progress tasks validate and every changed specification file is formatted."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "User-facing collaboration CLI commands and live hints remain M9.4 work.",
+      "Shared Community/Design Core presentation remains M9.5.",
+      "Real harness and cold native recovery remain M9.6."
+    ],
+    "versions": "Rust 1.98.1; ReviewCommandV1 and ReviewCommandResultV1 schema v1; ReviewCommand request/outcome/status response v1; OpenAPI 3.1; generated TypeScript contracts.",
+    "formats": "Adds JSON POST /v1/repos/{repo}/reviews/commands and GET /v1/repos/{repo}/reviews/commands/{request_id}. The service derives the authenticated principal and jj-store/review-publication/v1 publication ID, validates canonical result bytes and returns the existing manifest-selected receipt. Native objects, manifest format 2, WAL and ReviewStore persistence remain unchanged."
   }
 ]
 ```

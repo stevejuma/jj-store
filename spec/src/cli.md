@@ -452,6 +452,8 @@ checkpoint collection, current-detail and exact-version captures verify root
 continuity after publication and reject an immutable version from another
 checkpoint chain. A separate ReviewStore capture pages stable threads across a
 later review publication, resolves the current selected anchor, comments and
-events, and returns 404 for a missing stable thread. This adds no user-facing
-CLI command; ReviewStore writes and collaboration command presentation remain
-subsequent M9.4 work.
+events, and returns 404 for a missing stable thread. The same fixture applies
+typed ReviewStore commands, reconstructs the HTTP composition and validates
+durable status plus identical replay, stale preconditions, changed intent and
+read-only denial. This adds no user-facing CLI command; collaboration command
+presentation remains subsequent M9.4 work.

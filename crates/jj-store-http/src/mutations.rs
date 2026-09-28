@@ -11,6 +11,10 @@ pub(crate) const MAX_REQUEST_BYTES: usize = 512 * 1024;
 #[derive(Clone, Default)]
 pub(crate) struct Pending(Arc<OnceLock<m::RequestId>>);
 impl Pending {
+    pub(crate) fn set(&self, request_id: m::RequestId) {
+        let _ = self.0.set(request_id);
+    }
+
     pub(crate) fn response(&self) -> Option<Response> {
         self.0.get().map(|&request_id| {
             // Fixed small outcome envelope is independent of the larger result cap.
@@ -61,7 +65,7 @@ pub(super) async fn apply(
 ) -> Result<Response> {
     routes::input(args)?;
     let request = input(body)?;
-    let _ = pending.0.set(request.request_id);
+    pending.set(request.request_id);
     let result = state.commands.apply(context.session, &request).await?;
     Ok(state
         .json(&result)
@@ -75,7 +79,7 @@ pub(super) async fn status(
 ) -> Result<Response> {
     routes::input(args)?;
     let request_id = context.id("request_id")?;
-    let _ = pending.0.set(request_id);
+    pending.set(request_id);
     let result = state.commands.status(context.session, request_id).await?;
     Ok(state
         .json(&result)

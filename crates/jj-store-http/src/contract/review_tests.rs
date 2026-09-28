@@ -58,3 +58,39 @@ fn collaboration_contract_exposes_root_pinned_review_threads() {
         );
     }
 }
+
+#[test]
+fn collaboration_contract_exposes_receipt_backed_review_commands() {
+    let doc = super::openapi();
+    let apply = &doc["paths"]["/v1/repos/{repo}/reviews/commands"]["post"];
+    assert_eq!(apply["tags"], serde_json::json!(["collaboration"]));
+    assert_eq!(
+        apply["responses"]["200"]["content"]["application/json"]["schema"]["$ref"],
+        "#/components/schemas/ReviewCommandOutcome"
+    );
+    let request = &apply["requestBody"]["content"]["application/json"]["schema"];
+    assert_eq!(
+        request["required"],
+        serde_json::json!(["version", "request_id", "command"])
+    );
+    assert_eq!(
+        request["properties"]["command"]["oneOf"]
+            .as_array()
+            .unwrap()
+            .len(),
+        7
+    );
+
+    let status = &doc["paths"]["/v1/repos/{repo}/reviews/commands/{request_id}"]["get"];
+    assert_eq!(status["tags"], serde_json::json!(["collaboration"]));
+    assert_eq!(
+        status["responses"]["200"]["content"]["application/json"]["schema"]["$ref"],
+        "#/components/schemas/ReviewCommandStatus"
+    );
+    assert!(
+        status["description"]
+            .as_str()
+            .unwrap()
+            .contains("not_known never proves rejection")
+    );
+}

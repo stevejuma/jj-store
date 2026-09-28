@@ -405,4 +405,9 @@ detail routes. Their generated schemas own the review read snapshot, thread
 summary/page/detail, anchor, selected comment content and immutable event DTOs.
 Collection continuations use the distinct `jsr1` signature domain; existing
 `jsa1` AgentStore continuations and every persistence format remain unchanged.
-Captured LocalTrusted responses validate both handlers.
+It additionally registers typed review-command apply and durable-status routes.
+Their strict request omits principal/publication identity; generated outcomes
+retain the exact request, derived publication, intent digest, accepted snapshot
+and immutable ReviewStore result identities. Captured LocalTrusted responses
+validate all four handlers, replay and `not_known` status without changing WAL,
+manifest or ReviewStore object formats.

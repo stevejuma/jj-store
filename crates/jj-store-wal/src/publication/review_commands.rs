@@ -40,6 +40,14 @@ impl ReviewCommandRequest {
         hash.update(records::encode(&(repository, self), 8 * 1024 * 1024)?);
         Ok(IntentDigest::new(hash.finalize().into()))
     }
+
+    pub fn intent_digest(
+        &self,
+        repository: RepositoryId,
+    ) -> std::result::Result<IntentDigest, ReviewCommandError> {
+        self.validate()?;
+        self.intent(repository).map_err(Into::into)
+    }
 }
 
 #[derive(Debug, thiserror::Error)]

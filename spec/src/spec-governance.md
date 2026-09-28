@@ -165,12 +165,13 @@ exact snapshot pinning, signed query-bound forward/backward continuations and
 zero publication rather than validating generated shapes alone.
 
 The generated-contract lane also executes the registered LocalTrusted AgentStore
-session, transcript, relation and checkpoint handlers. Separate exact fixtures
+session, transcript, relation and checkpoint handlers plus ReviewStore
+collection, detail, command and durable-status handlers. Separate exact fixtures
 capture collection/detail responses, preserve one root snapshot across resumed
-pages and validate current plus historical immutable checkpoint detail against
-generated OpenAPI. Every fixture must report one executed test. A zero-test
-filter, schema-only assertion or uncaptured response cannot count as
-collaboration transport evidence.
+pages, validate current plus historical immutable checkpoint detail and replay a
+review receipt after transport reconstruction against generated OpenAPI. Every
+fixture must report one executed test. A zero-test filter, schema-only assertion
+or uncaptured response cannot count as collaboration transport evidence.
 
 Browser checks include Svelte/TypeScript analysis, focused client tests and cold
 Playwright interactions/accessibility against built assets. Functional and

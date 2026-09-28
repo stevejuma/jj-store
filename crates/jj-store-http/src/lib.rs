@@ -8,6 +8,7 @@ mod dto;
 mod error;
 mod mutations;
 mod repositories;
+mod review_mutations;
 mod routes;
 mod search;
 pub use search::SearchIndex;
@@ -141,6 +142,7 @@ struct State {
     operation_browser: OperationBrowserPager,
     agent_sessions: AgentSessionPager,
     review_threads: ReviewThreadPager,
+    review_commands: jj_store_service::review_mutations::ReviewCommandService,
     tasks: index_tasks::IndexTasks,
     commands: jj_store_service::mutations::CommandService,
     uploads: jj_store_service::uploads::Uploads,
@@ -220,6 +222,7 @@ impl HttpApi {
             .map_err(|_| "HTTP collaboration cursor limits")?;
         let review_threads = ReviewThreadPager::new(paging_limits, Arc::new(SystemClock))
             .map_err(|_| "HTTP review cursor limits")?;
+        let review_commands = jj_store_service::review_mutations::ReviewCommandService;
         let tasks = index_tasks::IndexTasks::new(
             queries.graph().clone(),
             index_tasks::Limits {
@@ -250,6 +253,7 @@ impl HttpApi {
             operation_browser,
             agent_sessions,
             review_threads,
+            review_commands,
             tasks,
             commands,
             uploads,

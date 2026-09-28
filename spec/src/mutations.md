@@ -44,6 +44,14 @@ principal's prepared request. Domain writes do not run native history semantics
 because they preserve code heads and code-state version through their separate
 manifest root.
 
+ReviewStore commands use a separate typed service over that same guarded domain
+publication. The HTTP request carries only version, request ID and validated
+semantic command. The service derives principal and repository-bound publication
+ID, validates the committed result bytes and exact receipt identity,
+reauthorizes after publication or status lookup, and emits only a freshness hint
+after commitment. Apply returns `outcome_unknown` when commitment cannot be
+classified; status returning `not_known` is never treated as rejection.
+
 ## Native publication policy
 
 Native publications must descend from every removed committed operation. Strict
