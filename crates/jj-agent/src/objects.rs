@@ -1,9 +1,11 @@
 use crate::{
-    AgentContentV1, AgentEventBatchV1, AgentIndexPageV1, AgentObjectId, AgentSessionSnapshotV1,
-    Result, SanitizedObservationBatchV1, ToolInvocationSnapshotV1, TranscriptChunkV1,
-    TranscriptManifestV1, TranscriptPageV1,
+    AgentCheckpointVersionV1, AgentContentV1, AgentEventBatchV1, AgentIndexPageV1, AgentObjectId,
+    AgentSessionSnapshotV1, CodeAssociationV1, Result, SanitizedObservationBatchV1,
+    ToolInvocationSnapshotV1, TranscriptChunkV1, TranscriptManifestV1, TranscriptPageV1,
 };
+use jj_store_model::ObjectKey;
 use serde::{Deserialize, Serialize};
+use std::collections::BTreeSet;
 
 #[derive(
     Clone,
@@ -72,6 +74,8 @@ pub enum AgentObjectV1 {
     TranscriptPage(TranscriptPageV1),
     TranscriptChunk(TranscriptChunkV1),
     Content(AgentContentV1),
+    CheckpointVersion(AgentCheckpointVersionV1),
+    Association(CodeAssociationV1),
 }
 impl AgentObjectV1 {
     pub const fn kind(&self) -> AgentObjectKind {
@@ -85,6 +89,8 @@ impl AgentObjectV1 {
             Self::TranscriptPage(_) => AgentObjectKind::TranscriptPage,
             Self::TranscriptChunk(_) => AgentObjectKind::TranscriptChunk,
             Self::Content(_) => AgentObjectKind::Content,
+            Self::CheckpointVersion(_) => AgentObjectKind::CheckpointVersion,
+            Self::Association(_) => AgentObjectKind::Association,
         }
     }
     pub fn validate(&self) -> Result<()> {
@@ -98,6 +104,8 @@ impl AgentObjectV1 {
             Self::TranscriptPage(value) => value.validate(),
             Self::TranscriptChunk(value) => value.validate(),
             Self::Content(value) => value.validate(),
+            Self::CheckpointVersion(value) => value.validate(),
+            Self::Association(value) => value.validate(),
         }
     }
     pub fn dependencies(&self) -> Result<Vec<AgentObjectRef>> {
@@ -110,6 +118,16 @@ impl AgentObjectV1 {
             Self::EventBatch(value) => value.dependencies()?.into_iter().collect(),
             Self::TranscriptManifest(value) => value.dependencies()?.into_iter().collect(),
             Self::TranscriptPage(value) => value.dependencies()?.into_iter().collect(),
+            Self::CheckpointVersion(value) => value.dependencies()?.into_iter().collect(),
+            Self::Association(value) => value.dependencies()?.into_iter().collect(),
         })
+    }
+    pub fn native_dependencies(&self) -> Result<BTreeSet<ObjectKey>> {
+        self.validate()?;
+        match self {
+            Self::CheckpointVersion(value) => value.native_dependencies(),
+            Self::Association(value) => value.native_dependencies(),
+            _ => Ok(BTreeSet::new()),
+        }
     }
 }

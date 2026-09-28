@@ -61,9 +61,9 @@ adds evidence here in its enclosing Jujutsu change.
 | M7          | Deferred    | M8a         | JST-ADAPT-005                                                           | Complete read-only replica through applied position                                                                 | After first release                                     | -                                                                                                                                                                                                                          |
 | M7.1        | Deferred    | M8a.4       | JST-ADAPT-006                                                           | Asynchronous verified S3 backup remains independent from passive serving and promotion                              | Future backup release after local application           | -                                                                                                                                                                                                                          |
 | M8b         | Deferred    | M8a         | JST-COMPAT-004                                                          | Verified lossless import with source safety                                                                         | Separate migration release                              | -                                                                                                                                                                                                                          |
-| M9          | Partial     | M8a.4       | JST-COLLAB-001,JST-COLLAB-005                                           | Repository-native agent activity and exact review discussions in the LocalTrusted application                       | Add checkpoints, normalizers and capture integrations   | E-M9-001,E-M9-002,E-M9-003,E-M9-004                                                                                                                                                                                        |
+| M9          | Partial     | M8a.4       | JST-COLLAB-001,JST-COLLAB-005                                           | Repository-native agent activity and exact review discussions in the LocalTrusted application                       | Add typed deltas, normalizers and capture integrations  | E-M9-001,E-M9-002,E-M9-003,E-M9-004,E-M9-005                                                                                                                                                                               |
 | M9.1        | Done        | M8a.4       | JST-PUB-007,JST-PUB-008                                                 | Independent code/agent/review roots, code-state fencing and non-destructive collaboration enablement                | Implement AgentStore typed root objects                 | E-M9-001                                                                                                                                                                                                                   |
-| M9.2        | In progress | M9.1        | JST-COLLAB-001,JST-COLLAB-002,JST-COLLAB-006                            | AgentStore model, immutable snapshots/catalogs, sanitized evidence and Codex/Cursor/OpenCode normalizers            | Add checkpoints, typed deltas and harness normalizers   | E-M9-002,E-M9-003,E-M9-004                                                                                                                                                                                                 |
+| M9.2        | In progress | M9.1        | JST-COLLAB-001,JST-COLLAB-002,JST-COLLAB-006                            | AgentStore model, immutable snapshots/catalogs, sanitized evidence and Codex/Cursor/OpenCode normalizers            | Add root-pinned facade, typed deltas and normalizers    | E-M9-002,E-M9-003,E-M9-004,E-M9-005                                                                                                                                                                                        |
 | M9.3        | Planned     | M9.2        | JST-COLLAB-001,JST-COLLAB-003                                           | ReviewStore exact artifact anchors and stale-safe thread/comment workflow                                           | Add exact anchors and review command store              | -                                                                                                                                                                                                                          |
 | M9.4        | Planned     | M9.2,M9.3   | JST-COLLAB-004                                                          | LocalTrusted bounded CLI/HTTP APIs, pagination, receipts and live collaboration hints                               | Wire first-party service and generated contracts        | -                                                                                                                                                                                                                          |
 | M9.5        | Planned     | M9.4        | JST-COLLAB-005                                                          | Community-owned thread/agent widgets and Design Core exact diff selection integrated into the application           | Implement accessible virtualized application routes     | -                                                                                                                                                                                                                          |
@@ -12484,6 +12484,77 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Rust 1.98.1; @lapismd/agent-redaction 0.1.0 at sibling revision 9583b512; Codex CLI 0.156.1; Cursor 3.22.7; OpenCode 1.18.30.",
     "formats": "The Node adapter returns only an allowlisted capture-ready DTO plus the agent-redaction policy identity and sanitization summary. It admits the three initial integration IDs and the source-kind vocabulary owned by SanitizedObservationV1."
+  },
+  {
+    "id": "E-M9-005",
+    "tasks": ["M9", "M9.2"],
+    "date": "2026-09-28",
+    "kind": "implementation",
+    "files": [
+      "crates/jj-agent/src/lib.rs",
+      "crates/jj-agent/src/objects.rs",
+      "crates/jj-agent/src/provenance.rs",
+      "crates/jj-agent/tests/provenance.rs",
+      "crates/jj-store-wal/src/publication.rs",
+      "crates/jj-store-wal/src/publication/agent.rs",
+      "crates/jj-store-wal/src/publication/domains.rs",
+      "crates/jj-store-wal/tests/publication.rs",
+      "spec/src/collaboration.md",
+      "spec/src/publication.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "crates/jj-agent/tests/provenance.rs#associations_separate_agent_edges_from_native_retention_roots",
+      "crates/jj-agent/tests/provenance.rs#checkpoints_pin_exact_agent_versions_and_native_anchors",
+      "crates/jj-agent/tests/provenance.rs#invalid_causality_and_paths_fail_closed",
+      "crates/jj-store-wal/tests/publication.rs#agent_publication_retains_exact_native_association_dependencies"
+    ],
+    "runs": [
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-agent --test provenance --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "The test-first compile proved that checkpoint/code-association schemas and native retention roots did not exist."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-wal --test publication agent_publication_retains_exact_native_association_dependencies --locked -- --exact",
+        "result": "fail",
+        "failures": 1,
+        "note": "The focused publication test proved that agent-only publication did not add a selected association's native operation and commit closures to inventory."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-agent --locked; DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-wal --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All ten AgentStore model tests and all 32 WAL inventory/publication tests pass, including exact native retention, missing-source rejection and cold recovery."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo clippy -p jj-agent -p jj-store-wal --all-targets --locked -- -D warnings; DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo fmt --all -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both affected crates are warning-free and match the pinned Rust formatting policy. Provenance and domain-publication modules remain below 300 counted lines."
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/collaboration.md spec/src/publication.md spec/src/milestones.md",
+        "result": "fail",
+        "failures": 2,
+        "note": "The focused formatter required mechanical prose reflow in collaboration.md and publication.md."
+      },
+      {
+        "command": "pnpm check:boundaries; pnpm test:governance; pnpm spec:validate; pnpm spec:first; pnpm check:progress; pnpm spec:build; pnpm exec prettier --check <changed prose>; DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo fmt --all -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 12 package boundaries, 26 governance tests, 84 requirements, eight mapped protected files and 60 task records pass, and the canonical book builds. Prettier and Rust formatting pass; provenance.rs is 279 and domains.rs is 297 counted lines."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "AgentStore root-pinned read/staging facade and typed publication deltas",
+      "Version-bound Codex, Cursor and OpenCode fixtures and normalizers",
+      "Released registry acceptance for @lapismd/agent-redaction"
+    ],
+    "versions": "Rust 1.98.1; AgentStore checkpoint/code-association schema v1; manifest format 2.",
+    "formats": "AgentCheckpointVersionV1 and CodeAssociationV1 separate immutable AgentStore edges, stable lookup identities and exact native operation/commit retention roots. Agent domain publication extends the existing verified native inventory without changing code state."
   }
 ]
 ```

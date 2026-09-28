@@ -1024,13 +1024,24 @@ impl Coordinator {
                 .get(manifest.initial_settings, RecordKind::Settings)
                 .await?;
             self.settings(&snapshot).await?;
+            let mut domain_native = BTreeSet::new();
             if let Some(domains) = manifest.domains() {
-                self.read_domain_root(Domain::Agent, domains.agent.root)
-                    .await?;
-                self.read_domain_root(Domain::Review, domains.review.root)
-                    .await?;
+                domain_native.extend(
+                    self.read_domain_root(Domain::Agent, domains.agent.root)
+                        .await?,
+                );
+                domain_native.extend(
+                    self.read_domain_root(Domain::Review, domains.review.root)
+                        .await?,
+                );
             }
             let inventory = self.inventory(&snapshot, max_entries).await?;
+            let inventory_keys: BTreeSet<_> = inventory.iter().map(|node| node.key).collect();
+            if !domain_native.is_subset(&inventory_keys) {
+                return Err(Error::Corrupt(
+                    "domain native dependency missing from inventory",
+                ));
+            }
             let mut remaining = self.limits.inventory.max_new_bytes;
             for expected in inventory {
                 let actual = self.source.load_verified(expected.key, remaining).await?;
@@ -1108,10 +1119,25 @@ impl Coordinator {
                         return Err(Error::Corrupt("manifest folded state"));
                     }
                     for domains in [tx.before_domains, tx.after_domains].into_iter().flatten() {
-                        self.read_domain_root(Domain::Agent, domains.agent.root)
+                        let mut native = self
+                            .read_domain_root(Domain::Agent, domains.agent.root)
                             .await?;
-                        self.read_domain_root(Domain::Review, domains.review.root)
-                            .await?;
+                        native.extend(
+                            self.read_domain_root(Domain::Review, domains.review.root)
+                                .await?,
+                        );
+                        for key in native {
+                            if self
+                                .catalog
+                                .get(tx.inventory, object_key(key))
+                                .await?
+                                .is_none()
+                            {
+                                return Err(Error::Corrupt(
+                                    "historical domain native dependency missing",
+                                ));
+                            }
+                        }
                     }
                     after = tx.after.position;
                 }

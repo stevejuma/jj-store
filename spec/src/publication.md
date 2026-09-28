@@ -69,9 +69,10 @@ Format 2 manifests select canonical AgentStore and ReviewStore roots alongside
 native code state. Each domain has an independent version, while one global WAL
 sequence and manifest revision retain total publication order. Code transitions
 preserve both collaboration roots; agent and review transitions preserve native
-heads, settings, inventories and the sibling collaboration root. Cold recovery
-verifies selected current and historical roots without Tantivy, Nostr or a
-second manifest.
+heads, settings and the sibling collaboration root. A domain transition may
+extend the selected native inventory only with complete verified closures that
+its typed artifacts strongly reference. Cold recovery verifies selected current
+and historical roots without Tantivy, Nostr or a second manifest.
 
 Agent roots are typed `AgentRootV1` records rather than caller-supplied opaque
 payloads. Their catalog and selected object edges use repository-bound immutable
@@ -79,6 +80,14 @@ record envelopes. Staging validates canonical schemas, semantic object kinds and
 a bounded transitive dependency closure; publication repeats that audit before
 CAS, and recovery repeats it before returning authority. Review roots remain
 bounded opaque foundation records until the ReviewStore schema slice.
+
+Checkpoint and association objects expose native operation/commit retention
+roots separately from AgentStore object edges. Staging verifies those native
+closures through the repository-bound dependency source. Agent publication adds
+them to the same selected inventory without reporting them as newly published
+code or changing native heads/code-state version. Recovery requires every
+current and historical domain retention root in that publication's exact
+inventory and verifies its stored descriptor and transitive native closure.
 
 An authorized collaboration-enable request upgrades a format 1 manifest by
 appending a receipt-bearing WAL event. The event selects deterministic empty

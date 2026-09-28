@@ -71,6 +71,22 @@ sufficient for direct reconstruction; they have no indispensable
 previous-manifest link. Checkpoint discovery remains in its root-level catalog,
 so a session snapshot has no mutable or circular checkpoint reference.
 
+Checkpoint versions pin exact session, transcript, event, tool and association
+objects plus complete before/after native operation and commit anchor sets. They
+distinguish changed, verified no-change and not-observed code relations; a
+failed tool can still have changed code. Completeness, capture status and
+execution outcome remain independent. Superseded checkpoints are immutable
+strong edges and cannot point back from a session snapshot.
+
+Code associations are many-to-many assertions with stable association, session,
+optional checkpoint/turn/tool/scope identities, full native IDs, optional JJ
+change IDs, repository-relative paths, evidence method, trust, coverage and
+exclusivity. Correction versions must name a prior immutable association and a
+reason. File claims reject absolute or traversing paths, and manual assertions
+cannot masquerade as stronger evidence. Stable IDs and JJ change IDs are lookup
+facts; exact operation/commit IDs and immutable evidence objects are retention
+edges.
+
 ## Capture sanitization boundary
 
 The Node capture boundary uses `@lapismd/agent-redaction` 0.1.0 at source

@@ -137,7 +137,7 @@ impl Coordinator {
         request: &DomainRequest,
         intent: IntentDigest,
     ) -> Result<Receipt> {
-        self.read_domain_root(request.domain, request.root).await?;
+        let native_roots = self.read_domain_root(request.domain, request.root).await?;
         for _ in 0..self.limits.cas_attempts {
             let base = self.read().await?;
             self.guard.authorize_domain(&base, request).await?;
@@ -156,6 +156,15 @@ impl Coordinator {
             if base.manifest.domain_state(request.domain) != Some(request.expected) {
                 return Err(Error::Stale);
             }
+            let inventory = if native_roots.is_empty() {
+                base.manifest.inventory
+            } else {
+                let delta = self
+                    .verify_delta(base.manifest.inventory, native_roots.iter().copied())
+                    .await?;
+                self.persist_inventory(base.manifest.inventory, &delta)
+                    .await?
+            };
             let position = WalPosition(
                 base.manifest
                     .published
@@ -219,7 +228,7 @@ impl Coordinator {
                 previous_manifest: base.digest,
                 previous: base.manifest.tail,
                 receipt: receipt_ref,
-                inventory: base.manifest.inventory,
+                inventory,
                 settings: base.manifest.settings,
                 kind: request.domain.semantic_kind(),
                 published_operations: BTreeSet::new(),
@@ -247,6 +256,7 @@ impl Coordinator {
                 tail: Some(tail),
                 receipts,
                 history,
+                inventory,
                 agent_root: Some(after_domains.agent.root),
                 agent_state_version: after_domains.agent.version,
                 review_root: Some(after_domains.review.root),
@@ -276,18 +286,23 @@ impl Coordinator {
         Err(Error::Contended)
     }
 
-    pub(super) async fn read_domain_root(&self, domain: Domain, root: RecordRef) -> Result<()> {
+    pub(super) async fn read_domain_root(
+        &self,
+        domain: Domain,
+        root: RecordRef,
+    ) -> Result<BTreeSet<ObjectKey>> {
         match domain {
             Domain::Agent => {
-                self.read_agent_root(root).await?;
+                let (_, native) = self.read_agent_root_dependencies(root).await?;
+                Ok(native)
             }
             Domain::Review => {
                 let value: ReviewRoot = self.records.get(root, RecordKind::ReviewRoot).await?;
                 if value.format != 1 || value.payload.len() as u64 > MAX_DOMAIN_ROOT {
                     return Err(Error::Corrupt("domain root"));
                 }
+                Ok(BTreeSet::new())
             }
         }
-        Ok(())
     }
 }

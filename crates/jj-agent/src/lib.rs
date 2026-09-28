@@ -7,6 +7,7 @@ mod catalog;
 mod codec;
 mod ids;
 mod objects;
+mod provenance;
 mod transcript;
 
 pub use activity::*;
@@ -15,6 +16,7 @@ pub use catalog::*;
 pub use codec::{decode_object, decode_root, encode_object, encode_root};
 pub use ids::*;
 pub use objects::*;
+pub use provenance::*;
 pub use transcript::*;
 
 pub type Result<T> = std::result::Result<T, Error>;

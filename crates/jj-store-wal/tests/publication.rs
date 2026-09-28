@@ -1,6 +1,9 @@
 //! Fault matrix for atomic visibility, idempotency, concurrency and recovery.
 use jj_agent::{
-    AgentIndexPageV1, AgentObjectId, AgentObjectKind, AgentObjectRef, AgentObjectV1, AgentRootV1,
+    AgentCatalogKey, AgentCheckpointId, AgentIndexPageV1, AgentObjectId, AgentObjectKind,
+    AgentObjectRef, AgentObjectV1, AgentRootV1, AgentSessionId, AssociationGranularity,
+    AssociationId, AssociationRelation, CodeAnchorV1, CodeAssociationV1, CompletenessV1,
+    CoverageV1, EvidenceMethod, SourceTrust,
 };
 use jj_store_model::*;
 use jj_store_object::{memory::MemoryStore, *};
@@ -46,38 +49,56 @@ const REPO: RepositoryId = RepositoryId::new([1; 16]);
 fn op(n: u8) -> OperationId {
     OperationId::new([n; 64])
 }
+fn commit(n: u8) -> CommitId {
+    CommitId::new([n; 64])
+}
 struct Source {
     scope: SourceScope,
     nodes: BTreeMap<ObjectKey, VerifiedNode>,
 }
 impl Source {
     fn new() -> Self {
+        let mut nodes: BTreeMap<_, _> = (0..=128)
+            .map(|n| {
+                let key = ObjectKey::Operation(op(n));
+                (
+                    key,
+                    VerifiedNode {
+                        key,
+                        representation: if n == 0 {
+                            Representation::Virtual
+                        } else {
+                            Representation::Stored {
+                                envelope_digest: EnvelopeDigest::new([n; 32]),
+                                bytes: 100,
+                            }
+                        },
+                        dependencies: if n == 0 {
+                            BTreeSet::new()
+                        } else {
+                            BTreeSet::from([ObjectKey::Operation(op(0))])
+                        },
+                    },
+                )
+            })
+            .collect();
+        nodes.extend((1..=128).map(|n| {
+            let key = ObjectKey::Commit(commit(n));
+            (
+                key,
+                VerifiedNode {
+                    key,
+                    representation: Representation::Stored {
+                        envelope_digest: EnvelopeDigest::new([n; 32]),
+                        bytes: 100,
+                    },
+                    dependencies: BTreeSet::new(),
+                },
+            )
+        }));
         Self {
             scope: SourceScope::new(REPO),
-            nodes: (0..=128)
-                .map(|n| {
-                    let key = ObjectKey::Operation(op(n));
-                    (
-                        key,
-                        VerifiedNode {
-                            key,
-                            representation: if n == 0 {
-                                Representation::Virtual
-                            } else {
-                                Representation::Stored {
-                                    envelope_digest: EnvelopeDigest::new([n; 32]),
-                                    bytes: 100,
-                                }
-                            },
-                            dependencies: if n == 0 {
-                                BTreeSet::new()
-                            } else {
-                                BTreeSet::from([ObjectKey::Operation(op(0))])
-                            },
-                        },
-                    )
-                })
-                .collect(),
+            nodes,
         }
     }
 }
@@ -366,6 +387,111 @@ async fn agent_roots_require_complete_typed_dependency_closures() {
     assert!(matches!(
         c.stage_agent_object(&parent).await,
         Err(wal::Error::Corrupt("agent object kind"))
+    ));
+}
+
+#[tokio::test]
+async fn agent_publication_retains_exact_native_association_dependencies() {
+    let (_, c) = fixture().await;
+    let initial = c.read().await.unwrap();
+    let association = CodeAssociationV1 {
+        schema_version: 1,
+        association_id: AssociationId::new([80; 16]),
+        checkpoint_id: Some(AgentCheckpointId::new([81; 16])),
+        session_id: AgentSessionId::new([82; 16]),
+        turn_id: None,
+        tool_call_ids: BTreeSet::new(),
+        scope_id: None,
+        relation: AssociationRelation::ObservedDuringInterval,
+        before: CodeAnchorV1 {
+            operations: BTreeSet::from([op(125)]),
+            commits: BTreeSet::from([commit(126)]),
+        },
+        after: CodeAnchorV1 {
+            operations: BTreeSet::from([op(127)]),
+            commits: BTreeSet::from([commit(128)]),
+        },
+        changes: BTreeSet::new(),
+        paths: Vec::new(),
+        granularity: AssociationGranularity::SnapshotInterval,
+        evidence_method: EvidenceMethod::HookBoundary,
+        source_trust: SourceTrust::LocalUserHook,
+        exclusive_write_scope: false,
+        evidence: Vec::new(),
+        coverage: CoverageV1 {
+            completeness: CompletenessV1::Complete,
+            gaps: 0,
+            redacted_fields: 0,
+            truncated: false,
+        },
+        created_at_millis: 1_790_000_000_000,
+        supersedes: None,
+        correction_reason: None,
+    };
+    let mut missing = association.clone();
+    missing.association_id = AssociationId::new([84; 16]);
+    missing.before = CodeAnchorV1 {
+        operations: BTreeSet::from([op(250)]),
+        commits: BTreeSet::new(),
+    };
+    missing.after = CodeAnchorV1::default();
+    let association = c
+        .stage_agent_object(&AgentObjectV1::Association(association))
+        .await
+        .unwrap();
+    let page = c
+        .stage_agent_object(&AgentObjectV1::IndexPage(AgentIndexPageV1::Leaf {
+            prefix: String::new(),
+            entries: BTreeMap::from([(
+                AgentCatalogKey::derive("association", &[80; 16]).unwrap(),
+                association,
+            )]),
+        }))
+        .await
+        .unwrap();
+    let root = c
+        .stage_agent_root(&AgentRootV1 {
+            associations: Some(page),
+            ..AgentRootV1::empty()
+        })
+        .await
+        .unwrap();
+    let request = DomainRequest::new(
+        PrincipalId::new([3; 16]),
+        RequestId::new([83; 16]),
+        PublicationId::new([83; 16]),
+        Domain::Agent,
+        initial.manifest().domain_state(Domain::Agent).unwrap(),
+        root,
+        Vec::new(),
+    )
+    .unwrap();
+    committed(c.publish_domain(&request).await.unwrap());
+
+    let selected = c.read().await.unwrap();
+    let retained: BTreeSet<_> = c
+        .inventory(&selected, 128)
+        .await
+        .unwrap()
+        .into_iter()
+        .map(|node| node.key)
+        .collect();
+    for key in [
+        ObjectKey::Operation(op(125)),
+        ObjectKey::Commit(commit(126)),
+        ObjectKey::Operation(op(127)),
+        ObjectKey::Commit(commit(128)),
+    ] {
+        assert!(retained.contains(&key));
+    }
+    assert_eq!(c.recover(128).await.unwrap().manifest().published.0, 1);
+
+    assert!(matches!(
+        c.stage_agent_object(&AgentObjectV1::Association(missing))
+            .await,
+        Err(wal::Error::Inventory(
+            wal::inventory::InventoryError::Source(_)
+        ))
     ));
 }
 fn request(n: u8, remove: &[u8], add: u8) -> Request {

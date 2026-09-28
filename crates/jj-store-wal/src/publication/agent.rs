@@ -7,7 +7,9 @@ const MAX_AGENT_DEPENDENCIES: usize = 4096;
 impl Coordinator {
     pub async fn stage_agent_object(&self, object: &AgentObjectV1) -> Result<AgentObjectRef> {
         let dependencies = object.dependencies().map_err(agent_error)?;
-        self.audit_agent_dependencies(dependencies).await?;
+        let mut native = object.native_dependencies().map_err(agent_error)?;
+        native.extend(self.audit_agent_dependencies(dependencies).await?);
+        self.verify_delta(None, native).await?;
         let reference = self
             .records
             .put(RecordKind::AgentObject, None, object)
@@ -20,19 +22,33 @@ impl Coordinator {
 
     pub async fn stage_agent_root(&self, root: &AgentRootV1) -> Result<RecordRef> {
         let dependencies = root.dependencies().map_err(agent_error)?;
-        self.audit_agent_dependencies(dependencies).await?;
+        let native = self.audit_agent_dependencies(dependencies).await?;
+        self.verify_delta(None, native).await?;
         self.records.put(RecordKind::AgentRoot, None, root).await
     }
 
     pub async fn read_agent_root(&self, reference: RecordRef) -> Result<AgentRootV1> {
-        let root: AgentRootV1 = self.records.get(reference, RecordKind::AgentRoot).await?;
-        let dependencies = root.dependencies().map_err(agent_error)?;
-        self.audit_agent_dependencies(dependencies).await?;
+        let (root, native) = self.read_agent_root_dependencies(reference).await?;
+        self.verify_delta(None, native).await?;
         Ok(root)
     }
 
-    async fn audit_agent_dependencies(&self, mut pending: Vec<AgentObjectRef>) -> Result<()> {
+    pub(super) async fn read_agent_root_dependencies(
+        &self,
+        reference: RecordRef,
+    ) -> Result<(AgentRootV1, BTreeSet<ObjectKey>)> {
+        let root: AgentRootV1 = self.records.get(reference, RecordKind::AgentRoot).await?;
+        let dependencies = root.dependencies().map_err(agent_error)?;
+        let native = self.audit_agent_dependencies(dependencies).await?;
+        Ok((root, native))
+    }
+
+    async fn audit_agent_dependencies(
+        &self,
+        mut pending: Vec<AgentObjectRef>,
+    ) -> Result<BTreeSet<ObjectKey>> {
         let mut seen = BTreeSet::new();
+        let mut native = BTreeSet::new();
         while let Some(reference) = pending.pop() {
             if !seen.insert(reference) {
                 continue;
@@ -49,9 +65,10 @@ impl Coordinator {
             if object.kind() != reference.kind {
                 return Err(Error::Corrupt("agent object kind"));
             }
+            native.extend(object.native_dependencies().map_err(agent_error)?);
             pending.extend(object.dependencies().map_err(agent_error)?);
         }
-        Ok(())
+        Ok(native)
     }
 }
 
