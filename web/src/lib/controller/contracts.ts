@@ -1,4 +1,7 @@
 import type { FileListingViewMode } from "@lapismd/design-core/diff";
+import type { Model } from "../api/client.js";
+export type StoreConflictDescriptor = Model<"ConflictDescriptor">;
+export type StoreConflictUpload = Model<"ConflictUpload">;
 import type { CommunityMemberModel } from "../ui/community-workspace/model.js";
 import type { StorePage } from "../ui/community-navigation/model.js";
 import type { RepositoryLogGraph } from "../projects/repository-log.js";
@@ -99,6 +102,9 @@ export interface StoreControllerState {
   readonly operationHeads: readonly string[];
   readonly comparisonParents: readonly string[];
   readonly conflictCount: number | null;
+  readonly conflicts: readonly StoreConflictDescriptor[];
+  readonly conflictResolutionActions: readonly string[];
+  readonly conflictUploadBytes: number | bigint;
   readonly unavailableComparisonCount: number;
   readonly canLoadMoreBookmarks: boolean;
   readonly canLoadMoreGraph: boolean;
@@ -140,6 +146,12 @@ export interface StoreController {
     applyMutation(): Promise<void>;
     checkMutationStatus(): Promise<void>;
     resetMutation(): void;
+    uploadConflict(
+      commit: string,
+      path: string,
+      fingerprint: string,
+      bytes: Uint8Array,
+    ): Promise<StoreConflictUpload>;
     setFileViewMode(mode: FileListingViewMode): void | Promise<void>;
     toggleDirectory(path: string): void | Promise<void>;
     openRepository(id: string): void | Promise<void>;

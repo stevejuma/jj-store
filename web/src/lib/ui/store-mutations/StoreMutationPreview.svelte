@@ -26,4 +26,9 @@
     <dd>{bookmarkNames.join(", ")}</dd>{/if}
   {#if result.abandoned?.length}<dt>Abandoned commits</dt>
     <dd>{result.abandoned.length}</dd>{/if}
+  {#if result.conflict_resolution}<dt>Conflict paths</dt>
+    <dd>{result.conflict_resolution.selected_paths.join(", ")}</dd>
+    <dt>Remaining conflicts</dt>
+    <dd>{Object.values(result.conflict_resolution.remaining).flat().length}</dd>
+  {/if}
 </dl>

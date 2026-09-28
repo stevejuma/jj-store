@@ -117,13 +117,13 @@
   }}
   play={async ({ canvasElement }) => {
     const page = within(canvasElement.ownerDocument.body);
-    await expect(page.getByRole("status")).toHaveTextContent(
+    await expect(await page.findByRole("status")).toHaveTextContent(
       "Search is not configured",
     );
     await userEvent.click(page.getByRole("button", { name: "Close search" }));
     await expect(
-      page.getByRole("dialog", { name: "Search repository", hidden: true }),
-    ).toHaveAttribute("data-state", "closed");
+      canvasElement.querySelector("[data-search-open]"),
+    ).toHaveAttribute("data-search-open", "false");
   }}
 >
   {#snippet template(args)}

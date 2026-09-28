@@ -1,0 +1,101 @@
+.store-conflict-editor__paths {
+  display: grid;
+  gap: 0.25rem;
+}
+.store-conflict-editor__paths button {
+  justify-content: space-between;
+  width: 100%;
+  min-width: 0;
+}
+.store-conflict-editor__paths button span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.store-conflict-editor__paths svg {
+  flex: none;
+}
+.store-conflict-path {
+  display: grid;
+  gap: 1rem;
+  padding: 0.75rem 1rem 1rem;
+}
+.store-conflict-path__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+.store-conflict-path__header h3,
+.store-conflict-path__header p {
+  margin: 0;
+}
+.store-conflict-path__header h3 {
+  font-size: 0.875rem;
+}
+.store-conflict-path__header p {
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+}
+.store-conflict-path__header code {
+  max-width: 15rem;
+  overflow: hidden;
+  color: var(--muted-foreground);
+  font-size: 0.6875rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.store-conflict-path__terms {
+  display: grid;
+  gap: 0.5rem;
+}
+.store-conflict-path__term {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.625rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--background);
+}
+.store-conflict-path__term div {
+  display: grid;
+  min-width: 0;
+}
+.store-conflict-path__term span,
+.store-conflict-path__stage span,
+.store-conflict-path__delete span {
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+}
+.store-conflict-path__editor {
+  min-height: 22rem;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--background);
+}
+.store-conflict-path__editor [data-ui-component="merge-editor"] {
+  min-height: 19rem;
+}
+.store-conflict-path__stage,
+.store-conflict-path__delete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.625rem 0.75rem;
+  border-top: 1px solid var(--border);
+}
+.store-conflict-path__delete {
+  padding-inline: 0;
+  border-top: 0;
+}
+.store-conflict-path__error,
+.store-conflict-editor__error {
+  margin: 0;
+  color: var(--destructive);
+  font-size: 0.8125rem;
+}

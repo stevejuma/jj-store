@@ -7,12 +7,14 @@
   let query = $state(untrack(() => args.query));
 </script>
 
-<StoreSearchCommand
-  {...args}
-  bind:open
-  {query}
-  onQueryChange={(value) => {
-    query = value;
-    args.onQueryChange(value);
-  }}
-/>
+<div data-search-open={open ? "true" : "false"}>
+  <StoreSearchCommand
+    {...args}
+    bind:open
+    {query}
+    onQueryChange={(value) => {
+      query = value;
+      args.onQueryChange(value);
+    }}
+  />
+</div>

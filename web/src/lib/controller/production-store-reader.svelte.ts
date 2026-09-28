@@ -99,7 +99,8 @@ export function createProductionStoreReader(context: ReaderContext) {
       if (!context.current(ticket, source)) return;
       data.detail = value.detail;
       data.comparisons = value.comparisons;
-      data.conflictCount = value.conflictCount;
+      data.conflicts = value.conflicts;
+      data.conflictCount = value.conflicts.length;
       data.inspectionContinuation = value.continuation;
       data.status.detail = "ready";
     } catch (cause) {

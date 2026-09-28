@@ -125,11 +125,10 @@ accessibility failures remain blocking; visual review is separate and remains
 visual-pending. Browser sources and tooling require same-change ledger evidence.
 
 User-requested scope deferrals must retain original requirements and evidence.
-The 27 September 2026 browsing resumption covers M4.9–M4.14; M4.15 and M4.16
-subsequently reopen search and core repository mutations. Conflict editing
-remains deferred under M4.17 without disabling existing functional checks or
-treating deferred acceptance as passed. Backend tasks may depend on completed
-API foundations independently of browser progress.
+The 27 September 2026 browsing resumption covers M4.9–M4.14; M4.15–M4.17
+subsequently connect search, core repository mutations and native conflict
+editing. Backend tasks may depend on completed API foundations independently of
+browser progress.
 
 Contract checks validate both read/SSE and typed mutation responses captured
 from real registered handlers. Mutation request schemas and generated TypeScript
@@ -141,14 +140,14 @@ well as foundational mutations and reads. New nonempty optional report fields
 must conform to generated schemas while older V1 report bytes remain unchanged.
 
 Contract capture includes atomic conflict preview/apply and rejection responses.
-The generated command union exposes only implemented resolution actions; further
-upload support needs its own specification, security and acceptance evidence.
-Existing browser checks remain enabled while UI work is deferred.
+The generated command union exposes only implemented resolution actions.
+Conflict-editor acceptance separately covers descriptor loading, complete
+multi-path selection, stale fingerprints and the real native workflow.
 
 The generated-contract lane also captures actual binary-upload results and
 uploaded-file mutation responses. Upload IDs have canonical-width schema checks
-and the staging record has an independently calculated digest fixture. Adding
-these API declarations does not resume deferred UI work.
+and the staging record has an independently calculated digest fixture. Browser
+tests additionally require the upload query binding and atomic command body.
 
 Dependency checks permit service-to-adapter authorization wiring while retaining
 the adapter-to-service/native/UI prohibition. Adapter runner and fault fixtures

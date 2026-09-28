@@ -41,7 +41,15 @@
       initiallyCollapsed={false}
     />{/snippet}
 </Story>
-<Story name="Mobile workspace">
+<Story
+  name="Mobile workspace"
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(
+      await canvas.findByRole("option", { name: "main" }),
+    ).toBeVisible();
+  }}
+>
   {#snippet template()}<StoreRepositoryApplication
       displayMode="mobile"
     />{/snippet}

@@ -198,6 +198,30 @@ export class HttpStoreDataSource implements StoreDataSource {
         ),
     );
   }
+  uploadConflict(
+    head: Head,
+    commit: string,
+    path: string,
+    fingerprint: string,
+    bytes: Uint8Array,
+  ) {
+    return this.#client.request<Model<"ConflictUpload">>(
+      "conflict-uploads",
+      {
+        epoch: head.epoch,
+        position: head.published_seq,
+        operation: fullId(head.heads[0]!),
+        commit: fullId(commit),
+        path,
+        fingerprint: fullId(fingerprint),
+      },
+      {
+        method: "POST",
+        headers: { "content-type": "application/octet-stream" },
+        body: Uint8Array.from(bytes).buffer,
+      },
+    );
+  }
   search(input: SearchQuery) {
     const query = {
       q: input.query,

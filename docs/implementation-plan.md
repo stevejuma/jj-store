@@ -35,8 +35,9 @@ bounded read contracts, typed hash restoration, explicit SSE refresh,
 virtualized collections and persistent layout. M4.15 adds the authenticated
 repository command search against the selected Tantivy snapshot. M4.16 adds
 preview/apply/status controls for core repository commands using the durable
-native mutation contract. Conflict-editing controls remain deferred within M4.3
-under M4.17.
+native mutation contract. M4.17 adds complete native conflict descriptors,
+bounded staged uploads and atomic multi-path resolution through that same
+workflow.
 
 M4.10 adds separate signed browsing windows for bookmark/change lookup,
 recursive paths with bounded last-change attribution, operation changes grouped

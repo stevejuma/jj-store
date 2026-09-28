@@ -145,7 +145,7 @@ export async function readCommitInspection(
 ): Promise<{
   detail: RevisionDetail;
   comparisons: Map<string, Comparison>;
-  conflictCount: number;
+  conflicts: Model<"ConflictDescriptor">[];
   continuation: InspectionContinuation | null;
 }> {
   const value = await source.commit(id, operation);
@@ -163,7 +163,7 @@ export async function readCommitInspection(
     comparisons: new Map(
       changes.map((change) => [change.path, { from: parent!, to: id }]),
     ),
-    conflictCount: conflicts.data.conflicts.length,
+    conflicts: conflicts.data.conflicts,
     continuation:
       parent && paths?.next_cursor
         ? {

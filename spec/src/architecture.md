@@ -71,16 +71,9 @@ Repository action menus and dialogs consume only the shared controller contract;
 the catalog supplies the same contract from an in-memory source and production
 cannot depend on those fixtures. A committed receipt may invalidate protected
 query state, while a preview, rejection or unknown outcome cannot replace the
-displayed snapshot.
-
-The production mutation controller is an asynchronous controller concern. It
-owns captured native request identity, preview/apply/status transitions, session
-cancellation and committed-snapshot refresh without importing visual components.
-Repository action menus and dialogs consume only the shared controller contract;
-the catalog supplies the same contract from an in-memory source and production
-cannot depend on those fixtures. A committed receipt may invalidate protected
-query state, while a preview, rejection or unknown outcome cannot replace the
-displayed snapshot.
+displayed snapshot. Conflict descriptor loading, bounded upload staging and
+atomic command construction remain controller/model concerns; the conflict
+editor receives only shared state/actions and never imports HTTP transport.
 
 The native backend adapts JJ's futures file streams to the owned Tokio
 transport. Its query engine derives bounded copy records from native history;

@@ -1,9 +1,9 @@
 # Repository browser
 
-The current browser supports authenticated repository reads, repository search
-and core repository commands. It shows commits, operations and evolution, native
-metadata, directories, bounded file previews, structured file differences and
-conflict descriptors. Conflict editing remains deferred in the progress ledger.
+The current browser supports authenticated repository reads, repository search,
+core repository commands and native conflict editing. It shows commits,
+operations and evolution, native metadata, directories, bounded file previews,
+structured file differences and complete conflict descriptors.
 
 ## Build and serve
 
@@ -71,6 +71,20 @@ Semantic policy denials, including protected bookmarks or commits, remain in the
 authenticated session and display as command failures. Revoked or otherwise
 invalid credentials disconnect the session and clear protected cache state.
 
+## Conflict resolution
+
+Select a commit with native conflict descriptors, then choose Resolve conflicts
+from the repository action menu. The editor shows every path, fingerprint and
+ordered native term without flattening the conflict. Choose one advertised term,
+deletion or a separately staged merged file for every path before previewing the
+complete atomic request. Unsupported shapes and stale fingerprints remain
+visible and never trigger an implicit reread or partial publication.
+
+Merged file uploads are bounded by the server-advertised limit and bound to the
+repository, snapshot operation, commit, path and conflict fingerprint. Uploading
+bytes alone does not publish history. Preview and apply retain the same request
+identity, and only a committed receipt advances the displayed snapshot.
+
 ## Development acceptance
 
 For local interactive review, `pnpm dev:restart` builds and starts the complete
@@ -95,9 +109,9 @@ Run `pnpm web:test:real` for the separate native deployment lane. It uses
 and native server with search worker, proves authenticated native Tantivy
 results, publishes through another CLI process, and verifies that SSE announces
 the new history without changing the displayed snapshot until the user
-refreshes. The test preserves the selected bookmark across that refresh and
-previews and applies one native browser mutation before removing the disposable
-stack.
+refreshes. The test preserves the selected bookmark across that refresh,
+resolves a seeded native conflict atomically, and previews and applies another
+native browser mutation before removing the disposable stack.
 
 This cold interaction/accessibility lane checks the production CSP and asset
 router. It is separate from RustFS/TLS deployment qualification. Screenshot

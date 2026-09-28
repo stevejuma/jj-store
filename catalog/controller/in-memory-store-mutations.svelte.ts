@@ -21,6 +21,7 @@ export function createInMemoryStoreMutations(options: {
     result: StoreMutationPrepared,
   ) => void;
   firstApply?: "committed" | "unknown";
+  previewFailure?: string;
 }) {
   const state = $state({
     ...initialStoreMutationState(),
@@ -39,6 +40,11 @@ export function createInMemoryStoreMutations(options: {
       error: "",
     });
     await Promise.resolve();
+    if (options.previewFailure) {
+      state.status = "failed";
+      state.error = options.previewFailure;
+      return;
+    }
     state.result = prepared(command);
     state.status = "prepared";
   }
@@ -93,13 +99,16 @@ function prepared(command: StoreMutationCommand): StoreMutationPrepared {
     operation: "ef".repeat(64),
     created: command.type === "new" ? [target] : [],
     rewrites:
-      command.type === "describe" || command.type === "abandon"
+      command.type === "describe" ||
+      command.type === "abandon" ||
+      command.type === "resolve_conflicts"
         ? [
             {
               commit: target,
               change: "12".repeat(16),
               predecessors:
-                command.type === "describe"
+                command.type === "describe" ||
+                command.type === "resolve_conflicts"
                   ? [command.commit]
                   : [...command.commits],
             },
@@ -118,6 +127,15 @@ function prepared(command: StoreMutationCommand): StoreMutationPrepared {
     staged_objects: 6,
     staged_bytes: 8192,
     ...(command.type === "abandon" ? { abandoned: [...command.commits] } : {}),
+    ...(command.type === "resolve_conflicts"
+      ? {
+          conflict_resolution: {
+            target: { before: command.commit, after: target },
+            selected_paths: command.paths.map((path) => path.path),
+            remaining: {},
+          },
+        }
+      : {}),
   };
   return result;
 }

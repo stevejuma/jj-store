@@ -155,6 +155,54 @@ test("external publication waits for explicit refresh and preserves selection", 
   ).not.toContain(token);
 });
 
+test("native conflict selection previews and publishes one atomic resolution", async ({
+  page,
+}) => {
+  const requests: any[] = [];
+  page.on("request", (request) => {
+    const path = new URL(request.url()).pathname;
+    if (path.endsWith("/mutations/preview") || path.endsWith("/mutations"))
+      requests.push(request.postDataJSON());
+  });
+  await connect(page);
+  await page
+    .getByRole("option", { name: "conflict/demo", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Unresolved browser conflict", exact: true })
+    .click();
+  await page.getByRole("button", { name: "Repository actions" }).click();
+  await page.getByRole("menuitem", { name: "Resolve conflicts" }).click();
+  const dialog = page.getByRole("dialog", { name: "Resolve native conflicts" });
+  await expect(
+    dialog.getByRole("heading", { name: "conflict.txt", exact: true }),
+  ).toBeVisible();
+  await dialog.getByRole("button", { name: /^Use .*Conflict left/u }).click();
+  await dialog.getByRole("button", { name: "Preview 1/1" }).click();
+  await expect(dialog.getByText("Preview prepared")).toBeVisible();
+  await expect(
+    dialog.locator(".store-mutation-preview dd").filter({
+      hasText: "conflict.txt",
+    }),
+  ).toBeVisible();
+  await dialog.getByRole("button", { name: "Apply resolution" }).click();
+  const confirmation = page.getByRole("alertdialog", {
+    name: "Apply atomic conflict resolution?",
+  });
+  await confirmation.getByRole("button", { name: "Apply resolution" }).click();
+  await expect(dialog.getByText("Conflicts resolved")).toBeVisible();
+
+  expect(requests).toHaveLength(2);
+  expect(requests[1]).toEqual(requests[0]);
+  expect(requests[0].command.type).toBe("resolve_conflicts");
+  expect(requests[0].command.paths).toHaveLength(1);
+  expect(requests[0].command.paths[0]).toMatchObject({
+    path: "conflict.txt",
+    resolution: { type: "select_term", term: 0 },
+  });
+  expect(requests[0].command.paths[0].fingerprint).toMatch(/^[0-9a-f]{128}$/u);
+});
+
 test("browser mutation previews and publishes one native request", async ({
   page,
 }) => {

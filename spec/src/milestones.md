@@ -42,7 +42,7 @@ adds evidence here in its enclosing Jujutsu change.
 | M4.14       | In progress | M4.12,M4.13 | JST-API-003,JST-API-004,JST-API-005                                     | Cold built browser passes captured and real RustFS-backed native repository acceptance                              | Repeat after the approved Design Core registry release   | E-UI-016                                                                                                                                                                                                                   |
 | M4.15       | Done        | M4.9,M6.1   | JST-UI-007                                                              | Community-adapted command search queries real snapshot-bound Tantivy results and restores stable routes             | Retain search acceptance; continue mutation/conflict UI  | E-UI-017                                                                                                                                                                                                                   |
 | M4.16       | Done        | M4.9,M5.3   | JST-UI-008                                                              | Preview/apply/status repository actions use durable typed mutations and committed snapshot refresh                  | Retain mutation acceptance; implement M4.17 conflicts    | E-UI-018                                                                                                                                                                                                                   |
-| M4.17       | Planned     | M4.16,M5.3  | JST-UI-009                                                              | Native conflict descriptors, uploads and atomic multi-path resolution are editable without flattening               | Implement after core command workflow                    | -                                                                                                                                                                                                                          |
+| M4.17       | Done        | M4.16,M5.3  | JST-UI-009                                                              | Native conflict descriptors, uploads and atomic multi-path resolution are editable without flattening               | Retain conflict-editor and real-repository acceptance    | E-UI-019                                                                                                                                                                                                                   |
 | M5          | Done        | M4.1        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Authenticated typed commands and shared RPC policy                                                                  | Retain mutation conformance; proceed to M6               | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-M5-005,E-M5-006,E-M5-007,E-M5-008                                                                                                                                        |
 | M5.1        | Done        | M4.1        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Basic changes/refs/reconcile; preview receipt and semantic policy                                                   | Retain basic mutation acceptance                         | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004                                                                                                                                                                            |
 | M5.2        | Done        | M5.1        | JST-MUT-003                                                             | Full abandon descendant bookmark workspace/evolution parity                                                         | Retain abandon acceptance                                | E-M5-005                                                                                                                                                                                                                   |
@@ -10628,6 +10628,194 @@ and named tests are checked by the progress gate.
     "remaining": [],
     "versions": "Community source 9d82df591548a1efc49681b744f7a5f244b8ac99; Design Core source 6f8ee4570708ffdae406e9c48457546db07ec71a inspected and consumed through registry range ^0.2.0 with the guarded local source hook; @tanstack/svelte-query 6.3.0; Storybook 10.5.7; Vitest 4.1.11; Playwright 1.63.x; RustFS rustfs/rustfs@sha256:b7014e0ce2bc703c1316b3ef760e29dfae61fe4a50d1a66fa89638e0f8ea211f.",
     "formats": "The UI uses the existing strict V1 mutation preview/apply/status contract. Each request retains one 128-bit hexadecimal request ID, exact captured epoch/position/heads and one typed native command. Committed receipts alone replace the selected operation and protected query cache. Semantic protection now has the typed 409 protected_transition code; authentication denial remains 401/403 access_denied. No native object, WAL, credential, URL or persistent layout format changes. Stories remain visual-pending and visual tests were skipped at the user's request."
+  },
+  {
+    "id": "E-UI-019",
+    "tasks": ["M4", "M4.3", "M4.17"],
+    "date": "2026-09-28",
+    "kind": "implementation",
+    "files": [
+      "catalog/components/store-application/RepositoryApplication.stories.svelte",
+      "catalog/components/store-mutations/StoreConflictEditor.stories.svelte",
+      "catalog/components/store-search/StoreSearchCommand.stories.svelte",
+      "catalog/controller/in-memory-store-conflicts.ts",
+      "catalog/controller/in-memory-store-controller.svelte.ts",
+      "catalog/controller/in-memory-store-mutations.svelte.ts",
+      "catalog/fixtures/StoreConflictEditorFixture.svelte",
+      "catalog/fixtures/StoreSearchCommandFixture.svelte",
+      "catalog/fixtures/conflicts.ts",
+      "docs/browser.md",
+      "docs/implementation-plan.md",
+      "scripts/dev-demo-repository.mjs",
+      "scripts/dev-demo.mjs",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/milestones.md",
+      "spec/src/spec-governance.md",
+      "spec/src/ui.md",
+      "spec/src/verification.md",
+      "web/src/lib/controller/contracts.ts",
+      "web/src/lib/controller/http-store-data-source.ts",
+      "web/src/lib/controller/native-data-source.ts",
+      "web/src/lib/controller/production-store-conflicts.ts",
+      "web/src/lib/controller/production-store-controller.svelte.ts",
+      "web/src/lib/controller/production-store-index.ts",
+      "web/src/lib/controller/production-store-loaders.ts",
+      "web/src/lib/controller/production-store-reader.svelte.ts",
+      "web/src/lib/controller/production-store-state.svelte.ts",
+      "web/src/lib/controller/production-store-view.ts",
+      "web/src/lib/ui/store-conflicts/StoreConflictEditor.svelte",
+      "web/src/lib/ui/store-conflicts/StoreConflictPath.svelte",
+      "web/src/lib/ui/store-conflicts/model.ts",
+      "web/src/lib/ui/store-conflicts/store-conflicts.css",
+      "web/src/lib/ui/store-mutations/StoreMutationPreview.svelte",
+      "web/src/lib/ui/store-mutations/StoreRepositoryActions.svelte",
+      "web/tests/browser/conflicts.spec.ts",
+      "web/tests/production-store-conflicts.test.ts",
+      "web/tests/real/native-repository.spec.ts",
+      "web/tests/store-conflict-model.test.ts"
+    ],
+    "tests": [
+      "web/tests/store-conflict-model.test.ts#atomic conflict commands retain every path and native fingerprint",
+      "web/tests/store-conflict-model.test.ts#atomic conflict commands reject omissions and foreign term indexes",
+      "web/tests/store-conflict-model.test.ts#uploaded conflict resolution keeps the scoped staged handle",
+      "web/tests/production-store-conflicts.test.ts#conflict uploads bind bytes to the captured head commit path and fingerprint",
+      "web/tests/production-store-conflicts.test.ts#conflict uploads reject oversized bytes before transport",
+      "web/tests/browser/conflicts.spec.ts#native conflict editor stages and previews one complete atomic selection",
+      "web/tests/real/native-repository.spec.ts#native conflict selection previews and publishes one atomic resolution"
+    ],
+    "runs": [
+      {
+        "command": "pnpm exec tsx --test web/tests/store-conflict-model.test.ts web/tests/production-store-conflicts.test.ts",
+        "result": "fail",
+        "failures": 2,
+        "note": "The test-first controller and command-model cases failed because the conflict modules did not exist. They established the exact snapshot/upload binding and complete atomic selection boundary before implementation."
+      },
+      {
+        "command": "pnpm exec tsx --test web/tests/store-conflict-model.test.ts web/tests/production-store-conflicts.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "All five focused controller and command-model cases pass: uploads bind the captured head, commit, path and fingerprint; oversized bytes stop before transport; commands retain every path and reject omissions or foreign terms."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Production and catalog Svelte diagnostics report no errors or warnings, catalog boundaries cover 51 modules, and all 186 governed modules stay within the 300/400/500-line budgets after extracting conflict and index controller concerns."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-mutations/StoreConflictEditor.stories.svelte --reporter=dot",
+        "result": "pass",
+        "failures": 0,
+        "note": "All four real-control interaction/accessibility stories pass for atomic term selection, bounded staged content, unknown-outcome recovery and a stale fingerprint that remains visible without implicit reread. Stories remain visual-pending."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "The production bundle builds with the conflict editor and existing CSP assets. Existing Design Core :global selector and bundle-size diagnostics remain warnings rather than failures."
+      },
+      {
+        "command": "pnpm exec playwright test --config web/playwright.config.ts conflicts.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "The cold built-browser regression passes 1/1 and proves the exact upload query binding plus one unchanged complete atomic preview body."
+      },
+      {
+        "command": "pnpm web:test:real",
+        "result": "fail",
+        "failures": 1,
+        "note": "Three of four real cases passed. Conflict selection timed out because demo seeding left the checkout working copy on the conflict merge, so an earlier external publication rewrote that bookmark-visible description. The seed now creates a separate working copy after preserving conflict/demo."
+      },
+      {
+        "command": "pnpm web:test:real",
+        "result": "pass",
+        "failures": 0,
+        "note": "All four cold built-browser cases pass against a fresh native repository and pinned RustFS: snapshot-bound Tantivy search, external publication with explicit SSE refresh, atomic conflict resolution and another durable mutation. The public lane starts through pnpm dev:restart and removes the disposable stack through pnpm dev:stop."
+      },
+      {
+        "command": "pnpm spec:first; pnpm check:progress; pnpm format:check",
+        "result": "fail",
+        "failures": 4,
+        "note": "Spec-first passed for 30 protected files across five canonical chapters and formatting passed. The progress guard only recognizes named test functions rather than Svelte Story declarations, so exact Storybook coverage remains recorded by its focused run instead of invented named-test references."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools VITEST_MAX_WORKERS=1 pnpm test",
+        "result": "fail",
+        "failures": 1,
+        "note": "The aggregate reached 67/68 passing Storybook cases before axe scanned the mobile application while its virtualized bookmark options had not mounted, leaving a transient empty listbox. Design Core's Empty primitive already renders the required option role; the stable mobile story now waits for its representative main option before accessibility scanning."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/RepositoryApplication.stories.svelte --reporter=dot; VITEST_MAX_WORKERS=1 pnpm test:storybook",
+        "result": "pass",
+        "failures": 0,
+        "note": "All four application stories and all 68 Storybook interaction/accessibility cases pass after the mobile story waits for its virtualized bookmark row. The check changes no runtime behavior and Design Core requires no source repair."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools VITEST_MAX_WORKERS=1 pnpm spec:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "The canonical aggregate stopped at catalog type checking because Storybook's typed findByRole overload does not expose the exact option accepted by the runtime query helper. The unambiguous main query now uses the supported name-only form."
+      },
+      {
+        "command": "pnpm catalog:check; pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/RepositoryApplication.stories.svelte --reporter=dot",
+        "result": "pass",
+        "failures": 0,
+        "note": "Catalog diagnostics and boundaries pass with no warnings, and the four application stories pass after the type-only query correction."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools VITEST_MAX_WORKERS=1 pnpm spec:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "Cold catalog, diagnostics and unit lanes passed before the interaction lane exposed an existing search-unavailable teardown race. Its final assertion synchronously queried a portal dialog that may already be unmounted while Storybook replaces the story."
+      },
+      {
+        "command": "pnpm catalog:check; pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-search/StoreSearchCommand.stories.svelte --reporter=dot (twice); VITEST_MAX_WORKERS=1 pnpm test:storybook",
+        "result": "pass",
+        "failures": 0,
+        "note": "Catalog diagnostics pass, the three search stories pass in two consecutive fresh runs and all 68 Storybook interaction/accessibility cases pass. The fixture now exposes its authoritative bound open state outside the portal, and the story awaits initial status before closing."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Specification validation, 11 package boundaries, the 186-module architecture budget, progress, rustfmt, 51 actual HTTP/SSE responses, six contract tests, production/catalog diagnostics and locked-workspace Clippy pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools VITEST_MAX_WORKERS=1 pnpm test",
+        "result": "pass",
+        "failures": 0,
+        "note": "The complete non-visual aggregate passes 23 governance, three storage-harness, six contract, 40 production web, 34 catalog unit and 68 Storybook interaction/accessibility cases, cold catalog browser acceptance and the full locked Rust workspace. Declared external-service cases remain ignored in this normal lane."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm build",
+        "result": "pass",
+        "failures": 0,
+        "note": "The cold Storybook catalog, production browser bundle and complete locked Rust workspace build successfully. Existing Design Core :global selector and bundle-size diagnostics remain warnings rather than failures."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools VITEST_MAX_WORKERS=1 pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 18 canonical specification lanes pass after the two story-readiness repairs, including architecture, contracts, diagnostics, 68 Storybook interaction/accessibility cases, cold catalog and production-browser acceptance, the locked Rust workspace and mdBook."
+      },
+      {
+        "command": "pnpm dev:restart; curl browser root; inspect runtime process, metadata and RustFS ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "A cold public restart rebuilt the browser and native binaries, started the checkout-owned pinned RustFS container and native server, seeded repository 91884361f1dd4eb2cce59b97142b0356 with conflict/demo, and returned HTTP 200. The recorded PID runs this checkout's binary with the generated server.toml, the container is running with the checkout ownership label, and runtime.json contains no token or other credential field. The review stack remains running; the one-time bearer credential is reported only to the user."
+      },
+      {
+        "command": "pnpm spec:first; pnpm check:progress; pnpm format:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final protected-file mapping covers 33 files across five canonical chapters; all 46 milestone tasks, rustfmt and Prettier checks pass after recording the aggregate and cold-restart outcomes."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "versions": "Community source 9d82df591548a1efc49681b744f7a5f244b8ac99; Design Core source 7beeb4eb9a9d4c75da61df9ae9f3ad02694078df inspected with public MergeEditor, DialogFrame, Button, Alert, Spinner and confirmation primitives consumed through registry range ^0.2.0 and the guarded local source hook; @tanstack/svelte-query 6.3.0; Storybook 10.5.7; Vitest 4.1.11; Playwright 1.63.x; RustFS rustfs/rustfs@sha256:b7014e0ce2bc703c1316b3ef760e29dfae61fe4a50d1a66fa89638e0f8ea211f.",
+    "formats": "The UI consumes existing V1 conflict descriptors, conflict-upload responses and resolve_conflicts mutation requests. Every command retains full native commit IDs, path fingerprints, ordered terms and scoped upload handles. Staging content does not publish; only a committed durable receipt advances the selected snapshot. No native object, WAL, API, credential, URL or persistent-layout format changes. The dev:restart task rebuilds and restarts only checkout-owned services and prints credentials without storing the bearer token in the checkout or runtime metadata. Visual tests remain skipped at the user's request and stories remain visual-pending."
   }
 ]
 ```

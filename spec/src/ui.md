@@ -1,10 +1,10 @@
 # Storybook presentation catalog
 
 The reviewed catalog application is the presentation authority for the served
-browser. Production browsing, typed mutation and conflict-editing integration
-are open under M4.3. Reusable components receive presentation data and
-callbacks, while HTTP and in-memory controllers supply the same asynchronous
-contract. Deterministic fixtures remain catalog-only.
+browser. Production browsing, search, typed mutations and conflict editing share
+the same components and asynchronous controller contract. Reusable components
+receive presentation data and callbacks, while HTTP and in-memory controllers
+supply interchangeable sources. Deterministic fixtures remain catalog-only.
 
 ## Requirements
 

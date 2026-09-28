@@ -391,10 +391,10 @@ preserving the explicit comparison parent and exact before/after identities.
 
 Production browsing resumed on 27 September 2026 through M4.9-M4.14. The served
 application reuses the reviewed Storybook shell for Files, Branches, JJ Log, Op
-Log, evolution and existing read details. Typed mutation controls,
-conflict-editing controls and search UI remain deferred within M4.3. Their
-existing backend contracts and checks stay enabled and cannot be counted as
-browser acceptance.
+Log, evolution and existing read details. M4.15-M4.17 connect repository search,
+typed mutation controls and native conflict editing through the same
+authenticated controller. Their browser acceptance remains separate from the
+backend contract checks.
 
 Local workspace validation may resolve `@lapismd/design-core` from the sibling
 source repository through the guarded pnpm hook. That development resolution
@@ -433,8 +433,8 @@ HTTP deadline or oversized result returns outcome_unknown with that identity.
 Preview cannot publish and does not authorize later apply.
 
 Generated OpenAPI and TypeScript contracts include these routes and owned DTOs.
-The generated client declaration is an API artifact; browser components,
-interaction behavior and visual changes remain deferred under M4.3.
+The generated client declaration remains an API artifact; M4.16 separately
+qualifies the shared browser controls and real native mutation workflow.
 
 The typed capability registry also advertises reconcile_operations. This command
 requires `base` as a full current operation ID and an exact expected head set
@@ -448,8 +448,8 @@ retain_bookmarks/restore_descendants options. Reports include nonempty abandoned
 and skipped_hidden lists. Empty lists are omitted to preserve V1 receipt bytes.
 An all-hidden request returns HTTP 409 no_changes with zero publications; this
 rejection is not a retained receipt. Snapshot and request identity rules remain
-identical to other commands. Generated schemas/types expose this API while
-browser mutation controls remain deferred.
+identical to other commands. Generated schemas/types expose this API and M4.16
+connects the corresponding browser mutation controls.
 
 ResolveConflicts is advertised as resolve_conflicts and accepts a commit plus
 1–256 conflict paths with fingerprints. Each resolution is select_term with an
@@ -457,8 +457,9 @@ ordered zero-based term index, or delete. A stale fingerprint or a path that is
 no longer a conflict returns HTTP 409 stale_conflict; malformed/overlapping
 paths and invalid term indices return 400. Preview/apply/status retain the
 existing authorization, limits, atomic snapshot and retry behavior. Uploaded
-replacement-file actions use the authorized endpoint specified below. Only API
-declarations change under web; conflict editors remain deferred.
+replacement-file actions use the authorized endpoint specified below. M4.17
+connects these declarations to the shared conflict editor without changing the
+native resolution contract.
 
 ## Conflict content uploads
 
@@ -479,15 +480,16 @@ integrity before atomic native rewriting. Invalid handles return 409
 invalid_upload; stale snapshots and conflicts retain their existing errors.
 Capabilities expose the upload byte cap and supported resolution actions.
 Generated OpenAPI and TypeScript include binary upload and resolution contracts;
-no browser editor or other UI behavior changes.
+the browser stages bounded bytes separately and retains the returned scoped
+handle until preview or apply.
 
 ResolveConflicts previews and retained results expose an optional
 conflict_resolution report: exact target before/after IDs, sorted selected_paths
 and complete remaining native conflict paths for every changed result commit.
 Empty lists explicitly mean no remaining conflicts on that result; absent
 reports are legacy or non-resolution responses. Preview IDs are provisional. The
-generated OpenAPI and TypeScript contracts describe this extension; browser
-controls remain deferred.
+generated OpenAPI and TypeScript contracts describe this extension; the M4.17
+editor renders the report through the existing durable mutation workflow.
 
 ## Search HTTP transport
 

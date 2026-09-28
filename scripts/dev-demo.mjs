@@ -13,6 +13,7 @@ import {
   stopPrevious,
   waitForServer,
 } from "./dev-demo-services.mjs";
+import { seedRepository } from "./dev-demo-repository.mjs";
 
 const repositoryRoot = resolve(import.meta.dirname, "..");
 const userSuffix =
@@ -32,82 +33,6 @@ async function run(command, args, options = {}) {
     cwd: repositoryRoot,
     env: options.env,
   });
-}
-
-async function seedRepository(adminToken, operatorToken, origin) {
-  const repository = join(runtimeRoot, "repository");
-  const cache = join(runtimeRoot, "cache");
-  const state = join(runtimeRoot, "init-state");
-  const config = join(runtimeRoot, "jj.toml");
-  await writeFile(
-    config,
-    '[user]\nname = "Maya Chen"\nemail = "maya@example.invalid"\n',
-  );
-  const nativeEnv = {
-    JJ_CONFIG: config,
-    JJ_STORE_TOKEN: adminToken,
-    JJ_STORE_OPERATOR_TOKEN: operatorToken,
-  };
-  const created = await run(
-    resolve(repositoryRoot, "target/debug/jj"),
-    [
-      "store",
-      "init",
-      repository,
-      "--endpoint",
-      origin,
-      "--insecure-loopback",
-      "--cache",
-      cache,
-      "--state-dir",
-      state,
-      "--workspace",
-      "demo",
-      "--format=json",
-    ],
-    { env: nativeEnv },
-  );
-  const repositoryId = JSON.parse(created.stdout).repository;
-  const jj = (args) =>
-    run(
-      resolve(repositoryRoot, "target/debug/jj"),
-      ["-R", repository, "--no-pager", "--color=never", ...args],
-      { env: nativeEnv },
-    );
-  await mkdir(join(repository, "src"), { recursive: true });
-  await mkdir(join(repository, "assets"), { recursive: true });
-  await writeFile(
-    join(repository, "README.md"),
-    "# jj-store demo\n\nThis native repository is created by `pnpm dev:restart`.\n",
-  );
-  await writeFile(join(repository, "LICENSE"), "Apache-2.0\n");
-  await writeFile(
-    join(repository, "Cargo.toml"),
-    '[package]\nname = "jj-store-demo"\nversion = "0.1.0"\nedition = "2024"\n',
-  );
-  await writeFile(
-    join(repository, "src/lib.rs"),
-    'pub fn repository_name() -> &\'static str {\n    "jj-store demo"\n}\n',
-  );
-  await writeFile(join(repository, "assets/logo.bin"), randomBytes(96));
-  await jj(["describe", "-m", "Bootstrap native repository"]);
-  await jj(["bookmark", "create", "release/0.1", "-r", "@"]);
-  await jj(["new", "-m", "Add repository browser"]);
-  await writeFile(
-    join(repository, "src/lib.rs"),
-    'pub fn repository_name() -> &\'static str {\n    "jj-store browser demo"\n}\n\npub fn supports_native_history() -> bool { true }\n',
-  );
-  await jj(["describe", "-m", "Add repository browser"]);
-  await jj(["bookmark", "create", "main", "-r", "@"]);
-  await jj(["new", "-m", "Experiment with persistent layouts"]);
-  await writeFile(
-    join(repository, "LAYOUT.md"),
-    "# Layout experiment\n\nColumn widths persist between sessions.\n",
-  );
-  await jj(["describe", "-m", "Experiment with persistent layouts"]);
-  await jj(["bookmark", "create", "experiment/layout", "-r", "@"]);
-  await jj(["new", "-m", "Working copy"]);
-  return repositoryId;
 }
 
 function startServer(serverConfig, logHandle, environment = {}) {
@@ -240,7 +165,14 @@ async function restart() {
   const logHandle = openSync(logPath, "a", 0o600);
   let server = startServer(serverConfig, logHandle);
   await waitForServer(origin);
-  const repositoryId = await seedRepository(adminToken, operatorToken, origin);
+  const repositoryId = await seedRepository({
+    adminToken,
+    operatorToken,
+    origin,
+    repositoryRoot,
+    runtimeRoot,
+    run,
+  });
   await stopServer(server);
   await appendFile(
     serverConfig,

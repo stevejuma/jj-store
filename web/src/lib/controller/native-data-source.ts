@@ -82,6 +82,13 @@ export interface StoreDataSource {
     operation: string,
     commit: string,
   ): Promise<Envelope<Model<"ConflictResponse">>>;
+  uploadConflict(
+    head: Head,
+    commit: string,
+    path: string,
+    fingerprint: string,
+    bytes: Uint8Array,
+  ): Promise<Model<"ConflictUpload">>;
   search(query: SearchQuery): Promise<Model<"SearchPage">>;
   previewMutation(request: StoreMutationRequest): Promise<StoreMutationPreview>;
   applyMutation(request: StoreMutationRequest): Promise<StoreMutationOutcome>;

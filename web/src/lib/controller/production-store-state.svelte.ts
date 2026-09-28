@@ -1,5 +1,5 @@
 import type { FileListingViewMode } from "@lapismd/design-core/diff";
-import type { Head, Snapshot } from "../api/client.js";
+import type { Head, Model, Snapshot } from "../api/client.js";
 import type { RepositoryLogGraph } from "../projects/repository-log.js";
 import type { Bookmark, RevisionDetail } from "../projects/presentation.js";
 import type {
@@ -33,6 +33,9 @@ export interface ProductionStoreState {
   detail: RevisionDetail | undefined;
   comparisonParents: string[];
   conflictCount: number | null;
+  conflicts: Model<"ConflictDescriptor">[];
+  conflictResolutionActions: string[];
+  conflictUploadBytes: number | bigint;
   unavailableComparisonCount: number;
   status: MutableStatus;
   refsCursor: string | null;
@@ -92,6 +95,9 @@ export function createProductionStoreState(): ProductionStoreState {
     detail: undefined,
     comparisonParents: [],
     conflictCount: null,
+    conflicts: [],
+    conflictResolutionActions: [],
+    conflictUploadBytes: 0,
     unavailableComparisonCount: 0,
     status: initialStatus(),
     refsCursor: null,
@@ -131,6 +137,7 @@ export function clearProductionStoreView(state: ProductionStoreState) {
   state.detail = undefined;
   state.comparisonParents = [];
   state.conflictCount = null;
+  state.conflicts = [];
   state.unavailableComparisonCount = 0;
   state.refsCursor = null;
   state.graphCursor = null;

@@ -17,6 +17,8 @@ import { createStoreRouteHistory } from "./store-route-history.svelte.js";
 import { productionStoreView } from "./production-store-view.js";
 import { createProductionStoreSearch } from "./production-store-search-controller.js";
 import { createProductionStoreMutations } from "./production-store-mutations.js";
+import { createProductionStoreConflicts } from "./production-store-conflicts.js";
+import { createProductionStoreIndex } from "./production-store-index.js";
 
 export function createProductionStoreController(
   options: { fetcher?: typeof fetch; now?: () => number } = {},
@@ -75,6 +77,8 @@ export function createProductionStoreController(
     Object.assign(data, { heads: [], repositories: [], head: null });
     mutations.configure([]);
     mutations.reset();
+    data.conflictResolutionActions = [];
+    data.conflictUploadBytes = 0;
     data.searchAvailable = false;
     search.clear();
     clearProductionStoreView(data);
@@ -110,6 +114,8 @@ export function createProductionStoreController(
       data.heads = [...captured.heads];
       data.head = captured;
       mutations.configure(capabilities.typed_mutations);
+      data.conflictResolutionActions = capabilities.conflict_resolution_actions;
+      data.conflictUploadBytes = capabilities.conflict_upload_bytes;
       const selected = data.heads.length === 1 ? data.heads[0]! : null;
       data.repositories = [{ id: active.repository, name: active.repository }];
       data.searchAvailable = capabilities.search;
@@ -159,6 +165,12 @@ export function createProductionStoreController(
     current: (active) => active === source,
     committed: refresh,
   });
+  const conflictUploads = createProductionStoreConflicts({
+    source: activeSource,
+    head: () => data.head,
+    current: (active) => active === source,
+    uploadLimit: () => data.conflictUploadBytes,
+  });
   async function selectOperation(id: string) {
     if (!data.heads.includes(id)) return;
     version += 1;
@@ -167,24 +179,13 @@ export function createProductionStoreController(
     history.selectSnapshot(id);
     await reader.restorePage();
   }
-  async function prepareIndex() {
-    if (!data.neededIndex) return;
-    const active = activeSource(),
-      ticket = version;
-    let task = await active.prepareIndex(data.neededIndex.operation_id);
-    while (
-      current(ticket, active) &&
-      ["running", "canceling"].includes(task.status)
-    ) {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      task = await active.indexTask(task.id);
-    }
-    if (current(ticket, active) && task.status === "ready") {
-      data.neededIndex = null;
-      data.status.error = "";
-      await reader.restorePage();
-    }
-  }
+  const prepareIndex = createProductionStoreIndex({
+    data,
+    source: activeSource,
+    version: () => version,
+    current,
+    restore: reader.restorePage,
+  });
   async function selectRevision(id: string | null) {
     const page = history.route.page;
     history.push({
@@ -238,6 +239,7 @@ export function createProductionStoreController(
     search: search.run,
     selectSearchResult: search.select,
     ...mutations.actions,
+    uploadConflict: conflictUploads.upload,
     setFileViewMode: reader.setFileViewMode,
     toggleDirectory: reader.toggleDirectory,
     async openRepository(id) {

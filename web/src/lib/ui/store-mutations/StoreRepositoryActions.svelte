@@ -10,7 +10,9 @@
   import TrashIcon from "@lucide/svelte/icons/trash-2";
   import GitMergeIcon from "@lucide/svelte/icons/git-merge";
   import GitCommitIcon from "@lucide/svelte/icons/git-commit-horizontal";
+  import FileWarningIcon from "@lucide/svelte/icons/file-warning";
   import type { StoreController } from "../../controller/contracts.js";
+  import StoreConflictEditor from "../store-conflicts/StoreConflictEditor.svelte";
   import StoreMutationDialog from "./StoreMutationDialog.svelte";
   import { mutationActionKind, type StoreMutationAction } from "./model.js";
 
@@ -23,19 +25,27 @@
     view.bookmarks.some((item) => item.name === view.route.bookmark),
   );
   let action = $state<StoreMutationAction>("new");
-  let pendingAction = $state<StoreMutationAction | null>(null);
+  let pendingAction = $state<StoreMutationAction | "resolve-conflicts" | null>(
+    null,
+  );
   let dialogOpen = $state(false);
+  let conflictOpen = $state(false);
 
   function available(value: StoreMutationAction) {
     return view.mutation.available.includes(mutationActionKind[value]);
   }
 
-  function select(value: StoreMutationAction) {
+  function select(value: StoreMutationAction | "resolve-conflicts") {
     pendingAction = value;
   }
 
   function completeSelection(open: boolean) {
     if (open || !pendingAction) return;
+    if (pendingAction === "resolve-conflicts") {
+      pendingAction = null;
+      conflictOpen = true;
+      return;
+    }
     action = pendingAction;
     pendingAction = null;
     dialogOpen = true;
@@ -82,6 +92,15 @@
         <GitCommitIcon data-icon="inline-start" aria-hidden="true" />Abandon
         change
       </DropdownMenu.Item>
+      <DropdownMenu.Item
+        disabled={!selectedCommit ||
+          view.conflicts.length === 0 ||
+          !view.mutation.available.includes("resolve_conflicts")}
+        onSelect={() => select("resolve-conflicts")}
+      >
+        <FileWarningIcon data-icon="inline-start" aria-hidden="true" />Resolve
+        conflicts
+      </DropdownMenu.Item>
     </DropdownMenu.Group>
     <DropdownMenu.Separator />
     <DropdownMenu.Group>
@@ -126,4 +145,7 @@
 
 <Dialog.Root bind:open={dialogOpen}>
   <StoreMutationDialog {controller} {action} open={dialogOpen} />
+</Dialog.Root>
+<Dialog.Root bind:open={conflictOpen}>
+  <StoreConflictEditor {controller} open={conflictOpen} />
 </Dialog.Root>

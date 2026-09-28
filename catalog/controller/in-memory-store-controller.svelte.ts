@@ -20,6 +20,7 @@ import {
 } from "./in-memory-store-route.js";
 import { createInMemoryStoreRepository } from "./in-memory-store-repository.svelte.js";
 import { inMemoryStoreMember } from "./in-memory-store-member.js";
+import { createInMemoryStoreConflicts } from "./in-memory-store-conflicts.js";
 
 /** Each story owns this instance. It has no persistence or transport effects. */
 export function createInMemoryStoreController(
@@ -27,6 +28,7 @@ export function createInMemoryStoreController(
   options: {
     large?: boolean;
     mutationOutcome?: "committed" | "unknown";
+    mutationFailure?: string;
   } = {},
 ): StoreController {
   const repositoryData = createInMemoryStoreRepository(options.large);
@@ -54,6 +56,7 @@ export function createInMemoryStoreController(
         : repositorySnapshot(route.repository, targets[0]!)
       : undefined,
   );
+  const conflictController = createInMemoryStoreConflicts(() => route);
   function push(next: StoreRoute) {
     if (JSON.stringify(next) === JSON.stringify(route)) return;
     history = [...history.slice(0, index + 1), next];
@@ -67,6 +70,7 @@ export function createInMemoryStoreController(
       if (next) push(next);
     },
     firstApply: options.mutationOutcome,
+    previewFailure: options.mutationFailure,
   });
   const actions: StoreController["actions"] = {
     async connect() {
@@ -84,6 +88,7 @@ export function createInMemoryStoreController(
     search: search.search,
     selectSearchResult: search.select,
     ...mutations.actions,
+    ...conflictController.actions,
     setFileViewMode(mode) {
       fileViewMode = mode;
     },
@@ -228,7 +233,7 @@ export function createInMemoryStoreController(
         repository: repositories.find((repo) => repo.id === route.repository)!,
         operationHeads: repositoryData.operationHeads,
         comparisonParents: [],
-        conflictCount: null,
+        ...conflictController.view,
         unavailableComparisonCount: 0,
         canLoadMoreBookmarks: false,
         canLoadMoreGraph: false,
