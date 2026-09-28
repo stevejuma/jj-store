@@ -168,6 +168,15 @@ versions; failed probe stderr is never retained or presented. Detection and
 desired enablement remain separate from owned hook/plugin setup, so discovery
 alone cannot claim capture is active.
 
+Harness setup is also CLI-owned. It merges namespaced Codex and Cursor project
+hooks or installs one namespaced OpenCode project plugin. Before any project
+mutation it atomically stores exact original bytes plus original and intended
+SHA-256 ownership hashes under the locked device registry. Project writes are
+bounded, atomic and reject symlinked configuration paths. Restart can complete
+an interrupted original-to-owned transition; later user edits are reported as
+drift and never overwritten. Hook ingestion remains a separate boundary and is
+not implied by installed setup state.
+
 The CLI builds both development executables. Repository creation is a durable
 client workflow that provisions its OS-held admin credential before remote
 creation and then delegates physical checkout setup to resumable attachment.

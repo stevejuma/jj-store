@@ -408,5 +408,21 @@ other versions and failed probes are explicit states; stderr is discarded and
 never enters the registry or command output. Explicit noninteractive enablement
 may select only supported integrations, and dry-run does not modify durable
 state. Enablement records desired policy while setup remains not installed.
-Owned hook/plugin setup, drift-safe removal and the ingestion loop remain
-unfinished M9.2 work.
+
+Setup requires both enabled policy and exact-version support. It merges only the
+owned command handlers into Codex or Cursor project hook documents and installs
+one namespaced OpenCode project plugin. Before writing, the device registry
+atomically stores exact original bytes and the original and owned SHA-256
+hashes. Project files use bounded atomic replacement, preserve unrelated JSON
+values and reject symlinked target directories. Restart recognizes either the
+exact original-to-owned transition or the installed hash; any other bytes are
+drift and block replacement. Dry-run writes nothing.
+
+The Codex contract follows `openai/codex` tag `rust-v0.156.1` at source revision
+`b412ff32c417f855c2b2d1581b77058eed87c84b`; the OpenCode plugin contract follows
+`anomalyco/opencode` tag `v1.18.30` at source revision
+`3104c1428ec91f809e5ab86631300de41eb6952e`. Cursor uses the documented version-1
+project hooks shape, but remains synthetic setup acceptance because the local
+agent reports `2026.09.26-dd393fe` rather than qualified `3.22.7`. Drift-safe
+removal, packaged hook ingestion and the publication loop remain unfinished M9.2
+work.

@@ -61,9 +61,9 @@ adds evidence here in its enclosing Jujutsu change.
 | M7          | Deferred    | M8a         | JST-ADAPT-005                                                           | Complete read-only replica through applied position                                                                 | After first release                                     | -                                                                                                                                                                                                                          |
 | M7.1        | Deferred    | M8a.4       | JST-ADAPT-006                                                           | Asynchronous verified S3 backup remains independent from passive serving and promotion                              | Future backup release after local application           | -                                                                                                                                                                                                                          |
 | M8b         | Deferred    | M8a         | JST-COMPAT-004                                                          | Verified lossless import with source safety                                                                         | Separate migration release                              | -                                                                                                                                                                                                                          |
-| M9          | Partial     | M8a.4       | JST-COLLAB-001,JST-COLLAB-005                                           | Repository-native agent activity and exact review discussions in the LocalTrusted application                       | Implement LocalTrusted collaboration APIs               | E-M9-001,E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009,E-M9-010,E-M9-011,E-M9-012,E-M9-013,E-M9-014,E-M9-015,E-M9-016                                                                            |
+| M9          | Partial     | M8a.4       | JST-COLLAB-001,JST-COLLAB-005                                           | Repository-native agent activity and exact review discussions in the LocalTrusted application                       | Implement LocalTrusted collaboration APIs               | E-M9-001,E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009,E-M9-010,E-M9-011,E-M9-012,E-M9-013,E-M9-014,E-M9-015,E-M9-016,E-M9-017                                                                   |
 | M9.1        | Done        | M8a.4       | JST-PUB-007,JST-PUB-008                                                 | Independent code/agent/review roots, code-state fencing and non-destructive collaboration enablement                | Implement AgentStore typed root objects                 | E-M9-001                                                                                                                                                                                                                   |
-| M9.2        | In progress | M9.1        | JST-COLLAB-001,JST-COLLAB-002,JST-COLLAB-006                            | AgentStore model, immutable snapshots/catalogs, sanitized evidence and Codex/Cursor/OpenCode normalizers            | Add drift-safe owned setup and capture ingestion        | E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009,E-M9-015,E-M9-016                                                                                                                                  |
+| M9.2        | In progress | M9.1        | JST-COLLAB-001,JST-COLLAB-002,JST-COLLAB-006                            | AgentStore model, immutable snapshots/catalogs, sanitized evidence and Codex/Cursor/OpenCode normalizers            | Wire packaged hook ingestion and publication recovery   | E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009,E-M9-015,E-M9-016,E-M9-017                                                                                                                         |
 | M9.3        | In progress | M9.2        | JST-COLLAB-001,JST-COLLAB-003,JST-PUB-009                               | ReviewStore exact anchors, stale-safe thread workflow, direct catalogs and conservative placement                   | Await M9.2, then implement LocalTrusted APIs            | E-M9-010,E-M9-011,E-M9-012,E-M9-013,E-M9-014                                                                                                                                                                               |
 | M9.4        | Planned     | M9.2,M9.3   | JST-COLLAB-004                                                          | LocalTrusted bounded CLI/HTTP APIs, pagination, receipts and live collaboration hints                               | Wire first-party service and generated contracts        | -                                                                                                                                                                                                                          |
 | M9.5        | Planned     | M9.4        | JST-COLLAB-005                                                          | Community-owned thread/agent widgets and Design Core exact diff selection integrated into the application           | Implement accessible virtualized application routes     | -                                                                                                                                                                                                                          |
@@ -13476,6 +13476,91 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Rust 1.98.1; device-local agent integration registry v1; Codex 0.156.1; Cursor 3.22.7; OpenCode 1.18.30.",
     "formats": "AgentDeviceStatusV1 binds a nonzero stable DeviceId, RepositoryId and canonical workspace to explicit Codex, Cursor and OpenCode entries. Detection support, desired enablement and setup state remain separate. Registry replacement is locked, atomic, synchronized and user-restricted; probes have a two-second timeout and 256-byte stdout limit while stderr is discarded."
+  },
+  {
+    "id": "E-M9-017",
+    "tasks": ["M9", "M9.2"],
+    "date": "2026-09-28",
+    "kind": "implementation",
+    "files": [
+      "crates/jj-store-cli/src/agent_commands.rs",
+      "crates/jj-store-cli/src/agent_integrations.rs",
+      "crates/jj-store-cli/src/agent_setup.rs",
+      "crates/jj-store-cli/src/agent_setup_files.rs",
+      "crates/jj-store-cli/src/agent_setup_templates.rs",
+      "crates/jj-store-cli/src/lib.rs",
+      "crates/jj-store-cli/tests/agent_setup.rs",
+      "docs/cli/agent.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/collaboration.md",
+      "spec/src/verification.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/agent_setup.rs#setup_merges_only_owned_hooks_and_preserves_original_backups",
+      "crates/jj-store-cli/tests/agent_setup.rs#setup_recovers_owned_state_and_refuses_drifted_configuration",
+      "crates/jj-store-cli/tests/agent_setup.rs#setup_rejects_project_configuration_symlinks",
+      "crates/jj-store-cli/tests/agent_setup.rs#setup_command_selects_one_explicit_integration"
+    ],
+    "runs": [
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test agent_setup --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "The test-first compile reported the intentionally missing agent_setup module before the owned setup implementation existed."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test agent_setup --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "Restart and drift recovery passed; the preservation case exposed a test assertion expecting a shell string where the OpenCode plugin deliberately uses a safer argv array."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo clippy -p jj-store-cli --test agent_setup --test agent_integrations --locked -- -D warnings",
+        "result": "fail",
+        "failures": 1,
+        "note": "The first targeted Clippy run found one unused test-helper lifetime; production behavior was unchanged."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo fmt --all -- --check",
+        "result": "fail",
+        "failures": 1,
+        "note": "The final ownership-record validation addition required one rustfmt line wrap."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test agent_setup --locked; DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test agent_integrations --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All four setup regressions and all three shared registry regressions pass, covering namespaced merges and exact backups, restart/idempotency and drift refusal, project symlink rejection, explicit setup grammar and unchanged support probing."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo clippy -p jj-store-cli --test agent_setup --test agent_integrations --locked -- -D warnings; DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo fmt --all -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "The affected CLI library plus both directly affected integration targets are warning-free and formatted."
+      },
+      {
+        "command": "wc -l crates/jj-store-cli/src/{agent_commands,agent_integrations,agent_setup,agent_setup_files,agent_setup_templates}.rs crates/jj-store-cli/tests/agent_setup.rs",
+        "result": "pass",
+        "failures": 0,
+        "note": "The production modules contain 179, 293, 181, 197 and 148 physical lines; the focused regression contains 239. Every file stays below its governed limit."
+      },
+      {
+        "command": "pnpm check:boundaries; pnpm test:governance; pnpm spec:validate; pnpm spec:first; pnpm check:progress; pnpm exec prettier --check docs/cli/agent.md spec/src/architecture.md spec/src/cli.md spec/src/collaboration.md spec/src/verification.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 13 package boundaries and 26 governance tests pass; all 85 requirements validate, eight protected files map to four canonical chapters, all 60 progress tasks are consistent and every changed prose file is formatted."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Package and wire the jj agent hook ingestion path through @lapismd/agent-redaction into the durable capture spool and publication recovery",
+      "Add drift-safe owned removal after the ingesting setup is qualified",
+      "Execute pinned real-harness capability and smoke tests in M9.6; Cursor remains unsupported on the current host"
+    ],
+    "versions": "Rust 1.98.1; setup ownership record v1; Codex 0.156.1 from openai/codex rust-v0.156.1 source b412ff32c417f855c2b2d1581b77058eed87c84b; Cursor project hooks version 1 with synthetic 3.22.7 acceptance; OpenCode 1.18.30 from anomalyco/opencode v1.18.30 source 3104c1428ec91f809e5ab86631300de41eb6952e.",
+    "formats": "Project-scoped Codex and Cursor JSON documents retain unrelated keys and append only the owned hook command. OpenCode uses one namespaced TypeScript plugin and an argv spawn. The private ownership record binds integration, exact target, original optional SHA-256, owned SHA-256 and exact original bytes; setup writes the record before atomic project replacement, resumes only the recorded original-to-owned transition and treats every other state as drift."
   }
 ]
 ```

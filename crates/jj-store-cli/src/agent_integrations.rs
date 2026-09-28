@@ -166,6 +166,23 @@ impl AgentIntegrationRegistry {
         &self.status
     }
 
+    pub(crate) fn state_directory(&self) -> &Path {
+        &self.directory
+    }
+
+    pub(crate) fn set_setup(
+        &mut self,
+        integration: IntegrationId,
+        setup: IntegrationSetupV1,
+    ) -> AuthorityResult<()> {
+        self.status
+            .integrations
+            .get_mut(&integration)
+            .ok_or("unsupported agent integration")?
+            .setup = setup;
+        self.save()
+    }
+
     pub fn refresh(&mut self, search: &[PathBuf]) -> AuthorityResult<AgentDeviceStatusV1> {
         for integration in INTEGRATIONS {
             let state = self

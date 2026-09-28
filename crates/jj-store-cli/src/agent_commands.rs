@@ -1,5 +1,6 @@
 use crate::{
     agent_integrations::{AgentDeviceStatusV1, AgentIntegrationRegistry},
+    agent_setup::{SetupRequestV1, audit_installations, setup},
     commands::{Format, error},
     presentation,
 };
@@ -36,6 +37,14 @@ pub enum AgentCommand {
         #[arg(long)]
         non_interactive: bool,
     },
+    /// Install one owned project hook or plugin without replacing unrelated configuration
+    Setup {
+        #[arg(value_enum)]
+        agent: AgentName,
+        /// Preview the target change without writing configuration or ownership state
+        #[arg(long)]
+        dry_run: bool,
+    },
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, ValueEnum)]
@@ -69,6 +78,7 @@ pub fn run(ui: &mut Ui, helper: &CommandHelper, args: AgentArgs) -> Result<(), C
     let mut registry =
         AgentIntegrationRegistry::open(&state, &workspace, connection.repository).map_err(error)?;
     registry.refresh_environment().map_err(error)?;
+    audit_installations(&mut registry).map_err(error)?;
     let (status, action) = match command {
         AgentCommand::Status => (registry.status().clone(), "probed"),
         AgentCommand::Enable {
@@ -89,6 +99,31 @@ pub fn run(ui: &mut Ui, helper: &CommandHelper, args: AgentArgs) -> Result<(), C
                 registry.enable(&agents, dry_run).map_err(error)?,
                 if dry_run { "previewed" } else { "enabled" },
             )
+        }
+        AgentCommand::Setup { agent, dry_run } => {
+            let integration = IntegrationId::from(agent);
+            let result = setup(
+                &mut registry,
+                SetupRequestV1 {
+                    integration,
+                    executable: std::env::current_exe().map_err(error)?,
+                    dry_run,
+                },
+            )
+            .map_err(error)?;
+            return presentation::result(
+                ui,
+                helper,
+                args.format,
+                &serde_json::to_value(&result).map_err(error)?,
+                &format!(
+                    "Agent integration {:?}: {:?} at {}{}\n",
+                    result.integration,
+                    result.setup,
+                    result.target.display(),
+                    if result.dry_run { " (dry run)" } else { "" }
+                ),
+            );
         }
     };
     present(ui, helper, args.format, &status, action)

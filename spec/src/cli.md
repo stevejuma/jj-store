@@ -138,9 +138,19 @@ retaining subprocess stderr. `jj agent enable --non-interactive --agent ...`
 requires explicit supported selections and durably records desired enablement;
 `--dry-run` returns the prospective registry without writing it. The registry is
 bound to one native repository and canonical workspace, keeps a stable device
-identity across restart and reports setup independently as not installed. Owned
-`jj agent setup`, drift-safe hook/plugin mutation and capture ingestion remain
-pending M9.2 work.
+identity across restart and reports setup independently as not installed.
+
+`jj agent setup <codex|cursor|opencode> [--dry-run]` requires prior explicit
+enablement and exact-version support. Codex setup merges only owned command
+handlers into `.codex/hooks.json`; Cursor setup uses the version-1
+`.cursor/hooks.json` events; OpenCode installs only
+`.opencode/plugins/jj-store-agent.ts`. Dry-run creates no directories, backups,
+registry records or project files. A real setup atomically records exact
+original bytes and content hashes before replacing the bounded regular target,
+preserves unrelated JSON values, rejects configuration symlinks and becomes
+idempotent after success. Status audits the installed hash on restart; drift is
+reported and blocks replacement. The packaged hook ingestion path and durable
+publication loop remain pending M9.2 work.
 
 `store init` provisions a new repository using a separate operator credential,
 durably retaining generated repository/epoch IDs before contacting the server.
