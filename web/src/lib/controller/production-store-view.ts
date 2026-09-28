@@ -48,6 +48,7 @@ export function productionStoreView(
     detail: data.detail,
     bookmarks: data.bookmarks,
     choices: data.choices,
+    workingCopies: data.workingCopies,
     targets: data.targets,
     snapshot: data.snapshot,
     blob: data.blob,

@@ -1,5 +1,6 @@
 import { fullId, type Model, type Snapshot } from "../api/client.js";
 import type { RepositoryLogGraph } from "../projects/repository-log.js";
+import type { RepositoryWorkingCopy } from "../projects/repository-log.js";
 import type { Bookmark, RevisionDetail } from "../projects/presentation.js";
 import type {
   RepositoryBlob,
@@ -33,6 +34,7 @@ export async function readReferences(
 ): Promise<{
   bookmarks: Bookmark[];
   choices: RepositoryChoice[];
+  workingCopies: RepositoryWorkingCopy[];
   cursor: string | null;
   snapshot: Snapshot;
 }> {
@@ -54,6 +56,7 @@ export async function readGraph(
   atTimeMillis: number,
   cursor?: string,
   expected?: Snapshot,
+  targets?: readonly string[],
 ): Promise<{
   graph: RepositoryLogGraph;
   cursor: string | null;
@@ -63,6 +66,12 @@ export async function readGraph(
     operation: fullId(operation),
     cursor,
     atTimeMillis,
+    revset:
+      kind === "log" && targets
+        ? targets.length
+          ? targets.map((id) => `::${fullId(id)}`).join(" | ")
+          : "none()"
+        : undefined,
   });
   assertPinned(value.snapshot, source, operation);
   assertSameSnapshot(value.snapshot, expected);

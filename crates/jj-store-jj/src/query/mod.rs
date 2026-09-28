@@ -133,6 +133,7 @@ pub struct Signature {
 #[schemars(rename = "GraphBookmark")]
 pub struct Bookmark {
     pub name: String,
+    pub remote: Option<String>,
     pub added: bool,
     pub removed: bool,
     pub conflicted: bool,

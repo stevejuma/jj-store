@@ -4,6 +4,7 @@ import { encodeJjChangeId } from "../projects/repository-log-graph.js";
 import type {
   RepositoryLogGraph,
   RepositoryLogRevision,
+  RepositoryWorkingCopy,
 } from "../projects/repository-log.js";
 import type { Bookmark } from "../projects/presentation.js";
 import type { RepositoryChoice, RepositorySnapshot } from "./contracts.js";
@@ -18,6 +19,7 @@ type DirectoryTreeValue = Extract<Model<"NativeTreeValue">, { type: "tree" }>;
 export interface PresentedReferences {
   bookmarks: Bookmark[];
   choices: RepositoryChoice[];
+  workingCopies: RepositoryWorkingCopy[];
 }
 
 export interface PresentedPaths {
@@ -32,7 +34,21 @@ export function presentReferences(
 ): PresentedReferences {
   const bookmarks: Bookmark[] = [];
   const choices: RepositoryChoice[] = [];
+  const workingCopies = new Map<string, RepositoryWorkingCopy>();
   for (const reference of references) {
+    for (const target of reference.targets) {
+      for (const workspace of target.workspaces) {
+        workingCopies.set(workspace, {
+          workspace,
+          commitId: target.commit,
+          changeId: target.change,
+          message: target.description || "No description",
+          createdAt: seconds(target.committer.timestamp.millis),
+          author: target.author.name || target.author.email,
+          authorEmail: target.author.email,
+        });
+      }
+    }
     if (reference.kind === "bookmark") {
       const target = reference.targets[0];
       const targets = reference.terms.filter((id): id is string => Boolean(id));
@@ -67,7 +83,7 @@ export function presentReferences(
       targets,
     });
   }
-  return { bookmarks, choices };
+  return { bookmarks, choices, workingCopies: [...workingCopies.values()] };
 }
 
 function presentCommit(node: Model<"GraphCommitNode">): RepositoryLogRevision {
@@ -84,6 +100,13 @@ function presentCommit(node: Model<"GraphCommitNode">): RepositoryLogRevision {
     author: commit.author.name || commit.author.email,
     authorEmail: commit.author.email,
     empty: false,
+    bookmarks: commit.bookmarks.map((bookmark) => ({
+      ...bookmark,
+      remote: bookmark.remote ?? undefined,
+    })),
+    workspaces: [...commit.workspaces],
+    conflicted: commit.conflicted,
+    divergent: commit.divergent,
   };
 }
 
@@ -101,6 +124,11 @@ function presentOperation(
     author: node.user || "Unknown user",
     authorEmail: node.host,
     empty: false,
+    bookmarks: [],
+    workspaces: node.workspace ? [node.workspace] : [],
+    conflicted: false,
+    divergent: false,
+    operationSnapshot: node.is_snapshot,
   };
 }
 

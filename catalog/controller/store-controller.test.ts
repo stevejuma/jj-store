@@ -16,6 +16,14 @@ test("controller_restores_snapshot_history", () => {
   controller.actions.navigate(1);
   expect(controller.state.snapshot?.id).toBe(IDS.current);
 });
+test("working_copy_card_scopes_branch_history_to_its_native_commit", () => {
+  const controller = createInMemoryStoreController();
+  controller.actions.selectWorkingCopy(IDS.current);
+  expect(controller.state.route.bookmark).toBe("");
+  expect(controller.state.route.commitId).toBe(IDS.current);
+  expect(controller.state.targets).toEqual([IDS.current]);
+  expect(controller.state.graph.revisions[0]?.eventId).toBe(IDS.current);
+});
 test("controller_isolates_instances_and_conflicts", () => {
   const a = createInMemoryStoreController(),
     b = createInMemoryStoreController();

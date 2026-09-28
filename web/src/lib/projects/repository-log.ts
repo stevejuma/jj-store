@@ -1,5 +1,13 @@
 export type RepositoryLogReason = "checkpoint" | "merge";
 
+export type RepositoryLogBookmark = {
+  name: string;
+  remote?: string;
+  added: boolean;
+  removed: boolean;
+  conflicted: boolean;
+};
+
 export type RepositoryLogRevision = {
   eventId: string;
   changeId: string;
@@ -14,6 +22,21 @@ export type RepositoryLogRevision = {
   authorEmail?: string;
   authorAvatarUrl?: string;
   empty: boolean;
+  bookmarks: RepositoryLogBookmark[];
+  workspaces: string[];
+  conflicted: boolean;
+  divergent: boolean;
+  operationSnapshot?: boolean;
+};
+
+export type RepositoryWorkingCopy = {
+  workspace: string;
+  commitId: string;
+  changeId: string;
+  message: string;
+  createdAt: number;
+  author: string;
+  authorEmail?: string;
 };
 
 export type RepositoryLogDevice = {

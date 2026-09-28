@@ -24,6 +24,7 @@ import {
   reportProductionStoreError,
   startProductionStoreLifecycle,
 } from "./production-store-lifecycle.svelte.js";
+import { createProductionBranchActions } from "./production-branch-actions.js";
 
 export function createProductionStoreController(
   options: { fetcher?: typeof fetch; now?: () => number } = {},
@@ -196,6 +197,14 @@ export function createProductionStoreController(
     history,
     reader,
   );
+  const branchActions = createProductionBranchActions({
+    data,
+    history,
+    reader,
+    invalidate: () => {
+      version += 1;
+    },
+  });
 
   const actions: StoreController["actions"] = {
     connect: ({ repository, token }) => connect(repository, token),
@@ -251,18 +260,7 @@ export function createProductionStoreController(
     async navigate(delta) {
       if (history.navigate(delta)) await restoreRoute();
     },
-    selectBookmark(name) {
-      const bookmark = data.bookmarks.find((item) => item.name === name);
-      if (!bookmark) return;
-      data.targets = [...bookmark.targets];
-      history.push({
-        ...history.route,
-        bookmark: name,
-        commitId: null,
-        changeId: null,
-        path: null,
-      });
-    },
+    ...branchActions,
     selectRevision,
     async selectFile(path) {
       version += 1;

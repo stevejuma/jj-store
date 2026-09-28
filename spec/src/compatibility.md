@@ -350,6 +350,11 @@ checked against 51 captured registered-handler responses; existing complete read
 routes remain compatible. This local native/API evidence does not replace the
 separate built-browser and pinned RustFS qualification in M4.14.
 
+The generated graph contract requires `GraphBookmark.remote` as a nullable
+string. `null` identifies a local bookmark and a string preserves the native
+remote name; OpenAPI and TypeScript therefore retain local and remote bookmarks
+without overloading the display label or changing commit identities.
+
 M4.16 keeps the V1 mutation request, prepared result, committed receipt and
 durable status shapes intact. Generated and captured contracts add the semantic
 409 `protected_transition` error code without changing native identities, stored

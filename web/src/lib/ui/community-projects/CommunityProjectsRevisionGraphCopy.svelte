@@ -37,17 +37,52 @@
     <span class="community-revision-graph-copy__meta">
       <CommunityRelativeTime timestamp={row.revision.createdAt} {now} />
     </span>
-    {#if row.revision.reason === "merge" || row.deviceAliases.length > 0}
+    {#if row.revision.reason === "merge" || row.revision.divergent || row.revision.conflicted || row.revision.bookmarks.length > 0 || row.revision.workspaces.length > 0 || row.revision.operationSnapshot || row.deviceAliases.length > 0}
       <span class="community-revision-graph-copy__chips">
         {#if row.revision.reason === "merge"}
           <CommunityChip size="compact" variant="muted" ariaHidden
             >Merge</CommunityChip
           >
         {/if}
-        {#each row.deviceAliases as alias (alias)}
-          <CommunityChip size="compact" variant="outline" ariaHidden
-            >{alias}</CommunityChip
+        {#if row.revision.divergent}
+          <CommunityChip size="compact" tone="warning">Divergent</CommunityChip>
+        {/if}
+        {#if row.revision.conflicted}
+          <CommunityChip size="compact" tone="danger">Conflicted</CommunityChip>
+        {/if}
+        {#each row.revision.bookmarks as bookmark (`${bookmark.name}:${bookmark.remote ?? "local"}:${bookmark.added}:${bookmark.removed}`)}
+          <CommunityChip
+            size="compact"
+            tone={bookmark.conflicted
+              ? "danger"
+              : bookmark.remote
+                ? "neutral"
+                : "accent"}
+            title={bookmark.removed && !bookmark.added
+              ? "Removed bookmark target"
+              : bookmark.remote
+                ? `Remote bookmark on ${bookmark.remote}`
+                : "Local bookmark"}
+            >{bookmark.name}{bookmark.remote
+              ? `@${bookmark.remote}`
+              : ""}</CommunityChip
           >
+        {/each}
+        {#each row.revision.workspaces as workspace (workspace)}
+          <CommunityChip
+            size="compact"
+            tone="success"
+            title={`Workspace ${workspace}`}
+            >{workspace === "default"
+              ? "Working copy"
+              : `Working copy · ${workspace}`}</CommunityChip
+          >
+        {/each}
+        {#if row.revision.operationSnapshot}
+          <CommunityChip size="compact" variant="muted">Snapshot</CommunityChip>
+        {/if}
+        {#each row.deviceAliases as alias (alias)}
+          <CommunityChip size="compact" tone="accent">{alias}</CommunityChip>
         {/each}
       </span>
     {/if}

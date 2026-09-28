@@ -18,6 +18,10 @@ function revision(eventId: string, parents: string[]): RepositoryLogRevision {
     changeId: "",
     author: "Maya Chen",
     empty: false,
+    bookmarks: [],
+    workspaces: [],
+    conflicted: false,
+    divergent: false,
   };
 }
 

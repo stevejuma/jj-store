@@ -1053,6 +1053,7 @@ export interface components {
     };
     GraphBookmark: {
       name: string;
+      remote: string | null;
       added: boolean;
       removed: boolean;
       conflicted: boolean;

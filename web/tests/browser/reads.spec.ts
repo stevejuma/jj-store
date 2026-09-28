@@ -2,6 +2,7 @@ import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import {
   api,
+  commit,
   connect,
   diffPathsPage,
   graph,
@@ -183,6 +184,55 @@ test("native_graphs_files_and_source_rendering_are_accessible", async ({
     page.getByLabel("Repository token", { exact: true }),
   ).toHaveValue("");
 });
+test("branch targets scope native history and expose repository decorations", async ({
+  page,
+}) => {
+  await api(page);
+  const revsets: string[] = [];
+  await page.route("**/log?**", async (route) => {
+    revsets.push(new URL(route.request().url()).searchParams.get("revset")!);
+    await route.fulfill({ json: sample("log") });
+  });
+  await connect(page);
+  const workingCopy = page.getByRole("button", {
+    name: "Working copy · laptop",
+    exact: true,
+  });
+  await expect(workingCopy).toBeVisible();
+
+  revsets.length = 0;
+  await page.getByRole("option", { name: "main", exact: true }).click();
+  await expect.poll(() => revsets.at(-1)).toBe(`::${commit}`);
+  await expect(
+    page
+      .locator('[data-chip-tone="danger"]', { hasText: "conflicted" })
+      .first(),
+  ).toBeVisible();
+  await expect(
+    page.locator('[data-chip-tone="success"]', {
+      hasText: "Working copy · laptop",
+    }),
+  ).toBeVisible();
+
+  revsets.length = 0;
+  await workingCopy.click();
+  await expect.poll(() => revsets.at(-1)).toBe(`::${commit}`);
+  expect(new URL(page.url()).hash).toContain(`commit=${commit}`);
+
+  await page.getByRole("button", { name: "Op Log", exact: true }).click();
+  const operationGraph = page.getByRole("list", { name: "Operation graph" });
+  await expect(
+    operationGraph.locator('[data-chip-tone="success"]', {
+      hasText: "Working copy · laptop",
+    }),
+  ).toBeVisible();
+  await expect(
+    operationGraph.getByText("Snapshot", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    operationGraph.getByText("head 1", { exact: true }),
+  ).toHaveAttribute("data-chip-tone", "accent");
+});
 test("multiple_heads_require_choice_and_events_preserve_the_selected_view", async ({
   page,
 }) => {
@@ -266,28 +316,38 @@ test("graph_and_directory_pages_retain_exact_snapshots_and_query_context", async
     const query = new URL(route.request().url()).searchParams;
     queries.push(query);
     const result = sample("log");
+    const queryPage = queries.filter(
+      (candidate) => candidate.get("revset") === query.get("revset"),
+    ).length;
     result.data.data.nodes = result.data.data.nodes.slice(
-      queries.length - 1,
-      queries.length,
+      queryPage - 1,
+      queryPage,
     );
-    result.next_cursor = queries.length === 1 ? "graph-page-2" : null;
-    if (queries.length > 1) result.snapshot.manifest_revision++;
+    result.next_cursor = queryPage === 1 ? "graph-page-2" : null;
+    if (queryPage > 1) result.snapshot.manifest_revision++;
     await route.fulfill({ json: result });
   });
   await connect(page);
   await page.getByRole("option", { name: "main", exact: true }).click();
   const revisionGraph = page.getByRole("list", { name: "Revision graph" });
+  await expect
+    .poll(
+      () =>
+        queries.filter((query) => query.get("revset") === `::${commit}`).length,
+    )
+    .toBe(2);
   await expect(revisionGraph.getByRole("listitem")).toHaveCount(1);
-  await expect.poll(() => queries.length).toBe(2);
   await page.getByRole("button", { name: "Toggle details" }).click();
   await expect(page.getByRole("alert")).toContainText(
     "pagination snapshot mismatch",
   );
-  expect(queries[1].get("revset")).toBe("all()");
-  expect(queries[1].get("at_time_millis")).toBe(
-    queries[0].get("at_time_millis"),
+  const scopedQueries = queries.filter(
+    (query) => query.get("revset") === `::${commit}`,
   );
-  expect(queries[1].get("cursor")).toBe("graph-page-2");
+  expect(scopedQueries[1]!.get("at_time_millis")).toBe(
+    scopedQueries[0]!.get("at_time_millis"),
+  );
+  expect(scopedQueries[1]!.get("cursor")).toBe("graph-page-2");
   await expect(revisionGraph.getByRole("listitem")).toHaveCount(1);
   let pages = 0;
   await page.route("**/commits/*/paths?**", async (route) => {

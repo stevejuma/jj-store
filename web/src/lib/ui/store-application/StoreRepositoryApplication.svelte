@@ -62,6 +62,7 @@
         {page}
         graph={state.graph}
         bookmarks={[...state.bookmarks]}
+        workingCopies={[...state.workingCopies]}
         selectedBranch={state.route.bookmark}
         {selectedId}
         selectedPath={state.route.path}
@@ -86,6 +87,7 @@
         now={state.now}
         {layoutStorage}
         onSelectBranch={controller.actions.selectBookmark}
+        onSelectWorkingCopy={controller.actions.selectWorkingCopy}
         onSelectRevision={controller.actions.selectRevision}
         onSelectPath={controller.actions.selectFile}
         onLoadMoreBookmarks={() => controller.actions.loadMore("bookmarks")}

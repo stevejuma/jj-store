@@ -30,6 +30,10 @@ export const largeRevisions: RepositoryLogRevision[] = Array.from(
     author: "Maya Chen",
     authorEmail: "maya@example.test",
     empty: false,
+    bookmarks: [],
+    workspaces: [],
+    conflicted: false,
+    divergent: false,
   }),
 );
 

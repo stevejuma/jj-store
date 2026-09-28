@@ -20,6 +20,7 @@ import {
   presentReferences,
 } from "../src/lib/controller/native-presentation.js";
 import {
+  readGraph,
   readOperationInspection,
   readReferences,
 } from "../src/lib/controller/production-store-loaders.js";
@@ -117,6 +118,17 @@ test("native presentation preserves conflicting targets and exact identifiers", 
   assert.deepEqual(references.bookmarks[0]?.targets, [after, before]);
   assert.deepEqual(references.choices[0]?.targets, [after, before]);
   assert.equal(references.bookmarks[0]?.updatedAt, 60);
+  assert.deepEqual(references.workingCopies, [
+    {
+      workspace: "default",
+      commitId: after,
+      changeId: change,
+      message: "Native history",
+      createdAt: 60,
+      author: "Maya Chen",
+      authorEmail: "maya@example.test",
+    },
+  ]);
 
   const paths = presentPaths(after, [
     {
@@ -206,8 +218,26 @@ test("graph and diff presentation retain native edges and text statistics", () =
               author: signature,
               committer: signature,
               predecessors: [],
-              conflicted: false,
-              workspaces: [],
+              conflicted: true,
+              workspaces: ["default"],
+              bookmarks: [
+                {
+                  name: "feature/native",
+                  remote: null,
+                  added: true,
+                  removed: false,
+                  conflicted: false,
+                },
+                {
+                  name: "feature/native",
+                  remote: "origin",
+                  added: true,
+                  removed: false,
+                  conflicted: false,
+                },
+              ],
+              visible: true,
+              divergent: true,
             },
             edges: [{ target: before, kind: "indirect" }],
           },
@@ -219,6 +249,25 @@ test("graph and diff presentation retain native edges and text statistics", () =
   );
   assert.deepEqual(graph.revisions[0]?.parents, [before]);
   assert.equal(graph.revisions[0]?.changeId, change);
+  assert.deepEqual(graph.revisions[0]?.workspaces, ["default"]);
+  assert.equal(graph.revisions[0]?.conflicted, true);
+  assert.equal(graph.revisions[0]?.divergent, true);
+  assert.deepEqual(graph.revisions[0]?.bookmarks, [
+    {
+      name: "feature/native",
+      remote: undefined,
+      added: true,
+      removed: false,
+      conflicted: false,
+    },
+    {
+      name: "feature/native",
+      remote: "origin",
+      added: true,
+      removed: false,
+      conflicted: false,
+    },
+  ]);
 
   const changed = {
     path: "src/lib.rs",
@@ -242,6 +291,40 @@ test("graph and diff presentation retain native edges and text statistics", () =
     { path: "src/lib.rs", additions: 3, deletions: 2 },
   ]);
   assert.match(presentPatch(changed) ?? "", /@@ -4,2 \+4,3 @@/u);
+});
+
+test("branch graph requests bind exact target ancestry", async () => {
+  const revsets: (string | undefined)[] = [];
+  const graphPage = {
+    snapshot: snapshot(),
+    data: {
+      version: 1,
+      data: { graph: "log", nodes: [] },
+      stats,
+    },
+    next_cursor: null,
+  } as unknown as Envelope<import("../src/lib/api/client.js").Graph>;
+  const dataSource = source({
+    graph: async (_kind, query) => {
+      revsets.push(query.revset);
+      return graphPage;
+    },
+  });
+  await readGraph(dataSource, operation, "log", [], 1, undefined, undefined, [
+    after,
+    before,
+  ]);
+  await readGraph(
+    dataSource,
+    operation,
+    "log",
+    [],
+    1,
+    undefined,
+    undefined,
+    [],
+  );
+  assert.deepEqual(revsets, [`::${after} | ::${before}`, "none()"]);
 });
 
 test("paged reads reject a continuation from another captured snapshot", async () => {

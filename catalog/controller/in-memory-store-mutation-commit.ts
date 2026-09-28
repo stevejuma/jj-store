@@ -36,6 +36,10 @@ export function commitInMemoryMutation(
       author: "Maya Chen",
       authorEmail: "maya@example.test",
       empty: true,
+      bookmarks: [],
+      workspaces: ["default"],
+      conflicted: false,
+      divergent: false,
     });
   }
   if (command.type === "describe") {

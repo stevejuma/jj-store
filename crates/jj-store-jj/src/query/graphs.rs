@@ -97,7 +97,7 @@ async fn describe(
         .resolve_change_id(commit.change_id())
         .await
         .map_err(|_| Error::Unavailable)?;
-    let bookmarks = repo
+    let mut bookmarks: Vec<_> = repo
         .view()
         .local_bookmarks()
         .filter_map(|(name, target)| {
@@ -105,12 +105,29 @@ async fn describe(
             let removed = target.removed_ids().any(|id| id == commit.id());
             (added || removed).then(|| Bookmark {
                 name: name.as_str().to_owned(),
+                remote: None,
                 added,
                 removed,
                 conflicted: target.has_conflict(),
             })
         })
         .collect();
+    bookmarks.extend(
+        repo.view()
+            .all_remote_bookmarks()
+            .filter_map(|(symbol, remote_ref)| {
+                let target = &remote_ref.target;
+                let added = target.added_ids().any(|id| id == commit.id());
+                let removed = target.removed_ids().any(|id| id == commit.id());
+                (added || removed).then(|| Bookmark {
+                    name: symbol.name.as_str().to_owned(),
+                    remote: Some(symbol.remote.as_str().to_owned()),
+                    added,
+                    removed,
+                    conflicted: target.has_conflict(),
+                })
+            }),
+    );
     Ok(Commit {
         id,
         change_id: m::ChangeId::from_slice(commit.change_id().as_bytes())

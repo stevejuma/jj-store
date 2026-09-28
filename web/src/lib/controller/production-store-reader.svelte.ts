@@ -47,6 +47,16 @@ export function createProductionStoreReader(context: ReaderContext) {
         ? [...data.bookmarks, ...value.bookmarks]
         : value.bookmarks;
       data.choices = more ? [...data.choices, ...value.choices] : value.choices;
+      data.workingCopies = more
+        ? [
+            ...new Map(
+              [...data.workingCopies, ...value.workingCopies].map((item) => [
+                item.workspace,
+                item,
+              ]),
+            ).values(),
+          ]
+        : value.workingCopies;
       data.refsCursor = value.cursor;
       data.refsPageSnapshot = value.snapshot;
       data.status.bookmarks = data.bookmarks.length ? "ready" : "empty";
@@ -61,6 +71,16 @@ export function createProductionStoreReader(context: ReaderContext) {
       operation = fullId(context.operation() ?? ""),
       ticket = context.version();
     const kind = history.route.page === "oplog" ? "operations" : "log";
+    const branchTargets =
+      history.route.page !== "branches"
+        ? undefined
+        : history.route.bookmark
+          ? data.targets
+          : data.workingCopies.some(
+                (copy) => copy.commitId === history.route.commitId,
+              )
+            ? [history.route.commitId!]
+            : undefined;
     data.status.graph = more ? "refreshing" : "loading";
     try {
       data.graphAtTimeMillis ??= Date.now();
@@ -72,6 +92,7 @@ export function createProductionStoreReader(context: ReaderContext) {
         data.graphAtTimeMillis,
         more ? (data.graphCursor ?? undefined) : undefined,
         more ? (data.graphPageSnapshot ?? undefined) : undefined,
+        branchTargets,
       );
       if (!context.current(ticket, source)) return;
       data.graph = more

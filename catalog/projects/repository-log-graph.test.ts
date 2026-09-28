@@ -30,6 +30,10 @@ function revision(
     changeId: "",
     author: "Maya Chen",
     empty: false,
+    bookmarks: [],
+    workspaces: [],
+    conflicted: false,
+    divergent: false,
     ...extras,
   };
 }

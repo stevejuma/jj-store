@@ -2,16 +2,18 @@
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, fn, userEvent, within } from "storybook/test";
   import CommunityRepositoryBranchCommand from "../../../web/src/lib/ui/community-repository-branch-command/CommunityRepositoryBranchCommand.svelte";
-  import { bookmarks, NOW } from "../../fixtures/repository.js";
+  import { bookmarks, NOW, workingCopies } from "../../fixtures/repository.js";
   const { Story } = defineMeta({
     title: "JJ Store/Components/Branch cards",
     component: CommunityRepositoryBranchCommand,
     tags: ["visual-pending"],
     args: {
       bookmarks,
+      workingCopies,
       now: NOW,
       selected: "feature/publication",
       onSelect: fn(),
+      onSelectWorkingCopy: fn(),
     },
   });
 </script>
@@ -20,6 +22,18 @@
   name="Bookmark cards"
   play={async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
+    const workingCopy = canvas.getByRole("button", { name: /Working copy/ });
+    const filters = canvas.getByRole("tablist", { name: "Bookmark filters" });
+    await expect(
+      Boolean(
+        workingCopy.compareDocumentPosition(filters) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+      ),
+    ).toBe(true);
+    await userEvent.click(workingCopy);
+    await expect(args.onSelectWorkingCopy).toHaveBeenLastCalledWith(
+      workingCopies[0]!.commitId,
+    );
     const expectSeparators = async () => {
       const cards = canvas.getAllByRole("option");
       for (const card of cards) {

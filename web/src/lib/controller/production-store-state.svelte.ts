@@ -1,6 +1,9 @@
 import type { FileListingViewMode } from "@lapismd/design-core/diff";
 import type { Head, Model, Snapshot } from "../api/client.js";
-import type { RepositoryLogGraph } from "../projects/repository-log.js";
+import type {
+  RepositoryLogGraph,
+  RepositoryWorkingCopy,
+} from "../projects/repository-log.js";
 import type { Bookmark, RevisionDetail } from "../projects/presentation.js";
 import type {
   RepositoryBlob,
@@ -29,6 +32,7 @@ export interface ProductionStoreState {
   repositories: { id: string; name: string }[];
   bookmarks: Bookmark[];
   choices: RepositoryChoice[];
+  workingCopies: RepositoryWorkingCopy[];
   graph: RepositoryLogGraph;
   targets: string[];
   snapshot: RepositorySnapshot | undefined;
@@ -94,6 +98,7 @@ export function createProductionStoreState(): ProductionStoreState {
     repositories: [],
     bookmarks: [],
     choices: [],
+    workingCopies: [],
     graph: emptyGraph(),
     targets: [],
     snapshot: undefined,
@@ -136,6 +141,7 @@ export function createProductionStoreState(): ProductionStoreState {
 export function clearProductionStoreView(state: ProductionStoreState) {
   state.bookmarks = [];
   state.choices = [];
+  state.workingCopies = [];
   state.graph = emptyGraph();
   state.targets = [];
   state.snapshot = undefined;

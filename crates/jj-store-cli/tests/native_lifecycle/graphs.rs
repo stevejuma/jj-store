@@ -82,6 +82,16 @@ async fn graph_query_three_histories_filtered_edges_and_snapshot_pagination() {
             let (repo, b) = child(&repo, &a, "B").await;
             let (repo, c) = child(&repo, &b, "C").await;
             let (repo, c_new) = describe(&repo, &c, "C rewritten").await;
+            let mut tx = repo.start_transaction();
+            tx.repo_mut().set_remote_bookmark(
+                jj_lib::ref_name::RefName::new("main")
+                    .to_remote_symbol(jj_lib::ref_name::RemoteName::new("origin")),
+                o::RemoteRef {
+                    target: o::RefTarget::normal(c_new.id().clone()),
+                    state: o::RemoteRefState::Tracked,
+                },
+            );
+            let repo = tx.commit("track remote fixture").await.unwrap();
             let read = pin(&f, oid(repo.op_id())).await;
             let exec = executor(graphs.path(), q::Limits::default());
             let before = f.session.snapshot().await.unwrap().manifest().clone();
@@ -106,8 +116,12 @@ async fn graph_query_three_histories_filtered_edges_and_snapshot_pagination() {
                 top.commit
                     .bookmarks
                     .iter()
-                    .any(|r| r.name == "main" && r.added && !r.conflicted)
+                    .any(|r| r.name == "main" && r.remote.is_none() && r.added && !r.conflicted)
             );
+            assert!(top.commit.bookmarks.iter().any(|r| r.name == "main"
+                && r.remote.as_deref() == Some("origin")
+                && r.added
+                && !r.conflicted));
             assert!(commits(&full).iter().all(|n| n.commit.visible));
             let filtered = read
                 .graph(

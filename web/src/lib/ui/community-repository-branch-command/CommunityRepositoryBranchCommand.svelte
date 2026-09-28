@@ -1,26 +1,34 @@
 <script lang="ts">
   import * as CommandView from "@lapismd/design-core/shadcn/command-view";
   import GitBranchIcon from "@lucide/svelte/icons/git-branch";
+  import GitCommitIcon from "@lucide/svelte/icons/git-commit-horizontal";
   import CommunityChip from "../community-chip/CommunityChip.svelte";
   import CommunityProjectsGitAuthorAvatar from "../community-projects/CommunityProjectsGitAuthorAvatar.svelte";
   import CommunityProjectsVirtualRows from "../community-projects/CommunityProjectsVirtualRows.svelte";
   import CommunityRelativeTime from "../community-relative-time/CommunityRelativeTime.svelte";
   import type { Bookmark } from "../../projects/presentation.js";
+  import type { RepositoryWorkingCopy } from "../../projects/repository-log.js";
   let {
     bookmarks,
+    workingCopies = [],
     selected = "",
+    selectedCommit = null,
     now,
     hasMore = false,
     loading = false,
     onSelect,
+    onSelectWorkingCopy = () => {},
     onLoadMore,
   }: {
     bookmarks: readonly Bookmark[];
+    workingCopies?: readonly RepositoryWorkingCopy[];
     selected?: string;
+    selectedCommit?: string | null;
     now?: number;
     hasMore?: boolean;
     loading?: boolean;
     onSelect: (name: string) => void;
+    onSelectWorkingCopy?: (commit: string) => void;
     onLoadMore?: () => void;
   } = $props();
   let query = $state(""),
@@ -93,6 +101,39 @@
   class="community-bookmark-cards"
   shouldFilter={false}
 >
+  {#each workingCopies as workingCopy (workingCopy.workspace)}
+    <button
+      type="button"
+      class="community-working-copy-card"
+      data-current={workingCopy.commitId === selectedCommit || undefined}
+      aria-label={`Working copy · ${workingCopy.workspace}`}
+      onclick={() => onSelectWorkingCopy(workingCopy.commitId)}
+    >
+      <span class="community-bookmark-card__heading">
+        <GitCommitIcon aria-hidden="true" />
+        <strong>Working copy</strong>
+        <CommunityChip size="compact" tone="success"
+          >{workingCopy.workspace}</CommunityChip
+        >
+      </span>
+      <span class="community-working-copy-card__description"
+        >{workingCopy.message}</span
+      >
+      <span class="community-bookmark-card__footer">
+        <CommunityProjectsGitAuthorAvatar
+          name={workingCopy.author}
+          email={workingCopy.authorEmail}
+          size="xsmall"
+        />
+        <span>workspace</span><span class="community-bookmark-card__author"
+          ><CommunityRelativeTime
+            timestamp={workingCopy.createdAt}
+            {now}
+          />{" by "}{workingCopy.author}</span
+        >
+      </span>
+    </button>
+  {/each}
   <CommandView.Filters
     bind:value={filter}
     label="Bookmark filters"
@@ -143,6 +184,35 @@
     padding: 0.5rem 0.9rem;
     background: var(--jj-store-row-background);
     border-bottom: 1px solid var(--border);
+  }
+  .community-working-copy-card {
+    position: relative;
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.9rem;
+    border: 0;
+    border-bottom: 1px solid var(--border);
+    border-radius: 0;
+    color: var(--foreground);
+    background: var(--background);
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+  }
+  .community-working-copy-card:hover,
+  .community-working-copy-card:focus-visible,
+  .community-working-copy-card[data-current="true"] {
+    background: var(--accent);
+  }
+  .community-working-copy-card:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
+  .community-working-copy-card__description {
+    color: var(--muted-foreground);
+    font-size: var(--community-text-body);
   }
   :global(.community-bookmark-card[data-ui-part="item"]) {
     position: relative;

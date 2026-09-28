@@ -146,6 +146,12 @@ split/squash/abandon, three-way conflicts, divergent changes and operation
 reconciliation require explicit acceptance before the capability matrix
 advertises them as verified.
 
+Native graph lifecycle acceptance also projects a tracked remote bookmark beside
+its same-named local bookmark, retains their separate identities and verifies
+that commit metadata survives filtered graph paging. Browser acceptance scopes a
+selected bookmark or working-copy card to exact target ancestry instead of
+reusing the repository-wide default graph.
+
 The verified capability matrix includes rebase, squash, split, abandon, undo,
 manual conflict snapshotting, divergent operations and conflicted local
 bookmarks. Separate Unix fixtures qualify binary/symlink/executable checkout

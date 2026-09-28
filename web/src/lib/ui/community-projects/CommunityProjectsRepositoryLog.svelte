@@ -2,7 +2,10 @@
   import * as ColumnCanvas from "@lapismd/design-core/shadcn/column-canvas";
   import { onDestroy, untrack } from "svelte";
   import type { FileListingFile } from "@lapismd/design-core/diff";
-  import type { RepositoryLogGraph } from "../../projects/repository-log.js";
+  import type {
+    RepositoryLogGraph,
+    RepositoryWorkingCopy,
+  } from "../../projects/repository-log.js";
   import type { Bookmark } from "../../projects/presentation.js";
   import type { StorePage } from "../community-navigation/model.js";
   import { createRepositoryLogCanvas } from "../../projects/repository-log-canvas.js";
@@ -19,6 +22,7 @@
     page = "log",
     graph,
     bookmarks = [],
+    workingCopies = [],
     selectedBranch = "",
     selectedId = null,
     selectedPath = null,
@@ -35,6 +39,7 @@
     now,
     layoutStorage,
     onSelectBranch,
+    onSelectWorkingCopy = () => {},
     onSelectRevision,
     onSelectPath,
     onLoadMoreBookmarks = () => {},
@@ -44,6 +49,7 @@
     page?: StorePage;
     graph: RepositoryLogGraph;
     bookmarks?: readonly Bookmark[];
+    workingCopies?: readonly RepositoryWorkingCopy[];
     selectedBranch?: string;
     selectedId?: string | null;
     selectedPath?: string | null;
@@ -60,6 +66,7 @@
     now: number;
     layoutStorage?: Storage;
     onSelectBranch: (name: string) => void;
+    onSelectWorkingCopy?: (commit: string) => void;
     onSelectRevision: (id: string | null) => void;
     onSelectPath: (path: string | null) => void;
     onLoadMoreBookmarks?: () => void | Promise<void>;
@@ -136,11 +143,14 @@
               label="Loading branches"
             />{:else}<CommunityRepositoryBranchCommand
               {bookmarks}
+              {workingCopies}
               {now}
               selected={selectedBranch}
+              selectedCommit={selectedBranch ? null : selectedId}
               hasMore={hasMoreBookmarks}
               {loading}
               onSelect={onSelectBranch}
+              {onSelectWorkingCopy}
               onLoadMore={() => void onLoadMoreBookmarks()}
             />{/if}
         </ColumnCanvas.Body>

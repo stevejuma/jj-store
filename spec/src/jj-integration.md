@@ -193,8 +193,10 @@ uses a read-only authority and permits physical object access only to the
 captured committed inventory. It runs upstream revset, operation-walk and
 evolution algorithms without a server checkout. Graph DTOs retain native IDs,
 ordered parents, direct/indirect/missing commit edges, local bookmark conflict
-annotations, logical workspaces, visibility and divergence. Evolution
-distinguishes absent predecessor records from known-empty records.
+annotations, remote bookmark names with their remote identity, logical
+workspaces, visibility and divergence. Local and remote bookmark decorations
+remain distinct even when they share a bookmark name. Evolution distinguishes
+absent predecessor records from known-empty records.
 
 Requests have explicit page, object-byte, output-byte, index-size, traversal,
 revset-size and elapsed-time bounds. Native futures run on a caller-owned

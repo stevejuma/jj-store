@@ -75,6 +75,21 @@ has no autoplay actions. The measured graph retains Community paths while
 allowing native bookmark labels and ID controls to wrap in narrow columns
 without overlapping subsequent rows.
 
+The Branches column places every native working-copy association in a card above
+the bookmark filters. Selecting a working copy scopes the adjacent JJ Log to
+that exact commit and opens its details. Selecting a bookmark scopes the log to
+the exact ancestry of all of its native targets; a conflicted bookmark preserves
+every target and a deleted bookmark produces an empty graph. Route restoration
+loads references before resolving this scope, so reload and Back/Forward cannot
+briefly substitute the repository-wide default log.
+
+JJ Log rows render local bookmarks as accent chips, remote bookmarks as neutral
+`name@remote` chips, working-copy associations as success chips, divergence as a
+warning and conflicts as danger. Op Log rows use the same working-copy chip,
+distinguish captured snapshots with a muted chip and render concurrent head
+aliases with the accent tone. These decorations come from native graph metadata;
+the presentation layer does not infer them from descriptions or fixture names.
+
 Graph lane slots remain stable while inner forks converge so an unrelated outer
 lane never jumps horizontally between adjacent revisions. Vacated internal slots
 may be reused by later branches only after the current row is captured; trailing

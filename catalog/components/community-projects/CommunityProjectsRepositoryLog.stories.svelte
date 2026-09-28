@@ -89,6 +89,17 @@
   name="Branches to diff"
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    await userEvent.click(
+      canvas.getByRole("option", { name: "feature/native-objects" }),
+    );
+    await expect(
+      canvas.getByRole("button", { name: "Stream immutable native objects" }),
+    ).toBeVisible();
+    await expect(
+      canvas.queryByRole("button", {
+        name: "Preserve concurrent publication history",
+      }),
+    ).not.toBeInTheDocument();
     await userEvent.click(canvas.getByRole("option", { name: "main" }));
     await inspectDiff(canvasElement);
   }}

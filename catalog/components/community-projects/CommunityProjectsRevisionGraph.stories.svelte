@@ -1,6 +1,6 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
-  import { expect, waitFor } from "storybook/test";
+  import { expect, waitFor, within } from "storybook/test";
   import CommunityProjectsRevisionGraph from "../../../web/src/lib/ui/community-projects/CommunityProjectsRevisionGraph.svelte";
   import { fixtureGraph, NOW, operations } from "../../fixtures/repository.js";
   const linear = Array.from({ length: 160 }, (_, index) => ({
@@ -26,13 +26,54 @@
   });
 </script>
 
-<Story name="Fork merge and convergence" />
+<Story
+  name="Fork merge and convergence"
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const nativeRow = canvas
+      .getByText("Stream immutable native objects")
+      .closest<HTMLElement>(".community-revision-graph__row")!;
+    for (const [label, tone] of [
+      ["Divergent", "warning"],
+      ["Conflicted", "danger"],
+      ["feature/native-objects", "accent"],
+      ["feature/native-objects@origin", "neutral"],
+    ] as const) {
+      await expect(within(nativeRow).getByText(label)).toHaveAttribute(
+        "data-chip-tone",
+        tone,
+      );
+    }
+    const workingCopyRow = canvas
+      .getAllByText("Working copy")
+      .find((element) =>
+        element.classList.contains("community-revision-graph-message__text"),
+      )!
+      .closest<HTMLElement>(".community-revision-graph__row")!;
+    await expect(
+      within(workingCopyRow)
+        .getAllByText("Working copy")
+        .find((element) => element.hasAttribute("data-chip-tone")),
+    ).toHaveAttribute("data-chip-tone", "success");
+  }}
+/>
 <Story
   name="Operation siblings"
   args={{
     ...operations,
     commitLabel: "operation ID",
     graphLabel: "Operation graph",
+  }}
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByText("head 1")).toHaveAttribute(
+      "data-chip-tone",
+      "accent",
+    );
+    await expect(canvas.getByText("Working copy")).toHaveAttribute(
+      "data-chip-tone",
+      "success",
+    );
   }}
 />
 <Story

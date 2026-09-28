@@ -112,7 +112,7 @@ export async function restoreProductionStoreRoute(
   if (desired.page === "files")
     await restoreFiles(desired, data, history, reads);
   else {
-    await Promise.all([reads.loadReferences(), reads.loadGraph()]);
+    await reads.loadReferences();
     if (desired.bookmark) {
       const bookmark = data.bookmarks.find(
         (candidate) => candidate.name === desired.bookmark,
@@ -123,7 +123,13 @@ export async function restoreProductionStoreRoute(
         return;
       }
       data.targets = [...bookmark.targets];
+    } else if (desired.page === "branches" && desired.commitId) {
+      const workingCopy = data.workingCopies.find(
+        (candidate) => candidate.commitId === desired.commitId,
+      );
+      if (workingCopy) data.targets = [workingCopy.commitId];
     }
+    await reads.loadGraph();
     const selected =
       desired.page === "oplog"
         ? desired.inspectedOperationId

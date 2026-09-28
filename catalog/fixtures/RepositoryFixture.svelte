@@ -5,6 +5,7 @@
     NOW,
     fixtureGraph,
     bookmarks,
+    workingCopies,
     operations,
     sampleDetail,
   } from "./repository.js";
@@ -47,6 +48,7 @@
   {page}
   {graph}
   {bookmarks}
+  {workingCopies}
   selectedBranch={branch}
   {selectedId}
   {selectedPath}
@@ -61,6 +63,11 @@
   error={fixtureState === "error" ? "Fixture history is unavailable." : ""}
   {unavailableComparisonCount}
   onSelectBranch={selectBranch}
+  onSelectWorkingCopy={(commit) => {
+    branch = "";
+    selectedId = commit;
+    selectedPath = null;
+  }}
   onSelectRevision={selectRevision}
   onSelectPath={(path) => (selectedPath = path)}
 />

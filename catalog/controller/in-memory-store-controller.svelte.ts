@@ -21,6 +21,7 @@ import {
 import { createInMemoryStoreRepository } from "./in-memory-store-repository.svelte.js";
 import { inMemoryStoreMember } from "./in-memory-store-member.js";
 import { createInMemoryStoreConflicts } from "./in-memory-store-conflicts.js";
+import { createInMemoryStoreBranchActions } from "./in-memory-store-branch-actions.js";
 
 /** Each story owns this instance. It has no persistence or transport effects. */
 export function createInMemoryStoreController(
@@ -71,6 +72,12 @@ export function createInMemoryStoreController(
     },
     firstApply: options.mutationOutcome,
     previewFailure: options.mutationFailure,
+  });
+  const branchActions = createInMemoryStoreBranchActions({
+    bookmarks: () => repositoryData.bookmarks,
+    workingCopies: fixture.workingCopies,
+    route: () => route,
+    push,
   });
   const actions: StoreController["actions"] = {
     async connect() {
@@ -132,21 +139,7 @@ export function createInMemoryStoreController(
     navigate(delta) {
       index = Math.max(0, Math.min(history.length - 1, index + delta));
     },
-    selectBookmark(name) {
-      if (!repositoryData.bookmarks.some((bookmark) => bookmark.name === name))
-        throw new Error("Unknown fixture bookmark");
-      push({
-        ...route,
-        bookmark: name,
-        inspectedOperationId: null,
-        commitId: null,
-        changeId: null,
-        comparisonParentId: null,
-        comparisonGroupId: null,
-        path: null,
-        directory: "",
-      });
-    },
+    ...branchActions,
     selectRevision(id) {
       if (
         id &&
@@ -246,6 +239,7 @@ export function createInMemoryStoreController(
         collapsedDirectoryPaths,
         bookmarks: repositoryData.bookmarks,
         choices: repositoryData.choices,
+        workingCopies: fixture.workingCopies,
         targets,
         snapshot,
         blob: snapshot?.files.find((file) => file.path === route.path),

@@ -378,6 +378,15 @@ and pagination retain an exact selected operation and time anchor. Live events
 indicate newer history without replacing the displayed snapshot. Reconnect
 resumes only fully parsed SSE IDs, while reset asks for explicit refresh.
 
+Branch graph navigation resolves the selected bookmark or working-copy target
+from the captured reference response before issuing the log request. One target
+uses its exact ancestry, several conflicted targets use the union of their exact
+ancestries and a deleted bookmark uses an explicitly empty revset. Paging keeps
+that same target-bound revset and time anchor. The production controller retains
+commit metadata for local and remote bookmarks, logical working copies, conflict
+and divergence state; operation rows independently retain workspace, snapshot
+and concurrent-head metadata.
+
 Read errors retain explicit cursor reset, incomplete history and index
 preparation states. Users may prepare/cancel the selected native index. Source
 strings, signatures, paths, diff hunks and conflict terms render as text. File

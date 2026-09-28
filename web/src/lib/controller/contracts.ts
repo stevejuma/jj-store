@@ -4,7 +4,10 @@ export type StoreConflictDescriptor = Model<"ConflictDescriptor">;
 export type StoreConflictUpload = Model<"ConflictUpload">;
 import type { CommunityMemberModel } from "../ui/community-workspace/model.js";
 import type { StorePage } from "../ui/community-navigation/model.js";
-import type { RepositoryLogGraph } from "../projects/repository-log.js";
+import type {
+  RepositoryLogGraph,
+  RepositoryWorkingCopy,
+} from "../projects/repository-log.js";
 import type { Bookmark, RevisionDetail } from "../projects/presentation.js";
 import type {
   StoreMutationCommand,
@@ -120,6 +123,7 @@ export interface StoreControllerState {
   readonly detail: RevisionDetail | undefined;
   readonly bookmarks: readonly Bookmark[];
   readonly choices: readonly RepositoryChoice[];
+  readonly workingCopies: readonly RepositoryWorkingCopy[];
   readonly targets: readonly string[];
   readonly snapshot: RepositorySnapshot | undefined;
   readonly blob: RepositoryBlob | undefined;
@@ -161,6 +165,7 @@ export interface StoreController {
     selectPage(page: StorePage): void | Promise<void>;
     navigate(delta: -1 | 1): void | Promise<void>;
     selectBookmark(name: string): void | Promise<void>;
+    selectWorkingCopy(commit: string): void | Promise<void>;
     selectRevision(id: string | null): void | Promise<void>;
     selectFile(path: string | null): void | Promise<void>;
     selectDirectory(path: string): void | Promise<void>;

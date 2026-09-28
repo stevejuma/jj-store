@@ -42,30 +42,76 @@ function revision(
     author: "Maya Chen",
     authorEmail: "maya@example.test",
     empty: false,
+    bookmarks: [],
+    workspaces: [],
+    conflicted: false,
+    divergent: false,
   };
 }
 export const revisions: RepositoryLogRevision[] = [
-  { ...revision(IDS.current, [IDS.merge], "Working copy", 30), empty: true },
+  {
+    ...revision(IDS.current, [IDS.merge], "Working copy", 30),
+    empty: true,
+    bookmarks: [
+      {
+        name: "main",
+        added: true,
+        removed: false,
+        conflicted: false,
+      },
+    ],
+    workspaces: ["default"],
+  },
   revision(
     IDS.merge,
     [IDS.left, IDS.right],
     "Merge native storage and publication",
     180,
   ),
-  revision(
-    IDS.left,
-    [IDS.base],
-    "Stream immutable native objects",
-    360,
-    "ab".repeat(16),
-  ),
-  revision(
-    IDS.right,
-    [IDS.base],
-    "Preserve concurrent publication history",
-    400,
-    "ab".repeat(16),
-  ),
+  {
+    ...revision(
+      IDS.left,
+      [IDS.base],
+      "Stream immutable native objects",
+      360,
+      "ab".repeat(16),
+    ),
+    bookmarks: [
+      {
+        name: "feature/native-objects",
+        added: true,
+        removed: false,
+        conflicted: false,
+      },
+      {
+        name: "feature/native-objects",
+        remote: "origin",
+        added: true,
+        removed: false,
+        conflicted: false,
+      },
+    ],
+    conflicted: true,
+    divergent: true,
+  },
+  {
+    ...revision(
+      IDS.right,
+      [IDS.base],
+      "Preserve concurrent publication history",
+      400,
+      "ab".repeat(16),
+    ),
+    bookmarks: [
+      {
+        name: "feature/publication",
+        added: true,
+        removed: false,
+        conflicted: false,
+      },
+    ],
+    divergent: true,
+  },
   revision(
     IDS.base,
     [IDS.root],
@@ -118,6 +164,17 @@ export const bookmarks: Bookmark[] = [
     targets: [],
   },
 ];
+export const workingCopies = [
+  {
+    workspace: "default",
+    commitId: IDS.current,
+    changeId: revisions[0]!.changeId,
+    message: revisions[0]!.message,
+    createdAt: revisions[0]!.createdAt,
+    author: revisions[0]!.author,
+    authorEmail: revisions[0]!.authorEmail,
+  },
+];
 export function fixtureGraph(
   bookmark?: string,
   sourceBookmarks: readonly Bookmark[] = bookmarks,
@@ -131,27 +188,21 @@ export function fixtureGraph(
   );
   return {
     revisions: orderNewestFirst(visible),
-    devices: sourceBookmarks.flatMap((b) =>
-      b.targets
-        .filter((id) => visible.some((r) => r.eventId === id))
-        .map((id) => ({
-          publicKey: b.name,
-          alias: b.name,
-          revisionEventId: id,
-          lastSeen: NOW,
-        })),
-    ),
+    devices: [],
   };
 }
 export const operations: RepositoryLogGraph = {
   revisions: [
-    revision(
-      IDS.opLeft,
-      [IDS.opRoot],
-      "describe: native object history",
-      90,
-      "",
-    ),
+    {
+      ...revision(
+        IDS.opLeft,
+        [IDS.opRoot],
+        "describe: native object history",
+        90,
+        "",
+      ),
+      workspaces: ["default"],
+    },
     revision(
       IDS.opRight,
       [IDS.opRoot],

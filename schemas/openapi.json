@@ -9197,11 +9197,12 @@
         "type": "object",
         "properties": {
           "name": { "type": "string" },
+          "remote": { "type": ["string", "null"] },
           "added": { "type": "boolean" },
           "removed": { "type": "boolean" },
           "conflicted": { "type": "boolean" }
         },
-        "required": ["name", "added", "removed", "conflicted"]
+        "required": ["name", "remote", "added", "removed", "conflicted"]
       },
       "GraphEdge": {
         "type": "object",
