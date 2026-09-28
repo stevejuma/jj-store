@@ -3,6 +3,7 @@
 
 mod activity;
 mod capture;
+mod capture_cursor;
 mod catalog;
 mod codec;
 mod delta;
@@ -17,6 +18,7 @@ mod transcript;
 
 pub use activity::*;
 pub use capture::*;
+pub use capture_cursor::*;
 pub use catalog::*;
 pub use codec::{decode_object, decode_root, encode_object, encode_root};
 pub use delta::*;

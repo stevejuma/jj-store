@@ -151,6 +151,14 @@ The CLI owns resumable physical attachment journals and atomic metadata staging.
 They retain no credentials and are not authority; publication acknowledgements
 continue to come from the native service's manifest-selected receipts.
 
+The CLI also owns device-local AgentStore capture durability because it already
+owns filesystem discovery and local process state. The neutral `jj-agent` crate
+defines the versioned cursor and sanitized activity models without filesystem or
+WAL dependencies. The CLI journal depends on those models and the WAL's typed
+agent request, persists outside checkouts under an exclusive user-restricted
+lock and never becomes repository authority. Only the WAL coordinator can
+publish its prepared delta through the manifest CAS and durable receipt path.
+
 The CLI builds both development executables. Repository creation is a durable
 client workflow that provisions its OS-held admin credential before remote
 creation and then delegates physical checkout setup to resumable attachment.

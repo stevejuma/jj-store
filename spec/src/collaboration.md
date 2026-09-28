@@ -364,5 +364,31 @@ state rejects repeated or overlapping receipts, records the accepted native
 sequence and carries forward explicit coverage gaps. Projection updates replace
 superseded session/source versions while preserving prior immutable event
 batches. The caller must durably retain the resulting delta and request identity
-before publication; device discovery, durable pending-spool ownership and an
-ingestion command/API remain unfinished.
+before publication.
+
+## Durable pending capture
+
+`CaptureCursorV1` records the device-local integration and source identity,
+nonzero generation, bounded parser version, optional native session key and the
+source-specific accepted position. It is distinct from the published source
+state. A native-sequence cursor can acknowledge a batch only at that batch's
+last accepted observation.
+
+The local capture spool is an exclusive owner outside repository checkouts. Its
+directories are user-restricted on Unix, its entry count and aggregate bytes are
+bounded, and every entry is a versioned regular file named by the capture batch
+ID. Enqueue validates the supported normalizer profile, sanitized batch, cursor
+and repository binding, writes through an atomically renamed temporary file,
+synchronizes both file and directory and only then returns the cursor
+acknowledgement. Exact retries are idempotent; a changed repository, profile,
+cursor or batch under the same ID fails closed.
+
+Preparing publication atomically replaces that entry with the exact validated
+`AgentDeltaRequest`, including stable principal, request and publication IDs.
+Restart discards only unacknowledged atomic temporary files, then reopens and
+validates every pending entry. Corruption, symlinks, unexpected files,
+concurrent ownership and byte-limit exhaustion fail closed. Completion removes
+only a prepared entry whose request and publication IDs match the committed
+outcome, then synchronizes the directory. An unprepared capture cannot be
+discarded through the completion path. Owned harness discovery, setup/status
+commands and the ingestion loop remain unfinished M9.2 work.

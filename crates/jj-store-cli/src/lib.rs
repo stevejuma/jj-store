@@ -1,5 +1,7 @@
 //! Custom JJ command and authenticated remote native workspace integration.
 #![forbid(unsafe_code)]
+pub mod agent_capture;
+mod agent_capture_files;
 pub mod attachment;
 pub mod binding;
 pub mod commands;

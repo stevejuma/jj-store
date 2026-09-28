@@ -42,6 +42,13 @@ impl NormalizerProfileV1 {
             self.product_version, self.schema_version
         )
     }
+    pub fn validate(&self) -> Result<()> {
+        if self.supported() {
+            Ok(())
+        } else {
+            Err(crate::Error::Invalid("normalizer profile"))
+        }
+    }
     pub(crate) fn supported(&self) -> bool {
         self.schema_version == 1
             && matches!(

@@ -120,6 +120,18 @@ complete bindings before rename. Physical metadata appears only after
 publication is acknowledged; resuming never snapshots or overwrites source
 files.
 
+Agent capture uses a separate bounded journal under the same CLI ownership
+rules. It exclusively locks a user-restricted path outside checkouts, atomically
+persists a validated sanitized batch before acknowledging reader progress, and
+then atomically records the exact principal, request ID, publication ID and
+typed AgentStore delta before publication. Restart validates pending entries; it
+removes only unacknowledged atomic temporary files. Changed retries, corrupt,
+symlink or unexpected entries and concurrent ownership fail closed. Completion
+requires the matching prepared request/publication identity, so unprepared or
+unknown-outcome captures remain recoverable. The journal is implemented as an
+internal boundary; `jj agent enable/setup/status` command presentation and
+harness installation remain pending M9.2 work.
+
 `store init` provisions a new repository using a separate operator credential,
 durably retaining generated repository/epoch IDs before contacting the server.
 The initial admin credential is saved to the OS facility or provided explicitly

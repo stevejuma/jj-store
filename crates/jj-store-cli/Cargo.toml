@@ -7,6 +7,7 @@ license.workspace = true
 publish = false
 
 [dependencies]
+jj-agent.workspace = true
 jj-cli.workspace = true
 jj-lib.workspace = true
 async-trait = "0.1"

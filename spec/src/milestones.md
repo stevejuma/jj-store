@@ -61,9 +61,9 @@ adds evidence here in its enclosing Jujutsu change.
 | M7          | Deferred    | M8a         | JST-ADAPT-005                                                           | Complete read-only replica through applied position                                                                 | After first release                                     | -                                                                                                                                                                                                                          |
 | M7.1        | Deferred    | M8a.4       | JST-ADAPT-006                                                           | Asynchronous verified S3 backup remains independent from passive serving and promotion                              | Future backup release after local application           | -                                                                                                                                                                                                                          |
 | M8b         | Deferred    | M8a         | JST-COMPAT-004                                                          | Verified lossless import with source safety                                                                         | Separate migration release                              | -                                                                                                                                                                                                                          |
-| M9          | Partial     | M8a.4       | JST-COLLAB-001,JST-COLLAB-005                                           | Repository-native agent activity and exact review discussions in the LocalTrusted application                       | Implement LocalTrusted collaboration APIs               | E-M9-001,E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009,E-M9-010,E-M9-011,E-M9-012,E-M9-013,E-M9-014                                                                                              |
+| M9          | Partial     | M8a.4       | JST-COLLAB-001,JST-COLLAB-005                                           | Repository-native agent activity and exact review discussions in the LocalTrusted application                       | Implement LocalTrusted collaboration APIs               | E-M9-001,E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009,E-M9-010,E-M9-011,E-M9-012,E-M9-013,E-M9-014,E-M9-015                                                                                     |
 | M9.1        | Done        | M8a.4       | JST-PUB-007,JST-PUB-008                                                 | Independent code/agent/review roots, code-state fencing and non-destructive collaboration enablement                | Implement AgentStore typed root objects                 | E-M9-001                                                                                                                                                                                                                   |
-| M9.2        | In progress | M9.1        | JST-COLLAB-001,JST-COLLAB-002,JST-COLLAB-006                            | AgentStore model, immutable snapshots/catalogs, sanitized evidence and Codex/Cursor/OpenCode normalizers            | Add durable capture ingress and setup                   | E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009                                                                                                                                                    |
+| M9.2        | In progress | M9.1        | JST-COLLAB-001,JST-COLLAB-002,JST-COLLAB-006                            | AgentStore model, immutable snapshots/catalogs, sanitized evidence and Codex/Cursor/OpenCode normalizers            | Add owned integration discovery and setup/status        | E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009,E-M9-015                                                                                                                                           |
 | M9.3        | In progress | M9.2        | JST-COLLAB-001,JST-COLLAB-003,JST-PUB-009                               | ReviewStore exact anchors, stale-safe thread workflow, direct catalogs and conservative placement                   | Await M9.2, then implement LocalTrusted APIs            | E-M9-010,E-M9-011,E-M9-012,E-M9-013,E-M9-014                                                                                                                                                                               |
 | M9.4        | Planned     | M9.2,M9.3   | JST-COLLAB-004                                                          | LocalTrusted bounded CLI/HTTP APIs, pagination, receipts and live collaboration hints                               | Wire first-party service and generated contracts        | -                                                                                                                                                                                                                          |
 | M9.5        | Planned     | M9.4        | JST-COLLAB-005                                                          | Community-owned thread/agent widgets and Design Core exact diff selection integrated into the application           | Implement accessible virtualized application routes     | -                                                                                                                                                                                                                          |
@@ -13324,6 +13324,85 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Rust 1.98.1; ReviewStore object/root schema v1; AnchorResolverV1 algorithm v1; 256 entries per relation/status page; eight MiB default resolver byte budget; eight default bounded candidates.",
     "formats": "ArtifactId hashes one validated exact target independently from anchor creation context. Relation/status pages select current thread snapshots under typed subject keys. Placement results preserve the original anchor and return exact, mapped_unchanged, candidate_modified, deleted, ambiguous, unresolved or unavailable with categorical evidence."
+  },
+  {
+    "id": "E-M9-015",
+    "tasks": ["M9", "M9.2"],
+    "date": "2026-09-28",
+    "kind": "implementation",
+    "files": [
+      "Cargo.lock",
+      "crates/jj-agent/src/capture_cursor.rs",
+      "crates/jj-agent/src/lib.rs",
+      "crates/jj-agent/src/normalize.rs",
+      "crates/jj-store-cli/Cargo.toml",
+      "crates/jj-store-cli/src/agent_capture.rs",
+      "crates/jj-store-cli/src/agent_capture_files.rs",
+      "crates/jj-store-cli/src/lib.rs",
+      "crates/jj-store-cli/tests/agent_capture_spool.rs",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/collaboration.md",
+      "spec/src/verification.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/agent_capture_spool.rs#sanitized_capture_and_prepared_publication_survive_restart",
+      "crates/jj-store-cli/tests/agent_capture_spool.rs#capture_spool_rejects_concurrent_owners_and_changed_retries",
+      "crates/jj-store-cli/tests/agent_capture_spool.rs#capture_spool_enforces_byte_bounds_and_rejects_corruption"
+    ],
+    "runs": [
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test agent_capture_spool --locked",
+        "result": "fail",
+        "failures": 2,
+        "note": "The test-first compile reported the missing durable cursor and capture-spool contracts."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test agent_capture_spool --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "The first implementation required the lockfile to record jj-store-cli's direct ownership of the existing jj-agent workspace package."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test agent_capture_spool --offline",
+        "result": "fail",
+        "failures": 1,
+        "note": "The first compiled regression found a test-local fixture name shadow; no production contract was changed to resolve it."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test agent_capture_spool --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All three focused spool regressions pass: sanitized restart recovery and exact prepared identity, exclusive ownership and immutable retries, plus byte-bound and corruption rejection."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-agent --locked; DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test agent_capture_spool --locked; DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo clippy -p jj-agent -p jj-store-cli --test agent_capture_spool --locked -- -D warnings; DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo fmt --all -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 20 AgentStore model/normalizer tests and three capture-spool regressions pass; the affected model and CLI test targets are warning-free and formatted. The spool modules contain 276 and 51 physical lines and the regression contains 179."
+      },
+      {
+        "command": "pnpm spec:validate; pnpm spec:first",
+        "result": "fail",
+        "failures": 2,
+        "note": "Canonical validation passed, then spec-first required the CLI-owned durable journal to be documented in both architecture.md and cli.md; both ownership mappings were added."
+      },
+      {
+        "command": "pnpm check:boundaries; pnpm test:governance; pnpm spec:validate; pnpm spec:first; pnpm check:progress; pnpm spec:build; pnpm exec prettier --check spec/src/architecture.md spec/src/cli.md spec/src/collaboration.md spec/src/verification.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 13 package boundaries and 26 governance tests pass; 85 requirements validate, nine protected files map to four canonical chapters, all 60 progress tasks are consistent, the book builds and changed prose is formatted."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Owned Codex, Cursor and OpenCode discovery plus setup/status commands",
+      "Released registry acceptance for @lapismd/agent-redaction",
+      "Pinned real-harness capability matrix and smoke tests in M9.6"
+    ],
+    "versions": "Rust 1.98.1; capture spool format v1; AgentStore capture projection schema v1; exact normalizer profiles from E-M9-008.",
+    "formats": "CaptureCursorV1 retains one source generation and accepted position. The user-restricted locked spool atomically persists a sanitized batch before acknowledging its cursor, then the exact AgentDeltaRequest before publication. Exact retries survive restart; unacknowledged atomic temporary files are discarded, while changed retries, corrupt or unexpected files, concurrent ownership and unprepared or mismatched completion fail closed."
   }
 ]
 ```

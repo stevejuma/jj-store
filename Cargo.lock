@@ -3420,6 +3420,7 @@ dependencies = [
  "getrandom 0.4.3",
  "gix",
  "hex",
+ "jj-agent",
  "jj-cli",
  "jj-lib",
  "jj-store-adapters",
