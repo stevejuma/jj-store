@@ -87,6 +87,22 @@ cannot masquerade as stronger evidence. Stable IDs and JJ change IDs are lookup
 facts; exact operation/commit IDs and immutable evidence objects are retention
 edges.
 
+An AgentStore read is pinned to one selected `AgentRootV1`. Stable session,
+checkpoint and association keys resolve through bounded persistent radix pages;
+immutable object reads succeed only for references in that root's audited
+transitive closure. A staged but unselected object is not readable through the
+pinned facade. Catalog leaves contain at most 32 selections, branch updates copy
+only the affected path, and prior roots remain readable.
+
+Typed agent deltas carry expected and replacement selections for one stable
+session, checkpoint or association key. They reject duplicate edits, semantic
+kind substitution and no-op edits. A disjoint edit can reapply to a newer agent
+root after a CAS race, while a changed expected selection is stale. The stable
+request intent covers the original delta rather than generated page/root IDs, so
+receipt replay remains valid after later agent publications. Alias, relation,
+source and projection schemas plus bounded enumeration, transcript streaming and
+relation traversal remain M9.2 work.
+
 ## Capture sanitization boundary
 
 The Node capture boundary uses `@lapismd/agent-redaction` 0.1.0 at source

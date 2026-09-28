@@ -132,7 +132,7 @@ impl Coordinator {
         }
     }
 
-    async fn publish_domain_inner(
+    pub(super) async fn publish_domain_inner(
         &self,
         request: &DomainRequest,
         intent: IntentDigest,

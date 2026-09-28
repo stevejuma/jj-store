@@ -1,9 +1,10 @@
 //! Fault matrix for atomic visibility, idempotency, concurrency and recovery.
 use jj_agent::{
-    AgentCatalogKey, AgentCheckpointId, AgentIndexPageV1, AgentObjectId, AgentObjectKind,
-    AgentObjectRef, AgentObjectV1, AgentRootV1, AgentSessionId, AssociationGranularity,
-    AssociationId, AssociationRelation, CodeAnchorV1, CodeAssociationV1, CompletenessV1,
-    CoverageV1, EvidenceMethod, SourceTrust,
+    AgentCatalogEditV1, AgentCatalogKey, AgentCatalogKind, AgentCheckpointId, AgentDeltaV1,
+    AgentIndexPageV1, AgentObjectId, AgentObjectKind, AgentObjectRef, AgentObjectV1, AgentRootV1,
+    AgentSessionId, AgentSessionSnapshotV1, AssociationGranularity, AssociationId,
+    AssociationRelation, CodeAnchorV1, CodeAssociationV1, CompletenessV1, CoverageV1,
+    EvidenceMethod, IntegrationId, SessionState, SourceTrust,
 };
 use jj_store_model::*;
 use jj_store_object::{memory::MemoryStore, *};
@@ -492,6 +493,132 @@ async fn agent_publication_retains_exact_native_association_dependencies() {
         Err(wal::Error::Inventory(
             wal::inventory::InventoryError::Source(_)
         ))
+    ));
+}
+
+#[tokio::test]
+async fn agent_delta_publications_rebase_disjoint_keys_and_pin_old_roots() {
+    let (_, c) = fixture().await;
+    let initial = c.read().await.unwrap();
+    let initial_agent = initial.manifest().domain_state(Domain::Agent).unwrap();
+    let stage_session = |byte| {
+        AgentObjectV1::SessionSnapshot(AgentSessionSnapshotV1 {
+            schema_version: 1,
+            session_id: AgentSessionId::new([byte; 16]),
+            integration: IntegrationId::Codex,
+            state: SessionState::Active,
+            parent_session_id: None,
+            evidence: Vec::new(),
+            event_batches: Vec::new(),
+            transcripts: Vec::new(),
+            tools: BTreeMap::new(),
+            coverage: CoverageV1 {
+                completeness: CompletenessV1::Complete,
+                gaps: 0,
+                redacted_fields: 0,
+                truncated: false,
+            },
+        })
+    };
+    let first = c.stage_agent_object(&stage_session(90)).await.unwrap();
+    let second = c.stage_agent_object(&stage_session(91)).await.unwrap();
+    let conflicting = c.stage_agent_object(&stage_session(92)).await.unwrap();
+    let first_key = AgentCatalogKey::derive("session", &[90; 16]).unwrap();
+    let second_key = AgentCatalogKey::derive("session", &[91; 16]).unwrap();
+    let delta = |key, replacement| AgentDeltaV1 {
+        schema_version: 1,
+        edits: vec![AgentCatalogEditV1 {
+            catalog: AgentCatalogKind::Sessions,
+            key,
+            expected: None,
+            replacement: Some(replacement),
+        }],
+    };
+    let first_request = AgentDeltaRequest::new(
+        PrincipalId::new([3; 16]),
+        RequestId::new([93; 16]),
+        PublicationId::new([93; 16]),
+        delta(first_key, first),
+        b"first session".to_vec(),
+    )
+    .unwrap();
+    let first_receipt = committed(c.publish_agent_delta(&first_request).await.unwrap());
+    let first_root = c
+        .read()
+        .await
+        .unwrap()
+        .manifest()
+        .domain_state(Domain::Agent)
+        .unwrap()
+        .root;
+
+    let second_request = AgentDeltaRequest::new(
+        PrincipalId::new([3; 16]),
+        RequestId::new([94; 16]),
+        PublicationId::new([94; 16]),
+        delta(second_key, second),
+        b"second session".to_vec(),
+    )
+    .unwrap();
+    committed(c.publish_agent_delta(&second_request).await.unwrap());
+    let current = c.read().await.unwrap();
+    let current_agent = current.manifest().domain_state(Domain::Agent).unwrap();
+    assert_eq!(current_agent.version, initial_agent.version + 2);
+
+    let pinned_first = c.agent_store(first_root).await.unwrap();
+    assert_eq!(
+        pinned_first
+            .lookup(AgentCatalogKind::Sessions, first_key)
+            .await
+            .unwrap(),
+        Some(first)
+    );
+    assert_eq!(
+        pinned_first
+            .lookup(AgentCatalogKind::Sessions, second_key)
+            .await
+            .unwrap(),
+        None
+    );
+    let pinned_current = c.agent_store(current_agent.root).await.unwrap();
+    assert_eq!(
+        pinned_current
+            .lookup(AgentCatalogKind::Sessions, first_key)
+            .await
+            .unwrap(),
+        Some(first)
+    );
+    assert_eq!(
+        pinned_current
+            .lookup(AgentCatalogKind::Sessions, second_key)
+            .await
+            .unwrap(),
+        Some(second)
+    );
+    assert_eq!(
+        pinned_current.read_object(first).await.unwrap(),
+        stage_session(90)
+    );
+    assert!(matches!(
+        pinned_current.read_object(conflicting).await,
+        Err(wal::Error::Stale)
+    ));
+    assert_eq!(
+        committed(c.publish_agent_delta(&first_request).await.unwrap()),
+        first_receipt
+    );
+
+    let conflict = AgentDeltaRequest::new(
+        PrincipalId::new([3; 16]),
+        RequestId::new([95; 16]),
+        PublicationId::new([95; 16]),
+        delta(first_key, conflicting),
+        Vec::new(),
+    )
+    .unwrap();
+    assert!(matches!(
+        c.publish_agent_delta(&conflict).await,
+        Err(wal::Error::Stale)
     ));
 }
 fn request(n: u8, remove: &[u8], add: u8) -> Request {

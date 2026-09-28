@@ -1,13 +1,17 @@
 //! One manifest CAS selects immutable native inventory, history and receipts.
 mod agent;
+mod agent_catalog;
+mod agent_delta;
 mod application;
 mod collaboration;
 mod domains;
 mod reader;
+pub use agent_catalog::AgentStoreSnapshot;
+pub use agent_delta::AgentDeltaRequest;
 pub use application::ApplicationIntent;
 pub use collaboration::{CollaborationOutcome, CollaborationRequest};
 pub use domains::{Domain, DomainRequest, DomainState, RepositoryDomains};
-pub use jj_agent::{AgentObjectRef, AgentObjectV1, AgentRootV1};
+pub use jj_agent::{AgentDeltaV1, AgentObjectRef, AgentObjectV1, AgentRootV1};
 pub use reader::SelectedRecord;
 
 use crate::{

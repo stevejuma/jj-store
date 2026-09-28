@@ -89,6 +89,16 @@ code or changing native heads/code-state version. Recovery requires every
 current and historical domain retention root in that publication's exact
 inventory and verifies its stored descriptor and transitive native closure.
 
+Normal AgentStore writes publish a typed delta rather than a caller-computed
+replacement root. Each edit binds a stable catalog key to its expected and
+replacement typed object. The coordinator authorizes before receipt lookup,
+applies edits to a root-pinned persistent catalog, stages the resulting root and
+uses the existing agent-domain publication path. Its intent digest excludes the
+generated page/root identities. A concurrent disjoint agent edit is reapplied to
+the newer root; a same-key precondition change remains stale. Code heads,
+code-state version and the review root remain unchanged, and unknown outcomes
+still resolve under the original request/publication identities.
+
 An authorized collaboration-enable request upgrades a format 1 manifest by
 appending a receipt-bearing WAL event. The event selects deterministic empty
 agent and review roots, records the exact boundary at which domain history
