@@ -9,6 +9,7 @@ export function dependencyErrors(packages) {
   const layers = {
     "jj-store-model": [],
     "jj-agent": ["jj-store-model"],
+    "jj-review": ["jj-agent", "jj-store-model"],
     "jj-store-object": ["jj-store-model"],
     "jj-store-wal": ["jj-agent", "jj-store-model", "jj-store-object"],
     "jj-store-jj": ["jj-store-model", "jj-store-object", "jj-store-wal"],

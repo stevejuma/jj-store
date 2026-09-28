@@ -1,5 +1,5 @@
 [workspace]
-members = ["crates/jj-agent", "crates/jj-store-model", "crates/jj-store-jj", "crates/jj-store-cli", "crates/jj-store-object", "crates/jj-store-wal", "crates/jj-store-service", "crates/jj-store-rpc", "crates/jj-store-server", "crates/jj-store-http", "crates/jj-store-adapters", "crates/jj-store-tantivy"]
+members = ["crates/jj-agent", "crates/jj-review", "crates/jj-store-model", "crates/jj-store-jj", "crates/jj-store-cli", "crates/jj-store-object", "crates/jj-store-wal", "crates/jj-store-service", "crates/jj-store-rpc", "crates/jj-store-server", "crates/jj-store-http", "crates/jj-store-adapters", "crates/jj-store-tantivy"]
 resolver = "2"
 
 [workspace.package]
@@ -11,6 +11,7 @@ authors = ["LapisMD contributors"]
 
 [workspace.dependencies]
 jj-agent = { path = "crates/jj-agent" }
+jj-review = { path = "crates/jj-review" }
 jj-store-tantivy = { path = "crates/jj-store-tantivy" }
 jj-store-adapters = { path = "crates/jj-store-adapters" }
 schemars = "1.2.1"

@@ -54,6 +54,13 @@ crate stages its validated immutable objects through the existing
 repository-bound record envelope, verifies complete bounded dependency closures
 and selects only typed agent roots through the shared manifest CAS.
 
+The `jj-review` crate owns stable review identities, exact immutable artifact
+anchors and canonical ReviewStore object schemas. It may depend on `jj-agent`
+for immutable activity-object references and on the neutral model for native JJ
+identities, but cannot import WAL, services, native JJ or presentation code.
+Review publication and root-pinned reads will enter through the existing WAL
+domain boundary rather than adding another storage or transaction service.
+
 The service crate owns repository/operator token policies and request-bound
 authorization. Its publication guard uses owned WAL snapshots/settings and
 requires an explicit native semantic validator, keeping authentication shared

@@ -61,10 +61,10 @@ adds evidence here in its enclosing Jujutsu change.
 | M7          | Deferred    | M8a         | JST-ADAPT-005                                                           | Complete read-only replica through applied position                                                                 | After first release                                     | -                                                                                                                                                                                                                          |
 | M7.1        | Deferred    | M8a.4       | JST-ADAPT-006                                                           | Asynchronous verified S3 backup remains independent from passive serving and promotion                              | Future backup release after local application           | -                                                                                                                                                                                                                          |
 | M8b         | Deferred    | M8a         | JST-COMPAT-004                                                          | Verified lossless import with source safety                                                                         | Separate migration release                              | -                                                                                                                                                                                                                          |
-| M9          | Partial     | M8a.4       | JST-COLLAB-001,JST-COLLAB-005                                           | Repository-native agent activity and exact review discussions in the LocalTrusted application                       | Add durable capture ingress and ReviewStore             | E-M9-001,E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009                                                                                                                                           |
+| M9          | Partial     | M8a.4       | JST-COLLAB-001,JST-COLLAB-005                                           | Repository-native agent activity and exact review discussions in the LocalTrusted application                       | Add durable capture ingress and ReviewStore             | E-M9-001,E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009,E-M9-010                                                                                                                                  |
 | M9.1        | Done        | M8a.4       | JST-PUB-007,JST-PUB-008                                                 | Independent code/agent/review roots, code-state fencing and non-destructive collaboration enablement                | Implement AgentStore typed root objects                 | E-M9-001                                                                                                                                                                                                                   |
 | M9.2        | In progress | M9.1        | JST-COLLAB-001,JST-COLLAB-002,JST-COLLAB-006                            | AgentStore model, immutable snapshots/catalogs, sanitized evidence and Codex/Cursor/OpenCode normalizers            | Add durable capture ingress and setup                   | E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009                                                                                                                                                    |
-| M9.3        | Planned     | M9.2        | JST-COLLAB-001,JST-COLLAB-003                                           | ReviewStore exact artifact anchors and stale-safe thread/comment workflow                                           | Add exact anchors and review command store              | -                                                                                                                                                                                                                          |
+| M9.3        | In progress | M9.2        | JST-COLLAB-001,JST-COLLAB-003                                           | ReviewStore exact artifact anchors and stale-safe thread/comment workflow                                           | Add review objects, root-pinned store and commands      | E-M9-010                                                                                                                                                                                                                   |
 | M9.4        | Planned     | M9.2,M9.3   | JST-COLLAB-004                                                          | LocalTrusted bounded CLI/HTTP APIs, pagination, receipts and live collaboration hints                               | Wire first-party service and generated contracts        | -                                                                                                                                                                                                                          |
 | M9.5        | Planned     | M9.4        | JST-COLLAB-005                                                          | Community-owned thread/agent widgets and Design Core exact diff selection integrated into the application           | Implement accessible virtualized application routes     | -                                                                                                                                                                                                                          |
 | M9.6        | Planned     | M9.5        | JST-COLLAB-002,JST-COLLAB-006,JST-COLLAB-007                            | Three harness qualification, cold recovery, three-root native copy and bounded fault/security/browser acceptance    | Execute real harness and native recovery gates          | -                                                                                                                                                                                                                          |
@@ -12848,6 +12848,82 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Rust 1.98.1; AgentStore capture projection schema v1; manifest format 2; exact normalizer profiles from E-M9-008.",
     "formats": "AgentEventV1 adds permission and file observations. stage_agent_capture produces repository-bound immutable evidence/content/event/tool/session/alias/source/projection objects and one typed AgentDeltaV1 against an explicit pinned root; publication remains the existing receipt-bearing domain CAS."
+  },
+  {
+    "id": "E-M9-010",
+    "tasks": ["M9", "M9.3"],
+    "date": "2026-09-28",
+    "kind": "implementation",
+    "files": [
+      "Cargo.lock",
+      "Cargo.toml",
+      "crates/jj-review/Cargo.toml",
+      "crates/jj-review/src/anchors.rs",
+      "crates/jj-review/src/codec.rs",
+      "crates/jj-review/src/dependencies.rs",
+      "crates/jj-review/src/ids.rs",
+      "crates/jj-review/src/lib.rs",
+      "crates/jj-review/src/selectors.rs",
+      "crates/jj-review/src/validation.rs",
+      "crates/jj-review/tests/anchors.rs",
+      "scripts/check-boundaries.mjs",
+      "spec/src/architecture.md",
+      "spec/src/collaboration.md",
+      "spec/src/spec-governance.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "crates/jj-review/tests/anchors.rs#code_text_anchor_pins_exact_native_objects_and_utf8_bytes",
+      "crates/jj-review/tests/anchors.rs#agent_text_anchor_keeps_owner_attempt_block_and_content_versions_distinct",
+      "crates/jj-review/tests/anchors.rs#anchors_reject_paths_ranges_and_diff_sides_that_lose_exact_identity",
+      "crates/jj-review/tests/anchors.rs#whole_artifact_anchor_requires_a_matching_native_object_kind"
+    ],
+    "runs": [
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-review --test anchors --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "The test-first compile produced the missing exact-anchor public APIs. The first implementation compile then reported nine concrete Serde result-alias and SHA-256 trait errors before the focused repair."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-review --test anchors --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All four exact-anchor regressions pass for native and AgentStore identities, explicit diff sides, UTF-8 byte/digest validation, canonical round trips and object-kind matching."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-review --locked; DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo clippy -p jj-review --all-targets --locked -- -D warnings; DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo fmt --all -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "The complete new crate passes its four tests, clippy is warning-free and all Rust is formatted. Production modules contain at most 184 physical lines and the anchor regression has 231 lines."
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 13 workspace package boundaries pass with jj-review limited to jj-agent and jj-store-model dependencies."
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/architecture.md spec/src/collaboration.md spec/src/spec-governance.md spec/src/milestones.md",
+        "result": "fail",
+        "failures": 3,
+        "note": "The focused formatter reported mechanical wrapping and milestone-table alignment in three changed canonical specification files."
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/architecture.md spec/src/collaboration.md spec/src/spec-governance.md spec/src/milestones.md; pnpm test:governance; pnpm spec:validate; pnpm spec:first; pnpm check:progress; pnpm spec:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed specification files are formatted; all 26 governance tests, 84 requirements, 12 protected files across four canonical chapters and 60 progress tasks pass, and the canonical book builds."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Typed immutable ReviewStore root, index, event, body, comment-revision, thread-event and thread-snapshot objects",
+      "Root-pinned ReviewStore reads, typed deltas and stale-safe thread/comment commands",
+      "Conservative explicit re-anchoring after original-context reads"
+    ],
+    "versions": "Rust 1.98.1; ReviewStore anchor schema v1; canonical decimal-string UTF-8 byte offsets; SHA-256 anchor and selected-byte digests.",
+    "formats": "ArtifactAnchorV1 distinguishes exact code, diff, agent, revision, operation and repository targets. Strong dependencies enumerate full native operation/commit/file objects or immutable AgentStore snapshot/content versions; external gitlink identities fail closed in v1."
   }
 ]
 ```

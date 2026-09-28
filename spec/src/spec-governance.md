@@ -89,11 +89,12 @@ The RPC layer may consume the owned object streaming interface. Its native JJ
 trait adapters remain in the CLI crate, and direct upstream JJ dependencies in
 RPC are rejected by the existing boundary checker.
 
-The boundary checker treats `jj-agent` and future `jj-review` crates as owned
-layers even though their names do not use the `jj-store-` prefix. `jj-agent` may
-depend on the neutral model layer; it cannot depend on WAL, service, native JJ,
-transport or presentation layers. WAL may depend on `jj-agent` to validate typed
-roots and immutable objects before shared publication.
+The boundary checker treats `jj-agent` and `jj-review` as owned layers even
+though their names do not use the `jj-store-` prefix. `jj-agent` may depend on
+the neutral model layer. `jj-review` may additionally depend on `jj-agent` for
+immutable activity-object references. Neither can depend on WAL, service, native
+JJ, transport or presentation layers. WAL may depend on the domain crates to
+validate typed roots and immutable objects before shared publication.
 
 Capture tooling consumes the public Agent Redaction contract through a
 publishable semver dependency. The local pnpm hook may substitute the sibling

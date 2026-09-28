@@ -175,6 +175,41 @@ runs. Cursor 3.22.7 is synthetic contract acceptance only because the locally
 available Cursor agent reports a different 2026.09.26 build. These distinctions
 must remain visible until M9.6 executes pinned real-harness qualification.
 
+## Exact review anchors
+
+`jj-review` owns fixed-width stable identifiers for review threads, comments,
+actions and work requests, plus separate SHA-256 identifiers for anchors,
+comment revisions, thread events, snapshots, work-request versions and roots.
+Stable workflow identities never substitute for immutable version identities.
+All identifiers use canonical lowercase hexadecimal encoding.
+
+`ArtifactAnchorV1` binds one repository and exactly one code text, whole code
+artifact, agent text, whole agent artifact, revision, operation or repository
+target. Code anchors carry full operation and commit IDs, optional change IDs,
+repository-relative paths and the exact native file/object identity. Diff text
+anchors additionally carry an explicit before/after operation, commit and path
+pair; the selected side must equal the anchor's primary identity. Whole native
+artifacts accept matching file or symlink object kinds. External-width gitlink
+identities have no owned native object key and therefore fail closed in v1.
+
+Text selections use canonical decimal-string UTF-8 byte offsets and a SHA-256
+digest of the selected bytes. Empty, reversed, out-of-bounds, non-UTF-8-boundary
+or digest-mismatched selections are invalid. No line number, display text or
+search result can replace this byte-level check.
+
+Agent anchors pin an immutable session snapshot plus the exact tool attempt,
+message or plan owner snapshot. Text targets also pin the block version, content
+object, content part, source coverage and representation, sanitizer and
+normalizer versions. Kind mismatches fail closed. Anchor dependency traversal
+enumerates every native or AgentStore object needed for original-context reads;
+stable entity IDs and optional change IDs remain lookup facts rather than strong
+object edges.
+
+Canonical JSON encoding rejects unknown fields, alternate byte-offset forms and
+noncanonical round trips. The anchor ID hashes those validated canonical bytes.
+Conservative placement mapping into later artifacts, ReviewStore thread state,
+commands and publication remain subsequent M9.3 slices.
+
 ## Root-pinned capture projection
 
 The publication coordinator can stage one validated sanitized batch and its
