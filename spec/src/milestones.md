@@ -61,9 +61,9 @@ adds evidence here in its enclosing Jujutsu change.
 | M7          | Deferred    | M8a         | JST-ADAPT-005                                                           | Complete read-only replica through applied position                                                                 | After first release                                     | -                                                                                                                                                                                                                          |
 | M7.1        | Deferred    | M8a.4       | JST-ADAPT-006                                                           | Asynchronous verified S3 backup remains independent from passive serving and promotion                              | Future backup release after local application           | -                                                                                                                                                                                                                          |
 | M8b         | Deferred    | M8a         | JST-COMPAT-004                                                          | Verified lossless import with source safety                                                                         | Separate migration release                              | -                                                                                                                                                                                                                          |
-| M9          | Partial     | M8a.4       | JST-COLLAB-001,JST-COLLAB-005                                           | Repository-native agent activity and exact review discussions in the LocalTrusted application                       | Complete AgentStore reads and harness normalizers       | E-M9-001,E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006                                                                                                                                                                      |
+| M9          | Partial     | M8a.4       | JST-COLLAB-001,JST-COLLAB-005                                           | Repository-native agent activity and exact review discussions in the LocalTrusted application                       | Add harness normalizers and ReviewStore                 | E-M9-001,E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007                                                                                                                                                             |
 | M9.1        | Done        | M8a.4       | JST-PUB-007,JST-PUB-008                                                 | Independent code/agent/review roots, code-state fencing and non-destructive collaboration enablement                | Implement AgentStore typed root objects                 | E-M9-001                                                                                                                                                                                                                   |
-| M9.2        | In progress | M9.1        | JST-COLLAB-001,JST-COLLAB-002,JST-COLLAB-006                            | AgentStore model, immutable snapshots/catalogs, sanitized evidence and Codex/Cursor/OpenCode normalizers            | Complete reads and add harness normalizers              | E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006                                                                                                                                                                               |
+| M9.2        | In progress | M9.1        | JST-COLLAB-001,JST-COLLAB-002,JST-COLLAB-006                            | AgentStore model, immutable snapshots/catalogs, sanitized evidence and Codex/Cursor/OpenCode normalizers            | Add version-bound harness normalizers                   | E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007                                                                                                                                                                      |
 | M9.3        | Planned     | M9.2        | JST-COLLAB-001,JST-COLLAB-003                                           | ReviewStore exact artifact anchors and stale-safe thread/comment workflow                                           | Add exact anchors and review command store              | -                                                                                                                                                                                                                          |
 | M9.4        | Planned     | M9.2,M9.3   | JST-COLLAB-004                                                          | LocalTrusted bounded CLI/HTTP APIs, pagination, receipts and live collaboration hints                               | Wire first-party service and generated contracts        | -                                                                                                                                                                                                                          |
 | M9.5        | Planned     | M9.4        | JST-COLLAB-005                                                          | Community-owned thread/agent widgets and Design Core exact diff selection integrated into the application           | Implement accessible virtualized application routes     | -                                                                                                                                                                                                                          |
@@ -12627,6 +12627,85 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Rust 1.98.1; AgentStore delta schema v1; 32 selections per persistent catalog leaf; manifest format 2.",
     "formats": "AgentDeltaV1 carries typed expected/replacement edits for session, checkpoint and association catalogs. AgentStoreSnapshot binds stable lookup and immutable-object reads to one audited root closure. AgentDeltaRequest uses a root-independent stable intent and the existing domain CAS/receipt path."
+  },
+  {
+    "id": "E-M9-007",
+    "tasks": ["M9", "M9.2"],
+    "date": "2026-09-28",
+    "kind": "implementation",
+    "files": [
+      "crates/jj-agent/src/delta.rs",
+      "crates/jj-agent/src/indexes.rs",
+      "crates/jj-agent/src/lib.rs",
+      "crates/jj-agent/src/objects.rs",
+      "crates/jj-agent/src/transcript.rs",
+      "crates/jj-agent/tests/activity.rs",
+      "crates/jj-agent/tests/indexes.rs",
+      "crates/jj-store-wal/src/publication.rs",
+      "crates/jj-store-wal/src/publication/agent_catalog.rs",
+      "crates/jj-store-wal/src/publication/agent_reads.rs",
+      "crates/jj-store-wal/tests/agent_catalog.rs",
+      "spec/src/collaboration.md",
+      "spec/src/publication.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "crates/jj-agent/tests/indexes.rs#auxiliary_catalog_objects_validate_keys_and_strong_edges",
+      "crates/jj-agent/tests/indexes.rs#auxiliary_catalog_objects_reject_wrong_kinds_and_receipt_order",
+      "crates/jj-store-wal/tests/agent_catalog.rs#persistent_catalog_splits_and_keeps_old_root_pinned",
+      "crates/jj-store-wal/tests/agent_catalog.rs#pinned_reads_page_catalog_relations_and_transcript_ranges"
+    ],
+    "runs": [
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-agent --test indexes --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "The test-first compile produced fourteen missing type and variant errors because alias, relation, source and projection schemas did not exist."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-wal --test agent_catalog pinned_reads_page_catalog_relations_and_transcript_ranges --locked -- --exact",
+        "result": "fail",
+        "failures": 1,
+        "note": "The focused compile produced five missing field or method errors for linked transcript pages and bounded root-pinned reads."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-agent --locked; DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-wal --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 13 AgentStore model tests and 35 WAL catalog, inventory and publication tests pass, including auxiliary catalog validation, radix continuation, relation traversal and byte-bounded transcript continuation."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo fmt --all -- --check",
+        "result": "fail",
+        "failures": 5,
+        "note": "The focused formatter reported mechanical wrapping in five affected Rust source and test files."
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/collaboration.md spec/src/publication.md spec/src/milestones.md",
+        "result": "fail",
+        "failures": 2,
+        "note": "The focused formatter required prose wrapping and milestone table alignment in two protected specification files."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo clippy -p jj-agent -p jj-store-wal --all-targets --locked -- -D warnings; DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo fmt --all -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both affected crates are warning-free and formatted. The new indexes and read modules contain 279 and 276 physical lines, below the 300 counted-line production limit, and the extended test contains 368 lines."
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/collaboration.md spec/src/publication.md spec/src/milestones.md; pnpm check:boundaries; pnpm test:governance; pnpm spec:validate; pnpm spec:first; pnpm check:progress; pnpm spec:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formatting, all 12 package boundaries, 26 governance tests, 84 requirements, eleven protected files across three canonical chapters and 60 progress tasks pass, and the canonical book builds."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Version-bound Codex, Cursor and OpenCode fixtures and deterministic normalizers",
+      "Released registry acceptance for @lapismd/agent-redaction"
+    ],
+    "versions": "Rust 1.98.1; AgentStore schema v1; Codex CLI 0.156.1; Cursor 3.22.7; OpenCode 1.18.30.",
+    "formats": "AliasV1, RelationPageV1, CaptureSourceStateV1 and ProjectionCatalogV1 populate the four remaining typed catalogs. Root-pinned reads page radix catalogs by stable key, relations by page/offset and transcript chunks by source generation and sequence under explicit count and byte ceilings."
   }
 ]
 ```

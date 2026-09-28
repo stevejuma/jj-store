@@ -2,12 +2,14 @@
 mod agent;
 mod agent_catalog;
 mod agent_delta;
+mod agent_reads;
 mod application;
 mod collaboration;
 mod domains;
 mod reader;
 pub use agent_catalog::AgentStoreSnapshot;
 pub use agent_delta::AgentDeltaRequest;
+pub use agent_reads::{AgentCatalogPage, AgentRelationCursor, AgentRelationRange, TranscriptRange};
 pub use application::ApplicationIntent;
 pub use collaboration::{CollaborationOutcome, CollaborationRequest};
 pub use domains::{Domain, DomainRequest, DomainState, RepositoryDomains};

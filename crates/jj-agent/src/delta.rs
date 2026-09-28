@@ -8,16 +8,24 @@ use std::collections::BTreeSet;
 #[serde(rename_all = "snake_case")]
 pub enum AgentCatalogKind {
     Sessions,
+    Aliases,
     Checkpoints,
     Associations,
+    Relations,
+    Sources,
+    Projections,
 }
 impl AgentCatalogKind {
     fn accepts(self, value: AgentObjectRef) -> bool {
         matches!(
             (self, value.kind),
             (Self::Sessions, AgentObjectKind::SessionSnapshot)
+                | (Self::Aliases, AgentObjectKind::Alias)
                 | (Self::Checkpoints, AgentObjectKind::CheckpointVersion)
                 | (Self::Associations, AgentObjectKind::Association)
+                | (Self::Relations, AgentObjectKind::RelationPage)
+                | (Self::Sources, AgentObjectKind::SourceState)
+                | (Self::Projections, AgentObjectKind::ProjectionCatalog)
         )
     }
 }

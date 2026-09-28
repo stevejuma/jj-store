@@ -68,8 +68,12 @@ impl Coordinator {
         let mut root = base.root.clone();
         for catalog in [
             AgentCatalogKind::Sessions,
+            AgentCatalogKind::Aliases,
             AgentCatalogKind::Checkpoints,
             AgentCatalogKind::Associations,
+            AgentCatalogKind::Relations,
+            AgentCatalogKind::Sources,
+            AgentCatalogKind::Projections,
         ] {
             let changes: BTreeMap<_, _> = delta
                 .edits
@@ -248,11 +252,18 @@ impl Coordinator {
     }
 }
 
-fn catalog_root(root: &AgentRootV1, catalog: AgentCatalogKind) -> Option<AgentObjectRef> {
+pub(super) fn catalog_root(
+    root: &AgentRootV1,
+    catalog: AgentCatalogKind,
+) -> Option<AgentObjectRef> {
     match catalog {
         AgentCatalogKind::Sessions => root.sessions,
+        AgentCatalogKind::Aliases => root.aliases,
         AgentCatalogKind::Checkpoints => root.checkpoints,
         AgentCatalogKind::Associations => root.associations,
+        AgentCatalogKind::Relations => root.relations,
+        AgentCatalogKind::Sources => root.sources,
+        AgentCatalogKind::Projections => root.projections,
     }
 }
 fn set_catalog_root(
@@ -262,7 +273,11 @@ fn set_catalog_root(
 ) {
     match catalog {
         AgentCatalogKind::Sessions => root.sessions = value,
+        AgentCatalogKind::Aliases => root.aliases = value,
         AgentCatalogKind::Checkpoints => root.checkpoints = value,
         AgentCatalogKind::Associations => root.associations = value,
+        AgentCatalogKind::Relations => root.relations = value,
+        AgentCatalogKind::Sources => root.sources = value,
+        AgentCatalogKind::Projections => root.projections = value,
     }
 }

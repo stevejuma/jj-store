@@ -1,6 +1,7 @@
 use crate::{
-    AgentCheckpointVersionV1, AgentContentV1, AgentEventBatchV1, AgentIndexPageV1, AgentObjectId,
-    AgentSessionSnapshotV1, CodeAssociationV1, Result, SanitizedObservationBatchV1,
+    AgentAliasV1, AgentCheckpointVersionV1, AgentContentV1, AgentEventBatchV1, AgentIndexPageV1,
+    AgentObjectId, AgentProjectionCatalogV1, AgentRelationPageV1, AgentSessionSnapshotV1,
+    CaptureSourceStateV1, CodeAssociationV1, Result, SanitizedObservationBatchV1,
     ToolInvocationSnapshotV1, TranscriptChunkV1, TranscriptManifestV1, TranscriptPageV1,
 };
 use jj_store_model::ObjectKey;
@@ -36,6 +37,10 @@ pub enum AgentObjectKind {
     Content,
     CheckpointVersion,
     Association,
+    Alias,
+    RelationPage,
+    SourceState,
+    ProjectionCatalog,
 }
 
 #[derive(
@@ -76,6 +81,10 @@ pub enum AgentObjectV1 {
     Content(AgentContentV1),
     CheckpointVersion(AgentCheckpointVersionV1),
     Association(CodeAssociationV1),
+    Alias(AgentAliasV1),
+    RelationPage(AgentRelationPageV1),
+    SourceState(CaptureSourceStateV1),
+    ProjectionCatalog(AgentProjectionCatalogV1),
 }
 impl AgentObjectV1 {
     pub const fn kind(&self) -> AgentObjectKind {
@@ -91,6 +100,10 @@ impl AgentObjectV1 {
             Self::Content(_) => AgentObjectKind::Content,
             Self::CheckpointVersion(_) => AgentObjectKind::CheckpointVersion,
             Self::Association(_) => AgentObjectKind::Association,
+            Self::Alias(_) => AgentObjectKind::Alias,
+            Self::RelationPage(_) => AgentObjectKind::RelationPage,
+            Self::SourceState(_) => AgentObjectKind::SourceState,
+            Self::ProjectionCatalog(_) => AgentObjectKind::ProjectionCatalog,
         }
     }
     pub fn validate(&self) -> Result<()> {
@@ -106,6 +119,10 @@ impl AgentObjectV1 {
             Self::Content(value) => value.validate(),
             Self::CheckpointVersion(value) => value.validate(),
             Self::Association(value) => value.validate(),
+            Self::Alias(value) => value.validate(),
+            Self::RelationPage(value) => value.validate(),
+            Self::SourceState(value) => value.validate(),
+            Self::ProjectionCatalog(value) => value.validate(),
         }
     }
     pub fn dependencies(&self) -> Result<Vec<AgentObjectRef>> {
@@ -120,6 +137,9 @@ impl AgentObjectV1 {
             Self::TranscriptPage(value) => value.dependencies()?.into_iter().collect(),
             Self::CheckpointVersion(value) => value.dependencies()?.into_iter().collect(),
             Self::Association(value) => value.dependencies()?.into_iter().collect(),
+            Self::Alias(_) | Self::SourceState(_) => Vec::new(),
+            Self::RelationPage(value) => value.dependencies()?.into_iter().collect(),
+            Self::ProjectionCatalog(value) => value.dependencies()?.into_iter().collect(),
         })
     }
     pub fn native_dependencies(&self) -> Result<BTreeSet<ObjectKey>> {

@@ -128,6 +128,7 @@ fn normalized_events_and_tool_snapshots_keep_typed_content_edges() {
 fn transcript_manifests_reconstruct_from_their_own_chunk_page_closure() {
     let chunk_ref = reference(AgentObjectKind::TranscriptChunk, 12);
     let page_ref = reference(AgentObjectKind::TranscriptPage, 13);
+    let next_page_ref = reference(AgentObjectKind::TranscriptPage, 16);
     let chunk = TranscriptChunkV1 {
         schema_version: 1,
         source_instance_id: SourceInstanceId::new([14; 16]),
@@ -141,8 +142,12 @@ fn transcript_manifests_reconstruct_from_their_own_chunk_page_closure() {
         source_instance_id: SourceInstanceId::new([14; 16]),
         source_generation: 1,
         chunks: vec![chunk_ref],
+        next: Some(next_page_ref),
     };
-    assert_eq!(page.dependencies().unwrap(), BTreeSet::from([chunk_ref]));
+    assert_eq!(
+        page.dependencies().unwrap(),
+        BTreeSet::from([chunk_ref, next_page_ref])
+    );
     let manifest = TranscriptManifestV1 {
         schema_version: 1,
         session_id: AgentSessionId::new([15; 16]),

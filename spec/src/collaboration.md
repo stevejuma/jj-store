@@ -94,14 +94,36 @@ transitive closure. A staged but unselected object is not readable through the
 pinned facade. Catalog leaves contain at most 32 selections, branch updates copy
 only the affected path, and prior roots remain readable.
 
-Typed agent deltas carry expected and replacement selections for one stable
-session, checkpoint or association key. They reject duplicate edits, semantic
-kind substitution and no-op edits. A disjoint edit can reapply to a newer agent
-root after a CAS race, while a changed expected selection is stale. The stable
-request intent covers the original delta rather than generated page/root IDs, so
-receipt replay remains valid after later agent publications. Alias, relation,
-source and projection schemas plus bounded enumeration, transcript streaming and
-relation traversal remain M9.2 work.
+Typed agent deltas carry expected and replacement selections for all seven
+catalogs. They reject duplicate edits, semantic kind substitution and no-op
+edits. A disjoint edit can reapply to a newer agent root after a CAS race, while
+a changed expected selection is stale. The stable request intent covers the
+original delta rather than generated page/root IDs, so receipt replay remains
+valid after later agent publications.
+
+Alias objects bind an integration, source instance, native entity kind and
+native ID to a matching stable session, turn, message, tool, checkpoint or
+association identity. These lookup facts are not strong object references.
+Relation subjects are typed session, tool, operation, revision or checkpoint
+identities. Their catalog selections are immutable linked pages containing only
+checkpoint and association object references; each page repeats its subject so a
+cursor from another relation fails closed.
+
+Source-state objects retain the integration/source identity, generation,
+versioned parser, optional native session key, source-specific accepted
+position, strictly ordered non-overlapping capture-batch receipts and coverage.
+Projection catalogs retain one normalizer version and activation time plus exact
+selected session, normalized-event and source-state object versions. Replaying a
+parser therefore publishes new selected objects rather than mutating prior
+facts.
+
+Catalog enumeration is radix ordered and root pinned, returns at most 256
+selections and resumes after a stable catalog key. Relation traversal uses a
+root-local page/offset cursor and rejects mismatched subjects. Transcript reads
+select one source generation from an immutable manifest, verify strictly
+increasing chunk sequences across linked pages and enforce both a record count
+and an eight MiB caller-selected byte ceiling. Session/checkpoint enumeration,
+relation traversal and transcript streaming do not depend on Tantivy.
 
 ## Capture sanitization boundary
 

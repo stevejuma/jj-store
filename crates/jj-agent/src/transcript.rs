@@ -34,6 +34,8 @@ pub struct TranscriptPageV1 {
     pub source_instance_id: SourceInstanceId,
     pub source_generation: u64,
     pub chunks: Vec<AgentObjectRef>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub next: Option<AgentObjectRef>,
 }
 impl TranscriptPageV1 {
     pub fn validate(&self) -> Result<()> {
@@ -46,6 +48,9 @@ impl TranscriptPageV1 {
                 .iter()
                 .any(|value| value.kind != AgentObjectKind::TranscriptChunk)
             || unique.len() != self.chunks.len()
+            || self
+                .next
+                .is_some_and(|value| value.kind != AgentObjectKind::TranscriptPage)
         {
             return Err(Error::Invalid("transcript page"));
         }
@@ -53,7 +58,7 @@ impl TranscriptPageV1 {
     }
     pub fn dependencies(&self) -> Result<BTreeSet<AgentObjectRef>> {
         self.validate()?;
-        Ok(self.chunks.iter().copied().collect())
+        Ok(self.chunks.iter().copied().chain(self.next).collect())
     }
 }
 
