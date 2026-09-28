@@ -1,5 +1,8 @@
 //! One manifest CAS selects immutable native inventory, history and receipts.
 mod agent;
+mod agent_capture;
+mod agent_capture_projection;
+mod agent_capture_records;
 mod agent_catalog;
 mod agent_delta;
 mod agent_reads;

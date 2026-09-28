@@ -2,17 +2,18 @@ use jj_agent::{
     AgentCatalogEditV1, AgentCatalogKey, AgentCatalogKind, AgentDeltaV1, AgentObjectRef,
     AgentObjectV1, AgentRelationPageV1, AgentRelationSubjectV1, AgentSessionId,
     AgentSessionSnapshotV1, AssociationGranularity, AssociationId, AssociationRelation,
-    CodeAnchorV1, CodeAssociationV1, CompletenessV1, CoverageV1, EvidenceMethod, IntegrationId,
-    SanitizedMediaType, SanitizedPayloadV1, SanitizedRepresentation, SessionState,
-    SourceInstanceId, SourceTrust, TranscriptChunkV1, TranscriptManifestV1, TranscriptPageV1,
-    TranscriptStreamV1,
+    CaptureBatchId, CodeAnchorV1, CodeAssociationV1, CompletenessV1, CoverageV1, EvidenceMethod,
+    IntegrationId, NormalizedActivityRecordV1, NormalizerProfileV1, ObservationId,
+    SanitizedMediaType, SanitizedObservationBatchV1, SanitizedObservationV1, SanitizedPayloadV1,
+    SanitizedRepresentation, SessionState, SourceInstanceId, SourceKind, SourceTrust,
+    TranscriptChunkV1, TranscriptManifestV1, TranscriptPageV1, TranscriptStreamV1,
 };
 use jj_store_model::{EpochId, ObjectKey, OperationId, RepositoryId};
 use jj_store_object::memory::MemoryStore;
 use jj_store_wal::{
     self as wal,
     inventory::{DependencySource, Representation, SourceScope, VerifiedNode},
-    publication::{Coordinator, Limits, PublicationGuard, Request, Snapshot},
+    publication::{AgentDeltaRequest, Coordinator, Limits, PublicationGuard, Request, Snapshot},
 };
 use std::{collections::BTreeMap, collections::BTreeSet, sync::Arc};
 
@@ -57,6 +58,13 @@ impl PublicationGuard for Permit {
     ) -> wal::Result<()> {
         Ok(())
     }
+    async fn authorize_domain(
+        &self,
+        _: &wal::publication::ManifestSnapshot,
+        _: &wal::publication::DomainRequest,
+    ) -> wal::Result<()> {
+        Ok(())
+    }
 }
 
 async fn fixture() -> Coordinator {
@@ -73,6 +81,37 @@ async fn fixture() -> Coordinator {
         .await
         .unwrap();
     coordinator
+}
+
+fn codex_batch() -> SanitizedObservationBatchV1 {
+    let values: Vec<serde_json::Value> = serde_json::from_slice(include_bytes!(
+        "../../jj-agent/tests/fixtures/codex-0.156.1-hooks.json"
+    ))
+    .unwrap();
+    SanitizedObservationBatchV1 {
+        schema_version: 1,
+        batch_id: CaptureBatchId::new([70; 16]),
+        integration: IntegrationId::Codex,
+        source_instance_id: SourceInstanceId::new([71; 16]),
+        sanitizer_version: "agent-redaction@0.1.0".into(),
+        representation: SanitizedRepresentation::SanitizedNative,
+        observations: values
+            .into_iter()
+            .enumerate()
+            .map(|(index, value)| SanitizedObservationV1 {
+                observation_id: ObservationId::new([index as u8 + 1; 16]),
+                source_sequence: index as u64 + 1,
+                occurred_at_millis: Some(1_725_000_000_000 + index as i64),
+                source_kind: SourceKind::Hook,
+                source_trust: SourceTrust::LocalUserHook,
+                payload: SanitizedPayloadV1::new(
+                    SanitizedMediaType::Json,
+                    &serde_json::to_vec(&value).unwrap(),
+                )
+                .unwrap(),
+            })
+            .collect(),
+    }
 }
 
 fn session(byte: u8) -> AgentObjectV1 {
@@ -106,6 +145,87 @@ fn edit(
         expected,
         replacement: Some(replacement),
     }
+}
+
+#[tokio::test]
+async fn normalized_capture_stages_one_root_pinned_publication_delta() {
+    let coordinator = fixture().await;
+    let selected = coordinator.read().await.unwrap();
+    let root = selected.manifest().agent_root.unwrap();
+    let pinned = coordinator.agent_store(root).await.unwrap();
+    let batch = codex_batch();
+    let profile = NormalizerProfileV1::codex_0_156_1();
+    let normalized = jj_agent::normalize_batch(&profile, &batch).unwrap();
+    let session_id = normalized
+        .records
+        .iter()
+        .find_map(|record| match record {
+            NormalizedActivityRecordV1::SessionState(value) => Some(value.session_id),
+            _ => None,
+        })
+        .unwrap();
+
+    let delta = coordinator
+        .stage_agent_capture(&pinned, &profile, &batch, 1_725_000_000_000)
+        .await
+        .unwrap();
+    assert!(
+        delta
+            .edits
+            .iter()
+            .any(|edit| edit.catalog == AgentCatalogKind::Sessions)
+    );
+    assert!(
+        delta
+            .edits
+            .iter()
+            .any(|edit| edit.catalog == AgentCatalogKind::Aliases)
+    );
+    assert!(
+        delta
+            .edits
+            .iter()
+            .any(|edit| edit.catalog == AgentCatalogKind::Sources)
+    );
+    assert!(
+        delta
+            .edits
+            .iter()
+            .any(|edit| edit.catalog == AgentCatalogKind::Projections)
+    );
+
+    let request = AgentDeltaRequest::new(
+        jj_store_model::PrincipalId::new([72; 16]),
+        jj_store_model::RequestId::new([73; 16]),
+        jj_store_model::PublicationId::new([74; 16]),
+        delta,
+        b"captured codex batch".to_vec(),
+    )
+    .unwrap();
+    let first = coordinator.publish_agent_delta(&request).await.unwrap();
+    let current = coordinator.read().await.unwrap();
+    let store = coordinator
+        .agent_store(current.manifest().agent_root.unwrap())
+        .await
+        .unwrap();
+    let key = AgentCatalogKey::derive("session", session_id.as_bytes()).unwrap();
+    let reference = store
+        .lookup(AgentCatalogKind::Sessions, key)
+        .await
+        .unwrap()
+        .unwrap();
+    let AgentObjectV1::SessionSnapshot(session) = store.read_object(reference).await.unwrap()
+    else {
+        panic!("expected session snapshot");
+    };
+    assert_eq!(session.session_id, session_id);
+    assert_eq!(session.evidence.len(), 1);
+    assert_eq!(session.event_batches.len(), 1);
+    assert_eq!(session.tools.len(), 3);
+    assert_eq!(
+        coordinator.publish_agent_delta(&request).await.unwrap(),
+        first
+    );
 }
 
 #[tokio::test]

@@ -1,7 +1,7 @@
 use jj_agent::{
     AgentEventBatchV1, AgentEventId, AgentEventV1, AgentObjectId, AgentObjectKind, AgentObjectRef,
     AgentObjectV1, AgentSessionId, AgentSessionSnapshotV1, CaptureBatchId, CompletenessV1,
-    CoverageV1, IntegrationId, MessageId, MessageRole, SanitizedMediaType,
+    CoverageV1, IntegrationId, MessageId, MessageRole, PermissionState, SanitizedMediaType,
     SanitizedObservationBatchV1, SanitizedObservationV1, SanitizedPayloadV1,
     SanitizedRepresentation, SessionState, SourceInstanceId, SourceKind, SourceTrust, ToolCallId,
     ToolInvocationSnapshotV1, ToolKind, ToolState, TranscriptChunkV1, TranscriptManifestV1,
@@ -98,7 +98,20 @@ fn normalized_events_and_tool_snapshots_keep_typed_content_edges() {
         schema_version: 1,
         normalizer_version: "codex@0.156.1/v1".into(),
         evidence,
-        events: vec![event],
+        events: vec![
+            event,
+            AgentEventV1::PermissionObserved {
+                event_id: AgentEventId::new([17; 16]),
+                session_id: AgentSessionId::new([8; 16]),
+                tool_call_id: Some(ToolCallId::new([11; 16])),
+                state: PermissionState::Granted,
+            },
+            AgentEventV1::FileObserved {
+                event_id: AgentEventId::new([18; 16]),
+                session_id: AgentSessionId::new([8; 16]),
+                path: "src/lib.rs".into(),
+            },
+        ],
     };
     assert_eq!(
         batch.dependencies().unwrap(),

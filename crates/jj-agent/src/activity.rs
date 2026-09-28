@@ -104,6 +104,10 @@ impl AgentSessionSnapshotV1 {
             .copied()
             .collect())
     }
+    pub fn catalog_key(&self) -> Result<crate::AgentCatalogKey> {
+        self.validate()?;
+        crate::AgentCatalogKey::derive("session", self.session_id.as_bytes())
+    }
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]

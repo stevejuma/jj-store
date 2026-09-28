@@ -138,9 +138,9 @@ mandatory after every observation.
 
 This boundary currently admits only `codex`, `cursor` and `opencode` integration
 identifiers and the source-kind vocabulary owned by `SanitizedObservationV1`. It
-proves the pre-spool sanitization contract but does not yet qualify a harness
-decoder, local discovery, durable spool or capture publication path. Those
-remain M9.2 work and support is not claimed from the adapter test alone.
+proves the pre-spool sanitization contract but does not yet qualify local
+discovery, a durable spool or an installed harness adapter. Those remain M9.2
+work and support is not claimed from the adapter test alone.
 
 ## Version-bound normalization
 
@@ -174,3 +174,23 @@ Both remain sanitized synthetic contract fixtures rather than captured smoke
 runs. Cursor 3.22.7 is synthetic contract acceptance only because the locally
 available Cursor agent reports a different 2026.09.26 build. These distinctions
 must remain visible until M9.6 executes pinned real-harness qualification.
+
+## Root-pinned capture projection
+
+The publication coordinator can stage one validated sanitized batch and its
+normalized result against an explicitly pinned AgentStore root. It stages the
+evidence batch first, then typed content, normalized event, reduced tool,
+session, alias, source-receipt and projection objects. Permission and file
+observations have explicit event variants; a file observation still cannot
+become a tool invocation. Every dependency is audited by the existing typed
+AgentStore object closure before the returned delta can select it.
+
+The returned `AgentDeltaV1` updates session, alias, source and projection
+catalogs in one existing manifest-domain publication. Session snapshots retain
+prior selected evidence, event batches, transcripts and tool versions. Source
+state rejects repeated or overlapping receipts, records the accepted native
+sequence and carries forward explicit coverage gaps. Projection updates replace
+superseded session/source versions while preserving prior immutable event
+batches. The caller must durably retain the resulting delta and request identity
+before publication; device discovery, durable pending-spool ownership and an
+ingestion command/API remain unfinished.

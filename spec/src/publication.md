@@ -101,6 +101,16 @@ stale. Code heads, code-state version and the review root remain unchanged, and
 unknown outcomes still resolve under the original request/publication
 identities.
 
+Normalized capture staging reuses this typed-delta boundary. Against one pinned
+AgentStore root it stages a complete evidence/content/event/tool/session closure
+plus alias, source-receipt and normalizer-projection selections, then returns
+one `AgentDeltaV1`. None of those staged objects are visible until the retained
+delta is published with its request identity through the existing agent-domain
+CAS. Receipt replay therefore uses the exact retained delta; rebuilding a new
+delta after an unknown outcome is not a substitute for a durable pending spool.
+Repeated or overlapping source receipts fail stale, and updating this domain
+does not move code or review state.
+
 An authorized collaboration-enable request upgrades a format 1 manifest by
 appending a receipt-bearing WAL event. The event selects deterministic empty
 agent and review roots, records the exact boundary at which domain history

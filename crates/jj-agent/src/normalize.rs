@@ -30,6 +30,18 @@ impl NormalizerProfileV1 {
             schema_version: 1,
         }
     }
+    pub fn identity(&self) -> String {
+        let integration = match self.integration {
+            IntegrationId::Codex => "codex",
+            IntegrationId::Cursor => "cursor",
+            IntegrationId::OpenCode => "opencode",
+            IntegrationId::OwnedController => "owned-controller",
+        };
+        format!(
+            "{integration}@{}/v{}",
+            self.product_version, self.schema_version
+        )
+    }
     pub(crate) fn supported(&self) -> bool {
         self.schema_version == 1
             && matches!(
@@ -227,6 +239,20 @@ pub(crate) fn stable_id(
     hash.update((native.len() as u64).to_be_bytes());
     hash.update(native.as_bytes());
     hash.finalize()[..16].try_into().expect("sha256 prefix")
+}
+
+pub fn normalized_event_id(
+    source: SourceInstanceId,
+    integration: IntegrationId,
+    source_sequence: u64,
+    kind: &str,
+) -> crate::AgentEventId {
+    crate::AgentEventId::new(stable_id(
+        source,
+        integration,
+        "event",
+        &format!("{source_sequence}/{kind}"),
+    ))
 }
 
 pub(crate) fn scoped(session: &str, native: &str) -> String {

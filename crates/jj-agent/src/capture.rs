@@ -1,7 +1,7 @@
 use crate::{
     AgentEventId, AgentObjectKind, AgentObjectRef, AgentSessionId, CaptureBatchId, Error,
-    IntegrationId, MessageId, Result, SessionState, SourceInstanceId, ToolCallId, ToolState,
-    TurnId, activity::valid_label,
+    IntegrationId, MessageId, PermissionState, Result, SessionState, SourceInstanceId, ToolCallId,
+    ToolState, TurnId, activity::valid_label,
 };
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeSet;
@@ -163,6 +163,17 @@ pub enum AgentEventV1 {
         tool_call_id: ToolCallId,
         state: ToolState,
     },
+    PermissionObserved {
+        event_id: AgentEventId,
+        session_id: AgentSessionId,
+        tool_call_id: Option<ToolCallId>,
+        state: PermissionState,
+    },
+    FileObserved {
+        event_id: AgentEventId,
+        session_id: AgentSessionId,
+        path: String,
+    },
     CaptureGap {
         event_id: AgentEventId,
         session_id: AgentSessionId,
@@ -176,6 +187,8 @@ impl AgentEventV1 {
             Self::SessionStateChanged { event_id, .. }
             | Self::MessageCompleted { event_id, .. }
             | Self::ToolStateChanged { event_id, .. }
+            | Self::PermissionObserved { event_id, .. }
+            | Self::FileObserved { event_id, .. }
             | Self::CaptureGap { event_id, .. } => *event_id,
         }
     }
@@ -189,6 +202,9 @@ impl AgentEventV1 {
                 missing_to,
                 ..
             } if missing_from >= missing_to => Err(Error::Invalid("capture gap")),
+            Self::FileObserved { path, .. } if !valid_label(path, 4096) => {
+                Err(Error::Invalid("file observation path"))
+            }
             _ => Ok(()),
         }
     }
