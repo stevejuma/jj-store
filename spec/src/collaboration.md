@@ -54,3 +54,19 @@ strong references. Every staged root and page validates its complete
 repository-bound dependency closure before it can be selected; missing objects,
 semantic kind mismatches, unknown fields and noncanonical bytes fail closed.
 Only the publication coordinator can turn staged objects into visible state.
+
+Sanitized observation batches and normalized event batches are distinct
+immutable objects. Observation batches record integration, source instance,
+source order, source kind/trust, representation and sanitizer version; their
+payload is validated canonical JSON or UTF-8 text rather than an arbitrary
+untyped JSON value. Event batches reference their exact evidence batch and use
+stable event/entity IDs. Normalization therefore cannot replace or rename the
+accepted source evidence.
+
+Session snapshots select exact evidence, event, transcript and tool object
+versions. Tool snapshots keep execution state separate from capture evidence and
+reference typed sanitized input/output content. Transcript manifests keep each
+source generation separate and root an ordered immutable chunk-page closure
+sufficient for direct reconstruction; they have no indispensable
+previous-manifest link. Checkpoint discovery remains in its root-level catalog,
+so a session snapshot has no mutable or circular checkpoint reference.
