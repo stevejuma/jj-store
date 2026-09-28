@@ -200,6 +200,13 @@ browser fixtures must provide the bootstrap phase explicitly and assert the
 protocol header plus the presence or absence of bearer credentials for the
 selected access mode. Visual baselines remain a separate approval lane.
 
+The LocalTrusted demo seed is verified at its native boundary: the unresolved
+file retains JJ conflict terms, while the divergent history presents distinct
+commit IDs under one change ID. Focused real-browser acceptance asserts those
+full identities through production controls. Catalog graph units separately
+prove stable lane geometry, so native divergence is not inferred from color or
+screen position.
+
 The tracked pnpm hook may substitute an available sibling Design Core source for
 dependency, development-dependency and optional-dependency fields only. Peer
 ranges, the published package range and the committed registry lockfile remain

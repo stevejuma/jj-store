@@ -5,6 +5,8 @@
     type FileListingFile,
     type FileListingViewMode,
   } from "@lapismd/design-core/diff";
+  import { Skeleton } from "@lapismd/design-core/shadcn/skeleton";
+  import CommunityProjectsRepositorySkeleton from "./CommunityProjectsRepositorySkeleton.svelte";
 
   let {
     files,
@@ -13,7 +15,9 @@
     compact = false,
     error = "",
     hasMore = false,
+    initialLoading = false,
     loading = false,
+    loadingLabel = "Loading changed files",
     onSelectPath,
     onLoadMore,
   }: {
@@ -23,7 +27,9 @@
     compact?: boolean | undefined;
     error?: string | undefined;
     hasMore?: boolean | undefined;
+    initialLoading?: boolean | undefined;
     loading?: boolean | undefined;
+    loadingLabel?: string | undefined;
     onSelectPath: (path: string) => void;
     onLoadMore?: (() => void) | undefined;
   } = $props();
@@ -36,10 +42,16 @@
   class:community-revision-graph-files--compact={compact}
   data-ui-part="changed-files"
   aria-label={title}
+  aria-busy={initialLoading || loading}
 >
   <div class="community-revision-graph-files__header">
     <span class="community-revision-graph-files__title">{title}</span>
-    <span class="community-revision-graph-files__count">{files.length}</span>
+    <span
+      class="community-revision-graph-files__count"
+      data-ui-part="changed-files-count"
+    >
+      {#if initialLoading}<Skeleton />{:else}{files.length}{/if}
+    </span>
 
     <FileListingViewModeToggle bind:mode />
   </div>
@@ -47,17 +59,25 @@
     <p class="community-revision-graph-files__status">{error}</p>
   {/if}
   <div class="community-revision-graph-files__body">
-    <FileListing
-      {files}
-      {mode}
-      {selectedPath}
-      virtualize
-      {hasMore}
-      {loading}
-      loadingLabel="Loading more changed files"
-      {onSelectPath}
-      {onLoadMore}
-    />
+    {#if initialLoading}
+      <CommunityProjectsRepositorySkeleton
+        layout="changed-files"
+        label={loadingLabel}
+        count={4}
+      />
+    {:else}
+      <FileListing
+        {files}
+        {mode}
+        {selectedPath}
+        virtualize
+        {hasMore}
+        {loading}
+        loadingLabel="Loading more changed files"
+        {onSelectPath}
+        {onLoadMore}
+      />
+    {/if}
   </div>
 </section>
 
@@ -114,6 +134,12 @@
     color: var(--foreground);
     font-size: var(--community-text-secondary);
     font-weight: 600;
+  }
+
+  .community-revision-graph-files__count
+    :global([data-ui-component="skeleton"]) {
+    width: 1rem;
+    height: 0.7rem;
   }
 
   .community-revision-graph-files__status {

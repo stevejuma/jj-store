@@ -433,6 +433,12 @@ another native CLI process over the owner-only Unix socket, and requires
 explicit refresh before the displayed operation changes. The selected bookmark,
 commit and change identities must survive that refresh.
 
+The disposable repository used by this lane contains a native unresolved
+multi-parent file conflict and a concurrent rewrite pair with one JJ change ID
+and two commit IDs. The browser consumes the server-provided identities and
+edges for both cases; seeding them does not add an API-only ancestry or conflict
+representation.
+
 ## Typed mutation HTTP transport
 
 `POST /v1/repos/{repo}/mutations/preview` and `POST .../mutations` accept a

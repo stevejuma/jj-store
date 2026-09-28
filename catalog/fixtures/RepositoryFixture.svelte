@@ -13,9 +13,11 @@
   let {
     page = "branches",
     state: fixtureState = "populated",
+    unavailableComparisonCount = 0,
   }: {
     page?: StorePage;
     state?: "populated" | "empty" | "loading" | "error" | "refreshing";
+    unavailableComparisonCount?: number;
   } = $props();
   let branch = $state("");
   let selectedId = $state<string | null>(null);
@@ -57,6 +59,7 @@
   {layoutStorage}
   loading={fixtureState === "loading" || fixtureState === "refreshing"}
   error={fixtureState === "error" ? "Fixture history is unavailable." : ""}
+  {unavailableComparisonCount}
   onSelectBranch={selectBranch}
   onSelectRevision={selectRevision}
   onSelectPath={(path) => (selectedPath = path)}

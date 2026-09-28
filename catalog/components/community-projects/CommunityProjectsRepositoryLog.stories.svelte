@@ -65,6 +65,24 @@
       canvas.getByRole("button", { name: "Wrap text" }),
     ).toBeVisible();
   }
+  async function expectColumnBanner(
+    canvasElement: HTMLElement,
+    title: string,
+    tone: "warning" | "destructive",
+  ) {
+    const titleElement = within(canvasElement).getByText(title);
+    const alert = titleElement.closest<HTMLElement>('[data-ui-part="alert"]');
+    if (!alert) throw new Error(`Expected a column alert for ${title}`);
+    const style = getComputedStyle(alert);
+    await expect(alert).toHaveAttribute("data-tone", tone);
+    await expect(style.borderTopWidth).toBe("0px");
+    await expect(style.borderRightWidth).toBe("0px");
+    await expect(style.borderBottomWidth).toBe("1px");
+    await expect(style.borderLeftWidth).toBe("0px");
+    await expect(style.borderRadius).toBe("0px");
+    await expect(style.backgroundColor).not.toBe("rgba(0, 0, 0, 0)");
+    await expect(alert.querySelector(":scope > svg")).not.toBeNull();
+  }
 </script>
 
 <Story
@@ -92,6 +110,13 @@
         name: "Preserve concurrent publication history",
       }),
     ).toBeVisible();
+    const graphRow = canvas
+      .getByRole("button", { name: "Stream immutable native objects" })
+      .closest<HTMLElement>(".community-revision-graph__row");
+    if (!graphRow) throw new Error("Expected a revision graph row");
+    await expect(getComputedStyle(graphRow.querySelector("svg")!).zIndex).toBe(
+      "2",
+    );
     await inspectDiff(canvasElement);
   }}
   >{#snippet template()}<div class="repository-story">
@@ -104,6 +129,7 @@
     const canvas = within(canvasElement);
     await userEvent.click(canvas.getByRole("option", { name: /conflicted/ }));
     await expect(canvas.getByText("Conflicted bookmark")).toBeVisible();
+    await expectColumnBanner(canvasElement, "Conflicted bookmark", "warning");
     await expect(
       await canvas.findByRole("button", {
         name: "Stream immutable native objects",
@@ -244,6 +270,22 @@
       <RepositoryFixture page="oplog" />
     </div>{/snippet}</Story
 >
+<Story
+  name="Op Log comparison warning"
+  play={async ({ canvasElement }) => {
+    await expectColumnBanner(
+      canvasElement,
+      "Comparison needs a target",
+      "warning",
+    );
+    await expect(within(canvasElement).getByRole("alert")).toHaveTextContent(
+      "One affected change has ambiguous lineage",
+    );
+  }}
+  >{#snippet template()}<div class="repository-story">
+      <RepositoryFixture page="oplog" unavailableComparisonCount={1} />
+    </div>{/snippet}</Story
+>
 <Story name="Loading"
   >{#snippet template()}<div class="repository-story">
       <RepositoryFixture page="log" state="loading" />
@@ -254,7 +296,15 @@
       <RepositoryFixture page="log" state="empty" />
     </div>{/snippet}</Story
 >
-<Story name="Error"
+<Story
+  name="Error"
+  play={async ({ canvasElement }) => {
+    await expectColumnBanner(
+      canvasElement,
+      "History unavailable",
+      "destructive",
+    );
+  }}
   >{#snippet template()}<div class="repository-story">
       <RepositoryFixture page="log" state="error" />
     </div>{/snippet}</Story

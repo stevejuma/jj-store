@@ -68,6 +68,38 @@ test("LocalTrusted bootstrap auto-opens without browser credentials", async ({
   ).not.toContain("jst1_");
 });
 
+test("demo history exposes one native divergent change", async ({ page }) => {
+  await connect(page);
+  await page.getByRole("button", { name: "JJ Log", exact: true }).click();
+
+  const alpha = page.getByRole("button", {
+    name: "Divergent layout alpha",
+    exact: true,
+  });
+  const beta = page.getByRole("button", {
+    name: "Divergent layout beta",
+    exact: true,
+  });
+  await expect(alpha).toBeVisible();
+  await expect(beta).toBeVisible();
+
+  const rowFor = (message: typeof alpha) =>
+    message.locator(
+      "xpath=ancestor::div[contains(@class, 'community-revision-graph__row')]",
+    );
+  const labelFor = async (message: typeof alpha, kind: "Git" | "JJ") =>
+    rowFor(message)
+      .getByRole("button", {
+        name: new RegExp(
+          `^Copy ${kind === "Git" ? "Git commit SHA" : "JJ Change ID"}`,
+        ),
+      })
+      .getAttribute("aria-label");
+
+  expect(await labelFor(alpha, "JJ")).toBe(await labelFor(beta, "JJ"));
+  expect(await labelFor(alpha, "Git")).not.toBe(await labelFor(beta, "Git"));
+});
+
 test("external publication waits for explicit refresh and preserves selection", async ({
   page,
 }) => {

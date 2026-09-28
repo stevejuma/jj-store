@@ -100,6 +100,16 @@
   name="JJ Log detail"
   args={{ initialPage: "log", loading: false, detailLoading: true }}
   play={async ({ canvasElement }) => {
+    const files = within(canvasElement).getByRole("region", {
+      name: "Changed files",
+    });
+    await expect(within(files).getByText("Changed files")).toBeVisible();
+    await expect(
+      within(files).getByRole("radio", { name: "Show files as folders" }),
+    ).toBeVisible();
+    await expect(
+      files.querySelector('[data-ui-part="changed-files-count"]'),
+    ).not.toBeNull();
     await expectSkeleton(
       canvasElement,
       "Loading changed files",
@@ -112,6 +122,18 @@
   name="Op Log detail"
   args={{ initialPage: "oplog", loading: false, detailLoading: true }}
   play={async ({ canvasElement }) => {
+    const files = within(canvasElement).getByRole("region", {
+      name: "Changed files in operation",
+    });
+    await expect(
+      within(files).getByText("Changed files in operation"),
+    ).toBeVisible();
+    await expect(
+      within(files).getByRole("radio", { name: "Show files as list" }),
+    ).toBeVisible();
+    await expect(
+      files.querySelector('[data-ui-part="changed-files-count"]'),
+    ).not.toBeNull();
     await expectSkeleton(
       canvasElement,
       "Loading changed files in operation",

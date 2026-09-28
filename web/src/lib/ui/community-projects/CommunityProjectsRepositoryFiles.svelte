@@ -1,9 +1,9 @@
 <script lang="ts">
   import { AppShell } from "@lapismd/design-core/shell";
-  import * as Alert from "@lapismd/design-core/shadcn/alert";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import type { StoreController } from "../../controller/contracts.js";
   import CommunityProjectsRepositoryFileTree from "./CommunityProjectsRepositoryFileTree.svelte";
+  import CommunityProjectsColumnAlert from "./CommunityProjectsColumnAlert.svelte";
   import CommunityProjectsRepositoryFilePanel from "./CommunityProjectsRepositoryFilePanel.svelte";
   import CommunityProjectsRepositoryDirectory from "./CommunityProjectsRepositoryDirectory.svelte";
   import CommunityProjectsRepositorySkeleton from "./CommunityProjectsRepositorySkeleton.svelte";
@@ -194,16 +194,15 @@
         layout="directory"
         label="Loading repository files"
       />{:else}
-      {#if view.targets.length > 1}<Alert.Root
-          ><Alert.Title>Choose a bookmark target</Alert.Title><Alert.Description
-            >This bookmark is conflicted. Select an explicit revision to browse
-            its files.</Alert.Description
-          >
+      {#if view.targets.length > 1}<CommunityProjectsColumnAlert
+          title="Choose a bookmark target"
+          description="This bookmark is conflicted. Select an explicit revision to browse its files."
+        >
           {#each view.targets as target}<Button
               variant="outline"
               onclick={() => controller.actions.selectRevision(target)}
               >Open target {target.slice(0, 8)}…{target.slice(-4)}</Button
-            >{/each}</Alert.Root
+            >{/each}</CommunityProjectsColumnAlert
         >{/if}
       {#if view.route.path}<CommunityProjectsRepositoryFilePanel
           blob={view.blob}

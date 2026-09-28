@@ -230,17 +230,6 @@
     flex-direction: column;
   }
 
-  .community-revision-graph__item:not(:last-child)::after {
-    content: "";
-    position: absolute;
-    z-index: 2;
-    inset-inline: 0;
-    bottom: 0;
-    height: 1px;
-    background: var(--border);
-    pointer-events: none;
-  }
-
   .community-revision-graph__item--selected {
     background: color-mix(in srgb, var(--foreground) 12%, var(--background));
   }
@@ -285,6 +274,7 @@
 
   .community-revision-graph__svg {
     position: absolute;
+    z-index: 2;
     top: 0;
     left: 0;
     overflow: visible;

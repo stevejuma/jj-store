@@ -11533,6 +11533,116 @@ and named tests are checked by the progress gate.
     "remaining": [],
     "versions": "Rust 1.98.1 on macOS ARM64; rustfs crate 1.0.0 with default features disabled and source revision d47f54bfb2f39f48bd1adda334bd27e151fe85b8; Svelte 5.57.1; Playwright 1.63.x.",
     "formats": "The development and cold browser stack now uses strict configuration format 2, LocalTrusted loopback/Unix transports and persistent embedded RustFS. Runtime metadata contains only public process, resource and repository identifiers. No native object, manifest, WAL, receipt, route or browser-persistence format changes. Authenticated/shared serving, external S3, search indexing, backup/restore, replication, provider qualification, Linux packaging, package publication and visual baselines are deferred."
+  },
+  {
+    "id": "E-UI-020",
+    "tasks": ["M4", "M4.3", "M4.11", "M4.14"],
+    "date": "2026-09-28",
+    "kind": "implementation",
+    "files": [
+      ".storybook/preview.css",
+      "catalog/components/community-projects/CommunityProjectsColumnAlert.stories.svelte",
+      "catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte",
+      "catalog/components/store-application/RepositoryLoading.stories.svelte",
+      "catalog/fixtures/RepositoryFixture.svelte",
+      "catalog/projects/repository-log-lane-stability.test.ts",
+      "scripts/dev-demo-repository.mjs",
+      "spec/src/milestones.md",
+      "spec/src/ui.md",
+      "spec/src/verification.md",
+      "web/src/lib/projects/repository-log-graph.ts",
+      "web/src/lib/projects/repository-log-lanes.ts",
+      "web/src/lib/ui/community-projects/CommunityProjectsColumnAlert.svelte",
+      "web/src/lib/ui/community-projects/CommunityProjectsRepositoryFiles.svelte",
+      "web/src/lib/ui/community-projects/CommunityProjectsRepositoryLog.svelte",
+      "web/src/lib/ui/community-projects/CommunityProjectsRepositoryLogFiles.svelte",
+      "web/src/lib/ui/community-projects/CommunityProjectsRepositorySkeleton.svelte",
+      "web/src/lib/ui/community-projects/CommunityProjectsRevisionGraph.svelte",
+      "web/src/style.css",
+      "web/tests/real/native-repository.spec.ts"
+    ],
+    "tests": [
+      "catalog/projects/repository-log-lane-stability.test.ts#keeps an unrelated outer lane connected while an inner fork converges",
+      "web/tests/real/native-repository.spec.ts#demo history exposes one native divergent change"
+    ],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit catalog/projects/repository-log-graph.test.ts catalog/projects/repository-log-lane-stability.test.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "The focused regression proved that convergence removed an inner lane by compacting the unrelated outer lane between adjacent rows."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte catalog/components/store-application/RepositoryLoading.stories.svelte",
+        "result": "fail",
+        "failures": 6,
+        "note": "The focused stories reproduced the SVG paint order, three unstyled column banners and both detail-loading cards being replaced by generic skeleton headers."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit catalog/projects/repository-log-graph.test.ts catalog/projects/repository-log-lane-stability.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "All eight graph units pass with stable vacant lane slots, safe reuse and convergence paths."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte catalog/components/store-application/RepositoryLoading.stories.svelte catalog/components/community-projects/CommunityProjectsColumnAlert.stories.svelte",
+        "result": "fail",
+        "failures": 3,
+        "note": "The first implementation run found two blocking alert color-contrast failures plus one transient module reload while Vite optimized the newly imported icon. Alert text now uses the accessible theme foreground while semantic color remains in the icon and tint."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte catalog/components/store-application/RepositoryLoading.stories.svelte catalog/components/community-projects/CommunityProjectsColumnAlert.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 18 focused interaction and accessibility stories pass for flat semantic banners, graph paint order and header-preserving changed-file skeletons."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm dev:restart",
+        "result": "pass",
+        "failures": 0,
+        "note": "The checkout-owned LocalTrusted app and embedded RustFS restarted with a fresh native repository containing the real file conflict and divergent same-change pair; the stack remains available on loopback for review."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm exec playwright test --config web/playwright.real.config.ts --grep 'demo history exposes one native divergent change'",
+        "result": "pass",
+        "failures": 0,
+        "note": "The one focused cold-browser case proves both named divergent rows render with different Git commit IDs and the same full JJ change ID."
+      },
+      {
+        "command": "target/debug/jj -R <demo-repository> file show -r conflict/demo 'root:conflict.txt'",
+        "result": "pass",
+        "failures": 0,
+        "note": "The native file view reports one unresolved conflict with distinct Conflict base, Conflict left and Conflict right terms and realistic policy content."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Production and catalog Svelte diagnostics report no warnings or errors, catalog boundaries pass for 53 modules and all 192 governed modules remain within architecture budgets."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:first; pnpm check:progress",
+        "result": "fail",
+        "failures": 2,
+        "note": "Spec-first required the changed demo seed and real-browser test to be stated in their mapped API and governance chapters. Those chapters now define the native conflict/divergence fixture boundary and focused identity acceptance."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:first; pnpm check:progress",
+        "result": "fail",
+        "failures": 7,
+        "note": "Spec-first passed for 17 protected files across four chapters. Progress rejected Storybook names as named executable tests and the new graph case still used Vitest's it alias; the ledger now lists only parser-verifiable tests and the graph test uses test()."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:first; pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Spec-first maps 17 protected files to four canonical chapters and all 53 tasks pass evidence bookkeeping with the focused native and catalog tests named directly."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "versions": "Community repository graph source fd44ccb98bd9b3113714d9feb76c47db0496ea0a; @lapismd/design-core 0.1.2 Alert and Skeleton source at 0f7d6e10e276; Svelte 5.57.1; Storybook 10.5.7; Vitest 4.1.11; Playwright 1.63.x.",
+    "formats": "Graph lanes retain null internal slots until safe reuse and trim only trailing vacancies. Column banners compose the public Design Core Alert with application warning/destructive tones. Changed-file loading keeps the production header and virtual-list shell. Demo divergence preserves one native JJ change ID across two distinct commit IDs, and the conflict remains a native unresolved merge. No API, native identity, object, WAL, credential, route or persistent-browser format changes. Stories remain visual-pending and visual baselines were skipped by user direction."
   }
 ]
 ```

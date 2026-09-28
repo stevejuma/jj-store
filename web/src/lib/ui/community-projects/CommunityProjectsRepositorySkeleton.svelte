@@ -75,13 +75,15 @@
         </div>
       {/each}
     {:else if layout === "file-tree" || layout === "changed-files"}
-      <div class="community-projects-repository-skeleton__tree-heading">
-        <Skeleton class="community-projects-repository-skeleton__title" />
-        <Skeleton class="community-projects-repository-skeleton__count" />
-        <div class="community-projects-repository-skeleton__tree-actions">
-          <Skeleton /><Skeleton /><Skeleton />
+      {#if layout === "file-tree"}
+        <div class="community-projects-repository-skeleton__tree-heading">
+          <Skeleton class="community-projects-repository-skeleton__title" />
+          <Skeleton class="community-projects-repository-skeleton__count" />
+          <div class="community-projects-repository-skeleton__tree-actions">
+            <Skeleton /><Skeleton /><Skeleton />
+          </div>
         </div>
-      </div>
+      {/if}
       {#each rows as _, index (index)}
         <div
           class="community-projects-repository-skeleton__tree-row"

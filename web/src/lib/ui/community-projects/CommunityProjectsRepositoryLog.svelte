@@ -1,5 +1,4 @@
 <script lang="ts">
-  import * as Alert from "@lapismd/design-core/shadcn/alert";
   import * as ColumnCanvas from "@lapismd/design-core/shadcn/column-canvas";
   import { onDestroy, untrack } from "svelte";
   import type { FileListingFile } from "@lapismd/design-core/diff";
@@ -8,6 +7,7 @@
   import type { StorePage } from "../community-navigation/model.js";
   import { createRepositoryLogCanvas } from "../../projects/repository-log-canvas.js";
   import CommunityProjectsRevisionGraph from "./CommunityProjectsRevisionGraph.svelte";
+  import CommunityProjectsColumnAlert from "./CommunityProjectsColumnAlert.svelte";
   import CommunityProjectsRepositoryLogHeader from "./CommunityProjectsRepositoryLogHeader.svelte";
   import CommunityProjectsRepositoryLogEmpty from "./CommunityProjectsRepositoryLogEmpty.svelte";
   import CommunityProjectsRepositoryLogDiff from "./CommunityProjectsRepositoryLogDiff.svelte";
@@ -119,11 +119,11 @@
   aria-label="Repository log"
   aria-busy={loading}
 >
-  {#if error}<Alert.Root variant="destructive"
-      ><Alert.Title>History unavailable</Alert.Title><Alert.Description
-        >{error}</Alert.Description
-      ></Alert.Root
-    >{/if}
+  {#if error}<CommunityProjectsColumnAlert
+      title="History unavailable"
+      description={error}
+      tone="destructive"
+    />{/if}
   <ColumnCanvas.Root controller={canvas}>
     {#if page === "branches"}<ColumnCanvas.Column
         id="branches"
@@ -158,26 +158,18 @@
               : "Loading JJ log"}
             showStatus={page === "oplog"}
           />{:else}
-          {#if selectedBookmark && selectedBookmark.targets.length > 1}<Alert.Root
-              ><Alert.Title>Conflicted bookmark</Alert.Title><Alert.Description
-                >All {selectedBookmark.targets.length} targets are shown. No target
-                is implicitly selected.</Alert.Description
-              ></Alert.Root
-            >{/if}
+          {#if selectedBookmark && selectedBookmark.targets.length > 1}<CommunityProjectsColumnAlert
+              title="Conflicted bookmark"
+              description={`All ${selectedBookmark.targets.length} targets are shown. No target is implicitly selected.`}
+            />{/if}
           {#if page === "oplog"}<p class="store-operation-heads" role="status">
               {graph.devices.length} operation heads · selecting one does not reconcile
               history
             </p>{/if}
-          {#if unavailableComparisonCount > 0}<Alert.Root>
-              <Alert.Title>Comparison needs a target</Alert.Title>
-              <Alert.Description
-                >{unavailableComparisonCount === 1
-                  ? "One affected change has"
-                  : `${unavailableComparisonCount} affected changes have`}
-                ambiguous lineage and cannot be compared until an explicit target
-                is selected.</Alert.Description
-              >
-            </Alert.Root>{/if}
+          {#if unavailableComparisonCount > 0}<CommunityProjectsColumnAlert
+              title="Comparison needs a target"
+              description={`${unavailableComparisonCount === 1 ? "One affected change has" : `${unavailableComparisonCount} affected changes have`} ambiguous lineage and cannot be compared until an explicit target is selected.`}
+            />{/if}
           {#if graph.revisions.length === 0}<CommunityProjectsRepositoryLogEmpty
               pane={page === "oplog" ? "oplog" : "log"}
               branch={selectedBranch}
@@ -197,22 +189,20 @@
               onLoadMore={() => void onLoadMoreGraph()}
             >
               {#snippet selectedFiles()}
-                {#if detailLoading}<CommunityProjectsRepositorySkeleton
-                    layout="changed-files"
-                    label={page === "oplog"
-                      ? "Loading changed files in operation"
-                      : "Loading changed files"}
-                    count={4}
-                  />{:else}<CommunityProjectsRepositoryLogFiles
-                    compact
-                    title={changedFilesTitle}
-                    {files}
-                    {selectedPath}
-                    hasMore={hasMoreFiles}
-                    loading={filesLoading}
-                    onSelectPath={selectFile}
-                    onLoadMore={() => void onLoadMoreFiles()}
-                  />{/if}
+                <CommunityProjectsRepositoryLogFiles
+                  compact
+                  title={changedFilesTitle}
+                  {files}
+                  {selectedPath}
+                  hasMore={hasMoreFiles}
+                  initialLoading={detailLoading}
+                  loading={filesLoading}
+                  loadingLabel={page === "oplog"
+                    ? "Loading changed files in operation"
+                    : "Loading changed files"}
+                  onSelectPath={selectFile}
+                  onLoadMore={() => void onLoadMoreFiles()}
+                />
               {/snippet}
             </CommunityProjectsRevisionGraph>{/if}
         {/if}

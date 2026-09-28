@@ -40,6 +40,7 @@ export async function seedRepository(options) {
     );
   await seedLinearHistory(repository, jj);
   await seedConflict(repository, jj);
+  await seedDivergence(jj);
   return repositoryId;
 }
 
@@ -80,21 +81,66 @@ async function seedLinearHistory(repository, jj) {
 }
 
 async function seedConflict(repository, jj) {
-  await writeFile(join(repository, "conflict.txt"), "base\n");
+  await writeFile(
+    join(repository, "conflict.txt"),
+    "# Browser conflict policy\nmode = conservative\ntimeout = 30\n",
+  );
   await jj(["describe", "-m", "Conflict base"]);
   const base = (await jj(["log", "-r", "@", "-T", "commit_id", "--no-graph"]))
     .stdout;
   await jj(["new", base, "-m", "Conflict left"]);
-  await writeFile(join(repository, "conflict.txt"), "left\n");
+  await writeFile(
+    join(repository, "conflict.txt"),
+    "# Browser conflict policy\nmode = prefer-local\nreviewer = Maya\n",
+  );
   await jj(["describe", "-m", "Conflict left"]);
   const left = (await jj(["log", "-r", "@", "-T", "commit_id", "--no-graph"]))
     .stdout;
   await jj(["new", base, "-m", "Conflict right"]);
-  await writeFile(join(repository, "conflict.txt"), "right\n");
+  await writeFile(
+    join(repository, "conflict.txt"),
+    "# Browser conflict policy\nmode = prefer-remote\nretry = 3\n",
+  );
   await jj(["describe", "-m", "Conflict right"]);
   const right = (await jj(["log", "-r", "@", "-T", "commit_id", "--no-graph"]))
     .stdout;
   await jj(["new", left, right, "-m", "Unresolved browser conflict"]);
   await jj(["bookmark", "create", "conflict/demo", "-r", "@"]);
+  await jj(["new", "experiment/layout", "-m", "Working copy"]);
+}
+
+async function seedDivergence(jj) {
+  await jj(["new", "experiment/layout", "-m", "Divergent layout baseline"]);
+  const change = (await jj(["log", "-r", "@", "-T", "change_id", "--no-graph"]))
+    .stdout;
+  const operation = (
+    await jj([
+      "op",
+      "log",
+      "--at-op=@",
+      "--ignore-working-copy",
+      "-n",
+      "1",
+      "--no-graph",
+      "-T",
+      "self.id()",
+    ])
+  ).stdout;
+  await jj([
+    `--at-op=${operation}`,
+    "describe",
+    "-r",
+    change,
+    "-m",
+    "Divergent layout alpha",
+  ]);
+  await jj([
+    `--at-op=${operation}`,
+    "describe",
+    "-r",
+    change,
+    "-m",
+    "Divergent layout beta",
+  ]);
   await jj(["new", "experiment/layout", "-m", "Working copy"]);
 }
