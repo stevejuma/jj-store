@@ -1,8 +1,6 @@
 //! Independent application-domain roots published through the repository CAS.
 use super::*;
 
-const MAX_DOMAIN_ROOT: u64 = 4 * 1024 * 1024;
-
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum Domain {
@@ -89,30 +87,7 @@ impl DomainRequest {
     }
 }
 
-#[derive(Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-struct ReviewRoot {
-    format: u32,
-    payload: Vec<u8>,
-}
-
 impl Coordinator {
-    pub async fn stage_review_root(&self, payload: &[u8]) -> Result<RecordRef> {
-        if payload.len() as u64 > MAX_DOMAIN_ROOT {
-            return Err(Error::Limit("domain root"));
-        }
-        self.records
-            .put(
-                RecordKind::ReviewRoot,
-                None,
-                &ReviewRoot {
-                    format: 1,
-                    payload: payload.to_vec(),
-                },
-            )
-            .await
-    }
-
     pub async fn publish_domain(&self, request: &DomainRequest) -> Result<PublishOutcome> {
         request.validate()?;
         let intent = request.intent()?;
@@ -297,11 +272,8 @@ impl Coordinator {
                 Ok(native)
             }
             Domain::Review => {
-                let value: ReviewRoot = self.records.get(root, RecordKind::ReviewRoot).await?;
-                if value.format != 1 || value.payload.len() as u64 > MAX_DOMAIN_ROOT {
-                    return Err(Error::Corrupt("domain root"));
-                }
-                Ok(BTreeSet::new())
+                let (_, native) = self.read_review_root_dependencies(root).await?;
+                Ok(native)
             }
         }
     }

@@ -10,6 +10,10 @@ mod application;
 mod collaboration;
 mod domains;
 mod reader;
+mod review;
+mod review_audit;
+mod review_catalog;
+mod review_reads;
 pub use agent_catalog::AgentStoreSnapshot;
 pub use agent_delta::AgentDeltaRequest;
 pub use agent_reads::{AgentCatalogPage, AgentRelationCursor, AgentRelationRange, TranscriptRange};
@@ -17,7 +21,10 @@ pub use application::ApplicationIntent;
 pub use collaboration::{CollaborationOutcome, CollaborationRequest};
 pub use domains::{Domain, DomainRequest, DomainState, RepositoryDomains};
 pub use jj_agent::{AgentDeltaV1, AgentObjectRef, AgentObjectV1, AgentRootV1};
+pub use jj_review::{ReviewDeltaV1, ReviewObjectRef, ReviewObjectV1, ReviewRootV1};
 pub use reader::SelectedRecord;
+pub use review_catalog::ReviewStoreSnapshot;
+pub use review_reads::ReviewCatalogPage;
 
 use crate::{
     Error, Result,
@@ -443,7 +450,7 @@ impl Coordinator {
                 .put(RecordKind::Settings, None, &Settings { data: settings })
                 .await?;
             let agent_root = self.stage_agent_root(&AgentRootV1::empty()).await?;
-            let review_root = self.stage_review_root(&[]).await?;
+            let review_root = self.stage_review_root(&ReviewRootV1::empty()).await?;
             let manifest = Manifest {
                 format: 2,
                 repository: self.records.repository,

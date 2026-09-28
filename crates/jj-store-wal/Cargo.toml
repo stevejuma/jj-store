@@ -9,6 +9,7 @@ publish = false
 [dependencies]
 schemars.workspace = true
 jj-agent.workspace = true
+jj-review.workspace = true
 jj-store-model.workspace = true
 jj-store-object.workspace = true
 serde = { version = "1", features = ["derive"] }

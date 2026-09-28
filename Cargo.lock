@@ -3645,6 +3645,7 @@ dependencies = [
  "futures 0.3.34",
  "getrandom 0.4.3",
  "jj-agent",
+ "jj-review",
  "jj-store-model",
  "jj-store-object",
  "schemars",

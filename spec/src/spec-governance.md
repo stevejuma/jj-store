@@ -94,7 +94,9 @@ though their names do not use the `jj-store-` prefix. `jj-agent` may depend on
 the neutral model layer. `jj-review` may additionally depend on `jj-agent` for
 immutable activity-object references. Neither can depend on WAL, service, native
 JJ, transport or presentation layers. WAL may depend on the domain crates to
-validate typed roots and immutable objects before shared publication.
+validate typed roots and immutable objects before shared publication. The
+boundary checker admits the exact `jj-store-wal` to `jj-review` dependency and
+continues to reject review dependencies on WAL or higher layers.
 
 Capture tooling consumes the public Agent Redaction contract through a
 publishable semver dependency. The local pnpm hook may substitute the sibling

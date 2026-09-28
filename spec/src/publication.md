@@ -74,12 +74,13 @@ extend the selected native inventory only with complete verified closures that
 its typed artifacts strongly reference. Cold recovery verifies selected current
 and historical roots without Tantivy, Nostr or a second manifest.
 
-Agent roots are typed `AgentRootV1` records rather than caller-supplied opaque
-payloads. Their catalog and selected object edges use repository-bound immutable
-record envelopes. Staging validates canonical schemas, semantic object kinds and
-a bounded transitive dependency closure; publication repeats that audit before
-CAS, and recovery repeats it before returning authority. Review roots remain
-bounded opaque foundation records until the ReviewStore schema slice.
+Agent and review roots are typed `AgentRootV1` and `ReviewRootV1` records rather
+than caller-supplied opaque payloads. Their catalog and selected object edges
+use repository-bound immutable record envelopes. Staging validates canonical
+schemas, semantic object kinds and a bounded transitive dependency closure;
+publication repeats that audit before CAS, and recovery repeats it before
+returning authority. Review closure audit additionally verifies selected comment
+and event ownership, accepted sequence continuity and snapshot tail agreement.
 
 Checkpoint and association objects expose native operation/commit retention
 roots separately from AgentStore object edges. Staging verifies those native
@@ -110,6 +111,15 @@ CAS. Receipt replay therefore uses the exact retained delta; rebuilding a new
 delta after an unknown outcome is not a substitute for a durable pending spool.
 Repeated or overlapping source receipts fail stale, and updating this domain
 does not move code or review state.
+
+Review staging likewise accepts typed `ReviewDeltaV1` edits against a pinned
+ReviewStore root. It copy-on-write updates thread, comment and thread-event
+catalog paths, rejects changed expected selections and stages a complete root
+whose native and AgentStore dependencies have been verified. The generated pages
+and root are candidates rather than client-controlled publication inputs; the
+stale-safe command and receipt layer remains responsible for retaining and
+publishing the original semantic intent. Code and AgentStore roots are preserved
+by review-only publication.
 
 An authorized collaboration-enable request upgrades a format 1 manifest by
 appending a receipt-bearing WAL event. The event selects deterministic empty

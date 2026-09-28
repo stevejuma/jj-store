@@ -110,7 +110,7 @@ impl Coordinator {
                             version: 0,
                         },
                         review: DomainState {
-                            root: self.stage_review_root(&[]).await?,
+                            root: self.stage_review_root(&ReviewRootV1::empty()).await?,
                             version: 0,
                         },
                     };

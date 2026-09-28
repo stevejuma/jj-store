@@ -326,7 +326,10 @@ async fn domain_publications_preserve_roots_without_staling_code() {
         agent_root
     );
 
-    let review_root = c.stage_review_root(b"review root one").await.unwrap();
+    let review_root = c
+        .stage_review_root(&jj_review::ReviewRootV1::empty())
+        .await
+        .unwrap();
     let review = DomainRequest::new(
         PrincipalId::new([3; 16]),
         RequestId::new([92; 16]),

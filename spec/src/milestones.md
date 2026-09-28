@@ -61,10 +61,10 @@ adds evidence here in its enclosing Jujutsu change.
 | M7          | Deferred    | M8a         | JST-ADAPT-005                                                           | Complete read-only replica through applied position                                                                 | After first release                                     | -                                                                                                                                                                                                                          |
 | M7.1        | Deferred    | M8a.4       | JST-ADAPT-006                                                           | Asynchronous verified S3 backup remains independent from passive serving and promotion                              | Future backup release after local application           | -                                                                                                                                                                                                                          |
 | M8b         | Deferred    | M8a         | JST-COMPAT-004                                                          | Verified lossless import with source safety                                                                         | Separate migration release                              | -                                                                                                                                                                                                                          |
-| M9          | Partial     | M8a.4       | JST-COLLAB-001,JST-COLLAB-005                                           | Repository-native agent activity and exact review discussions in the LocalTrusted application                       | Add durable capture ingress and ReviewStore             | E-M9-001,E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009,E-M9-010,E-M9-011                                                                                                                         |
+| M9          | Partial     | M8a.4       | JST-COLLAB-001,JST-COLLAB-005                                           | Repository-native agent activity and exact review discussions in the LocalTrusted application                       | Add durable capture ingress and ReviewStore             | E-M9-001,E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009,E-M9-010,E-M9-011,E-M9-012                                                                                                                |
 | M9.1        | Done        | M8a.4       | JST-PUB-007,JST-PUB-008                                                 | Independent code/agent/review roots, code-state fencing and non-destructive collaboration enablement                | Implement AgentStore typed root objects                 | E-M9-001                                                                                                                                                                                                                   |
 | M9.2        | In progress | M9.1        | JST-COLLAB-001,JST-COLLAB-002,JST-COLLAB-006                            | AgentStore model, immutable snapshots/catalogs, sanitized evidence and Codex/Cursor/OpenCode normalizers            | Add durable capture ingress and setup                   | E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009                                                                                                                                                    |
-| M9.3        | In progress | M9.2        | JST-COLLAB-001,JST-COLLAB-003                                           | ReviewStore exact artifact anchors and stale-safe thread/comment workflow                                           | Add root-pinned store and stale-safe commands           | E-M9-010,E-M9-011                                                                                                                                                                                                          |
+| M9.3        | In progress | M9.2        | JST-COLLAB-001,JST-COLLAB-003                                           | ReviewStore exact artifact anchors and stale-safe thread/comment workflow                                           | Add stale-safe thread and comment commands              | E-M9-010,E-M9-011,E-M9-012                                                                                                                                                                                                 |
 | M9.4        | Planned     | M9.2,M9.3   | JST-COLLAB-004                                                          | LocalTrusted bounded CLI/HTTP APIs, pagination, receipts and live collaboration hints                               | Wire first-party service and generated contracts        | -                                                                                                                                                                                                                          |
 | M9.5        | Planned     | M9.4        | JST-COLLAB-005                                                          | Community-owned thread/agent widgets and Design Core exact diff selection integrated into the application           | Implement accessible virtualized application routes     | -                                                                                                                                                                                                                          |
 | M9.6        | Planned     | M9.5        | JST-COLLAB-002,JST-COLLAB-006,JST-COLLAB-007                            | Three harness qualification, cold recovery, three-root native copy and bounded fault/security/browser acceptance    | Execute real harness and native recovery gates          | -                                                                                                                                                                                                                          |
@@ -12988,6 +12988,100 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Rust 1.98.1; ReviewStore object/root schema v1; 32 selections per catalog leaf; 256 events per event page; one MiB body and root ceilings.",
     "formats": "ReviewRootV1 selects nine independent typed COW catalogs. ReviewObjectV1 registers index, anchor, body, revision, thread-event, event-page and thread-snapshot objects with canonical codecs, safe body state, append-only revision edges and separate thread/content/workflow versions."
+  },
+  {
+    "id": "E-M9-012",
+    "tasks": ["M9", "M9.3"],
+    "date": "2026-09-28",
+    "kind": "implementation",
+    "files": [
+      "Cargo.lock",
+      "crates/jj-review/src/delta.rs",
+      "crates/jj-review/src/lib.rs",
+      "crates/jj-review/tests/delta.rs",
+      "crates/jj-store-wal/Cargo.toml",
+      "crates/jj-store-wal/src/publication.rs",
+      "crates/jj-store-wal/src/publication/collaboration.rs",
+      "crates/jj-store-wal/src/publication/domains.rs",
+      "crates/jj-store-wal/src/publication/review.rs",
+      "crates/jj-store-wal/src/publication/review_audit.rs",
+      "crates/jj-store-wal/src/publication/review_catalog.rs",
+      "crates/jj-store-wal/src/publication/review_reads.rs",
+      "crates/jj-store-wal/src/records.rs",
+      "crates/jj-store-wal/tests/publication.rs",
+      "crates/jj-store-wal/tests/review_catalog.rs",
+      "scripts/check-boundaries.mjs",
+      "spec/src/architecture.md",
+      "spec/src/collaboration.md",
+      "spec/src/publication.md",
+      "spec/src/spec-governance.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "crates/jj-review/tests/delta.rs#review_delta_accepts_typed_expected_replacement_edits",
+      "crates/jj-review/tests/delta.rs#review_delta_rejects_noops_duplicates_and_semantic_kind_substitution",
+      "crates/jj-store-wal/tests/review_catalog.rs#persistent_review_catalog_splits_pages_and_keeps_old_root_pinned",
+      "crates/jj-store-wal/tests/review_catalog.rs#selecting_a_thread_rejects_cross_object_thread_identity_mismatch",
+      "crates/jj-store-wal/tests/review_catalog.rs#review_root_rejects_catalog_values_with_the_wrong_semantic_kind"
+    ],
+    "runs": [
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-review --test delta --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "The test-first compile reported the missing typed review catalog kind, expected/replacement edit and delta APIs."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-review --test delta --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both focused delta tests pass for typed selection changes and rejection of no-op, duplicate or semantic-kind-substituting edits."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-wal --test review_catalog --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "The test-first compile produced twelve missing staging, pinned-store and delta methods before the typed WAL integration existed."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-wal --test review_catalog --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Three focused WAL regressions pass for 40-thread COW pagination and old-root pinning, selected-object isolation, cross-object thread/event agreement and semantic catalog value kinds."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-review --locked; DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-wal --locked; DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo clippy -p jj-review -p jj-store-wal --all-targets --locked -- -D warnings; DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo fmt --all -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 10 ReviewStore model tests and 39 WAL inventory, publication, recovery and catalog tests pass; both crates are warning-free and formatted. Production modules contain at most 274 physical lines and the new WAL regression has 338 lines."
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 13 workspace boundaries pass with the exact jj-store-wal to jj-review validation dependency admitted and reverse or higher-layer edges still rejected."
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/architecture.md spec/src/collaboration.md spec/src/publication.md spec/src/spec-governance.md spec/src/milestones.md",
+        "result": "fail",
+        "failures": 4,
+        "note": "The focused formatter reported mechanical wrapping and milestone-table alignment in four changed canonical specification files."
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/architecture.md spec/src/collaboration.md spec/src/publication.md spec/src/spec-governance.md spec/src/milestones.md; pnpm test:governance; pnpm spec:validate; pnpm spec:first; pnpm check:progress; pnpm spec:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed canonical files are formatted; all 26 governance tests, 84 requirements, 16 protected files across five canonical chapters and 60 progress tasks pass, and the canonical book builds."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Stale-safe create thread, append reply, edit, tombstone, hide, resolve and reopen commands with receipt replay",
+      "Typed relation/status catalogs and conservative explicit re-anchoring",
+      "LocalTrusted CLI/HTTP contracts and shared Community/Design Core presentation"
+    ],
+    "versions": "Rust 1.98.1; ReviewDeltaV1 and ReviewStore root/object schema v1; 32 selections per persistent catalog leaf; 256-row bounded catalog reads.",
+    "formats": "Typed review objects use repository-bound ReviewObject records. ReviewStoreSnapshot pins one audited root closure; ReviewDeltaV1 copy-on-write updates thread, comment and thread-event catalogs while preserving old roots and rejecting stale or semantically mismatched selections."
   }
 ]
 ```

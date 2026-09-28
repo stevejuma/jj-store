@@ -246,8 +246,33 @@ revisions, one event-page root, the last accepted sequence, open/resolved state
 and selected workflow action. Its overall thread version advances for every
 accepted event, while content and workflow versions remain distinct monotonic
 preconditions. Parent comments must already occur in the selected order and a
-resolved snapshot must identify its workflow action. Cross-object loading will
-add thread-ID and event-history agreement checks in the root-pinned store slice.
+resolved snapshot must identify its workflow action. Cross-object loading
+rejects comment revisions from another thread, event-page or event
+thread/sequence mismatches, missing creation identity and an event tail that
+disagrees with the snapshot.
+
+## Root-pinned review store
+
+The WAL coordinator stages each validated review object in the existing
+repository-bound envelope and traverses every typed ReviewStore, native code and
+AgentStore strong edge before staging a root. A review root independently audits
+the semantic value kind of its thread, comment and thread-event catalogs. The
+remaining relation, status, work-request, alias and source catalogs fail closed
+until their typed object schemas are implemented.
+
+`ReviewDeltaV1` carries expected and replacement selections for thread
+snapshots, comment revisions and thread-event pages. It rejects no-op edits,
+duplicate catalog keys and semantic kind substitution. Applying a delta checks
+every expected selection against one pinned root, rewrites only affected
+persistent radix paths and stages a fully re-audited replacement root. Staged
+objects and roots remain invisible until the shared domain publication selects
+them.
+
+A `ReviewStoreSnapshot` binds exact lookup, bounded radix-ordered enumeration
+and object reads to the selected root closure. Reading an unselected staged
+object returns stale. Catalog enumeration accepts at most 256 selections per
+call and uses the last returned stable catalog key for continuation. Old
+snapshots retain their original roots and selections after later COW updates.
 
 ## Root-pinned capture projection
 
