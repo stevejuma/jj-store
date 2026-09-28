@@ -164,6 +164,15 @@ Ambiguous transport failures preserve unknown publication outcomes. An explicit
 insecure-loopback client option is required for local plaintext; shared channels
 require TLS. Executable command and administration integration remain separate.
 
+AgentStore capture adds a bounded two-phase service to this same native RPC. A
+prepare call carries canonical supported-profile and sanitized-batch JSON plus
+stable request/publication IDs; the server pins the current AgentStore root and
+returns an exact validated `AgentDeltaRequest` with its admitted peer principal.
+The publish call accepts only that prepared request and returns either the full
+committed receipt or the original unknown identity. The client cannot select an
+AgentStore root or actor, and operation IDs never cross this domain boundary as
+commit or capture identities.
+
 The executable installs lazy native factory closures: a native cache's bounded
 connection record selects the endpoint and repository, while credentials are
 resolved independently. The shared factory instance within one invocation keeps

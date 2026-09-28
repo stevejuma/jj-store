@@ -113,6 +113,14 @@ delta after an unknown outcome is not a substitute for a durable pending spool.
 Repeated or overlapping source receipts fail stale, and updating this domain
 does not move code or review state.
 
+The publication facade exports the validated normalizer profile, sanitized batch
+and exact delta request types needed by the service prepare/publish boundary.
+Service and RPC layers consume those owned facade types rather than importing
+the neutral agent model or WAL implementation directly. This changes no
+serialized record: canonical capture JSON is only transport framing, while the
+returned `AgentDeltaRequest` remains the durable intent used by receipt lookup
+and manifest CAS.
+
 Review staging likewise accepts typed `ReviewDeltaV1` edits against a pinned
 ReviewStore root. It copy-on-write updates thread, comment, thread-event,
 original-anchor relation, artifact relation and status catalog paths, rejects

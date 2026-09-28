@@ -1,5 +1,5 @@
 use crate::{
-    CHUNK_BYTES, MAX_IDS, REQUEST_BYTES, RESPONSE_BYTES, administration as admin, object,
+    CHUNK_BYTES, MAX_IDS, REQUEST_BYTES, RESPONSE_BYTES, administration as admin, agent, object,
     service_error,
     wire::{
         self,
@@ -457,6 +457,45 @@ impl NativeStore for NativeRpc {
         self.bounded(async {
             session.publish(old, new).await.map_err(service_error)?;
             Ok(wire::Empty {})
+        })
+        .await
+    }
+    async fn prepare_agent_capture(
+        &self,
+        request: Request<wire::AgentCapturePrepareRequest>,
+    ) -> Result<Response<wire::AgentCapturePrepared>, Status> {
+        let access = self.request_access(&request)?;
+        let prepared = agent::prepared_capture(request.into_inner())?;
+        let session = self.bind(&prepared.repository, access)?;
+        self.bounded(async {
+            let request = session
+                .prepare_agent_capture(
+                    prepared.request_id,
+                    prepared.publication_id,
+                    &prepared.profile,
+                    &prepared.batch,
+                    prepared.result,
+                )
+                .await
+                .map_err(service_error)?;
+            agent::wire_prepared(&request)
+        })
+        .await
+    }
+    async fn publish_agent_delta(
+        &self,
+        request: Request<wire::AgentDeltaPublishRequest>,
+    ) -> Result<Response<wire::AgentPublicationReply>, Status> {
+        let access = self.request_access(&request)?;
+        let body = request.into_inner();
+        let session = self.bind(&body.repository, access)?;
+        let request = agent::delta_request(&body.request_json)?;
+        self.bounded(async {
+            let outcome = session
+                .publish_agent_delta(&request)
+                .await
+                .map_err(service_error)?;
+            Ok(agent::wire_outcome(outcome))
         })
         .await
     }

@@ -35,6 +35,15 @@ receipts store only the resulting `PrincipalId`, so the access-mode addition
 does not rewrite historical records or weaken protection, snapshot, idempotency,
 semantic or resource checks.
 
+AgentStore domain publication uses the same guard with current write
+authorization. The guard compares the domain request actor with the principal
+derived from the current access policy before receipt lookup, staging or CAS.
+The prepare service rechecks that principal after staging immutable objects; a
+later publish repeats authorization, and a peer cannot replay another
+principal's prepared request. Domain writes do not run native history semantics
+because they preserve code heads and code-state version through their separate
+manifest root.
+
 ## Native publication policy
 
 Native publications must descend from every removed committed operation. Strict

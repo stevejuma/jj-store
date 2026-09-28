@@ -30,7 +30,10 @@ pub use agent_reads::{AgentCatalogPage, AgentRelationCursor, AgentRelationRange,
 pub use application::ApplicationIntent;
 pub use collaboration::{CollaborationOutcome, CollaborationRequest};
 pub use domains::{Domain, DomainRequest, DomainState, RepositoryDomains};
-pub use jj_agent::{AgentDeltaV1, AgentObjectRef, AgentObjectV1, AgentRootV1};
+pub use jj_agent::{
+    AgentDeltaV1, AgentObjectRef, AgentObjectV1, AgentRootV1, NormalizerProfileV1,
+    SanitizedObservationBatchV1,
+};
 pub use jj_review::{ReviewDeltaV1, ReviewObjectRef, ReviewObjectV1, ReviewRootV1};
 pub use reader::SelectedRecord;
 pub use review_catalog::ReviewStoreSnapshot;

@@ -68,6 +68,7 @@ pub struct NativeSession {
     pub(crate) repository: m::RepositoryId,
     pub(crate) object_store: Arc<dyn ObjectStore>,
     access: Arc<RepositoryAccess>,
+    pub(crate) clock: Arc<dyn Clock>,
     pub(crate) coordinator: Coordinator,
     pub(crate) limits: SessionLimits,
 }
@@ -88,15 +89,16 @@ impl NativeSession {
             repository,
             store.clone(),
             token,
-            clock,
+            clock.clone(),
         ));
-        Self::with_access(store, objects, access, protection, limits)
+        Self::with_access(store, objects, access, clock, protection, limits)
     }
     pub fn new_local_trusted(
         store: Arc<dyn ObjectStore>,
         objects: Arc<NativeObjects>,
         principal: m::PrincipalId,
         permission: Permission,
+        clock: Arc<dyn Clock>,
         protection: Protection,
         limits: SessionLimits,
     ) -> wal::Result<Self> {
@@ -108,12 +110,13 @@ impl NativeSession {
             RepositoryAccess::local_trusted(repository, store.clone(), principal, permission)
                 .map_err(|_| wal::Error::Denied)?,
         );
-        Self::with_access(store, objects, access, protection, limits)
+        Self::with_access(store, objects, access, clock, protection, limits)
     }
     fn with_access(
         store: Arc<dyn ObjectStore>,
         objects: Arc<NativeObjects>,
         access: Arc<RepositoryAccess>,
+        clock: Arc<dyn Clock>,
         protection: Protection,
         limits: SessionLimits,
     ) -> wal::Result<Self> {
@@ -136,6 +139,7 @@ impl NativeSession {
             repository,
             object_store: store,
             access,
+            clock,
             coordinator,
             limits,
         })

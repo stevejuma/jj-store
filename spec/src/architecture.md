@@ -164,6 +164,11 @@ WAL dependencies. The CLI journal depends on those models and the WAL's typed
 agent request, persists outside checkouts under an exclusive user-restricted
 lock and never becomes repository authority. Only the WAL coordinator can
 publish its prepared delta through the manifest CAS and durable receipt path.
+The native transport exposes that authority as separate prepare and publish
+calls: the server owns current-root selection, peer principal and activation
+time, while the CLI owns crash-safe persistence between them. Canonical JSON
+payloads are explicitly byte bounded inside the protobuf envelope, and an
+unknown manifest outcome remains a typed response requiring an exact retry.
 
 The same CLI boundary owns a device-local integration registry outside the
 checkout. It binds one stable random device identity and explicit desired

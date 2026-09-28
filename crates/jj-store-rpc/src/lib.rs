@@ -1,6 +1,7 @@
 //! Bounded native gRPC V1; no upstream JJ types or storage control records.
 #![forbid(unsafe_code)]
 pub mod administration;
+pub mod agent;
 pub mod client;
 pub mod server;
 pub mod wire {
@@ -9,7 +10,7 @@ pub mod wire {
 use jj_store_model as m;
 use tonic::Status;
 pub const CHUNK_BYTES: usize = 64 * 1024;
-pub const REQUEST_BYTES: usize = 128 * 1024;
+pub const REQUEST_BYTES: usize = 8 * 1024 * 1024;
 pub const RESPONSE_BYTES: usize = 8 * 1024 * 1024;
 pub const MAX_IDS: usize = 100_000;
 

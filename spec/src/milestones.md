@@ -62,9 +62,9 @@ adds evidence here in its enclosing Jujutsu change.
 | M7          | Deferred    | M8a         | JST-ADAPT-005                                                           | Complete read-only replica through applied position                                                                 | After first release                                     | -                                                                                                                                                                                                                          |
 | M7.1        | Deferred    | M8a.4       | JST-ADAPT-006                                                           | Asynchronous verified S3 backup remains independent from passive serving and promotion                              | Future backup release after local application           | -                                                                                                                                                                                                                          |
 | M8b         | Deferred    | M8a         | JST-COMPAT-004                                                          | Verified lossless import with source safety                                                                         | Separate migration release                              | -                                                                                                                                                                                                                          |
-| M9          | Partial     | M8a.4       | JST-COLLAB-001,JST-COLLAB-005                                           | Repository-native agent activity and exact review discussions in the LocalTrusted application                       | Implement LocalTrusted collaboration APIs               | E-M9-001,E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009,E-M9-010,E-M9-011,E-M9-012,E-M9-013,E-M9-014,E-M9-015,E-M9-016,E-M9-017,E-M9-018,E-M9-019                                                 |
+| M9          | Partial     | M8a.4       | JST-COLLAB-001,JST-COLLAB-005                                           | Repository-native agent activity and exact review discussions in the LocalTrusted application                       | Implement LocalTrusted collaboration APIs               | E-M9-001,E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009,E-M9-010,E-M9-011,E-M9-012,E-M9-013,E-M9-014,E-M9-015,E-M9-016,E-M9-017,E-M9-018,E-M9-019,E-M9-020                                        |
 | M9.1        | Done        | M8a.4       | JST-PUB-007,JST-PUB-008                                                 | Independent code/agent/review roots, code-state fencing and non-destructive collaboration enablement                | Implement AgentStore typed root objects                 | E-M9-001                                                                                                                                                                                                                   |
-| M9.2        | In progress | M9.1        | JST-COLLAB-001,JST-COLLAB-002,JST-COLLAB-006                            | AgentStore model, immutable snapshots/catalogs, sanitized evidence and Codex/Cursor/OpenCode normalizers            | Wire packaged hook ingestion and publication recovery   | E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009,E-M9-015,E-M9-016,E-M9-017,E-M9-018,E-M9-019                                                                                                       |
+| M9.2        | In progress | M9.1        | JST-COLLAB-001,JST-COLLAB-002,JST-COLLAB-006                            | AgentStore model, immutable snapshots/catalogs, sanitized evidence and Codex/Cursor/OpenCode normalizers            | Wire packaged hook ingestion and publication recovery   | E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009,E-M9-015,E-M9-016,E-M9-017,E-M9-018,E-M9-019,E-M9-020                                                                                              |
 | M9.3        | In progress | M9.2        | JST-COLLAB-001,JST-COLLAB-003,JST-PUB-009                               | ReviewStore exact anchors, stale-safe thread workflow, direct catalogs and conservative placement                   | Await M9.2, then implement LocalTrusted APIs            | E-M9-010,E-M9-011,E-M9-012,E-M9-013,E-M9-014                                                                                                                                                                               |
 | M9.4        | Planned     | M9.2,M9.3   | JST-COLLAB-004                                                          | LocalTrusted bounded CLI/HTTP APIs, pagination, receipts and live collaboration hints                               | Wire first-party service and generated contracts        | -                                                                                                                                                                                                                          |
 | M9.5        | Planned     | M9.4        | JST-COLLAB-005                                                          | Community-owned thread/agent widgets and Design Core exact diff selection integrated into the application           | Implement accessible virtualized application routes     | -                                                                                                                                                                                                                          |
@@ -13909,6 +13909,121 @@ and named tests are checked by the progress gate.
     "remaining": [],
     "versions": "Rust 1.98.1; configuration format 2; repository registry catalog version 2; OpenAPI 3.1; Svelte 5.57.1; Storybook 10.5.7.",
     "formats": "Adds installation registry catalog version 2 with pending aliases, monotonic generation and token-ID candidate sets. Adds GET /v1/repositories V1 pages and jrr1 HMAC cursors bound to generation and token ID. Native repository identities, manifest CAS, WAL, receipts and bearer-token encoding are unchanged. Browser credentials remain memory-only."
+  },
+  {
+    "id": "E-M9-020",
+    "tasks": ["M9", "M9.2"],
+    "date": "2026-09-28",
+    "kind": "implementation",
+    "files": [
+      "Cargo.lock",
+      "crates/jj-store-rpc/Cargo.toml",
+      "crates/jj-store-rpc/proto/native.proto",
+      "crates/jj-store-rpc/src/agent.rs",
+      "crates/jj-store-rpc/src/client.rs",
+      "crates/jj-store-rpc/src/lib.rs",
+      "crates/jj-store-rpc/src/server.rs",
+      "crates/jj-store-rpc/tests/agent_publication.rs",
+      "crates/jj-store-service/src/guard.rs",
+      "crates/jj-store-service/src/lib.rs",
+      "crates/jj-store-service/src/native.rs",
+      "crates/jj-store-service/src/native_agent.rs",
+      "crates/jj-store-service/src/transport.rs",
+      "crates/jj-store-wal/src/publication.rs",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/collaboration.md",
+      "spec/src/jj-integration.md",
+      "spec/src/milestones.md",
+      "spec/src/mutations.md",
+      "spec/src/publication.md",
+      "spec/src/verification.md"
+    ],
+    "tests": [
+      "crates/jj-store-rpc/tests/agent_publication.rs#local_peer_prepares_and_replays_exact_agent_publication"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-rpc --test agent_publication --locked",
+        "result": "fail",
+        "failures": 3,
+        "note": "The test-first compile proved that NativeClient had no prepare or publish AgentStore RPC methods."
+      },
+      {
+        "command": "cargo test -p jj-store-rpc --test agent_publication --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "The first complete transport reached publication and exposed that production guards still inherited the fail-closed default for all domain writes; the guard now requires the current write principal and exact request actor."
+      },
+      {
+        "command": "cargo test -p jj-store-rpc --test agent_publication --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "The LocalTrusted Unix RPC prepares a server-principal-owned delta, commits and replays its receipt, rejects a changed principal and preserves a storage-unknown outcome until the same request commits."
+      },
+      {
+        "command": "cargo clippy -p jj-store-service -p jj-store-rpc --lib --test agent_publication --test local_trusted --locked -- -D warnings",
+        "result": "pass",
+        "failures": 0,
+        "note": "The affected service and RPC libraries plus both focused Unix transport targets are warning-free. New production modules contain 249 and 63 physical lines; the regression contains 176."
+      },
+      {
+        "command": "pnpm spec:validate; pnpm spec:first",
+        "result": "fail",
+        "failures": 2,
+        "note": "The first same-change gate required the RPC and service changes to update their mapped jj-integration and mutations chapters in addition to the collaboration chapter."
+      },
+      {
+        "command": "pnpm spec:validate; pnpm spec:first; pnpm check:progress; pnpm exec prettier --check spec/src/architecture.md spec/src/cli.md spec/src/collaboration.md spec/src/jj-integration.md spec/src/milestones.md spec/src/mutations.md spec/src/verification.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 89 requirements, 14 protected files across six canonical chapters and all 61 progress tasks validate; every changed specification file is formatted."
+      },
+      {
+        "command": "cargo test -p jj-store-rpc --test agent_publication --test local_trusted --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both focused RPC regressions pass, covering agent prepare/publish/replay/unknown outcomes and retained owner-only bearer-free Unix admission."
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "fail",
+        "failures": 3,
+        "note": "The first package audit rejected direct jj-agent and WAL dependencies from RPC plus a direct jj-agent dependency from service. Collaboration types are now re-exported through the existing WAL and service facades instead of weakening the layer policy."
+      },
+      {
+        "command": "cargo test -p jj-store-rpc --test agent_publication --offline; pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "The exact agent publication regression still passes through the allowed facade types, and all 13 package dependency boundaries pass."
+      },
+      {
+        "command": "pnpm spec:validate; pnpm spec:first",
+        "result": "fail",
+        "failures": 1,
+        "note": "After the dependency correction, spec-first required the WAL facade re-export to be recorded in its mapped publication chapter."
+      },
+      {
+        "command": "cargo clippy -p jj-store-wal -p jj-store-service -p jj-store-rpc --lib --test agent_publication --test local_trusted --locked -- -D warnings; cargo test -p jj-store-rpc --test agent_publication --test local_trusted --locked; cargo test -p jj-store-service --test authorization --locked; cargo fmt --all -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "The final allowed WAL facade, service guard and RPC transport are warning-free and formatted. Both focused RPC tests and all eight service authorization regressions pass."
+      },
+      {
+        "command": "pnpm check:boundaries; pnpm spec:validate; pnpm spec:first; pnpm check:progress; pnpm exec prettier --check spec/src/architecture.md spec/src/cli.md spec/src/collaboration.md spec/src/jj-integration.md spec/src/milestones.md spec/src/mutations.md spec/src/publication.md spec/src/verification.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 13 package boundaries, 89 requirements, 14 protected files across seven canonical chapters and 61 progress tasks pass; all changed specifications are formatted."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Drain captured and prepared entries in source-sequence order through the exact native RPC request",
+      "Add drift-safe owned integration removal after ingesting setup is qualified",
+      "Execute pinned real-harness capability and smoke tests in M9.6; Cursor remains unsupported on the current host"
+    ],
+    "versions": "Rust 1.98.1; native RPC package jj_store.native.v1; AgentStore delta schema v1; manifest format 2.",
+    "formats": "Adds bounded canonical JSON AgentCapturePrepareRequest and AgentDeltaPublishRequest messages. Prepare derives the current peer principal, server activation time and pinned AgentStore root. Publish accepts only the exact validated AgentDeltaRequest and returns a typed committed receipt or unknown identity without changing native object, manifest or AgentStore identities."
   }
 ]
 ```

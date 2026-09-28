@@ -163,7 +163,9 @@ or oversized input without retaining source details. A bounded lock serializes
 source-sequence allocation across hook processes; reservations are synchronized
 before the sanitized batch is atomically enqueued, so interrupted attempts can
 leave a gap but can never reuse a sequence. The command does not yet publish the
-pending batch; publication recovery remains M9.2 work.
+pending batch. The native service now prepares and publishes exact peer-bound
+AgentStore requests, but the CLI recovery worker that drains captured/prepared
+entries in source order remains M9.2 work.
 
 `store init` provisions a new repository using a separate operator credential,
 durably retaining generated repository/epoch IDs before contacting the server.

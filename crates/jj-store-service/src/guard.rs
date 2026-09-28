@@ -6,7 +6,7 @@ use crate::{
 };
 use jj_store_wal::{
     self as wal,
-    publication::{ManifestSnapshot, PublicationGuard, Request, Snapshot},
+    publication::{DomainRequest, ManifestSnapshot, PublicationGuard, Request, Snapshot},
 };
 use std::sync::Arc;
 /// Native/application policy is mandatory. Authentication is not semantic
@@ -56,6 +56,17 @@ impl AuthenticatedGuard {
 impl PublicationGuard for AuthenticatedGuard {
     async fn authorize(&self, snapshot: &ManifestSnapshot, request: &Request) -> wal::Result<()> {
         self.actor(snapshot, request).await.map(|_| ())
+    }
+    async fn authorize_domain(
+        &self,
+        snapshot: &ManifestSnapshot,
+        request: &DomainRequest,
+    ) -> wal::Result<()> {
+        let principal = self.access.authorize(snapshot, Permission::Write).await?;
+        if request.principal != principal.id() {
+            return Err(wal::Error::Denied);
+        }
+        Ok(())
     }
     async fn validate_transition(
         &self,

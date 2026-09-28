@@ -400,6 +400,17 @@ only a prepared entry whose request and publication IDs match the committed
 outcome, then synchronizes the directory. An unprepared capture cannot be
 discarded through the completion path.
 
+Native capture publication is two phase. A bounded canonical prepare request
+sends the supported profile, sanitized batch, stable request/publication IDs and
+result to the repository service. The server derives the principal and
+activation time from the admitted peer, pins the current AgentStore root and
+returns the exact validated delta request; the device spool must persist those
+bytes before publication. The second call submits only that prepared request.
+Committed receipts and unknown outcomes retain the same identities, while a
+different peer principal, changed retry or stale same-source edit is rejected.
+Preparing again after an unpersisted response may stage a fresh intent, but a
+persisted prepared entry is never restaged under its existing receipt identity.
+
 ## Installed hook ingestion
 
 `jj agent hook <codex|cursor|opencode>` is the owned, noninteractive ingestion

@@ -1,5 +1,5 @@
 use crate::{
-    CHUNK_BYTES, MAX_IDS, REQUEST_BYTES, RESPONSE_BYTES, administration as admin,
+    CHUNK_BYTES, MAX_IDS, REQUEST_BYTES, RESPONSE_BYTES, administration as admin, agent,
     wire::{self, native_store_client::NativeStoreClient},
     wire_object,
 };
@@ -12,6 +12,9 @@ use jj_store_service::administration::{
     AdministrationSnapshot, TokenListing, TokenReceipt, TokenRequest,
 };
 use jj_store_service::auth::BearerToken;
+use jj_store_service::transport::{
+    AgentDeltaRequest, NormalizerProfileV1, PublishOutcome, SanitizedObservationBatchV1,
+};
 use std::{collections::BTreeSet, sync::Arc, time::Duration};
 use tokio::{io::AsyncReadExt as _, time::Instant};
 use tonic::{
@@ -342,6 +345,42 @@ impl NativeClient {
             }))
             .await?;
         Ok(())
+    }
+    pub async fn prepare_agent_capture(
+        &self,
+        request_id: m::RequestId,
+        publication_id: m::PublicationId,
+        profile: &NormalizerProfileV1,
+        batch: &SanitizedObservationBatchV1,
+        result: Vec<u8>,
+    ) -> Result<AgentDeltaRequest, Status> {
+        let expected_result = result.clone();
+        let body = agent::prepare_request(
+            self.repository,
+            request_id,
+            publication_id,
+            profile,
+            batch,
+            result,
+        )?;
+        let response = self
+            .wire()
+            .prepare_agent_capture(self.request(body))
+            .await?
+            .into_inner();
+        agent::prepared(response, request_id, publication_id, &expected_result)
+    }
+    pub async fn publish_agent_delta(
+        &self,
+        request: &AgentDeltaRequest,
+    ) -> Result<PublishOutcome, Status> {
+        let body = agent::publish_request(self.repository, request)?;
+        let response = self
+            .wire()
+            .publish_agent_delta(self.request(body))
+            .await?
+            .into_inner();
+        agent::outcome(response, request)
     }
     fn object_request(&self, key: m::ObjectKey) -> Request<wire::ObjectRequest> {
         self.request(wire::ObjectRequest {

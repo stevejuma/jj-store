@@ -13,7 +13,11 @@ use jj_store_model as m;
 use jj_store_object::{
     Condition, Download, Key, Metadata, ObjectStore, StagedUpload, WriteOutcome,
 };
-use jj_store_wal::{self as wal, publication::PublishOutcome};
+use jj_store_wal as wal;
+pub use jj_store_wal::publication::{
+    AgentDeltaRequest, NormalizerProfileV1, PublishOutcome, Receipt, SanitizedObservationBatchV1,
+    Snapshot,
+};
 use std::{collections::BTreeSet, sync::Arc};
 
 #[derive(Debug, thiserror::Error)]
@@ -122,6 +126,7 @@ impl NativeEndpoint {
             self.objects.clone(),
             principal,
             permission,
+            self.clock.clone(),
             self.protection.clone(),
             self.limits,
         )?;
@@ -155,6 +160,22 @@ impl NativeRequest {
             .await?
             .map(TokenReceipt::try_from)
             .transpose()
+    }
+    pub async fn prepare_agent_capture(
+        &self,
+        request_id: m::RequestId,
+        publication_id: m::PublicationId,
+        profile: &NormalizerProfileV1,
+        batch: &SanitizedObservationBatchV1,
+        result: Vec<u8>,
+    ) -> Result<AgentDeltaRequest> {
+        Ok(self
+            .session
+            .prepare_agent_capture(request_id, publication_id, profile, batch, result)
+            .await?)
+    }
+    pub async fn publish_agent_delta(&self, request: &AgentDeltaRequest) -> Result<PublishOutcome> {
+        Ok(self.session.publish_agent_delta(request).await?)
     }
     pub async fn authorize(&self, write: bool) -> Result<()> {
         self.session
