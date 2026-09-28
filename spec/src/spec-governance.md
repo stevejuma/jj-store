@@ -89,6 +89,12 @@ The RPC layer may consume the owned object streaming interface. Its native JJ
 trait adapters remain in the CLI crate, and direct upstream JJ dependencies in
 RPC are rejected by the existing boundary checker.
 
+The boundary checker treats `jj-agent` and future `jj-review` crates as owned
+layers even though their names do not use the `jj-store-` prefix. `jj-agent` may
+depend on the neutral model layer; it cannot depend on WAL, service, native JJ,
+transport or presentation layers. WAL may depend on `jj-agent` to validate typed
+roots and immutable objects before shared publication.
+
 Server composition has an explicit layer in the boundary checker. Regression
 coverage rejects dependencies on CLI presentation and direct upstream JJ types,
 while permitting the owned native/service/RPC composition interfaces.

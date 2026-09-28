@@ -3217,6 +3217,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "jj-agent"
+version = "0.1.0"
+dependencies = [
+ "hex",
+ "jj-store-model",
+ "schemars",
+ "serde",
+ "serde_json",
+ "sha2 0.10.9",
+ "thiserror 2.0.21",
+]
+
+[[package]]
 name = "jj-cli"
 version = "0.45.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3617,6 +3630,7 @@ dependencies = [
  "async-trait",
  "futures 0.3.34",
  "getrandom 0.4.3",
+ "jj-agent",
  "jj-store-model",
  "jj-store-object",
  "schemars",

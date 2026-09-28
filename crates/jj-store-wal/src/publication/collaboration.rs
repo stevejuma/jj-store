@@ -106,11 +106,11 @@ impl Coordinator {
                 None => {
                     let domains = RepositoryDomains {
                         agent: DomainState {
-                            root: self.stage_domain_root(Domain::Agent, &[]).await?,
+                            root: self.stage_agent_root(&AgentRootV1::empty()).await?,
                             version: 0,
                         },
                         review: DomainState {
-                            root: self.stage_domain_root(Domain::Review, &[]).await?,
+                            root: self.stage_review_root(&[]).await?,
                             version: 0,
                         },
                     };

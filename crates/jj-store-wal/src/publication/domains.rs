@@ -91,21 +91,21 @@ impl DomainRequest {
 
 #[derive(Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
-struct DomainRoot {
+struct ReviewRoot {
     format: u32,
     payload: Vec<u8>,
 }
 
 impl Coordinator {
-    pub async fn stage_domain_root(&self, domain: Domain, payload: &[u8]) -> Result<RecordRef> {
+    pub async fn stage_review_root(&self, payload: &[u8]) -> Result<RecordRef> {
         if payload.len() as u64 > MAX_DOMAIN_ROOT {
             return Err(Error::Limit("domain root"));
         }
         self.records
             .put(
-                domain.record_kind(),
+                RecordKind::ReviewRoot,
                 None,
-                &DomainRoot {
+                &ReviewRoot {
                     format: 1,
                     payload: payload.to_vec(),
                 },
@@ -277,9 +277,16 @@ impl Coordinator {
     }
 
     pub(super) async fn read_domain_root(&self, domain: Domain, root: RecordRef) -> Result<()> {
-        let value: DomainRoot = self.records.get(root, domain.record_kind()).await?;
-        if value.format != 1 || value.payload.len() as u64 > MAX_DOMAIN_ROOT {
-            return Err(Error::Corrupt("domain root"));
+        match domain {
+            Domain::Agent => {
+                self.read_agent_root(root).await?;
+            }
+            Domain::Review => {
+                let value: ReviewRoot = self.records.get(root, RecordKind::ReviewRoot).await?;
+                if value.format != 1 || value.payload.len() as u64 > MAX_DOMAIN_ROOT {
+                    return Err(Error::Corrupt("domain root"));
+                }
+            }
         }
         Ok(())
     }

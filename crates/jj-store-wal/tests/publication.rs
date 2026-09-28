@@ -1,4 +1,7 @@
 //! Fault matrix for atomic visibility, idempotency, concurrency and recovery.
+use jj_agent::{
+    AgentIndexPageV1, AgentObjectId, AgentObjectKind, AgentObjectRef, AgentObjectV1, AgentRootV1,
+};
 use jj_store_model::*;
 use jj_store_object::{memory::MemoryStore, *};
 use jj_store_wal::{
@@ -247,8 +250,18 @@ async fn domain_publications_preserve_roots_without_staling_code() {
     assert_eq!(initial.manifest().format, 2);
     assert_eq!(initial.manifest().code_state_version, 0);
 
+    let agent_page = c
+        .stage_agent_object(&AgentObjectV1::IndexPage(AgentIndexPageV1::Leaf {
+            prefix: String::new(),
+            entries: BTreeMap::new(),
+        }))
+        .await
+        .unwrap();
     let agent_root = c
-        .stage_domain_root(Domain::Agent, b"agent root one")
+        .stage_agent_root(&AgentRootV1 {
+            sessions: Some(agent_page),
+            ..AgentRootV1::empty()
+        })
         .await
         .unwrap();
     let agent = DomainRequest::new(
@@ -291,10 +304,7 @@ async fn domain_publications_preserve_roots_without_staling_code() {
         agent_root
     );
 
-    let review_root = c
-        .stage_domain_root(Domain::Review, b"review root one")
-        .await
-        .unwrap();
+    let review_root = c.stage_review_root(b"review root one").await.unwrap();
     let review = DomainRequest::new(
         PrincipalId::new([3; 16]),
         RequestId::new([92; 16]),
@@ -325,6 +335,38 @@ async fn domain_publications_preserve_roots_without_staling_code() {
             .root,
         review_root
     );
+}
+
+#[tokio::test]
+async fn agent_roots_require_complete_typed_dependency_closures() {
+    let (_, c) = fixture().await;
+    let missing = AgentObjectRef::new(AgentObjectKind::IndexPage, AgentObjectId::new([251; 32]));
+    let root = AgentRootV1 {
+        sessions: Some(missing),
+        ..AgentRootV1::empty()
+    };
+    assert!(matches!(
+        c.stage_agent_root(&root).await,
+        Err(wal::Error::Storage(jj_store_object::Error::NotFound))
+    ));
+
+    let stored = c
+        .stage_agent_object(&AgentObjectV1::IndexPage(AgentIndexPageV1::Leaf {
+            prefix: String::new(),
+            entries: BTreeMap::new(),
+        }))
+        .await
+        .unwrap();
+    let wrong_kind = AgentObjectRef::new(AgentObjectKind::SessionSnapshot, stored.id);
+    let key = jj_agent::AgentCatalogKey::derive("session", &[7; 16]).unwrap();
+    let parent = AgentObjectV1::IndexPage(AgentIndexPageV1::Leaf {
+        prefix: String::new(),
+        entries: BTreeMap::from([(key, wrong_kind)]),
+    });
+    assert!(matches!(
+        c.stage_agent_object(&parent).await,
+        Err(wal::Error::Corrupt("agent object kind"))
+    ));
 }
 fn request(n: u8, remove: &[u8], add: u8) -> Request {
     Request {

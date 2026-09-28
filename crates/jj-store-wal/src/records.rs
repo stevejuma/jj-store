@@ -17,6 +17,7 @@ pub enum RecordKind {
     Checkpoint,
     Settings,
     AgentRoot,
+    AgentObject,
     ReviewRoot,
 }
 impl RecordKind {
@@ -29,6 +30,7 @@ impl RecordKind {
             Self::Checkpoint => "checkpoints",
             Self::Settings => "settings",
             Self::AgentRoot => "agent-roots",
+            Self::AgentObject => "agent-objects",
             Self::ReviewRoot => "review-roots",
         }
     }

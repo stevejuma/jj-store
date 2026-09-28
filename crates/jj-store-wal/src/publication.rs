@@ -1,4 +1,5 @@
 //! One manifest CAS selects immutable native inventory, history and receipts.
+mod agent;
 mod application;
 mod collaboration;
 mod domains;
@@ -6,6 +7,7 @@ mod reader;
 pub use application::ApplicationIntent;
 pub use collaboration::{CollaborationOutcome, CollaborationRequest};
 pub use domains::{Domain, DomainRequest, DomainState, RepositoryDomains};
+pub use jj_agent::{AgentObjectRef, AgentObjectV1, AgentRootV1};
 pub use reader::SelectedRecord;
 
 use crate::{
@@ -431,8 +433,8 @@ impl Coordinator {
                 .records
                 .put(RecordKind::Settings, None, &Settings { data: settings })
                 .await?;
-            let agent_root = self.stage_domain_root(Domain::Agent, &[]).await?;
-            let review_root = self.stage_domain_root(Domain::Review, &[]).await?;
+            let agent_root = self.stage_agent_root(&AgentRootV1::empty()).await?;
+            let review_root = self.stage_review_root(&[]).await?;
             let manifest = Manifest {
                 format: 2,
                 repository: self.records.repository,

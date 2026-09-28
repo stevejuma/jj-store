@@ -166,6 +166,35 @@ test("accepts_owned_dependencies", () =>
     [],
   ));
 
+test("agent_models_stay_below_publication_and_native_layers", () => {
+  assert.deepEqual(
+    dependencyErrors([
+      {
+        name: "jj-agent",
+        dependencies: [{ name: "jj-store-model" }],
+      },
+      {
+        name: "jj-store-wal",
+        dependencies: [
+          { name: "jj-agent" },
+          { name: "jj-store-model" },
+          { name: "jj-store-object" },
+        ],
+      },
+    ]),
+    [],
+  );
+  assert.match(
+    dependencyErrors([
+      {
+        name: "jj-agent",
+        dependencies: [{ name: "jj-store-wal" }],
+      },
+    ]).join(),
+    /invalid layer dependency jj-store-wal/,
+  );
+});
+
 test("server_composition_cannot_depend_on_cli_or_native_upstream", () => {
   assert.equal(
     dependencyErrors([

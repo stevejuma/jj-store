@@ -8,8 +8,9 @@ export function dependencyErrors(packages) {
   const native = new Set(["jj-store-jj", "jj-store-cli"]);
   const layers = {
     "jj-store-model": [],
+    "jj-agent": ["jj-store-model"],
     "jj-store-object": ["jj-store-model"],
-    "jj-store-wal": ["jj-store-model", "jj-store-object"],
+    "jj-store-wal": ["jj-agent", "jj-store-model", "jj-store-object"],
     "jj-store-jj": ["jj-store-model", "jj-store-object", "jj-store-wal"],
     "jj-store-service": [
       "jj-store-adapters",
@@ -51,7 +52,8 @@ export function dependencyErrors(packages) {
       )
         errors.push(`${pkg.name}: excluded core dependency ${dep.name}`);
       if (
-        dep.name.startsWith("jj-store-") &&
+        (dep.name.startsWith("jj-store-") ||
+          ["jj-agent", "jj-review"].includes(dep.name)) &&
         layers[pkg.name] &&
         !layers[pkg.name].includes(dep.name) &&
         dep.kind !== "dev"

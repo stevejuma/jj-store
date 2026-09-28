@@ -36,3 +36,21 @@ export, controller job dispatch, arbitrary cross-repository targets, CRDT/edit
 identity, advanced semantic re-anchoring, other harnesses and visual baselines
 are deferred. Tantivy may index committed collaboration records later but never
 becomes their authority.
+
+## AgentStore object foundation
+
+`jj-agent` owns distinct fixed-width stable IDs for sessions, attempts, turns,
+messages, blocks, tool calls, terminals, checkpoints, associations,
+observations, events, devices and capture sources. Content-addressed
+`AgentObjectId` values remain separate from those durable entity IDs. Native JJ
+operation, commit and change IDs retain their existing owned types and are not
+reinterpreted as agent identities.
+
+`AgentRootV1` selects independent persistent radix catalogs for sessions,
+aliases, checkpoints, associations, relations, sources and projections. Empty
+catalogs are represented by absent page roots in one canonical empty root.
+Catalog pages are bounded immutable objects with canonical digest keys and typed
+strong references. Every staged root and page validates its complete
+repository-bound dependency closure before it can be selected; missing objects,
+semantic kind mismatches, unknown fields and noncanonical bytes fail closed.
+Only the publication coordinator can turn staged objects into visible state.
