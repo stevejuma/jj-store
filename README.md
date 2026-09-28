@@ -30,23 +30,24 @@ application contracts. `pnpm contracts:check` rejects drift and verifies actual
 HTTP fixture responses; it runs in both normal and specification checks. See the
 [contract guide](schemas/README.md).
 
-The workspace builds `target/debug/jj` and `target/debug/jj-store`. Start with
-`target/debug/jj-store config example` and the
-[server guide](docs/cli/server.md). Use [jj store init](docs/cli/init.md) for a
-new native repository and [attach](docs/cli/attach.md) for another physical
-workspace. Use explicit build paths; development never replaces the installed
-`jj`.
+The workspace builds `target/debug/jj` and `target/debug/jj-store`. Start a
+local installation with `target/debug/jj-store init --local --state-dir <path>`
+and the [server guide](docs/cli/server.md). Use
+[jj store init](docs/cli/init.md) for a new native repository and
+[attach](docs/cli/attach.md) for another physical workspace. Use explicit build
+paths; development never replaces the installed `jj`.
 
-For the browser UI, `pnpm dev:restart` rebuilds the UI and development binaries,
-restarts an owned pinned RustFS container and native server, creates a fresh
-native demo repository, restarts the server with its repository-specific Tantivy
-worker, waits for the index to become current, then prints the URL, repository
-ID and one-time token. The isolated runtime and credentials stay under the
-operating system temporary directory. Use `pnpm dev:stop` to stop and remove the
-owned services. `pnpm web:test:real` cold-starts that same stack, publishes a
-change through a separate native CLI process, verifies SSE notification and
-explicit browser refresh through the built UI, then removes the disposable
-services.
+For the browser UI, `pnpm dev:restart` rebuilds the UI, embedded RustFS helper
+and development binaries, initializes a private LocalTrusted installation,
+creates and registers a native demo repository, then prints its URL and runtime
+directory. It requires no repository token or Docker service. The installation
+identity, repository authority and RustFS volume persist under the operating
+system temporary directory until `pnpm dev:stop` removes the owned stack.
+`pnpm web:test:real` cold-starts that same token-free stack, publishes a change
+through a separate native CLI process, verifies SSE notification and explicit
+browser refresh through the built UI, then removes the disposable services.
+Search indexing remains a separately configured/deferred service and is not
+started by the local demo.
 
 On macOS with Xcode license prompts, prefix checks with
 `DEVELOPER_DIR=/Library/Developer/CommandLineTools` to use the installed Command

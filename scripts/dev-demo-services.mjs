@@ -49,14 +49,11 @@ async function ownedContainerExists({ containerName, owner, cwd }) {
   }
 }
 
-export async function stopPrevious({
-  containerName,
-  owner,
-  runtimeFile,
-  runtimeRoot,
-}) {
+export async function stopPrevious({ owner, runtimeFile, runtimeRoot }) {
+  let containerName;
   try {
     const runtime = JSON.parse(await readFile(runtimeFile, "utf8"));
+    containerName = runtime.containerName;
     if (Number.isInteger(runtime.serverPid)) {
       try {
         const { stdout } = await execute(
@@ -64,7 +61,13 @@ export async function stopPrevious({
           ["-p", String(runtime.serverPid), "-o", "command="],
           { cwd: owner },
         );
-        if (!stdout.includes(join(runtimeRoot, "server.toml"))) {
+        const expectedConfig = runtime.serverConfig;
+        const owned = expectedConfig
+          ? stdout.includes(expectedConfig)
+          : stdout.includes(runtimeRoot) &&
+            stdout.includes("server.toml") &&
+            stdout.includes("jj-store");
+        if (!owned) {
           throw new Error(
             `refusing to stop unrelated process ${runtime.serverPid}`,
           );
@@ -90,7 +93,10 @@ export async function stopPrevious({
   } catch (error) {
     if (error.code !== "ENOENT") throw error;
   }
-  if (await ownedContainerExists({ containerName, owner, cwd: owner })) {
+  if (
+    containerName &&
+    (await ownedContainerExists({ containerName, owner, cwd: owner }))
+  ) {
     await execute("docker", ["rm", "--force", "--volumes", containerName], {
       cwd: owner,
     });
@@ -174,4 +180,34 @@ export async function waitForServer(origin) {
     await new Promise((resolveWait) => setTimeout(resolveWait, 200));
   }
   throw new Error(`jj-store did not start at ${origin}`);
+}
+
+export async function processTreeMetrics(serverPid) {
+  const { stdout } = await execute("ps", ["-axo", "pid=,ppid=,rss=,command="], {
+    cwd: process.cwd(),
+  });
+  const rows = stdout
+    .split("\n")
+    .map((line) => line.trim().match(/^(\d+)\s+(\d+)\s+(\d+)\s+(.+)$/u))
+    .filter(Boolean)
+    .map((match) => ({
+      pid: Number(match[1]),
+      parentPid: Number(match[2]),
+      rssKiB: Number(match[3]),
+      command: match[4],
+    }));
+  const server = rows.find((row) => row.pid === serverPid);
+  const rustfs = rows.find(
+    (row) =>
+      row.parentPid === serverPid && row.command.includes("jj-store-rustfs"),
+  );
+  if (!server || !rustfs)
+    throw new Error("could not measure the owned local server process tree");
+  return {
+    serverPid: server.pid,
+    serverRssKiB: server.rssKiB,
+    rustfsPid: rustfs.pid,
+    rustfsRssKiB: rustfs.rssKiB,
+    totalRssKiB: server.rssKiB + rustfs.rssKiB,
+  };
 }

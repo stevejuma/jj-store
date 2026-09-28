@@ -119,8 +119,8 @@ settings. The current application target uses LocalTrusted access and embedded
 storage; its runtime owns installation state, the RustFS child, readiness,
 sentinel verification, shutdown and the lifetime filesystem lock while returning
 the existing owned `S3Store` contract. Older formats are rejected. Authenticated
-shared serving, external authority, backup/restore and replication are deferred
-and are not first-release acceptance gates.
+shared serving, external authority, background search indexing, backup/restore
+and replication are deferred and are not first-release acceptance gates.
 
 The access policy is independent of transport. Authenticated HTTP and RPC keep
 repository bearer validation, while LocalTrusted HTTP and Unix RPC derive stable
@@ -172,17 +172,19 @@ startup with fixed bounds, so requests do not read arbitrary disk paths. The
 Rust workspace remains buildable without a frontend toolchain; pnpm build builds
 the browser bundle before the Rust executables.
 
-The development demo orchestrator owns one labelled pinned RustFS container, one
-recorded native server process, the built browser bundle and one disposable
-native checkout under the operating system temporary directory. The real browser
-acceptance runner consumes its one-time credential in child-process memory,
-publishes through a separate CLI process and removes the owned stack. It refuses
-unowned listeners, containers and process identities.
+The development demo orchestrator owns one pinned embedded RustFS child, one
+recorded native server process, the built browser bundle, a private LocalTrusted
+installation and one disposable native checkout under the operating system
+temporary directory. The real browser acceptance runner auto-opens the verified
+catalog entry without credentials, publishes through a separate Unix-RPC CLI
+process and removes the owned stack. It refuses unowned listeners and process
+identities and records bounded startup/RSS measurements.
 
-The user deferred further UI changes on 27 September 2026. Existing browser code
-remains intact while backend/API/CLI/storage/search and operational work
-continue. M4.3 in the progress ledger retains the uncompleted UI requirements;
-backend completion does not establish full browser release acceptance.
+The user deferred registry-only and shared-deployment browser finalization on 28
+September 2026. M4/M4.3 and M4.11-M4.14 retain that future work. Functional cold
+local browser acceptance belongs to M8a.1; package publication, authenticated
+connection UX, background search indexing and visual baselines do not block the
+local application release.
 
 The WAL snapshot DTO shares schema metadata with the typed application API using
 schemars. The locked dependency is schema infrastructure, with no HTTP/UI

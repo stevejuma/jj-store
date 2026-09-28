@@ -3,14 +3,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 
 export async function seedRepository(options) {
-  const {
-    adminToken,
-    operatorToken,
-    origin,
-    repositoryRoot,
-    runtimeRoot,
-    run,
-  } = options;
+  const { repositoryRoot, runtimeRoot, run, unixSocket } = options;
   const repository = join(runtimeRoot, "repository");
   const config = join(runtimeRoot, "jj.toml");
   await writeFile(
@@ -19,8 +12,6 @@ export async function seedRepository(options) {
   );
   const nativeEnv = {
     JJ_CONFIG: config,
-    JJ_STORE_TOKEN: adminToken,
-    JJ_STORE_OPERATOR_TOKEN: operatorToken,
   };
   const created = await run(
     resolve(repositoryRoot, "target/debug/jj"),
@@ -28,9 +19,8 @@ export async function seedRepository(options) {
       "store",
       "init",
       repository,
-      "--endpoint",
-      origin,
-      "--insecure-loopback",
+      "--unix-socket",
+      unixSocket,
       "--cache",
       join(runtimeRoot, "cache"),
       "--state-dir",

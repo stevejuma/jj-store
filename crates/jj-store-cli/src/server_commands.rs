@@ -18,7 +18,7 @@ use serde_json::json;
 use std::{io::Write as _, path::PathBuf};
 
 #[derive(Debug, Parser)]
-#[command(name="jj-store",disable_help_subcommand=true,about="Serve authenticated native JJ repositories",long_about=include_str!("../../../docs/cli/server.md"))]
+#[command(name="jj-store",disable_help_subcommand=true,about="Serve persistent local native JJ repositories",long_about=include_str!("../../../docs/cli/server.md"))]
 pub struct ServerCli {
     #[arg(long,global=true,value_enum,default_value_t=Format::Text)]
     pub format: Format,
@@ -394,15 +394,43 @@ async fn run(ui: &Ui, cli: ServerCli) -> AuthorityResult<()> {
         }
         ServerCommand::Doctor { config, repo_id } => {
             let config = Config::load(&config)?;
-            let connection =
-                Connection::new(&config.public_url, repo_id, config.insecure_loopback, None)?;
-            let report =
-                process::doctor(&config, repo_id, credentials::resolve(&connection)?).await?;
-            let text = format!(
-                "Authoritative repository metadata is accessible. Search: {}.\n",
-                report.search.state.replace('_', " ")
-            );
-            emit(ui, format, no_pager, serde_json::to_value(report)?, &text)
+            match &config.access {
+                jj_store_server::config::Access::LocalTrusted { rpc_socket, .. } => {
+                    let heads = Connection::new_local(rpc_socket.clone(), repo_id)?
+                        .connect()
+                        .await?
+                        .heads()
+                        .await?;
+                    let search = jj_store_server::search::diagnose_local(&config, repo_id).await;
+                    let text = format!(
+                        "Authoritative repository metadata is accessible. Search: {}.\n",
+                        search.state.replace('_', " ")
+                    );
+                    emit(
+                        ui,
+                        format,
+                        no_pager,
+                        json!({"version":1,"repository":repo_id,"storage_ready":true,"heads":heads,"adapters":if search.configured {"search configured"} else {"not configured"},"search":search}),
+                        &text,
+                    )
+                }
+                jj_store_server::config::Access::Authenticated => {
+                    let connection = Connection::new(
+                        &config.public_url,
+                        repo_id,
+                        config.insecure_loopback,
+                        None,
+                    )?;
+                    let report =
+                        process::doctor(&config, repo_id, credentials::resolve(&connection)?)
+                            .await?;
+                    let text = format!(
+                        "Authoritative repository metadata is accessible. Search: {}.\n",
+                        report.search.state.replace('_', " ")
+                    );
+                    emit(ui, format, no_pager, serde_json::to_value(report)?, &text)
+                }
+            }
         }
         ServerCommand::Operator { command } => {
             let initialize = matches!(&command, OperatorCommand::Init { .. });

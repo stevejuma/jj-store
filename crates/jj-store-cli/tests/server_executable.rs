@@ -424,6 +424,28 @@ async fn local_trusted_executable_bootstraps_registers_and_serves_without_tokens
         .await
         .unwrap();
     assert_eq!(snapshot.status(), reqwest::StatusCode::OK);
+    let doctor: serde_json::Value = serde_json::from_str(&success(
+        command()
+            .args([
+                "doctor",
+                "--config",
+                config.to_str().unwrap(),
+                "--repo-id",
+                repository,
+                "--format=json",
+            ])
+            .output()
+            .unwrap(),
+    ))
+    .unwrap();
+    assert_eq!(doctor["storage_ready"], true);
+    assert_eq!(doctor["repository"], repository);
+    assert_eq!(doctor["search"]["state"], "not_configured");
+    assert!(
+        doctor["heads"]
+            .as_array()
+            .is_some_and(|heads| !heads.is_empty())
+    );
     running.terminate();
 
     let registered: serde_json::Value = serde_json::from_str(&success(

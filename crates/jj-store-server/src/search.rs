@@ -253,6 +253,18 @@ pub async fn diagnose(
     repository: m::RepositoryId,
     token: &BearerToken,
 ) -> Diagnosis {
+    diagnose_with_token(config, repository, Some(token)).await
+}
+
+pub async fn diagnose_local(config: &config::Config, repository: m::RepositoryId) -> Diagnosis {
+    diagnose_with_token(config, repository, None).await
+}
+
+async fn diagnose_with_token(
+    config: &config::Config,
+    repository: m::RepositoryId,
+    token: Option<&BearerToken>,
+) -> Diagnosis {
     if config.validate().is_err() {
         return Diagnosis::state(true, "invalid_configuration");
     }
@@ -276,18 +288,18 @@ pub async fn diagnose(
             );
         }
         let client = builder.build().map_err(|_| "unavailable")?;
-        let mut header =
-            reqwest::header::HeaderValue::from_str(&format!("Bearer {}", token.expose().as_str()))
-                .map_err(|_| "unavailable")?;
-        header.set_sensitive(true);
         let url = format!("{}v1/repos/{repository}/search/status", config.public_url);
-        let mut response = client
-            .get(url)
-            .header(reqwest::header::AUTHORIZATION, header)
-            .header("x-jj-store-protocol", "1")
-            .send()
-            .await
+        let mut request = client.get(url).header("x-jj-store-protocol", "1");
+        if let Some(token) = token {
+            let mut header = reqwest::header::HeaderValue::from_str(&format!(
+                "Bearer {}",
+                token.expose().as_str()
+            ))
             .map_err(|_| "unavailable")?;
+            header.set_sensitive(true);
+            request = request.header(reqwest::header::AUTHORIZATION, header);
+        }
+        let mut response = request.send().await.map_err(|_| "unavailable")?;
         if matches!(response.status().as_u16(), 401 | 403) {
             return Err("access_denied");
         }

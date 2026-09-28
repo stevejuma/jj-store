@@ -54,10 +54,16 @@ impl AuthoritativeStorage {
                 region,
             } => {
                 let lock = policy::exclusive_lock(&config.state_dir.join("server.lock"))?;
-                let identity: Identity = installation::read_private_json(installation)?;
-                let credentials: InternalCredentials =
-                    installation::read_private_json(credentials)?;
-                let owner: Ownership = installation::read_private_json(ownership)?;
+                let identity: Identity = read_managed_state(
+                    installation,
+                    "managed storage installation identity is missing",
+                )?;
+                let credentials: InternalCredentials = read_managed_state(
+                    credentials,
+                    "managed storage internal credentials are missing",
+                )?;
+                let owner: Ownership =
+                    read_managed_state(ownership, "managed storage ownership is missing")?;
                 validate_owned_state(&identity, &credentials, &owner, volume, bucket, region)?;
                 let address = concrete_address(address)?;
                 let runtime = EmbeddedStorageRuntime::start(EmbeddedStorageConfig {
@@ -99,6 +105,18 @@ impl AuthoritativeStorage {
         }
         Ok(())
     }
+}
+
+fn read_managed_state<T: serde::de::DeserializeOwned>(
+    path: &std::path::Path,
+    missing: &'static str,
+) -> Result<T> {
+    installation::read_private_json(path).map_err(|error| match error {
+        Error::Io(source) if source.kind() == std::io::ErrorKind::NotFound => {
+            Error::Config(missing)
+        }
+        other => other,
+    })
 }
 
 fn resolve_credentials(reference: &CredentialReference) -> Result<s3::Credentials> {

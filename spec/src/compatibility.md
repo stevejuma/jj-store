@@ -20,9 +20,11 @@ A2 qualification runs the released embedded helper through the actual server and
 CLI binaries on macOS ARM64. It verifies tokenless native creation, a mode-0600
 Unix socket, protected loopback HTTP, explicit catalog registration, restart and
 browser bootstrap. Linux packaging, authenticated/shared deployment, external
-S3, backup/restore, generic-S3 qualification, replication and migration are
-deferred future-release work. Windows remains unsupported for LocalTrusted
-because its required Unix peer boundary is absent.
+S3, background search indexing, backup/restore, generic-S3 qualification,
+replication and migration are deferred future-release work. Registry-only shared
+browser integration and package publication are deferred independently. Windows
+remains unsupported for LocalTrusted because its required Unix peer boundary is
+absent.
 
 ## M0 audit evidence
 

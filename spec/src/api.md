@@ -3,8 +3,11 @@
 The served browser and Storybook consume the same production-owned shell,
 repository views, presentation models and styles under `web/src/lib`. Catalog
 fixtures implement the shared asynchronous controller contract without a
-transport; production transport and authentication remain owned by the web API
-layer. Snapshot operation, inspected operation, commit, change and comparison
+transport; production transport and access policy remain owned by the web API
+layer. The current release target is the LocalTrusted application on literal
+loopback with persistent embedded RustFS. Authenticated/shared browser serving,
+background search activation and registry-only package finalization are
+deferred. Snapshot operation, inspected operation, commit, change and comparison
 identities are distinct fields and must not be substituted for one another.
 
 Use tonic/protobuf for native RPC and Axum JSON/SSE for browser/agent APIs.
@@ -38,9 +41,10 @@ configured literal loopback authority, rejects forwarded-host trust, null or
 cross-origin browser requests, cross-site Fetch Metadata and method overrides,
 and accepts only endpoint-specific JSON or binary request media types. SSE uses
 the same authority, origin, protocol and access checks. LocalTrusted rejects a
-Bearer header and binds the installation HTTP principal; authenticated mode
-retains repository bearer validation. OpenAPI declares deployment-dependent
-access rather than promising an unauthenticated public listener.
+Bearer header and binds the installation HTTP principal. Authenticated mode
+retains repository bearer validation as deferred shared-deployment behavior.
+OpenAPI declares deployment-dependent access rather than promising an
+unauthenticated public listener.
 
 ## Read-session foundation
 
@@ -407,12 +411,13 @@ preserving the explicit comparison parent and exact before/after identities.
 
 ## Browsing UI execution
 
-Production browsing resumed on 27 September 2026 through M4.9-M4.14. The served
-application reuses the reviewed Storybook shell for Files, Branches, JJ Log, Op
-Log, evolution and existing read details. M4.15-M4.17 connect repository search,
-typed mutation controls and native conflict editing through the same
-authenticated controller. Their browser acceptance remains separate from the
-backend contract checks.
+The LocalTrusted application reuses the reviewed Storybook shell for Files,
+Branches, JJ Log, Op Log, evolution, existing read details, typed mutations and
+native conflict editing. It bootstraps the installation catalog and opens the
+sole repository without credentials. Existing search implementation and tests
+remain recorded, but starting its background index is deferred from the local
+release. M4 registry-only dependency finalization and authenticated/shared
+browser deployment are also deferred.
 
 Local workspace validation may resolve `@lapismd/design-core` from the sibling
 source repository through the guarded pnpm hook. That development resolution
@@ -421,11 +426,12 @@ transport behavior. Clean environments without the sibling source use the
 registry range and committed registry lockfile.
 
 Real browser deployment acceptance is a separate opt-in lane from captured
-response tests. It starts the built bundle and native server against the pinned
-RustFS image, opens authenticated SSE, publishes through another native CLI
-process, and requires explicit refresh before the displayed operation changes.
-The selected bookmark, commit and change identities must survive that refresh.
-Ephemeral repository credentials pass only through process memory.
+response tests. It initializes a persistent LocalTrusted installation, starts
+the built bundle and native server with checkout-owned embedded RustFS,
+auto-opens the sole catalog repository without credentials, publishes through
+another native CLI process over the owner-only Unix socket, and requires
+explicit refresh before the displayed operation changes. The selected bookmark,
+commit and change identities must survive that refresh.
 
 ## Typed mutation HTTP transport
 

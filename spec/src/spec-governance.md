@@ -49,13 +49,17 @@ The external compiled-storage lane is explicitly opt-in with the isolated RustFS
 harness. Its immutable report records the command and actual test output; normal
 test output must report this deployment test as ignored, not passed.
 
-The opt-in `pnpm web:test:real` lane is distinct from captured-response browser
-tests. It must cold-build and start the checkout-owned pinned RustFS and native
-server with its configured Tantivy worker, prove authenticated snapshot-bound
-search, publish from another native CLI process, observe SSE without automatic
-snapshot replacement, complete an explicit refresh and clean up its owned
-services. It receives ephemeral credentials only through process memory and
-records no secret in Playwright artifacts or canonical evidence.
+The opt-in `pnpm test:local-release` lane is distinct from captured-response
+browser tests. It must cold-build, initialize a persistent format-2 LocalTrusted
+installation, start checkout-owned embedded RustFS and the native server,
+auto-open the sole catalog repository without credentials, publish from another
+native CLI process over the owner-only Unix socket, observe token-free SSE
+without automatic snapshot replacement, complete an explicit refresh, and record
+cold/restart startup time plus server/RustFS RSS against the macOS ARM64
+ceilings. `JJ_STORE_REAL_KEEP=1` may retain the owned stack for review;
+otherwise the lane cleans it up. Runtime metadata and Playwright artifacts
+record no secret. Authenticated search, registry-only M4 finalization and shared
+deployment acceptance are deferred and do not gate this lane.
 
 Publication faults are exercised in the normal WAL tests. The opt-in deployment
 lane records both the initial compiled native publication run and a separate

@@ -33,19 +33,21 @@ required.
 | Explicit persistent volume                              | Implemented              | `EmbeddedStorageConfig::volume`; persistence test                                                                   |
 | Graceful shutdown                                       | Implemented              | Parent closes the private shutdown channel and waits up to ten seconds                                              |
 | Persistent graceful restart                             | Qualified on macOS ARM64 | `embedded_rustfs_preserves_objects_across_graceful_restart` preserves exact bytes across owned shutdown and restart |
-| Failed startup and port conflict                        | Planned A1               | Must fail before public listeners                                                                                   |
-| Missing volume, ownership, identity, secret or sentinel | Planned A1               | Format-2 initialization and fail-closed restart                                                                     |
-| Disk and permission faults                              | Planned A1               | Native filesystem fault acceptance                                                                                  |
-| Conditional create/CAS                                  | Planned A1               | Complete existing real-storage contract against the embedded runtime                                                |
-| Abrupt restart                                          | Planned A1               | Kill helper, reopen the exact volume, recover repository publication                                                |
+| Failed startup and port conflict                        | Qualified on macOS ARM64 | Managed runtime fails before the public listener and reports the startup fault                                      |
+| Missing volume, ownership, identity, secret or sentinel | Qualified on macOS ARM64 | Strict format-2 restart rejects each unavailable or mismatched installation input                                   |
+| Private-state permission faults                         | Qualified on macOS ARM64 | Group/world-readable internal credential state is rejected before child startup                                     |
+| Conditional publication                                 | Qualified on macOS ARM64 | LocalTrusted native creation and browser mutations publish through the existing manifest CAS path                   |
+| Abrupt restart                                          | Qualified on macOS ARM64 | Dropped runtime is killed; the exact volume reopens and returns previously published bytes                          |
 | Resource measurements                                   | Qualified on macOS ARM64 | Debug binary 899,687,824 bytes; first start 11,808 ms at 115,696 KiB RSS; restart 107 ms at 110,880 KiB RSS         |
 | Bucket replication                                      | Unsupported pending A3   | Do not enable until generic-S3 bootstrap, restart, backlog, multipart and existing-object tests pass                |
 
-The measurements come from the ignored real-runtime acceptance invoked by
-`pnpm test:embedded-rustfs`; they describe an unoptimized qualification binary,
-not a packaged release budget. The first start creates RustFS metadata in an
-empty explicit volume. The second start reopens that volume and reads an object
-written through `S3Store` before the owned graceful shutdown.
+The low-level measurements come from the ignored real-runtime acceptance invoked
+by `pnpm test:embedded-rustfs`; they describe an unoptimized qualification
+binary. The cold application lane records the complete server plus RustFS tree
+and enforces 30-second cold/restart startup and 512 MiB combined RSS ceilings.
+The first start creates RustFS metadata in an empty explicit volume. The second
+start reopens that volume and reads an object written through `S3Store` before
+the owned graceful shutdown.
 
-This A0 report does not qualify Linux x86_64, MinIO, AWS, replication, restore,
-or production readiness. Those claims require their named later gates.
+This report does not qualify Linux x86_64, MinIO, AWS, replication, backup,
+restore or shared production serving. Those areas are explicitly deferred.

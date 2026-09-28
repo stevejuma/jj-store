@@ -44,6 +44,7 @@
     "web:test": "tsx --test web/tests/*.test.ts",
     "web:test:browser": "pnpm web:build && node scripts/browser-fixtures.mjs && playwright test --config web/playwright.config.ts",
     "web:test:real": "node scripts/real-browser-acceptance.mjs",
+    "test:local-release": "JJ_STORE_LOCAL_RELEASE_QUALIFY=1 pnpm web:test:real",
     "storybook": "storybook dev --host 127.0.0.1 --port 6046 --no-open --disable-telemetry",
     "test:storybook": "vitest run --config catalog/vitest.config.ts --project storybook",
     "build-storybook": "storybook build --disable-telemetry",

@@ -1,15 +1,13 @@
 #!/usr/bin/env node
 
-import { randomBytes } from "node:crypto";
 import { spawn } from "node:child_process";
 import { openSync } from "node:fs";
-import { appendFile, chmod, mkdir, rm, writeFile } from "node:fs/promises";
+import { chmod, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import {
-  createBucket,
-  credential,
   execute,
+  processTreeMetrics,
   stopPrevious,
   waitForServer,
 } from "./dev-demo-services.mjs";
@@ -20,13 +18,7 @@ const userSuffix =
   typeof process.getuid === "function" ? process.getuid() : "user";
 const runtimeRoot = join(tmpdir(), `jj-store-dev-${userSuffix}`);
 const runtimeFile = join(runtimeRoot, "runtime.json");
-const containerName = `jj-store-dev-${userSuffix}`;
 const serverPort = Number(process.env.JJ_STORE_DEV_PORT ?? "7460");
-const image =
-  "rustfs/rustfs@sha256:b7014e0ce2bc703c1316b3ef760e29dfae61fe4a50d1a66fa89638e0f8ea211f";
-const accessKey = "jj-store-disposable-test";
-const secretKey = "jj-store-disposable-test-secret-only";
-const bucket = "jj-store-dev";
 
 async function run(command, args, options = {}) {
   return execute(command, args, {
@@ -35,19 +27,14 @@ async function run(command, args, options = {}) {
   });
 }
 
-function startServer(serverConfig, logHandle, environment = {}) {
+function startServer(serverConfig, logHandle) {
   const server = spawn(
     resolve(repositoryRoot, "target/debug/jj-store"),
     ["run", "--config", serverConfig, "--format=json"],
     {
       cwd: repositoryRoot,
       detached: true,
-      env: {
-        ...process.env,
-        JJ_STORE_S3_ACCESS_KEY: accessKey,
-        JJ_STORE_S3_SECRET_KEY: secretKey,
-        ...environment,
-      },
+      env: process.env,
       stdio: ["ignore", logHandle, logHandle],
     },
   );
@@ -69,29 +56,8 @@ async function stopServer(server) {
   throw new Error("temporary native server did not stop");
 }
 
-async function waitForSearch(origin, repositoryId, token) {
-  for (let attempt = 0; attempt < 300; attempt += 1) {
-    try {
-      const response = await fetch(
-        `${origin}v1/repos/${repositoryId}/search/status`,
-        { headers: { authorization: `Bearer ${token}` } },
-      );
-      if (response.ok) {
-        const status = await response.json();
-        if (status.indexed_position !== null && status.is_stale === false)
-          return;
-      } else await response.body?.cancel();
-    } catch {
-      // The search worker is rebuilding its first generation.
-    }
-    await new Promise((resolveWait) => setTimeout(resolveWait, 100));
-  }
-  throw new Error("jj-store search worker did not become ready");
-}
-
 async function restart() {
   await stopPrevious({
-    containerName,
     owner: repositoryRoot,
     runtimeFile,
     runtimeRoot,
@@ -105,105 +71,95 @@ async function restart() {
   await rm(runtimeRoot, { recursive: true, force: true });
   await mkdir(runtimeRoot, { recursive: true, mode: 0o700 });
   await run("pnpm", ["web:build"]);
+  await run("pnpm", ["build:embedded-rustfs"]);
   await run("cargo", ["build", "-p", "jj-store-cli", "--bins", "--locked"]);
-  const { stdout: containerId } = await run("docker", [
-    "run",
-    "--detach",
-    "--name",
-    containerName,
-    "--label",
-    `org.lapismd.jj-store.dev=${repositoryRoot}`,
-    "--publish",
-    "127.0.0.1::9000",
-    "--env",
-    `RUSTFS_ACCESS_KEY=${accessKey}`,
-    "--env",
-    `RUSTFS_SECRET_KEY=${secretKey}`,
-    "--env",
-    "RUSTFS_VOLUMES=/data",
-    "--env",
-    "RUSTFS_ADDRESS=0.0.0.0:9000",
-    "--env",
-    "RUSTFS_CONSOLE_ENABLE=false",
-    "--tmpfs",
-    "/data:rw,mode=1777",
-    image,
-  ]);
-  const { stdout: portText } = await run("docker", [
-    "port",
-    containerName,
-    "9000/tcp",
-  ]);
-  const storagePort = Number(portText.trim().split(":").at(-1));
-  await createBucket({ accessKey, bucket, secretKey, storagePort });
   const origin = `http://127.0.0.1:${serverPort}/`;
-  const operatorToken = credential();
-  const adminToken = credential();
-  const operatorPolicy = join(runtimeRoot, "operators.json");
-  await run(
-    resolve(repositoryRoot, "target/debug/jj-store"),
-    [
-      "operator",
-      "init",
-      "--policy",
-      operatorPolicy,
-      "--endpoint",
-      origin.slice(0, -1),
-      "--insecure-loopback",
-      "--principal",
-      randomBytes(16).toString("hex"),
-      "--format=json",
-    ],
-    { env: { JJ_STORE_OPERATOR_TOKEN: operatorToken } },
+  const stateRoot = join(runtimeRoot, "local");
+  const rustfsRuntime = resolve(
+    repositoryRoot,
+    "runtime/embedded-rustfs/target/debug/jj-store-rustfs",
   );
-  const serverConfig = join(runtimeRoot, "server.toml");
+  await run(resolve(repositoryRoot, "target/debug/jj-store"), [
+    "init",
+    "--local",
+    "--state-dir",
+    stateRoot,
+    "--rustfs-executable",
+    rustfsRuntime,
+    "--format=json",
+  ]);
+  const serverConfig = join(stateRoot, "server.toml");
+  const unixSocket = join(stateRoot, "native.sock");
+  const generated = await readFile(serverConfig, "utf8");
   await writeFile(
     serverConfig,
-    `format = 1\nbind = "127.0.0.1:${serverPort}"\npublic_url = "${origin}"\ninsecure_loopback = true\nstate_dir = "${join(runtimeRoot, "state")}"\noperator_policy = "${operatorPolicy}"\nweb_root = "${join(repositoryRoot, "web/dist")}"\n\n[storage]\nendpoint = "http://127.0.0.1:${storagePort}/"\nbucket = "${bucket}"\nregion = "us-east-1"\ninsecure_loopback = true\n\n[limits]\nconcurrent_requests = 8\nrequest_seconds = 30\nmax_blob_bytes = 33554432\ninventory_nodes = 100000\n\n[protection]\nbookmarks = []\ncommits = []\n`,
+    generated
+      .replace('bind = "127.0.0.1:7443"', `bind = "127.0.0.1:${serverPort}"`)
+      .replace(
+        'public_url = "http://127.0.0.1:7443/"',
+        `public_url = "${origin}"`,
+      )
+      .replace(
+        /operator_policy = (.+)\n/u,
+        `operator_policy = $1\nweb_root = ${JSON.stringify(join(repositoryRoot, "web/dist"))}\n`,
+      ),
+    { mode: 0o600 },
   );
   const logPath = join(runtimeRoot, "server.log");
   const logHandle = openSync(logPath, "a", 0o600);
+  let started = performance.now();
   let server = startServer(serverConfig, logHandle);
   await waitForServer(origin);
+  const firstStartupMillis = Math.round(performance.now() - started);
   const repositoryId = await seedRepository({
-    adminToken,
-    operatorToken,
-    origin,
     repositoryRoot,
     runtimeRoot,
     run,
+    unixSocket,
   });
   await stopServer(server);
-  await appendFile(
+  await run(resolve(repositoryRoot, "target/debug/jj-store"), [
+    "repository",
+    "register",
+    "--config",
     serverConfig,
-    `\n[[search]]\nrepository = "${repositoryId}"\ntoken_environment = "JJ_STORE_SEARCH_TOKEN_DEMO"\npoll_millis = 50\ntimeout_seconds = 30\nindex_bytes = 67108864\n\n[search.source]\nindex_source = true\nmax_text_bytes = 262144\nmax_files = 10000\nmax_work = 100000\nmax_output_bytes = 16777216\n\n[search.source.scopes.main]\nkind = "bookmark"\nname = "main"\n`,
-  );
-  server = startServer(serverConfig, logHandle, {
-    JJ_STORE_SEARCH_TOKEN_DEMO: adminToken,
-  });
+    "--repo-id",
+    repositoryId,
+    "--name",
+    "jj-store demo",
+    "--format=json",
+  ]);
+  started = performance.now();
+  server = startServer(serverConfig, logHandle);
   await waitForServer(origin);
-  await waitForSearch(origin, repositoryId, adminToken);
+  const restartStartupMillis = Math.round(performance.now() - started);
+  const processes = await processTreeMetrics(server.pid);
   const runtime = {
-    format: 1,
+    format: 2,
+    accessMode: "local-trusted",
+    storageMode: "embedded-rustfs",
     serverPid: server.pid,
-    containerId,
-    containerName,
     origin,
     repositoryId,
     runtimeRoot,
+    serverConfig,
+    resources: {
+      firstStartupMillis,
+      restartStartupMillis,
+      ...processes,
+    },
   };
   await writeFile(runtimeFile, `${JSON.stringify(runtime, null, 2)}\n`, {
     mode: 0o600,
   });
   await chmod(runtimeRoot, 0o700);
   console.log(
-    `JJ Store development demo is ready.\n\nURL: ${origin}\nRepository ID: ${repositoryId}\nToken: ${adminToken}\nRuntime: ${runtimeRoot}\nRustFS: ${containerName}\n\nThe token is shown once and is kept out of the repository. Reloading the browser requires entering it again.`,
+    `JJ Store LocalTrusted development demo is ready.\n\nURL: ${origin}\nRepository ID: ${repositoryId}\nCredentials: none (local loopback access)\nRuntime: ${runtimeRoot}\nStorage: embedded RustFS\nStartup: ${firstStartupMillis} ms cold, ${restartStartupMillis} ms restart\nResident memory: ${processes.totalRssKiB} KiB server plus storage\n\nThe repository, installation identity and RustFS volume persist under the runtime directory until pnpm dev:stop.`,
   );
 }
 
 async function stop() {
   await stopPrevious({
-    containerName,
     owner: repositoryRoot,
     runtimeFile,
     runtimeRoot,

@@ -9,16 +9,20 @@ waits, scope selection, request admission, cursor expiry/restart and current
 repository authorization through native service sessions.
 
 First custom commands: init, attach, status, capabilities, doctor, serve-local,
-and credential login/logout. JSON is never paged. Custom standalone no-command
-invocation prints help successfully; ordinary upstream jj defaults stay intact.
-Match jj-nostr presentation semantics without inheriting its storage or daemon
-installation policy. Secrets stay out of argv, output, and checked-in config.
+and the retained shared-deployment credential commands. The supported local
+release path uses `jj-store init --local`, `run`, repository registration and
+doctor without user credentials. Authenticated commands, external storage and
+search-worker activation remain deferred. JSON is never paged. Custom standalone
+no-command invocation prints help successfully; ordinary upstream jj defaults
+stay intact. Match jj-nostr presentation semantics without inheriting its
+storage or daemon installation policy. Secrets stay out of argv, output, and
+checked-in config.
 
 ## Requirements
 
 | ID          | Requirement                                                                                                                                                                                                                                                                                                                         |
 | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| JST-CLI-001 | Custom commands MUST use jj store under upstream CliRunner, and the server MUST use explicit jj-store run with configuration, diagnostics, and token administration.                                                                                                                                                                |
+| JST-CLI-001 | Custom commands MUST use jj store under upstream CliRunner, and the LocalTrusted server MUST use explicit jj-store initialization, run, repository registration and diagnostics without user credentials; authenticated token administration is deferred.                                                                           |
 | JST-CLI-002 | Custom command families MUST provide authored Markdown long help, short help, keyword help, hints, JSON results, TTY paging, no-pager, color controls, completions, and build information.                                                                                                                                          |
 | JST-CLI-003 | Ordinary JJ commands MUST preserve upstream behavior; a tested capability matrix MUST report unsupported backend commands honestly.                                                                                                                                                                                                 |
 | JST-CLI-004 | Development MUST use explicit build paths and MUST NOT replace installed jj or start unrelated services.                                                                                                                                                                                                                            |
@@ -94,11 +98,13 @@ contain no token or credential identifier. Login and logout reject this mode.
 requested native manifest and only then atomically updates the identity-bound
 discovery catalog; it cannot register against an authenticated deployment.
 `doctor --config PATH --repo-id ID` checks the configured repository through the
-in-process authenticated service. It does not publish operations.
-`operator init` persists a verifier for an environment-injected or OS-held
-operator credential; `operator list/revoke` administer that trusted local policy
-file. Token values are never command-line arguments or output. Repository token
-commands remain a separate command slice.
+owner-only Unix RPC and checks token-free HTTP status when the LocalTrusted
+listener is running. It does not publish operations. Authenticated diagnostics,
+operator policy and repository token commands remain retained future behavior
+and do not gate the local release. `operator init` persists a verifier for an
+environment-injected or OS-held operator credential; `operator list/revoke`
+administer that trusted local policy file. Token values are never command-line
+arguments or output. Repository token commands remain a separate command slice.
 
 On Unix, serve-local is parsed by CliRunner and then replaces the process with
 the paired jj-store binary from the same executable directory. This resets the
@@ -214,16 +220,16 @@ preparation during later publications, cache loss/rebuild and shared-worker
 cancellation. These are native library tests, independent of browser task
 status.
 
-HTTP acceptance uses real authenticated native service fixtures and compares
-owned DTOs at exact operations, including binary media and error boundaries. The
-foreground server serves HTTP V1 and native RPC on one listener, with shared TLS
-and explicit insecure-loopback configuration.
+HTTP acceptance compares owned DTOs at exact operations, including binary media
+and error boundaries. Existing authenticated native-service fixtures retain the
+future shared-deployment branch; the local release serves protected HTTP V1 on
+literal loopback and native RPC through its owner-only Unix socket.
 
-The cold server/CLI deployment fixture also opens authenticated SSE, publishes a
-native bookmark operation, resumes from the same event ID after server/storage
+The retained authenticated server/CLI fixture opens authenticated SSE, publishes
+a native bookmark operation, resumes from the same event ID after server/storage
 restart and cache deletion, and checks live stream termination on token
-revocation. SSE and RPC share the production TLS listener and scoped native
-sessions.
+revocation. This qualifies deferred behavior; LocalTrusted cold acceptance uses
+token-free SSE and Unix RPC.
 
 The CLI-owned native lifecycle fixtures also exercise every HTTP read route for
 generated contract conformance. An opt-in capture path receives only disposable
@@ -231,10 +237,10 @@ response bodies and route metadata, never request credentials. This fixture does
 not alter CLI presentation or publication semantics.
 
 Server configuration may provide web_root, resolved relative to its TOML file,
-to serve a prebuilt browser bundle alongside the authenticated HTTP/RPC APIs.
-Build it with pnpm web:build. A malformed or oversized bundle fails server
-startup explicitly; no filesystem directory listing or repository content is
-served as a browser asset.
+to serve a prebuilt browser bundle alongside the protected HTTP APIs. Build it
+with pnpm web:build. A malformed or oversized bundle fails server startup
+explicitly; no filesystem directory listing or repository content is served as a
+browser asset.
 
 CLI-owned native lifecycle fixtures compare internal typed command preparation
 with the pinned native repository model, including descendant, bookmark,
@@ -250,7 +256,9 @@ Native lifecycle acceptance also exercises the typed HTTP command transport:
 authenticated New/Describe/bookmark commands, strict snapshots, protected
 history, durable replay and lost acknowledgements. These routes reuse the
 service and do not change ordinary CLI spelling or its capability evidence.
-Browser work remains deferred under M4.3.
+LocalTrusted browser mutations reuse the same transport without bearer
+credentials. Authenticated/shared browser finalization remains deferred under
+M4.3.
 
 Typed reconciliation acceptance compares native descendant rebases and recursive
 operation-ancestor merges to pinned upstream behavior, including three current
@@ -328,9 +336,12 @@ and signals retained native workers. Writer leases remain held until those
 workers exit.
 
 Search status reports durable, served and repository positions through the
-current authenticated HTTP endpoint. Doctor keeps authoritative readiness
-separate from configured search health and explicitly reports an unavailable
-serving endpoint. It does not start a replacement writer to inspect status.
+configured deployment's HTTP endpoint. LocalTrusted requests use the literal
+loopback authority and no bearer credential; retained authenticated fixtures use
+their repository token. Doctor keeps authoritative readiness separate from
+configured search health and explicitly reports an unavailable serving endpoint.
+It does not start a replacement writer to inspect status, and the local release
+does not start the deferred search worker.
 
 M4.10 native-lifecycle and registered-HTTP acceptance covers conflicted
 references, bidirectional signed cursors, recursive paths, operation-change

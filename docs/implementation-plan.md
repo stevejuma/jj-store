@@ -12,9 +12,10 @@ initialized with `jj git init --colocate`. Follow jj-nostr's specification, CLI
 presentation, validation, and verified-slice commit conventions.
 
 The first release supports **new native repositories** through a custom JJ CLI,
-RustFS-backed server, structured APIs, browser UI, typed mutations, and Tantivy
-search. Shared access uses **repository-scoped tokens**. Passive replication and
-existing-repository migration remain explicit follow-on milestones.
+LocalTrusted loopback server, persistent embedded RustFS, structured APIs and
+the browser UI without user authentication. Shared access, background search
+indexing, backup/restore, replication and existing-repository migration remain
+explicit follow-on milestones.
 
 The development repository is Git-colocated; repositories served by the product
 use native JJ storage without requiring Git, SQL, or Nostr.
@@ -56,19 +57,19 @@ in Community and consumes a released Design Core version before M4.14.
 
 ## Execution scope update — 28 September 2026
 
-M8a now adds a trusted-local deployment without weakening authenticated shared
-servers. A0-A5 qualify Rust 1.98.1, a released embedded RustFS 1.0.0 runtime,
-format-2 access/storage/backup configuration, LocalTrusted Unix and guarded
-loopback transports, installation-owned repository discovery, asynchronous
-verified `wal-copy` backup, offline restore, and packaged macOS ARM64/Linux
-x86_64 drills. The existing external RustFS image lane remains independent.
-Generic S3 backup targets a pinned MinIO image; AWS is not claimed.
+M8a now owns only the trusted-local macOS application release. A0-A2 qualify
+Rust 1.98.1, released embedded RustFS 1.0.0, strict format-2 local
+initialization, LocalTrusted Unix and guarded loopback transports,
+installation-owned repository discovery, persistent restart, bounded startup
+diagnostics and the cold built browser. Older configuration compatibility is
+removed because the application has not shipped.
 
-The work does not add automatic failover, writable promotion, destructive GC,
-delete replication, multi-writer authority, existing-authority migration,
-Windows, Git, Nostr, or Smart HTTP. Bucket replication remains disabled unless
-its separate embedded-to-generic-S3 qualification passes. Visual baselines stay
-deferred while functional interactions and accessibility remain required.
+Authenticated/shared serving, external S3 authority, background search indexing,
+backup/restore, generic-S3/MinIO qualification, RustFS replication,
+Linux/Windows packaging, automatic failover, writable promotion, destructive GC,
+delete replication, multi-writer authority, existing-authority migration, Git,
+Nostr, Smart HTTP, registry publication and visual baselines are deferred.
+Existing implementations remain covered but are not local-release gates.
 
 ## Repository foundation and progress tracking
 
@@ -175,7 +176,7 @@ unauthenticated loopback requires an explicit development setting.
 | M4            | Pinned reads, graph/revset/tree/file/diff APIs, operation diff, SSE, generated contracts, browser                                                                 | Fixed-operation CLI/API parity; zero GET writes; coherent pagination; explicit multi-head state                                      |
 | M5            | Preview/apply/status; basic commands, abandon, resolve, reconciliation, shared semantic policy                                                                    | Correct descendants/bookmarks/workspaces/evolution; stale/invalid requests publish nothing; duplicate receipts; no RPC policy bypass |
 | M6            | Committed adapter runner, bootstrap/checkpoints, Tantivy deterministic updates, durable payloads, scopes, freshness, rebuild                                      | Replay equivalence, safe index/cursor crashes, lost-index rebuild, fresh access control                                              |
-| M8a           | Deployment examples, packaging, restore, diagnostics, limits, measured performance                                                                                | Pinned cold recovery/security/semantic/browser/storage/release checks pass; limits published                                         |
+| M8a           | LocalTrusted examples, embedded-storage lifecycle, diagnostics, limits and measured macOS acceptance                                                              | Pinned cold recovery/security/semantic/browser/storage checks pass; limits published                                                 |
 | M7, deferred  | Complete replica inventory, verified transfer, publish-last destination, lag, fenced manual promotion                                                             | Read-only complete history through applied position after primary shutdown                                                           |
 | M8b, deferred | Profile audit, lossless import rehearsal, verification/rollback                                                                                                   | Exact guarantees demonstrated; incompatible profiles rejected; failed import leaves source untouched                                 |
 
@@ -208,9 +209,10 @@ requests, bytes, CAS retries, and indexing lag.
 
 Commit every verified slice with canonical requirements and ledger evidence.
 Record unexplained failures; compilation or a happy-path demo never establishes
-completion. First release requires CLI/browser history parity, authenticated
-abandon/resolve, rebuildable search, and acknowledged publication durability
-under the documented failures.
+completion. The local first release requires CLI/browser history parity,
+LocalTrusted native publication, persistent restart and acknowledged durability
+under the documented failures. Search and shared authenticated deployment remain
+future releases.
 
 ### Catalog follow-up requested 27 September 2026
 

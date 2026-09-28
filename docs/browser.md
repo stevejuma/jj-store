@@ -1,9 +1,10 @@
 # Repository browser
 
-The current browser supports authenticated repository reads, repository search,
-core repository commands and native conflict editing. It shows commits,
-operations and evolution, native metadata, directories, bounded file previews,
-structured file differences and complete conflict descriptors.
+The current browser opens repositories discovered from a LocalTrusted
+installation without user credentials. It shows commits, operations and
+evolution, native metadata, directories, bounded file previews, structured file
+differences and complete conflict descriptors. Search indexing and authenticated
+shared access remain deferred from the first local release.
 
 ## Build and serve
 
@@ -14,17 +15,13 @@ Relative paths are resolved against the configuration file. Run
 `target/debug/jj-store config check --config <path>` before starting the server;
 see the [server guide](cli/server.md) for the command family.
 
-The foreground server serves the bundle at its configured public origin beside
-HTTP V1 and native RPC. Assets are checked and preloaded before binding, so a
-bundle update requires a server restart. Unknown paths return 404. Shared access
-requires the server's TLS configuration. The explicit insecure loopback setting
-is for local development only.
-
-Enter a full repository ID and a scoped token. Both native and browser clients
-use the same repository permissions. The browser keeps the token only in memory;
-refreshing the document, disconnecting or losing authorization clears it. There
-is no repository enumeration endpoint: select a repository using its full ID.
-Never put credentials in the bundle, a URL or a checkout.
+The foreground server serves the bundle at its configured literal-loopback
+origin beside HTTP V1 and the owner-only Unix RPC socket. Assets are checked and
+preloaded before binding, so a bundle update requires a server restart. Unknown
+paths return 404. The installation catalog auto-opens its sole repository or
+shows a chooser when several are registered. It contains only verified discovery
+metadata; repository authority remains in embedded RustFS. No credential enters
+the bundle, URL or browser storage.
 
 ## Reading history
 
@@ -46,30 +43,29 @@ Index preparation is explicit and cancelable. It retries the original captured
 query when ready. The graph display is bounded; narrow a query for large
 history.
 
-## Repository search
+## Repository search (deferred locally)
 
 Use the sidebar search control or `Command+K`/`Control+K` to open repository
-search. The command overlay queries the selected operation snapshot through the
-authenticated Tantivy endpoint and groups operations, commits and files. A
-result navigates with its full stable native identities; queries and opaque
-cursors never enter the hash route. Indexing, degraded, truncated, empty,
-unavailable and failed states remain explicit. Closing search leaves the current
-route unchanged.
+search when a separately configured Tantivy worker is available. The command
+overlay queries the selected operation snapshot and groups operations, commits
+and files. A result navigates with its full stable native identities; queries
+and opaque cursors never enter the hash route. Indexing, degraded, truncated,
+empty, unavailable and failed states remain explicit. Closing search leaves the
+current route unchanged.
 
 ## Repository commands
 
 Use the repository action menu in the application header to create or describe a
 change, create/move/delete bookmarks, abandon a change, or reconcile concurrent
-operation heads when the connected token authorizes that command. The dialog
-first prepares and displays the exact typed native request. Apply reuses the
-same request ID and captured heads; destructive commands add a separate
+operation heads under the installation's configured LocalTrusted permission. The
+dialog first prepares and displays the exact typed native request. Apply reuses
+the same request ID and captured heads; destructive commands add a separate
 confirmation. A committed receipt advances the displayed snapshot and restores
 valid route selections. An unknown publication outcome keeps the same request
 available for retry or durable status lookup.
 
 Semantic policy denials, including protected bookmarks or commits, remain in the
-authenticated session and display as command failures. Revoked or otherwise
-invalid credentials disconnect the session and clear protected cache state.
+local session and display as command failures.
 
 ## Conflict resolution
 
@@ -88,13 +84,13 @@ identity, and only a committed receipt advances the displayed snapshot.
 ## Development acceptance
 
 For local interactive review, `pnpm dev:restart` builds and starts the complete
-loopback stack: an owned pinned RustFS container, the native server, the built
-browser, a fresh native demo repository and its Tantivy worker. It does not
-return until the repository index is current. The command prints the repository
-ID and one-time admin token needed by the in-memory browser session. Runtime
-files and credentials stay outside the checkout under the operating system
-temporary directory. The command refuses an unowned listener or Docker container
-rather than stopping it. `pnpm dev:stop` removes only the stack it owns.
+loopback stack: the pinned embedded RustFS helper, native server, built browser
+and a registered native demo repository. The command prints the URL, repository
+ID, startup measurements and runtime directory; no user credential is required.
+The installation identity, repository authority and explicit RustFS volume stay
+outside the checkout under the operating system temporary directory. The command
+refuses an unowned listener or process rather than stopping it. `pnpm dev:stop`
+removes only the stack it owns.
 
 `pnpm web:check` checks Svelte/TypeScript; `pnpm web:test` covers bounded
 parsing, credentials and graph layout. Install the matching test browser with
@@ -105,13 +101,15 @@ port 7458. It refuses an existing listener. API responses in this browser lane
 use those captured fixtures plus explicit race/error variants.
 
 Run `pnpm web:test:real` for the separate native deployment lane. It uses
-`pnpm dev:restart` to build the UI and binaries, starts the owned pinned RustFS
-and native server with search worker, proves authenticated native Tantivy
-results, publishes through another CLI process, and verifies that SSE announces
-the new history without changing the displayed snapshot until the user
-refreshes. The test preserves the selected bookmark across that refresh,
-resolves a seeded native conflict atomically, and previews and applies another
-native browser mutation before removing the disposable stack.
+`pnpm dev:restart` to build the UI, native binaries and embedded RustFS helper,
+auto-opens the sole LocalTrusted repository without credentials, publishes
+through another Unix-RPC CLI process, and verifies that SSE announces the new
+history without changing the displayed snapshot until the user refreshes. The
+test preserves the selected bookmark across that refresh, resolves a seeded
+native conflict atomically, and previews and applies another native browser
+mutation before removing the disposable stack. `pnpm test:local-release` adds
+the macOS ARM64 platform assertion and the 30-second startup / 512 MiB combined
+resident-memory ceilings.
 
 This cold interaction/accessibility lane checks the production CSP and asset
 router. It is separate from RustFS/TLS deployment qualification. Screenshot

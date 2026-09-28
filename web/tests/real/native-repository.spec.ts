@@ -4,7 +4,6 @@ import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 const repository = required("JJ_STORE_REAL_REPOSITORY");
-const token = required("JJ_STORE_REAL_TOKEN");
 const runtime = required("JJ_STORE_REAL_RUNTIME");
 const root = required("JJ_STORE_REAL_ROOT");
 const publication = "External browser acceptance publication";
@@ -41,7 +40,6 @@ function publishFromExternalCli() {
       env: {
         ...process.env,
         JJ_CONFIG: join(runtime, "jj.toml"),
-        JJ_STORE_TOKEN: token,
       },
       stdio: "pipe",
     },
@@ -50,57 +48,24 @@ function publishFromExternalCli() {
 
 async function connect(page: import("@playwright/test").Page) {
   await page.goto("/");
-  await page.getByLabel("Repository ID", { exact: true }).fill(repository);
-  await page.getByLabel("Repository token", { exact: true }).fill(token);
-  await page.getByRole("button", { name: "Open repository" }).click();
   await expect(
     page.getByRole("option", { name: "main", exact: true }),
   ).toBeVisible();
 }
 
-test("native Tantivy search is snapshot-bound and leaves the route unchanged when closed", async ({
+test("LocalTrusted bootstrap auto-opens without browser credentials", async ({
   page,
 }) => {
-  await connect(page);
-  const routeBeforeSearch = new URL(page.url()).hash;
-  const selectedOperation = routeQuery(page.url()).get("at_op");
-  expect(selectedOperation).toMatch(/^[0-9a-f]{128}$/u);
-
-  await page.getByRole("button", { name: "Search repository" }).click();
-  const dialog = page.getByRole("dialog", { name: "Search repository" });
-  const responsePromise = page.waitForResponse((response) => {
-    const url = new URL(response.url());
-    return (
-      url.pathname.endsWith(`/v1/repos/${repository}/search`) &&
-      url.searchParams.get("q") === "browser"
-    );
-  });
-  await dialog
-    .getByRole("combobox", { name: "Search repository" })
-    .fill("browser");
-  await expect(
-    dialog.getByRole("option", { name: /Add repository browser/u }),
-  ).toBeVisible();
-
-  const response = await responsePromise;
-  expect(response.request().headers()["authorization"]).toBe(`Bearer ${token}`);
-  const body = await response.json();
-  expect(body.repository).toBe(repository);
-  expect(body.selected_view?.operation_id).toBe(selectedOperation);
-  expect(body.results).toEqual(
-    expect.arrayContaining([
-      expect.objectContaining({
-        key: expect.objectContaining({ kind: "commit" }),
-      }),
-      expect.objectContaining({
-        key: expect.objectContaining({ kind: "file", path: "src/lib.rs" }),
-      }),
-    ]),
+  const bootstrap = page.waitForRequest((request) =>
+    new URL(request.url()).pathname.endsWith("/v1/bootstrap"),
   );
-
-  await dialog.getByRole("button", { name: "Close search" }).click();
-  await expect(dialog).not.toBeVisible();
-  expect(new URL(page.url()).hash).toBe(routeBeforeSearch);
+  await connect(page);
+  expect((await bootstrap).headers()["authorization"]).toBeUndefined();
+  expect(new URL(page.url()).hash).toContain(`/repos/${repository}/`);
+  expect(page.url()).not.toContain("token");
+  expect(
+    await page.evaluate(() => JSON.stringify({ ...localStorage })),
+  ).not.toContain("jst1_");
 });
 
 test("external publication waits for explicit refresh and preserves selection", async ({
@@ -110,9 +75,7 @@ test("external publication waits for explicit refresh and preserves selection", 
     new URL(request.url()).pathname.endsWith(`/v1/repos/${repository}/events`),
   );
   await connect(page);
-  expect((await eventRequest).headers()["authorization"]).toBe(
-    `Bearer ${token}`,
-  );
+  expect((await eventRequest).headers()["authorization"]).toBeUndefined();
   const main = page.getByRole("option", { name: "main", exact: true });
   await expect(main).toBeVisible();
   await main.click();
@@ -149,10 +112,10 @@ test("external publication waits for explicit refresh and preserves selection", 
   await expect(
     page.getByRole("button", { name: publication, exact: true }),
   ).toBeVisible();
-  expect(page.url()).not.toContain(token);
+  expect(page.url()).not.toContain("token");
   expect(
     await page.evaluate(() => JSON.stringify({ ...localStorage })),
-  ).not.toContain(token);
+  ).not.toContain("jst1_");
 });
 
 test("native conflict selection previews and publishes one atomic resolution", async ({

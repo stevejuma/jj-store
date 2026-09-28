@@ -103,7 +103,10 @@ async fn managed_local_storage_locks_verifies_and_fails_closed() {
         .unwrap();
 
     let first = AuthoritativeStorage::start(&config).await.unwrap();
-    assert!(AuthoritativeStorage::start(&config).await.is_err());
+    let locked = AuthoritativeStorage::start(&config)
+        .await
+        .unwrap_err_or_display();
+    assert!(locked.contains("lock"), "{locked}");
     assert!(matches!(
         first
             .store()
@@ -148,13 +151,23 @@ async fn managed_local_storage_locks_verifies_and_fails_closed() {
     let volume = initialized.state_dir.join("rustfs");
     let missing = initialized.state_dir.join("rustfs-missing");
     std::fs::rename(&volume, &missing).unwrap();
-    assert!(AuthoritativeStorage::start(&config).await.is_err());
+    assert!(
+        AuthoritativeStorage::start(&config)
+            .await
+            .unwrap_err_or_display()
+            .contains("managed storage identity, credentials, volume or ownership")
+    );
     std::fs::rename(&missing, &volume).unwrap();
 
     let identity = initialized.state_dir.join("installation.json");
     let identity_bytes = std::fs::read(&identity).unwrap();
     std::fs::remove_file(&identity).unwrap();
-    assert!(AuthoritativeStorage::start(&config).await.is_err());
+    assert!(
+        AuthoritativeStorage::start(&config)
+            .await
+            .unwrap_err_or_display()
+            .contains("managed storage installation identity is missing")
+    );
     std::fs::write(&identity, identity_bytes).unwrap();
     set_private(&identity);
 
@@ -163,7 +176,12 @@ async fn managed_local_storage_locks_verifies_and_fails_closed() {
         use std::os::unix::fs::PermissionsExt as _;
         let credentials = initialized.state_dir.join("rustfs-credentials.json");
         std::fs::set_permissions(&credentials, std::fs::Permissions::from_mode(0o644)).unwrap();
-        assert!(AuthoritativeStorage::start(&config).await.is_err());
+        assert!(
+            AuthoritativeStorage::start(&config)
+                .await
+                .unwrap_err_or_display()
+                .contains("local installation file permissions")
+        );
         std::fs::set_permissions(&credentials, std::fs::Permissions::from_mode(0o600)).unwrap();
     }
 
@@ -178,7 +196,9 @@ async fn managed_local_storage_locks_verifies_and_fails_closed() {
         AuthoritativeStorage::start(&blocked),
     )
     .await;
-    assert!(matches!(conflict, Ok(Err(_))));
+    assert!(
+        matches!(conflict, Ok(Err(error)) if error.to_string().contains("embedded storage startup failed"))
+    );
 
     let mut served = config.clone();
     served.bind = "127.0.0.1:0".parse().unwrap();
@@ -196,7 +216,25 @@ async fn managed_local_storage_locks_verifies_and_fails_closed() {
     std::fs::write(&owner, serde_json::to_vec(&value).unwrap()).unwrap();
     set_private(&owner);
     let absent = Config::load(&absent.config).unwrap();
-    assert!(AuthoritativeStorage::start(&absent).await.is_err());
+    assert!(
+        AuthoritativeStorage::start(&absent)
+            .await
+            .unwrap_err_or_display()
+            .contains("managed storage bucket is missing")
+    );
+}
+
+trait ResultErrorDisplay<T> {
+    fn unwrap_err_or_display(self) -> String;
+}
+
+impl<T> ResultErrorDisplay<T> for jj_store_server::Result<T> {
+    fn unwrap_err_or_display(self) -> String {
+        match self {
+            Ok(_) => panic!("expected managed storage startup to fail"),
+            Err(error) => error.to_string(),
+        }
+    }
 }
 
 fn set_private(path: &std::path::Path) {
