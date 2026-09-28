@@ -58,8 +58,11 @@ without automatic snapshot replacement, complete an explicit refresh, and record
 cold/restart startup time plus server/RustFS RSS against the macOS ARM64
 ceilings. `JJ_STORE_REAL_KEEP=1` may retain the owned stack for review;
 otherwise the lane cleans it up. Runtime metadata and Playwright artifacts
-record no secret. Authenticated search, registry-only M4 finalization and shared
-deployment acceptance are deferred and do not gate this lane.
+record no secret. The development stack additionally configures token-free
+LocalTrusted search and waits for its first current Tantivy generation before it
+reports readiness. Authenticated/shared deployment, registry-only M4
+finalization and shared deployment acceptance are deferred and do not gate this
+lane.
 
 Publication faults are exercised in the normal WAL tests. The opt-in deployment
 lane records both the initial compiled native publication run and a separate

@@ -433,10 +433,11 @@ preserving the explicit comparison parent and exact before/after identities.
 The LocalTrusted application reuses the reviewed Storybook shell for Files,
 Branches, JJ Log, Op Log, evolution, existing read details, typed mutations and
 native conflict editing. It bootstraps the installation catalog and opens the
-sole repository without credentials. Existing search implementation and tests
-remain recorded, but starting its background index is deferred from the local
-release. M4 registry-only dependency finalization and authenticated/shared
-browser deployment are also deferred.
+sole repository without credentials. An explicitly configured LocalTrusted
+search entry starts the existing background Tantivy projection through a stable
+installation-derived read-only principal; repository capabilities expose the
+command only when that index is configured. M4 registry-only dependency
+finalization and authenticated/shared browser deployment are deferred.
 
 Local workspace validation may resolve `@lapismd/design-core` from the sibling
 source repository through the guarded pnpm hook. That development resolution

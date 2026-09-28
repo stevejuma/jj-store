@@ -174,9 +174,11 @@ Server composition creates one runner per explicitly configured repository and
 uses the canonical native extraction identity. Active index paths are derived
 from full repository IDs beneath private server state; users cannot supply paths
 from repository content. Configuring no source scopes indexes metadata only.
-Runners hold their repository token only in memory and reauthorize on every
-batch. Configuration reload is an explicit server restart. Local cache loss
-rebuilds from selected history regardless of an advanced remote adapter cursor.
+Authenticated runners hold their repository token only in memory and reauthorize
+on every batch. LocalTrusted runners use a stable installation-derived read-only
+principal and share the same repository, snapshot and resource checks.
+Configuration reload is an explicit server restart. Local cache loss rebuilds
+from selected history regardless of an advanced remote adapter cursor.
 
 A graceful runner shutdown waits until retained callback contexts release native
 and blocking work before releasing writer ownership. A forced task drop still

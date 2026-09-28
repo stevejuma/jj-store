@@ -1,88 +1,21 @@
 //! Explicit, bounded search workers owned by the foreground server lifecycle.
+pub use crate::search_config::{Repository, SearchAccess};
+pub(crate) use crate::search_config::{environment, validate};
 use crate::{Error, Result, config, policy};
 use jj_store_adapters::{self as a, CancellationToken};
 use jj_store_http::SearchIndex;
 use jj_store_model as m;
-use jj_store_service::{administration::RepositoryHost, auth::BearerToken};
-use jj_store_tantivy::{self as t, native};
-use serde::{Deserialize, Serialize};
-use std::{
-    collections::{BTreeMap, BTreeSet},
-    path::Path,
-    time::Duration,
+use jj_store_service::{
+    administration::RepositoryHost,
+    auth::{BearerToken, Permission},
 };
+use jj_store_tantivy::{self as t, native};
+use serde::Serialize;
+use std::{collections::BTreeMap, path::Path, time::Duration};
 use tokio::{
     task::JoinHandle,
     time::{Instant, timeout_at},
 };
-use zeroize::Zeroizing;
-
-#[derive(Clone, Debug, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct Repository {
-    pub repository: m::RepositoryId,
-    pub token_environment: String,
-    #[serde(default)]
-    pub source: native::Config,
-    #[serde(default = "poll_millis")]
-    pub poll_millis: u64,
-    #[serde(default = "timeout_seconds")]
-    pub timeout_seconds: u64,
-    #[serde(default = "index_bytes")]
-    pub index_bytes: u64,
-    #[serde(default = "snapshot_every")]
-    pub snapshot_every: u64,
-}
-fn poll_millis() -> u64 {
-    1000
-}
-fn timeout_seconds() -> u64 {
-    60
-}
-fn index_bytes() -> u64 {
-    512 * 1024 * 1024
-}
-fn snapshot_every() -> u64 {
-    32
-}
-pub(crate) fn validate(entries: &[Repository]) -> Result<()> {
-    if entries.len() > 8 {
-        return Err(Error::Config("search repository limit"));
-    }
-    let mut repositories = BTreeSet::new();
-    let mut credentials = BTreeSet::new();
-    for entry in entries {
-        let suffix = entry
-            .token_environment
-            .strip_prefix("JJ_STORE_SEARCH_TOKEN_");
-        if !repositories.insert(entry.repository)
-            || !credentials.insert(&entry.token_environment)
-            || entry.token_environment.len() > 128
-            || suffix.is_none_or(|s| {
-                s.is_empty()
-                    || !s
-                        .bytes()
-                        .all(|b| b.is_ascii_uppercase() || b.is_ascii_digit() || b == b'_')
-            })
-            || !(10..=60000).contains(&entry.poll_millis)
-            || !(1..=300).contains(&entry.timeout_seconds)
-            || !(1..=2 * 1024 * 1024 * 1024).contains(&entry.index_bytes)
-            || entry.snapshot_every > 1_000_000
-            || entry.source.identity().is_err()
-        {
-            return Err(Error::Config(
-                "search repository, credential name, source scopes or limits",
-            ));
-        }
-    }
-    Ok(())
-}
-pub(crate) fn environment(name: &str) -> Result<BearerToken> {
-    let value = Zeroizing::new(
-        std::env::var(name).map_err(|_| Error::Config("search credential unavailable"))?,
-    );
-    BearerToken::parse(&value).map_err(|_| Error::Config("invalid search credential"))
-}
 type Runner = a::Runner<t::TantivyProjection<native::NativeExtractor>>;
 pub struct PreparedSearch {
     runners: Vec<Runner>,
@@ -94,9 +27,10 @@ impl PreparedSearch {
         root: &Path,
         entries: &[Repository],
         server_limits: &config::Limits,
+        access: SearchAccess,
         mut credential: impl FnMut(&str) -> Result<BearerToken>,
     ) -> Result<(Self, BTreeMap<m::RepositoryId, SearchIndex>)> {
-        validate(entries)?;
+        validate(entries, matches!(access, SearchAccess::Authenticated))?;
         let root = policy::outside_checkout(root)?;
         if !(1..=300).contains(&server_limits.request_seconds)
             || !(1..=1_000_000).contains(&server_limits.inventory_nodes)
@@ -106,13 +40,22 @@ impl PreparedSearch {
         let mut runners = Vec::new();
         let mut indexes = BTreeMap::new();
         for entry in entries {
-            let token = credential(&entry.token_environment)?;
-            let session = host
+            let endpoint = host
                 .endpoint(entry.repository)
-                .map_err(|_| Error::Config("search repository endpoint"))?
-                .bind(token)
-                .map_err(|_| Error::Config("search session limits"))?
-                .into_session();
+                .map_err(|_| Error::Config("search repository endpoint"))?;
+            let request = match access {
+                SearchAccess::Authenticated => endpoint.bind(credential(
+                    entry
+                        .token_environment
+                        .as_deref()
+                        .ok_or(Error::Config("search credential name"))?,
+                )?),
+                SearchAccess::LocalTrusted(principal) => {
+                    endpoint.bind_local_trusted(principal, Permission::Read)
+                }
+            }
+            .map_err(|_| Error::Config("search session limits"))?;
+            let session = request.into_session();
             let identity = entry
                 .source
                 .identity()

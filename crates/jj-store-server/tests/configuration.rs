@@ -225,6 +225,10 @@ name = "main"
     assert_eq!(config.search[0].source.scopes.len(), 1);
     assert_eq!(config.search[0].index_bytes, 512 * 1024 * 1024);
     assert_eq!(config.search[0].snapshot_every, 32);
+    assert_eq!(
+        config.search[0].token_environment.as_deref(),
+        Some("JJ_STORE_SEARCH_TOKEN_EXAMPLE")
+    );
     assert!(!config.state_dir.exists());
     for bad in [
         search.replace("JJ_STORE_SEARCH_TOKEN_EXAMPLE", "JJ_STORE_TOKEN"),
@@ -244,4 +248,25 @@ name = "main"
             .to_string();
         assert!(!error.contains("must-not-echo-secret"));
     }
+
+    let local_access = format!(
+        r#"[access]
+mode = "local-trusted"
+installation = "{}"
+catalog = "{}"
+rpc_socket = "{}"
+permission = "admin""#,
+        root.path().join("installation.json").display(),
+        root.path().join("repositories.json").display(),
+        root.path().join("native.sock").display()
+    );
+    let local = EXAMPLE.replace("[access]\nmode = \"authenticated\"", &local_access);
+    let local_search = search.replace(
+        "token_environment = \"JJ_STORE_SEARCH_TOKEN_EXAMPLE\"\n",
+        "",
+    );
+    let config = load(root.path(), &format!("{local}{local_search}")).unwrap();
+    assert_eq!(config.search[0].token_environment, None);
+    assert!(load(root.path(), &format!("{EXAMPLE}{local_search}")).is_err());
+    assert!(load(root.path(), &format!("{local}{search}")).is_err());
 }

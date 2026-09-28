@@ -418,6 +418,27 @@ async fn local_trusted_executable_bootstraps_registers_and_serves_without_tokens
     ))
     .unwrap();
     let repository = created["repository"].as_str().unwrap();
+    fs::write(
+        workspace.join("search.txt"),
+        "searchable local acceptance\n",
+    )
+    .unwrap();
+    success(
+        Command::new(env!("CARGO_BIN_EXE_jj"))
+            .current_dir(root.path())
+            .env("JJ_CONFIG", &jj_config)
+            .args([
+                "--no-pager",
+                "--color=never",
+                "-R",
+                workspace.to_str().unwrap(),
+                "describe",
+                "-m",
+                "searchable local acceptance",
+            ])
+            .output()
+            .unwrap(),
+    );
     let snapshot = http
         .get(format!("{origin}/v1/repos/{repository}/snapshot"))
         .send()
@@ -467,6 +488,31 @@ async fn local_trusted_executable_bootstraps_registers_and_serves_without_tokens
     .unwrap();
     assert_eq!(registered["catalog_entries"], 1);
 
+    let search = format!(
+        r#"
+[[search]]
+repository = "{repository}"
+poll_millis = 10
+timeout_seconds = 30
+snapshot_every = 1
+
+[search.source.scopes.workspace]
+kind = "workspace"
+name = "local-acceptance"
+"#
+    );
+    fs::write(
+        &config,
+        format!(
+            "{}{}",
+            fs::read_to_string(&config)
+                .unwrap()
+                .replace("search = []\n", ""),
+            search
+        ),
+    )
+    .unwrap();
+
     let mut restarted = start_local_trusted_server(root.path(), &config);
     let bootstrap: serde_json::Value = http
         .get(format!("{origin}/v1/bootstrap"))
@@ -479,6 +525,46 @@ async fn local_trusted_executable_bootstraps_registers_and_serves_without_tokens
     assert_eq!(bootstrap["repositories"][0]["id"], repository);
     assert_eq!(bootstrap["repositories"][0]["name"], "Local acceptance");
     assert!(bootstrap["backups"].as_array().unwrap().is_empty());
+    let base = format!("{origin}/v1/repos/{repository}");
+    let ready = wait_search_ready(&http, None, &base).await;
+    assert_eq!(ready["is_stale"], false);
+    let capabilities: serde_json::Value = http
+        .get(format!("{base}/capabilities"))
+        .send()
+        .await
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    assert_eq!(capabilities["search"], true);
+    let result = http
+        .get(format!(
+            "{base}/search?q=searchable&scope=workspace&mode=historical"
+        ))
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(result.status(), reqwest::StatusCode::OK);
+    let result: serde_json::Value = result.json().await.unwrap();
+    assert!(
+        !result["results"].as_array().unwrap().is_empty(),
+        "{result}"
+    );
+    let doctor: serde_json::Value = serde_json::from_str(&success(
+        command()
+            .args([
+                "doctor",
+                "--config",
+                config.to_str().unwrap(),
+                "--repo-id",
+                repository,
+                "--format=json",
+            ])
+            .output()
+            .unwrap(),
+    ))
+    .unwrap();
+    assert_eq!(doctor["search"]["state"], "ready");
     restarted.terminate();
 }
 #[test]
@@ -1042,7 +1128,7 @@ async fn real_rustfs_server_cli_restart_and_revocation() {
         .build()
         .unwrap();
     let base = format!("{endpoint}/v1/repos/{repository}");
-    let rebuilt_search = wait_search_ready(&http, &admin, &base).await;
+    let rebuilt_search = wait_search_ready(&http, Some(&admin), &base).await;
     let rebuilt_generation = rebuilt_search["index_generation"]
         .as_str()
         .unwrap()
@@ -1174,7 +1260,7 @@ async fn real_rustfs_server_cli_restart_and_revocation() {
     ))
     .unwrap();
     assert_eq!(diagnosis["storage_ready"], true);
-    let rebuilt_search = wait_search_ready(&http, &admin, &base).await;
+    let rebuilt_search = wait_search_ready(&http, Some(&admin), &base).await;
     let rebuilt_generation = rebuilt_search["index_generation"]
         .as_str()
         .unwrap()
@@ -1247,7 +1333,7 @@ async fn real_rustfs_server_cli_restart_and_revocation() {
         );
         tokio::time::sleep(Duration::from_millis(100)).await;
     }
-    let restored_search = wait_search_ready(&http, &admin, &base).await;
+    let restored_search = wait_search_ready(&http, Some(&admin), &base).await;
     let restore_millis = restore_started.elapsed().as_millis();
     assert_eq!(restored_search["index_generation"], rebuilt_generation);
     let restored_page = http_json(
@@ -1532,17 +1618,16 @@ async fn http_json(client: &reqwest::Client, token: &BearerToken, url: &str) -> 
 
 async fn wait_search_ready(
     client: &reqwest::Client,
-    token: &BearerToken,
+    token: Option<&BearerToken>,
     base: &str,
 ) -> serde_json::Value {
     let deadline = Instant::now() + Duration::from_secs(30);
     loop {
-        let response = client
-            .get(format!("{base}/search/status"))
-            .bearer_auth(token.expose().as_str())
-            .send()
-            .await
-            .unwrap();
+        let mut request = client.get(format!("{base}/search/status"));
+        if let Some(token) = token {
+            request = request.bearer_auth(token.expose().as_str());
+        }
+        let response = request.send().await.unwrap();
         let status = response.status();
         let value = response.json::<serde_json::Value>().await.unwrap();
         if status == reqwest::StatusCode::OK

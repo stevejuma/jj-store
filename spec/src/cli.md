@@ -321,16 +321,20 @@ not expose an incompatible prior generation to newly authorized reads.
 ## Configured search lifecycle
 
 Server TOML may contain up to eight explicit search entries. Each binds a full
-repository ID, a dedicated JJ_STORE_SEARCH_TOKEN_ environment-variable name,
-source scopes/exclusions and bounded polling, batch duration and per-generation
-disk capacity. Tokens are never accepted in TOML or command arguments. Config
-checks validate settings without reading credentials or starting indexers.
+repository ID, source scopes/exclusions and bounded polling, batch duration and
+per-generation disk capacity. Authenticated deployments require a dedicated
+`JJ_STORE_SEARCH_TOKEN_` environment-variable name. LocalTrusted entries omit it
+and bind the worker through a stable installation-derived principal with read
+permission. Tokens are never accepted in TOML or command arguments. Config
+checks reject credentials in LocalTrusted entries and missing credential
+references in authenticated entries without reading secrets or starting
+indexers.
 
 Each entry may set `snapshot_every` to an interval of committed source
 positions; the default is 32 and zero disables optional remote index snapshots.
 The interval is bounded at one million. Snapshot transfer budgets derive from
-the configured generation capacity, and credentials remain available only
-through the entry's environment-variable name.
+the configured generation capacity. Authenticated credentials remain available
+only through the entry's environment-variable name.
 
 The foreground server prepares private local indexes beneath its state
 directory, then starts their committed-log runners alongside the listener.
@@ -346,8 +350,9 @@ configured deployment's HTTP endpoint. LocalTrusted requests use the literal
 loopback authority and no bearer credential; retained authenticated fixtures use
 their repository token. Doctor keeps authoritative readiness separate from
 configured search health and explicitly reports an unavailable serving endpoint.
-It does not start a replacement writer to inspect status, and the local release
-does not start the deferred search worker.
+It does not start a replacement writer to inspect status. The local development
+stack configures the seeded repository, waits for a current Tantivy generation,
+and reports readiness without generating a browser or worker credential.
 
 M4.10 native-lifecycle and registered-HTTP acceptance covers conflicted
 references, bidirectional signed cursors, recursive paths, operation-change
@@ -359,6 +364,6 @@ The browser mutation acceptance reuses the native lifecycle fixture and
 development `jj` binary for create, describe, bookmark, abandon, reconcile and
 resolve semantics; it does not add a parallel command implementation. The
 `pnpm dev:restart` task cold-builds the UI and binaries, replaces only its
-labelled disposable services, seeds a native repository and prints the URL,
-repository ID and one-time in-memory browser token. `pnpm dev:stop` removes only
-that owned stack.
+labelled disposable services, seeds a native repository, starts its LocalTrusted
+search worker and prints the URL and repository ID with `Credentials: none`.
+`pnpm dev:stop` removes only that owned stack.

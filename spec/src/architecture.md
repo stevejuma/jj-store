@@ -118,9 +118,11 @@ access policy, authoritative storage and backup projection as independent tagged
 settings. The current application target uses LocalTrusted access and embedded
 storage; its runtime owns installation state, the RustFS child, readiness,
 sentinel verification, shutdown and the lifetime filesystem lock while returning
-the existing owned `S3Store` contract. Older formats are rejected. Authenticated
-shared serving, external authority, background search indexing, backup/restore
-and replication are deferred and are not first-release acceptance gates.
+the existing owned `S3Store` contract. Older formats are rejected. Explicit
+LocalTrusted search entries start rebuildable background indexing through an
+installation-derived read-only principal. Authenticated shared serving, external
+authority, backup/restore and replication are deferred and are not first-release
+acceptance gates.
 
 The access policy is independent of transport. Authenticated HTTP and RPC keep
 repository bearer validation, while LocalTrusted HTTP and Unix RPC derive stable
@@ -183,8 +185,8 @@ identities and records bounded startup/RSS measurements.
 The user deferred registry-only and shared-deployment browser finalization on 28
 September 2026. M4/M4.3 and M4.11-M4.14 retain that future work. Functional cold
 local browser acceptance belongs to M8a.1; package publication, authenticated
-connection UX, background search indexing and visual baselines do not block the
-local application release.
+connection UX and visual baselines do not block the local application release.
+The local demo configures and waits for search before reporting readiness.
 
 The WAL snapshot DTO shares schema metadata with the typed application API using
 schemars. The locked dependency is schema infrastructure, with no HTTP/UI

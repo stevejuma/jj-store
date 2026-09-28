@@ -5,7 +5,7 @@ use axum::{
     http::{Request, StatusCode},
 };
 use jj_store_object::Key;
-use jj_store_server::search::{PreparedSearch, Repository};
+use jj_store_server::search::{PreparedSearch, Repository, SearchAccess};
 use jj_store_service::administration::{OperatorPolicies, RepositoryHost};
 use serde_json::{Value, json};
 use sha2::{Digest as _, Sha256};
@@ -40,11 +40,15 @@ fn prepare_with_http(
     http: jj_store_http::Config,
 ) -> (PreparedSearch, Router) {
     let host = host(f);
-    let (prepared, indexes) =
-        PreparedSearch::new(&host, root, &entries(), &Default::default(), |_| {
-            Ok(f.reader.clone())
-        })
-        .unwrap();
+    let (prepared, indexes) = PreparedSearch::new(
+        &host,
+        root,
+        &entries(),
+        &Default::default(),
+        SearchAccess::Authenticated,
+        |_| Ok(f.reader.clone()),
+    )
+    .unwrap();
     let router = jj_store_http::HttpApi::with_search(host, root.join("native"), http, indexes)
         .unwrap()
         .router();
@@ -329,6 +333,7 @@ async fn server_search_drop_cancels_workers_and_releases_owned_state() {
                     root.path(),
                     &entries(),
                     &Default::default(),
+                    SearchAccess::Authenticated,
                     |_| Ok(f.reader.clone()),
                 ) {
                     drop(prepared);
@@ -357,6 +362,7 @@ async fn server_search_rejects_state_symlink_escape_and_invalid_programmatic_lim
             root.path(),
             &entries(),
             &Default::default(),
+            SearchAccess::Authenticated,
             |_| Ok(f.reader.clone())
         )
         .is_err()
@@ -372,6 +378,7 @@ async fn server_search_rejects_state_symlink_escape_and_invalid_programmatic_lim
                 request_seconds: 0,
                 ..Default::default()
             },
+            SearchAccess::Authenticated,
             |_| Ok(f.reader.clone())
         )
         .is_err()

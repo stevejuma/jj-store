@@ -56,6 +56,61 @@ async function stopServer(server) {
   throw new Error("temporary native server did not stop");
 }
 
+async function configureSearch(serverConfig, repositoryId) {
+  const generated = await readFile(serverConfig, "utf8");
+  const search = `
+[[search]]
+repository = "${repositoryId}"
+poll_millis = 100
+timeout_seconds = 30
+snapshot_every = 32
+
+[search.source.scopes.main]
+kind = "bookmark"
+name = "main"
+`;
+  await writeFile(
+    serverConfig,
+    `${generated.replace(/^search = \[\]\n/mu, "")}${search}`,
+    { mode: 0o600 },
+  );
+}
+
+async function waitForSearch(origin, repositoryId) {
+  const deadline = performance.now() + 120_000;
+  const url = `${origin}v1/repos/${repositoryId}/search/status`;
+  let lastResponse = "no response";
+  while (performance.now() < deadline) {
+    try {
+      const response = await fetch(url, {
+        headers: {
+          Origin: new URL(origin).origin,
+          "Sec-Fetch-Dest": "empty",
+          "Sec-Fetch-Mode": "cors",
+          "Sec-Fetch-Site": "same-origin",
+          "X-JJ-Store-Protocol": "1",
+        },
+      });
+      const searchState = await response.json();
+      lastResponse = `${response.status} ${JSON.stringify(searchState)}`;
+      if (
+        response.ok &&
+        searchState.index_generation &&
+        searchState.is_stale === false &&
+        searchState.degraded === false
+      ) {
+        return searchState;
+      }
+    } catch (error) {
+      lastResponse = String(error.message ?? error);
+    }
+    await new Promise((resolveWait) => setTimeout(resolveWait, 100));
+  }
+  throw new Error(
+    `native search did not become ready within 120 seconds: ${lastResponse}`,
+  );
+}
+
 async function restart() {
   await stopPrevious({
     owner: repositoryRoot,
@@ -129,9 +184,16 @@ async function restart() {
     "jj-store demo",
     "--format=json",
   ]);
+  await configureSearch(serverConfig, repositoryId);
   started = performance.now();
   server = startServer(serverConfig, logHandle);
-  await waitForServer(origin);
+  try {
+    await waitForServer(origin);
+    await waitForSearch(origin, repositoryId);
+  } catch (error) {
+    await stopServer(server);
+    throw error;
+  }
   const restartStartupMillis = Math.round(performance.now() - started);
   const processes = await processTreeMetrics(server.pid);
   const runtime = {
@@ -154,7 +216,7 @@ async function restart() {
   });
   await chmod(runtimeRoot, 0o700);
   console.log(
-    `JJ Store LocalTrusted development demo is ready.\n\nURL: ${origin}\nRepository ID: ${repositoryId}\nCredentials: none (local loopback access)\nRuntime: ${runtimeRoot}\nStorage: embedded RustFS\nStartup: ${firstStartupMillis} ms cold, ${restartStartupMillis} ms restart\nResident memory: ${processes.totalRssKiB} KiB server plus storage\n\nThe repository, installation identity and RustFS volume persist under the runtime directory until pnpm dev:stop.`,
+    `JJ Store LocalTrusted development demo is ready.\n\nURL: ${origin}\nRepository ID: ${repositoryId}\nCredentials: none (local loopback access)\nRuntime: ${runtimeRoot}\nStorage: embedded RustFS\nSearch: ready\nStartup: ${firstStartupMillis} ms cold, ${restartStartupMillis} ms restart\nResident memory: ${processes.totalRssKiB} KiB server plus storage\n\nThe repository, installation identity and RustFS volume persist under the runtime directory until pnpm dev:stop.`,
   );
 }
 

@@ -6,6 +6,7 @@ mod listener;
 pub mod policy;
 pub mod process;
 pub mod search;
+mod search_config;
 pub mod storage;
 #[derive(Debug, thiserror::Error)]
 pub enum Error {

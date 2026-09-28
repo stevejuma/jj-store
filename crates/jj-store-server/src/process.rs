@@ -125,11 +125,18 @@ impl PreparedServer {
             }
         };
         let timeout = Duration::from_secs(config.limits.request_seconds);
+        let search_access = match &config.access {
+            Access::Authenticated => crate::search::SearchAccess::Authenticated,
+            Access::LocalTrusted { installation, .. } => crate::search::SearchAccess::LocalTrusted(
+                Identity::load(installation)?.principal(b"search-index"),
+            ),
+        };
         let (search, indexes) = crate::search::PreparedSearch::new(
             &host,
             &state,
             &config.search,
             &config.limits,
+            search_access,
             crate::search::environment,
         )?;
         let http_access = match &config.access {

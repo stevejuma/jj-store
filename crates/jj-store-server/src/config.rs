@@ -200,7 +200,7 @@ impl Config {
             ));
         }
         validate_public_url(self)?;
-        crate::search::validate(&self.search)
+        crate::search::validate(&self.search, matches!(self.access, Access::Authenticated))
     }
 
     pub(crate) fn s3_config(&self, credentials: s3::Credentials) -> Result<s3::Config> {

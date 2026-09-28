@@ -40,7 +40,7 @@ adds evidence here in its enclosing Jujutsu change.
 | M4.12       | Deferred | M4.11       | JST-API-002,JST-API-003,JST-UI-005                                      | Shared-deployment route/SSE finalization against registry-only dependencies                                         | Future shared/package release                           | E-UI-012                                                                                                                                                                                                                   |
 | M4.13       | Deferred | M4.11       | JST-API-002,JST-UI-006                                                  | Cross-consumer release of virtual/lazy listing and persisted-layout extensions                                      | Future Design Core release                              | E-UI-013,E-UI-014,E-UI-015                                                                                                                                                                                                 |
 | M4.14       | Deferred | M4.12,M4.13 | JST-API-003,JST-API-004,JST-API-005                                     | Registry-resolved shared deployment browser acceptance                                                              | Future shared/package release                           | E-UI-016                                                                                                                                                                                                                   |
-| M4.15       | Done     | M4.9,M6.1   | JST-UI-007                                                              | Community-adapted command search queries real snapshot-bound Tantivy results and restores stable routes             | Retain search acceptance; continue mutation/conflict UI | E-UI-017                                                                                                                                                                                                                   |
+| M4.15       | Done     | M4.9,M6.1   | JST-UI-007                                                              | Community-adapted command search queries real snapshot-bound Tantivy results and restores stable routes             | Retain LocalTrusted and authenticated search acceptance | E-UI-017,E-UI-024                                                                                                                                                                                                          |
 | M4.16       | Done     | M4.9,M5.3   | JST-UI-008                                                              | Preview/apply/status repository actions use durable typed mutations and committed snapshot refresh                  | Retain mutation acceptance; implement M4.17 conflicts   | E-UI-018                                                                                                                                                                                                                   |
 | M4.17       | Done     | M4.16,M5.3  | JST-UI-009                                                              | Native conflict descriptors, uploads and atomic multi-path resolution are editable without flattening               | Retain conflict-editor and real-repository acceptance   | E-UI-019                                                                                                                                                                                                                   |
 | M5          | Done     | M4.1        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                     | Authenticated typed commands and shared RPC policy                                                                  | Retain mutation conformance; proceed to M6              | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-M5-005,E-M5-006,E-M5-007,E-M5-008                                                                                                                                        |
@@ -74,12 +74,13 @@ On 28 September 2026 the user narrowed the first application release to
 LocalTrusted access, persistent embedded RustFS and macOS local application
 acceptance. The unreleased server accepts configuration format 2 only; older
 configuration compatibility and migration are removed. Authenticated/shared
-deployment, external S3 authority, background search indexing, RustFS
-replication, verified backup and restore, generic-S3/MinIO qualification, Linux
-packaging, authority migration, failover, promotion, Git, Nostr and Smart HTTP
-are deferred future-release work. M4's registry/package and shared-deployment
-finalization is also deferred; functional local browser acceptance is owned by
-M8a.1 and does not require package publication or visual baselines.
+deployment, external S3 authority, RustFS replication, verified backup and
+restore, generic-S3/MinIO qualification, Linux packaging, authority migration,
+failover, promotion, Git, Nostr and Smart HTTP are deferred future-release work.
+M4's registry/package and shared-deployment finalization is also deferred;
+functional local browser acceptance is owned by M8a.1 and does not require
+package publication or visual baselines. Explicitly configured LocalTrusted
+search is part of the local application and uses no bearer credential.
 
 ## Evidence ledger
 
@@ -11971,6 +11972,108 @@ and named tests are checked by the progress gate.
     "remaining": [],
     "versions": "@lapismd/design-core 0.2.0; Svelte 5.57.1; Storybook 10.5.7; Vitest 4.1.11.",
     "formats": "The selected reference remains distinct from its resolved commit in the existing typed hash route. Native IDs, OpenAPI, object, manifest, WAL, receipt and browser-layout formats are unchanged. Stories remain visual-pending and visual baselines were skipped by user direction."
+  },
+  {
+    "id": "E-UI-024",
+    "tasks": ["M4.15", "M8a.4"],
+    "date": "2026-09-28",
+    "kind": "implementation",
+    "files": [
+      "crates/jj-store-cli/tests/native_lifecycle/server_search.rs",
+      "crates/jj-store-cli/tests/server_executable.rs",
+      "crates/jj-store-server/src/config.rs",
+      "crates/jj-store-server/src/lib.rs",
+      "crates/jj-store-server/src/process.rs",
+      "crates/jj-store-server/src/search.rs",
+      "crates/jj-store-server/src/search_config.rs",
+      "crates/jj-store-server/tests/configuration.rs",
+      "scripts/dev-demo.mjs",
+      "spec/src/adapters.md",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/compatibility.md",
+      "spec/src/milestones.md",
+      "spec/src/spec-governance.md",
+      "spec/src/verification.md"
+    ],
+    "tests": [
+      "crates/jj-store-server/tests/configuration.rs#search_configuration_is_explicit_bounded_and_contains_no_credentials",
+      "crates/jj-store-cli/tests/native_lifecycle/server_search.rs#server_search_runs_recovers_and_restores_after_cache_loss",
+      "crates/jj-store-cli/tests/server_executable.rs#local_trusted_executable_bootstraps_registers_and_serves_without_tokens"
+    ],
+    "runs": [
+      {
+        "command": "live GET /v1/bootstrap and /v1/repos/{repository}/search/status at http://127.0.0.1:7460/",
+        "result": "fail",
+        "failures": 2,
+        "note": "The running LocalTrusted demo advertised repository search false and returned search_not_configured, reproducing the disabled command without relying on fixture state."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-server --test configuration search_configuration_is_explicit_bounded_and_contains_no_credentials --locked",
+        "result": "fail",
+        "failures": 2,
+        "note": "The access-specific regression initially produced two compiler diagnostics because search token_environment was still a mandatory string."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-server --test configuration search_configuration_is_explicit_bounded_and_contains_no_credentials --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "The focused configuration contract accepts credential-free LocalTrusted entries, retains authenticated JJ_STORE_SEARCH_TOKEN_ references and rejects either access mode's credential form in the other."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test native_lifecycle server_search_runs_recovers_and_restores_after_cache_loss --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "The existing authenticated search worker still indexes, advances, snapshots, restarts and restores through its bearer session."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools JJ_STORE_RUSTFS_RUNTIME=$PWD/runtime/embedded-rustfs/target/debug/jj-store-rustfs cargo test -p jj-store-cli --test server_executable --locked -- --ignored --exact local_trusted_executable_bootstraps_registers_and_serves_without_tokens",
+        "result": "fail",
+        "failures": 2,
+        "note": "Two focused iterations corrected the acceptance itself: search is repository-specific rather than a bootstrap capability, and a real searchable file must be published before asserting a file hit."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools JJ_STORE_RUSTFS_RUNTIME=$PWD/runtime/embedded-rustfs/target/debug/jj-store-rustfs cargo test -p jj-store-cli --test server_executable --locked -- --ignored --exact local_trusted_executable_bootstraps_registers_and_serves_without_tokens",
+        "result": "pass",
+        "failures": 0,
+        "note": "The real embedded-RustFS LocalTrusted process reaches a current Tantivy generation, advertises repository search, returns a tokenless file result and reports doctor search state ready."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo clippy -p jj-store-server -p jj-store-cli --tests --locked -- -D warnings; node --check scripts/dev-demo.mjs; pnpm check:boundaries; pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both affected Rust packages are warning-free, the development script parses, all 11 package boundaries pass and all 196 governed web modules retain their budgets. Search configuration was extracted so each modified production source remains at or below 300 lines."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm dev:restart",
+        "result": "fail",
+        "failures": 3,
+        "note": "Cold readiness initially timed out because Node fetch supplied an incomplete browser Fetch Metadata tuple and received access_denied. The probe now sends the exact Origin plus same-origin metadata, records its last response and shuts down the owned server on failure."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm dev:restart",
+        "result": "pass",
+        "failures": 0,
+        "note": "The checkout-owned LocalTrusted demo started with repository 07199c19c07a5834554e3ed194710518, no credentials, embedded RustFS and a current search generation before reporting ready."
+      },
+      {
+        "command": "live API and in-app browser verification at http://127.0.0.1:7460/",
+        "result": "pass",
+        "failures": 0,
+        "note": "Repository capabilities advertise LocalTrusted search, position 25 is indexed without staleness or degradation, native returns two main-scope file hits, and the browser command displays operation, commit and file results for native."
+      },
+      {
+        "command": "pnpm spec:first; pnpm check:progress; DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm format:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Same-change governance maps nine protected files to seven updated canonical chapters, validates all 53 task records and confirms Rust plus Prettier formatting without running unrelated aggregate suites."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "versions": "Rust 1.98.1; jj-lib 0.45.1; Tantivy 0.26.2; embedded rustfs 1.0.0 with default features disabled; Node.js 22 or newer.",
+    "formats": "Format-2 search entries now require token_environment only for authenticated access and omit it for LocalTrusted access. Local workers use a stable installation-derived read-only principal. Native objects, manifest, WAL, receipts, IDs, HTTP routes and browser storage formats are unchanged. Visual baselines were skipped by user direction."
   }
 ]
 ```
