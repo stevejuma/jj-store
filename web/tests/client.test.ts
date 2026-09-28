@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { Client, EventParser, decode, pretty } from "../src/lib/api/client.ts";
+import { bootstrap } from "../src/lib/api/bootstrap.ts";
 import { layout, displayable } from "../src/lib/graph.ts";
 
 test("native_numbers_remain_exact_and_fractional_values_fail", () => {
@@ -54,11 +55,42 @@ test("credentials_stay_in_headers_and_close_aborts_pending_requests", async () =
     new Headers(init?.headers).get("authorization"),
     "Bearer test-memory-token",
   );
+  assert.equal(new Headers(init?.headers).get("x-jj-store-protocol"), "1");
   client.close();
   assert.equal(signal?.aborted, true);
   await assert.rejects(() => client.request("snapshot"), {
     name: "AbortError",
   });
+});
+test("bootstrap_and_local_clients_use_protocol_binding_without_credentials", async () => {
+  const repo = "11".repeat(16);
+  const requests: RequestInit[] = [];
+  const fetcher: typeof fetch = async (_input, init = {}) => {
+    requests.push(init);
+    return new Response(
+      requests.length === 1
+        ? JSON.stringify({
+            version: 1,
+            access_mode: "local_trusted",
+            capabilities: {},
+            storage: { ready: true },
+            repositories: [{ id: repo, name: "Local" }],
+            backups: [],
+          })
+        : '{"heads":[]}',
+      { headers: { "content-type": "application/json" } },
+    );
+  };
+  const result = await bootstrap(fetcher);
+  assert.equal(result.repositories[0]?.name, "Local");
+  const client = new Client(repo, null, () => {}, fetcher);
+  await client.request("snapshot");
+  for (const init of requests) {
+    const headers = new Headers(init.headers);
+    assert.equal(headers.get("x-jj-store-protocol"), "1");
+    assert.equal(headers.has("authorization"), false);
+  }
+  client.close();
 });
 test("revocation_closes_the_client_and_calls_its_owner", async () => {
   let denied = 0;

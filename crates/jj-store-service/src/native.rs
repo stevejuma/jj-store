@@ -84,12 +84,40 @@ impl NativeSession {
             return Err(wal::Error::Limit("native session limits"));
         }
         let repository = objects.scope().repository();
-        let access = Arc::new(RepositoryAccess::new(
+        let access = Arc::new(RepositoryAccess::authenticated(
             repository,
             store.clone(),
             token,
             clock,
         ));
+        Self::with_access(store, objects, access, protection, limits)
+    }
+    pub fn new_local_trusted(
+        store: Arc<dyn ObjectStore>,
+        objects: Arc<NativeObjects>,
+        principal: m::PrincipalId,
+        permission: Permission,
+        protection: Protection,
+        limits: SessionLimits,
+    ) -> wal::Result<Self> {
+        if limits.inventory_nodes == 0 || limits.timeout.is_zero() {
+            return Err(wal::Error::Limit("native session limits"));
+        }
+        let repository = objects.scope().repository();
+        let access = Arc::new(
+            RepositoryAccess::local_trusted(repository, store.clone(), principal, permission)
+                .map_err(|_| wal::Error::Denied)?,
+        );
+        Self::with_access(store, objects, access, protection, limits)
+    }
+    fn with_access(
+        store: Arc<dyn ObjectStore>,
+        objects: Arc<NativeObjects>,
+        access: Arc<RepositoryAccess>,
+        protection: Protection,
+        limits: SessionLimits,
+    ) -> wal::Result<Self> {
+        let repository = objects.scope().repository();
         let semantic = Arc::new(NativeSemantic {
             store: store.clone(),
             native: NativePolicy::new(objects.clone(), protection, limits.policy)?,
@@ -285,6 +313,31 @@ pub async fn create_repository(
             clock.unix_seconds().map_err(|_| wal::Error::Denied)?,
         )
         .map_err(|_| wal::Error::Denied)?;
+    initialize_repository(store, objects, initial_policy, epoch, limits).await
+}
+
+pub async fn create_repository_local_trusted(
+    store: Arc<dyn ObjectStore>,
+    objects: Arc<NativeObjects>,
+    permission: Permission,
+    epoch: m::EpochId,
+    limits: Limits,
+) -> wal::Result<ManifestSnapshot> {
+    if permission != Permission::Admin {
+        return Err(wal::Error::Denied);
+    }
+    let policy =
+        crate::auth::TokenPolicy::new(crate::auth::Scope::Repository(objects.scope().repository()));
+    initialize_repository(store, objects, &policy, epoch, limits).await
+}
+
+async fn initialize_repository(
+    store: Arc<dyn ObjectStore>,
+    objects: Arc<NativeObjects>,
+    initial_policy: &crate::auth::TokenPolicy,
+    epoch: m::EpochId,
+    limits: Limits,
+) -> wal::Result<ManifestSnapshot> {
     let settings = initial_policy
         .encode()
         .map_err(|_| wal::Error::Corrupt("initial repository policy"))?;

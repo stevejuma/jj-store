@@ -239,15 +239,38 @@ function searchPage(query: string) {
 }
 export async function api(
   page: Page,
-  options: { multi?: boolean; changed?: boolean; delayLog?: boolean } = {},
+  options: {
+    multi?: boolean;
+    changed?: boolean;
+    delayLog?: boolean;
+    access?: "authenticated" | "local_trusted";
+  } = {},
 ) {
   const requests: string[] = [];
+  await page.route("**/v1/bootstrap", async (route) => {
+    const request = route.request();
+    expect(request.headers()["x-jj-store-protocol"]).toBe("1");
+    expect(request.headers()["authorization"]).toBeUndefined();
+    await route.fulfill({
+      json: {
+        version: 1,
+        access_mode: "authenticated",
+        capabilities: sample("capabilities"),
+        storage: { ready: true },
+        repositories: [],
+        backups: [],
+      },
+    });
+  });
   await page.route("**/v1/repos/**", async (route) => {
     const request = route.request();
     const url = new URL(request.url());
     const path = url.pathname.split(`/v1/repos/${repo}/`)[1];
     requests.push(path);
-    expect(request.headers()["authorization"]).toBe(`Bearer ${token}`);
+    expect(request.headers()["x-jj-store-protocol"]).toBe("1");
+    if (options.access === "local_trusted")
+      expect(request.headers()["authorization"]).toBeUndefined();
+    else expect(request.headers()["authorization"]).toBe(`Bearer ${token}`);
     if (path === "events") {
       const ready = sample("events");
       if (options.multi) ready.snapshot.heads.push("ab".repeat(64));

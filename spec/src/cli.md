@@ -16,13 +16,13 @@ installation policy. Secrets stay out of argv, output, and checked-in config.
 
 ## Requirements
 
-| ID          | Requirement                                                                                                                                                                                                                                                                                                                 |
-| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| JST-CLI-001 | Custom commands MUST use jj store under upstream CliRunner, and the server MUST use explicit jj-store run with configuration, diagnostics, and token administration.                                                                                                                                                        |
-| JST-CLI-002 | Custom command families MUST provide authored Markdown long help, short help, keyword help, hints, JSON results, TTY paging, no-pager, color controls, completions, and build information.                                                                                                                                  |
-| JST-CLI-003 | Ordinary JJ commands MUST preserve upstream behavior; a tested capability matrix MUST report unsupported backend commands honestly.                                                                                                                                                                                         |
-| JST-CLI-004 | Development MUST use explicit build paths and MUST NOT replace installed jj or start unrelated services.                                                                                                                                                                                                                    |
-| JST-CLI-005 | Configuration format 2 MUST explicitly tag access, authority storage and repeated backup targets; format 1 MUST remain authenticated external S3; migration MUST emit a separate reviewable file; and local init, catalog repair, backup control, verified restore, help and completions MUST be explicit bounded commands. |
+| ID          | Requirement                                                                                                                                                                                                                                                                                                                         |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| JST-CLI-001 | Custom commands MUST use jj store under upstream CliRunner, and the server MUST use explicit jj-store run with configuration, diagnostics, and token administration.                                                                                                                                                                |
+| JST-CLI-002 | Custom command families MUST provide authored Markdown long help, short help, keyword help, hints, JSON results, TTY paging, no-pager, color controls, completions, and build information.                                                                                                                                          |
+| JST-CLI-003 | Ordinary JJ commands MUST preserve upstream behavior; a tested capability matrix MUST report unsupported backend commands honestly.                                                                                                                                                                                                 |
+| JST-CLI-004 | Development MUST use explicit build paths and MUST NOT replace installed jj or start unrelated services.                                                                                                                                                                                                                            |
+| JST-CLI-005 | Configuration format 2 MUST explicitly tag access and authority storage, reject every older format, and provide explicit bounded local initialization, verified catalog registration, help and completion commands; configuration migration, authenticated deployment, external authority, backup control and restore are deferred. |
 
 ## M0 extension qualification
 
@@ -74,20 +74,25 @@ acceptance below.
 listener only after validating configuration, TLS and the operator policy.
 `jj store serve-local --server-config PATH` uses the same composition and
 requires a literal loopback bind address. Both stop on interrupt/termination and
-bound graceful shutdown. Format-1 and external format-2 storage use the existing
-S3 authority; embedded format-2 storage launches and owns the configured pinned
-RustFS helper without installing a daemon. On Unix, both shutdown handlers are
-installed before the listening event is flushed. Immediate interrupt or
-termination after that event must enter graceful shutdown, even before the
-listener or search worker future is first polled.
+bound graceful shutdown. The supported application path uses embedded format-2
+storage, which launches and owns the configured pinned RustFS helper without
+installing a daemon. Authenticated external serving remains deferred. On Unix,
+both shutdown handlers are installed before the listening event is flushed.
+Immediate interrupt or termination after that event must enter graceful
+shutdown, even before the listener or search worker future is first polled.
 
 `jj-store config example` prints the format-2 configuration template, while
-`config check` validates it without contacting storage. `config migrate` reads
-format 1 as authenticated external S3 and writes a new format-2 file without
-changing the source or retargeting authority.
+`config check` validates it without contacting storage. Older formats are
+rejected and there is no migration command for this unreleased application.
 `jj-store init --local --state-dir` atomically creates a new private
 LocalTrusted installation, empty discovery catalog and managed RustFS volume
 with backup disabled; it refuses existing state and paths inside a checkout.
+`jj store init` and `jj store attach` accept the installation Unix socket as an
+alternative to an authenticated endpoint. Their format-2 connection records
+contain no token or credential identifier. Login and logout reject this mode.
+`jj-store repository register` obtains the lifetime storage lock, opens the
+requested native manifest and only then atomically updates the identity-bound
+discovery catalog; it cannot register against an authenticated deployment.
 `doctor --config PATH --repo-id ID` checks the configured repository through the
 in-process authenticated service. It does not publish operations.
 `operator init` persists a verifier for an environment-injected or OS-held

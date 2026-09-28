@@ -20,6 +20,17 @@ submodule data need full coverage beyond the reference SimpleBackend.
 | JST-JJ-004 | Physical checkout bookkeeping MUST stay client-local; logical workspace IDs MUST be distinct across unrelated clients and stale-workspace updates MUST preserve unsnapshotted edits. |
 | JST-JJ-005 | Indexes and prefix lookup MUST be bounded, rebuildable, and versioned by native profile; normal required methods MUST NOT contain silent stubs.                                      |
 
+## LocalTrusted native transport
+
+On supported Unix hosts, a LocalTrusted server exposes native RPC only through
+its installation-owned filesystem socket. The socket is mode 0600 and each
+accepted connection must report the owning UID before a stable
+installation-derived principal is bound. The transport accepts no bearer
+metadata in this mode. Repository creation, attachment, reads and publications
+still use the existing native factories and guarded service sessions; operation
+IDs never become client or installation identities. Authenticated TLS RPC keeps
+its existing bearer policy and wire contract.
+
 ## M0 extension qualification
 
 M0 probes register a request-scoped OpHeadsStore through StoreFactories,

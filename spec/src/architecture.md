@@ -11,12 +11,12 @@ repo is colocated for development; product storage has no Git carrier.
 
 ## Requirements
 
-| ID           | Requirement                                                                                                                                                                     |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| JST-ARCH-001 | The repository MUST provide a Rust workspace with independently owned native storage, publication, JJ integration, services, transports, adapters, and presentation boundaries. |
-| JST-ARCH-002 | Model, object storage, and WAL MUST NOT depend on UI, Tantivy, Git transport, SQL, Nostr, or agent runtimes; upstream JJ integration MUST stay behind owned adapters.           |
-| JST-ARCH-003 | First release MUST serve new native repositories locally and on an authenticated shared server using the same storage format, with no required Git, SQL, or relay authority.    |
-| JST-ARCH-004 | Browser and catalog source MUST enforce counted-line budgets, keep production independent of fixtures, and separate presentation from API and controller ownership.             |
+| ID           | Requirement                                                                                                                                                                                                                             |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| JST-ARCH-001 | The repository MUST provide a Rust workspace with independently owned native storage, publication, JJ integration, services, transports, adapters, and presentation boundaries.                                                         |
+| JST-ARCH-002 | Model, object storage, and WAL MUST NOT depend on UI, Tantivy, Git transport, SQL, Nostr, or agent runtimes; upstream JJ integration MUST stay behind owned adapters.                                                                   |
+| JST-ARCH-003 | First release MUST serve new native repositories through LocalTrusted loopback HTTP and owner-only Unix RPC backed by persistent embedded RustFS, with no required authentication, Git, SQL, relay, or external object-store authority. |
+| JST-ARCH-004 | Browser and catalog source MUST enforce counted-line budgets, keep production independent of fixtures, and separate presentation from API and controller ownership.                                                                     |
 
 Storage harness self-tests are part of normal validation. `pnpm test:rustfs`
 executes only isolated disposable Docker probes and writes a scratch report. An
@@ -113,13 +113,22 @@ files, RustFS construction, process exclusivity and the foreground listener.
 Both executable entry points live in the CLI crate to share presentation and OS
 credentials; server composition never depends on command presentation.
 
-Configuration format 2 keeps access policy, authoritative storage and backup
-projection as independent tagged settings. The storage runtime always returns
-the existing owned `S3Store` contract: external mode resolves explicit
-credential references, while embedded mode additionally owns installation state,
-the RustFS child, readiness, sentinel verification, shutdown and the lifetime
-filesystem lock. Format 1 normalizes only to authenticated external S3 and can
-be migrated only into a separate reviewable file.
+Configuration format 2 is the only accepted server configuration. It keeps
+access policy, authoritative storage and backup projection as independent tagged
+settings. The current application target uses LocalTrusted access and embedded
+storage; its runtime owns installation state, the RustFS child, readiness,
+sentinel verification, shutdown and the lifetime filesystem lock while returning
+the existing owned `S3Store` contract. Older formats are rejected. Authenticated
+shared serving, external authority, backup/restore and replication are deferred
+and are not first-release acceptance gates.
+
+The access policy is independent of transport. Authenticated HTTP and RPC keep
+repository bearer validation, while LocalTrusted HTTP and Unix RPC derive stable
+principals from the installation identity after transport admission. Both paths
+enter the same guarded service sessions, semantic policy, limits and manifest
+publication boundary. Bootstrap discovery reads only the private installation
+catalog; opening a listed repository still verifies native authority through the
+ordinary service APIs.
 
 The CLI owns resumable physical attachment journals and atomic metadata staging.
 They retain no credentials and are not authority; publication acknowledgements

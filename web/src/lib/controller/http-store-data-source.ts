@@ -27,7 +27,7 @@ export class HttpStoreDataSource implements StoreDataSource {
 
   constructor(
     repository: string,
-    token: string,
+    token: string | null,
     readonly queryClient: QueryClient,
     session: string,
     denied: () => void,

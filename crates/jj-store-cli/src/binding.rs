@@ -31,6 +31,8 @@ pub struct Connection {
     pub ca_certificate: Option<PathBuf>,
     pub max_blob_bytes: u64,
     pub timeout_seconds: u64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub unix_socket: Option<PathBuf>,
 }
 impl Connection {
     pub fn new(
@@ -48,14 +50,40 @@ impl Connection {
             ca_certificate,
             max_blob_bytes: 32 * 1024 * 1024,
             timeout_seconds: 30,
+            unix_socket: None,
+        };
+        value.validate()?;
+        Ok(value)
+    }
+    pub fn new_local(socket: PathBuf, repository: RepositoryId) -> AuthorityResult<Self> {
+        let value = Self {
+            format: 2,
+            profile: PROFILE.into(),
+            endpoint: "local".into(),
+            repository,
+            insecure_loopback: false,
+            ca_certificate: None,
+            max_blob_bytes: 32 * 1024 * 1024,
+            timeout_seconds: 30,
+            unix_socket: Some(socket),
         };
         value.validate()?;
         Ok(value)
     }
     pub fn validate(&self) -> AuthorityResult<()> {
-        if self.format != 1
+        let authenticated = self.format == 1
+            && self.unix_socket.is_none()
+            && self.endpoint == canonical_endpoint(&self.endpoint, self.insecure_loopback)?;
+        let local = self.format == 2
+            && self.endpoint == "local"
+            && !self.insecure_loopback
+            && self.ca_certificate.is_none()
+            && self
+                .unix_socket
+                .as_ref()
+                .is_some_and(|path| path.is_absolute());
+        if !(authenticated || local)
             || self.profile != PROFILE
-            || self.endpoint != canonical_endpoint(&self.endpoint, self.insecure_loopback)?
             || !(1..=3600).contains(&self.timeout_seconds)
             || self.max_blob_bytes == 0
             || self.max_blob_bytes
@@ -107,6 +135,9 @@ impl Connection {
         token: jj_store_service::auth::BearerToken,
     ) -> AuthorityResult<NativeClient> {
         self.validate()?;
+        if self.unix_socket.is_some() {
+            return Err("local trusted connections do not accept bearer credentials".into());
+        }
         let ca_certificate_pem = self
             .ca_certificate
             .as_ref()
@@ -126,6 +157,18 @@ impl Connection {
         .await?)
     }
     pub async fn connect(&self) -> AuthorityResult<NativeClient> {
+        if let Some(socket) = &self.unix_socket {
+            return Ok(NativeClient::connect_unix(
+                socket,
+                self.repository,
+                Options {
+                    object_bytes: self.max_blob_bytes + jj_store_model::envelope::HEADER_LEN as u64,
+                    timeout: Duration::from_secs(self.timeout_seconds),
+                    ..Options::default()
+                },
+            )
+            .await?);
+        }
         self.connect_with(credentials::resolve(self)?).await
     }
     pub async fn stores(&self) -> AuthorityResult<NativeStores> {

@@ -149,7 +149,8 @@ impl Document {
         let mutation = path.contains("/mutations");
         let mut operation = json!({"operationId":id, "tags":["reads"],
             "description":"Requires current repository read permission. Unknown query fields are rejected. Source strings are untrusted data. Reads never reconcile or publish native operations.",
-            "parameters":parameters, "responses":responses, "x-jj-store-query-schema":query});
+            "parameters":parameters, "responses":responses, "x-jj-store-query-schema":query,
+            "security":[{"repositoryBearer":[]},{}]});
         if mutation {
             operation["tags"] = json!(["mutations"]);
             operation["description"] = json!(
@@ -196,6 +197,22 @@ impl Document {
             "duplicate route"
         );
     }
+    pub(crate) fn public_endpoint<Q: JsonSchema, R: JsonSchema>(
+        &mut self,
+        method: &str,
+        path: &str,
+        id: &str,
+        reply: Reply,
+    ) {
+        self.endpoint::<Q, R>(method, path, id, reply);
+        let item = self.paths.get_mut(&format!("/v1{path}")).unwrap();
+        for operation in item.as_object_mut().unwrap().values_mut() {
+            operation["security"] = json!([{}]);
+            operation["description"] = json!(
+                "Transport-protected deployment bootstrap. Exact authority, protocol-version, Origin and Fetch Metadata checks apply before this response. LocalTrusted repository entries are installation-owned discovery metadata, never repository authority. Authenticated deployments expose no repository catalog."
+            );
+        }
+    }
     pub(crate) fn body<T: JsonSchema>(&mut self, path: &str, method: &str) {
         let operation = self.paths.get_mut(path).unwrap().get_mut(method).unwrap();
         operation["requestBody"] = json!({"required":true,
@@ -224,9 +241,10 @@ impl Document {
         );
         json!({"openapi":"3.1.0", "jsonSchemaDialect":"https://json-schema.org/draft/2020-12/schema",
             "info":{"title":"jj-store application API", "version":"1.0.0", "license":{"name":"Apache-2.0","identifier":"Apache-2.0"},
-                "description":"Native JJ read and typed mutation contracts. Same-origin Bearer authentication; tokens never appear in paths, query strings or cookies. Shared deployments require TLS. Numeric JSON values retain Rust widths: clients must handle precision beyond JavaScript safe integers explicitly."},
+                "description":"Native JJ read and typed mutation contracts. Access is deployment-dependent: authenticated deployments require repository Bearer credentials, while LocalTrusted installations admit only protected literal-loopback requests and bind an installation principal. Tokens never appear in paths, query strings or cookies. Shared deployments require TLS. Numeric JSON values retain Rust widths: clients must handle precision beyond JavaScript safe integers explicitly."},
             "servers":[{"url":"/"}], "tags":[{"name":"reads"},{"name":"mutations"},{"name":"search"}],
-            "security":[{"repositoryBearer":[]}],
+            "security":[],
+            "x-jj-store-access-policies":["authenticated","local_trusted"],
             "paths":self.paths,
             "components":{"securitySchemes":{"repositoryBearer":{"type":"http","scheme":"bearer","description":"Revocable repository-scoped token; read routes require read permission, mutation routes require write permission."}},
                 "schemas":self.output.take_definitions(true)}})

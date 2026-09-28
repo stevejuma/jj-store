@@ -15,11 +15,19 @@ export function productionStoreView(
 ): StoreControllerState {
   const repository = options.repository;
   return {
+    accessMode: data.accessMode,
+    storageReady: data.storageReady,
+    backups: data.backups,
     route,
     canNavigateBack: options.canBack,
     canNavigateForward: options.canForward,
     repositories: data.repositories,
-    repository: { id: repository, name: repository },
+    repository: {
+      id: repository,
+      name:
+        data.repositories.find((candidate) => candidate.id === repository)
+          ?.name ?? repository,
+    },
     operationHeads: data.heads,
     comparisonParents: data.comparisonParents,
     conflictCount: data.conflictCount,
@@ -57,13 +65,30 @@ export function productionStoreView(
     mutation: data.mutation,
     authenticated: options.connected && data.status.connection === "connected",
     member: {
-      id: repository || "disconnected",
-      name: options.connected ? "Repository connected" : "Disconnected",
-      handle: options.connected ? repository.slice(0, 12) : "Connect",
-      initials: options.connected ? "JJ" : "—",
+      id:
+        data.accessMode === "local_trusted"
+          ? "local"
+          : repository || "disconnected",
+      name: options.connected
+        ? data.accessMode === "local_trusted"
+          ? "Local"
+          : "Repository connected"
+        : "Disconnected",
+      handle: options.connected
+        ? data.accessMode === "local_trusted"
+          ? "Local installation"
+          : repository.slice(0, 12)
+        : "Connect",
+      initials: options.connected
+        ? data.accessMode === "local_trusted"
+          ? "L"
+          : "JJ"
+        : "—",
       presence: options.connected ? "online" : "offline",
       status: options.connected
-        ? `${data.status.live} · token held in memory`
+        ? data.accessMode === "local_trusted"
+          ? `${data.status.live} · trusted local access`
+          : `${data.status.live} · token held in memory`
         : "No repository session",
     },
     status: data.status,

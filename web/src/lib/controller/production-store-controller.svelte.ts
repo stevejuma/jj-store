@@ -19,6 +19,11 @@ import { createProductionStoreSearch } from "./production-store-search-controlle
 import { createProductionStoreMutations } from "./production-store-mutations.js";
 import { createProductionStoreConflicts } from "./production-store-conflicts.js";
 import { createProductionStoreIndex } from "./production-store-index.js";
+import {
+  createProductionRevisionSelector,
+  reportProductionStoreError,
+  startProductionStoreLifecycle,
+} from "./production-store-lifecycle.svelte.js";
 
 export function createProductionStoreController(
   options: { fetcher?: typeof fetch; now?: () => number } = {},
@@ -26,9 +31,10 @@ export function createProductionStoreController(
   const history = createStoreRouteHistory();
   const data = createProductionStoreState();
   let source: StoreDataSource | null = null;
-  let session = 0,
-    version = 0,
-    feed = new AbortController();
+  let session = 0;
+  let version = 0,
+    feed = new AbortController(),
+    lifecycle = new AbortController();
   const operation = () => history.route.snapshotOperationId;
   const activeSource = () => {
     if (!source) throw new ApiError("not_connected");
@@ -36,12 +42,6 @@ export function createProductionStoreController(
   };
   const current = (ticket: number, active: StoreDataSource) =>
     ticket === version && active === source;
-  function report(cause: unknown) {
-    if (cause instanceof DOMException && cause.name === "AbortError") return;
-    if (cause instanceof ApiError && cause.code === "index_rebuild_required")
-      data.neededIndex = cause.snapshot ?? null;
-    data.status.error = storeErrorMessage(cause);
-  }
   const reader = createProductionStoreReader({
     data,
     history,
@@ -49,7 +49,7 @@ export function createProductionStoreController(
     operation,
     version: () => version,
     current,
-    report,
+    report: (cause) => reportProductionStoreError(data, cause),
   });
   if (history.error)
     Object.assign(data.status, { navigation: "failed", error: history.error });
@@ -74,7 +74,7 @@ export function createProductionStoreController(
     feed.abort();
     source?.close();
     source = null;
-    Object.assign(data, { heads: [], repositories: [], head: null });
+    Object.assign(data, { heads: [], head: null });
     mutations.configure([]);
     mutations.reset();
     data.conflictResolutionActions = [];
@@ -87,7 +87,7 @@ export function createProductionStoreController(
       error: message,
     });
   }
-  async function connect(repository: string, token: string) {
+  async function connect(repository: string, token: string | null) {
     disconnect();
     data.status.connection = "connecting";
     const ticket = ++version;
@@ -100,7 +100,9 @@ export function createProductionStoreController(
       () => {
         if (source === active)
           disconnect(
-            "Access expired or was revoked. Connect with a current token.",
+            data.accessMode === "local_trusted"
+              ? "Trusted local access was rejected. Check the server and repository catalog."
+              : "Access expired or was revoked. Connect with a current token.",
             true,
           );
       },
@@ -117,7 +119,10 @@ export function createProductionStoreController(
       data.conflictResolutionActions = capabilities.conflict_resolution_actions;
       data.conflictUploadBytes = capabilities.conflict_upload_bytes;
       const selected = data.heads.length === 1 ? data.heads[0]! : null;
-      data.repositories = [{ id: active.repository, name: active.repository }];
+      if (data.accessMode === "authenticated")
+        data.repositories = [
+          { id: active.repository, name: active.repository },
+        ];
       data.searchAvailable = capabilities.search;
       history.connect(active.repository, selected);
       data.status.connection = "connected";
@@ -186,32 +191,17 @@ export function createProductionStoreController(
     current,
     restore: reader.restorePage,
   });
-  async function selectRevision(id: string | null) {
-    const page = history.route.page;
-    history.push({
-      ...history.route,
-      inspectedOperationId: page === "oplog" ? id : null,
-      commitId: page === "oplog" ? null : id,
-      changeId:
-        data.graph.revisions.find((revision) => revision.eventId === id)
-          ?.changeId ?? null,
-      path: null,
-    });
-    Object.assign(data, {
-      detail: undefined,
-      blob: undefined,
-      inspectionContinuation: null,
-    });
-    if (!id) return;
-    if (page === "oplog") await reader.loadOperation(id);
-    else if (page === "files") await reader.loadFiles(id);
-    else await reader.loadCommit(id);
-  }
+  const selectRevision = createProductionRevisionSelector(
+    data,
+    history,
+    reader,
+  );
 
   const actions: StoreController["actions"] = {
     connect: ({ repository, token }) => connect(repository, token),
     disconnect: () => disconnect(),
     destroy() {
+      lifecycle.abort();
       disconnect();
       history.destroy();
     },
@@ -243,7 +233,14 @@ export function createProductionStoreController(
     setFileViewMode: reader.setFileViewMode,
     toggleDirectory: reader.toggleDirectory,
     async openRepository(id) {
-      if (id !== source?.repository) return;
+      if (id !== source?.repository) {
+        if (
+          data.accessMode === "local_trusted" &&
+          data.repositories.some((repository) => repository.id === id)
+        )
+          await connect(id, null);
+        return;
+      }
       history.page("files");
       await restoreRoute();
     },
@@ -281,15 +278,15 @@ export function createProductionStoreController(
     signOut: () => disconnect(),
   };
 
-  history.onExternalRoute((result) => {
-    if (result.kind === "invalid") {
-      data.status.navigation = "failed";
-      data.status.error = result.message;
-    } else if (result.kind === "route" && source) {
-      if (result.route.repository !== source.repository)
-        disconnect("Reconnect to open the requested repository.");
-      else void restoreRoute();
-    }
+  startProductionStoreLifecycle({
+    data,
+    history,
+    source: () => source,
+    connect,
+    disconnect,
+    restore: restoreRoute,
+    fetcher: options.fetcher,
+    signal: lifecycle.signal,
   });
 
   return {

@@ -1,6 +1,6 @@
 use jj_store_model::{PrincipalId, RepositoryId};
 use jj_store_server::{
-    config::{Access, Config, EXAMPLE, FORMAT_1_EXAMPLE, Storage},
+    config::{Config, EXAMPLE},
     policy::{PolicyFile, exclusive_lock, outside_checkout},
 };
 use jj_store_service::{
@@ -41,31 +41,13 @@ fn configuration_is_bounded_strict_and_resolves_paths_without_creating_state() {
 }
 
 #[test]
-fn format_one_remains_authenticated_external_s3_and_migrates_without_retargeting_authority() {
+fn older_configuration_formats_are_explicitly_rejected() {
     let root = tempfile::tempdir().unwrap();
-    let legacy = load(root.path(), FORMAT_1_EXAMPLE).unwrap();
-    assert_eq!(legacy.format, 1);
-    assert!(matches!(legacy.access, Access::Authenticated));
-    let Storage::ExternalS3 {
-        endpoint, bucket, ..
-    } = &legacy.storage
-    else {
-        panic!("format one must remain external S3")
-    };
-    assert_eq!(endpoint, "http://127.0.0.1:9000/");
-    assert_eq!(bucket, "jj-store");
-    assert!(legacy.backup.is_empty());
-
-    let source = root.path().join("legacy.toml");
-    let destination = root.path().join("migrated.toml");
-    fs::write(&source, FORMAT_1_EXAMPLE).unwrap();
-    Config::migrate(&source, &destination).unwrap();
-    assert_eq!(fs::read_to_string(&source).unwrap(), FORMAT_1_EXAMPLE);
-    let migrated = Config::load(&destination).unwrap();
-    assert_eq!(migrated.format, 2);
-    assert!(matches!(migrated.access, Access::Authenticated));
-    assert!(matches!(migrated.storage, Storage::ExternalS3 { .. }));
-    assert!(Config::migrate(&source, &destination).is_err());
+    let error = load(root.path(), "format = 1\n").unwrap_err().to_string();
+    assert!(
+        error.contains("unsupported configuration format"),
+        "unexpected error: {error}"
+    );
 }
 
 #[test]

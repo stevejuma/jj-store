@@ -226,6 +226,9 @@ export function createInMemoryStoreController(
   return {
     get state(): StoreControllerState {
       return {
+        accessMode: "authenticated",
+        storageReady: true,
+        backups: [],
         route,
         canNavigateBack: index > 0,
         canNavigateForward: index < history.length - 1,

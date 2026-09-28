@@ -284,6 +284,7 @@ pub async fn diagnose(
         let mut response = client
             .get(url)
             .header(reqwest::header::AUTHORIZATION, header)
+            .header("x-jj-store-protocol", "1")
             .send()
             .await
             .map_err(|_| "unavailable")?;

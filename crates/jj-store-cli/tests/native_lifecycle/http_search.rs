@@ -54,6 +54,8 @@ async fn get(router: &Router, token: &BearerToken, path: &str) -> (StatusCode, V
         .oneshot(
             HttpRequest::builder()
                 .uri(format!("/v1/repos/{REPO}/{path}"))
+                .header("host", "127.0.0.1:7443")
+                .header("x-jj-store-protocol", "1")
                 .header(
                     "authorization",
                     format!("Bearer {}", token.expose().as_str()),
@@ -171,6 +173,8 @@ async fn http_search_revocation_and_repository_isolation_precede_query_details()
                     .oneshot(
                         HttpRequest::builder()
                             .uri(format!("/v1/repos/{REPO}/{path}"))
+                            .header("host", "127.0.0.1:7443")
+                            .header("x-jj-store-protocol", "1")
                             .body(Body::empty())
                             .unwrap(),
                     )
@@ -185,6 +189,8 @@ async fn http_search_revocation_and_repository_isolation_precede_query_details()
                                 "/v1/repos/{}/{path}",
                                 m::RepositoryId::new([99; 16])
                             ))
+                            .header("host", "127.0.0.1:7443")
+                            .header("x-jj-store-protocol", "1")
                             .header(
                                 "authorization",
                                 format!("Bearer {}", f.f.reader.expose().as_str()),
@@ -252,6 +258,8 @@ async fn http_search_reports_degradation_and_head_runs_without_publication() {
                     HttpRequest::builder()
                         .method("HEAD")
                         .uri(format!("/v1/repos/{REPO}/search?q=metafixture"))
+                        .header("host", "127.0.0.1:7443")
+                        .header("x-jj-store-protocol", "1")
                         .header(
                             "authorization",
                             format!("Bearer {}", f.f.reader.expose().as_str()),

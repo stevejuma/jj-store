@@ -74,3 +74,59 @@
     ).toHaveValue("12".repeat(16));
   }}
 />
+
+<Story
+  name="Bootstrapping"
+  args={{
+    status: { ...disconnected, connection: "connecting" },
+    accessMode: "bootstrapping",
+    onConnect: fn(),
+  }}
+  play={async ({ canvasElement }) => {
+    await expect(
+      within(canvasElement).getByRole("status", {
+        name: /loading installation status/i,
+      }),
+    ).toBeVisible();
+  }}
+/>
+
+<Story
+  name="Local repositories"
+  args={{
+    status: { ...disconnected, repositories: "ready" },
+    accessMode: "local_trusted",
+    storageReady: true,
+    repositories: [
+      { id: "12".repeat(16), name: "Notes" },
+      { id: "34".repeat(16), name: "Design system" },
+    ],
+    onConnect: fn(),
+  }}
+  play={async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole("button", { name: /Notes/ }));
+    await waitFor(() =>
+      expect(args.onConnect).toHaveBeenCalledWith({
+        repository: "12".repeat(16),
+        token: null,
+      }),
+    );
+  }}
+/>
+
+<Story
+  name="Empty local catalog"
+  args={{
+    status: { ...disconnected, repositories: "empty" },
+    accessMode: "local_trusted",
+    storageReady: true,
+    repositories: [],
+    onConnect: fn(),
+  }}
+  play={async ({ canvasElement }) => {
+    await expect(
+      within(canvasElement).getByText("No registered repositories"),
+    ).toBeVisible();
+  }}
+/>

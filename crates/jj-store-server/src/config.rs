@@ -3,78 +3,12 @@ use jj_store_jj::policy::Protection;
 use jj_store_model as m;
 use jj_store_object::s3::{self, S3Store};
 use jj_store_service::{administration::RepositoryHost, auth::SystemClock, native::SessionLimits};
-use serde::Deserialize;
-use std::{
-    fs::{self, File, OpenOptions},
-    io::Write as _,
-    path::{Path, PathBuf},
-    sync::Arc,
-    time::Duration,
-};
+use std::{path::Path, sync::Arc, time::Duration};
 
 mod types;
 pub use types::*;
 
-pub const FORMAT_1_EXAMPLE: &str = include_str!("config/format-1-example.toml");
 pub const EXAMPLE: &str = include_str!("config/format-2-example.toml");
-
-#[derive(Deserialize)]
-#[serde(deny_unknown_fields)]
-struct FormatOne {
-    format: u32,
-    bind: std::net::SocketAddr,
-    public_url: String,
-    #[serde(default)]
-    insecure_loopback: bool,
-    state_dir: PathBuf,
-    operator_policy: PathBuf,
-    tls: Option<Tls>,
-    web_root: Option<PathBuf>,
-    storage: FormatOneStorage,
-    #[serde(default)]
-    limits: Limits,
-    #[serde(default)]
-    protection: Protected,
-    #[serde(default)]
-    search: Vec<crate::search::Repository>,
-}
-
-#[derive(Deserialize)]
-#[serde(deny_unknown_fields)]
-struct FormatOneStorage {
-    endpoint: String,
-    bucket: String,
-    region: String,
-    #[serde(default)]
-    insecure_loopback: bool,
-}
-
-impl From<FormatOne> for Config {
-    fn from(value: FormatOne) -> Self {
-        Self {
-            format: value.format,
-            bind: value.bind,
-            public_url: value.public_url,
-            insecure_loopback: value.insecure_loopback,
-            state_dir: value.state_dir,
-            operator_policy: value.operator_policy,
-            tls: value.tls,
-            web_root: value.web_root,
-            access: Access::Authenticated,
-            storage: Storage::ExternalS3 {
-                endpoint: value.storage.endpoint,
-                bucket: value.storage.bucket,
-                region: value.storage.region,
-                insecure_loopback: value.storage.insecure_loopback,
-                credentials: CredentialReference::jj_store_s3_environment(),
-            },
-            backup: Vec::new(),
-            limits: value.limits,
-            protection: value.protection,
-            search: value.search,
-        }
-    }
-}
 
 impl Config {
     pub fn load(path: &Path) -> Result<Self> {
@@ -87,12 +21,11 @@ impl Config {
             .get("format")
             .and_then(toml::Value::as_integer)
             .ok_or(Error::Config("configuration format"))?;
-        let mut config = match format {
-            1 => toml::from_str::<FormatOne>(text).map(Config::from),
-            2 => toml::from_str::<Config>(text),
-            _ => return Err(Error::Config("unsupported configuration format")),
+        if format != 2 {
+            return Err(Error::Config("unsupported configuration format"));
         }
-        .map_err(|_| Error::Config("malformed or unknown TOML configuration field"))?;
+        let mut config = toml::from_str::<Config>(text)
+            .map_err(|_| Error::Config("malformed or unknown TOML configuration field"))?;
         let base = path
             .canonicalize()?
             .parent()
@@ -101,19 +34,6 @@ impl Config {
         config.resolve_paths(&base)?;
         config.validate()?;
         Ok(config)
-    }
-
-    pub fn migrate(source: &Path, destination: &Path) -> Result<()> {
-        if source == destination || destination.exists() {
-            return Err(Error::Config(
-                "migration destination must be a new separate file",
-            ));
-        }
-        let mut config = Self::load(source)?;
-        config.format = 2;
-        let text = toml::to_string_pretty(&config)
-            .map_err(|_| Error::Config("configuration serialization"))?;
-        persist_new_private(destination, text.as_bytes())
     }
 
     fn resolve_paths(&mut self, base: &Path) -> Result<()> {
@@ -127,10 +47,13 @@ impl Config {
         if let Access::LocalTrusted {
             installation,
             catalog,
+            rpc_socket,
+            ..
         } = &mut self.access
         {
             *installation = policy::outside_checkout(&base.join(&*installation))?;
             *catalog = policy::outside_checkout(&base.join(&*catalog))?;
+            *rpc_socket = policy::outside_checkout(&base.join(&*rpc_socket))?;
         }
         if let Storage::EmbeddedRustfs {
             runtime_executable,
@@ -217,13 +140,6 @@ impl Config {
         if names.len() != self.backup.len() || self.backup.len() > 16 {
             return Err(Error::Config("backup target bounds or duplicate name"));
         }
-        if self.format == 1
-            && (!matches!(self.access, Access::Authenticated)
-                || !matches!(self.storage, Storage::ExternalS3 { .. })
-                || !self.backup.is_empty())
-        {
-            return Err(Error::Config("format one deployment semantics"));
-        }
         Ok(())
     }
 
@@ -237,19 +153,31 @@ impl Config {
         if let Access::LocalTrusted {
             installation,
             catalog,
+            rpc_socket,
+            permission,
         } = &self.access
         {
-            for path in [installation, catalog] {
+            for path in [installation, catalog, rpc_socket] {
                 if !path.is_absolute() {
                     return Err(Error::Config("local access paths must be absolute"));
                 }
                 policy::outside_checkout(path)?;
             }
+            if !self.bind.ip().is_loopback()
+                || !matches!(
+                    permission,
+                    jj_store_service::auth::Permission::Read
+                        | jj_store_service::auth::Permission::Write
+                        | jj_store_service::auth::Permission::Admin
+                )
+            {
+                return Err(Error::Config("local access transport or permission"));
+            }
         }
         if let Some(tls) = &self.tls {
             policy::outside_checkout(&tls.private_key)?;
         }
-        if !(1..=2).contains(&self.format)
+        if self.format != 2
             || !(1..=256).contains(&self.limits.concurrent_requests)
             || !(1..=300).contains(&self.limits.request_seconds)
             || !(1..=2 * 1024 * 1024 * 1024).contains(&self.limits.max_blob_bytes)
@@ -422,26 +350,5 @@ fn validate_credentials(reference: &CredentialReference) -> Result<()> {
             }
         }
     }
-    Ok(())
-}
-
-fn persist_new_private(path: &Path, bytes: &[u8]) -> Result<()> {
-    let path = policy::outside_checkout(path)?;
-    let parent = path
-        .parent()
-        .ok_or(Error::Config("configuration destination"))?;
-    fs::create_dir_all(parent)?;
-    let mut options = OpenOptions::new();
-    options.write(true).create_new(true);
-    #[cfg(unix)]
-    {
-        use std::os::unix::fs::OpenOptionsExt as _;
-        options.mode(0o600);
-    }
-    let mut file = options.open(&path)?;
-    file.write_all(bytes)?;
-    file.sync_all()?;
-    #[cfg(unix)]
-    File::open(parent)?.sync_all()?;
     Ok(())
 }

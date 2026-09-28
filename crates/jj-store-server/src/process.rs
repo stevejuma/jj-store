@@ -1,10 +1,14 @@
 use crate::{
     Error, Result,
-    config::Config,
+    config::{Access, Config},
+    installation::{Catalog, Identity},
     policy::{self, PolicyFile},
     storage::AuthoritativeStorage,
 };
-use jj_store_http::{Config as HttpConfig, HttpApi};
+use jj_store_http::{
+    Access as HttpAccess, BackupStatus, BackupTransfer, BootstrapRepository, Config as HttpConfig,
+    HttpApi,
+};
 use jj_store_model::RepositoryId;
 use jj_store_rpc::server::{Limits, NativeRpc};
 use jj_store_service::auth::BearerToken;
@@ -18,7 +22,7 @@ use std::{
 use tonic::{service::Routes, transport::Server};
 
 pub struct PreparedServer {
-    rpc: NativeRpc,
+    rpc: PreparedRpc,
     http: HttpApi,
     browser: Option<jj_store_http::assets::BrowserAssets>,
     listener: tokio::net::TcpListener,
@@ -28,6 +32,21 @@ pub struct PreparedServer {
     search: crate::search::PreparedSearch,
     storage: AuthoritativeStorage,
     _state_lock: Option<File>,
+}
+enum PreparedRpc {
+    Shared(NativeRpc),
+    Local(LocalRpc),
+}
+struct LocalRpc {
+    service: NativeRpc,
+    listener: tokio::net::UnixListener,
+    socket: SocketGuard,
+}
+struct SocketGuard(std::path::PathBuf);
+impl Drop for SocketGuard {
+    fn drop(&mut self) {
+        let _ = fs::remove_file(&self.0);
+    }
 }
 impl PreparedServer {
     pub async fn prepare(config: &Config, require_loopback: bool) -> Result<Self> {
@@ -55,16 +74,56 @@ impl PreparedServer {
         };
         let storage = AuthoritativeStorage::start(config).await?;
         let host = config.host(storage.store())?;
-        let rpc = NativeRpc::hosted(
-            host.clone(),
-            Limits {
-                concurrent: config.limits.concurrent_requests,
-                timeout: Duration::from_secs(config.limits.request_seconds),
-                object_bytes: config.limits.max_blob_bytes
-                    + jj_store_model::envelope::HEADER_LEN as u64,
-            },
-        )
-        .map_err(|_| Error::Config("RPC limits"))?;
+        let rpc_limits = Limits {
+            concurrent: config.limits.concurrent_requests,
+            timeout: Duration::from_secs(config.limits.request_seconds),
+            object_bytes: config.limits.max_blob_bytes
+                + jj_store_model::envelope::HEADER_LEN as u64,
+        };
+        let rpc = match &config.access {
+            Access::Authenticated => PreparedRpc::Shared(
+                NativeRpc::hosted(host.clone(), rpc_limits)
+                    .map_err(|_| Error::Config("RPC limits"))?,
+            ),
+            Access::LocalTrusted {
+                installation,
+                rpc_socket,
+                permission,
+                ..
+            } => {
+                #[cfg(unix)]
+                {
+                    use std::os::unix::fs::{
+                        FileTypeExt as _, MetadataExt as _, PermissionsExt as _,
+                    };
+                    let owner_uid = fs::metadata(&state)?.uid();
+                    let identity = Identity::load(installation)?;
+                    if let Ok(metadata) = fs::symlink_metadata(rpc_socket) {
+                        if !metadata.file_type().is_socket() {
+                            return Err(Error::Config("local RPC path must be a Unix socket"));
+                        }
+                        fs::remove_file(rpc_socket)?;
+                    }
+                    let listener = tokio::net::UnixListener::bind(rpc_socket)?;
+                    fs::set_permissions(rpc_socket, fs::Permissions::from_mode(0o600))?;
+                    let principal = identity.principal(format!("unix-uid:{owner_uid}").as_bytes());
+                    PreparedRpc::Local(LocalRpc {
+                        service: NativeRpc::hosted_local_trusted(
+                            host.clone(),
+                            rpc_limits,
+                            principal,
+                            *permission,
+                            owner_uid,
+                        )
+                        .map_err(|_| Error::Config("local RPC access"))?,
+                        listener,
+                        socket: SocketGuard(rpc_socket.clone()),
+                    })
+                }
+                #[cfg(not(unix))]
+                return Err(Error::Config("local trusted RPC requires Unix"));
+            }
+        };
         let timeout = Duration::from_secs(config.limits.request_seconds);
         let (search, indexes) = crate::search::PreparedSearch::new(
             &host,
@@ -73,6 +132,46 @@ impl PreparedServer {
             &config.limits,
             crate::search::environment,
         )?;
+        let http_access = match &config.access {
+            Access::Authenticated => HttpAccess::Authenticated,
+            Access::LocalTrusted {
+                installation,
+                catalog,
+                permission,
+                ..
+            } => {
+                let identity = Identity::load(installation)?;
+                let repositories = Catalog::load(catalog, &identity)?
+                    .repositories
+                    .into_iter()
+                    .map(|entry| BootstrapRepository {
+                        id: entry.id,
+                        name: entry.name,
+                    })
+                    .collect();
+                HttpAccess::LocalTrusted {
+                    principal: identity.principal(b"loopback-http"),
+                    permission: *permission,
+                    repositories,
+                }
+            }
+        };
+        let backups = config
+            .backup
+            .iter()
+            .map(|target| BackupStatus {
+                target: target.name().to_owned(),
+                driver: "wal-copy".into(),
+                transfer: BackupTransfer {
+                    state: "idle".into(),
+                    completed_objects: 0,
+                    total_objects: None,
+                    completed_bytes: 0,
+                    total_bytes: None,
+                },
+                last_verified_restore_point: None,
+            })
+            .collect();
         let http = HttpApi::with_search(
             host,
             state.join("native-reads"),
@@ -81,6 +180,9 @@ impl PreparedServer {
                     .map_err(|_| Error::Config("public URL"))?
                     .origin()
                     .ascii_serialization(),
+                access: http_access,
+                storage_ready: true,
+                backups,
                 concurrency: config.limits.concurrent_requests.min(64),
                 timeout,
                 read: jj_store_service::reads::ReadLimits {
@@ -131,10 +233,16 @@ impl PreparedServer {
     pub async fn run(self, shutdown: impl Future<Output = ()> + Send + 'static) -> Result<()> {
         let search = self.search.start();
         let (tx, rx) = tokio::sync::oneshot::channel();
-        let mut router = Routes::new(self.rpc.service())
-            .into_axum_router()
-            .merge(self.http.router())
-            .fallback(unknown_route);
+        let (mut router, local_rpc) = match self.rpc {
+            PreparedRpc::Shared(rpc) => (
+                Routes::new(rpc.service())
+                    .into_axum_router()
+                    .merge(self.http.router())
+                    .fallback(unknown_route),
+                None,
+            ),
+            PreparedRpc::Local(rpc) => (self.http.router().fallback(unknown_route), Some(rpc)),
+        };
         if let Some(browser) = self.browser {
             router = router.merge(browser.router());
         }
@@ -151,19 +259,74 @@ impl PreparedServer {
             .serve_with_incoming_shutdown(incoming, async {
                 let _ = rx.await;
             });
-        tokio::pin!(serve);
-        let result = tokio::select! {
-            result=&mut serve=>result.map_err(|_|Error::Service("native listener failed")),
-            _=shutdown=>{
-                let _=tx.send(());
-                tokio::time::timeout(Duration::from_secs(5),serve).await
-                    .map_err(|_|Error::Service("graceful shutdown exceeded five seconds; in-flight outcomes may be unknown"))
-                    .and_then(|result|result.map_err(|_|Error::Service("native listener shutdown failed")))
+        let result = if let Some(local_rpc) = local_rpc {
+            run_with_local_rpc(serve, local_rpc, shutdown, tx).await
+        } else {
+            tokio::pin!(serve);
+            tokio::select! {
+                result=&mut serve=>result.map_err(|_|Error::Service("native listener failed")),
+                _=shutdown=>{
+                    let _=tx.send(());
+                    tokio::time::timeout(Duration::from_secs(5),serve).await
+                        .map_err(|_|Error::Service("graceful shutdown exceeded five seconds; in-flight outcomes may be unknown"))
+                        .and_then(|result|result.map_err(|_|Error::Service("native listener shutdown failed")))
+                }
             }
         };
         let stopped = search.shutdown().await;
         let storage = self.storage.shutdown().await;
         result.and(stopped).and(storage)
+    }
+}
+
+async fn run_with_local_rpc<H, S>(
+    http: H,
+    local: LocalRpc,
+    shutdown: S,
+    stop_http: tokio::sync::oneshot::Sender<()>,
+) -> Result<()>
+where
+    H: Future<Output = std::result::Result<(), tonic::transport::Error>> + Send,
+    S: Future<Output = ()> + Send,
+{
+    let LocalRpc {
+        service,
+        listener,
+        socket: _socket,
+    } = local;
+    let (stop_rpc, stopped_rpc) = tokio::sync::oneshot::channel();
+    let rpc = Server::builder()
+        .add_service(service.service())
+        .serve_with_incoming_shutdown(
+            tokio_stream::wrappers::UnixListenerStream::new(listener),
+            async {
+                let _ = stopped_rpc.await;
+            },
+        );
+    tokio::pin!(http);
+    tokio::pin!(rpc);
+    let finish = |result: std::result::Result<(), tonic::transport::Error>| {
+        result.map_err(|_| Error::Service("native listener failed"))
+    };
+    tokio::select! {
+        result = &mut http => {
+            let _ = stop_rpc.send(());
+            let _ = tokio::time::timeout(Duration::from_secs(5), &mut rpc).await;
+            finish(result)
+        },
+        result = &mut rpc => {
+            let _ = stop_http.send(());
+            let _ = tokio::time::timeout(Duration::from_secs(5), &mut http).await;
+            finish(result)
+        },
+        _ = shutdown => {
+            let _ = stop_http.send(());
+            let _ = stop_rpc.send(());
+            tokio::time::timeout(Duration::from_secs(5), async {
+                finish((&mut http).await)?;
+                finish((&mut rpc).await)
+            }).await.map_err(|_| Error::Service("graceful shutdown exceeded five seconds; in-flight outcomes may be unknown"))?
+        },
     }
 }
 /// Install handlers synchronously, before the caller announces readiness.

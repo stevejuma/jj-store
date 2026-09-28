@@ -1,7 +1,9 @@
 //! Installation-owned state for local access and managed RustFS authority.
 use crate::{Error, Result, config, policy};
+use jj_store_model::RepositoryId;
 use jj_store_service::auth::{Scope, TokenPolicy};
 use serde::{Deserialize, Serialize, de::DeserializeOwned};
+use sha2::{Digest as _, Sha256};
 use std::{
     fs::{self, File},
     io::Write as _,
@@ -14,12 +16,39 @@ pub const CREDENTIALS_FILE: &str = "rustfs-credentials.json";
 pub const OWNERSHIP_FILE: &str = "storage-owner.json";
 pub const VOLUME_DIRECTORY: &str = "rustfs";
 pub const CONFIG_FILE: &str = "server.toml";
+pub const RPC_SOCKET_FILE: &str = "native.sock";
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct Identity {
     pub version: u32,
     pub installation: String,
+}
+
+impl Identity {
+    pub fn load(path: &Path) -> Result<Self> {
+        let identity: Self = read_private_json(path)?;
+        if identity.version != 1
+            || identity.installation.len() != 32
+            || identity
+                .installation
+                .bytes()
+                .any(|byte| !byte.is_ascii_digit() && !(b'a'..=b'f').contains(&byte))
+        {
+            return Err(Error::Config("invalid local installation identity"));
+        }
+        Ok(identity)
+    }
+
+    pub fn principal(&self, peer: &[u8]) -> jj_store_model::PrincipalId {
+        let mut digest = Sha256::new_with_prefix(b"jj-store/local-principal/v1");
+        digest.update(self.installation.as_bytes());
+        digest.update((peer.len() as u64).to_be_bytes());
+        digest.update(peer);
+        let mut id = [0; 16];
+        id.copy_from_slice(&digest.finalize()[..16]);
+        jj_store_model::PrincipalId::new(id)
+    }
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -41,11 +70,82 @@ pub(crate) struct Ownership {
     pub sentinel_installed: bool,
 }
 
-#[derive(Serialize)]
-struct Catalog<'a> {
-    version: u32,
-    installation: &'a str,
-    repositories: [(); 0],
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct CatalogEntry {
+    pub id: RepositoryId,
+    pub name: String,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct Catalog {
+    pub version: u32,
+    pub installation: String,
+    pub repositories: Vec<CatalogEntry>,
+}
+
+impl Catalog {
+    pub fn empty(identity: &Identity) -> Self {
+        Self {
+            version: 1,
+            installation: identity.installation.clone(),
+            repositories: Vec::new(),
+        }
+    }
+
+    pub fn load(path: &Path, identity: &Identity) -> Result<Self> {
+        let catalog: Self = read_private_json(path)?;
+        catalog.validate(identity)?;
+        Ok(catalog)
+    }
+
+    fn validate(&self, identity: &Identity) -> Result<()> {
+        if self.version != 1
+            || self.installation != identity.installation
+            || self.repositories.len() > 4096
+            || self.repositories.iter().any(|entry| {
+                entry.name.is_empty()
+                    || entry.name.len() > 256
+                    || entry.name.chars().any(char::is_control)
+            })
+            || self
+                .repositories
+                .windows(2)
+                .any(|entries| entries[0].id >= entries[1].id)
+        {
+            return Err(Error::Config("invalid local repository catalog"));
+        }
+        Ok(())
+    }
+
+    pub fn register(
+        path: &Path,
+        identity: &Identity,
+        repository: RepositoryId,
+        name: String,
+    ) -> Result<Self> {
+        let mut catalog = Self::load(path, identity)?;
+        if name.is_empty() || name.len() > 256 || name.chars().any(char::is_control) {
+            return Err(Error::Config("repository catalog display name"));
+        }
+        match catalog
+            .repositories
+            .binary_search_by_key(&repository, |entry| entry.id)
+        {
+            Ok(index) => catalog.repositories[index].name = name,
+            Err(index) => catalog.repositories.insert(
+                index,
+                CatalogEntry {
+                    id: repository,
+                    name,
+                },
+            ),
+        }
+        catalog.validate(identity)?;
+        persist_private_json(path, &catalog)?;
+        Ok(catalog)
+    }
 }
 
 #[derive(Clone, Debug, Serialize)]
@@ -101,11 +201,7 @@ pub fn initialize_local(state_dir: &Path, runtime_executable: &Path) -> Result<I
     write_json(staging.path().join(INSTALLATION_FILE), &identity)?;
     write_json(
         staging.path().join(CATALOG_FILE),
-        &Catalog {
-            version: 1,
-            installation: &installation,
-            repositories: [],
-        },
+        &Catalog::empty(&identity),
     )?;
     write_json(staging.path().join(CREDENTIALS_FILE), &credentials)?;
     write_json(staging.path().join(OWNERSHIP_FILE), &ownership)?;
@@ -146,6 +242,8 @@ fn local_config(state: &Path, runtime: &Path, bucket: &str) -> config::Config {
         access: config::Access::LocalTrusted {
             installation: state.join(INSTALLATION_FILE),
             catalog: state.join(CATALOG_FILE),
+            rpc_socket: state.join(RPC_SOCKET_FILE),
+            permission: jj_store_service::auth::Permission::Admin,
         },
         storage: config::Storage::EmbeddedRustfs {
             runtime_executable: runtime.into(),
@@ -170,9 +268,13 @@ pub(crate) fn read_private_json<T: DeserializeOwned>(path: &Path) -> Result<T> {
 }
 
 pub(crate) fn persist_ownership(path: &Path, ownership: &Ownership) -> Result<()> {
+    persist_private_json(path, ownership)
+}
+
+fn persist_private_json(path: &Path, value: &impl Serialize) -> Result<()> {
     let parent = path.parent().ok_or(Error::Config("ownership path"))?;
-    let bytes =
-        serde_json::to_vec(ownership).map_err(|_| Error::Config("ownership serialization"))?;
+    let bytes = serde_json::to_vec(value)
+        .map_err(|_| Error::Config("local installation state serialization"))?;
     let mut temp = tempfile::NamedTempFile::new_in(parent)?;
     set_private_file(temp.as_file())?;
     temp.write_all(&bytes)?;

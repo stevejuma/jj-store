@@ -112,6 +112,25 @@ impl NativeEndpoint {
             session,
         })
     }
+    pub fn bind_local_trusted(
+        &self,
+        principal: m::PrincipalId,
+        permission: Permission,
+    ) -> Result<NativeRequest> {
+        let mut session = NativeSession::new_local_trusted(
+            self.store.clone(),
+            self.objects.clone(),
+            principal,
+            permission,
+            self.protection.clone(),
+            self.limits,
+        )?;
+        session.events = self.events.clone();
+        Ok(NativeRequest {
+            endpoint: self.clone(),
+            session,
+        })
+    }
 }
 pub struct NativeRequest {
     endpoint: NativeEndpoint,

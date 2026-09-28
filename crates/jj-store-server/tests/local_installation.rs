@@ -1,6 +1,6 @@
 use jj_store_server::{
     config::{Access, Config, Storage},
-    installation::initialize_local,
+    installation::{Catalog, Identity, initialize_local},
 };
 use std::fs;
 
@@ -53,6 +53,37 @@ fn local_initialization_is_atomic_private_and_restart_stable() {
             0
         );
     }
+}
+
+#[test]
+fn local_catalog_is_identity_bound_sorted_and_atomically_repairable() {
+    let root = tempfile::tempdir().unwrap();
+    let state = root.path().join("local-state");
+    let initialized = initialize_local(&state, &std::env::current_exe().unwrap()).unwrap();
+    let identity = Identity::load(&state.join("installation.json")).unwrap();
+    let path = state.join("repositories.json");
+    assert!(
+        Catalog::load(&path, &identity)
+            .unwrap()
+            .repositories
+            .is_empty()
+    );
+    let high = jj_store_model::RepositoryId::new([9; 16]);
+    let low = jj_store_model::RepositoryId::new([1; 16]);
+    Catalog::register(&path, &identity, high, "High".into()).unwrap();
+    let catalog = Catalog::register(&path, &identity, low, "Low".into()).unwrap();
+    assert_eq!(catalog.repositories[0].id, low);
+    assert_eq!(catalog.repositories[1].id, high);
+    let catalog = Catalog::register(&path, &identity, low, "Renamed".into()).unwrap();
+    assert_eq!(catalog.repositories.len(), 2);
+    assert_eq!(catalog.repositories[0].name, "Renamed");
+    let other = Identity {
+        version: 1,
+        installation: "00".repeat(16),
+    };
+    assert!(Catalog::load(&path, &other).is_err());
+    assert!(Catalog::register(&path, &identity, low, "\n".into()).is_err());
+    assert!(initialized.config.is_file());
 }
 
 #[test]

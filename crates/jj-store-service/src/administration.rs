@@ -122,6 +122,30 @@ impl RepositoryHost {
         .await
         .map_err(|_| wal::Error::OutcomeUnknown)?
     }
+    pub async fn create_local_trusted(
+        &self,
+        repository: m::RepositoryId,
+        epoch: m::EpochId,
+        permission: Permission,
+    ) -> wal::Result<Snapshot> {
+        tokio::time::timeout(self.limits.timeout, async {
+            let objects = Arc::new(
+                NativeObjects::new(self.store.clone(), repository, self.max_blob)
+                    .map_err(|_| wal::Error::Limit("native blob limit"))?,
+            );
+            let created = crate::native::create_repository_local_trusted(
+                self.store.clone(),
+                objects,
+                permission,
+                epoch,
+                self.limits.publication,
+            )
+            .await?;
+            Ok(created.manifest().snapshot())
+        })
+        .await
+        .map_err(|_| wal::Error::OutcomeUnknown)?
+    }
 }
 
 #[derive(Clone, Debug)]

@@ -38,6 +38,8 @@ pub(crate) fn api(
 pub(crate) fn request(token: &BearerToken, path: &str, body: Option<&Value>) -> HttpRequest<Body> {
     let mut builder = HttpRequest::builder()
         .uri(format!("/v1/repos/{REPO}/{path}"))
+        .header("host", "127.0.0.1:7443")
+        .header("x-jj-store-protocol", "1")
         .header(
             "authorization",
             format!("Bearer {}", token.expose().as_str()),

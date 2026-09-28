@@ -91,9 +91,12 @@ export interface StoreControllerStatus {
 }
 export interface StoreConnection {
   repository: string;
-  token: string;
+  token: string | null;
 }
 export interface StoreControllerState {
+  readonly accessMode: "bootstrapping" | "authenticated" | "local_trusted";
+  readonly storageReady: boolean;
+  readonly backups: readonly Model<"BackupStatus">[];
   readonly route: StoreRoute;
   readonly canNavigateBack: boolean;
   readonly canNavigateForward: boolean;

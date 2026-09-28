@@ -1,5 +1,6 @@
 //! Shared request authorization and application transaction services.
 #![forbid(unsafe_code)]
+pub mod access;
 pub mod administration;
 pub mod auth;
 pub mod events;

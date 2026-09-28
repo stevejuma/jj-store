@@ -21,6 +21,7 @@ jj-store-model.workspace = true
 jj-store-object.workspace = true
 jj-store-service.workspace = true
 jj-store-server.workspace = true
+jj-store-wal.workspace = true
 
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"

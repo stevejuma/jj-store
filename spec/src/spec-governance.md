@@ -189,6 +189,13 @@ rejects production imports from catalog fixtures, and keeps reusable
 presentation modules independent of API/controller ownership. Its focused
 negative tests run in the governance lane.
 
+LocalTrusted catalog stories exercise bootstrapping, multiple registered
+repositories and the empty catalog using the same production component. The
+Storybook lane keeps interaction and accessibility failures blocking. Cold
+browser fixtures must provide the bootstrap phase explicitly and assert the
+protocol header plus the presence or absence of bearer credentials for the
+selected access mode. Visual baselines remain a separate approval lane.
+
 The tracked pnpm hook may substitute an available sibling Design Core source for
 dependency, development-dependency and optional-dependency fields only. Peer
 ranges, the published package range and the committed registry lockfile remain

@@ -14,6 +14,8 @@ fn router(f: &Fixture, cache: &std::path::Path, config: Config) -> Router {
 fn req(f: &Fixture, path: &str) -> HttpRequest<Body> {
     HttpRequest::builder()
         .uri(format!("/v1/repos/{REPO}/{path}"))
+        .header("host", "127.0.0.1:7443")
+        .header("x-jj-store-protocol", "1")
         .header(
             "authorization",
             format!("Bearer {}", f.reader.expose().as_str()),

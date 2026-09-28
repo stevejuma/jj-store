@@ -74,14 +74,24 @@ fn contract_preserves_native_shapes_and_hex_id_widths() {
 #[test]
 fn contract_inventory_covers_security_methods_media_and_task_bodies() {
     let doc = openapi();
-    assert_eq!(doc["security"], json!([{"repositoryBearer":[]}]));
+    assert_eq!(doc["security"], json!([]));
+    assert_eq!(
+        doc["x-jj-store-access-policies"],
+        json!(["authenticated", "local_trusted"])
+    );
     let paths = doc["paths"].as_object().unwrap();
-    assert_eq!(paths.len(), 27);
+    assert_eq!(paths.len(), 28);
     let mut ids = std::collections::BTreeSet::new();
-    for path in paths.values() {
+    for (name, path) in paths {
         for (method, operation) in path.as_object().unwrap() {
             assert!(ids.insert(operation["operationId"].as_str().unwrap()));
-            assert_eq!(operation["parameters"][0]["name"], "repo");
+            if name == "/v1/bootstrap" {
+                assert_eq!(operation["parameters"], json!([]));
+                assert_eq!(operation["security"], json!([{}]));
+            } else {
+                assert_eq!(operation["parameters"][0]["name"], "repo");
+                assert_eq!(operation["security"], json!([{"repositoryBearer":[]},{}]));
+            }
             if method == "head" {
                 for response in operation["responses"].as_object().unwrap().values() {
                     assert!(response.get("content").is_none());
@@ -117,6 +127,40 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
         paths["/v1/repos/{repo}/index/tasks/{task}/cancel"]["post"]
             .get("requestBody")
             .is_none()
+    );
+}
+
+#[test]
+fn bootstrap_contract_separates_access_storage_catalog_and_backup_state() {
+    let doc = openapi();
+    let operation = &doc["paths"]["/v1/bootstrap"]["get"];
+    assert_eq!(operation["security"], json!([{}]));
+    let schema = &doc["components"]["schemas"]["Bootstrap"];
+    for field in [
+        "version",
+        "access_mode",
+        "capabilities",
+        "storage",
+        "repositories",
+        "backups",
+    ] {
+        assert!(
+            schema["required"]
+                .as_array()
+                .unwrap()
+                .contains(&json!(field))
+        );
+    }
+    assert_eq!(
+        doc["components"]["schemas"]["AccessMode"]["enum"],
+        json!(["authenticated", "local_trusted"])
+    );
+    let backup = &doc["components"]["schemas"]["BackupStatus"];
+    assert!(
+        backup["required"]
+            .as_array()
+            .unwrap()
+            .contains(&json!("last_verified_restore_point"))
     );
 }
 

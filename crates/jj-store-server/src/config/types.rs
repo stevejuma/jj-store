@@ -1,4 +1,5 @@
 use jj_store_model as m;
+use jj_store_service::auth::Permission;
 use serde::{Deserialize, Serialize};
 use std::{collections::BTreeSet, net::SocketAddr, path::PathBuf};
 
@@ -33,6 +34,8 @@ pub enum Access {
     LocalTrusted {
         installation: PathBuf,
         catalog: PathBuf,
+        rpc_socket: PathBuf,
+        permission: Permission,
     },
 }
 
@@ -71,16 +74,6 @@ pub enum CredentialReference {
         service: String,
         account: String,
     },
-}
-
-impl CredentialReference {
-    pub fn jj_store_s3_environment() -> Self {
-        Self::Environment {
-            access_key: "JJ_STORE_S3_ACCESS_KEY".into(),
-            secret_key: "JJ_STORE_S3_SECRET_KEY".into(),
-            session_token: Some("JJ_STORE_S3_SESSION_TOKEN".into()),
-        }
-    }
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]

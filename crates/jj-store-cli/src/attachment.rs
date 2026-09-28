@@ -38,7 +38,7 @@ struct Record {
     destination: PathBuf,
     cache: PathBuf,
     workspace: String,
-    token: m::TokenId,
+    token: Option<m::TokenId>,
     pending: Option<Pending>,
     published: bool,
     complete: bool,
@@ -132,9 +132,41 @@ impl Attachment {
         workspace: Option<String>,
         state: Option<PathBuf>,
     ) -> AuthorityResult<Self> {
+        Self::open_with(
+            connection,
+            Some(token),
+            destination,
+            cache,
+            workspace,
+            state,
+        )
+        .await
+    }
+
+    pub async fn open_local(
+        connection: Connection,
+        destination: PathBuf,
+        cache: Option<PathBuf>,
+        workspace: Option<String>,
+        state: Option<PathBuf>,
+    ) -> AuthorityResult<Self> {
+        Self::open_with(connection, None, destination, cache, workspace, state).await
+    }
+
+    async fn open_with(
+        connection: Connection,
+        token: Option<BearerToken>,
+        destination: PathBuf,
+        cache: Option<PathBuf>,
+        workspace: Option<String>,
+        state: Option<PathBuf>,
+    ) -> AuthorityResult<Self> {
         connection.validate()?;
         // Even a completed retry checks current access before revealing metadata.
-        let client = connection.connect_with(token.clone()).await?;
+        let client = match &token {
+            Some(token) => connection.connect_with(token.clone()).await?,
+            None => connection.connect().await?,
+        };
         client.authorize(true).await?;
         let destination = target(&destination)?;
         let state = state_path(&destination, cache.as_deref(), state)?;
@@ -152,9 +184,9 @@ impl Attachment {
             )?)
             .map_err(|_| "invalid attachment journal")?;
             record.connection.validate()?;
-            if record.format != 1
+            if record.format != connection.format
                 || record.destination != destination
-                || record.token != token.id()
+                || record.token != token.as_ref().map(BearerToken::id)
                 || serde_json::to_value(&record.connection)? != serde_json::to_value(&connection)?
                 || cache
                     .as_ref()
@@ -173,12 +205,12 @@ impl Attachment {
             let cache = target(&cache.unwrap_or_else(|| state.join("cache")))?;
             empty(&cache)?;
             Record {
-                format: 1,
+                format: connection.format,
                 connection,
                 destination,
                 cache,
                 workspace: workspace.unwrap_or(format!("client-{}", random_name()?)),
-                token: token.id(),
+                token: token.as_ref().map(BearerToken::id),
                 pending: None,
                 published: false,
                 complete: false,

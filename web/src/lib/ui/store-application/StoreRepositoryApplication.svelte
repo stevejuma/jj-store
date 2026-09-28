@@ -103,6 +103,18 @@
       </dd>
       <dt>Connection</dt>
       <dd>{state.status.live}</dd>
+      {#each state.backups as backup (backup.target)}
+        <dt>Backup · {backup.target}</dt>
+        <dd>
+          Transfer: {backup.transfer.state} · {backup.transfer
+            .completed_objects}
+          objects<br />
+          Last verified restore point:
+          {backup.last_verified_restore_point
+            ? `${backup.last_verified_restore_point.operation.slice(0, 12)} at position ${backup.last_verified_restore_point.position}`
+            : "none"}
+        </dd>
+      {/each}
       {#if state.conflictCount !== null}<dt>Conflicts</dt>
         <dd>{state.conflictCount}</dd>{/if}
     </dl>

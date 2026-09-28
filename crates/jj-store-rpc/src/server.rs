@@ -11,7 +11,7 @@ use jj_store_model as m;
 use jj_store_object::{StagedUpload, WriteOutcome};
 use jj_store_service::{
     administration::RepositoryHost,
-    auth::BearerToken,
+    auth::{BearerToken, Permission},
     transport::{NativeEndpoint, NativeRequest},
 };
 use std::{
@@ -49,6 +49,23 @@ pub struct NativeRpc {
     host: Option<RepositoryHost>,
     slots: Arc<Semaphore>,
     limits: Limits,
+    access: RpcAccess,
+}
+#[derive(Clone)]
+enum RpcAccess {
+    Authenticated,
+    LocalTrusted {
+        principal: m::PrincipalId,
+        permission: Permission,
+        owner_uid: u32,
+    },
+}
+enum RequestAccess {
+    Authenticated(BearerToken),
+    LocalTrusted {
+        principal: m::PrincipalId,
+        permission: Permission,
+    },
 }
 impl NativeRpc {
     pub fn new(repositories: Vec<NativeEndpoint>, limits: Limits) -> Result<Self, Status> {
@@ -72,11 +89,30 @@ impl NativeRpc {
             host: None,
             slots: Arc::new(Semaphore::new(limits.concurrent)),
             limits,
+            access: RpcAccess::Authenticated,
         })
     }
     pub fn hosted(host: RepositoryHost, limits: Limits) -> Result<Self, Status> {
         let mut rpc = Self::new(Vec::new(), limits)?;
         rpc.host = Some(host);
+        Ok(rpc)
+    }
+    pub fn hosted_local_trusted(
+        host: RepositoryHost,
+        limits: Limits,
+        principal: m::PrincipalId,
+        permission: Permission,
+        owner_uid: u32,
+    ) -> Result<Self, Status> {
+        let mut rpc = Self::hosted(host, limits)?;
+        if permission == Permission::CreateRepository {
+            return Err(Status::invalid_argument("local repository permission"));
+        }
+        rpc.access = RpcAccess::LocalTrusted {
+            principal,
+            permission,
+            owner_uid,
+        };
         Ok(rpc)
     }
     pub fn service(self) -> NativeStoreServer<Self> {
@@ -127,7 +163,37 @@ impl NativeRpc {
             .ok_or_else(|| Status::unauthenticated("bearer credential required"))?;
         BearerToken::parse(value).map_err(|_| Status::unauthenticated("invalid bearer credential"))
     }
-    fn bind(&self, repository: &[u8], credential: BearerToken) -> Result<NativeRequest, Status> {
+    fn request_access<T>(&self, request: &Request<T>) -> Result<RequestAccess, Status> {
+        match self.access {
+            RpcAccess::Authenticated => {
+                Self::credential(request.metadata()).map(RequestAccess::Authenticated)
+            }
+            RpcAccess::LocalTrusted {
+                principal,
+                permission,
+                owner_uid,
+            } => {
+                if request.metadata().contains_key("authorization") {
+                    return Err(Status::unauthenticated(
+                        "bearer credentials are disabled for local trusted RPC",
+                    ));
+                }
+                let uid = request
+                    .extensions()
+                    .get::<tonic::transport::server::UdsConnectInfo>()
+                    .and_then(|info| info.peer_cred)
+                    .map(|credential| credential.uid());
+                if uid != Some(owner_uid) {
+                    return Err(Status::permission_denied("local peer access denied"));
+                }
+                Ok(RequestAccess::LocalTrusted {
+                    principal,
+                    permission,
+                })
+            }
+        }
+    }
+    fn bind(&self, repository: &[u8], access: RequestAccess) -> Result<NativeRequest, Status> {
         let repository = m::RepositoryId::from_slice(repository)
             .map_err(|_| Status::invalid_argument("repository ID length"))?;
         let endpoint = match &self.host {
@@ -138,7 +204,17 @@ impl NativeRpc {
                 .cloned()
                 .ok_or_else(|| Status::permission_denied("repository access denied"))?,
         };
-        endpoint.bind(credential).map_err(service_error)
+        match access {
+            RequestAccess::Authenticated(credential) => {
+                endpoint.bind(credential).map_err(service_error)
+            }
+            RequestAccess::LocalTrusted {
+                principal,
+                permission,
+            } => endpoint
+                .bind_local_trusted(principal, permission)
+                .map_err(service_error),
+        }
     }
     async fn bounded<T>(
         &self,
@@ -161,22 +237,33 @@ impl NativeStore for NativeRpc {
         &self,
         request: Request<wire::CreateRepositoryRequest>,
     ) -> Result<Response<wire::Snapshot>, Status> {
-        let token = Self::credential(request.metadata())?;
+        let access = self.request_access(&request)?;
         let mut request = request.into_inner();
         let repository = m::RepositoryId::from_slice(&request.repository)
             .map_err(|_| Status::invalid_argument("repository ID length"))?;
         let epoch = m::EpochId::from_slice(&request.epoch)
             .map_err(|_| Status::invalid_argument("epoch ID length"))?;
-        let credential = admin::parse_secret(&mut request.admin_credential)?;
         let host = self
             .host
             .as_ref()
             .ok_or_else(|| Status::unimplemented("repository creation unavailable"))?;
         self.bounded(async {
-            let snapshot = host
-                .create(&token, repository, epoch, &credential)
-                .await
-                .map_err(|error| service_error(error.into()))?;
+            let snapshot = match access {
+                RequestAccess::Authenticated(token) => {
+                    let credential = admin::parse_secret(&mut request.admin_credential)?;
+                    host.create(&token, repository, epoch, &credential).await
+                }
+                RequestAccess::LocalTrusted { permission, .. } => {
+                    if !request.admin_credential.is_empty() {
+                        return Err(Status::invalid_argument(
+                            "local trusted creation accepts no bearer credential",
+                        ));
+                    }
+                    host.create_local_trusted(repository, epoch, permission)
+                        .await
+                }
+            }
+            .map_err(|error| service_error(error.into()))?;
             Ok(admin::wire_snapshot(snapshot))
         })
         .await
@@ -187,7 +274,7 @@ impl NativeStore for NativeRpc {
     ) -> Result<Response<wire::TokenListing>, Status> {
         let session = self.bind(
             &request.get_ref().repository,
-            Self::credential(request.metadata())?,
+            self.request_access(&request)?,
         )?;
         self.bounded(async { admin::wire_listing(session.tokens().await.map_err(service_error)?) })
             .await
@@ -198,7 +285,7 @@ impl NativeStore for NativeRpc {
     ) -> Result<Response<wire::TokenReply>, Status> {
         let session = self.bind(
             &request.get_ref().repository,
-            Self::credential(request.metadata())?,
+            self.request_access(&request)?,
         )?;
         let request = admin::request(request.into_inner())?;
         self.bounded(async {
@@ -217,7 +304,7 @@ impl NativeStore for NativeRpc {
     ) -> Result<Response<wire::TokenReply>, Status> {
         let session = self.bind(
             &request.get_ref().repository,
-            Self::credential(request.metadata())?,
+            self.request_access(&request)?,
         )?;
         let request = admin::request(request.into_inner())?;
         self.bounded(async {
@@ -234,9 +321,9 @@ impl NativeStore for NativeRpc {
         &self,
         request: Request<wire::AccessRequest>,
     ) -> Result<Response<wire::Empty>, Status> {
-        let token = Self::credential(request.metadata())?;
+        let access = self.request_access(&request)?;
         let r = request.into_inner();
-        let session = self.bind(&r.repository, token)?;
+        let session = self.bind(&r.repository, access)?;
         self.bounded(async {
             session.authorize(r.write).await.map_err(service_error)?;
             Ok(wire::Empty {})
@@ -249,7 +336,7 @@ impl NativeStore for NativeRpc {
     ) -> Result<Response<wire::Ids>, Status> {
         let session = self.bind(
             &request.get_ref().repository,
-            Self::credential(request.metadata())?,
+            self.request_access(&request)?,
         )?;
         self.bounded(async {
             let ids = session.heads().await.map_err(service_error)?;
@@ -265,7 +352,7 @@ impl NativeStore for NativeRpc {
     ) -> Result<Response<wire::Ids>, Status> {
         let session = self.bind(
             &request.get_ref().repository,
-            Self::credential(request.metadata())?,
+            self.request_access(&request)?,
         )?;
         let r = request.into_inner();
         if r.limit == 0 || r.limit as usize > MAX_IDS {
@@ -287,7 +374,7 @@ impl NativeStore for NativeRpc {
     ) -> Result<Response<wire::Empty>, Status> {
         let session = self.bind(
             &request.get_ref().repository,
-            Self::credential(request.metadata())?,
+            self.request_access(&request)?,
         )?;
         let r = request.into_inner();
         if r.removed.is_empty() || r.removed.len() > 256 {
@@ -318,7 +405,7 @@ impl NativeStore for NativeRpc {
     ) -> Result<Response<wire::ObjectMetadata>, Status> {
         let session = self.bind(
             &request.get_ref().repository,
-            Self::credential(request.metadata())?,
+            self.request_access(&request)?,
         )?;
         let key = object(request.into_inner().object)?;
         self.bounded(async {
@@ -342,7 +429,7 @@ impl NativeStore for NativeRpc {
         let deadline = Instant::now() + self.limits.timeout;
         let session = self.bind(
             &request.get_ref().repository,
-            Self::credential(request.metadata())?,
+            self.request_access(&request)?,
         )?;
         let key = object(request.into_inner().object)?;
         let mut download = tokio::time::timeout_at(deadline, session.read(key))
@@ -413,7 +500,7 @@ impl NativeStore for NativeRpc {
         &self,
         request: Request<tonic::Streaming<wire::UploadChunk>>,
     ) -> Result<Response<wire::UploadResult>, Status> {
-        let token = Self::credential(request.metadata())?;
+        let access = self.request_access(&request)?;
         let mut stream = request.into_inner();
         self.bounded(async {
             let first = stream
@@ -423,7 +510,7 @@ impl NativeStore for NativeRpc {
             let Some(wire::upload_chunk::Part::Start(start)) = first.part else {
                 return Err(Status::invalid_argument("upload header required"));
             };
-            let session = self.bind(&start.repository, token)?;
+            let session = self.bind(&start.repository, access)?;
             session.authorize(true).await.map_err(service_error)?;
             let key = object(start.object)?;
             if start.length < m::envelope::HEADER_LEN as u64

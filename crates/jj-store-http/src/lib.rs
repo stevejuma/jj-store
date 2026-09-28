@@ -38,9 +38,56 @@ use std::{
 use tokio::{sync::Semaphore, time::Instant};
 type Result<T> = std::result::Result<T, Error>;
 
+const PROTOCOL_HEADER: &str = "x-jj-store-protocol";
+
+#[derive(Clone)]
+pub enum Access {
+    Authenticated,
+    LocalTrusted {
+        principal: m::PrincipalId,
+        permission: Permission,
+        repositories: Vec<BootstrapRepository>,
+    },
+}
+
+#[derive(Clone, Debug, Serialize, schemars::JsonSchema)]
+pub struct BootstrapRepository {
+    pub id: m::RepositoryId,
+    pub name: String,
+}
+
+#[derive(Clone, Debug, Serialize, schemars::JsonSchema)]
+pub struct BackupStatus {
+    pub target: String,
+    pub driver: String,
+    pub transfer: BackupTransfer,
+    pub last_verified_restore_point: Option<VerifiedRestorePoint>,
+}
+
+#[derive(Clone, Debug, Serialize, schemars::JsonSchema)]
+pub struct BackupTransfer {
+    pub state: String,
+    pub completed_objects: u64,
+    pub total_objects: Option<u64>,
+    pub completed_bytes: u64,
+    pub total_bytes: Option<u64>,
+}
+
+#[derive(Clone, Debug, Serialize, schemars::JsonSchema)]
+pub struct VerifiedRestorePoint {
+    pub repository: m::RepositoryId,
+    pub epoch: m::EpochId,
+    pub position: u64,
+    pub operation: m::OperationId,
+    pub verified_at_millis: i64,
+}
+
 #[derive(Clone)]
 pub struct Config {
     pub origin: String,
+    pub access: Access,
+    pub storage_ready: bool,
+    pub backups: Vec<BackupStatus>,
     pub concurrency: usize,
     pub event_concurrency: usize,
     pub events: events::Limits,
@@ -58,6 +105,9 @@ impl Default for Config {
     fn default() -> Self {
         Self {
             origin: "http://127.0.0.1:7443".into(),
+            access: Access::Authenticated,
+            storage_ready: true,
+            backups: Vec::new(),
             concurrency: 8,
             event_concurrency: 16,
             events: Default::default(),
@@ -108,6 +158,7 @@ impl HttpApi {
         let url = url::Url::parse(&config.origin).map_err(|_| "HTTP origin")?;
         if !matches!(url.scheme(), "http" | "https")
             || url.origin().ascii_serialization() != config.origin
+            || config.backups.len() > 16
             || !(1..=64).contains(&config.concurrency)
             || !(1..=128).contains(&config.event_concurrency)
             || !(64..=64 * 1024 * 1024).contains(&config.max_json_bytes)
@@ -235,17 +286,102 @@ async fn admit(
             {
                 return Err(Error::limit());
             }
+            let url = url::Url::parse(&state.config.origin).map_err(|_| Error::denied())?;
+            let host = match url.host().ok_or_else(Error::denied)? {
+                url::Host::Domain(host) => host.to_owned(),
+                url::Host::Ipv4(host) => host.to_string(),
+                url::Host::Ipv6(host) => format!("[{host}]"),
+            };
+            let expected_authority = match url.port() {
+                Some(port) => format!("{host}:{port}"),
+                None => host,
+            };
+            let host = request.headers().get_all(header::HOST);
+            if host.iter().count() != 1
+                || host
+                    .iter()
+                    .next()
+                    .is_none_or(|value| value.as_bytes() != expected_authority.as_bytes())
+            {
+                return Err(Error::denied());
+            }
+            let protocol = request.headers().get_all(PROTOCOL_HEADER);
+            if protocol.iter().count() != 1
+                || protocol.iter().next().is_none_or(|value| value != "1")
+            {
+                return Err(Error::denied());
+            }
             if let Some(origin) = request.headers().get(header::ORIGIN)
                 && (request.headers().get_all(header::ORIGIN).iter().count() != 1
+                    || origin == "null"
                     || origin.as_bytes() != state.config.origin.as_bytes())
             {
                 return Err(Error::denied());
             }
-            if matches!(
+            for name in [
+                "x-http-method-override",
+                "x-method-override",
+                "x-http-method",
+            ] {
+                if request.headers().contains_key(name) {
+                    return Err(Error::denied());
+                }
+            }
+            let fetch_names = ["sec-fetch-site", "sec-fetch-mode", "sec-fetch-dest"];
+            let fetch_present = fetch_names
+                .iter()
+                .any(|name| request.headers().contains_key(*name));
+            if fetch_present
+                && (request.headers().get_all("sec-fetch-site").iter().count() != 1
+                    || request
+                        .headers()
+                        .get("sec-fetch-site")
+                        .is_none_or(|v| v != "same-origin")
+                    || request.headers().get_all("sec-fetch-mode").iter().count() != 1
+                    || request
+                        .headers()
+                        .get("sec-fetch-mode")
+                        .is_none_or(|v| v != "cors" && v != "same-origin")
+                    || request.headers().get_all("sec-fetch-dest").iter().count() != 1
+                    || request
+                        .headers()
+                        .get("sec-fetch-dest")
+                        .is_none_or(|v| v != "empty"))
+            {
+                return Err(Error::denied());
+            }
+            if matches!(state.config.access, Access::LocalTrusted { .. })
+                && request.headers().contains_key(header::AUTHORIZATION)
+            {
+                return Err(Error::denied());
+            }
+            let path = request.uri().path();
+            let bodyless = matches!(
                 *request.method(),
                 axum::http::Method::GET | axum::http::Method::HEAD
-            ) || request.uri().path().ends_with("/cancel")
-            {
+            ) || path.ends_with("/cancel");
+            let media = request.headers().get_all(header::CONTENT_TYPE);
+            if bodyless {
+                if media.iter().count() != 0 {
+                    return Err(Error::invalid());
+                }
+            } else if request.method() == axum::http::Method::POST {
+                let expected = if path.ends_with("/conflict-uploads") {
+                    "application/octet-stream"
+                } else {
+                    "application/json"
+                };
+                if media.iter().count() != 1
+                    || media.iter().next().is_none_or(|value| value != expected)
+                    || request.headers().contains_key(header::CONTENT_ENCODING)
+                {
+                    return Err(Error::new(
+                        StatusCode::UNSUPPORTED_MEDIA_TYPE,
+                        "unsupported_media_type",
+                    ));
+                }
+            }
+            if bodyless {
                 use http_body::Body as _;
                 if request.body().size_hint().lower() > 0
                     || request.headers().contains_key(header::TRANSFER_ENCODING)
@@ -332,23 +468,35 @@ impl FromRequestParts<Arc<State>> for Context {
         let Path(paths) = Path::<BTreeMap<String, String>>::from_request_parts(parts, state)
             .await
             .map_err(|_| Error::invalid())?;
-        if parts.headers.get_all(header::AUTHORIZATION).iter().count() != 1 {
-            return Err(Error::new(StatusCode::UNAUTHORIZED, "bearer_required"));
-        }
-        let text = parts
-            .headers
-            .get(header::AUTHORIZATION)
-            .and_then(|h| h.to_str().ok())
-            .and_then(|h| h.strip_prefix("Bearer "))
-            .ok_or_else(|| Error::new(StatusCode::UNAUTHORIZED, "bearer_required"))?;
-        let token = BearerToken::parse(text)
-            .map_err(|_| Error::new(StatusCode::UNAUTHORIZED, "invalid_credential"))?;
         let repository: m::RepositoryId = paths
             .get("repo")
             .ok_or_else(Error::invalid)?
             .parse()
             .map_err(|_| Error::invalid())?;
-        let session = state.host.endpoint(repository)?.bind(token)?.into_session();
+        let endpoint = state.host.endpoint(repository)?;
+        let session = match &state.config.access {
+            Access::Authenticated => {
+                if parts.headers.get_all(header::AUTHORIZATION).iter().count() != 1 {
+                    return Err(Error::new(StatusCode::UNAUTHORIZED, "bearer_required"));
+                }
+                let text = parts
+                    .headers
+                    .get(header::AUTHORIZATION)
+                    .and_then(|h| h.to_str().ok())
+                    .and_then(|h| h.strip_prefix("Bearer "))
+                    .ok_or_else(|| Error::new(StatusCode::UNAUTHORIZED, "bearer_required"))?;
+                let token = BearerToken::parse(text)
+                    .map_err(|_| Error::new(StatusCode::UNAUTHORIZED, "invalid_credential"))?;
+                endpoint.bind(token)?.into_session()
+            }
+            Access::LocalTrusted {
+                principal,
+                permission,
+                ..
+            } => endpoint
+                .bind_local_trusted(*principal, *permission)?
+                .into_session(),
+        };
         session
             .principal(Permission::Read)
             .await

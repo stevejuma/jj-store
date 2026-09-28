@@ -5,12 +5,176 @@
     "title": "jj-store application API",
     "version": "1.0.0",
     "license": { "name": "Apache-2.0", "identifier": "Apache-2.0" },
-    "description": "Native JJ read and typed mutation contracts. Same-origin Bearer authentication; tokens never appear in paths, query strings or cookies. Shared deployments require TLS. Numeric JSON values retain Rust widths: clients must handle precision beyond JavaScript safe integers explicitly."
+    "description": "Native JJ read and typed mutation contracts. Access is deployment-dependent: authenticated deployments require repository Bearer credentials, while LocalTrusted installations admit only protected literal-loopback requests and bind an installation principal. Tokens never appear in paths, query strings or cookies. Shared deployments require TLS. Numeric JSON values retain Rust widths: clients must handle precision beyond JavaScript safe integers explicitly."
   },
   "servers": [{ "url": "/" }],
   "tags": [{ "name": "reads" }, { "name": "mutations" }, { "name": "search" }],
-  "security": [{ "repositoryBearer": [] }],
+  "security": [],
+  "x-jj-store-access-policies": ["authenticated", "local_trusted"],
   "paths": {
+    "/v1/bootstrap": {
+      "get": {
+        "operationId": "bootstrap",
+        "tags": ["reads"],
+        "description": "Transport-protected deployment bootstrap. Exact authority, protocol-version, Origin and Fetch Metadata checks apply before this response. LocalTrusted repository entries are installation-owned discovery metadata, never repository authority. Authenticated deployments expose no repository catalog.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Authorized result at the reported snapshot.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Bootstrap" }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request, unknown query field or invalid cursor.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing repository Bearer credential.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied, including revoked credentials or disallowed Origin.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "404": {
+            "description": "Object not committed in the selected snapshot or unknown route.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "405": {
+            "description": "Unsupported method.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "408": {
+            "description": "Native query canceled.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "409": {
+            "description": "Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "410": {
+            "description": "Index task expired or was lost on server restart.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "413": {
+            "description": "Request or response resource limit exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "503": {
+            "description": "Busy, unavailable, corrupt or incomplete history.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "504": {
+            "description": "Request or response deadline exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          }
+        },
+        "x-jj-store-query-schema": {
+          "type": "object",
+          "additionalProperties": false
+        },
+        "security": [{}]
+      },
+      "head": {
+        "operationId": "bootstrap_head",
+        "tags": ["reads"],
+        "description": "Transport-protected deployment bootstrap. Exact authority, protocol-version, Origin and Fetch Metadata checks apply before this response. LocalTrusted repository entries are installation-owned discovery metadata, never repository authority. Authenticated deployments expose no repository catalog.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Authorized result at the reported snapshot."
+          },
+          "400": {
+            "description": "Invalid request, unknown query field or invalid cursor."
+          },
+          "401": { "description": "Missing repository Bearer credential." },
+          "403": {
+            "description": "Access denied, including revoked credentials or disallowed Origin."
+          },
+          "404": {
+            "description": "Object not committed in the selected snapshot or unknown route."
+          },
+          "405": { "description": "Unsupported method." },
+          "408": { "description": "Native query canceled." },
+          "409": {
+            "description": "Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index."
+          },
+          "410": {
+            "description": "Index task expired or was lost on server restart."
+          },
+          "413": {
+            "description": "Request or response resource limit exceeded."
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding."
+          },
+          "503": {
+            "description": "Busy, unavailable, corrupt or incomplete history."
+          },
+          "504": { "description": "Request or response deadline exceeded." }
+        },
+        "x-jj-store-query-schema": {
+          "type": "object",
+          "additionalProperties": false
+        },
+        "security": [{}]
+      }
+    },
     "/v1/repos/{repo}/capabilities": {
       "get": {
         "operationId": "capabilities",
@@ -133,7 +297,8 @@
         "x-jj-store-query-schema": {
           "type": "object",
           "additionalProperties": false
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       },
       "head": {
         "operationId": "capabilities_head",
@@ -183,7 +348,8 @@
         "x-jj-store-query-schema": {
           "type": "object",
           "additionalProperties": false
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       }
     },
     "/v1/repos/{repo}/search": {
@@ -439,7 +605,8 @@
             "cursor": { "type": ["string", "null"] }
           },
           "required": ["q"]
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       },
       "head": {
         "operationId": "search_head",
@@ -615,7 +782,8 @@
             "cursor": { "type": ["string", "null"] }
           },
           "required": ["q"]
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       }
     },
     "/v1/repos/{repo}/search/status": {
@@ -748,7 +916,8 @@
         "x-jj-store-query-schema": {
           "type": "object",
           "additionalProperties": false
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       },
       "head": {
         "operationId": "search_status_head",
@@ -801,7 +970,8 @@
         "x-jj-store-query-schema": {
           "type": "object",
           "additionalProperties": false
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       }
     },
     "/v1/repos/{repo}/snapshot": {
@@ -926,7 +1096,8 @@
         "x-jj-store-query-schema": {
           "type": "object",
           "additionalProperties": false
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       },
       "head": {
         "operationId": "snapshot_head",
@@ -976,7 +1147,8 @@
         "x-jj-store-query-schema": {
           "type": "object",
           "additionalProperties": false
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       }
     },
     "/v1/repos/{repo}/events": {
@@ -1141,7 +1313,8 @@
           "type": "object",
           "additionalProperties": false,
           "properties": { "after": { "type": ["string", "null"] } }
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       },
       "head": {
         "operationId": "events_head",
@@ -1217,7 +1390,8 @@
           "type": "object",
           "additionalProperties": false,
           "properties": { "after": { "type": ["string", "null"] } }
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       }
     },
     "/v1/repos/{repo}/objects/{kind}/{id}": {
@@ -1388,7 +1562,8 @@
               "maxLength": 128
             }
           }
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       },
       "head": {
         "operationId": "object_head",
@@ -1482,7 +1657,8 @@
               "maxLength": 128
             }
           }
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       }
     },
     "/v1/repos/{repo}/log": {
@@ -1693,7 +1869,8 @@
             "at_time_millis": { "type": "integer", "format": "int64" }
           },
           "required": ["at_time_millis"]
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       },
       "head": {
         "operationId": "log_head",
@@ -1829,7 +2006,8 @@
             "at_time_millis": { "type": "integer", "format": "int64" }
           },
           "required": ["at_time_millis"]
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       }
     },
     "/v1/repos/{repo}/references": {
@@ -2055,7 +2233,8 @@
               "default": "forward"
             }
           }
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       },
       "head": {
         "operationId": "references_head",
@@ -2206,7 +2385,8 @@
               "default": "forward"
             }
           }
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       }
     },
     "/v1/repos/{repo}/operations": {
@@ -2399,7 +2579,8 @@
               "default": 50
             }
           }
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       },
       "head": {
         "operationId": "operations_head",
@@ -2517,7 +2698,8 @@
               "default": 50
             }
           }
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       }
     },
     "/v1/repos/{repo}/operations/{operation}": {
@@ -2650,7 +2832,8 @@
         "x-jj-store-query-schema": {
           "type": "object",
           "additionalProperties": false
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       },
       "head": {
         "operationId": "operation_head",
@@ -2706,7 +2889,8 @@
         "x-jj-store-query-schema": {
           "type": "object",
           "additionalProperties": false
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       }
     },
     "/v1/repos/{repo}/operations/{operation}/diff": {
@@ -2860,7 +3044,8 @@
               "maxLength": 128
             }
           }
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       },
       "head": {
         "operationId": "operation_diff_head",
@@ -2937,7 +3122,8 @@
               "maxLength": 128
             }
           }
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       }
     },
     "/v1/repos/{repo}/operations/{operation}/changes": {
@@ -3144,7 +3330,8 @@
             }
           },
           "required": ["parent"]
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       },
       "head": {
         "operationId": "operation_changes_head",
@@ -3276,7 +3463,8 @@
             }
           },
           "required": ["parent"]
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       }
     },
     "/v1/repos/{repo}/evolution": {
@@ -3470,7 +3658,8 @@
             }
           },
           "required": ["commit"]
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       },
       "head": {
         "operationId": "evolution_head",
@@ -3589,7 +3778,8 @@
             }
           },
           "required": ["commit"]
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       }
     },
     "/v1/repos/{repo}/commits/{commit}": {
@@ -3743,7 +3933,8 @@
               "maxLength": 128
             }
           }
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       },
       "head": {
         "operationId": "commit_head",
@@ -3820,7 +4011,8 @@
               "maxLength": 128
             }
           }
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       }
     },
     "/v1/repos/{repo}/commits/{commit}/tree": {
@@ -4009,7 +4201,8 @@
               "default": 50
             }
           }
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       },
       "head": {
         "operationId": "tree_head",
@@ -4123,7 +4316,8 @@
               "default": 50
             }
           }
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       }
     },
     "/v1/repos/{repo}/commits/{commit}/paths": {
@@ -4347,7 +4541,8 @@
               "default": "forward"
             }
           }
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       },
       "head": {
         "operationId": "paths_head",
@@ -4496,7 +4691,8 @@
               "default": "forward"
             }
           }
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       }
     },
     "/v1/repos/{repo}/commits/{commit}/conflicts": {
@@ -4659,7 +4855,8 @@
             },
             "path": { "type": "string", "default": "" }
           }
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       },
       "head": {
         "operationId": "conflicts_head",
@@ -4745,7 +4942,8 @@
             },
             "path": { "type": "string", "default": "" }
           }
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       }
     },
     "/v1/repos/{repo}/files/{file}": {
@@ -4980,7 +5178,8 @@
               "maxLength": 128
             }
           }
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       },
       "head": {
         "operationId": "file_head",
@@ -5130,7 +5329,8 @@
               "maxLength": 128
             }
           }
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       }
     },
     "/v1/repos/{repo}/diff": {
@@ -5335,7 +5535,8 @@
             "content": { "type": "boolean", "default": false }
           },
           "required": ["from", "to"]
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       },
       "head": {
         "operationId": "diff_head",
@@ -5463,7 +5664,8 @@
             "content": { "type": "boolean", "default": false }
           },
           "required": ["from", "to"]
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       }
     },
     "/v1/repos/{repo}/diff/paths": {
@@ -5711,7 +5913,8 @@
             }
           },
           "required": ["at_op", "from", "to"]
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       },
       "head": {
         "operationId": "diff_paths_head",
@@ -5884,7 +6087,8 @@
             }
           },
           "required": ["at_op", "from", "to"]
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       }
     },
     "/v1/repos/{repo}/index/tasks": {
@@ -6010,6 +6214,7 @@
           "type": "object",
           "additionalProperties": false
         },
+        "security": [{ "repositoryBearer": [] }, {}],
         "requestBody": {
           "required": true,
           "content": {
@@ -6163,7 +6368,8 @@
         "x-jj-store-query-schema": {
           "type": "object",
           "additionalProperties": false
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       },
       "head": {
         "operationId": "task_head",
@@ -6222,7 +6428,8 @@
         "x-jj-store-query-schema": {
           "type": "object",
           "additionalProperties": false
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       }
     },
     "/v1/repos/{repo}/index/tasks/{task}/cancel": {
@@ -6356,7 +6563,8 @@
         "x-jj-store-query-schema": {
           "type": "object",
           "additionalProperties": false
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       }
     },
     "/v1/repos/{repo}/mutations/preview": {
@@ -6482,6 +6690,7 @@
           "type": "object",
           "additionalProperties": false
         },
+        "security": [{ "repositoryBearer": [] }, {}],
         "requestBody": {
           "required": true,
           "content": {
@@ -6896,6 +7105,7 @@
           "type": "object",
           "additionalProperties": false
         },
+        "security": [{ "repositoryBearer": [] }, {}],
         "requestBody": {
           "required": true,
           "content": {
@@ -7414,6 +7624,7 @@
             "fingerprint"
           ]
         },
+        "security": [{ "repositoryBearer": [] }, {}],
         "requestBody": {
           "required": true,
           "content": {
@@ -7552,7 +7763,8 @@
         "x-jj-store-query-schema": {
           "type": "object",
           "additionalProperties": false
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       },
       "head": {
         "operationId": "mutation_status_head",
@@ -7608,7 +7820,8 @@
         "x-jj-store-query-schema": {
           "type": "object",
           "additionalProperties": false
-        }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
       }
     }
   },
@@ -7621,12 +7834,6 @@
       }
     },
     "schemas": {
-      "RepositoryId": {
-        "type": "string",
-        "pattern": "^[0-9a-f]{32}$",
-        "minLength": 32,
-        "maxLength": 32
-      },
       "ErrorBody": {
         "type": "object",
         "properties": {
@@ -7681,6 +7888,12 @@
           "heads",
           "operation_id"
         ]
+      },
+      "RepositoryId": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{32}$",
+        "minLength": 32,
+        "maxLength": 32
       },
       "EpochId": {
         "type": "string",
@@ -7772,6 +7985,35 @@
         "pattern": "^[0-9a-f]{64}$",
         "minLength": 64,
         "maxLength": 64
+      },
+      "Bootstrap": {
+        "type": "object",
+        "properties": {
+          "version": { "type": "integer", "format": "uint32", "minimum": 0 },
+          "access_mode": { "$ref": "#/components/schemas/AccessMode" },
+          "capabilities": { "$ref": "#/components/schemas/Capabilities" },
+          "storage": { "$ref": "#/components/schemas/StorageState" },
+          "repositories": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/BootstrapRepository" }
+          },
+          "backups": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/BackupStatus" }
+          }
+        },
+        "required": [
+          "version",
+          "access_mode",
+          "capabilities",
+          "storage",
+          "repositories",
+          "backups"
+        ]
+      },
+      "AccessMode": {
+        "type": "string",
+        "enum": ["authenticated", "local_trusted"]
       },
       "Capabilities": {
         "type": "object",
@@ -7882,6 +8124,89 @@
           "user_email": { "type": "string" }
         },
         "required": ["at_time_millis", "workspace", "user_email"]
+      },
+      "StorageState": {
+        "type": "object",
+        "properties": { "ready": { "type": "boolean" } },
+        "required": ["ready"]
+      },
+      "BootstrapRepository": {
+        "type": "object",
+        "properties": {
+          "id": { "$ref": "#/components/schemas/RepositoryId" },
+          "name": { "type": "string" }
+        },
+        "required": ["id", "name"]
+      },
+      "BackupStatus": {
+        "type": "object",
+        "properties": {
+          "target": { "type": "string" },
+          "driver": { "type": "string" },
+          "transfer": { "$ref": "#/components/schemas/BackupTransfer" },
+          "last_verified_restore_point": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/VerifiedRestorePoint" },
+              { "type": "null" }
+            ]
+          }
+        },
+        "required": [
+          "target",
+          "driver",
+          "transfer",
+          "last_verified_restore_point"
+        ]
+      },
+      "BackupTransfer": {
+        "type": "object",
+        "properties": {
+          "state": { "type": "string" },
+          "completed_objects": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0
+          },
+          "total_objects": {
+            "type": ["integer", "null"],
+            "format": "uint64",
+            "minimum": 0
+          },
+          "completed_bytes": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0
+          },
+          "total_bytes": {
+            "type": ["integer", "null"],
+            "format": "uint64",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "state",
+          "completed_objects",
+          "total_objects",
+          "completed_bytes",
+          "total_bytes"
+        ]
+      },
+      "VerifiedRestorePoint": {
+        "type": "object",
+        "properties": {
+          "repository": { "$ref": "#/components/schemas/RepositoryId" },
+          "epoch": { "$ref": "#/components/schemas/EpochId" },
+          "position": { "type": "integer", "format": "uint64", "minimum": 0 },
+          "operation": { "$ref": "#/components/schemas/OperationId" },
+          "verified_at_millis": { "type": "integer", "format": "int64" }
+        },
+        "required": [
+          "repository",
+          "epoch",
+          "position",
+          "operation",
+          "verified_at_millis"
+        ]
       },
       "SearchPage": {
         "type": "object",

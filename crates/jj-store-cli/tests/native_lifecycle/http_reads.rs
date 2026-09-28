@@ -4,7 +4,7 @@ use axum::{
     body::{Body, to_bytes},
     http::{Request, StatusCode},
 };
-use jj_store_http::{Config, HttpApi};
+use jj_store_http::{Access, BootstrapRepository, Config, HttpApi};
 use jj_store_service::administration::{OperatorPolicies, RepositoryHost};
 use serde_json::Value;
 use tower::ServiceExt as _;
@@ -33,6 +33,8 @@ fn api(f: &ContentFixture, cache: &std::path::Path, config: Config) -> Router {
 fn request(token: &BearerToken, path: &str) -> Request<Body> {
     Request::builder()
         .uri(format!("/v1/repos/{REPO}/{path}"))
+        .header("host", "127.0.0.1:7443")
+        .header("x-jj-store-protocol", "1")
         .header(
             "authorization",
             format!("Bearer {}", token.expose().as_str()),
@@ -200,6 +202,164 @@ async fn json(router: &Router, token: &BearerToken, path: &str) -> (StatusCode, 
         .unwrap();
     (status, serde_json::from_slice(&bytes).unwrap())
 }
+
+fn protected(path: &str) -> Request<Body> {
+    Request::builder()
+        .uri(path)
+        .header("host", "127.0.0.1:7443")
+        .header("x-jj-store-protocol", "1")
+        .body(Body::empty())
+        .unwrap()
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn local_trusted_bootstrap_and_http_admission_fail_closed() {
+    let f = ContentFixture::new().await;
+    let cache = tempfile::tempdir().unwrap();
+    let repository = BootstrapRepository {
+        id: REPO,
+        name: "Local fixture".into(),
+    };
+    let router = api(
+        &f,
+        cache.path(),
+        Config {
+            access: Access::LocalTrusted {
+                principal: ACTOR,
+                permission: Permission::Admin,
+                repositories: vec![repository],
+            },
+            ..Config::default()
+        },
+    );
+    let response = router
+        .clone()
+        .oneshot(protected("/v1/bootstrap"))
+        .await
+        .unwrap();
+    assert_eq!(response.status(), StatusCode::OK);
+    let bootstrap: Value =
+        serde_json::from_slice(&to_bytes(response.into_body(), 64 * 1024).await.unwrap()).unwrap();
+    assert_eq!(bootstrap["access_mode"], "local_trusted");
+    assert_eq!(bootstrap["storage"]["ready"], true);
+    assert_eq!(bootstrap["repositories"][0]["id"], REPO.to_string());
+    assert_eq!(bootstrap["repositories"][0]["name"], "Local fixture");
+    assert_eq!(bootstrap["capabilities"]["authentication"], "local_trusted");
+
+    let snapshot = router
+        .clone()
+        .oneshot(protected(&format!("/v1/repos/{REPO}/snapshot")))
+        .await
+        .unwrap();
+    assert_eq!(snapshot.status(), StatusCode::OK);
+
+    let mut bearer = protected(&format!("/v1/repos/{REPO}/snapshot"));
+    bearer.headers_mut().insert(
+        "authorization",
+        format!("Bearer {}", f.f.token.expose().as_str())
+            .parse()
+            .unwrap(),
+    );
+    assert_eq!(
+        router.clone().oneshot(bearer).await.unwrap().status(),
+        StatusCode::FORBIDDEN
+    );
+
+    let path = format!("/v1/repos/{REPO}/snapshot");
+    for request in [
+        Request::builder()
+            .uri(&path)
+            .header("x-jj-store-protocol", "1")
+            .body(Body::empty())
+            .unwrap(),
+        Request::builder()
+            .uri(&path)
+            .header("host", "127.0.0.1:7443")
+            .body(Body::empty())
+            .unwrap(),
+        Request::builder()
+            .uri(&path)
+            .header("host", "localhost:7443")
+            .header("x-jj-store-protocol", "1")
+            .body(Body::empty())
+            .unwrap(),
+        Request::builder()
+            .uri(&path)
+            .header("host", "127.0.0.1:7443")
+            .header("x-jj-store-protocol", "1")
+            .header("origin", "null")
+            .body(Body::empty())
+            .unwrap(),
+        Request::builder()
+            .uri(&path)
+            .header("host", "127.0.0.1:7443")
+            .header("x-jj-store-protocol", "1")
+            .header("origin", "https://attacker.invalid")
+            .body(Body::empty())
+            .unwrap(),
+        Request::builder()
+            .uri(&path)
+            .header("host", "127.0.0.1:7443")
+            .header("x-jj-store-protocol", "1")
+            .header("sec-fetch-site", "cross-site")
+            .header("sec-fetch-mode", "cors")
+            .header("sec-fetch-dest", "empty")
+            .body(Body::empty())
+            .unwrap(),
+        Request::builder()
+            .uri(&path)
+            .header("host", "127.0.0.1:7443")
+            .header("x-jj-store-protocol", "1")
+            .header("x-http-method-override", "POST")
+            .body(Body::empty())
+            .unwrap(),
+    ] {
+        assert_eq!(
+            router.clone().oneshot(request).await.unwrap().status(),
+            StatusCode::FORBIDDEN
+        );
+    }
+
+    let same_origin = Request::builder()
+        .uri(&path)
+        .header("host", "127.0.0.1:7443")
+        .header("x-jj-store-protocol", "1")
+        .header("origin", "http://127.0.0.1:7443")
+        .header("sec-fetch-site", "same-origin")
+        .header("sec-fetch-mode", "cors")
+        .header("sec-fetch-dest", "empty")
+        .body(Body::empty())
+        .unwrap();
+    assert_eq!(
+        router.clone().oneshot(same_origin).await.unwrap().status(),
+        StatusCode::OK
+    );
+
+    let wrong_json = Request::builder()
+        .method("POST")
+        .uri(format!("/v1/repos/{REPO}/index/tasks"))
+        .header("host", "127.0.0.1:7443")
+        .header("x-jj-store-protocol", "1")
+        .header("content-type", "text/plain")
+        .body(Body::from("{}"))
+        .unwrap();
+    assert_eq!(
+        router.clone().oneshot(wrong_json).await.unwrap().status(),
+        StatusCode::UNSUPPORTED_MEDIA_TYPE
+    );
+    let wrong_upload = Request::builder()
+        .method("POST")
+        .uri(format!("/v1/repos/{REPO}/conflict-uploads"))
+        .header("host", "127.0.0.1:7443")
+        .header("x-jj-store-protocol", "1")
+        .header("content-type", "application/json")
+        .body(Body::from("{}"))
+        .unwrap();
+    assert_eq!(
+        router.oneshot(wrong_upload).await.unwrap().status(),
+        StatusCode::UNSUPPORTED_MEDIA_TYPE
+    );
+}
 #[tokio::test(flavor = "multi_thread", worker_threads = 4)]
 async fn http_reads_match_native_snapshots_objects_graphs_and_differences_without_publication() {
     let f = ContentFixture::new().await;
@@ -256,6 +416,8 @@ async fn http_reads_authentication_queries_and_binary_ranges_fail_closed() {
         .oneshot(
             Request::builder()
                 .uri(format!("/v1/repos/{REPO}/snapshot"))
+                .header("host", "127.0.0.1:7443")
+                .header("x-jj-store-protocol", "1")
                 .body(Body::empty())
                 .unwrap(),
         )
@@ -349,6 +511,8 @@ async fn http_reads_revocation_stops_inflight_media_and_credentials_never_become
             "/v1/repos/{}/snapshot",
             m::RepositoryId::new([219; 16])
         ))
+        .header("host", "127.0.0.1:7443")
+        .header("x-jj-store-protocol", "1")
         .header(
             "authorization",
             format!("Bearer {}", f.f.token.expose().as_str()),
@@ -369,6 +533,8 @@ async fn http_reads_revocation_stops_inflight_media_and_credentials_never_become
     );
     let cookie = Request::builder()
         .uri(format!("/v1/repos/{REPO}/snapshot"))
+        .header("host", "127.0.0.1:7443")
+        .header("x-jj-store-protocol", "1")
         .header("cookie", format!("token={}", f.f.token.expose().as_str()))
         .body(Body::empty())
         .unwrap();

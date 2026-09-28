@@ -177,7 +177,7 @@ impl fmt::Debug for TokenPolicy {
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Principal {
     id: PrincipalId,
-    token: TokenId,
+    token: Option<TokenId>,
     scope: Scope,
     permission: Permission,
 }
@@ -185,7 +185,7 @@ impl Principal {
     pub fn id(self) -> PrincipalId {
         self.id
     }
-    pub fn token(self) -> TokenId {
+    pub fn token(self) -> Option<TokenId> {
         self.token
     }
     pub fn scope(self) -> Scope {
@@ -194,7 +194,28 @@ impl Principal {
     pub fn permission(self) -> Permission {
         self.permission
     }
+
+    pub fn local(
+        id: PrincipalId,
+        scope: Scope,
+        permission: Permission,
+        required: Permission,
+    ) -> Result<Self> {
+        if !permission.valid_for(scope)
+            || !required.valid_for(scope)
+            || !permission.allows(required)
+        {
+            return Err(Error::Denied);
+        }
+        Ok(Self {
+            id,
+            token: None,
+            scope,
+            permission,
+        })
+    }
 }
+pub type AccessPrincipal = Principal;
 impl TokenPolicy {
     pub fn new(scope: Scope) -> Self {
         Self {
@@ -320,7 +341,7 @@ impl TokenPolicy {
         }
         Ok(Principal {
             id: grant.principal,
-            token: token.id,
+            token: Some(token.id),
             scope: self.scope,
             permission: grant.permission,
         })

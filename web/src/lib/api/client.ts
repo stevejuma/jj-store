@@ -47,7 +47,10 @@ export function fullId(value: string, width = 128): string {
     throw new ApiError("invalid_full_id");
   return value;
 }
-async function bytes(response: Response, limit: number): Promise<Uint8Array> {
+export async function responseBytes(
+  response: Response,
+  limit: number,
+): Promise<Uint8Array> {
   const reader = response.body?.getReader();
   if (!reader) return new Uint8Array();
   const chunks: Uint8Array[] = [];
@@ -73,21 +76,24 @@ async function bytes(response: Response, limit: number): Promise<Uint8Array> {
   }
 }
 export class Client {
-  #token: string;
+  #token: string | null;
   #closed = new AbortController();
   constructor(
     readonly repository: string,
-    token: string,
+    token: string | null,
     readonly denied: () => void,
     private fetcher: typeof fetch = (...args) => fetch(...args),
   ) {
     fullId(repository, 32);
-    if (!token.trim() || /[\r\n]/.test(token) || token.length > 4096)
+    if (
+      token !== null &&
+      (!token.trim() || /[\r\n]/.test(token) || token.length > 4096)
+    )
       throw new ApiError("invalid_credential");
-    this.#token = token.trim();
+    this.#token = token?.trim() ?? null;
   }
   close() {
-    this.#token = "";
+    this.#token = null;
     this.#closed.abort();
   }
   async #fetch(
@@ -113,7 +119,13 @@ export class Client {
           init.signal ?? new AbortController().signal,
           AbortSignal.timeout(35000),
         ]),
-        headers: { ...init.headers, authorization: `Bearer ${this.#token}` },
+        headers: {
+          ...init.headers,
+          "x-jj-store-protocol": "1",
+          ...(this.#token === null
+            ? {}
+            : { authorization: `Bearer ${this.#token}` }),
+        },
       },
     );
     if (response.status === 401 || response.status === 403) {
@@ -136,7 +148,7 @@ export class Client {
     }
     const value = decode(
       new TextDecoder("utf-8", { fatal: true }).decode(
-        await bytes(response, 16 * 1024 * 1024),
+        await responseBytes(response, 16 * 1024 * 1024),
       ),
     ) as T;
     if (!response.ok) {
@@ -181,7 +193,7 @@ export class Client {
       await response.body?.cancel();
       throw new ApiError("snapshot_mismatch");
     }
-    const data = await bytes(response, 262144);
+    const data = await responseBytes(response, 262144);
     let text: string | undefined;
     try {
       const decoded = new TextDecoder("utf-8", { fatal: true }).decode(data);

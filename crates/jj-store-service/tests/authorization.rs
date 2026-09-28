@@ -403,3 +403,38 @@ async fn replacement_policy_must_retain_scope_and_can_be_read_after_restart() {
         WalPosition(0)
     );
 }
+
+#[tokio::test]
+async fn local_trusted_access_has_a_stable_principal_and_explicit_permission() {
+    let f = fixture().await;
+    let local = RepositoryAccess::local_trusted(
+        REPO,
+        f.store.clone(),
+        PrincipalId::new([44; 16]),
+        Permission::Admin,
+    )
+    .unwrap();
+    let principal = local.authorize_current(Permission::Write).await.unwrap();
+    assert_eq!(principal.id(), PrincipalId::new([44; 16]));
+    assert_eq!(principal.permission(), Permission::Admin);
+    assert_eq!(principal.token(), None);
+
+    let reader = RepositoryAccess::local_trusted(
+        REPO,
+        f.store,
+        PrincipalId::new([45; 16]),
+        Permission::Read,
+    )
+    .unwrap();
+    assert!(reader.authorize_current(Permission::Read).await.is_ok());
+    assert!(reader.authorize_current(Permission::Write).await.is_err());
+    assert!(
+        RepositoryAccess::local_trusted(
+            REPO,
+            Arc::new(MemoryStore::default()),
+            PrincipalId::new([46; 16]),
+            Permission::CreateRepository,
+        )
+        .is_err()
+    );
+}

@@ -1,0 +1,140 @@
+import { bootstrap as loadBootstrap } from "../api/bootstrap.js";
+import { ApiError } from "../api/client.js";
+import type { StoreDataSource } from "./native-data-source.js";
+import type { createProductionStoreReader } from "./production-store-reader.svelte.js";
+import type { ProductionStoreState } from "./production-store-state.svelte.js";
+import { storeErrorMessage } from "./http-store-data-source.js";
+import type { createStoreRouteHistory } from "./store-route-history.svelte.js";
+
+type History = ReturnType<typeof createStoreRouteHistory>;
+type Reader = ReturnType<typeof createProductionStoreReader>;
+
+export function reportProductionStoreError(
+  data: ProductionStoreState,
+  cause: unknown,
+) {
+  if (cause instanceof DOMException && cause.name === "AbortError") return;
+  if (cause instanceof ApiError && cause.code === "index_rebuild_required")
+    data.neededIndex = cause.snapshot ?? null;
+  data.status.error = storeErrorMessage(cause);
+}
+
+export function createProductionRevisionSelector(
+  data: ProductionStoreState,
+  history: History,
+  reader: Reader,
+) {
+  return async (id: string | null) => {
+    const page = history.route.page;
+    history.push({
+      ...history.route,
+      inspectedOperationId: page === "oplog" ? id : null,
+      commitId: page === "oplog" ? null : id,
+      changeId:
+        data.graph.revisions.find((revision) => revision.eventId === id)
+          ?.changeId ?? null,
+      path: null,
+    });
+    Object.assign(data, {
+      detail: undefined,
+      blob: undefined,
+      inspectionContinuation: null,
+    });
+    if (!id) return;
+    if (page === "oplog") await reader.loadOperation(id);
+    else if (page === "files") await reader.loadFiles(id);
+    else await reader.loadCommit(id);
+  };
+}
+
+export function followProductionExternalRoutes(options: {
+  data: ProductionStoreState;
+  history: History;
+  source: () => StoreDataSource | null;
+  connect: (repository: string, token: string | null) => Promise<void>;
+  disconnect: (message?: string) => void;
+  restore: () => Promise<void>;
+}) {
+  options.history.onExternalRoute((result) => {
+    if (result.kind === "invalid") {
+      options.data.status.navigation = "failed";
+      options.data.status.error = result.message;
+      return;
+    }
+    const source = options.source();
+    if (result.kind !== "route" || !source) return;
+    if (result.route.repository === source.repository) {
+      void options.restore();
+      return;
+    }
+    if (
+      options.data.accessMode === "local_trusted" &&
+      options.data.repositories.some(
+        (repository) => repository.id === result.route.repository,
+      )
+    )
+      void options.connect(result.route.repository, null);
+    else options.disconnect("Reconnect to open the requested repository.");
+  });
+}
+
+export async function initializeProductionStore(options: {
+  data: ProductionStoreState;
+  history: History;
+  connect: (repository: string, token: string | null) => Promise<void>;
+  fetcher?: typeof fetch;
+  signal: AbortSignal;
+}) {
+  options.data.status.connection = "connecting";
+  try {
+    const bootstrap = await loadBootstrap(options.fetcher, options.signal);
+    if (options.signal.aborted) return;
+    options.data.accessMode = bootstrap.access_mode;
+    options.data.storageReady = bootstrap.storage.ready;
+    options.data.backups = [...bootstrap.backups];
+    options.data.repositories = bootstrap.repositories.map((repository) => ({
+      id: repository.id,
+      name: repository.name,
+    }));
+    options.data.status.repositories = options.data.repositories.length
+      ? "ready"
+      : "empty";
+    if (!bootstrap.storage.ready) {
+      options.data.status.connection = "failed";
+      options.data.status.error = "Authoritative storage is not ready.";
+      return;
+    }
+    if (bootstrap.access_mode === "authenticated") {
+      options.data.status.connection = "disconnected";
+      return;
+    }
+    const requested = options.data.repositories.find(
+      (repository) => repository.id === options.history.route.repository,
+    );
+    const selected =
+      requested ??
+      (options.data.repositories.length === 1
+        ? options.data.repositories[0]
+        : undefined);
+    if (selected) await options.connect(selected.id, null);
+    else options.data.status.connection = "disconnected";
+  } catch (cause) {
+    if (cause instanceof DOMException && cause.name === "AbortError") return;
+    options.data.status.connection = "failed";
+    options.data.status.error = storeErrorMessage(cause);
+  }
+}
+
+export function startProductionStoreLifecycle(options: {
+  data: ProductionStoreState;
+  history: History;
+  source: () => StoreDataSource | null;
+  connect: (repository: string, token: string | null) => Promise<void>;
+  disconnect: (message?: string) => void;
+  restore: () => Promise<void>;
+  fetcher?: typeof fetch;
+  signal: AbortSignal;
+}) {
+  followProductionExternalRoutes(options);
+  void initializeProductionStore(options);
+}

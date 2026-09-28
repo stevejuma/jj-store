@@ -33,8 +33,15 @@ pub enum Format {
 }
 #[derive(Clone, Debug, Args)]
 pub struct ConnectionArgs {
-    #[arg(long)]
-    endpoint: String,
+    #[arg(
+        long,
+        required_unless_present = "unix_socket",
+        conflicts_with = "unix_socket"
+    )]
+    endpoint: Option<String>,
+    /// User-restricted LocalTrusted native RPC socket
+    #[arg(long, conflicts_with_all = ["endpoint", "insecure_loopback", "ca_certificate"])]
+    unix_socket: Option<PathBuf>,
     #[arg(long)]
     repo_id: RepositoryId,
     /// Allow plaintext only for a literal loopback IP address
@@ -54,7 +61,15 @@ impl ConnectionArgs {
             .map(|path| path.canonicalize())
             .transpose()
             .map_err(|_| "Could not read deployment CA path")?;
-        Connection::new(&self.endpoint, self.repo_id, self.insecure_loopback, ca)
+        match (&self.endpoint, &self.unix_socket) {
+            (Some(endpoint), None) => {
+                Connection::new(endpoint, self.repo_id, self.insecure_loopback, ca)
+            }
+            (None, Some(socket)) if !self.insecure_loopback && ca.is_none() => {
+                Connection::new_local(socket.canonicalize()?, self.repo_id)
+            }
+            _ => Err("select exactly one authenticated endpoint or local Unix socket".into()),
+        }
     }
     fn connection(&self) -> Result<Connection, CommandError> {
         self.connection_raw().map_err(error)
@@ -69,8 +84,15 @@ pub enum StoreCommand {
     #[command(long_about = include_str!("../../../docs/cli/init.md"))]
     Init {
         destination: PathBuf,
-        #[arg(long)]
-        endpoint: String,
+        #[arg(
+            long,
+            required_unless_present = "unix_socket",
+            conflicts_with = "unix_socket"
+        )]
+        endpoint: Option<String>,
+        /// User-restricted LocalTrusted native RPC socket
+        #[arg(long, conflicts_with_all = ["endpoint", "insecure_loopback", "ca_certificate"])]
+        unix_socket: Option<PathBuf>,
         #[arg(long)]
         insecure_loopback: bool,
         #[arg(long)]
@@ -190,6 +212,7 @@ pub async fn run(
         StoreCommand::Init {
             destination,
             endpoint,
+            unix_socket,
             insecure_loopback,
             ca_certificate,
             workspace,
@@ -199,6 +222,7 @@ pub async fn run(
             let mut initialization =
                 crate::initialization::Initialization::open(crate::initialization::Options {
                     endpoint,
+                    unix_socket: unix_socket.map(|path| helper.cwd().join(path)),
                     insecure_loopback,
                     ca_certificate: ca_certificate.map(|p| helper.cwd().join(p)),
                     destination: helper.cwd().join(destination),
@@ -223,17 +247,29 @@ pub async fn run(
             state_dir,
         } => {
             let connection = connection.connection()?;
-            let token = credentials::resolve(&connection).map_err(error)?;
-            let mut attachment = crate::attachment::Attachment::open(
-                connection,
-                token,
-                helper.cwd().join(destination),
-                cache.map(|p| helper.cwd().join(p)),
-                workspace,
-                state_dir.map(|p| helper.cwd().join(p)),
-            )
-            .await
-            .map_err(error)?;
+            let mut attachment = if connection.unix_socket.is_some() {
+                crate::attachment::Attachment::open_local(
+                    connection,
+                    helper.cwd().join(destination),
+                    cache.map(|p| helper.cwd().join(p)),
+                    workspace,
+                    state_dir.map(|p| helper.cwd().join(p)),
+                )
+                .await
+                .map_err(error)?
+            } else {
+                let token = credentials::resolve(&connection).map_err(error)?;
+                crate::attachment::Attachment::open(
+                    connection,
+                    token,
+                    helper.cwd().join(destination),
+                    cache.map(|p| helper.cwd().join(p)),
+                    workspace,
+                    state_dir.map(|p| helper.cwd().join(p)),
+                )
+                .await
+                .map_err(error)?
+            };
             complete_attachment(ui, helper, args.format, &mut attachment).await
         }
 
@@ -259,6 +295,11 @@ pub async fn run(
             token_stdin,
         } => {
             let connection = connection.connection()?;
+            if connection.unix_socket.is_some() {
+                return Err(user_error(
+                    "LocalTrusted connections do not use repository login credentials",
+                ));
+            }
             let text = if token_stdin {
                 let mut bytes = Zeroizing::new(Vec::new());
                 std::io::stdin()
@@ -301,6 +342,11 @@ pub async fn run(
         }
         StoreCommand::Logout { connection } => {
             let connection = connection.connection()?;
+            if connection.unix_socket.is_some() {
+                return Err(user_error(
+                    "LocalTrusted connections do not use repository login credentials",
+                ));
+            }
             credentials::remove(&connection).map_err(error)?;
             let override_present = credentials::environment_present();
             let text = if override_present {

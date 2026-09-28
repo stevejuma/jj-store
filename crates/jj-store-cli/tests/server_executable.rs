@@ -9,6 +9,12 @@ use std::{
     process::{Child, Command, Output, Stdio},
     time::{Duration, Instant},
 };
+
+fn protected_http_client() -> reqwest::ClientBuilder {
+    let mut headers = reqwest::header::HeaderMap::new();
+    headers.insert("x-jj-store-protocol", "1".parse().unwrap());
+    reqwest::Client::builder().default_headers(headers)
+}
 struct Fixture {
     root: tempfile::TempDir,
     config: PathBuf,
@@ -196,6 +202,43 @@ impl Running {
         }
     }
 }
+
+#[cfg(unix)]
+fn start_local_trusted_server(root: &Path, config: &Path) -> Running {
+    let mut cmd = command();
+    cmd.current_dir(root)
+        .args(["run", "--config", config.to_str().unwrap(), "--format=json"])
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped());
+    let mut running = Running {
+        child: cmd.spawn().unwrap(),
+        event: serde_json::Value::Null,
+    };
+    let out = running.child.stdout.take().unwrap();
+    let (tx, rx) = std::sync::mpsc::channel();
+    std::thread::spawn(move || {
+        let mut line = String::new();
+        let _ = BufReader::new(out).read_line(&mut line);
+        let _ = tx.send(line);
+    });
+    let line = rx
+        .recv_timeout(Duration::from_secs(30))
+        .expect("LocalTrusted server did not report its listener");
+    if line.is_empty() {
+        let mut stderr = String::new();
+        use std::io::Read as _;
+        running
+            .child
+            .stderr
+            .take()
+            .unwrap()
+            .read_to_string(&mut stderr)
+            .unwrap();
+        panic!("LocalTrusted server exited before listener: {stderr}");
+    }
+    running.event = serde_json::from_str(&line).unwrap();
+    running
+}
 #[test]
 fn standalone_help_configuration_completions_and_build_info_are_consistent() {
     for args in [
@@ -252,7 +295,7 @@ fn standalone_help_configuration_completions_and_build_info_are_consistent() {
 }
 
 #[test]
-fn local_init_and_configuration_migration_are_explicit_and_non_destructive() {
+fn local_init_creates_strict_format_two_configuration() {
     let root = tempfile::tempdir().unwrap();
     let state = root.path().join("local");
     let initialized: serde_json::Value = serde_json::from_str(&success(
@@ -278,30 +321,143 @@ fn local_init_and_configuration_migration_are_explicit_and_non_destructive() {
     assert!(text.contains("mode = \"local-trusted\""));
     assert!(text.contains("mode = \"embedded-rustfs\""));
     assert!(!text.contains("secret_key"));
+}
 
-    let source = root.path().join("format-1.toml");
-    let output = root.path().join("format-2.toml");
-    fs::write(&source, jj_store_server::config::FORMAT_1_EXAMPLE).unwrap();
+#[cfg(unix)]
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+#[ignore = "requires the separately built pinned embedded RustFS runtime"]
+async fn local_trusted_executable_bootstraps_registers_and_serves_without_tokens() {
+    use std::os::unix::fs::PermissionsExt as _;
+
+    let root = tempfile::tempdir().unwrap();
+    let state = root.path().join("local");
+    let runtime = std::fs::canonicalize(
+        std::env::var_os("JJ_STORE_RUSTFS_RUNTIME")
+            .expect("set JJ_STORE_RUSTFS_RUNTIME to the built embedded runtime"),
+    )
+    .unwrap();
     success(
         command()
             .args([
-                "config",
-                "migrate",
-                "--config",
-                source.to_str().unwrap(),
-                "--output",
-                output.to_str().unwrap(),
+                "init",
+                "--local",
+                "--state-dir",
+                state.to_str().unwrap(),
+                "--rustfs-executable",
+                runtime.to_str().unwrap(),
+                "--format=json",
             ])
             .output()
             .unwrap(),
     );
+    let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+    let address = listener.local_addr().unwrap();
+    drop(listener);
+    let config = state.join("server.toml");
+    fs::write(
+        &config,
+        fs::read_to_string(&config)
+            .unwrap()
+            .replace("127.0.0.1:7443", &address.to_string()),
+    )
+    .unwrap();
+
+    let mut running = start_local_trusted_server(root.path(), &config);
+    assert_eq!(running.event["address"], address.to_string());
+    let socket = state.join("native.sock");
     assert_eq!(
-        fs::read_to_string(&source).unwrap(),
-        jj_store_server::config::FORMAT_1_EXAMPLE
+        fs::metadata(&socket).unwrap().permissions().mode() & 0o777,
+        0o600
     );
-    let migrated = fs::read_to_string(output).unwrap();
-    assert!(migrated.contains("format = 2"));
-    assert!(migrated.contains("mode = \"external-s3\""));
+    let http = protected_http_client()
+        .no_proxy()
+        .timeout(Duration::from_secs(10))
+        .build()
+        .unwrap();
+    let origin = format!("http://{address}");
+    let bootstrap = http
+        .get(format!("{origin}/v1/bootstrap"))
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(bootstrap.status(), reqwest::StatusCode::OK);
+    let bootstrap: serde_json::Value = bootstrap.json().await.unwrap();
+    assert_eq!(bootstrap["access_mode"], "local_trusted");
+    assert_eq!(bootstrap["storage"]["ready"], true);
+    assert_eq!(bootstrap["repositories"], serde_json::json!([]));
+
+    let jj_config = root.path().join("jj.toml");
+    fs::write(
+        &jj_config,
+        "[user]\nname='Local Acceptance'\nemail='local@example.invalid'\n",
+    )
+    .unwrap();
+    let workspace = root.path().join("workspace");
+    let created: serde_json::Value = serde_json::from_str(&success(
+        Command::new(env!("CARGO_BIN_EXE_jj"))
+            .current_dir(root.path())
+            .env("JJ_CONFIG", &jj_config)
+            .args([
+                "--no-pager",
+                "--color=never",
+                "store",
+                "--format=json",
+                "init",
+                workspace.to_str().unwrap(),
+                "--cache",
+                root.path().join("cache").to_str().unwrap(),
+                "--state-dir",
+                root.path().join("client-state").to_str().unwrap(),
+                "--workspace",
+                "local-acceptance",
+                "--unix-socket",
+                socket.to_str().unwrap(),
+            ])
+            .output()
+            .unwrap(),
+    ))
+    .unwrap();
+    let repository = created["repository"].as_str().unwrap();
+    let snapshot = http
+        .get(format!("{origin}/v1/repos/{repository}/snapshot"))
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(snapshot.status(), reqwest::StatusCode::OK);
+    running.terminate();
+
+    let registered: serde_json::Value = serde_json::from_str(&success(
+        command()
+            .args([
+                "repository",
+                "register",
+                "--config",
+                config.to_str().unwrap(),
+                "--repo-id",
+                repository,
+                "--name",
+                "Local acceptance",
+                "--format=json",
+            ])
+            .output()
+            .unwrap(),
+    ))
+    .unwrap();
+    assert_eq!(registered["catalog_entries"], 1);
+
+    let mut restarted = start_local_trusted_server(root.path(), &config);
+    let bootstrap: serde_json::Value = http
+        .get(format!("{origin}/v1/bootstrap"))
+        .send()
+        .await
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    assert_eq!(bootstrap["repositories"][0]["id"], repository);
+    assert_eq!(bootstrap["repositories"][0]["name"], "Local acceptance");
+    assert!(bootstrap["backups"].as_array().unwrap().is_empty());
+    restarted.terminate();
 }
 #[test]
 fn operator_commands_provision_list_and_revoke_without_exposing_credentials() {
@@ -551,7 +707,7 @@ async fn cold_tls_server_serves_only_the_configured_browser_bundle() {
         .parse::<std::net::SocketAddr>()
         .unwrap()
         .port();
-    let client = reqwest::Client::builder()
+    let client = protected_http_client()
         .no_proxy()
         .timeout(Duration::from_secs(3))
         .add_root_certificate(reqwest::Certificate::from_pem(&pem).unwrap())
@@ -598,6 +754,7 @@ async fn cold_tls_server_serves_only_the_configured_browser_bundle() {
     assert_eq!(
         client
             .get(format!("{base}/v1/unknown"))
+            .header(reqwest::header::HOST, "localhost:7443")
             .send()
             .await
             .unwrap()
@@ -611,6 +768,7 @@ async fn cold_tls_server_serves_only_the_configured_browser_bundle() {
                 "{base}/v1/repos/{}/snapshot",
                 jj_store_model::RepositoryId::new([1; 16])
             ))
+            .header(reqwest::header::HOST, "localhost:7443")
             .send()
             .await
             .unwrap()
@@ -641,7 +799,7 @@ async fn cold_tls_http_reads_support_http1_and_http2() {
         .await
         .unwrap();
     for version in [reqwest::Version::HTTP_11, reqwest::Version::HTTP_2] {
-        let builder = reqwest::Client::builder()
+        let builder = protected_http_client()
             .no_proxy()
             .timeout(Duration::from_secs(3))
             .add_root_certificate(reqwest::Certificate::from_pem(&pem).unwrap());
@@ -652,7 +810,12 @@ async fn cold_tls_http_reads_support_http1_and_http2() {
         }
         .build()
         .unwrap();
-        let response = client.get(&url).send().await.unwrap();
+        let response = client
+            .get(&url)
+            .header(reqwest::header::HOST, "localhost:7443")
+            .send()
+            .await
+            .unwrap();
         assert_eq!(response.version(), version);
         assert_eq!(response.status(), reqwest::StatusCode::UNAUTHORIZED);
         assert_eq!(response.headers()["cache-control"], "no-store");
@@ -849,7 +1012,7 @@ async fn real_rustfs_server_cli_restart_and_revocation() {
     f.search = Some(admin.clone());
     let rebuild_started = Instant::now();
     running = f.start(false);
-    let http = reqwest::Client::builder()
+    let http = protected_http_client()
         .no_proxy()
         .http1_only()
         .timeout(Duration::from_secs(30))

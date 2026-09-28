@@ -33,6 +33,8 @@ fn api(f: &BrowsingFixture, cache: &std::path::Path) -> Router {
 fn request(token: &BearerToken, path: &str) -> Request<Body> {
     Request::builder()
         .uri(format!("/v1/repos/{REPO}/{path}"))
+        .header("host", "127.0.0.1:7443")
+        .header("x-jj-store-protocol", "1")
         .header(
             "authorization",
             format!("Bearer {}", token.expose().as_str()),
@@ -130,6 +132,8 @@ async fn http_browsing_windows_are_authorized_pinned_cursor_bound_and_contract_c
         .oneshot(
             Request::builder()
                 .uri(format!("/v1/repos/{REPO}/references"))
+                .header("host", "127.0.0.1:7443")
+                .header("x-jj-store-protocol", "1")
                 .body(Body::empty())
                 .unwrap(),
         )

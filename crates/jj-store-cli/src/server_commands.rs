@@ -43,6 +43,11 @@ pub enum ServerCommand {
     /// List, grant, revoke and recover repository token requests
     #[command(long_about=include_str!("../../../docs/cli/tokens.md"))]
     Token(crate::token_commands::TokenArgs),
+    /// Verify repository authority and update LocalTrusted discovery metadata
+    Repository {
+        #[command(subcommand)]
+        command: RepositoryCommand,
+    },
     /// Run the configured service in the foreground
     #[command(long_about=include_str!("../../../docs/cli/server-run.md"))]
     Run {
@@ -84,6 +89,18 @@ pub enum ServerCommand {
     },
 }
 #[derive(Debug, Subcommand)]
+pub enum RepositoryCommand {
+    /// Register a verified repository in the local installation catalog
+    Register {
+        #[arg(long)]
+        config: PathBuf,
+        #[arg(long)]
+        repo_id: RepositoryId,
+        #[arg(long)]
+        name: Option<String>,
+    },
+}
+#[derive(Debug, Subcommand)]
 pub enum ConfigCommand {
     /// Print an example configuration
     Example,
@@ -91,13 +108,6 @@ pub enum ConfigCommand {
     Check {
         #[arg(long)]
         config: PathBuf,
-    },
-    /// Write a separate reviewed format-2 configuration
-    Migrate {
-        #[arg(long)]
-        config: PathBuf,
-        #[arg(long)]
-        output: PathBuf,
     },
 }
 #[derive(Debug, Subcommand)]
@@ -314,6 +324,53 @@ async fn run(ui: &Ui, cli: ServerCli) -> AuthorityResult<()> {
             let (value, text) = crate::token_commands::run(ui, args).await?;
             emit(ui, format, no_pager, value, &text)
         }
+        ServerCommand::Repository {
+            command:
+                RepositoryCommand::Register {
+                    config,
+                    repo_id,
+                    name,
+                },
+        } => {
+            let config = Config::load(&config)?;
+            let (installation, catalog) = match &config.access {
+                jj_store_server::config::Access::LocalTrusted {
+                    installation,
+                    catalog,
+                    ..
+                } => (installation, catalog),
+                jj_store_server::config::Access::Authenticated => {
+                    return Err(
+                        "repository registration is available only for LocalTrusted installations"
+                            .into(),
+                    );
+                }
+            };
+            let identity = jj_store_server::installation::Identity::load(installation)?;
+            jj_store_server::installation::Catalog::load(catalog, &identity)?;
+            let storage = jj_store_server::storage::AuthoritativeStorage::start(&config).await?;
+            let snapshot =
+                jj_store_wal::publication::ManifestSnapshot::load(storage.store(), repo_id).await?;
+            if snapshot.manifest().repository != repo_id {
+                storage.shutdown().await?;
+                return Err("repository authority identity mismatch".into());
+            }
+            let name = name.unwrap_or_else(|| repo_id.to_string());
+            let updated = jj_store_server::installation::Catalog::register(
+                catalog,
+                &identity,
+                repo_id,
+                name.clone(),
+            )?;
+            storage.shutdown().await?;
+            emit(
+                ui,
+                format,
+                no_pager,
+                json!({"version":1,"repository":repo_id,"name":name,"catalog_entries":updated.repositories.len()}),
+                &format!("Registered repository {name} ({repo_id})\n"),
+            )
+        }
         ServerCommand::Config {
             command: ConfigCommand::Example,
         } => emit(
@@ -333,21 +390,6 @@ async fn run(ui: &Ui, cli: ServerCli) -> AuthorityResult<()> {
                 no_pager,
                 json!({"version":1,"valid":true,"configuration":config,"storage_readiness":"not checked"}),
                 "Configuration is valid; storage readiness has not been checked.\n",
-            )
-        }
-        ServerCommand::Config {
-            command: ConfigCommand::Migrate { config, output },
-        } => {
-            Config::migrate(&config, &output)?;
-            emit(
-                ui,
-                format,
-                no_pager,
-                json!({"version":1,"source":config,"output":output,"format":2}),
-                &format!(
-                    "Format-2 configuration written to {}. The source was not modified.\n",
-                    output.display()
-                ),
             )
         }
         ServerCommand::Doctor { config, repo_id } => {

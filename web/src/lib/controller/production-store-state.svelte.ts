@@ -22,6 +22,9 @@ type MutableStatus = {
 };
 
 export interface ProductionStoreState {
+  accessMode: "bootstrapping" | "authenticated" | "local_trusted";
+  storageReady: boolean;
+  backups: Model<"BackupStatus">[];
   heads: string[];
   repositories: { id: string; name: string }[];
   bookmarks: Bookmark[];
@@ -84,6 +87,9 @@ export const initialStatus = (): MutableStatus => ({
 
 export function createProductionStoreState(): ProductionStoreState {
   const state: ProductionStoreState = $state({
+    accessMode: "bootstrapping",
+    storageReady: false,
+    backups: [],
     heads: [],
     repositories: [],
     bookmarks: [],

@@ -72,6 +72,7 @@ test("hash route restores snapshot and file through controls reload and browser 
 test("malformed owned route is explicit before authentication", async ({
   page,
 }) => {
+  await api(page);
   await page.goto(`/#/repos/${repo}/files?file=..%2Fsecret`);
   await expect(page.getByRole("alert")).toContainText(
     "Invalid repository route value.",

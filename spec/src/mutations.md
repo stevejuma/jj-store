@@ -27,6 +27,14 @@ transition validation to an explicit semantic policy. A transport cannot select
 a caller's principal independently of its verified credential. No permissive
 semantic validator is provided by the service library.
 
+The same guard accepts a principal only through the shared access-policy
+boundary. LocalTrusted derives that principal from the installation and verified
+local peer, with one explicitly configured permission; authenticated access
+continues to derive it from the repository token. Existing WAL requests and
+receipts store only the resulting `PrincipalId`, so the access-mode addition
+does not rewrite historical records or weaken protection, snapshot, idempotency,
+semantic or resource checks.
+
 ## Native publication policy
 
 Native publications must descend from every removed committed operation. Strict

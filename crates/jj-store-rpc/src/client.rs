@@ -40,7 +40,7 @@ impl Default for Options {
 #[derive(Clone)]
 pub struct NativeClient {
     channel: Channel,
-    token: Arc<BearerToken>,
+    token: Option<Arc<BearerToken>>,
     repository: m::RepositoryId,
     options: Options,
 }
@@ -96,7 +96,44 @@ impl NativeClient {
             .map_err(|_| Status::unavailable("RPC connection failed"))?;
         Ok(Self {
             channel,
-            token: Arc::new(token),
+            token: Some(Arc::new(token)),
+            repository,
+            options,
+        })
+    }
+    pub async fn connect_unix(
+        socket: &std::path::Path,
+        repository: m::RepositoryId,
+        options: Options,
+    ) -> Result<Self, Status> {
+        if !socket.is_absolute()
+            || socket.as_os_str().as_encoded_bytes().len() > 4096
+            || options.timeout.is_zero()
+            || options.timeout > Duration::from_secs(3600)
+            || options.object_bytes < m::envelope::HEADER_LEN as u64
+            || options.object_bytes > storage::staging::MAX_SINGLE_PUT
+            || options.ca_certificate_pem.is_some()
+        {
+            return Err(Status::invalid_argument("native Unix client configuration"));
+        }
+        let endpoint = Endpoint::from_static("http://localhost")
+            .connect_timeout(options.timeout)
+            .timeout(options.timeout);
+        let socket = socket.to_owned();
+        let channel = endpoint
+            .connect_with_connector(tower::service_fn(move |_| {
+                let socket = socket.clone();
+                async move {
+                    tokio::net::UnixStream::connect(socket)
+                        .await
+                        .map(hyper_util::rt::TokioIo::new)
+                }
+            }))
+            .await
+            .map_err(|_| Status::unavailable("RPC connection failed"))?;
+        Ok(Self {
+            channel,
+            token: None,
             repository,
             options,
         })
@@ -111,13 +148,36 @@ impl NativeClient {
         epoch: m::EpochId,
         credential: &BearerToken,
     ) -> Result<AdministrationSnapshot, Status> {
+        self.create_repository_request(epoch, Some(credential))
+            .await
+    }
+    pub async fn create_repository_local(
+        &self,
+        epoch: m::EpochId,
+    ) -> Result<AdministrationSnapshot, Status> {
+        if self.token.is_some() {
+            return Err(Status::invalid_argument(
+                "local repository creation requires a Unix connection",
+            ));
+        }
+        self.create_repository_request(epoch, None).await
+    }
+    async fn create_repository_request(
+        &self,
+        epoch: m::EpochId,
+        credential: Option<&BearerToken>,
+    ) -> Result<AdministrationSnapshot, Status> {
         let response = self
             .wire()
-            .create_repository(self.request(wire::CreateRepositoryRequest {
-                repository: self.repository.as_bytes().to_vec(),
-                epoch: epoch.as_bytes().to_vec(),
-                admin_credential: credential.expose().to_string(),
-            }))
+            .create_repository(
+                self.request(wire::CreateRepositoryRequest {
+                    repository: self.repository.as_bytes().to_vec(),
+                    epoch: epoch.as_bytes().to_vec(),
+                    admin_credential: credential
+                        .map(|value| value.expose().to_string())
+                        .unwrap_or_default(),
+                }),
+            )
             .await?
             .into_inner();
         let snapshot = admin::snapshot(Some(response)).map_err(admin::bad_response)?;
@@ -169,14 +229,16 @@ impl NativeClient {
     }
     fn request<T>(&self, body: T) -> Request<T> {
         let mut request = Request::new(body);
-        let exposed = self.token.expose();
-        let mut authorization = format!("Bearer {}", exposed.as_str())
-            .parse::<tonic::metadata::MetadataValue<_>>()
-            .expect("canonical ASCII bearer token");
-        authorization.set_sensitive(true);
-        request
-            .metadata_mut()
-            .insert("authorization", authorization);
+        if let Some(token) = &self.token {
+            let exposed = token.expose();
+            let mut authorization = format!("Bearer {}", exposed.as_str())
+                .parse::<tonic::metadata::MetadataValue<_>>()
+                .expect("canonical ASCII bearer token");
+            authorization.set_sensitive(true);
+            request
+                .metadata_mut()
+                .insert("authorization", authorization);
+        }
         request.set_timeout(self.options.timeout);
         request
     }

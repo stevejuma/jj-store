@@ -15,7 +15,12 @@ test("openapi_document_validates_without_external_references", async () => {
     resolve: { external: false },
   });
   assert.equal(document.openapi, "3.1.0");
-  assert.deepEqual(document.security, [{ repositoryBearer: [] }]);
+  assert.deepEqual(document.security, []);
+  assert.deepEqual(document["x-jj-store-access-policies"], [
+    "authenticated",
+    "local_trusted",
+  ]);
+  assert.deepEqual(document.paths["/v1/bootstrap"].get.security, [{}]);
 });
 
 test("native_hex_rejects_short_uppercase_and_untyped_values", () => {

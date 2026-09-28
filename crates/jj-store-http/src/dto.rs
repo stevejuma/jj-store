@@ -1,5 +1,5 @@
 //! Transport-owned JSON values. Handler serialization and schemas share these types.
-use crate::{Config, q, reads};
+use crate::{Access, BackupStatus, BootstrapRepository, Config, q, reads};
 use schemars::JsonSchema;
 use serde::Serialize;
 
@@ -20,6 +20,49 @@ pub(crate) struct Capabilities {
     pub event_limits: EventLimits,
     pub limits: ReadLimits,
     pub log_context: LogContext,
+}
+
+#[derive(Serialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+pub(crate) enum AccessMode {
+    Authenticated,
+    LocalTrusted,
+}
+
+#[derive(Serialize, JsonSchema)]
+pub(crate) struct StorageState {
+    pub ready: bool,
+}
+
+#[derive(Serialize, JsonSchema)]
+pub(crate) struct Bootstrap {
+    pub version: u32,
+    pub access_mode: AccessMode,
+    pub capabilities: Capabilities,
+    pub storage: StorageState,
+    pub repositories: Vec<BootstrapRepository>,
+    pub backups: Vec<BackupStatus>,
+}
+
+impl From<&Config> for Bootstrap {
+    fn from(config: &Config) -> Self {
+        let (access_mode, repositories) = match &config.access {
+            Access::Authenticated => (AccessMode::Authenticated, Vec::new()),
+            Access::LocalTrusted { repositories, .. } => {
+                (AccessMode::LocalTrusted, repositories.clone())
+            }
+        };
+        Self {
+            version: 1,
+            access_mode,
+            capabilities: Capabilities::from(config),
+            storage: StorageState {
+                ready: config.storage_ready,
+            },
+            repositories,
+            backups: config.backups.clone(),
+        }
+    }
 }
 #[derive(Serialize, JsonSchema)]
 pub(crate) struct EventLimits {
@@ -50,7 +93,10 @@ impl From<&Config> for Capabilities {
         Self {
             version: 1,
             native_profile: reads::NATIVE_PROFILE,
-            authentication: "repository_bearer",
+            authentication: match config.access {
+                Access::Authenticated => "repository_bearer",
+                Access::LocalTrusted { .. } => "local_trusted",
+            },
             read_api: true,
             browsing_windows: true,
             index_tasks: true,

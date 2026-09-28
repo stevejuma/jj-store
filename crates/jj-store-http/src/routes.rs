@@ -202,6 +202,7 @@ macro_rules! endpoints {
     };
 }
 pub(super) fn document(doc: &mut Document) {
+    doc.public_endpoint::<Empty, Bootstrap>("get", "/bootstrap", "bootstrap", Reply::Json(200));
     macro_rules! register {
         ($(($method:ident, $path:literal, $handler:ident, $query:ty, $response:ty, $reply:expr)),* ) => {
             $(doc.endpoint::<$query, $response>(stringify!($method), $path, stringify!($handler), $reply);)*
@@ -221,10 +222,18 @@ pub(super) fn router() -> Router<Arc<State>> {
         };
     }
     endpoints!(register)
+        .route("/bootstrap", get(bootstrap))
         .fallback(|| async { Error::new(StatusCode::NOT_FOUND, "unknown_route") })
         .method_not_allowed_fallback(|| async {
             Error::new(StatusCode::METHOD_NOT_ALLOWED, "unsupported_method")
         })
+}
+async fn bootstrap(
+    ExtractState(state): ExtractState<Arc<State>>,
+    args: Input<Empty>,
+) -> Result<Response> {
+    input(args)?;
+    state.json(&Bootstrap::from(&state.config))
 }
 async fn capabilities(
     ExtractState(state): ExtractState<Arc<State>>,

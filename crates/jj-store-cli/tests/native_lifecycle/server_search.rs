@@ -32,16 +32,22 @@ fn entries() -> Vec<Repository> {
     serde_json::from_value(json!([{"repository":REPO,"token_environment":"JJ_STORE_SEARCH_TOKEN_FIXTURE","poll_millis":10,"snapshot_every":1,"source":{"scopes":{"main":{"kind":"bookmark","name":"main"}}}}])).unwrap()
 }
 fn prepare(f: &Fixture, root: &std::path::Path) -> (PreparedSearch, Router) {
+    prepare_with_http(f, root, Default::default())
+}
+fn prepare_with_http(
+    f: &Fixture,
+    root: &std::path::Path,
+    http: jj_store_http::Config,
+) -> (PreparedSearch, Router) {
     let host = host(f);
     let (prepared, indexes) =
         PreparedSearch::new(&host, root, &entries(), &Default::default(), |_| {
             Ok(f.reader.clone())
         })
         .unwrap();
-    let router =
-        jj_store_http::HttpApi::with_search(host, root.join("native"), Default::default(), indexes)
-            .unwrap()
-            .router();
+    let router = jj_store_http::HttpApi::with_search(host, root.join("native"), http, indexes)
+        .unwrap()
+        .router();
     (prepared, router)
 }
 async fn get(router: &Router, token: &BearerToken, path: &str) -> (StatusCode, Value) {
@@ -50,6 +56,8 @@ async fn get(router: &Router, token: &BearerToken, path: &str) -> (StatusCode, V
         .oneshot(
             Request::builder()
                 .uri(format!("/v1/repos/{REPO}/{path}"))
+                .header("host", "127.0.0.1:7443")
+                .header("x-jj-store-protocol", "1")
                 .header(
                     "authorization",
                     format!("Bearer {}", token.expose().as_str()),
@@ -132,6 +140,8 @@ async fn server_search_runs_recovers_and_restores_after_cache_loss() {
                 .oneshot(
                     Request::builder()
                         .uri(format!("/v1/repos/{REPO}/files/{file}?at_op={operation}"))
+                        .header("host", "127.0.0.1:7443")
+                        .header("x-jj-store-protocol", "1")
                         .header(
                             "authorization",
                             format!("Bearer {}", f.reader.expose().as_str()),
@@ -232,11 +242,17 @@ async fn server_search_diagnostics_use_authorized_live_status_and_handle_unavail
             let f = Fixture::new().await;
             publish_text_scope(&f, roots::ROOT_COMMIT, 1, &[]).await;
             let root = tempfile::tempdir().unwrap();
-            let (prepared, router) = prepare(&f, root.path());
-            let running = prepared.start();
-            wait_index(&router, &f.reader, 1).await;
             let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
             let address = listener.local_addr().unwrap();
+            let (prepared, router) = prepare_with_http(
+                &f,
+                root.path(),
+                jj_store_http::Config {
+                    origin: format!("http://{address}"),
+                    ..Default::default()
+                },
+            );
+            let running = prepared.start();
             let server = Listener(tokio::spawn(async move {
                 axum::serve(listener, router).await.unwrap();
             }));
@@ -246,7 +262,19 @@ async fn server_search_diagnostics_use_authorized_live_status_and_handle_unavail
             config.public_url = format!("http://{address}/");
             config.bind = address;
             config.search = entries();
-            let ready = jj_store_server::search::diagnose(&config, REPO, &f.reader).await;
+            let deadline = tokio::time::Instant::now() + Duration::from_secs(5);
+            let ready = loop {
+                let diagnosis = jj_store_server::search::diagnose(&config, REPO, &f.reader).await;
+                if diagnosis.state == "ready" {
+                    break diagnosis;
+                }
+                assert!(
+                    tokio::time::Instant::now() < deadline,
+                    "search diagnosis did not become ready: {}",
+                    diagnosis.state
+                );
+                tokio::time::sleep(Duration::from_millis(10)).await;
+            };
             assert_eq!(ready.state, "ready");
             assert_eq!(
                 ready.status.unwrap().indexed_position,
