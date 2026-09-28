@@ -91,6 +91,7 @@ id!(CommentId, 16);
 id!(ReviewActionId, 16);
 id!(ReviewWorkRequestId, 16);
 id!(AnchorId, 32);
+id!(ArtifactId, 32);
 id!(CommentRevisionId, 32);
 id!(ReviewEventId, 32);
 id!(ThreadSnapshotId, 32);

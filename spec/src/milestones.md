@@ -61,10 +61,10 @@ adds evidence here in its enclosing Jujutsu change.
 | M7          | Deferred    | M8a         | JST-ADAPT-005                                                           | Complete read-only replica through applied position                                                                 | After first release                                     | -                                                                                                                                                                                                                          |
 | M7.1        | Deferred    | M8a.4       | JST-ADAPT-006                                                           | Asynchronous verified S3 backup remains independent from passive serving and promotion                              | Future backup release after local application           | -                                                                                                                                                                                                                          |
 | M8b         | Deferred    | M8a         | JST-COMPAT-004                                                          | Verified lossless import with source safety                                                                         | Separate migration release                              | -                                                                                                                                                                                                                          |
-| M9          | Partial     | M8a.4       | JST-COLLAB-001,JST-COLLAB-005                                           | Repository-native agent activity and exact review discussions in the LocalTrusted application                       | Add durable capture ingress and ReviewStore             | E-M9-001,E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009,E-M9-010,E-M9-011,E-M9-012,E-M9-013                                                                                                       |
+| M9          | Partial     | M8a.4       | JST-COLLAB-001,JST-COLLAB-005                                           | Repository-native agent activity and exact review discussions in the LocalTrusted application                       | Implement LocalTrusted collaboration APIs               | E-M9-001,E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009,E-M9-010,E-M9-011,E-M9-012,E-M9-013,E-M9-014                                                                                              |
 | M9.1        | Done        | M8a.4       | JST-PUB-007,JST-PUB-008                                                 | Independent code/agent/review roots, code-state fencing and non-destructive collaboration enablement                | Implement AgentStore typed root objects                 | E-M9-001                                                                                                                                                                                                                   |
 | M9.2        | In progress | M9.1        | JST-COLLAB-001,JST-COLLAB-002,JST-COLLAB-006                            | AgentStore model, immutable snapshots/catalogs, sanitized evidence and Codex/Cursor/OpenCode normalizers            | Add durable capture ingress and setup                   | E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009                                                                                                                                                    |
-| M9.3        | In progress | M9.2        | JST-COLLAB-001,JST-COLLAB-003,JST-PUB-009                               | ReviewStore exact artifact anchors and stale-safe thread/comment workflow                                           | Add typed relation/status catalogs and re-anchoring     | E-M9-010,E-M9-011,E-M9-012,E-M9-013                                                                                                                                                                                        |
+| M9.3        | In progress | M9.2        | JST-COLLAB-001,JST-COLLAB-003,JST-PUB-009                               | ReviewStore exact anchors, stale-safe thread workflow, direct catalogs and conservative placement                   | Await M9.2, then implement LocalTrusted APIs            | E-M9-010,E-M9-011,E-M9-012,E-M9-013,E-M9-014                                                                                                                                                                               |
 | M9.4        | Planned     | M9.2,M9.3   | JST-COLLAB-004                                                          | LocalTrusted bounded CLI/HTTP APIs, pagination, receipts and live collaboration hints                               | Wire first-party service and generated contracts        | -                                                                                                                                                                                                                          |
 | M9.5        | Planned     | M9.4        | JST-COLLAB-005                                                          | Community-owned thread/agent widgets and Design Core exact diff selection integrated into the application           | Implement accessible virtualized application routes     | -                                                                                                                                                                                                                          |
 | M9.6        | Planned     | M9.5        | JST-COLLAB-002,JST-COLLAB-006,JST-COLLAB-007                            | Three harness qualification, cold recovery, three-root native copy and bounded fault/security/browser acceptance    | Execute real harness and native recovery gates          | -                                                                                                                                                                                                                          |
@@ -13205,6 +13205,125 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Rust 1.98.1; ReviewCommandV1 and ReviewCommandResultV1 schema v1; ReviewStore object/root schema v1.",
     "formats": "Review command intent binds repository, principal and stable request/publication identity plus the typed semantic command. Stable thread/comment/action IDs are deterministic per request; committed receipts return exact event, revision and snapshot references. Replies bind workflow version, comment revisions bind exact selected revision IDs, and workflow transitions bind exact thread snapshot IDs."
+  },
+  {
+    "id": "E-M9-014",
+    "tasks": ["M9", "M9.3"],
+    "date": "2026-09-28",
+    "kind": "implementation",
+    "files": [
+      "crates/jj-review/src/anchors.rs",
+      "crates/jj-review/src/delta.rs",
+      "crates/jj-review/src/ids.rs",
+      "crates/jj-review/src/lib.rs",
+      "crates/jj-review/src/objects.rs",
+      "crates/jj-review/src/relations.rs",
+      "crates/jj-review/src/resolver.rs",
+      "crates/jj-review/src/resolver_agent.rs",
+      "crates/jj-review/src/resolver_code.rs",
+      "crates/jj-review/src/resolver_text.rs",
+      "crates/jj-review/tests/objects.rs",
+      "crates/jj-review/tests/resolver.rs",
+      "crates/jj-store-wal/src/publication.rs",
+      "crates/jj-store-wal/src/publication/review_audit.rs",
+      "crates/jj-store-wal/src/publication/review_audit_relations.rs",
+      "crates/jj-store-wal/src/publication/review_catalog.rs",
+      "crates/jj-store-wal/src/publication/review_command_apply.rs",
+      "crates/jj-store-wal/src/publication/review_command_commit.rs",
+      "crates/jj-store-wal/src/publication/review_command_history.rs",
+      "crates/jj-store-wal/src/publication/review_command_relations.rs",
+      "crates/jj-store-wal/src/publication/review_command_stage.rs",
+      "crates/jj-store-wal/src/publication/review_command_update.rs",
+      "crates/jj-store-wal/src/publication/review_resolver.rs",
+      "crates/jj-store-wal/tests/review_catalog.rs",
+      "crates/jj-store-wal/tests/review_commands.rs",
+      "crates/jj-store-wal/tests/review_relations.rs",
+      "crates/jj-store-wal/tests/support/review.rs",
+      "spec/src/collaboration.md",
+      "spec/src/publication.md",
+      "spec/src/verification.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "crates/jj-review/tests/resolver.rs#exact_identity_and_explicit_insertion_map_without_retargeting_the_anchor",
+      "crates/jj-review/tests/resolver.rs#changed_deleted_duplicate_and_missing_lineage_are_categorical",
+      "crates/jj-review/tests/resolver.rs#budgets_divergence_and_unavailable_content_fail_closed",
+      "crates/jj-review/tests/resolver.rs#agent_output_maps_only_through_retained_unchanged_prefix_lineage",
+      "crates/jj-review/tests/objects.rs#relation_and_status_pages_are_typed_bounded_and_canonical",
+      "crates/jj-store-wal/tests/review_relations.rs#typed_relation_and_status_catalogs_validate_selected_threads",
+      "crates/jj-store-wal/tests/review_catalog.rs#root_pinned_resolver_does_not_publish_repository_state",
+      "crates/jj-store-wal/tests/review_commands.rs#create_thread_is_atomic_replayable_and_preserves_sibling_roots",
+      "crates/jj-store-wal/tests/review_commands.rs#reply_losing_a_race_with_resolve_is_rejected"
+    ],
+    "runs": [
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-review --test resolver --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "The test-first compile reported the missing typed resolver request, target, lineage, budget, candidate and categorical placement contracts."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-review --test objects relation_and_status_pages_are_typed_bounded_and_canonical --locked -- --exact",
+        "result": "fail",
+        "failures": 5,
+        "note": "The model regression first failed because typed relation/status pages, object kinds, keys and dependencies did not exist."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-wal --test review_catalog typed_relation_and_status_catalogs_validate_selected_threads --locked -- --exact",
+        "result": "fail",
+        "failures": 14,
+        "note": "The root-pinned regression first failed because relation/status catalog variants, staging, lookup and semantic audit were absent."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-wal --test review_commands create_thread_is_atomic_replayable_and_preserves_sibling_roots --locked -- --exact",
+        "result": "fail",
+        "failures": 1,
+        "note": "The first runtime regression found that normal review commands did not yet populate direct anchor, artifact and status indexes."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-review --test resolver --test objects --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All nine focused ReviewStore model and resolver regressions pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-wal --test review_commands --test review_catalog --test review_relations --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All thirteen affected WAL command, direct-index, root-audit and read-only resolver regressions pass."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo clippy -p jj-review -p jj-store-wal --all-targets --locked -- -D warnings",
+        "result": "fail",
+        "failures": 1,
+        "note": "The focused Clippy run required deriving the resolver wrapper's equivalent Default implementation."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "fail",
+        "failures": 2,
+        "note": "The ledger correctly rejected a passing evidence record with remaining M9 gaps and a Done M9.3 task whose M9.2 dependency remains in progress."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo clippy -p jj-review -p jj-store-wal --all-targets --locked -- -D warnings",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both affected packages and every directly affected test target are warning-free."
+      },
+      {
+        "command": "pnpm check:progress; pnpm spec:build; pnpm spec:validate; pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 60 progress tasks are consistent, the canonical book builds, all 85 requirements validate and 27 protected files map to three canonical chapters."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "LocalTrusted CLI/HTTP contracts and shared Community/Design Core presentation",
+      "Cold three-root recovery and native copy qualification"
+    ],
+    "versions": "Rust 1.98.1; ReviewStore object/root schema v1; AnchorResolverV1 algorithm v1; 256 entries per relation/status page; eight MiB default resolver byte budget; eight default bounded candidates.",
+    "formats": "ArtifactId hashes one validated exact target independently from anchor creation context. Relation/status pages select current thread snapshots under typed subject keys. Placement results preserve the original anchor and return exact, mapped_unchanged, candidate_modified, deleted, ambiguous, unresolved or unavailable with categorical evidence."
   }
 ]
 ```

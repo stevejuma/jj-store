@@ -1,4 +1,4 @@
-use crate::{AnchorId, Result, TextSelectionV1};
+use crate::{AnchorId, ArtifactId, Result, TextSelectionV1};
 use jj_agent::{AgentObjectRef, AgentSessionId, BlockId, MessageId, ToolAttemptId, ToolCallId};
 use jj_store_model::{
     ChangeId, CommitId, FileId, ObjectKey, OperationId, RecordDigest, RepositoryId,
@@ -180,5 +180,14 @@ impl ArtifactAnchorV1 {
         Ok(AnchorId::new(
             sha2::Sha256::digest(crate::encode_anchor(self)?).into(),
         ))
+    }
+
+    pub fn artifact_id(&self) -> Result<ArtifactId> {
+        self.validate()?;
+        let bytes = serde_json::to_vec(&self.target)?;
+        let mut hash = sha2::Sha256::new_with_prefix(b"jj-store/review-artifact/v1\0");
+        hash.update((bytes.len() as u64).to_be_bytes());
+        hash.update(bytes);
+        Ok(ArtifactId::new(hash.finalize().into()))
     }
 }

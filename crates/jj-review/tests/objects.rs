@@ -4,9 +4,10 @@ use jj_review::{
     CommentRevisionContentV1, CommentSelectionV1, CreatedContextV1, ReviewBodyFormatV1,
     ReviewCatalogKey, ReviewCommentBodyV1, ReviewCommentRevisionV1, ReviewEventPageV1,
     ReviewEventSelectionV1, ReviewObjectId, ReviewObjectKind, ReviewObjectRef, ReviewObjectV1,
-    ReviewRootV1, ReviewThreadEventKindV1, ReviewThreadEventV1, ReviewThreadId,
+    ReviewRelationPageV1, ReviewRelationSubjectV1, ReviewRootV1, ReviewStatusPageV1,
+    ReviewThreadEventKindV1, ReviewThreadEventV1, ReviewThreadId, ReviewThreadRelationV1,
     ReviewThreadSnapshotV1, SensitivityV1, ThreadStatusV1, decode_object, decode_root,
-    encode_object, encode_root,
+    encode_object, encode_root, review_status_key,
 };
 use jj_store_model::{CommitId, ObjectKey, OperationId, PrincipalId, RepositoryId};
 use std::collections::{BTreeMap, BTreeSet};
@@ -260,4 +261,56 @@ fn anchor_objects_forward_native_and_agent_dependencies() {
         object.agent_dependencies().unwrap(),
         BTreeSet::from([session, message])
     );
+}
+
+#[test]
+fn relation_and_status_pages_are_typed_bounded_and_canonical() {
+    let thread_id = ReviewThreadId::new([2; 16]);
+    let snapshot = review_ref(ReviewObjectKind::ThreadSnapshot, 3);
+    let next_relation = review_ref(ReviewObjectKind::RelationPage, 4);
+    let next_status = review_ref(ReviewObjectKind::StatusPage, 5);
+    let subject = ReviewRelationSubjectV1::OriginalAnchor {
+        anchor_id: anchor().anchor_id().unwrap(),
+    };
+    let entry = ReviewThreadRelationV1 {
+        thread_id,
+        snapshot,
+    };
+    let relation = ReviewObjectV1::RelationPage(ReviewRelationPageV1 {
+        schema_version: 1,
+        subject: subject.clone(),
+        entries: vec![entry],
+        next: Some(next_relation),
+    });
+    let status = ReviewObjectV1::StatusPage(ReviewStatusPageV1 {
+        schema_version: 1,
+        status: ThreadStatusV1::Open,
+        entries: vec![entry],
+        next: Some(next_status),
+    });
+    for object in [relation, status] {
+        object.validate().unwrap();
+        assert_eq!(
+            decode_object(&encode_object(&object).unwrap()).unwrap(),
+            object
+        );
+        assert_eq!(object.review_dependencies().unwrap().len(), 2);
+    }
+    assert_eq!(
+        subject.catalog_key().unwrap(),
+        ReviewCatalogKey::derive("anchor-relation", anchor().anchor_id().unwrap().as_bytes())
+            .unwrap()
+    );
+    assert_eq!(
+        review_status_key(ThreadStatusV1::Open).unwrap(),
+        ReviewCatalogKey::derive("thread-status", b"open").unwrap()
+    );
+
+    let invalid = ReviewRelationPageV1 {
+        schema_version: 1,
+        subject,
+        entries: vec![entry, entry],
+        next: None,
+    };
+    assert!(invalid.validate().is_err());
 }

@@ -70,6 +70,9 @@ impl Coordinator {
             ReviewCatalogKind::Threads,
             ReviewCatalogKind::Comments,
             ReviewCatalogKind::ThreadEvents,
+            ReviewCatalogKind::AnchorRelations,
+            ReviewCatalogKind::ArtifactRelations,
+            ReviewCatalogKind::Statuses,
         ] {
             let changes: BTreeMap<_, _> = delta
                 .edits
@@ -259,6 +262,9 @@ pub(super) fn catalog_root(
         ReviewCatalogKind::Threads => root.threads,
         ReviewCatalogKind::Comments => root.comments,
         ReviewCatalogKind::ThreadEvents => root.thread_events,
+        ReviewCatalogKind::AnchorRelations => root.anchor_relations,
+        ReviewCatalogKind::ArtifactRelations => root.artifact_relations,
+        ReviewCatalogKind::Statuses => root.statuses,
     }
 }
 fn set_catalog_root(
@@ -270,5 +276,8 @@ fn set_catalog_root(
         ReviewCatalogKind::Threads => root.threads = value,
         ReviewCatalogKind::Comments => root.comments = value,
         ReviewCatalogKind::ThreadEvents => root.thread_events = value,
+        ReviewCatalogKind::AnchorRelations => root.anchor_relations = value,
+        ReviewCatalogKind::ArtifactRelations => root.artifact_relations = value,
+        ReviewCatalogKind::Statuses => root.statuses = value,
     }
 }

@@ -114,10 +114,19 @@ Repeated or overlapping source receipts fail stale, and updating this domain
 does not move code or review state.
 
 Review staging likewise accepts typed `ReviewDeltaV1` edits against a pinned
-ReviewStore root. It copy-on-write updates thread, comment and thread-event
-catalog paths, rejects changed expected selections and stages a complete root
-whose native and AgentStore dependencies have been verified. Generated pages and
-roots are internal candidates rather than client-controlled publication inputs.
+ReviewStore root. It copy-on-write updates thread, comment, thread-event,
+original-anchor relation, artifact relation and status catalog paths, rejects
+changed expected selections and stages a complete root whose native and
+AgentStore dependencies have been verified. Thread commands update the current
+snapshot in every direct relation and status index in the same review-domain
+candidate; resolve and reopen remove the old status selection and add the new
+one. Generated pages and roots are internal candidates rather than
+client-controlled publication inputs.
+
+Anchor placement is outside publication. A root-pinned read may load a selected
+anchor and run the bounded resolver against an explicit immutable target, but it
+cannot stage a root, append a WAL record or move manifest position. A future
+confirmed placement remains a separately authorized typed mutation.
 
 The receipt-backed review command boundary hashes repository, principal,
 request/publication identities and the validated semantic command before it

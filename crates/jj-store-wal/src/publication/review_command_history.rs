@@ -3,12 +3,10 @@ use super::review_commands::{ReviewCommandError, ReviewCommandRequest};
 use super::*;
 use jj_review::{
     CommentId, ReviewActionId, ReviewCatalogEditV1, ReviewCatalogKey, ReviewCatalogKind,
-    ReviewCommandResultV1, ReviewCommentRevisionV1, ReviewEventPageV1, ReviewEventSelectionV1,
-    ReviewThreadId, ReviewThreadSnapshotV1,
+    ReviewCommandResultV1, ReviewCommentRevisionV1, ReviewThreadId, ReviewThreadSnapshotV1,
 };
 
 const MAX_THREAD_EVENTS: usize = 4096;
-const EVENT_PAGE_ENTRIES: usize = 256;
 
 pub(super) struct LoadedReviewThread {
     pub reference: ReviewObjectRef,
@@ -86,40 +84,6 @@ impl Coordinator {
             page = selected.next;
         }
         Ok(events)
-    }
-
-    pub(super) async fn stage_review_event_pages(
-        &self,
-        thread_id: ReviewThreadId,
-        events: &[ReviewObjectRef],
-    ) -> std::result::Result<ReviewObjectRef, ReviewCommandError> {
-        if events.is_empty() || events.len() > MAX_THREAD_EVENTS {
-            return Err(Error::Limit("review thread events").into());
-        }
-        let mut next = None;
-        let mut end = events.len();
-        while end > 0 {
-            let start = end.saturating_sub(EVENT_PAGE_ENTRIES);
-            let entries = events[start..end]
-                .iter()
-                .enumerate()
-                .map(|(offset, event)| ReviewEventSelectionV1 {
-                    sequence: (start + offset + 1) as u64,
-                    event: *event,
-                })
-                .collect();
-            next = Some(
-                self.stage_review_object(&ReviewObjectV1::EventPage(ReviewEventPageV1 {
-                    schema_version: 1,
-                    thread_id,
-                    entries,
-                    next,
-                }))
-                .await?,
-            );
-            end = start;
-        }
-        next.ok_or_else(|| Error::Corrupt("empty review event history").into())
     }
 }
 

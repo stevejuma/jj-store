@@ -1,7 +1,7 @@
 use crate::{
     ArtifactAnchorV1, Error, Result, ReviewCommentBodyV1, ReviewCommentRevisionV1,
-    ReviewEventPageV1, ReviewIndexPageV1, ReviewObjectId, ReviewThreadEventV1,
-    ReviewThreadSnapshotV1,
+    ReviewEventPageV1, ReviewIndexPageV1, ReviewObjectId, ReviewRelationPageV1, ReviewStatusPageV1,
+    ReviewThreadEventV1, ReviewThreadSnapshotV1,
 };
 use jj_agent::AgentObjectRef;
 use jj_store_model::ObjectKey;
@@ -30,6 +30,8 @@ pub enum ReviewObjectKind {
     ThreadEvent,
     EventPage,
     ThreadSnapshot,
+    RelationPage,
+    StatusPage,
 }
 
 #[derive(
@@ -66,6 +68,8 @@ pub enum ReviewObjectV1 {
     ThreadEvent(Box<ReviewThreadEventV1>),
     EventPage(ReviewEventPageV1),
     ThreadSnapshot(Box<ReviewThreadSnapshotV1>),
+    RelationPage(ReviewRelationPageV1),
+    StatusPage(ReviewStatusPageV1),
 }
 impl ReviewObjectV1 {
     pub const fn kind(&self) -> ReviewObjectKind {
@@ -77,6 +81,8 @@ impl ReviewObjectV1 {
             Self::ThreadEvent(_) => ReviewObjectKind::ThreadEvent,
             Self::EventPage(_) => ReviewObjectKind::EventPage,
             Self::ThreadSnapshot(_) => ReviewObjectKind::ThreadSnapshot,
+            Self::RelationPage(_) => ReviewObjectKind::RelationPage,
+            Self::StatusPage(_) => ReviewObjectKind::StatusPage,
         }
     }
     pub fn validate(&self) -> Result<()> {
@@ -88,6 +94,8 @@ impl ReviewObjectV1 {
             Self::ThreadEvent(value) => value.validate(),
             Self::EventPage(value) => value.validate(),
             Self::ThreadSnapshot(value) => value.validate(),
+            Self::RelationPage(value) => value.validate(),
+            Self::StatusPage(value) => value.validate(),
         }
     }
     pub fn review_dependencies(&self) -> Result<Vec<ReviewObjectRef>> {
@@ -99,6 +107,8 @@ impl ReviewObjectV1 {
             Self::ThreadEvent(value) => value.review_dependencies()?.into_iter().collect(),
             Self::EventPage(value) => value.review_dependencies()?.into_iter().collect(),
             Self::ThreadSnapshot(value) => value.review_dependencies()?.into_iter().collect(),
+            Self::RelationPage(value) => value.dependencies().into_iter().collect(),
+            Self::StatusPage(value) => value.dependencies().into_iter().collect(),
         })
     }
     pub fn native_dependencies(&self) -> Result<BTreeSet<ObjectKey>> {

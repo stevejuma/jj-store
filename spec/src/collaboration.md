@@ -207,8 +207,11 @@ object edges.
 
 Canonical JSON encoding rejects unknown fields, alternate byte-offset forms and
 noncanonical round trips. The anchor ID hashes those validated canonical bytes.
-Conservative placement mapping into later artifacts remains a subsequent M9.3
-slice. Immutable thread state and its receipt-backed commands are defined below.
+The v1 resolver maps an immutable anchor only against an explicitly identified
+target supplied through a narrow read port. Callers provide retained original
+bytes, bounded target bytes and typed validated predecessor, rename, copy or
+agent-block lineage. A same `ChangeId` never substitutes for an exact revision
+or for lineage evidence.
 
 ## Immutable ReviewStore objects
 
@@ -259,23 +262,59 @@ reconstructed state that disagrees with the snapshot.
 The WAL coordinator stages each validated review object in the existing
 repository-bound envelope and traverses every typed ReviewStore, native code and
 AgentStore strong edge before staging a root. A review root independently audits
-the semantic value kind of its thread, comment and thread-event catalogs. The
-remaining relation, status, work-request, alias and source catalogs fail closed
-until their typed object schemas are implemented.
+the semantic value kind of its thread, comment, thread-event, relation and
+status catalogs. Work-request, alias and source catalogs still fail closed until
+their typed object schemas are implemented.
+
+Original-anchor and exact-artifact relations are bounded immutable linked pages
+of stable thread IDs and current thread-snapshot references. Status pages use
+the same bounded entry shape for open and resolved threads. Catalog keys are
+derived from the typed anchor, artifact or status subject. Root audit verifies
+the key, page-chain subject, unique threads, current thread-catalog selection,
+original anchor or artifact identity and selected workflow state. A stale
+relation snapshot or an open thread in the resolved catalog fails closed.
 
 `ReviewDeltaV1` carries expected and replacement selections for thread
-snapshots, comment revisions and thread-event pages. It rejects no-op edits,
-duplicate catalog keys and semantic kind substitution. Applying a delta checks
-every expected selection against one pinned root, rewrites only affected
-persistent radix paths and stages a fully re-audited replacement root. Staged
-objects and roots remain invisible until the shared domain publication selects
-them.
+snapshots, comment revisions, thread-event pages, original-anchor relations,
+artifact relations and statuses. It rejects no-op edits, duplicate catalog keys
+and semantic kind substitution. Applying a delta checks every expected selection
+against one pinned root, rewrites only affected persistent radix paths and
+stages a fully re-audited replacement root. Thread commands rebuild the affected
+direct-index pages in the same review-domain publication, including moving a
+thread between open and resolved status pages. Staged objects and roots remain
+invisible until the shared domain publication selects them.
 
 A `ReviewStoreSnapshot` binds exact lookup, bounded radix-ordered enumeration
 and object reads to the selected root closure. Reading an unselected staged
 object returns stale. Catalog enumeration accepts at most 256 selections per
 call and uses the last returned stable catalog key for continuation. Old
 snapshots retain their original roots and selections after later COW updates.
+
+## Conservative anchor placement
+
+`AnchorResolverV1` is a bounded read-only service over an original immutable
+anchor and one explicit target. It returns `exact`, `mapped_unchanged`,
+`candidate_modified`, `deleted`, `ambiguous`, `unresolved` or `unavailable` with
+categorical evidence and at most the caller's bounded candidate count. A
+root-pinned `ReviewStoreSnapshot` can load a selected anchor and invoke the same
+pure resolver; the call has no publication, WAL or manifest capability.
+
+Code placement accepts exact object identity or lineage whose from/to operation,
+commit, path and file identities match both endpoints. It maps whole-file
+identity and byte ranges proven unchanged by common prefix or suffix, returns a
+modified candidate when the selected range intersects changed bytes, and keeps
+multiple paths or repeated candidate ranges ambiguous. A complete supported
+lineage with no target path is deleted. Missing lineage, unsupported targets and
+exhausted byte budgets are unresolved; missing or redacted retained content is
+unavailable.
+
+Agent text maps to a newer block only when the session/block identity,
+representation, sanitizer and normalizer versions match, retained block/content
+lineage names both immutable versions, and the newer bytes retain the complete
+old content as an unchanged prefix. Exact content versions remain exact. The
+resolver never uses a stable tool or change ID alone, mutates the original
+anchor, publishes a JJ operation, changes workflow state or records a permanent
+placement decision.
 
 ## Stale-safe review commands
 

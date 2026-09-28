@@ -1,8 +1,9 @@
 use jj_review::{
     ArtifactAnchorV1, ArtifactTargetV1, CommentRevisionContentV1, CommentRevisionId,
-    CreatedContextV1, ReviewBodyFormatV1, ReviewCommandResultV1, ReviewCommandV1,
-    ReviewCommentBodyV1, ReviewObjectRef, ReviewObjectV1, ReviewThreadSnapshotV1, SensitivityV1,
-    ThreadSnapshotId, ThreadStatusV1, decode_command_result,
+    CreatedContextV1, ReviewBodyFormatV1, ReviewCatalogKey, ReviewCatalogKind,
+    ReviewCommandResultV1, ReviewCommandV1, ReviewCommentBodyV1, ReviewObjectRef, ReviewObjectV1,
+    ReviewRelationSubjectV1, ReviewThreadSnapshotV1, SensitivityV1, ThreadSnapshotId,
+    ThreadStatusV1, decode_command_result, review_status_key,
 };
 use jj_store_model::{EpochId, ObjectKey, PrincipalId, PublicationId, RepositoryId, RequestId};
 use jj_store_object::memory::MemoryStore;
@@ -142,6 +143,19 @@ fn revision_id(reference: ReviewObjectRef) -> CommentRevisionId {
     CommentRevisionId::from_slice(reference.id.as_bytes()).unwrap()
 }
 
+async fn indexed_snapshot(
+    store: &wal::publication::ReviewStoreSnapshot,
+    catalog: ReviewCatalogKind,
+    key: ReviewCatalogKey,
+) -> Option<ReviewObjectRef> {
+    let selected = store.lookup(catalog, key).await.unwrap()?;
+    match store.read_object(selected).await.unwrap() {
+        ReviewObjectV1::RelationPage(page) => page.entries.first().map(|entry| entry.snapshot),
+        ReviewObjectV1::StatusPage(page) => page.entries.first().map(|entry| entry.snapshot),
+        _ => panic!("expected relation or status page"),
+    }
+}
+
 #[tokio::test]
 async fn create_thread_is_atomic_replayable_and_preserves_sibling_roots() {
     let coordinator = fixture().await;
@@ -158,6 +172,38 @@ async fn create_thread_is_atomic_replayable_and_preserves_sibling_roots() {
     let selected = store(&coordinator).await;
     let thread = snapshot(&selected, created.thread_snapshot).await;
     assert_eq!(thread.comments.len(), 1);
+    let ReviewObjectV1::Anchor(anchor) =
+        selected.read_object(thread.original_anchor).await.unwrap()
+    else {
+        panic!("expected original anchor")
+    };
+    for (catalog, key) in [
+        (
+            ReviewCatalogKind::AnchorRelations,
+            ReviewRelationSubjectV1::OriginalAnchor {
+                anchor_id: anchor.anchor_id().unwrap(),
+            }
+            .catalog_key()
+            .unwrap(),
+        ),
+        (
+            ReviewCatalogKind::ArtifactRelations,
+            ReviewRelationSubjectV1::Artifact {
+                artifact_id: anchor.artifact_id().unwrap(),
+            }
+            .catalog_key()
+            .unwrap(),
+        ),
+        (
+            ReviewCatalogKind::Statuses,
+            review_status_key(ThreadStatusV1::Open).unwrap(),
+        ),
+    ] {
+        assert_eq!(
+            indexed_snapshot(&selected, catalog, key).await,
+            Some(created.thread_snapshot)
+        );
+    }
     let ReviewObjectV1::CommentRevision(revision) = selected
         .read_object(created.comment_revision.unwrap())
         .await
@@ -325,7 +371,7 @@ async fn tombstone_and_moderated_hide_keep_append_only_history() {
 async fn reply_losing_a_race_with_resolve_is_rejected() {
     let coordinator = fixture().await;
     let created = publish(&coordinator, &request(50, create())).await;
-    publish(
+    let resolved = publish(
         &coordinator,
         &request(
             51,
@@ -351,6 +397,25 @@ async fn reply_losing_a_race_with_resolve_is_rejected() {
             .await,
         Err(ReviewCommandError::ThreadResolved)
     ));
+    let selected = store(&coordinator).await;
+    assert_eq!(
+        indexed_snapshot(
+            &selected,
+            ReviewCatalogKind::Statuses,
+            review_status_key(ThreadStatusV1::Open).unwrap(),
+        )
+        .await,
+        None
+    );
+    assert_eq!(
+        indexed_snapshot(
+            &selected,
+            ReviewCatalogKind::Statuses,
+            review_status_key(ThreadStatusV1::Resolved).unwrap(),
+        )
+        .await,
+        Some(resolved.thread_snapshot)
+    );
 }
 
 #[tokio::test]

@@ -10,13 +10,7 @@ impl Coordinator {
         root: &ReviewRootV1,
         objects: &BTreeSet<ReviewObjectRef>,
     ) -> Result<()> {
-        if root.anchor_relations.is_some()
-            || root.artifact_relations.is_some()
-            || root.statuses.is_some()
-            || root.work_requests.is_some()
-            || root.aliases.is_some()
-            || root.sources.is_some()
-        {
+        if root.work_requests.is_some() || root.aliases.is_some() || root.sources.is_some() {
             return Err(Error::Corrupt("unsupported review catalog"));
         }
         self.audit_review_catalog(root.threads, ReviewObjectKind::ThreadSnapshot, objects)
@@ -24,7 +18,22 @@ impl Coordinator {
         self.audit_review_catalog(root.comments, ReviewObjectKind::CommentRevision, objects)
             .await?;
         self.audit_review_catalog(root.thread_events, ReviewObjectKind::EventPage, objects)
-            .await
+            .await?;
+        self.audit_review_catalog(
+            root.anchor_relations,
+            ReviewObjectKind::RelationPage,
+            objects,
+        )
+        .await?;
+        self.audit_review_catalog(
+            root.artifact_relations,
+            ReviewObjectKind::RelationPage,
+            objects,
+        )
+        .await?;
+        self.audit_review_catalog(root.statuses, ReviewObjectKind::StatusPage, objects)
+            .await?;
+        self.audit_review_relation_catalogs(root, objects).await
     }
 
     async fn audit_review_catalog(

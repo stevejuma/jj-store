@@ -10,6 +10,9 @@ pub enum ReviewCatalogKind {
     Threads,
     Comments,
     ThreadEvents,
+    AnchorRelations,
+    ArtifactRelations,
+    Statuses,
 }
 impl ReviewCatalogKind {
     fn accepts(self, value: ReviewObjectRef) -> bool {
@@ -18,6 +21,11 @@ impl ReviewCatalogKind {
             (Self::Threads, ReviewObjectKind::ThreadSnapshot)
                 | (Self::Comments, ReviewObjectKind::CommentRevision)
                 | (Self::ThreadEvents, ReviewObjectKind::EventPage)
+                | (
+                    Self::AnchorRelations | Self::ArtifactRelations,
+                    ReviewObjectKind::RelationPage
+                )
+                | (Self::Statuses, ReviewObjectKind::StatusPage)
         )
     }
 }

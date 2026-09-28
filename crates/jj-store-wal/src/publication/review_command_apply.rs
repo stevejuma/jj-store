@@ -5,10 +5,9 @@ use super::review_command_history::{
 use super::review_commands::{AppliedReviewCommand, ReviewCommandError, ReviewCommandRequest};
 use super::*;
 use jj_review::{
-    CommentId, CommentRevisionContentV1, CommentSelectionV1, ReviewCatalogEditV1,
-    ReviewCatalogKind, ReviewCommandV1, ReviewCommentBodyV1, ReviewCommentRevisionV1,
-    ReviewDeltaV1, ReviewObjectV1, ReviewThreadEventKindV1, ReviewThreadEventV1, ReviewThreadId,
-    ReviewThreadSnapshotV1, ThreadStatusV1,
+    CommentId, CommentRevisionContentV1, CommentSelectionV1, ReviewCatalogKind, ReviewCommandV1,
+    ReviewCommentBodyV1, ReviewCommentRevisionV1, ReviewObjectV1, ReviewThreadEventKindV1,
+    ReviewThreadEventV1, ReviewThreadId, ReviewThreadSnapshotV1, ThreadStatusV1,
 };
 
 impl Coordinator {
@@ -141,7 +140,7 @@ impl Coordinator {
             request,
             b"initial-comment",
         ));
-        let anchor = self
+        let anchor_ref = self
             .stage_review_object(&ReviewObjectV1::Anchor(Box::new(anchor.clone())))
             .await?;
         let body = self.stage_review_body(body).await?;
@@ -165,7 +164,7 @@ impl Coordinator {
                 actor: request.principal,
                 accepted_at_millis,
                 event: ReviewThreadEventKindV1::Created {
-                    anchor,
+                    anchor: anchor_ref,
                     initial_comment_id: comment_id,
                     initial_revision: revision,
                 },
@@ -176,7 +175,7 @@ impl Coordinator {
             .stage_review_snapshot(ReviewThreadSnapshotV1 {
                 schema_version: 1,
                 thread_id,
-                original_anchor: anchor,
+                original_anchor: anchor_ref,
                 comments: vec![CommentSelectionV1 {
                     comment_id,
                     revision,
@@ -191,31 +190,31 @@ impl Coordinator {
                 workflow_version: 1,
             })
             .await?;
-        let root = self
-            .stage_review_command_delta(
-                store,
-                vec![
-                    catalog_edit(
-                        ReviewCatalogKind::Threads,
-                        thread_key(thread_id)?,
-                        None,
-                        thread_snapshot,
-                    ),
-                    catalog_edit(
-                        ReviewCatalogKind::Comments,
-                        comment_key(comment_id)?,
-                        None,
-                        revision,
-                    ),
-                    catalog_edit(
-                        ReviewCatalogKind::ThreadEvents,
-                        events_key(thread_id)?,
-                        None,
-                        event_page_root,
-                    ),
-                ],
-            )
-            .await?;
+        let mut edits = vec![
+            catalog_edit(
+                ReviewCatalogKind::Threads,
+                thread_key(thread_id)?,
+                None,
+                thread_snapshot,
+            ),
+            catalog_edit(
+                ReviewCatalogKind::Comments,
+                comment_key(comment_id)?,
+                None,
+                revision,
+            ),
+            catalog_edit(
+                ReviewCatalogKind::ThreadEvents,
+                events_key(thread_id)?,
+                None,
+                event_page_root,
+            ),
+        ];
+        edits.extend(
+            self.stage_new_thread_indexes(store, anchor, thread_id, thread_snapshot)
+                .await?,
+        );
+        let root = self.stage_review_command_delta(store, edits).await?;
         Ok(AppliedReviewCommand {
             root,
             result: command_result(
@@ -227,63 +226,6 @@ impl Coordinator {
                 event,
             ),
         })
-    }
-
-    pub(super) async fn stage_review_body(
-        &self,
-        body: &ReviewCommentBodyV1,
-    ) -> std::result::Result<ReviewObjectRef, ReviewCommandError> {
-        Ok(self
-            .stage_review_object(&ReviewObjectV1::CommentBody(body.clone()))
-            .await?)
-    }
-
-    pub(super) async fn stage_review_revision(
-        &self,
-        revision: ReviewCommentRevisionV1,
-    ) -> std::result::Result<ReviewObjectRef, ReviewCommandError> {
-        Ok(self
-            .stage_review_object(&ReviewObjectV1::CommentRevision(Box::new(revision)))
-            .await?)
-    }
-
-    pub(super) async fn stage_review_event(
-        &self,
-        event: ReviewThreadEventV1,
-    ) -> std::result::Result<ReviewObjectRef, ReviewCommandError> {
-        Ok(self
-            .stage_review_object(&ReviewObjectV1::ThreadEvent(Box::new(event)))
-            .await?)
-    }
-
-    pub(super) async fn stage_review_snapshot(
-        &self,
-        snapshot: ReviewThreadSnapshotV1,
-    ) -> std::result::Result<ReviewObjectRef, ReviewCommandError> {
-        Ok(self
-            .stage_review_object(&ReviewObjectV1::ThreadSnapshot(Box::new(snapshot)))
-            .await?)
-    }
-
-    pub(super) async fn stage_review_command_delta(
-        &self,
-        store: &ReviewStoreSnapshot,
-        edits: Vec<ReviewCatalogEditV1>,
-    ) -> std::result::Result<RecordRef, ReviewCommandError> {
-        match self
-            .stage_review_delta(
-                store,
-                &ReviewDeltaV1 {
-                    schema_version: 1,
-                    edits,
-                },
-            )
-            .await
-        {
-            Ok(root) => Ok(root),
-            Err(Error::Stale) => Err(ReviewCommandError::Stale),
-            Err(error) => Err(error.into()),
-        }
     }
 }
 
