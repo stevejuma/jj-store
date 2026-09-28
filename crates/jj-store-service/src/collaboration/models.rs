@@ -1,15 +1,17 @@
 use jj_store_model as m;
 use jj_store_wal::publication::{
-    AgentObjectId, AgentObjectRef, AgentSessionId, AgentSessionSnapshotV1, CompletenessV1,
-    IntegrationId, SanitizedMediaType, SanitizedRepresentation, SessionState, SourceInstanceId,
-    ToolCallId, TranscriptStreamV1,
+    AgentCheckpointId, AgentObjectId, AgentObjectRef, AgentRelationSubjectV1, AgentSessionId,
+    AgentSessionSnapshotV1, CompletenessV1, IntegrationId, SanitizedMediaType,
+    SanitizedRepresentation, SessionState, SourceInstanceId, ToolCallId, TranscriptStreamV1,
 };
 use schemars::JsonSchema;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 pub type AgentSessionIdentity = AgentSessionId;
 pub type AgentTranscriptIdentity = AgentObjectId;
 pub type AgentSourceInstanceIdentity = SourceInstanceId;
+pub type AgentToolIdentity = ToolCallId;
+pub type AgentCheckpointIdentity = AgentCheckpointId;
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, JsonSchema)]
 pub struct AgentReadSnapshot {
@@ -87,6 +89,69 @@ pub struct AgentTranscriptPage {
     pub source_instance_id: SourceInstanceId,
     pub source_generation: u64,
     pub chunks: Vec<AgentTranscriptChunk>,
+    pub next_cursor: Option<String>,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(tag = "subject", rename_all = "snake_case", deny_unknown_fields)]
+pub enum AgentRelationSubject {
+    Session {
+        session_id: AgentSessionId,
+    },
+    Tool {
+        session_id: AgentSessionId,
+        tool_call_id: ToolCallId,
+    },
+    Operation {
+        operation_id: m::OperationId,
+    },
+    Revision {
+        commit_id: m::CommitId,
+    },
+    Checkpoint {
+        checkpoint_id: AgentCheckpointId,
+    },
+}
+
+impl AgentRelationSubject {
+    pub(super) fn wal(self) -> AgentRelationSubjectV1 {
+        match self {
+            Self::Session { session_id } => AgentRelationSubjectV1::Session { session_id },
+            Self::Tool {
+                session_id,
+                tool_call_id,
+            } => AgentRelationSubjectV1::Tool {
+                session_id,
+                tool_call_id,
+            },
+            Self::Operation { operation_id } => AgentRelationSubjectV1::Operation { operation_id },
+            Self::Revision { commit_id } => AgentRelationSubjectV1::Revision { commit_id },
+            Self::Checkpoint { checkpoint_id } => {
+                AgentRelationSubjectV1::Checkpoint { checkpoint_id }
+            }
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+pub enum AgentRelationKind {
+    Checkpoint,
+    Association,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, JsonSchema)]
+pub struct AgentRelationLink {
+    pub kind: AgentRelationKind,
+    pub object_id: AgentObjectId,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, JsonSchema)]
+pub struct AgentRelationPage {
+    pub version: u32,
+    pub snapshot: AgentReadSnapshot,
+    pub subject: AgentRelationSubject,
+    pub relations: Vec<AgentRelationLink>,
     pub next_cursor: Option<String>,
 }
 

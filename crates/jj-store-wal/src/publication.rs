@@ -31,9 +31,11 @@ pub use application::ApplicationIntent;
 pub use collaboration::{CollaborationOutcome, CollaborationRequest};
 pub use domains::{Domain, DomainRequest, DomainState, RepositoryDomains};
 pub use jj_agent::{
-    AgentCatalogEditV1, AgentCatalogKey, AgentCatalogKind, AgentDeltaV1, AgentObjectId,
-    AgentObjectKind, AgentObjectRef, AgentObjectV1, AgentRootV1, AgentSessionId,
-    AgentSessionSnapshotV1, CaptureBatchId, CompletenessV1, CoverageV1, IntegrationId,
+    AgentCatalogEditV1, AgentCatalogKey, AgentCatalogKind, AgentCheckpointId, AgentDeltaV1,
+    AgentObjectId, AgentObjectKind, AgentObjectRef, AgentObjectV1, AgentRelationPageV1,
+    AgentRelationSubjectV1, AgentRootV1, AgentSessionId, AgentSessionSnapshotV1,
+    AssociationGranularity, AssociationId, AssociationRelation, CaptureBatchId, CodeAnchorV1,
+    CodeAssociationV1, CompletenessV1, CoverageV1, EvidenceMethod, IntegrationId,
     NormalizerProfileV1, ObservationId, SanitizedMediaType, SanitizedObservationBatchV1,
     SanitizedObservationV1, SanitizedPayloadV1, SanitizedRepresentation, SessionState,
     SourceInstanceId, SourceKind, SourceTrust, ToolCallId, TranscriptChunkV1, TranscriptManifestV1,

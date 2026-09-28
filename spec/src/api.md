@@ -330,12 +330,12 @@ returns trusted source HTML.
 
 `GET /v1/repos/{repo}/agent/sessions`,
 `GET /v1/repos/{repo}/agent/sessions/{session}` and
-`GET /v1/repos/{repo}/agent/sessions/{session}/transcripts/{transcript}` are
-bounded collaboration routes. LocalTrusted admits them through the existing
-literal-loopback protection and installation principal, without a bearer
-credential. Authenticated deployments retain their repository bearer policy.
-Both modes require current repository read permission before and after every
-root-pinned read.
+`GET /v1/repos/{repo}/agent/sessions/{session}/transcripts/{transcript}`, plus
+`GET /v1/repos/{repo}/agent/associations`, are bounded collaboration routes.
+LocalTrusted admits them through the existing literal-loopback protection and
+installation principal, without a bearer credential. Authenticated deployments
+retain their repository bearer policy. Both modes require current repository
+read permission before and after every root-pinned read.
 
 The JSON response contains version 1, an exact AgentStore read snapshot, bounded
 session summaries and an optional continuation. The snapshot carries repository,
@@ -364,16 +364,26 @@ contains at most 256 records and eight MiB; a record that cannot fit the
 selected budget fails explicitly instead of being truncated. Missing sessions,
 transcripts or streams return 404.
 
+The associations route accepts exactly one typed subject: `session`,
+`tool_session` together with `tool`, `operation`, `commit` or `checkpoint`.
+Missing, incomplete or contradictory selectors fail as an invalid request. A
+version 1 page repeats the exact typed subject and returns ordered immutable
+links containing either a checkpoint-version or association object ID. A valid
+subject with no links returns an empty page rather than inventing an
+association. Raw AgentStore objects are not serialized by this route.
+
 `limit` defaults to the common page size and accepts 1 through 256. The opaque
 continuation is bound to the entire snapshot and original page size, retains its
 immutable root after later publications and is never suitable for a permanent
 URL. Transcript continuations additionally bind the stable session, manifest,
 source instance, source generation, byte ceiling and last returned sequence.
-Invalid or query-mismatched continuations return `invalid_cursor`; expiry,
-process restart or epoch replacement returns `cursor_reset`. Request
-concurrency, retained pins, transitive closure objects and lifetime are bounded
-by the shared read limits. The route has no request body, mutation capability,
-receipt or agent dispatch behavior.
+Association continuations additionally bind the complete typed relation subject
+and the root-local relation page and offset. A continuation for one subject
+cannot resume another subject. Invalid or query-mismatched continuations return
+`invalid_cursor`; expiry, process restart or epoch replacement returns
+`cursor_reset`. Request concurrency, retained pins, transitive closure objects
+and lifetime are bounded by the shared read limits. The route has no request
+body, mutation capability, receipt or agent dispatch behavior.
 
 ## Committed event subscriptions
 

@@ -286,3 +286,12 @@ page and chunk kinds, stream identity and strictly increasing sequence before
 returning sanitized immutable chunks. The higher-layer signed cursor pins this
 existing audited snapshot; it does not add a manifest pointer, WAL record,
 receipt or publication transition.
+
+Bounded relation reads accept one typed session, tool, operation, revision or
+checkpoint subject and a root-local page/offset cursor.
+`AgentStoreSnapshot::relations` verifies the selected relation page chain and
+returns only ordered checkpoint-version or association references. The
+publication facade re-exports those relation, checkpoint and association model
+types for service conversion without exposing a staging or publication method.
+The higher-layer continuation binds the complete subject and existing audited
+snapshot; it creates no durable cursor or new stored object.

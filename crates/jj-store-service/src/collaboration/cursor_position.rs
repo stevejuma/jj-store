@@ -1,6 +1,9 @@
+use super::AgentRelationSubject;
 use super::agent_cursors::AgentPin;
 use jj_store_model as m;
-use jj_store_wal::publication::{AgentCatalogKey, AgentObjectId, AgentSessionId, SourceInstanceId};
+use jj_store_wal::publication::{
+    AgentCatalogKey, AgentObjectId, AgentObjectRef, AgentSessionId, SourceInstanceId,
+};
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone)]
@@ -25,6 +28,11 @@ pub(super) enum Position {
         source_generation: u64,
         max_bytes: usize,
         after_sequence: u64,
+    },
+    Relations {
+        subject: AgentRelationSubject,
+        page: AgentObjectRef,
+        offset: u16,
     },
 }
 

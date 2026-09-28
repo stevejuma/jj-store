@@ -396,6 +396,13 @@ position but no credential, typed delta, request/publication identity or receipt
 capability. Reading or resuming a transcript cannot stage or publish a
 collaboration object.
 
+Association traversal selects one typed session, tool, operation, revision or
+checkpoint subject and returns only immutable checkpoint-version and association
+links already selected by the audited AgentStore root. Its cursor retains that
+exact subject and root-local page position. The route has no correction command,
+typed delta, staging handle, receipt or publication identity, so an empty or
+unexpected relation page cannot be repaired through this read surface.
+
 ## Browser mutation orchestration
 
 The authenticated browser constructs only the existing typed V1 command union.

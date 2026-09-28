@@ -1,6 +1,7 @@
 use crate::*;
 use jj_store_service::collaboration::{
-    AgentSessionDetail, AgentSessionPage, AgentTranscriptPage, AgentTranscriptRequest,
+    AgentRelationPage, AgentRelationRequest, AgentSessionDetail, AgentSessionPage,
+    AgentTranscriptPage, AgentTranscriptRequest,
 };
 
 pub(super) async fn sessions(
@@ -45,6 +46,27 @@ pub(super) async fn transcript(
     state.json(&page)
 }
 
+pub(super) async fn relations(
+    state: &State,
+    session: Arc<NativeSession>,
+    cursor: Option<String>,
+    request: AgentRelationRequest,
+) -> Result<Response> {
+    let page = if let Some(cursor) = cursor {
+        state
+            .agent_sessions
+            .resume_relations(session, &cursor, request)
+            .await?
+    } else {
+        state
+            .agent_sessions
+            .begin_relations(session, request)
+            .await?
+    };
+    state.json(&page)
+}
+
 pub(super) type SessionPage = AgentSessionPage;
 pub(super) type SessionDetail = AgentSessionDetail;
 pub(super) type TranscriptPage = AgentTranscriptPage;
+pub(super) type RelationPage = AgentRelationPage;

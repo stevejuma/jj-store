@@ -5,16 +5,18 @@ use axum::{
 };
 use jj_agent::{
     AgentCatalogEditV1, AgentCatalogKey, AgentCatalogKind, AgentDeltaV1, AgentObjectV1,
-    AgentSessionId, AgentSessionSnapshotV1, CaptureBatchId, CompletenessV1, CoverageV1,
-    IntegrationId, NormalizerProfileV1, ObservationId, SanitizedMediaType,
-    SanitizedObservationBatchV1, SanitizedObservationV1, SanitizedPayloadV1,
-    SanitizedRepresentation, SessionState, SourceInstanceId, SourceKind, SourceTrust,
-    TranscriptChunkV1, TranscriptManifestV1, TranscriptPageV1, TranscriptStreamV1,
+    AgentRelationPageV1, AgentRelationSubjectV1, AgentSessionId, AgentSessionSnapshotV1,
+    AssociationGranularity, AssociationId, AssociationRelation, CaptureBatchId, CodeAnchorV1,
+    CodeAssociationV1, CompletenessV1, CoverageV1, EvidenceMethod, IntegrationId,
+    NormalizerProfileV1, ObservationId, SanitizedMediaType, SanitizedObservationBatchV1,
+    SanitizedObservationV1, SanitizedPayloadV1, SanitizedRepresentation, SessionState,
+    SourceInstanceId, SourceKind, SourceTrust, TranscriptChunkV1, TranscriptManifestV1,
+    TranscriptPageV1, TranscriptStreamV1,
 };
 use jj_store_http::{Access, Config, HttpApi};
 use jj_store_service::administration::{OperatorPolicies, RepositoryHost};
 use serde_json::Value;
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use tower::ServiceExt as _;
 
 struct NoOperators;
@@ -90,9 +92,48 @@ async fn publish(session: &NativeSession, seed: u8, native_session: &str) {
     ));
 }
 
+fn association(seed: u8, session_id: AgentSessionId) -> CodeAssociationV1 {
+    CodeAssociationV1 {
+        schema_version: 1,
+        association_id: AssociationId::new([seed; 16]),
+        checkpoint_id: None,
+        session_id,
+        turn_id: None,
+        tool_call_ids: BTreeSet::new(),
+        scope_id: None,
+        relation: AssociationRelation::ObservedDuringInterval,
+        before: CodeAnchorV1 {
+            operations: BTreeSet::from([m::OperationId::new([0; 64])]),
+            commits: BTreeSet::new(),
+        },
+        after: CodeAnchorV1::default(),
+        changes: BTreeSet::new(),
+        paths: vec![],
+        granularity: AssociationGranularity::Operation,
+        evidence_method: EvidenceMethod::HookBoundary,
+        source_trust: SourceTrust::LocalUserHook,
+        exclusive_write_scope: false,
+        evidence: vec![],
+        coverage: CoverageV1 {
+            completeness: CompletenessV1::Complete,
+            gaps: 0,
+            redacted_fields: 0,
+            truncated: false,
+        },
+        created_at_millis: i64::from(seed),
+        supersedes: None,
+        correction_reason: None,
+    }
+}
+
 async fn publish_transcript(
     fixture: &Fixture,
-) -> (AgentSessionId, AgentObjectId, SourceInstanceId) {
+) -> (
+    AgentSessionId,
+    AgentObjectId,
+    SourceInstanceId,
+    [AgentObjectId; 2],
+) {
     let staging = Coordinator::new(
         fixture.store.clone(),
         REPO,
@@ -188,18 +229,53 @@ async fn publish_transcript(
         }))
         .await
         .unwrap();
+    let first_association = staging
+        .stage_agent_object(&AgentObjectV1::Association(association(75, session_id)))
+        .await
+        .unwrap();
+    let second_association = staging
+        .stage_agent_object(&AgentObjectV1::Association(association(76, session_id)))
+        .await
+        .unwrap();
+    let subject = AgentRelationSubjectV1::Session { session_id };
+    let relation_tail = staging
+        .stage_agent_object(&AgentObjectV1::RelationPage(AgentRelationPageV1 {
+            schema_version: 1,
+            subject: subject.clone(),
+            selections: vec![second_association],
+            next: None,
+        }))
+        .await
+        .unwrap();
+    let relation_head = staging
+        .stage_agent_object(&AgentObjectV1::RelationPage(AgentRelationPageV1 {
+            schema_version: 1,
+            subject: subject.clone(),
+            selections: vec![first_association],
+            next: Some(relation_tail),
+        }))
+        .await
+        .unwrap();
     let request = AgentDeltaRequest::new(
         ACTOR,
         m::RequestId::new([73; 16]),
         m::PublicationId::new([74; 16]),
         AgentDeltaV1 {
             schema_version: 1,
-            edits: vec![AgentCatalogEditV1 {
-                catalog: AgentCatalogKind::Sessions,
-                key: AgentCatalogKey::derive("session", session_id.as_bytes()).unwrap(),
-                expected: None,
-                replacement: Some(snapshot),
-            }],
+            edits: vec![
+                AgentCatalogEditV1 {
+                    catalog: AgentCatalogKind::Sessions,
+                    key: AgentCatalogKey::derive("session", session_id.as_bytes()).unwrap(),
+                    expected: None,
+                    replacement: Some(snapshot),
+                },
+                AgentCatalogEditV1 {
+                    catalog: AgentCatalogKind::Relations,
+                    key: subject.catalog_key().unwrap(),
+                    expected: None,
+                    replacement: Some(relation_head),
+                },
+            ],
         },
         b"published transcript fixture".to_vec(),
     )
@@ -208,7 +284,12 @@ async fn publish_transcript(
         fixture.session.publish_agent_delta(&request).await.unwrap(),
         PublishOutcome::Committed(_)
     ));
-    (session_id, transcript.id, source)
+    (
+        session_id,
+        transcript.id,
+        source,
+        [first_association.id, second_association.id],
+    )
 }
 
 fn request(path: &str) -> Request<Body> {
@@ -283,7 +364,8 @@ async fn local_trusted_http_lists_root_pinned_agent_sessions_without_bearer_cred
     let (status, missing) = json(&router, &format!("agent/sessions/{}", "99".repeat(16))).await;
     assert_eq!(status, StatusCode::NOT_FOUND, "{missing}");
 
-    let (transcript_session, transcript_id, source) = publish_transcript(&fixture).await;
+    let (transcript_session, transcript_id, source, associations) =
+        publish_transcript(&fixture).await;
     let (status, transcript_detail) =
         json(&router, &format!("agent/sessions/{transcript_session}")).await;
     assert_eq!(status, StatusCode::OK, "{transcript_detail}");
@@ -313,6 +395,52 @@ async fn local_trusted_http_lists_root_pinned_agent_sessions_without_bearer_cred
     assert_eq!(transcript_second["chunks"][0]["content"], "second\n");
     assert!(transcript_second["next_cursor"].is_null());
 
+    let relation_path = format!("agent/associations?session={transcript_session}&limit=1");
+    let (status, relation_first) = json(&router, &relation_path).await;
+    assert_eq!(status, StatusCode::OK, "{relation_first}");
+    assert_eq!(relation_first["relations"][0]["kind"], "association");
+    assert_eq!(
+        relation_first["relations"][0]["object_id"],
+        associations[0].to_string()
+    );
+    let relation_cursor = relation_first["next_cursor"].as_str().unwrap();
+    publish(&fixture.session, 91, "relation-later-session").await;
+    let (status, relation_second) = json(
+        &router,
+        &format!("{relation_path}&cursor={relation_cursor}"),
+    )
+    .await;
+    assert_eq!(status, StatusCode::OK, "{relation_second}");
+    assert_eq!(relation_second["snapshot"], relation_first["snapshot"]);
+    assert_eq!(
+        relation_second["relations"][0]["object_id"],
+        associations[1].to_string()
+    );
+    assert!(relation_second["next_cursor"].is_null());
+    for (query, subject) in [
+        (
+            format!("tool_session={transcript_session}&tool={}", "00".repeat(16)),
+            "tool",
+        ),
+        (format!("operation={}", "00".repeat(64)), "operation"),
+        (format!("commit={}", "00".repeat(64)), "revision"),
+        (format!("checkpoint={}", "00".repeat(16)), "checkpoint"),
+    ] {
+        let (status, empty) = json(&router, &format!("agent/associations?{query}")).await;
+        assert_eq!(status, StatusCode::OK, "{empty}");
+        assert_eq!(empty["subject"]["subject"], subject);
+        assert!(empty["relations"].as_array().unwrap().is_empty());
+    }
+    let (status, invalid) = json(
+        &router,
+        &format!(
+            "agent/associations?session={transcript_session}&operation={}",
+            "00".repeat(64)
+        ),
+    )
+    .await;
+    assert_eq!(status, StatusCode::BAD_REQUEST, "{invalid}");
+
     if let Some(path) = std::env::var_os("JJ_STORE_COLLABORATION_CONTRACT_CAPTURE") {
         let pages = [first, second].map(|data| {
             serde_json::json!({
@@ -341,6 +469,15 @@ async fn local_trusted_http_lists_root_pinned_agent_sessions_without_bearer_cred
         for data in [transcript_first, transcript_second] {
             samples.push(serde_json::json!({
                 "path": "/v1/repos/{repo}/agent/sessions/{session}/transcripts/{transcript}",
+                "method": "get",
+                "status": 200,
+                "media": "application/json",
+                "data": data,
+            }));
+        }
+        for data in [relation_first, relation_second] {
+            samples.push(serde_json::json!({
+                "path": "/v1/repos/{repo}/agent/associations",
                 "method": "get",
                 "status": 200,
                 "media": "application/json",

@@ -191,6 +191,47 @@ struct AgentTranscript {
     limit: usize,
     max_bytes: usize,
 }
+#[derive(Deserialize, schemars::JsonSchema)]
+#[serde(deny_unknown_fields)]
+struct AgentRelations {
+    session: Option<jj_store_service::collaboration::AgentSessionIdentity>,
+    tool_session: Option<jj_store_service::collaboration::AgentSessionIdentity>,
+    tool: Option<jj_store_service::collaboration::AgentToolIdentity>,
+    operation: Option<m::OperationId>,
+    commit: Option<m::CommitId>,
+    checkpoint: Option<jj_store_service::collaboration::AgentCheckpointIdentity>,
+    cursor: Option<String>,
+    #[serde(default = "limit")]
+    limit: usize,
+}
+
+impl AgentRelations {
+    fn subject(&self) -> Result<jj_store_service::collaboration::AgentRelationSubject> {
+        use jj_store_service::collaboration::AgentRelationSubject as Subject;
+        match (
+            self.session,
+            self.tool_session,
+            self.tool,
+            self.operation,
+            self.commit,
+            self.checkpoint,
+        ) {
+            (Some(session_id), None, None, None, None, None) => Ok(Subject::Session { session_id }),
+            (None, Some(session_id), Some(tool_call_id), None, None, None) => Ok(Subject::Tool {
+                session_id,
+                tool_call_id,
+            }),
+            (None, None, None, Some(operation_id), None, None) => {
+                Ok(Subject::Operation { operation_id })
+            }
+            (None, None, None, None, Some(commit_id), None) => Ok(Subject::Revision { commit_id }),
+            (None, None, None, None, None, Some(checkpoint_id)) => {
+                Ok(Subject::Checkpoint { checkpoint_id })
+            }
+            _ => Err(Error::invalid()),
+        }
+    }
+}
 
 // One declaration registers both executable routes and their generated contracts.
 macro_rules! endpoints {
@@ -202,6 +243,7 @@ macro_rules! endpoints {
             (get, "/repos/{repo}/agent/sessions", agent_sessions, AgentSessions, crate::collaboration::SessionPage, Reply::Json(200)),
             (get, "/repos/{repo}/agent/sessions/{session}", agent_session, Empty, crate::collaboration::SessionDetail, Reply::Json(200)),
             (get, "/repos/{repo}/agent/sessions/{session}/transcripts/{transcript}", agent_transcript, AgentTranscript, crate::collaboration::TranscriptPage, Reply::Json(200)),
+            (get, "/repos/{repo}/agent/associations", agent_associations, AgentRelations, crate::collaboration::RelationPage, Reply::Json(200)),
             (get, "/repos/{repo}/snapshot", snapshot, Empty, reads::HeadSnapshot, Reply::Json(200)),
             (get, "/repos/{repo}/events", events, Events, events::Event, Reply::Events),
             (get, "/repos/{repo}/objects/{kind}/{id}", object, Selection, Envelope<c::Object>, Reply::Json(200)),
@@ -342,6 +384,24 @@ async fn agent_transcript(
             source_generation: args.generation,
             limit: args.limit,
             max_bytes: args.max_bytes,
+        },
+    )
+    .await
+}
+async fn agent_associations(
+    ExtractState(state): ExtractState<Arc<State>>,
+    context: Context,
+    args: Input<AgentRelations>,
+) -> Result<Response> {
+    let args = input(args)?;
+    let subject = args.subject()?;
+    crate::collaboration::relations(
+        &state,
+        context.session,
+        args.cursor,
+        jj_store_service::collaboration::AgentRelationRequest {
+            subject,
+            limit: args.limit,
         },
     )
     .await

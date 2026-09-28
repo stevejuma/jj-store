@@ -445,6 +445,8 @@ application, lists root-pinned AgentStore sessions, resolves current-root
 session detail and streams a selected transcript generation without a bearer
 credential. It executes the same repository host, literal-loopback admission and
 service pager used by the standalone server, and captures collection, detail and
-transcript pages for contract validation. This adds no user-facing CLI command;
-relations, checkpoints, ReviewStore operations and collaboration command
-presentation remain subsequent M9.4 work.
+transcript pages for contract validation. It also captures two root-pinned
+association pages and exercises session, tool, operation, revision and
+checkpoint subjects, including rejection of contradictory selectors. This adds
+no user-facing CLI command; checkpoint detail, ReviewStore operations and
+collaboration command presentation remain subsequent M9.4 work.

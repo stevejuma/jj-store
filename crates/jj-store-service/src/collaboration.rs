@@ -1,9 +1,11 @@
 //! Bounded, manifest-root-pinned collaboration reads.
 mod agent_cursors;
 mod agent_details;
+mod agent_relations;
 mod agent_transcripts;
 mod cursor_position;
 mod models;
+pub use agent_relations::AgentRelationRequest;
 pub use agent_transcripts::AgentTranscriptRequest;
 pub use models::*;
 
