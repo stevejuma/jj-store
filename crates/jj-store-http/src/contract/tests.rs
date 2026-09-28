@@ -189,6 +189,51 @@ fn collaboration_contract_exposes_root_pinned_agent_session_pages() {
                 .contains(&json!(field))
         );
     }
+
+    let checkpoints = &doc["paths"]["/v1/repos/{repo}/agent/checkpoints"]["get"];
+    assert_eq!(checkpoints["tags"], json!(["collaboration"]));
+    assert_eq!(
+        checkpoints["responses"]["200"]["content"]["application/json"]["schema"]["$ref"],
+        "#/components/schemas/AgentCheckpointPage"
+    );
+    let checkpoint_page = &doc["components"]["schemas"]["AgentCheckpointPage"];
+    for field in ["version", "snapshot", "checkpoints", "next_cursor"] {
+        assert!(
+            checkpoint_page["required"]
+                .as_array()
+                .unwrap()
+                .contains(&json!(field))
+        );
+    }
+    for path in [
+        "/v1/repos/{repo}/agent/checkpoints/{checkpoint}",
+        "/v1/repos/{repo}/agent/checkpoints/{checkpoint}/versions/{version}",
+    ] {
+        let detail = &doc["paths"][path]["get"];
+        assert_eq!(detail["tags"], json!(["collaboration"]));
+        assert_eq!(
+            detail["responses"]["200"]["content"]["application/json"]["schema"]["$ref"],
+            "#/components/schemas/AgentCheckpointDetail"
+        );
+    }
+    let checkpoint_detail = &doc["components"]["schemas"]["AgentCheckpointDetail"];
+    for field in [
+        "version",
+        "snapshot",
+        "checkpoint",
+        "session_snapshot_id",
+        "transcript_id",
+        "event_batches",
+        "tools",
+        "associations",
+    ] {
+        assert!(
+            checkpoint_detail["required"]
+                .as_array()
+                .unwrap()
+                .contains(&json!(field))
+        );
+    }
 }
 
 #[test]
@@ -200,7 +245,7 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
         json!(["authenticated", "local_trusted"])
     );
     let paths = doc["paths"].as_object().unwrap();
-    assert_eq!(paths.len(), 33);
+    assert_eq!(paths.len(), 36);
     let mut ids = std::collections::BTreeSet::new();
     for (name, path) in paths {
         for (method, operation) in path.as_object().unwrap() {

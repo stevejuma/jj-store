@@ -131,20 +131,31 @@ relation traversal and transcript streaming do not depend on Tantivy.
 The first M9.4 service surfaces list AgentStore sessions from one exact selected
 root, resolve one stable session against the current selected root, page one
 selected transcript stream and traverse typed relations for session, tool,
-operation, revision or checkpoint subjects. Their owned responses identify the
-repository, epoch, publication position, manifest revision, AgentStore root
-digest and AgentStore state version. Each row retains the complete stable
-session ID and immutable session-snapshot object ID, then exposes only bounded
-integration, lifecycle, parent, coverage and referenced object counts. Detail
-also returns the exact immutable observation-batch, event-batch and
-tool-snapshot IDs selected by that session; tool links retain their full stable
-tool-call IDs. Selected transcript manifests expand only into stream descriptors
-carrying the exact manifest/source identity, generation,
-format/decoder/sanitizer versions, representation, byte and record counts and
-gaps. Relation pages repeat the exact typed subject and return ordered immutable
-checkpoint-version or association links; an unlinked subject returns an empty
-page. Transport DTOs do not expose WAL objects or reinterpret stable entity
-identities as immutable object identities.
+operation, revision or checkpoint subjects. They also page the stable checkpoint
+catalog, resolve its current selected version and read a requested immutable
+version through that selection's supersession chain. Their owned responses
+identify the repository, epoch, publication position, manifest revision,
+AgentStore root digest and AgentStore state version. Each session row retains
+the complete stable session ID and immutable session-snapshot object ID, then
+exposes only bounded integration, lifecycle, parent, coverage and referenced
+object counts. Session detail also returns the exact immutable
+observation-batch, event-batch and tool-snapshot IDs selected by that session;
+tool links retain their full stable tool-call IDs. Selected transcript manifests
+expand only into stream descriptors carrying the exact manifest/source identity,
+generation, format/decoder/sanitizer versions, representation, byte and record
+counts and gaps. Relation pages repeat the exact typed subject and return
+ordered immutable checkpoint-version or association links; an unlinked subject
+returns an empty page. Transport DTOs do not expose WAL objects or reinterpret
+stable entity identities as immutable object identities.
+
+Checkpoint summaries keep their complete stable checkpoint and immutable version
+IDs, session, optional turn/scope, native before/after anchors, code relation,
+evidence/trust state, coverage, capture status, execution outcome and bounded
+reference counts. Detail adds exact selected session, transcript, event, tool
+and association object links. The immutable version route walks at most 4,096
+unique checkpoint versions from the current catalog selection and rejects a
+cycle, wrong stable checkpoint or unrelated object. It does not expose arbitrary
+reads from the selected AgentStore closure.
 
 Initial and resumed pages require current repository read permission. Page sizes
 are limited to 1 through 256. An opaque signed continuation binds repository,
@@ -160,10 +171,9 @@ resets after expiry, server restart or epoch replacement. Tampering, repository
 reuse and query changes fail explicitly. Reads neither dispatch an agent nor
 stage or publish repository state.
 
-Checkpoint detail reads, ReviewStore reads and typed writes, user-facing CLI
-commands, durable receipts and live collaboration hints remain later M9.4
-slices. Session, transcript and relation reads alone do not complete
-JST-COLLAB-004.
+ReviewStore reads and typed writes, user-facing CLI commands, durable receipts
+and live collaboration hints remain later M9.4 slices. AgentStore session,
+transcript, relation and checkpoint reads alone do not complete JST-COLLAB-004.
 
 ## Capture sanitization boundary
 

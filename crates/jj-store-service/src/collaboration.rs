@@ -1,12 +1,15 @@
 //! Bounded, manifest-root-pinned collaboration reads.
+mod agent_checkpoints;
 mod agent_cursors;
 mod agent_details;
 mod agent_relations;
 mod agent_transcripts;
+mod checkpoint_models;
 mod cursor_position;
 mod models;
 pub use agent_relations::AgentRelationRequest;
 pub use agent_transcripts::AgentTranscriptRequest;
+pub use checkpoint_models::*;
 pub use models::*;
 
 use crate::{
@@ -170,6 +173,24 @@ async fn resolve(
         rows.push(models::summary(reference, &session));
     }
     Ok(rows)
+}
+
+async fn resolve_checkpoint(
+    store: &wal::publication::AgentStoreSnapshot,
+    key: AgentCatalogKey,
+    reference: AgentObjectRef,
+) -> Result<AgentCheckpointSummary> {
+    let AgentObjectV1::CheckpointVersion(checkpoint) =
+        store.read_object(reference).await.map_err(map_wal)?
+    else {
+        return Err(Error::Corrupt);
+    };
+    let expected = AgentCatalogKey::derive("checkpoint", checkpoint.checkpoint_id.as_bytes())
+        .map_err(|_| Error::Corrupt)?;
+    if expected != key {
+        return Err(Error::Corrupt);
+    }
+    Ok(checkpoint_models::summary(reference, &checkpoint))
 }
 
 impl AgentSessionPager {

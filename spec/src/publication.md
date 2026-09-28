@@ -295,3 +295,12 @@ publication facade re-exports those relation, checkpoint and association model
 types for service conversion without exposing a staging or publication method.
 The higher-layer continuation binds the complete subject and existing audited
 snapshot; it creates no durable cursor or new stored object.
+
+Checkpoint collection uses the existing root-selected checkpoints catalog and
+its radix continuation key. Current detail derives the stable checkpoint catalog
+key and verifies that the selected object carries the same checkpoint identity.
+Exact-version detail follows only typed checkpoint `supersedes` references from
+that selected object, bounds unique traversal at 4,096 versions and rejects
+cycles or identity substitution. These reads use the already audited AgentStore
+closure and introduce no alternate object lookup, manifest pointer or
+publication transition.

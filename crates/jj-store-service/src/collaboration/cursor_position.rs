@@ -21,6 +21,9 @@ pub(super) enum Position {
     Sessions {
         after: AgentCatalogKey,
     },
+    Checkpoints {
+        after: AgentCatalogKey,
+    },
     Transcript {
         session_id: AgentSessionId,
         transcript_id: AgentObjectId,

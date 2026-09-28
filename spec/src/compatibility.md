@@ -388,12 +388,14 @@ only supported format-1 adoption path and never rewrites native objects.
 M9.4 additively registers `GET /v1/repos/{repo}/agent/sessions` and
 `GET /v1/repos/{repo}/agent/sessions/{session}` plus the bounded
 `GET /v1/repos/{repo}/agent/sessions/{session}/transcripts/{transcript}` range
-and `GET /v1/repos/{repo}/agent/associations`. OpenAPI and generated TypeScript
-own the AgentStore snapshot, coverage, summary, detail, transcript descriptor,
-chunk, typed relation subject, relation link and page schemas. Responses
-preserve native repository and AgentStore identity widths; collection,
-transcript and relation ranges use opaque process-local continuations. There is
-no persistence-format, WAL, receipt or native-ID change. Captured LocalTrusted
-responses validate all four handlers as part of contract drift checking. A
+and `GET /v1/repos/{repo}/agent/associations`. It also registers checkpoint
+collection, current-detail and exact-version routes. OpenAPI and generated
+TypeScript own the AgentStore snapshot, coverage, summary, detail, transcript
+descriptor, chunk, typed relation subject, relation link, checkpoint summary,
+code anchor and page schemas. Responses preserve native repository, stable
+AgentStore and immutable object identity widths; collection, transcript and
+relation ranges use opaque process-local continuations. There is no
+persistence-format, WAL, receipt or native-ID change. Captured LocalTrusted
+responses validate all seven handlers as part of contract drift checking. A
 continuation intentionally resets across server restart, expiry and epoch
 replacement and is not a durable compatibility token.

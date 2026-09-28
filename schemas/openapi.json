@@ -2440,6 +2440,637 @@
         "security": [{ "repositoryBearer": [] }, {}]
       }
     },
+    "/v1/repos/{repo}/agent/checkpoints": {
+      "get": {
+        "operationId": "agent_checkpoints",
+        "tags": ["collaboration"],
+        "description": "Requires current repository read permission. Session rows resolve from one immutable AgentStore root. Signed process-local continuations retain that exact root and page size, reauthorize every page, and reset after expiry, restart or epoch replacement. Reads never dispatch an agent or publish repository state.",
+        "parameters": [
+          {
+            "name": "repo",
+            "in": "path",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/RepositoryId" }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" },
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "uint",
+              "minimum": 0,
+              "default": 50
+            },
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result at the reported snapshot.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AgentCheckpointPage" }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request, unknown query field or invalid cursor.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing repository Bearer credential.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied, including revoked credentials or disallowed Origin.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "404": {
+            "description": "Object not committed in the selected snapshot or unknown route.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "405": {
+            "description": "Unsupported method.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "408": {
+            "description": "Native query canceled.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "409": {
+            "description": "cursor_reset after expiry, process restart, or repository epoch replacement.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "410": {
+            "description": "Index task expired or was lost on server restart.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "413": {
+            "description": "Request or response resource limit exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "503": {
+            "description": "Busy, unavailable, corrupt or incomplete history.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "504": {
+            "description": "Request or response deadline exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          }
+        },
+        "x-jj-store-query-schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "cursor": { "type": ["string", "null"] },
+            "limit": {
+              "type": "integer",
+              "format": "uint",
+              "minimum": 0,
+              "default": 50
+            }
+          }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
+      },
+      "head": {
+        "operationId": "agent_checkpoints_head",
+        "tags": ["collaboration"],
+        "description": "Runs the same authorized GET validation and drops the body. No JSON, binary bytes or SSE frames are returned.",
+        "parameters": [
+          {
+            "name": "repo",
+            "in": "path",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/RepositoryId" }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" },
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "uint",
+              "minimum": 0,
+              "default": 50
+            },
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result at the reported snapshot."
+          },
+          "400": {
+            "description": "Invalid request, unknown query field or invalid cursor."
+          },
+          "401": { "description": "Missing repository Bearer credential." },
+          "403": {
+            "description": "Access denied, including revoked credentials or disallowed Origin."
+          },
+          "404": {
+            "description": "Object not committed in the selected snapshot or unknown route."
+          },
+          "405": { "description": "Unsupported method." },
+          "408": { "description": "Native query canceled." },
+          "409": {
+            "description": "cursor_reset after expiry, process restart, or repository epoch replacement."
+          },
+          "410": {
+            "description": "Index task expired or was lost on server restart."
+          },
+          "413": {
+            "description": "Request or response resource limit exceeded."
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding."
+          },
+          "503": {
+            "description": "Busy, unavailable, corrupt or incomplete history."
+          },
+          "504": { "description": "Request or response deadline exceeded." }
+        },
+        "x-jj-store-query-schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "cursor": { "type": ["string", "null"] },
+            "limit": {
+              "type": "integer",
+              "format": "uint",
+              "minimum": 0,
+              "default": 50
+            }
+          }
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
+      }
+    },
+    "/v1/repos/{repo}/agent/checkpoints/{checkpoint}": {
+      "get": {
+        "operationId": "agent_checkpoint",
+        "tags": ["collaboration"],
+        "description": "Requires current repository read permission. Session rows resolve from one immutable AgentStore root. Signed process-local continuations retain that exact root and page size, reauthorize every page, and reset after expiry, restart or epoch replacement. Reads never dispatch an agent or publish repository state.",
+        "parameters": [
+          {
+            "name": "repo",
+            "in": "path",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/RepositoryId" }
+          },
+          {
+            "name": "checkpoint",
+            "in": "path",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/AgentCheckpointId" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result at the reported snapshot.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentCheckpointDetail"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request, unknown query field or invalid cursor.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing repository Bearer credential.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied, including revoked credentials or disallowed Origin.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "404": {
+            "description": "Object not committed in the selected snapshot or unknown route.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "405": {
+            "description": "Unsupported method.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "408": {
+            "description": "Native query canceled.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "409": {
+            "description": "cursor_reset after expiry, process restart, or repository epoch replacement.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "410": {
+            "description": "Index task expired or was lost on server restart.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "413": {
+            "description": "Request or response resource limit exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "503": {
+            "description": "Busy, unavailable, corrupt or incomplete history.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "504": {
+            "description": "Request or response deadline exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          }
+        },
+        "x-jj-store-query-schema": {
+          "type": "object",
+          "additionalProperties": false
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
+      },
+      "head": {
+        "operationId": "agent_checkpoint_head",
+        "tags": ["collaboration"],
+        "description": "Runs the same authorized GET validation and drops the body. No JSON, binary bytes or SSE frames are returned.",
+        "parameters": [
+          {
+            "name": "repo",
+            "in": "path",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/RepositoryId" }
+          },
+          {
+            "name": "checkpoint",
+            "in": "path",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/AgentCheckpointId" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result at the reported snapshot."
+          },
+          "400": {
+            "description": "Invalid request, unknown query field or invalid cursor."
+          },
+          "401": { "description": "Missing repository Bearer credential." },
+          "403": {
+            "description": "Access denied, including revoked credentials or disallowed Origin."
+          },
+          "404": {
+            "description": "Object not committed in the selected snapshot or unknown route."
+          },
+          "405": { "description": "Unsupported method." },
+          "408": { "description": "Native query canceled." },
+          "409": {
+            "description": "cursor_reset after expiry, process restart, or repository epoch replacement."
+          },
+          "410": {
+            "description": "Index task expired or was lost on server restart."
+          },
+          "413": {
+            "description": "Request or response resource limit exceeded."
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding."
+          },
+          "503": {
+            "description": "Busy, unavailable, corrupt or incomplete history."
+          },
+          "504": { "description": "Request or response deadline exceeded." }
+        },
+        "x-jj-store-query-schema": {
+          "type": "object",
+          "additionalProperties": false
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
+      }
+    },
+    "/v1/repos/{repo}/agent/checkpoints/{checkpoint}/versions/{version}": {
+      "get": {
+        "operationId": "agent_checkpoint_version",
+        "tags": ["collaboration"],
+        "description": "Requires current repository read permission. Session rows resolve from one immutable AgentStore root. Signed process-local continuations retain that exact root and page size, reauthorize every page, and reset after expiry, restart or epoch replacement. Reads never dispatch an agent or publish repository state.",
+        "parameters": [
+          {
+            "name": "repo",
+            "in": "path",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/RepositoryId" }
+          },
+          {
+            "name": "checkpoint",
+            "in": "path",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/AgentCheckpointId" }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/AgentObjectId" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result at the reported snapshot.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentCheckpointDetail"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request, unknown query field or invalid cursor.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing repository Bearer credential.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied, including revoked credentials or disallowed Origin.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "404": {
+            "description": "Object not committed in the selected snapshot or unknown route.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "405": {
+            "description": "Unsupported method.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "408": {
+            "description": "Native query canceled.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "409": {
+            "description": "cursor_reset after expiry, process restart, or repository epoch replacement.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "410": {
+            "description": "Index task expired or was lost on server restart.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "413": {
+            "description": "Request or response resource limit exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "503": {
+            "description": "Busy, unavailable, corrupt or incomplete history.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "504": {
+            "description": "Request or response deadline exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          }
+        },
+        "x-jj-store-query-schema": {
+          "type": "object",
+          "additionalProperties": false
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
+      },
+      "head": {
+        "operationId": "agent_checkpoint_version_head",
+        "tags": ["collaboration"],
+        "description": "Runs the same authorized GET validation and drops the body. No JSON, binary bytes or SSE frames are returned.",
+        "parameters": [
+          {
+            "name": "repo",
+            "in": "path",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/RepositoryId" }
+          },
+          {
+            "name": "checkpoint",
+            "in": "path",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/AgentCheckpointId" }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/AgentObjectId" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result at the reported snapshot."
+          },
+          "400": {
+            "description": "Invalid request, unknown query field or invalid cursor."
+          },
+          "401": { "description": "Missing repository Bearer credential." },
+          "403": {
+            "description": "Access denied, including revoked credentials or disallowed Origin."
+          },
+          "404": {
+            "description": "Object not committed in the selected snapshot or unknown route."
+          },
+          "405": { "description": "Unsupported method." },
+          "408": { "description": "Native query canceled." },
+          "409": {
+            "description": "cursor_reset after expiry, process restart, or repository epoch replacement."
+          },
+          "410": {
+            "description": "Index task expired or was lost on server restart."
+          },
+          "413": {
+            "description": "Request or response resource limit exceeded."
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding."
+          },
+          "503": {
+            "description": "Busy, unavailable, corrupt or incomplete history."
+          },
+          "504": { "description": "Request or response deadline exceeded." }
+        },
+        "x-jj-store-query-schema": {
+          "type": "object",
+          "additionalProperties": false
+        },
+        "security": [{ "repositoryBearer": [] }, {}]
+      }
+    },
     "/v1/repos/{repo}/snapshot": {
       "get": {
         "operationId": "snapshot",
@@ -10273,6 +10904,185 @@
       "AgentRelationKind": {
         "type": "string",
         "enum": ["checkpoint", "association"]
+      },
+      "AgentCheckpointPage": {
+        "type": "object",
+        "properties": {
+          "version": { "type": "integer", "format": "uint32", "minimum": 0 },
+          "snapshot": { "$ref": "#/components/schemas/AgentReadSnapshot" },
+          "checkpoints": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AgentCheckpointSummary" }
+          },
+          "next_cursor": { "type": ["string", "null"] }
+        },
+        "required": ["version", "snapshot", "checkpoints", "next_cursor"]
+      },
+      "AgentCheckpointSummary": {
+        "type": "object",
+        "properties": {
+          "checkpoint_id": { "$ref": "#/components/schemas/AgentCheckpointId" },
+          "version_id": { "$ref": "#/components/schemas/AgentObjectId" },
+          "session_id": { "$ref": "#/components/schemas/AgentSessionId" },
+          "turn_id": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/TurnId" },
+              { "type": "null" }
+            ]
+          },
+          "scope_id": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/ProvenanceScopeId" },
+              { "type": "null" }
+            ]
+          },
+          "before": { "$ref": "#/components/schemas/AgentCodeAnchor" },
+          "after": { "$ref": "#/components/schemas/AgentCodeAnchor" },
+          "code_relation": { "$ref": "#/components/schemas/CodeRelation" },
+          "evidence_method": { "$ref": "#/components/schemas/EvidenceMethod" },
+          "source_trust": { "$ref": "#/components/schemas/SourceTrust" },
+          "exclusive_write_scope": { "type": "boolean" },
+          "coverage": { "$ref": "#/components/schemas/AgentCoverage" },
+          "capture_status": { "$ref": "#/components/schemas/CaptureStatusV1" },
+          "execution_outcome": {
+            "$ref": "#/components/schemas/ExecutionOutcomeV1"
+          },
+          "event_batch_count": {
+            "type": "integer",
+            "format": "uint",
+            "minimum": 0
+          },
+          "tool_count": { "type": "integer", "format": "uint", "minimum": 0 },
+          "association_count": {
+            "type": "integer",
+            "format": "uint",
+            "minimum": 0
+          },
+          "supersedes": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/AgentObjectId" },
+              { "type": "null" }
+            ]
+          }
+        },
+        "required": [
+          "checkpoint_id",
+          "version_id",
+          "session_id",
+          "turn_id",
+          "scope_id",
+          "before",
+          "after",
+          "code_relation",
+          "evidence_method",
+          "source_trust",
+          "exclusive_write_scope",
+          "coverage",
+          "capture_status",
+          "execution_outcome",
+          "event_batch_count",
+          "tool_count",
+          "association_count",
+          "supersedes"
+        ]
+      },
+      "TurnId": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{32}$",
+        "minLength": 32,
+        "maxLength": 32
+      },
+      "ProvenanceScopeId": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{32}$",
+        "minLength": 32,
+        "maxLength": 32
+      },
+      "AgentCodeAnchor": {
+        "type": "object",
+        "properties": {
+          "operations": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": { "$ref": "#/components/schemas/OperationId" }
+          },
+          "commits": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": { "$ref": "#/components/schemas/CommitId" }
+          }
+        },
+        "required": ["operations", "commits"]
+      },
+      "CodeRelation": {
+        "type": "string",
+        "enum": ["changed", "no_change", "not_observed"]
+      },
+      "EvidenceMethod": {
+        "type": "string",
+        "enum": [
+          "controlled_scope",
+          "hook_boundary",
+          "transcript_recovery",
+          "historical_import",
+          "manual_assertion"
+        ]
+      },
+      "SourceTrust": {
+        "type": "string",
+        "enum": [
+          "authenticated_controller",
+          "local_user_hook",
+          "locally_trusted_plugin",
+          "approved_harness_api",
+          "local_transcript",
+          "imported_archive",
+          "untrusted_assertion"
+        ]
+      },
+      "CaptureStatusV1": {
+        "type": "string",
+        "enum": ["complete", "partial", "missing"]
+      },
+      "ExecutionOutcomeV1": {
+        "type": "string",
+        "enum": ["succeeded", "failed", "cancelled", "interrupted", "unknown"]
+      },
+      "AgentCheckpointDetail": {
+        "type": "object",
+        "properties": {
+          "version": { "type": "integer", "format": "uint32", "minimum": 0 },
+          "snapshot": { "$ref": "#/components/schemas/AgentReadSnapshot" },
+          "checkpoint": {
+            "$ref": "#/components/schemas/AgentCheckpointSummary"
+          },
+          "session_snapshot_id": {
+            "$ref": "#/components/schemas/AgentObjectId"
+          },
+          "transcript_id": { "$ref": "#/components/schemas/AgentObjectId" },
+          "event_batches": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AgentObjectId" }
+          },
+          "tools": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AgentToolLink" }
+          },
+          "associations": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AgentObjectId" }
+          }
+        },
+        "required": [
+          "version",
+          "snapshot",
+          "checkpoint",
+          "session_snapshot_id",
+          "transcript_id",
+          "event_batches",
+          "tools",
+          "associations"
+        ]
       },
       "CommittedEvent": {
         "type": "object",

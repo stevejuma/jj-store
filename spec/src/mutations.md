@@ -403,6 +403,13 @@ exact subject and root-local page position. The route has no correction command,
 typed delta, staging handle, receipt or publication identity, so an empty or
 unexpected relation page cannot be repaired through this read surface.
 
+Checkpoint collection and detail are also read-only. Current detail resolves one
+stable checkpoint through the selected catalog; immutable detail can only walk
+that selection's validated prior-version chain. Neither route accepts a
+replacement, correction, expected selection, command identity or publication
+request. Reading a prior version therefore cannot reselect it or supersede the
+current checkpoint.
+
 ## Browser mutation orchestration
 
 The authenticated browser constructs only the existing typed V1 command union.

@@ -46,6 +46,14 @@ impl Document {
                 .output
                 .subschema_for::<jj_store_service::collaboration::AgentTranscriptIdentity>()
                 .to_value(),
+            "checkpoint" => self
+                .output
+                .subschema_for::<jj_store_service::collaboration::AgentCheckpointIdentity>()
+                .to_value(),
+            "version" => self
+                .output
+                .subschema_for::<jj_store_service::collaboration::AgentCheckpointVersionIdentity>()
+                .to_value(),
             "kind" => {
                 json!({"type":"string", "enum":["commit","tree","file","symlink","copy","view","operation"]})
             }

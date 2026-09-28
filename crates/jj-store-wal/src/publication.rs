@@ -31,15 +31,16 @@ pub use application::ApplicationIntent;
 pub use collaboration::{CollaborationOutcome, CollaborationRequest};
 pub use domains::{Domain, DomainRequest, DomainState, RepositoryDomains};
 pub use jj_agent::{
-    AgentCatalogEditV1, AgentCatalogKey, AgentCatalogKind, AgentCheckpointId, AgentDeltaV1,
-    AgentObjectId, AgentObjectKind, AgentObjectRef, AgentObjectV1, AgentRelationPageV1,
-    AgentRelationSubjectV1, AgentRootV1, AgentSessionId, AgentSessionSnapshotV1,
-    AssociationGranularity, AssociationId, AssociationRelation, CaptureBatchId, CodeAnchorV1,
-    CodeAssociationV1, CompletenessV1, CoverageV1, EvidenceMethod, IntegrationId,
-    NormalizerProfileV1, ObservationId, SanitizedMediaType, SanitizedObservationBatchV1,
+    AgentCatalogEditV1, AgentCatalogKey, AgentCatalogKind, AgentCheckpointId,
+    AgentCheckpointVersionV1, AgentDeltaV1, AgentObjectId, AgentObjectKind, AgentObjectRef,
+    AgentObjectV1, AgentRelationPageV1, AgentRelationSubjectV1, AgentRootV1, AgentSessionId,
+    AgentSessionSnapshotV1, AssociationGranularity, AssociationId, AssociationRelation,
+    CaptureBatchId, CaptureStatusV1, CodeAnchorV1, CodeAssociationV1, CodeRelation, CompletenessV1,
+    CoverageV1, EvidenceMethod, ExecutionOutcomeV1, IntegrationId, NormalizerProfileV1,
+    ObservationId, ProvenanceScopeId, SanitizedMediaType, SanitizedObservationBatchV1,
     SanitizedObservationV1, SanitizedPayloadV1, SanitizedRepresentation, SessionState,
     SourceInstanceId, SourceKind, SourceTrust, ToolCallId, TranscriptChunkV1, TranscriptManifestV1,
-    TranscriptPageV1, TranscriptStreamV1,
+    TranscriptPageV1, TranscriptStreamV1, TurnId,
 };
 pub use jj_review::{ReviewDeltaV1, ReviewObjectRef, ReviewObjectV1, ReviewRootV1};
 pub use reader::SelectedRecord;

@@ -331,11 +331,15 @@ returns trusted source HTML.
 `GET /v1/repos/{repo}/agent/sessions`,
 `GET /v1/repos/{repo}/agent/sessions/{session}` and
 `GET /v1/repos/{repo}/agent/sessions/{session}/transcripts/{transcript}`, plus
-`GET /v1/repos/{repo}/agent/associations`, are bounded collaboration routes.
-LocalTrusted admits them through the existing literal-loopback protection and
-installation principal, without a bearer credential. Authenticated deployments
-retain their repository bearer policy. Both modes require current repository
-read permission before and after every root-pinned read.
+`GET /v1/repos/{repo}/agent/associations`,
+`GET /v1/repos/{repo}/agent/checkpoints`,
+`GET /v1/repos/{repo}/agent/checkpoints/{checkpoint}` and
+`GET /v1/repos/{repo}/agent/checkpoints/{checkpoint}/versions/{version}` are
+bounded collaboration routes. LocalTrusted admits them through the existing
+literal-loopback protection and installation principal, without a bearer
+credential. Authenticated deployments retain their repository bearer policy.
+Both modes require current repository read permission before and after every
+root-pinned read.
 
 The JSON response contains version 1, an exact AgentStore read snapshot, bounded
 session summaries and an optional continuation. The snapshot carries repository,
@@ -372,6 +376,21 @@ links containing either a checkpoint-version or association object ID. A valid
 subject with no links returns an empty page rather than inventing an
 association. Raw AgentStore objects are not serialized by this route.
 
+The checkpoint collection enumerates stable checkpoint IDs and their currently
+selected immutable versions from one exact AgentStore root. Summaries retain the
+stable checkpoint, immutable version, session, optional turn/scope, exact native
+before/after anchors, code relation, evidence/trust, coverage, capture status,
+execution outcome, bounded reference counts and prior version link. The stable
+checkpoint detail route returns its current selected summary plus the exact
+session snapshot, transcript, event, tool and association links.
+
+The version route accepts the stable checkpoint ID and one full immutable
+checkpoint-version ID. It can return only the current selection or a version in
+that selection's validated `supersedes` chain. A foreign or unselected version
+returns 404 even when some other selected AgentStore object refers to it. Both
+detail routes pin the current root for the whole request and never reinterpret
+the stable checkpoint ID as an immutable object ID.
+
 `limit` defaults to the common page size and accepts 1 through 256. The opaque
 continuation is bound to the entire snapshot and original page size, retains its
 immutable root after later publications and is never suitable for a permanent
@@ -379,11 +398,13 @@ URL. Transcript continuations additionally bind the stable session, manifest,
 source instance, source generation, byte ceiling and last returned sequence.
 Association continuations additionally bind the complete typed relation subject
 and the root-local relation page and offset. A continuation for one subject
-cannot resume another subject. Invalid or query-mismatched continuations return
-`invalid_cursor`; expiry, process restart or epoch replacement returns
-`cursor_reset`. Request concurrency, retained pins, transitive closure objects
-and lifetime are bounded by the shared read limits. The route has no request
-body, mutation capability, receipt or agent dispatch behavior.
+cannot resume another subject. Checkpoint collection continuations bind the
+radix key after the last stable checkpoint in the selected catalog. Invalid or
+query-mismatched continuations return `invalid_cursor`; expiry, process restart
+or epoch replacement returns `cursor_reset`. Request concurrency, retained pins,
+transitive closure objects and lifetime are bounded by the shared read limits.
+The route has no request body, mutation capability, receipt or agent dispatch
+behavior.
 
 ## Committed event subscriptions
 

@@ -90,6 +90,10 @@ if (mode === "--check") {
         "http_collaboration_acceptance::local_trusted_http_lists_root_pinned_agent_sessions_without_bearer_credentials",
         "JJ_STORE_COLLABORATION_CONTRACT_CAPTURE",
       ],
+      [
+        "http_collaboration_checkpoint_acceptance::local_trusted_http_pages_current_and_historical_agent_checkpoints",
+        "JJ_STORE_CHECKPOINT_CONTRACT_CAPTURE",
+      ],
     ]) {
       const capture = join(directory, `${variable}.json`);
       const { stdout } = await run(
