@@ -30,7 +30,10 @@ pub struct Config {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(tag = "mode", rename_all = "kebab-case", deny_unknown_fields)]
 pub enum Access {
-    Authenticated,
+    Authenticated {
+        installation: PathBuf,
+        catalog: PathBuf,
+    },
     LocalTrusted {
         installation: PathBuf,
         catalog: PathBuf,

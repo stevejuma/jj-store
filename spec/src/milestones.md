@@ -58,6 +58,7 @@ adds evidence here in its enclosing Jujutsu change.
 | M8a.5       | Deferred    | M8a.4       | JST-ADAPT-006,JST-COMPAT-005                                            | A3: wal-copy projection and pinned generic-S3 transfer qualification                                                | Future backup release                                   | -                                                                                                                                                                                                                          |
 | M8a.6       | Deferred    | M8a.5       | JST-ADAPT-006,JST-CLI-005,JST-COMPAT-005                                | A4: immutable verified inventories/certificates, fault qualification and offline restore                            | Future backup/restore release                           | -                                                                                                                                                                                                                          |
 | M8a.7       | Deferred    | M8a.6       | JST-COMPAT-003,JST-COMPAT-005,JST-SEC-006,JST-UI-010                    | A5: Linux packaging plus external/authenticated/provider release qualification                                      | Future shared and cross-platform release                | -                                                                                                                                                                                                                          |
+| M8a.8       | Done        | M8a.4       | JST-SEC-007,JST-API-008,JST-UI-011,JST-CLI-006                          | Manual-token multi-repository discovery, independent repository policy and browser selection                        | Retain focused authenticated discovery acceptance       | E-M8A-005                                                                                                                                                                                                                  |
 | M7          | Deferred    | M8a         | JST-ADAPT-005                                                           | Complete read-only replica through applied position                                                                 | After first release                                     | -                                                                                                                                                                                                                          |
 | M7.1        | Deferred    | M8a.4       | JST-ADAPT-006                                                           | Asynchronous verified S3 backup remains independent from passive serving and promotion                              | Future backup release after local application           | -                                                                                                                                                                                                                          |
 | M8b         | Deferred    | M8a         | JST-COMPAT-004                                                          | Verified lossless import with source safety                                                                         | Separate migration release                              | -                                                                                                                                                                                                                          |
@@ -13733,6 +13734,181 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Rust 1.98.1; capture hook source state v1; MongoDB Kingfisher policy mongodb-kingfisher@2.7.0/builtin-medium/v1; exact normalizer profiles from E-M9-008.",
     "formats": "The hidden hook command reads at most four MiB plus one overflow byte, verifies enabled and currently installed device policy without taking the administrative registry lock, sanitizes in memory, reserves a synchronized monotonic source sequence and atomically enqueues one SanitizedObservationBatchV1. Invalid input emits only a fixed omission payload. Reservations survive restart and may leave gaps after interrupted enqueue but are never reused; derived batch and observation IDs are domain-separated by stable source, generation and sequence."
+  },
+  {
+    "id": "E-M8A-005",
+    "tasks": ["M8a", "M8a.8"],
+    "date": "2026-09-28",
+    "kind": "implementation",
+    "files": [
+      "AGENTS.md",
+      "Cargo.lock",
+      "catalog/components/store-application/StoreConnection.stories.svelte",
+      "crates/jj-store-cli/src/commands.rs",
+      "crates/jj-store-cli/src/initialization.rs",
+      "crates/jj-store-cli/src/lib.rs",
+      "crates/jj-store-cli/src/server_commands.rs",
+      "crates/jj-store-cli/src/store_commands.rs",
+      "crates/jj-store-cli/src/token_commands.rs",
+      "crates/jj-store-cli/src/token_journal.rs",
+      "crates/jj-store-cli/tests/administration_rpc.rs",
+      "crates/jj-store-cli/tests/local_trusted_cli.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/http_reads.rs",
+      "crates/jj-store-cli/tests/server_executable.rs",
+      "crates/jj-store-http/Cargo.toml",
+      "crates/jj-store-http/src/contract/tests.rs",
+      "crates/jj-store-http/src/dto.rs",
+      "crates/jj-store-http/src/lib.rs",
+      "crates/jj-store-http/src/repositories.rs",
+      "crates/jj-store-http/src/routes.rs",
+      "crates/jj-store-rpc/proto/native.proto",
+      "crates/jj-store-rpc/src/client.rs",
+      "crates/jj-store-rpc/src/server.rs",
+      "crates/jj-store-server/src/config/format-2-example.toml",
+      "crates/jj-store-server/src/config/types.rs",
+      "crates/jj-store-server/src/config.rs",
+      "crates/jj-store-server/src/installation.rs",
+      "crates/jj-store-server/src/lib.rs",
+      "crates/jj-store-server/src/process.rs",
+      "crates/jj-store-server/src/registry.rs",
+      "crates/jj-store-server/src/registry_catalog.rs",
+      "crates/jj-store-server/src/registry_persistence.rs",
+      "crates/jj-store-server/tests/configuration.rs",
+      "crates/jj-store-server/tests/local_installation.rs",
+      "crates/jj-store-service/src/lib.rs",
+      "crates/jj-store-service/src/registry.rs",
+      "docs/cli/commands.md",
+      "docs/cli/server-config.md",
+      "docs/cli/server-operator.md",
+      "docs/cli/tokens.md",
+      "schemas/openapi.json",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/compatibility.md",
+      "spec/src/jj-integration.md",
+      "spec/src/milestones.md",
+      "spec/src/mutations.md",
+      "spec/src/security.md",
+      "spec/src/spec-governance.md",
+      "spec/src/ui.md",
+      "spec/src/verification.md",
+      "web/src/App.svelte",
+      "web/src/lib/api/generated.ts",
+      "web/src/lib/api/repositories.ts",
+      "web/src/lib/controller/production-store-actions.ts",
+      "web/src/lib/controller/production-store-controller.svelte.ts",
+      "web/src/lib/controller/production-store-lifecycle.svelte.ts",
+      "web/src/lib/ui/store-application/StoreConnection.svelte",
+      "web/tests/client.test.ts",
+      "web/tests/vite/production-store-bootstrap.test.ts"
+    ],
+    "tests": [
+      "crates/jj-store-server/tests/local_installation.rs#registry_indexes_token_candidates_without_conferring_access",
+      "crates/jj-store-server/tests/local_installation.rs#registry_reserves_aliases_before_exposing_published_repositories",
+      "crates/jj-store-cli/tests/administration_rpc.rs#rpc_created_repositories_attach_with_real_cli_and_survive_host_restart",
+      "crates/jj-store-cli/tests/server_executable.rs#token_generate_prints_one_valid_manual_credential",
+      "crates/jj-store-cli/tests/server_executable.rs#registry_init_creates_one_private_authenticated_catalog",
+      "crates/jj-store-cli/tests/native_lifecycle/http_reads.rs#authenticated_repository_discovery_reauthorizes_one_token_per_repository",
+      "crates/jj-store-http/src/repositories.rs#repository_cursor_resets_after_registry_generation_changes",
+      "web/tests/vite/production-store-bootstrap.test.ts#authenticated bootstrap accepts one token and exposes every authorized repository"
+    ],
+    "runs": [
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo check -p jj-store-cli --tests --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "The first focused compile found a test-only JSON Value versus PathBuf comparison in the new registry-init executable assertion; it was corrected without changing production behavior."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo check -p jj-store-cli --tests --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "The affected CLI, RPC, HTTP, server and service code compiles without warnings after the registry and token-journal extractions."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-server --test local_installation --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All six focused installation and registry regressions pass, including private authenticated initialization, alias reservation, atomic initial-token indexing and independent candidate revocation."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test administration_rpc rpc_created_repositories_attach_with_real_cli_and_survive_host_restart --locked; targeted token flow; token generate; registry init; authenticated repository discovery; repository cursor reset",
+        "result": "pass",
+        "failures": 0,
+        "note": "Seven focused invocations pass: immediate initial-admin discovery, existing grant/revoke recovery, both new commands, full-token per-repository reauthorization and generation-bound cursor reset."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreConnection.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Five states passed; the Connect interaction exposed missing storage readiness in the story fixture, which hid the token field behind the unavailable alert."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreConnection.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "All six authenticated and LocalTrusted connection interactions pass with blocking accessibility checks. Visual baselines were not run by user direction."
+      },
+      {
+        "command": "pnpm exec tsx --test web/tests/client.test.ts; pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-store-bootstrap.test.ts; pnpm web:check; pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Nine client tests and three controller bootstrap tests pass, including retaining the memory-only token while opening another authorized repository. Svelte diagnostics and the 200-module architecture check pass. Touched Rust modules are 269 lines or fewer and touched web production modules are within the enforced budgets."
+      },
+      {
+        "command": "pnpm contracts:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "The first contract command inherited the unlicensed full-Xcode developer path; all Rust tests use the available Command Line Tools path instead."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm contracts:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Generated contracts match; 51 captured HTTP and SSE responses conform, all six contract tests pass and the generated TypeScript compiles."
+      },
+      {
+        "command": "cargo fmt --all -- --check; DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo clippy -p jj-store-service -p jj-store-rpc -p jj-store-server -p jj-store-http -p jj-store-cli --lib --tests --locked -- -D warnings",
+        "result": "fail",
+        "failures": 1,
+        "note": "Focused Clippy found one single-element loop left in changed LocalTrusted path validation after authenticated registry paths were separated."
+      },
+      {
+        "command": "cargo fmt --all -- --check; DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo clippy -p jj-store-service -p jj-store-rpc -p jj-store-server -p jj-store-http -p jj-store-cli --lib --tests --locked -- -D warnings",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formatting and warning-denied Clippy pass for every affected Rust package after simplifying the RPC socket validation."
+      },
+      {
+        "command": "pnpm spec:validate; pnpm spec:first; pnpm check:progress; pnpm exec prettier --check AGENTS.md docs/cli/commands.md docs/cli/server-config.md docs/cli/server-operator.md docs/cli/tokens.md spec/src/architecture.md spec/src/compatibility.md spec/src/jj-integration.md spec/src/mutations.md spec/src/spec-governance.md spec/src/api.md spec/src/cli.md spec/src/milestones.md spec/src/security.md spec/src/ui.md spec/src/verification.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 89 requirements validate; 50 protected files map to ten canonical chapters; all 61 progress tasks are consistent; changed guidance, documentation and specifications are formatted."
+      },
+      {
+        "command": "pnpm spec:validate; pnpm check:progress; pnpm exec prettier --check spec/src/compatibility.md spec/src/milestones.md",
+        "result": "fail",
+        "failures": 1,
+        "note": "The first landing check preserved the E-M8A-005 evidence object but exposed that automatic table merging had omitted its M8a.8 task row; the row was restored without changing product behavior."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo check -p jj-store-cli --tests --locked; DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test agent_integrations --locked; DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test server_executable token_generate_prints_one_valid_manual_credential --locked -- --exact; DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-cli --test server_executable registry_init_creates_one_private_authenticated_catalog --locked -- --exact; pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-store-bootstrap.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "After rebasing onto the three newer agent-integration changes, the combined CLI compiles; all three affected agent registry tests, both manual-token registry commands and all three repository bootstrap and switching tests pass."
+      },
+      {
+        "command": "pnpm spec:validate; pnpm check:progress; pnpm exec prettier --check spec/src/compatibility.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "The merged ledger validates all 89 requirements and 61 tasks, retains both agent-ingestion and multi-repository evidence, and formats cleanly."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "versions": "Rust 1.98.1; configuration format 2; repository registry catalog version 2; OpenAPI 3.1; Svelte 5.57.1; Storybook 10.5.7.",
+    "formats": "Adds installation registry catalog version 2 with pending aliases, monotonic generation and token-ID candidate sets. Adds GET /v1/repositories V1 pages and jrr1 HMAC cursors bound to generation and token ID. Native repository identities, manifest CAS, WAL, receipts and bearer-token encoding are unchanged. Browser credentials remain memory-only."
   }
 ]
 ```

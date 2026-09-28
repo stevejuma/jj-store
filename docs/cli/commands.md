@@ -15,8 +15,12 @@
 - `jj-store run --config PATH`: run the standalone server.
 - `jj-store config`, `doctor`, and `operator`: configure, inspect and administer
   it.
+- `jj-store registry init`: create private authenticated installation discovery
+  state.
+- `jj-store token generate`: create one manual bearer credential without
+  persisting it.
 
 - `jj store token` and `jj-store token`: list grants and apply or recover typed
-  grant/revoke requests.
+  grant/revoke requests independently per repository.
 
 The milestone ledger records remaining command parity and release gates.

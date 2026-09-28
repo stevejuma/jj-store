@@ -148,7 +148,16 @@ impl NativeClient {
         epoch: m::EpochId,
         credential: &BearerToken,
     ) -> Result<AdministrationSnapshot, Status> {
-        self.create_repository_request(epoch, Some(credential))
+        self.create_repository_named(epoch, credential, &self.repository.to_string())
+            .await
+    }
+    pub async fn create_repository_named(
+        &self,
+        epoch: m::EpochId,
+        credential: &BearerToken,
+        name: &str,
+    ) -> Result<AdministrationSnapshot, Status> {
+        self.create_repository_request(epoch, Some(credential), name)
             .await
     }
     pub async fn create_repository_local(
@@ -160,12 +169,26 @@ impl NativeClient {
                 "local repository creation requires a Unix connection",
             ));
         }
-        self.create_repository_request(epoch, None).await
+        self.create_repository_local_named(epoch, &self.repository.to_string())
+            .await
+    }
+    pub async fn create_repository_local_named(
+        &self,
+        epoch: m::EpochId,
+        name: &str,
+    ) -> Result<AdministrationSnapshot, Status> {
+        if self.token.is_some() {
+            return Err(Status::invalid_argument(
+                "local repository creation requires a Unix connection",
+            ));
+        }
+        self.create_repository_request(epoch, None, name).await
     }
     async fn create_repository_request(
         &self,
         epoch: m::EpochId,
         credential: Option<&BearerToken>,
+        name: &str,
     ) -> Result<AdministrationSnapshot, Status> {
         let response = self
             .wire()
@@ -176,6 +199,7 @@ impl NativeClient {
                     admin_credential: credential
                         .map(|value| value.expose().to_string())
                         .unwrap_or_default(),
+                    name: name.to_owned(),
                 }),
             )
             .await?

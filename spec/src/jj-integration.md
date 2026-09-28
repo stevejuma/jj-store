@@ -181,6 +181,13 @@ repository catalog or bucket listing. Unknown and unauthorized repository
 bindings both deny access. The native object/head surface remains independently
 guarded and cannot mutate settings.
 
+Hosted creation reserves the requested installation alias before touching
+repository authority. After manifest publication succeeds or an identical retry
+recovers it, RPC atomically registers the alias with the initial admin token ID
+as a discovery candidate. Committed grant/revoke receipts update that candidate
+index, while every repository operation and discovery result still requires
+current full-credential authorization against native settings.
+
 Administration requests and responses bound snapshot heads, token counts,
 message sizes, deadlines and concurrent work. Credential-bearing protobuf
 messages use redacted Debug output; decoded secrets are cleared after parsing.

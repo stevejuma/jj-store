@@ -27,9 +27,16 @@ test("LocalTrusted bootstrap auto-opens the sole catalog repository without a to
         version: 1,
         access_mode: "local_trusted",
         storage: { ready: true },
-        repositories: [{ id: repository, name: "Demo repository" }],
         backups: [],
         capabilities: {},
+      });
+    if (path.startsWith("/v1/repositories?"))
+      return response({
+        version: 1,
+        generation: 1,
+        repositories: [
+          { id: repository, name: "Demo repository", permission: "admin" },
+        ],
       });
     if (path.endsWith("/capabilities"))
       return response({
@@ -72,18 +79,27 @@ test("LocalTrusted bootstrap auto-opens the sole catalog repository without a to
 test("LocalTrusted bootstrap exposes a chooser for several repositories", async () => {
   const second = "cd".repeat(16);
   const controller = createProductionStoreController({
-    fetcher: async () =>
-      response({
-        version: 1,
-        access_mode: "local_trusted",
-        storage: { ready: true },
-        repositories: [
-          { id: repository, name: "One" },
-          { id: second, name: "Two" },
-        ],
-        backups: [],
-        capabilities: {},
-      }),
+    fetcher: async (input) => {
+      const path = String(input);
+      if (path === "/v1/bootstrap")
+        return response({
+          version: 1,
+          access_mode: "local_trusted",
+          storage: { ready: true },
+          backups: [],
+          capabilities: {},
+        });
+      if (path.startsWith("/v1/repositories?"))
+        return response({
+          version: 1,
+          generation: 1,
+          repositories: [
+            { id: repository, name: "One", permission: "admin" },
+            { id: second, name: "Two", permission: "admin" },
+          ],
+        });
+      throw new Error(`unexpected request ${path}`);
+    },
   });
   await ready(() => controller.state.accessMode === "local_trusted");
 
@@ -92,5 +108,70 @@ test("LocalTrusted bootstrap exposes a chooser for several repositories", async 
     "One",
     "Two",
   ]);
+  controller.actions.destroy();
+});
+
+test("authenticated bootstrap accepts one token and exposes every authorized repository", async () => {
+  const second = "cd".repeat(16);
+  const token = "manual-token";
+  const seen: { path: string; headers: Headers }[] = [];
+  const controller = createProductionStoreController({
+    fetcher: async (input, init) => {
+      const path = String(input);
+      seen.push({ path, headers: new Headers(init?.headers) });
+      if (path === "/v1/bootstrap")
+        return response({
+          version: 1,
+          access_mode: "authenticated",
+          storage: { ready: true },
+          backups: [],
+          capabilities: {},
+        });
+      if (path.startsWith("/v1/repositories?"))
+        return response({
+          version: 1,
+          generation: 1,
+          repositories: [
+            { id: repository, name: "lapis/one", permission: "read" },
+            { id: second, name: "lapis/two", permission: "write" },
+          ],
+        });
+      if (path === `/v1/repos/${second}/capabilities`)
+        return response({
+          typed_mutations: [],
+          conflict_resolution_actions: [],
+          conflict_upload_bytes: 0,
+          search: false,
+        });
+      if (path === `/v1/repos/${second}/snapshot`)
+        return response({
+          repository: second,
+          epoch: "ef".repeat(16),
+          position: 0,
+          revision: 0,
+          heads: [],
+        });
+      if (path.startsWith(`/v1/repos/${second}/events`))
+        return new Response("", {
+          headers: { "content-type": "text/event-stream" },
+        });
+      throw new Error(`unexpected request ${path}`);
+    },
+  });
+  await ready(() => controller.state.accessMode === "authenticated");
+  await controller.actions.connect({ repository: "", token });
+  expect(controller.state.status.connection).toBe("disconnected");
+  expect(controller.state.repositories.map(({ name }) => name)).toEqual([
+    "lapis/one",
+    "lapis/two",
+  ]);
+  await controller.actions.openRepository(second);
+  await ready(() => controller.state.status.connection === "connected");
+  expect(controller.state.repository).toEqual({
+    id: second,
+    name: "lapis/two",
+  });
+  for (const request of seen.filter(({ path }) => path !== "/v1/bootstrap"))
+    expect(request.headers.get("authorization")).toBe(`Bearer ${token}`);
   controller.actions.destroy();
 });

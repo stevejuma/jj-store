@@ -8,7 +8,13 @@ use jj_store_rpc::{
     server::{Limits, NativeRpc},
     wire,
 };
-use jj_store_service::{administration::*, auth::*, native::SessionLimits};
+use jj_store_server::{
+    installation::{Identity, initialize_registry},
+    registry::Registry,
+};
+use jj_store_service::{
+    administration::*, auth::*, native::SessionLimits, registry::RepositoryRegistry as _,
+};
 use std::{
     net::SocketAddr,
     process::Command,
@@ -32,6 +38,8 @@ struct Fixture {
     admin: BearerToken,
     address: SocketAddr,
     listener: std::net::TcpListener,
+    registry: Arc<Registry>,
+    _registry_root: tempfile::TempDir,
     shutdown: Option<tokio::sync::oneshot::Sender<()>>,
     server: Option<tokio::task::JoinHandle<()>>,
 }
@@ -50,6 +58,15 @@ impl Fixture {
             .unwrap();
         let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
         listener.set_nonblocking(true).unwrap();
+        let registry_root = tempfile::tempdir().unwrap();
+        let initialized = initialize_registry(&registry_root.path().join("registry")).unwrap();
+        let registry = Arc::new(
+            Registry::new(
+                initialized.catalog,
+                Identity::load(&initialized.installation_file).unwrap(),
+            )
+            .unwrap(),
+        );
         let mut f = Self {
             store: Arc::default(),
             policies: Arc::new(Policies(Mutex::new(policy))),
@@ -57,6 +74,8 @@ impl Fixture {
             admin: BearerToken::generate().unwrap(),
             address: listener.local_addr().unwrap(),
             listener,
+            registry,
+            _registry_root: registry_root,
             shutdown: None,
             server: None,
         };
@@ -73,7 +92,9 @@ impl Fixture {
             32 * 1024 * 1024,
         )
         .unwrap();
-        let rpc = NativeRpc::hosted(host, Limits::default()).unwrap();
+        let rpc = NativeRpc::hosted(host, Limits::default())
+            .unwrap()
+            .with_registry(self.registry.clone());
         // Keep the original listener reserved across stopped server instances.
         let listener =
             tokio::net::TcpListener::from_std(self.listener.try_clone().unwrap()).unwrap();
@@ -146,6 +167,9 @@ impl Fixture {
 async fn rpc_created_repositories_attach_with_real_cli_and_survive_host_restart() {
     let mut f = Fixture::new().await;
     let initial = f.create().await;
+    let discovered = f.registry.snapshot(Some(f.admin.id())).await.unwrap();
+    assert_eq!(discovered.repositories.len(), 1);
+    assert_eq!(discovered.repositories[0].id, REPO);
     assert_eq!(initial, f.create().await);
     let root = tempfile::tempdir().unwrap();
     let config = root.path().join("jj.toml");
@@ -404,6 +428,7 @@ async fn rpc_rejects_malformed_admin_requests_without_publication_and_redacts_se
         repository: REPO.as_bytes().to_vec(),
         epoch: EPOCH.as_bytes().to_vec(),
         admin_credential: token.expose().to_string(),
+        name: "lapis/administration-rpc".into(),
     };
     assert!(!format!("{creation:?}").contains(&token.expose()[38..]));
     assert_eq!(
@@ -443,17 +468,13 @@ fn token_command(
     if !server {
         command.arg("store");
     }
-    command
-        .args([
-            "token",
-            "--endpoint",
-            &f.endpoint(),
-            "--repo-id",
-            &REPO.to_string(),
-            "--insecure-loopback",
-            "--format=json",
-        ])
-        .args(args);
+    command.arg("--format=json").arg("token").args(args).args([
+        "--endpoint",
+        &f.endpoint(),
+        "--repo-id",
+        &REPO.to_string(),
+        "--insecure-loopback",
+    ]);
     command
 }
 fn token_success(output: std::process::Output) -> serde_json::Value {

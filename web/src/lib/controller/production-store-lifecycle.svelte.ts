@@ -1,4 +1,5 @@
 import { bootstrap as loadBootstrap } from "../api/bootstrap.js";
+import { repositories as loadRepositories } from "../api/repositories.js";
 import { ApiError } from "../api/client.js";
 import type { StoreDataSource } from "./native-data-source.js";
 import type { createProductionStoreReader } from "./production-store-reader.svelte.js";
@@ -68,7 +69,6 @@ export function followProductionExternalRoutes(options: {
       return;
     }
     if (
-      options.data.accessMode === "local_trusted" &&
       options.data.repositories.some(
         (repository) => repository.id === result.route.repository,
       )
@@ -92,22 +92,27 @@ export async function initializeProductionStore(options: {
     options.data.accessMode = bootstrap.access_mode;
     options.data.storageReady = bootstrap.storage.ready;
     options.data.backups = [...bootstrap.backups];
-    options.data.repositories = bootstrap.repositories.map((repository) => ({
-      id: repository.id,
-      name: repository.name,
-    }));
-    options.data.status.repositories = options.data.repositories.length
-      ? "ready"
-      : "empty";
     if (!bootstrap.storage.ready) {
       options.data.status.connection = "failed";
       options.data.status.error = "Authoritative storage is not ready.";
       return;
     }
     if (bootstrap.access_mode === "authenticated") {
+      options.data.repositories = [];
+      options.data.status.repositories = "idle";
       options.data.status.connection = "disconnected";
       return;
     }
+    options.data.status.repositories = "loading";
+    options.data.repositories = (
+      await loadRepositories(null, options.fetcher, options.signal)
+    ).map((repository) => ({
+      id: repository.id,
+      name: repository.name,
+    }));
+    options.data.status.repositories = options.data.repositories.length
+      ? "ready"
+      : "empty";
     const requested = options.data.repositories.find(
       (repository) => repository.id === options.history.route.repository,
     );

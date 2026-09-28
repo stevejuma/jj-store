@@ -48,6 +48,11 @@ pub enum ServerCommand {
         #[command(subcommand)]
         command: RepositoryCommand,
     },
+    /// Initialize installation-owned discovery metadata for authenticated serving
+    Registry {
+        #[command(subcommand)]
+        command: RegistryCommand,
+    },
     /// Run the configured service in the foreground
     #[command(long_about=include_str!("../../../docs/cli/server-run.md"))]
     Run {
@@ -98,6 +103,14 @@ pub enum RepositoryCommand {
         repo_id: RepositoryId,
         #[arg(long)]
         name: Option<String>,
+    },
+}
+#[derive(Debug, Subcommand)]
+pub enum RegistryCommand {
+    /// Create a private empty installation registry
+    Init {
+        #[arg(long)]
+        state_dir: PathBuf,
     },
 }
 #[derive(Debug, Subcommand)]
@@ -338,13 +351,11 @@ async fn run(ui: &Ui, cli: ServerCli) -> AuthorityResult<()> {
                     installation,
                     catalog,
                     ..
-                } => (installation, catalog),
-                jj_store_server::config::Access::Authenticated => {
-                    return Err(
-                        "repository registration is available only for LocalTrusted installations"
-                            .into(),
-                    );
                 }
+                | jj_store_server::config::Access::Authenticated {
+                    installation,
+                    catalog,
+                } => (installation, catalog),
             };
             let identity = jj_store_server::installation::Identity::load(installation)?;
             jj_store_server::installation::Catalog::load(catalog, &identity)?;
@@ -369,6 +380,22 @@ async fn run(ui: &Ui, cli: ServerCli) -> AuthorityResult<()> {
                 no_pager,
                 json!({"version":1,"repository":repo_id,"name":name,"catalog_entries":updated.repositories.len()}),
                 &format!("Registered repository {name} ({repo_id})\n"),
+            )
+        }
+        ServerCommand::Registry {
+            command: RegistryCommand::Init { state_dir },
+        } => {
+            let initialized = jj_store_server::installation::initialize_registry(&state_dir)?;
+            let text = format!(
+                "Initialized authenticated repository registry at {}.\n",
+                initialized.state_dir.display()
+            );
+            emit(
+                ui,
+                format,
+                no_pager,
+                serde_json::to_value(initialized)?,
+                &text,
             )
         }
         ServerCommand::Config {
@@ -414,7 +441,7 @@ async fn run(ui: &Ui, cli: ServerCli) -> AuthorityResult<()> {
                         &text,
                     )
                 }
-                jj_store_server::config::Access::Authenticated => {
+                jj_store_server::config::Access::Authenticated { .. } => {
                     let connection = Connection::new(
                         &config.public_url,
                         repo_id,

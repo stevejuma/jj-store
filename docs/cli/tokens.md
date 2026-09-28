@@ -1,14 +1,20 @@
 Administer repository-scoped tokens through the authenticated native API.
 
 ```sh
-jj store token --endpoint https://store.example --repo-id REPOSITORY_ID list
-jj-store token --endpoint https://store.example --repo-id REPOSITORY_ID list
+jj-store token generate
+jj store token list --endpoint https://store.example --repo-id REPOSITORY_ID
+jj-store token list --endpoint https://store.example --repo-id REPOSITORY_ID
 ```
 
 Both command families use the same repository admin credential from the OS
 facility or `JJ_STORE_TOKEN`. An operator credential grants no repository
-access. Connection flags precede the subcommand; `--format json` returns
-structured results without a pager.
+access. Connection flags belong to `list`, `grant`, `revoke`, `status`, and
+`retry`; `--format json` returns structured results without a pager.
+
+`generate` creates one manual bearer credential locally, prints it once and does
+not store it. Grant that same credential independently to each repository that
+it should discover. Repository policies retain separate permissions, expiry and
+revocation, so removing it from one repository does not affect the others.
 
 `grant --principal ID --permission read|write|admin --request PATH` adds a
 client-generated token. Supply its complete bearer credential through a hidden

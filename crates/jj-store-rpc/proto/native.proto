@@ -17,7 +17,12 @@ service NativeStore {
   rpc WriteObject(stream UploadChunk) returns (UploadResult);
 }
 // The caller retains all three creation values across uncertain outcomes.
-message CreateRepositoryRequest { bytes repository = 1; bytes epoch = 2; string admin_credential = 3; }
+message CreateRepositoryRequest {
+  bytes repository = 1;
+  bytes epoch = 2;
+  string admin_credential = 3;
+  string name = 4;
+}
 message Snapshot {
   bytes epoch = 1;
   uint64 position = 2;

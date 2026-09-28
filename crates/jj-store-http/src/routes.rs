@@ -11,6 +11,7 @@ use crate::{
 use axum::{
     Json,
     extract::{DefaultBodyLimit, Query, rejection::QueryRejection},
+    http::HeaderMap,
     routing::{get, post},
 };
 use jj_store_service::mutations as mutation;
@@ -166,6 +167,13 @@ struct DiffPaths {
 struct Prepare {
     operation: m::OperationId,
 }
+#[derive(Deserialize, schemars::JsonSchema)]
+#[serde(deny_unknown_fields)]
+struct Repositories {
+    cursor: Option<String>,
+    #[serde(default = "limit")]
+    limit: usize,
+}
 
 // One declaration registers both executable routes and their generated contracts.
 macro_rules! endpoints {
@@ -203,6 +211,12 @@ macro_rules! endpoints {
 }
 pub(super) fn document(doc: &mut Document) {
     doc.public_endpoint::<Empty, Bootstrap>("get", "/bootstrap", "bootstrap", Reply::Json(200));
+    doc.endpoint::<Repositories, RepositoryPage>(
+        "get",
+        "/repositories",
+        "repositories",
+        Reply::Json(200),
+    );
     macro_rules! register {
         ($(($method:ident, $path:literal, $handler:ident, $query:ty, $response:ty, $reply:expr)),* ) => {
             $(doc.endpoint::<$query, $response>(stringify!($method), $path, stringify!($handler), $reply);)*
@@ -223,6 +237,7 @@ pub(super) fn router() -> Router<Arc<State>> {
     }
     endpoints!(register)
         .route("/bootstrap", get(bootstrap))
+        .route("/repositories", get(repositories))
         .fallback(|| async { Error::new(StatusCode::NOT_FOUND, "unknown_route") })
         .method_not_allowed_fallback(|| async {
             Error::new(StatusCode::METHOD_NOT_ALLOWED, "unsupported_method")
@@ -234,6 +249,16 @@ async fn bootstrap(
 ) -> Result<Response> {
     input(args)?;
     state.json(&Bootstrap::from(&state.config))
+}
+async fn repositories(
+    ExtractState(state): ExtractState<Arc<State>>,
+    headers: HeaderMap,
+    args: Input<Repositories>,
+) -> Result<Response> {
+    let args = input(args)?;
+    let page =
+        crate::repositories::list(&state, &headers, args.cursor.as_deref(), args.limit).await?;
+    state.json(&page)
 }
 async fn capabilities(
     ExtractState(state): ExtractState<Arc<State>>,

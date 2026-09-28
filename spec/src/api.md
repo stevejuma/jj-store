@@ -4,11 +4,12 @@ The served browser and Storybook consume the same production-owned shell,
 repository views, presentation models and styles under `web/src/lib`. Catalog
 fixtures implement the shared asynchronous controller contract without a
 transport; production transport and access policy remain owned by the web API
-layer. The current release target is the LocalTrusted application on literal
-loopback with persistent embedded RustFS. Authenticated/shared browser serving,
-background search activation and registry-only package finalization are
-deferred. Snapshot operation, inspected operation, commit, change and comparison
-identities are distinct fields and must not be substituted for one another.
+layer. The current release target includes the LocalTrusted application on
+literal loopback and manual-token repository discovery for authenticated
+deployments. External-provider qualification and registry-only package
+finalization remain deferred. Snapshot operation, inspected operation, commit,
+change and comparison identities are distinct fields and must not be substituted
+for one another.
 
 Use tonic/protobuf for native RPC and Axum JSON/SSE for browser/agent APIs.
 Generate OpenAPI and client types. Full IDs are authoritative; shortened IDs are
@@ -18,33 +19,37 @@ attachment section 10 is implemented under /v1/repos/{repo}.
 
 ## Requirements
 
-| ID          | Requirement                                                                                                                                                                                                                                         |
-| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| JST-API-001 | Read APIs MUST expose versioned DTOs for capabilities, snapshots, native objects, commit/operation/evolution graphs, trees, files, diffs, and conflicts without parsing CLI output.                                                                 |
-| JST-API-002 | Pagination MUST bind an explicit operation, query, repository, and epoch; ambiguous heads and workspace-dependent expressions MUST require explicit resolution.                                                                                     |
-| JST-API-003 | SSE MUST resume from committed positions and detect writes from other serving processes; slow consumers MUST NOT block repository publication.                                                                                                      |
-| JST-API-004 | Queries MUST enforce authorization and resource budgets, safely render untrusted source content, and expose incomplete history or rebuild tasks explicitly.                                                                                         |
-| JST-API-005 | The Svelte UI MUST show repository selection, snapshot state, three graph views, object/diff inspection, conflict editing, mutation previews/results, and search freshness.                                                                         |
-| JST-API-006 | HTTP routes and owned DTOs MUST generate OpenAPI and TypeScript contracts; normal and specification checks MUST reject drift and validate representative actual responses.                                                                          |
-| JST-API-007 | Versioned bootstrap MUST expose LocalTrusted access mode, public capabilities, embedded-storage readiness and installation-owned repository discovery without exposing internal credentials or treating discovery metadata as repository authority. |
+| ID          | Requirement                                                                                                                                                                                                                                            |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| JST-API-001 | Read APIs MUST expose versioned DTOs for capabilities, snapshots, native objects, commit/operation/evolution graphs, trees, files, diffs, and conflicts without parsing CLI output.                                                                    |
+| JST-API-002 | Pagination MUST bind an explicit operation, query, repository, and epoch; ambiguous heads and workspace-dependent expressions MUST require explicit resolution.                                                                                        |
+| JST-API-003 | SSE MUST resume from committed positions and detect writes from other serving processes; slow consumers MUST NOT block repository publication.                                                                                                         |
+| JST-API-004 | Queries MUST enforce authorization and resource budgets, safely render untrusted source content, and expose incomplete history or rebuild tasks explicitly.                                                                                            |
+| JST-API-005 | The Svelte UI MUST show repository selection, snapshot state, three graph views, object/diff inspection, conflict editing, mutation previews/results, and search freshness.                                                                            |
+| JST-API-006 | HTTP routes and owned DTOs MUST generate OpenAPI and TypeScript contracts; normal and specification checks MUST reject drift and validate representative actual responses.                                                                             |
+| JST-API-007 | Versioned bootstrap MUST expose LocalTrusted access mode, public capabilities, embedded-storage readiness and installation-owned repository discovery without exposing internal credentials or treating discovery metadata as repository authority.    |
+| JST-API-008 | `GET /v1/repositories` MUST provide bounded cursor-paged installation discovery: all registered repositories in LocalTrusted mode and only currently reauthorized token candidates in authenticated mode; bootstrap MUST NOT embed repository entries. |
 
 ## Bootstrap and browser admission
 
-`GET /v1/bootstrap` precedes repository UI and returns LocalTrusted access mode,
-public capabilities, authoritative-storage readiness and its identity-bound
-repository catalog. Reserved backup fields remain unavailable while backup and
-restore are deferred; they do not form a current release gate. The response
-contains no internal credential and catalog entries confer no repository access.
+`GET /v1/bootstrap` precedes repository UI and returns access mode, public
+capabilities and authoritative-storage readiness. Repository discovery is a
+separate bounded `GET /v1/repositories` request. LocalTrusted returns the
+identity-bound installation catalog; authenticated mode accepts one Bearer
+credential, narrows by its public token ID and reauthorizes every candidate
+against current repository authority. Reserved backup fields remain unavailable
+while backup and restore are deferred. Neither response contains an internal
+credential, and discovery metadata never confers repository access.
 
 Every `/v1` request supplies `X-JJ-Store-Protocol: 1`. The server validates the
 configured literal loopback authority, rejects forwarded-host trust, null or
 cross-origin browser requests, cross-site Fetch Metadata and method overrides,
 and accepts only endpoint-specific JSON or binary request media types. SSE uses
 the same authority, origin, protocol and access checks. LocalTrusted rejects a
-Bearer header and binds the installation HTTP principal. Authenticated mode
-retains repository bearer validation as deferred shared-deployment behavior.
-OpenAPI declares deployment-dependent access rather than promising an
-unauthenticated public listener.
+Bearer header and binds the installation HTTP principal. Authenticated discovery
+and repository requests require the same manual bearer credential; browser
+credentials remain memory-only. OpenAPI declares deployment-dependent access
+rather than promising an unauthenticated public listener.
 
 ## Read-session foundation
 
@@ -437,7 +442,9 @@ sole repository without credentials. An explicitly configured LocalTrusted
 search entry starts the existing background Tantivy projection through a stable
 installation-derived read-only principal; repository capabilities expose the
 command only when that index is configured. M4 registry-only dependency
-finalization and authenticated/shared browser deployment are deferred.
+finalization and shared browser release qualification are deferred. The
+authenticated browser supports one memory-only manual token and bounded
+repository discovery without adding an account or OIDC layer.
 
 Local workspace validation may resolve `@lapismd/design-core` from the sibling
 source repository through the guarded pnpm hook. That development resolution

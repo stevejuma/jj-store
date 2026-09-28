@@ -67,6 +67,7 @@ async fn tokenless_local_cli_initializes_and_attaches_a_physical_workspace() {
     let cache = root.path().join("cache");
     let state = root.path().join("client-state");
     let mut initialization = Initialization::open(Options {
+        name: Some("lapis/local-cli".into()),
         endpoint: None,
         unix_socket: Some(socket.clone()),
         insecure_loopback: false,

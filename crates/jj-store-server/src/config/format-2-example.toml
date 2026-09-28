@@ -13,6 +13,8 @@ operator_policy = "./operators.json"
 
 [access]
 mode = "authenticated"
+installation = "./installation.json"
+catalog = "./repositories.json"
 
 [storage]
 mode = "external-s3"

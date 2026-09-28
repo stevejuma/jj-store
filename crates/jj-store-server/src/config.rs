@@ -44,16 +44,24 @@ impl Config {
             tls.private_key = policy::outside_checkout(&base.join(&tls.private_key))?;
         }
         self.web_root = self.web_root.take().map(|root| base.join(root));
-        if let Access::LocalTrusted {
-            installation,
-            catalog,
-            rpc_socket,
-            ..
-        } = &mut self.access
-        {
-            *installation = policy::outside_checkout(&base.join(&*installation))?;
-            *catalog = policy::outside_checkout(&base.join(&*catalog))?;
-            *rpc_socket = policy::outside_checkout(&base.join(&*rpc_socket))?;
+        match &mut self.access {
+            Access::Authenticated {
+                installation,
+                catalog,
+            } => {
+                *installation = policy::outside_checkout(&base.join(&*installation))?;
+                *catalog = policy::outside_checkout(&base.join(&*catalog))?;
+            }
+            Access::LocalTrusted {
+                installation,
+                catalog,
+                rpc_socket,
+                ..
+            } => {
+                *installation = policy::outside_checkout(&base.join(&*installation))?;
+                *catalog = policy::outside_checkout(&base.join(&*catalog))?;
+                *rpc_socket = policy::outside_checkout(&base.join(&*rpc_socket))?;
+            }
         }
         if let Storage::EmbeddedRustfs {
             runtime_executable,
@@ -150,19 +158,33 @@ impl Config {
             }
             policy::outside_checkout(path)?;
         }
+        let (installation, catalog) = match &self.access {
+            Access::Authenticated {
+                installation,
+                catalog,
+            }
+            | Access::LocalTrusted {
+                installation,
+                catalog,
+                ..
+            } => (installation, catalog),
+        };
+        for path in [installation, catalog] {
+            if !path.is_absolute() {
+                return Err(Error::Config("access registry paths must be absolute"));
+            }
+            policy::outside_checkout(path)?;
+        }
         if let Access::LocalTrusted {
-            installation,
-            catalog,
             rpc_socket,
             permission,
+            ..
         } = &self.access
         {
-            for path in [installation, catalog, rpc_socket] {
-                if !path.is_absolute() {
-                    return Err(Error::Config("local access paths must be absolute"));
-                }
-                policy::outside_checkout(path)?;
+            if !rpc_socket.is_absolute() {
+                return Err(Error::Config("local access paths must be absolute"));
             }
+            policy::outside_checkout(rpc_socket)?;
             if !self.bind.ip().is_loopback()
                 || !matches!(
                     permission,
@@ -200,7 +222,10 @@ impl Config {
             ));
         }
         validate_public_url(self)?;
-        crate::search::validate(&self.search, matches!(self.access, Access::Authenticated))
+        crate::search::validate(
+            &self.search,
+            matches!(self.access, Access::Authenticated { .. }),
+        )
     }
 
     pub(crate) fn s3_config(&self, credentials: s3::Credentials) -> Result<s3::Config> {

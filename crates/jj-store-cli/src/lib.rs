@@ -21,3 +21,4 @@ pub mod server_commands;
 mod store_commands;
 
 pub mod token_commands;
+mod token_journal;

@@ -121,7 +121,13 @@ are physical-client state and do not become server authority.
 
 Typed provisioning and token administration extend the existing native RPC V1.
 Service-owned snapshots and secret-free results cross the transport boundary;
-RPC does not import native JJ types or gain raw storage-publication access.
+RPC does not import native JJ types or gain raw storage-publication access. An
+installation-owned registry separately retains repository aliases and token-ID
+discovery candidates. Repository creation reserves an alias before publication,
+then exposes the alias and initial admin-token candidate in one atomic registry
+replacement after authoritative publication succeeds or is recovered. The index
+never supplies authorization; HTTP reopens each candidate through its current
+manifest-selected policy.
 
 The server composition crate owns bounded TOML configuration, operator-policy
 files, RustFS construction, process exclusivity and the foreground listener.
@@ -223,11 +229,13 @@ catalog entry without credentials, publishes through a separate Unix-RPC CLI
 process and removes the owned stack. It refuses unowned listeners and process
 identities and records bounded startup/RSS measurements.
 
-The user deferred registry-only and shared-deployment browser finalization on 28
-September 2026. M4/M4.3 and M4.11-M4.14 retain that future work. Functional cold
-local browser acceptance belongs to M8a.1; package publication, authenticated
-connection UX and visual baselines do not block the local application release.
-The local demo configures and waits for search before reporting readiness.
+The user deferred shared-deployment browser release qualification on 28
+September 2026. Manual-token authenticated discovery and repository selection
+are now implemented without OIDC or accounts; provider qualification and M4.14
+remain future work. Functional cold local browser acceptance belongs to M8a.1;
+package publication and visual baselines do not block the local application
+release. The local demo configures and waits for search before reporting
+readiness.
 
 The WAL snapshot DTO shares schema metadata with the typed application API using
 schemars. The locked dependency is schema infrastructure, with no HTTP/UI

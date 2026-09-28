@@ -12,6 +12,7 @@ use jj_store_object::{StagedUpload, WriteOutcome};
 use jj_store_service::{
     administration::RepositoryHost,
     auth::{BearerToken, Permission},
+    registry::{self, RepositoryRegistry},
     transport::{NativeEndpoint, NativeRequest},
 };
 use std::{
@@ -50,6 +51,7 @@ pub struct NativeRpc {
     slots: Arc<Semaphore>,
     limits: Limits,
     access: RpcAccess,
+    registry: Option<Arc<dyn RepositoryRegistry>>,
 }
 #[derive(Clone)]
 enum RpcAccess {
@@ -90,12 +92,17 @@ impl NativeRpc {
             slots: Arc::new(Semaphore::new(limits.concurrent)),
             limits,
             access: RpcAccess::Authenticated,
+            registry: None,
         })
     }
     pub fn hosted(host: RepositoryHost, limits: Limits) -> Result<Self, Status> {
         let mut rpc = Self::new(Vec::new(), limits)?;
         rpc.host = Some(host);
         Ok(rpc)
+    }
+    pub fn with_registry(mut self, registry: Arc<dyn RepositoryRegistry>) -> Self {
+        self.registry = Some(registry);
+        self
     }
     pub fn hosted_local_trusted(
         host: RepositoryHost,
@@ -151,6 +158,13 @@ impl NativeRpc {
             .clone()
             .try_acquire_owned()
             .map_err(|_| Status::resource_exhausted("native request concurrency"))
+    }
+    fn registry_error(error: registry::Error) -> Status {
+        match error {
+            registry::Error::Conflict => Status::already_exists("repository alias already exists"),
+            registry::Error::Invalid => Status::invalid_argument("invalid repository alias"),
+            registry::Error::Unavailable => Status::unavailable("repository registry unavailable"),
+        }
     }
     fn credential(metadata: &MetadataMap) -> Result<BearerToken, Status> {
         if metadata.get_all("authorization").iter().count() != 1 {
@@ -243,15 +257,30 @@ impl NativeStore for NativeRpc {
             .map_err(|_| Status::invalid_argument("repository ID length"))?;
         let epoch = m::EpochId::from_slice(&request.epoch)
             .map_err(|_| Status::invalid_argument("epoch ID length"))?;
+        let name = if request.name.is_empty() {
+            repository.to_string()
+        } else {
+            std::mem::take(&mut request.name)
+        };
         let host = self
             .host
             .as_ref()
             .ok_or_else(|| Status::unimplemented("repository creation unavailable"))?;
         self.bounded(async {
-            let snapshot = match access {
+            if let Some(registry) = &self.registry {
+                registry
+                    .reserve(repository, name.clone())
+                    .await
+                    .map_err(Self::registry_error)?;
+            }
+            let (snapshot, initial_token) = match access {
                 RequestAccess::Authenticated(token) => {
                     let credential = admin::parse_secret(&mut request.admin_credential)?;
-                    host.create(&token, repository, epoch, &credential).await
+                    let token_id = credential.id();
+                    (
+                        host.create(&token, repository, epoch, &credential).await,
+                        Some(token_id),
+                    )
                 }
                 RequestAccess::LocalTrusted { permission, .. } => {
                     if !request.admin_credential.is_empty() {
@@ -259,11 +288,20 @@ impl NativeStore for NativeRpc {
                             "local trusted creation accepts no bearer credential",
                         ));
                     }
-                    host.create_local_trusted(repository, epoch, permission)
-                        .await
+                    (
+                        host.create_local_trusted(repository, epoch, permission)
+                            .await,
+                        None,
+                    )
                 }
+            };
+            let snapshot = snapshot.map_err(|error| service_error(error.into()))?;
+            if let Some(registry) = &self.registry {
+                registry
+                    .register(repository, name, initial_token)
+                    .await
+                    .map_err(Self::registry_error)?;
             }
-            .map_err(|error| service_error(error.into()))?;
             Ok(admin::wire_snapshot(snapshot))
         })
         .await
@@ -272,10 +310,9 @@ impl NativeStore for NativeRpc {
         &self,
         request: Request<wire::Repository>,
     ) -> Result<Response<wire::TokenListing>, Status> {
-        let session = self.bind(
-            &request.get_ref().repository,
-            self.request_access(&request)?,
-        )?;
+        let repository = m::RepositoryId::from_slice(&request.get_ref().repository)
+            .map_err(|_| Status::invalid_argument("repository ID length"))?;
+        let session = self.bind(repository.as_bytes(), self.request_access(&request)?)?;
         self.bounded(async { admin::wire_listing(session.tokens().await.map_err(service_error)?) })
             .await
     }
@@ -283,18 +320,30 @@ impl NativeStore for NativeRpc {
         &self,
         request: Request<wire::TokenRequest>,
     ) -> Result<Response<wire::TokenReply>, Status> {
-        let session = self.bind(
-            &request.get_ref().repository,
-            self.request_access(&request)?,
-        )?;
+        let repository = m::RepositoryId::from_slice(&request.get_ref().repository)
+            .map_err(|_| Status::invalid_argument("repository ID length"))?;
+        let session = self.bind(repository.as_bytes(), self.request_access(&request)?)?;
         let request = admin::request(request.into_inner())?;
         self.bounded(async {
-            admin::wire_reply(
-                session
-                    .change_token(&request)
+            let receipt = session
+                .change_token(&request)
+                .await
+                .map_err(service_error)?;
+            if let (Some(registry), Some(receipt)) = (&self.registry, &receipt) {
+                let (token, granted) = match &receipt.result {
+                    jj_store_service::administration::TokenResult::Granted { token } => {
+                        (token.id, true)
+                    }
+                    jj_store_service::administration::TokenResult::Revoked { token } => {
+                        (*token, false)
+                    }
+                };
+                registry
+                    .token_candidate(repository, token, granted)
                     .await
-                    .map_err(service_error)?,
-            )
+                    .map_err(Self::registry_error)?;
+            }
+            admin::wire_reply(receipt)
         })
         .await
     }
@@ -302,18 +351,30 @@ impl NativeStore for NativeRpc {
         &self,
         request: Request<wire::TokenRequest>,
     ) -> Result<Response<wire::TokenReply>, Status> {
-        let session = self.bind(
-            &request.get_ref().repository,
-            self.request_access(&request)?,
-        )?;
+        let repository = m::RepositoryId::from_slice(&request.get_ref().repository)
+            .map_err(|_| Status::invalid_argument("repository ID length"))?;
+        let session = self.bind(repository.as_bytes(), self.request_access(&request)?)?;
         let request = admin::request(request.into_inner())?;
         self.bounded(async {
-            admin::wire_reply(
-                session
-                    .token_status(&request)
+            let receipt = session
+                .token_status(&request)
+                .await
+                .map_err(service_error)?;
+            if let (Some(registry), Some(receipt)) = (&self.registry, &receipt) {
+                let (token, granted) = match &receipt.result {
+                    jj_store_service::administration::TokenResult::Granted { token } => {
+                        (token.id, true)
+                    }
+                    jj_store_service::administration::TokenResult::Revoked { token } => {
+                        (*token, false)
+                    }
+                };
+                registry
+                    .token_candidate(repository, token, granted)
                     .await
-                    .map_err(service_error)?,
-            )
+                    .map_err(Self::registry_error)?;
+            }
+            admin::wire_reply(receipt)
         })
         .await
     }

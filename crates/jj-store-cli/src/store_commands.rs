@@ -60,6 +60,9 @@ pub(crate) enum StoreCommand {
     #[command(long_about = include_str!("../../../docs/cli/init.md"))]
     Init {
         destination: PathBuf,
+        /// Unique installation alias, for example organisation/repository
+        #[arg(long)]
+        name: Option<String>,
         #[arg(
             long,
             required_unless_present = "unix_socket",

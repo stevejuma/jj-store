@@ -6,6 +6,7 @@ pub mod contract;
 mod dto;
 mod error;
 mod mutations;
+mod repositories;
 mod routes;
 mod search;
 pub use search::SearchIndex;
@@ -20,6 +21,7 @@ use axum::{
 };
 pub use error::Error;
 use jj_store_model as m;
+use jj_store_service::registry::RepositoryRegistry;
 use jj_store_service::{
     administration::RepositoryHost,
     auth::{BearerToken, Permission, SystemClock},
@@ -46,7 +48,6 @@ pub enum Access {
     LocalTrusted {
         principal: m::PrincipalId,
         permission: Permission,
-        repositories: Vec<BootstrapRepository>,
     },
 }
 
@@ -86,6 +87,7 @@ pub struct VerifiedRestorePoint {
 pub struct Config {
     pub origin: String,
     pub access: Access,
+    pub registry: Option<Arc<dyn RepositoryRegistry>>,
     pub storage_ready: bool,
     pub backups: Vec<BackupStatus>,
     pub concurrency: usize,
@@ -106,6 +108,7 @@ impl Default for Config {
         Self {
             origin: "http://127.0.0.1:7443".into(),
             access: Access::Authenticated,
+            registry: None,
             storage_ready: true,
             backups: Vec::new(),
             concurrency: 8,
@@ -137,6 +140,7 @@ struct State {
     tasks: index_tasks::IndexTasks,
     commands: jj_store_service::mutations::CommandService,
     uploads: jj_store_service::uploads::Uploads,
+    repository_cursor_key: [u8; 32],
 }
 #[derive(Clone)]
 pub struct HttpApi(Arc<State>);
@@ -225,6 +229,8 @@ impl HttpApi {
         );
         let uploads = jj_store_service::uploads::Uploads::new(config.uploads)
             .map_err(|_| "HTTP upload limits")?;
+        let mut repository_cursor_key = [0; 32];
+        getrandom::fill(&mut repository_cursor_key).map_err(|_| "HTTP cursor entropy")?;
         Ok(Self(Arc::new(State {
             host,
             search,
@@ -239,6 +245,7 @@ impl HttpApi {
             tasks,
             commands,
             uploads,
+            repository_cursor_key,
         })))
     }
     pub fn router(&self) -> Router {

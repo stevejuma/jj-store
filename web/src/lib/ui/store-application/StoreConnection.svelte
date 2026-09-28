@@ -5,7 +5,6 @@
   import * as Field from "@lapismd/design-core/shadcn/field";
   import { Input } from "@lapismd/design-core/shadcn/input";
   import { Spinner } from "@lapismd/design-core/shadcn/spinner";
-  import { untrack } from "svelte";
   import type {
     StoreConnection,
     StoreControllerStatus,
@@ -16,17 +15,14 @@
     accessMode = "authenticated",
     repositories = [],
     storageReady = false,
-    initialRepository = "",
     onConnect,
   }: {
     status: StoreControllerStatus;
     accessMode?: "bootstrapping" | "authenticated" | "local_trusted";
     repositories?: readonly { id: string; name: string }[];
     storageReady?: boolean;
-    initialRepository?: string;
     onConnect: (connection: StoreConnection) => Promise<void>;
   } = $props();
-  let repository = $state(untrack(() => initialRepository));
   let token = $state("");
   const pending = $derived(
     accessMode === "bootstrapping" || status.connection === "connecting",
@@ -35,10 +31,10 @@
   async function connect() {
     const credential = token;
     token = "";
-    await onConnect({ repository: repository.trim(), token: credential });
+    await onConnect({ repository: "", token: credential });
   }
 
-  async function openLocal(repository: string) {
+  async function openRepository(repository: string) {
     await onConnect({ repository, token: null });
   }
 
@@ -54,15 +50,19 @@
       <h1 class="store-connection__title">
         {accessMode === "local_trusted"
           ? "Open a local repository."
-          : "Explore native history."}
+          : repositories.length > 0
+            ? "Choose a repository."
+            : "Explore native history."}
       </h1>
       <Card.Description>
         {#if accessMode === "bootstrapping"}Checking this jj-store installation…
         {:else if accessMode === "local_trusted"}Repositories registered by this
           local installation. The catalog is discovery metadata; repository
           authority is verified when opened.
-        {:else}Connect to a jj-store repository with its repository-scoped
-          token. The credential stays in this browser session only.
+        {:else if repositories.length > 0}Repositories currently authorized by
+          the token held in this browser session.
+        {:else}Enter one manual token to discover every repository it currently
+          authorizes. The credential stays in this browser session only.
         {/if}
       </Card.Description>
     </Card.Header>
@@ -76,58 +76,43 @@
           <Spinner aria-hidden="true" />
           <span>Loading installation status</span>
         </div>
-      {:else if accessMode === "local_trusted"}
-        {#if !storageReady}
-          <Alert.Root variant="destructive">
-            <Alert.Title>Storage unavailable</Alert.Title>
-            <Alert.Description
-              >The local authority has not reported ready.</Alert.Description
-            >
-          </Alert.Root>
-        {:else if repositories.length === 0}
-          <Alert.Root>
-            <Alert.Title>No registered repositories</Alert.Title>
-            <Alert.Description
-              >Use <code>jj-store repository register</code> after creating or verifying
-              a repository.</Alert.Description
-            >
-          </Alert.Root>
-        {:else}
-          <div
-            class="store-connection__repositories"
-            aria-label="Local repositories"
+      {:else if !storageReady}
+        <Alert.Root variant="destructive">
+          <Alert.Title>Storage unavailable</Alert.Title>
+          <Alert.Description
+            >The repository authority has not reported ready.</Alert.Description
           >
-            {#each repositories as candidate (candidate.id)}
-              <Button
-                variant="outline"
-                disabled={pending}
-                onclick={() => void openLocal(candidate.id)}
-              >
-                <span>{candidate.name}</span>
-                <small>{candidate.id}</small>
-              </Button>
-            {/each}
-          </div>
-        {/if}
+        </Alert.Root>
+      {:else if repositories.length > 0}
+        <div
+          class="store-connection__repositories"
+          aria-label={accessMode === "local_trusted"
+            ? "Local repositories"
+            : "Authorized repositories"}
+        >
+          {#each repositories as candidate (candidate.id)}
+            <Button
+              variant="outline"
+              disabled={pending}
+              onclick={() => void openRepository(candidate.id)}
+            >
+              <span>{candidate.name}</span>
+              <small>{candidate.id}</small>
+            </Button>
+          {/each}
+        </div>
+      {:else if accessMode === "local_trusted"}
+        <Alert.Root>
+          <Alert.Title>No registered repositories</Alert.Title>
+          <Alert.Description
+            >Create or explicitly register a repository in this installation.</Alert.Description
+          >
+        </Alert.Root>
       {:else}
         <form onsubmit={submit}>
           <Field.Group>
             <Field.Field>
-              <Field.Label for="repository-id">Repository ID</Field.Label>
-              <Input
-                id="repository-id"
-                bind:value={repository}
-                autocomplete="off"
-                spellcheck="false"
-                pattern="[0-9a-f]{32}"
-                required
-              />
-              <Field.Description
-                >Full 32-character repository ID</Field.Description
-              >
-            </Field.Field>
-            <Field.Field>
-              <Field.Label for="repository-token">Repository token</Field.Label>
+              <Field.Label for="repository-token">Access token</Field.Label>
               <Input
                 id="repository-token"
                 type="password"
@@ -138,11 +123,11 @@
             </Field.Field>
             <Button
               type="button"
-              disabled={pending || !repository || !token}
+              disabled={pending || !token}
               onclick={() => void connect()}
             >
               {#if pending}<Spinner data-icon="inline-start" />{/if}
-              {pending ? "Connecting…" : "Open repository"}
+              {pending ? "Connecting…" : "Continue"}
             </Button>
           </Field.Group>
         </form>

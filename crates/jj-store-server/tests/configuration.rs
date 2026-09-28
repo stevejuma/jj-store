@@ -260,7 +260,10 @@ permission = "admin""#,
         root.path().join("repositories.json").display(),
         root.path().join("native.sock").display()
     );
-    let local = EXAMPLE.replace("[access]\nmode = \"authenticated\"", &local_access);
+    let local = EXAMPLE.replace(
+        "[access]\nmode = \"authenticated\"\ninstallation = \"./installation.json\"\ncatalog = \"./repositories.json\"",
+        &local_access,
+    );
     let local_search = search.replace(
         "token_environment = \"JJ_STORE_SEARCH_TOKEN_EXAMPLE\"\n",
         "",

@@ -16,7 +16,6 @@
     accessMode={controller.state.accessMode}
     repositories={controller.state.repositories}
     storageReady={controller.state.storageReady}
-    initialRepository={controller.state.route.repository}
     onConnect={controller.actions.connect}
   />
 {/if}

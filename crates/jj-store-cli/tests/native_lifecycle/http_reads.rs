@@ -4,8 +4,11 @@ use axum::{
     body::{Body, to_bytes},
     http::{Request, StatusCode},
 };
-use jj_store_http::{Access, BootstrapRepository, Config, HttpApi};
-use jj_store_service::administration::{OperatorPolicies, RepositoryHost};
+use jj_store_http::{Access, Config, HttpApi};
+use jj_store_service::{
+    administration::{OperatorPolicies, RepositoryHost},
+    registry::{RegistrySnapshot, RepositoryEntry, RepositoryRegistry},
+};
 use serde_json::Value;
 use tower::ServiceExt as _;
 
@@ -14,6 +17,43 @@ struct NoOperators;
 impl OperatorPolicies for NoOperators {
     async fn current(&self) -> jj_store_service::auth::Result<TokenPolicy> {
         panic!("read API accessed operator policy")
+    }
+}
+struct StaticRegistry {
+    token: Option<m::TokenId>,
+    snapshot: RegistrySnapshot,
+}
+#[async_trait::async_trait]
+impl RepositoryRegistry for StaticRegistry {
+    async fn snapshot(
+        &self,
+        token: Option<m::TokenId>,
+    ) -> std::result::Result<RegistrySnapshot, jj_store_service::registry::Error> {
+        assert_eq!(token, self.token);
+        Ok(self.snapshot.clone())
+    }
+    async fn register(
+        &self,
+        _: m::RepositoryId,
+        _: String,
+        _: Option<m::TokenId>,
+    ) -> std::result::Result<(), jj_store_service::registry::Error> {
+        unreachable!()
+    }
+    async fn reserve(
+        &self,
+        _: m::RepositoryId,
+        _: String,
+    ) -> std::result::Result<(), jj_store_service::registry::Error> {
+        unreachable!()
+    }
+    async fn token_candidate(
+        &self,
+        _: m::RepositoryId,
+        _: m::TokenId,
+        _: bool,
+    ) -> std::result::Result<(), jj_store_service::registry::Error> {
+        unreachable!()
     }
 }
 fn api(f: &ContentFixture, cache: &std::path::Path, config: Config) -> Router {
@@ -216,10 +256,6 @@ fn protected(path: &str) -> Request<Body> {
 async fn local_trusted_bootstrap_and_http_admission_fail_closed() {
     let f = ContentFixture::new().await;
     let cache = tempfile::tempdir().unwrap();
-    let repository = BootstrapRepository {
-        id: REPO,
-        name: "Local fixture".into(),
-    };
     let router = api(
         &f,
         cache.path(),
@@ -227,8 +263,17 @@ async fn local_trusted_bootstrap_and_http_admission_fail_closed() {
             access: Access::LocalTrusted {
                 principal: ACTOR,
                 permission: Permission::Admin,
-                repositories: vec![repository],
             },
+            registry: Some(Arc::new(StaticRegistry {
+                token: None,
+                snapshot: RegistrySnapshot {
+                    generation: 1,
+                    repositories: vec![RepositoryEntry {
+                        id: REPO,
+                        name: "Local fixture".into(),
+                    }],
+                },
+            })),
             ..Config::default()
         },
     );
@@ -242,9 +287,19 @@ async fn local_trusted_bootstrap_and_http_admission_fail_closed() {
         serde_json::from_slice(&to_bytes(response.into_body(), 64 * 1024).await.unwrap()).unwrap();
     assert_eq!(bootstrap["access_mode"], "local_trusted");
     assert_eq!(bootstrap["storage"]["ready"], true);
-    assert_eq!(bootstrap["repositories"][0]["id"], REPO.to_string());
-    assert_eq!(bootstrap["repositories"][0]["name"], "Local fixture");
+    assert!(bootstrap.get("repositories").is_none());
     assert_eq!(bootstrap["capabilities"]["authentication"], "local_trusted");
+
+    let response = router
+        .clone()
+        .oneshot(protected("/v1/repositories"))
+        .await
+        .unwrap();
+    assert_eq!(response.status(), StatusCode::OK);
+    let repositories: Value =
+        serde_json::from_slice(&to_bytes(response.into_body(), 64 * 1024).await.unwrap()).unwrap();
+    assert_eq!(repositories["repositories"][0]["id"], REPO.to_string());
+    assert_eq!(repositories["repositories"][0]["name"], "Local fixture");
 
     let snapshot = router
         .clone()
@@ -359,6 +414,126 @@ async fn local_trusted_bootstrap_and_http_admission_fail_closed() {
         router.oneshot(wrong_upload).await.unwrap().status(),
         StatusCode::UNSUPPORTED_MEDIA_TYPE
     );
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn authenticated_repository_discovery_reauthorizes_one_token_per_repository() {
+    let store = Arc::new(MemoryStore::default());
+    let shared = BearerToken::generate().unwrap();
+    let mut operators = TokenPolicy::new(Scope::Operator);
+    let operator = operators
+        .issue(ACTOR, Permission::CreateRepository, None)
+        .unwrap();
+    let repositories = [
+        (
+            m::RepositoryId::new([11; 16]),
+            "lapis/alpha",
+            Some((Permission::Read, None)),
+        ),
+        (
+            m::RepositoryId::new([12; 16]),
+            "lapis/beta",
+            Some((Permission::Write, None)),
+        ),
+        (
+            m::RepositoryId::new([13; 16]),
+            "lapis/expired",
+            Some((Permission::Admin, Some(1))),
+        ),
+        (
+            m::RepositoryId::new([14; 16]),
+            "lapis/stale-candidate",
+            None,
+        ),
+    ];
+    for (index, (repository, _, grant)) in repositories.iter().enumerate() {
+        let objects =
+            Arc::new(NativeObjects::new(store.clone(), *repository, 4 * 1024 * 1024).unwrap());
+        let mut policy = TokenPolicy::new(Scope::Repository(*repository));
+        if let Some((permission, expires_at)) = grant {
+            policy
+                .grant(&shared, ACTOR, *permission, *expires_at)
+                .unwrap();
+        }
+        create_repository(
+            store.clone(),
+            objects,
+            &operators,
+            &operator,
+            &policy,
+            m::EpochId::new([21 + index as u8; 16]),
+            &SystemClock,
+            Limits::default(),
+        )
+        .await
+        .unwrap();
+    }
+    let host = RepositoryHost::new(
+        store,
+        Arc::new(NoOperators),
+        Arc::new(SystemClock),
+        Protection::default(),
+        SessionLimits::default(),
+        4 * 1024 * 1024,
+    )
+    .unwrap();
+    let registry = StaticRegistry {
+        token: Some(shared.id()),
+        snapshot: RegistrySnapshot {
+            generation: 7,
+            repositories: repositories
+                .iter()
+                .map(|(id, name, _)| RepositoryEntry {
+                    id: *id,
+                    name: (*name).into(),
+                })
+                .collect(),
+        },
+    };
+    let cache = tempfile::tempdir().unwrap();
+    let router = HttpApi::new(
+        host,
+        cache.path().to_owned(),
+        Config {
+            registry: Some(Arc::new(registry)),
+            ..Config::default()
+        },
+    )
+    .unwrap()
+    .router();
+    let repository_request = |token: &BearerToken| {
+        Request::builder()
+            .uri("/v1/repositories")
+            .header("host", "127.0.0.1:7443")
+            .header("x-jj-store-protocol", "1")
+            .header(
+                "authorization",
+                format!("Bearer {}", token.expose().as_str()),
+            )
+            .body(Body::empty())
+            .unwrap()
+    };
+    let response = router
+        .clone()
+        .oneshot(repository_request(&shared))
+        .await
+        .unwrap();
+    assert_eq!(response.status(), StatusCode::OK);
+    let body: Value =
+        serde_json::from_slice(&to_bytes(response.into_body(), 64 * 1024).await.unwrap()).unwrap();
+    assert_eq!(
+        body["repositories"],
+        serde_json::json!([
+            {"id":repositories[0].0,"name":"lapis/alpha","permission":"read"},
+            {"id":repositories[1].0,"name":"lapis/beta","permission":"write"}
+        ])
+    );
+
+    let exposed = shared.expose();
+    let wrong = BearerToken::parse(&format!("{}{}", &exposed[..38], "00".repeat(32))).unwrap();
+    assert_eq!(wrong.id(), shared.id());
+    let response = router.oneshot(repository_request(&wrong)).await.unwrap();
+    assert_eq!(response.status(), StatusCode::UNAUTHORIZED);
 }
 #[tokio::test(flavor = "multi_thread", worker_threads = 4)]
 async fn http_reads_match_native_snapshots_objects_graphs_and_differences_without_publication() {

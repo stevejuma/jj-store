@@ -76,6 +76,12 @@ conflict, including revoking different already-absent token IDs. Concurrent
 administrators cannot overwrite each other's accepted policy changes. This typed
 administration boundary does not expose raw settings publication.
 
+After a committed grant or revoke receipt, server composition updates the
+installation token-ID candidate index for that repository. This derived update
+does not alter the receipt, settings bytes or publication result. A stale or
+replayed candidate is harmless because discovery reauthorizes the complete
+credential against current repository policy before revealing metadata.
+
 Native RPC administration exposes only typed grant/revoke requests and exact
 snapshot metadata. The facade returns secret-free token receipts, or an unknown
 outcome retaining the caller's request identity. No receipt observed by status

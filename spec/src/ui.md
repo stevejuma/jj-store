@@ -19,15 +19,19 @@ supply interchangeable sources. Deterministic fixtures remain catalog-only.
 | JST-UI-007 | Repository search MUST use the released Design Core Command View in a Community-adapted overlay, query the selected authenticated operation snapshot, represent readiness and paging states, and navigate results with stable full identities.                                         |
 | JST-UI-008 | Authenticated repository commands MUST use Community-adapted action menus and Design Core form/confirmation dialogs, preview the exact typed request before apply, preserve its request ID through unknown outcomes, and advance the displayed snapshot only from a committed receipt. |
 | JST-UI-009 | Conflict editing MUST present the native path, terms, fingerprints and supported resolution actions without flattening conflicts, stage bounded uploads separately, preview the atomic selection, and retain unsupported or stale states explicitly.                                   |
-| JST-UI-010 | The application MUST bootstrap before repository UI, auto-open the sole LocalTrusted repository or show its installation catalog chooser, and label unverified loopback identity as Local; authenticated connection and operational backup/restore status UI are deferred.             |
+| JST-UI-010 | The application MUST bootstrap before repository UI, auto-open the sole LocalTrusted repository or show its installation catalog chooser, and label unverified loopback identity as Local; operational backup/restore status UI remains deferred.                                      |
+| JST-UI-011 | Authenticated connection MUST request one manual token, keep it only in memory, discover all currently authorized repositories, restore an ID-based deep link or show a chooser, and cancel requests, SSE and protected caches when the token is replaced, revoked or disconnected.    |
 
 The production controller completes bootstrap before rendering connection
 choices. One ready LocalTrusted catalog entry opens without a token, several
-entries render an explicit chooser, and an empty catalog explains the verified
-registration command. Disconnect and teardown cancel protected requests and
-event streams. Local loopback identity is labelled only as `Local`; the UI does
-not infer a username from HTTP. Authenticated connection and usable backup
-status are future-release work.
+entries render an explicit chooser, and an empty catalog explains repository
+creation or verified registration. Authenticated mode asks for one token, then
+opens the requested ID-based deep link, auto-opens a sole authorized repository,
+or renders every authorized alias. Repository switching reuses that in-memory
+credential while closing the previous query/SSE session. Disconnect, token
+replacement, revocation and teardown cancel protected requests, event streams
+and caches. Local loopback identity is labelled only as `Local`; the UI does not
+infer a username from HTTP. Usable backup status is future-release work.
 
 The catalog uses Storybook 10.5.7, Svelte CSF 5.1.2, Vitest browser 4.1.11 and
 Design Core ^0.2.0 with the existing Svelte 5/Vite 8 toolchain. Direct

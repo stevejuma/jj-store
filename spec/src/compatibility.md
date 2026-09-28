@@ -34,6 +34,12 @@ Vectorscan fork at the same revision. Qualification covers bounded in-memory
 redaction, fail-closed omission and fresh-process compiled-cache startup; it
 does not enable Kingfisher validation or network access.
 
+Focused authenticated compatibility now covers private registry initialization,
+case-sensitive slash-separated aliases, one manual token with independent
+repository permissions and revocation, forged-secret rejection, cursor reset,
+and memory-only browser selection. It does not qualify an external S3 provider,
+public shared listener, OIDC, Linux package or deployment topology.
+
 ## M0 audit evidence
 
 The pinned reference/license and field audit is recorded in

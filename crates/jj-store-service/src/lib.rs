@@ -6,6 +6,7 @@ pub mod auth;
 pub mod events;
 pub mod guard;
 pub mod native;
+pub mod registry;
 
 pub mod transport;
 

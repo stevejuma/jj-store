@@ -1,6 +1,5 @@
 //! Installation-owned state for local access and managed RustFS authority.
 use crate::{Error, Result, config, policy};
-use jj_store_model::RepositoryId;
 use jj_store_service::auth::{Scope, TokenPolicy};
 use serde::{Deserialize, Serialize, de::DeserializeOwned};
 use sha2::{Digest as _, Sha256};
@@ -70,83 +69,7 @@ pub(crate) struct Ownership {
     pub sentinel_installed: bool,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
-#[serde(deny_unknown_fields)]
-pub struct CatalogEntry {
-    pub id: RepositoryId,
-    pub name: String,
-}
-
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
-#[serde(deny_unknown_fields)]
-pub struct Catalog {
-    pub version: u32,
-    pub installation: String,
-    pub repositories: Vec<CatalogEntry>,
-}
-
-impl Catalog {
-    pub fn empty(identity: &Identity) -> Self {
-        Self {
-            version: 1,
-            installation: identity.installation.clone(),
-            repositories: Vec::new(),
-        }
-    }
-
-    pub fn load(path: &Path, identity: &Identity) -> Result<Self> {
-        let catalog: Self = read_private_json(path)?;
-        catalog.validate(identity)?;
-        Ok(catalog)
-    }
-
-    fn validate(&self, identity: &Identity) -> Result<()> {
-        if self.version != 1
-            || self.installation != identity.installation
-            || self.repositories.len() > 4096
-            || self.repositories.iter().any(|entry| {
-                entry.name.is_empty()
-                    || entry.name.len() > 256
-                    || entry.name.chars().any(char::is_control)
-            })
-            || self
-                .repositories
-                .windows(2)
-                .any(|entries| entries[0].id >= entries[1].id)
-        {
-            return Err(Error::Config("invalid local repository catalog"));
-        }
-        Ok(())
-    }
-
-    pub fn register(
-        path: &Path,
-        identity: &Identity,
-        repository: RepositoryId,
-        name: String,
-    ) -> Result<Self> {
-        let mut catalog = Self::load(path, identity)?;
-        if name.is_empty() || name.len() > 256 || name.chars().any(char::is_control) {
-            return Err(Error::Config("repository catalog display name"));
-        }
-        match catalog
-            .repositories
-            .binary_search_by_key(&repository, |entry| entry.id)
-        {
-            Ok(index) => catalog.repositories[index].name = name,
-            Err(index) => catalog.repositories.insert(
-                index,
-                CatalogEntry {
-                    id: repository,
-                    name,
-                },
-            ),
-        }
-        catalog.validate(identity)?;
-        persist_private_json(path, &catalog)?;
-        Ok(catalog)
-    }
-}
+pub use crate::registry::Catalog;
 
 #[derive(Clone, Debug, Serialize)]
 pub struct InitializedLocal {
@@ -154,6 +77,52 @@ pub struct InitializedLocal {
     pub installation: String,
     pub state_dir: PathBuf,
     pub config: PathBuf,
+}
+
+#[derive(Clone, Debug, Serialize)]
+pub struct InitializedRegistry {
+    pub version: u32,
+    pub installation: String,
+    pub state_dir: PathBuf,
+    pub installation_file: PathBuf,
+    pub catalog: PathBuf,
+}
+
+pub fn initialize_registry(state_dir: &Path) -> Result<InitializedRegistry> {
+    let state_dir = policy::outside_checkout(state_dir)?;
+    if state_dir.exists() {
+        return Err(Error::Config(
+            "registry state directory must not already exist",
+        ));
+    }
+    let parent = state_dir
+        .parent()
+        .ok_or(Error::Config("registry state directory parent"))?;
+    private_directory(parent)?;
+    let staging = tempfile::Builder::new()
+        .prefix(".jj-store-registry-")
+        .tempdir_in(parent)?;
+    set_private_directory(staging.path())?;
+    let identity = Identity {
+        version: 1,
+        installation: random_hex::<16>()?,
+    };
+    write_json(staging.path().join(INSTALLATION_FILE), &identity)?;
+    write_json(
+        staging.path().join(CATALOG_FILE),
+        &Catalog::empty(&identity),
+    )?;
+    sync_directory(staging.path())?;
+    fs::rename(staging.path(), &state_dir)?;
+    let _moved = staging.keep();
+    sync_directory(parent)?;
+    Ok(InitializedRegistry {
+        version: 1,
+        installation: identity.installation,
+        installation_file: state_dir.join(INSTALLATION_FILE),
+        catalog: state_dir.join(CATALOG_FILE),
+        state_dir,
+    })
 }
 
 pub fn initialize_local(state_dir: &Path, runtime_executable: &Path) -> Result<InitializedLocal> {

@@ -1,13 +1,13 @@
 use crate::{
     Error, Result,
     config::{Access, Config},
-    installation::{Catalog, Identity},
+    installation::Identity,
     policy::{self, PolicyFile},
+    registry::Registry,
     storage::AuthoritativeStorage,
 };
 use jj_store_http::{
-    Access as HttpAccess, BackupStatus, BackupTransfer, BootstrapRepository, Config as HttpConfig,
-    HttpApi,
+    Access as HttpAccess, BackupStatus, BackupTransfer, Config as HttpConfig, HttpApi,
 };
 use jj_store_model::RepositoryId;
 use jj_store_rpc::server::{Limits, NativeRpc};
@@ -17,6 +17,7 @@ use std::{
     fs::{self, File},
     future::Future,
     net::SocketAddr,
+    sync::Arc,
     time::Duration,
 };
 use tonic::{service::Routes, transport::Server};
@@ -74,6 +75,21 @@ impl PreparedServer {
         };
         let storage = AuthoritativeStorage::start(config).await?;
         let host = config.host(storage.store())?;
+        let (installation, catalog) = match &config.access {
+            Access::Authenticated {
+                installation,
+                catalog,
+            }
+            | Access::LocalTrusted {
+                installation,
+                catalog,
+                ..
+            } => (installation, catalog),
+        };
+        let registry = Arc::new(Registry::new(
+            catalog.clone(),
+            Identity::load(installation)?,
+        )?);
         let rpc_limits = Limits {
             concurrent: config.limits.concurrent_requests,
             timeout: Duration::from_secs(config.limits.request_seconds),
@@ -81,9 +97,10 @@ impl PreparedServer {
                 + jj_store_model::envelope::HEADER_LEN as u64,
         };
         let rpc = match &config.access {
-            Access::Authenticated => PreparedRpc::Shared(
+            Access::Authenticated { .. } => PreparedRpc::Shared(
                 NativeRpc::hosted(host.clone(), rpc_limits)
-                    .map_err(|_| Error::Config("RPC limits"))?,
+                    .map_err(|_| Error::Config("RPC limits"))?
+                    .with_registry(registry.clone()),
             ),
             Access::LocalTrusted {
                 installation,
@@ -115,7 +132,8 @@ impl PreparedServer {
                             *permission,
                             owner_uid,
                         )
-                        .map_err(|_| Error::Config("local RPC access"))?,
+                        .map_err(|_| Error::Config("local RPC access"))?
+                        .with_registry(registry.clone()),
                         listener,
                         socket: SocketGuard(rpc_socket.clone()),
                     })
@@ -126,7 +144,7 @@ impl PreparedServer {
         };
         let timeout = Duration::from_secs(config.limits.request_seconds);
         let search_access = match &config.access {
-            Access::Authenticated => crate::search::SearchAccess::Authenticated,
+            Access::Authenticated { .. } => crate::search::SearchAccess::Authenticated,
             Access::LocalTrusted { installation, .. } => crate::search::SearchAccess::LocalTrusted(
                 Identity::load(installation)?.principal(b"search-index"),
             ),
@@ -140,26 +158,16 @@ impl PreparedServer {
             crate::search::environment,
         )?;
         let http_access = match &config.access {
-            Access::Authenticated => HttpAccess::Authenticated,
+            Access::Authenticated { .. } => HttpAccess::Authenticated,
             Access::LocalTrusted {
                 installation,
-                catalog,
                 permission,
                 ..
             } => {
                 let identity = Identity::load(installation)?;
-                let repositories = Catalog::load(catalog, &identity)?
-                    .repositories
-                    .into_iter()
-                    .map(|entry| BootstrapRepository {
-                        id: entry.id,
-                        name: entry.name,
-                    })
-                    .collect();
                 HttpAccess::LocalTrusted {
                     principal: identity.principal(b"loopback-http"),
                     permission: *permission,
-                    repositories,
                 }
             }
         };
@@ -188,6 +196,7 @@ impl PreparedServer {
                     .origin()
                     .ascii_serialization(),
                 access: http_access,
+                registry: Some(registry as Arc<dyn jj_store_service::registry::RepositoryRegistry>),
                 storage_ready: true,
                 backups,
                 concurrency: config.limits.concurrent_requests.min(64),

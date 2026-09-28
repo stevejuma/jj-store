@@ -11,22 +11,25 @@ repository authorization through native service sessions.
 First custom commands: init, attach, status, capabilities, doctor, serve-local,
 and the retained shared-deployment credential commands. The supported local
 release path uses `jj-store init --local`, `run`, repository registration and
-doctor without user credentials. Authenticated commands, external storage and
-search-worker activation remain deferred. JSON is never paged. Custom standalone
-no-command invocation prints help successfully; ordinary upstream jj defaults
-stay intact. Match jj-nostr presentation semantics without inheriting its
-storage or daemon installation policy. Secrets stay out of argv, output, and
+doctor without user credentials. Authenticated setup can initialize a private
+installation registry, generate a manual token locally, and grant that same
+credential independently to several repositories. External-provider and
+search-worker qualification remain deferred. JSON is never paged. Custom
+standalone no-command invocation prints help successfully; ordinary upstream jj
+defaults stay intact. Match jj-nostr presentation semantics without inheriting
+its storage or daemon installation policy. Secrets stay out of argv, output, and
 checked-in config.
 
 ## Requirements
 
-| ID          | Requirement                                                                                                                                                                                                                                                                                                                         |
-| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| JST-CLI-001 | Custom commands MUST use jj store under upstream CliRunner, and the LocalTrusted server MUST use explicit jj-store initialization, run, repository registration and diagnostics without user credentials; authenticated token administration is deferred.                                                                           |
-| JST-CLI-002 | Custom command families MUST provide authored Markdown long help, short help, keyword help, hints, JSON results, TTY paging, no-pager, color controls, completions, and build information.                                                                                                                                          |
-| JST-CLI-003 | Ordinary JJ commands MUST preserve upstream behavior; a tested capability matrix MUST report unsupported backend commands honestly.                                                                                                                                                                                                 |
-| JST-CLI-004 | Development MUST use explicit build paths and MUST NOT replace installed jj or start unrelated services.                                                                                                                                                                                                                            |
-| JST-CLI-005 | Configuration format 2 MUST explicitly tag access and authority storage, reject every older format, and provide explicit bounded local initialization, verified catalog registration, help and completion commands; configuration migration, authenticated deployment, external authority, backup control and restore are deferred. |
+| ID          | Requirement                                                                                                                                                                                                                                                                                                                                       |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| JST-CLI-001 | Custom commands MUST use jj store under upstream CliRunner; LocalTrusted MUST provide initialization, run, repository registration and diagnostics without user credentials, while authenticated mode MUST provide explicit registry and manual-token administration.                                                                             |
+| JST-CLI-002 | Custom command families MUST provide authored Markdown long help, short help, keyword help, hints, JSON results, TTY paging, no-pager, color controls, completions, and build information.                                                                                                                                                        |
+| JST-CLI-003 | Ordinary JJ commands MUST preserve upstream behavior; a tested capability matrix MUST report unsupported backend commands honestly.                                                                                                                                                                                                               |
+| JST-CLI-004 | Development MUST use explicit build paths and MUST NOT replace installed jj or start unrelated services.                                                                                                                                                                                                                                          |
+| JST-CLI-005 | Configuration format 2 MUST explicitly tag access and authority storage, reject every older format, and provide explicit bounded local or authenticated-registry initialization, verified catalog registration, help and completion commands; configuration migration, external-authority qualification, backup control and restore are deferred. |
+| JST-CLI-006 | Authenticated setup MUST explicitly initialize private installation and catalog state, generate a manual bearer credential without persisting it, accept case-sensitive slash-separated repository aliases, and grant or revoke that credential independently through each repository's durable token policy.                                     |
 
 ## M0 extension qualification
 
@@ -179,6 +182,14 @@ ID and intent. Retries never refresh the snapshot. Status queries publish
 nothing; absent receipts remain unknown. Current admin access and the original
 principal are required; credential rotation for that principal does not change
 request identity.
+
+`jj-store token generate` creates one manual bearer credential locally, prints
+it once and persists nothing. `jj-store registry init --state-dir PATH` creates
+the private installation identity and empty repository catalog required by an
+authenticated server. `jj store init --name organisation/repository` reserves
+the case-sensitive slash-separated alias before authoritative publication and
+atomically exposes the repository plus its initial admin-token candidate only
+after publication succeeds or is recovered.
 
 Executable semantic parity compares native RPC repositories with the pinned
 upstream Git backend at equivalent histories. Comparisons retain descriptions,

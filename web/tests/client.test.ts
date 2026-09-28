@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { Client, EventParser, decode, pretty } from "../src/lib/api/client.ts";
 import { bootstrap } from "../src/lib/api/bootstrap.ts";
+import { repositories } from "../src/lib/api/repositories.ts";
 import { layout, displayable } from "../src/lib/graph.ts";
 
 test("native_numbers_remain_exact_and_fractional_values_fail", () => {
@@ -65,24 +66,31 @@ test("credentials_stay_in_headers_and_close_aborts_pending_requests", async () =
 test("bootstrap_and_local_clients_use_protocol_binding_without_credentials", async () => {
   const repo = "11".repeat(16);
   const requests: RequestInit[] = [];
-  const fetcher: typeof fetch = async (_input, init = {}) => {
+  const fetcher: typeof fetch = async (input, init = {}) => {
     requests.push(init);
+    const path = String(input);
     return new Response(
-      requests.length === 1
+      path === "/v1/bootstrap"
         ? JSON.stringify({
             version: 1,
             access_mode: "local_trusted",
             capabilities: {},
             storage: { ready: true },
-            repositories: [{ id: repo, name: "Local" }],
             backups: [],
           })
-        : '{"heads":[]}',
+        : path.startsWith("/v1/repositories?")
+          ? JSON.stringify({
+              version: 1,
+              generation: 1,
+              repositories: [{ id: repo, name: "Local", permission: "admin" }],
+            })
+          : '{"heads":[]}',
       { headers: { "content-type": "application/json" } },
     );
   };
   const result = await bootstrap(fetcher);
-  assert.equal(result.repositories[0]?.name, "Local");
+  assert.equal(result.access_mode, "local_trusted");
+  assert.equal((await repositories(null, fetcher))[0]?.name, "Local");
   const client = new Client(repo, null, () => {}, fetcher);
   await client.request("snapshot");
   for (const init of requests) {

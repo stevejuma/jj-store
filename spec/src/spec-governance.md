@@ -4,6 +4,12 @@ Use the parent workspace test escalation ladder. The archived attachment is
 non-normative; requirement changes belong here before or with implementation.
 Generated book output is ignored. Only milestones.md carries implementation
 status; reports hold immutable evidence rather than competing status summaries.
+Integration-modified production modules are extracted below the 300-line budget;
+Storybook interaction and accessibility checks remain required while visual
+baselines stay separately approved. Focused test commands may prove a requested
+slice without running unrelated repository suites when the user narrows test
+scope, but every directly affected boundary and shared helper still needs named
+evidence.
 
 ## Requirements
 

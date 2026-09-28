@@ -3884,6 +3884,9 @@ version = "0.1.0"
 dependencies = [
  "axum",
  "futures 0.3.34",
+ "getrandom 0.4.3",
+ "hex",
+ "hmac 0.12.1",
  "http-body",
  "jj-store-adapters",
  "jj-store-model",
@@ -3892,6 +3895,7 @@ dependencies = [
  "schemars",
  "serde",
  "serde_json",
+ "sha2 0.10.9",
  "tempfile",
  "tokio",
  "tokio-util 0.7.19",

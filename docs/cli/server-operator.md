@@ -17,3 +17,8 @@ plaintext credential fallback is available.
 Use `jj-store token` for repository grants and revocations. Those requests
 require a current repository admin credential; the creation operator cannot
 authorize them.
+
+Use `jj-store token generate` once when one manual credential should access
+several repositories. Grant it separately through each repository policy; the
+installation registry uses its public token ID only to find candidates and each
+repository reauthorizes the complete credential.

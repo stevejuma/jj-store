@@ -79,8 +79,9 @@ components. Fix a shared-library deficiency in its owning repository and consume
 only a released registry version in jj-store. Credentials stay memory-only; SSE
 announces freshness and displayed snapshots change only on explicit refresh.
 Stories remain visual-pending; baseline approval is separate from interaction
-and accessibility acceptance. Authenticated/shared serving, controller dispatch,
-remote replication, backup/restore, Git/Nostr export, other harnesses and CRDT
+and accessibility acceptance. Manual-token authenticated repository discovery is
+implemented; shared release qualification, controller dispatch, remote
+replication, backup/restore, Git/Nostr export, other harnesses and CRDT
 semantics remain deferred.
 
 ## Local execution

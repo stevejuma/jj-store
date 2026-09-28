@@ -1,5 +1,7 @@
 //! Transport-owned JSON values. Handler serialization and schemas share these types.
-use crate::{Access, BackupStatus, BootstrapRepository, Config, q, reads};
+use crate::{Access, BackupStatus, Config, q, reads};
+use jj_store_model::RepositoryId;
+use jj_store_service::registry::EffectivePermission;
 use schemars::JsonSchema;
 use serde::Serialize;
 
@@ -40,17 +42,14 @@ pub(crate) struct Bootstrap {
     pub access_mode: AccessMode,
     pub capabilities: Capabilities,
     pub storage: StorageState,
-    pub repositories: Vec<BootstrapRepository>,
     pub backups: Vec<BackupStatus>,
 }
 
 impl From<&Config> for Bootstrap {
     fn from(config: &Config) -> Self {
-        let (access_mode, repositories) = match &config.access {
-            Access::Authenticated => (AccessMode::Authenticated, Vec::new()),
-            Access::LocalTrusted { repositories, .. } => {
-                (AccessMode::LocalTrusted, repositories.clone())
-            }
+        let access_mode = match &config.access {
+            Access::Authenticated => AccessMode::Authenticated,
+            Access::LocalTrusted { .. } => AccessMode::LocalTrusted,
         };
         Self {
             version: 1,
@@ -59,10 +58,25 @@ impl From<&Config> for Bootstrap {
             storage: StorageState {
                 ready: config.storage_ready,
             },
-            repositories,
             backups: config.backups.clone(),
         }
     }
+}
+
+#[derive(Serialize, JsonSchema)]
+pub(crate) struct RepositorySummary {
+    pub id: RepositoryId,
+    pub name: String,
+    pub permission: EffectivePermission,
+}
+
+#[derive(Serialize, JsonSchema)]
+pub(crate) struct RepositoryPage {
+    pub version: u32,
+    pub generation: u64,
+    pub repositories: Vec<RepositorySummary>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub next_cursor: Option<String>,
 }
 #[derive(Serialize, JsonSchema)]
 pub(crate) struct EventLimits {

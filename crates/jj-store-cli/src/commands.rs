@@ -92,6 +92,7 @@ pub async fn run(
         }
         StoreCommand::Init {
             destination,
+            name,
             endpoint,
             unix_socket,
             insecure_loopback,
@@ -107,6 +108,7 @@ pub async fn run(
                     insecure_loopback,
                     ca_certificate: ca_certificate.map(|p| helper.cwd().join(p)),
                     destination: helper.cwd().join(destination),
+                    name,
                     cache: cache.map(|p| helper.cwd().join(p)),
                     workspace,
                     state: state_dir.map(|p| helper.cwd().join(p)),

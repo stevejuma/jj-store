@@ -8,14 +8,15 @@ not make authoritative storage unready.
 
 ## Requirements
 
-| ID          | Requirement                                                                                                                                                                                                                                                                          |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| JST-SEC-001 | RPC and HTTP MUST authenticate one principal model with revocable repository-scoped read/write/admin tokens and a separate repository-creation operator capability.                                                                                                                  |
-| JST-SEC-002 | Credentials MUST remain outside checkouts; servers MUST retain token verifiers, CLI credentials MUST use the OS credential facility or automation environment, and browser tokens MUST remain in memory.                                                                             |
-| JST-SEC-003 | Authorization MUST precede every object, historical, staging, search, preview, and publication request; knowledge of an object ID MUST NOT grant access.                                                                                                                             |
-| JST-SEC-004 | Shared deployments MUST use TLS; unauthenticated operation MUST require an explicit restricted-loopback development setting.                                                                                                                                                         |
-| JST-SEC-005 | Server operations MUST NOT execute repository hooks, arbitrary programs, editors, or merge tools; paths, bodies, queries, and work queues MUST have explicit limits.                                                                                                                 |
-| JST-SEC-006 | LocalTrusted MUST accept only verified local peers, assign stable installation principals, and protect every browser route with exact loopback authority, origin, fetch-metadata, protocol-version, method, and media-type checks; authenticated shared deployment remains deferred. |
+| ID          | Requirement                                                                                                                                                                                                                                                                                       |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| JST-SEC-001 | RPC and HTTP MUST authenticate one principal model with revocable repository-scoped read/write/admin tokens and a separate repository-creation operator capability.                                                                                                                               |
+| JST-SEC-002 | Credentials MUST remain outside checkouts; servers MUST retain token verifiers, CLI credentials MUST use the OS credential facility or automation environment, and browser tokens MUST remain in memory.                                                                                          |
+| JST-SEC-003 | Authorization MUST precede every object, historical, staging, search, preview, and publication request; knowledge of an object ID MUST NOT grant access.                                                                                                                                          |
+| JST-SEC-004 | Shared deployments MUST use TLS; unauthenticated operation MUST require an explicit restricted-loopback development setting.                                                                                                                                                                      |
+| JST-SEC-005 | Server operations MUST NOT execute repository hooks, arbitrary programs, editors, or merge tools; paths, bodies, queries, and work queues MUST have explicit limits.                                                                                                                              |
+| JST-SEC-006 | LocalTrusted MUST accept only verified local peers, assign stable installation principals, and protect every browser route with exact loopback authority, origin, fetch-metadata, protocol-version, method, and media-type checks; authenticated shared deployment remains deferred.              |
+| JST-SEC-007 | Authenticated discovery MUST derive candidates from a token ID without treating that index as authority, reauthorize the full token against every current repository policy, preserve independent permission, expiry and revocation per repository, and reveal no repository for a forged secret. |
 
 ## Repository token foundation
 
@@ -35,6 +36,15 @@ committing. Receipt replay also requires current authorization. Settings changes
 require admin permission and cannot change the policy's repository scope. The
 service guard requires an explicit semantic validator; authentication alone does
 not permit client-computed history changes.
+
+One manual bearer token may be granted independently into several repository
+policies. The installation registry maps its public token ID to candidate
+repository IDs only. Discovery opens each candidate through the current
+manifest-selected policy and returns only repositories where the complete
+credential still has read access, together with its effective permission.
+Revoking or expiring one grant does not affect another repository. A stale
+candidate, wrong secret with the same token ID, missing manifest, or revoked
+grant confers no access and reveals no repository metadata.
 
 Operator policies remain separate from repository state. The authentication
 library does not itself persist credentials or expose transports. CLI credential

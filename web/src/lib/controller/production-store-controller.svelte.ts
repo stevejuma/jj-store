@@ -1,4 +1,5 @@
 import { ApiError } from "../api/client.js";
+import { repositories as loadRepositories } from "../api/repositories.js";
 import type { StoreController } from "./contracts.js";
 import {
   HttpStoreDataSource,
@@ -25,6 +26,7 @@ import {
   startProductionStoreLifecycle,
 } from "./production-store-lifecycle.svelte.js";
 import { createProductionBranchActions } from "./production-branch-actions.js";
+import { createProductionStoreActions } from "./production-store-actions.js";
 
 export function createProductionStoreController(
   options: { fetcher?: typeof fetch; now?: () => number } = {},
@@ -32,9 +34,11 @@ export function createProductionStoreController(
   const history = createStoreRouteHistory();
   const data = createProductionStoreState();
   let source: StoreDataSource | null = null;
+  let sessionToken: string | null = null;
   let session = 0;
   let version = 0,
     feed = new AbortController(),
+    discovery = new AbortController(),
     lifecycle = new AbortController();
   const operation = () => history.route.snapshotOperationId;
   const activeSource = () => {
@@ -70,9 +74,11 @@ export function createProductionStoreController(
     restoreRoute,
   });
 
-  function disconnect(message = "", denied = false) {
+  function disconnect(message = "", denied = false, preserveSession = false) {
+    const repositoryStatus = data.status.repositories;
     version += 1;
     feed.abort();
+    discovery.abort();
     source?.close();
     source = null;
     Object.assign(data, { heads: [], head: null });
@@ -87,15 +93,24 @@ export function createProductionStoreController(
       connection: denied ? "denied" : "disconnected",
       error: message,
     });
+    if (preserveSession) data.status.repositories = repositoryStatus;
+    else if (data.accessMode === "authenticated") {
+      sessionToken = null;
+      data.repositories = [];
+    }
   }
-  async function connect(repository: string, token: string | null) {
-    disconnect();
+  async function connectRepository(repository: string, token: string | null) {
+    disconnect("", false, true);
     data.status.connection = "connecting";
     const ticket = ++version;
+    const credential =
+      data.accessMode === "authenticated" ? (token ?? sessionToken) : null;
+    if (data.accessMode === "authenticated" && !credential)
+      throw new ApiError("bearer_required");
     let active!: HttpStoreDataSource;
     active = new HttpStoreDataSource(
       repository.trim(),
-      token,
+      credential,
       createStoreQueryClient(),
       `session-${++session}`,
       () => {
@@ -120,10 +135,7 @@ export function createProductionStoreController(
       data.conflictResolutionActions = capabilities.conflict_resolution_actions;
       data.conflictUploadBytes = capabilities.conflict_upload_bytes;
       const selected = data.heads.length === 1 ? data.heads[0]! : null;
-      if (data.accessMode === "authenticated")
-        data.repositories = [
-          { id: active.repository, name: active.repository },
-        ];
+      if (data.accessMode === "authenticated") sessionToken = credential;
       data.searchAvailable = capabilities.search;
       history.connect(active.repository, selected);
       data.status.connection = "connected";
@@ -140,6 +152,42 @@ export function createProductionStoreController(
       if (!current(ticket, active)) return;
       const message = storeErrorMessage(cause);
       disconnect(message);
+      data.status.connection = "failed";
+    }
+  }
+  async function connect(repository: string, token: string | null) {
+    if (data.accessMode !== "authenticated" || token === null)
+      return connectRepository(repository, token);
+    disconnect();
+    const ticket = version;
+    discovery = new AbortController();
+    data.status.connection = "connecting";
+    data.status.repositories = "loading";
+    try {
+      const repositories = await loadRepositories(
+        token,
+        options.fetcher,
+        discovery.signal,
+      );
+      if (ticket !== version) return;
+      data.repositories = repositories.map((candidate) => ({
+        id: candidate.id,
+        name: candidate.name,
+      }));
+      data.status.repositories = data.repositories.length ? "ready" : "empty";
+      sessionToken = token;
+      const requested = data.repositories.find(
+        (candidate) =>
+          candidate.id === (repository.trim() || history.route.repository),
+      );
+      const selected =
+        requested ??
+        (data.repositories.length === 1 ? data.repositories[0] : undefined);
+      if (selected) await connectRepository(selected.id, token);
+      else data.status.connection = "disconnected";
+    } catch (cause) {
+      const message = storeErrorMessage(cause);
+      disconnect(message, cause instanceof ApiError);
       data.status.connection = "failed";
     }
   }
@@ -206,75 +254,32 @@ export function createProductionStoreController(
     },
   });
 
-  const actions: StoreController["actions"] = {
+  const actions = createProductionStoreActions({
+    data,
+    history,
+    reader,
+    search,
+    mutations,
+    conflicts: conflictUploads,
+    branches: branchActions,
+    selectRevision,
+    prepareIndex,
     connect: ({ repository, token }) => connect(repository, token),
+    connectRepository,
     disconnect: () => disconnect(),
-    destroy() {
+    destroy: () => {
       lifecycle.abort();
       disconnect();
       history.destroy();
     },
     refresh,
     selectOperation,
-    async selectComparisonParent(id) {
-      if (
-        !data.comparisonParents.includes(id) ||
-        !history.route.inspectedOperationId
-      )
-        return;
-      data.comparisonParents = [];
-      await reader.loadOperation(history.route.inspectedOperationId, id);
-    },
-    prepareIndex,
-    async loadMore(collection) {
-      if (collection === "bookmarks" && data.refsCursor)
-        await reader.loadReferences(true);
-      if (collection === "graph" && data.graphCursor)
-        await reader.loadGraph(true);
-      if (collection === "files") await reader.loadMoreFiles();
-      if (collection === "detail") await reader.loadMoreDetail();
-      if (collection === "search" && data.searchCursor) await search.loadMore();
-    },
-    search: search.run,
-    selectSearchResult: search.select,
-    ...mutations.actions,
-    uploadConflict: conflictUploads.upload,
-    setFileViewMode: reader.setFileViewMode,
-    toggleDirectory: reader.toggleDirectory,
-    async openRepository(id) {
-      if (id !== source?.repository) {
-        if (
-          data.accessMode === "local_trusted" &&
-          data.repositories.some((repository) => repository.id === id)
-        )
-          await connect(id, null);
-        return;
-      }
-      history.page("files");
-      await restoreRoute();
-    },
-    async selectPage(page) {
-      history.page(page);
-      await restoreRoute();
-    },
-    async navigate(delta) {
-      if (history.navigate(delta)) await restoreRoute();
-    },
-    ...branchActions,
-    selectRevision,
-    async selectFile(path) {
+    restoreRoute,
+    activeRepository: () => source?.repository,
+    invalidate: () => {
       version += 1;
-      history.push({ ...history.route, path });
-      data.blob = undefined;
-      if (!path) return;
-      if (history.route.page === "files") await reader.loadBlob(path);
-      else await reader.loadPatch(path);
     },
-    selectDirectory: reader.selectDirectory,
-    selectRef: (value) => reader.selectRef(value),
-    signIn() {},
-    signOut: () => disconnect(),
-  };
+  });
 
   startProductionStoreLifecycle({
     data,

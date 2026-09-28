@@ -80,7 +80,7 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
         json!(["authenticated", "local_trusted"])
     );
     let paths = doc["paths"].as_object().unwrap();
-    assert_eq!(paths.len(), 28);
+    assert_eq!(paths.len(), 29);
     let mut ids = std::collections::BTreeSet::new();
     for (name, path) in paths {
         for (method, operation) in path.as_object().unwrap() {
@@ -88,6 +88,15 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
             if name == "/v1/bootstrap" {
                 assert_eq!(operation["parameters"], json!([]));
                 assert_eq!(operation["security"], json!([{}]));
+            } else if name == "/v1/repositories" {
+                assert!(
+                    operation["parameters"]
+                        .as_array()
+                        .unwrap()
+                        .iter()
+                        .all(|parameter| parameter["in"] == "query")
+                );
+                assert_eq!(operation["security"], json!([{"repositoryBearer":[]},{}]));
             } else {
                 assert_eq!(operation["parameters"][0]["name"], "repo");
                 assert_eq!(operation["security"], json!([{"repositoryBearer":[]},{}]));
@@ -141,7 +150,6 @@ fn bootstrap_contract_separates_access_storage_catalog_and_backup_state() {
         "access_mode",
         "capabilities",
         "storage",
-        "repositories",
         "backups",
     ] {
         assert!(
@@ -154,6 +162,34 @@ fn bootstrap_contract_separates_access_storage_catalog_and_backup_state() {
     assert_eq!(
         doc["components"]["schemas"]["AccessMode"]["enum"],
         json!(["authenticated", "local_trusted"])
+    );
+    let repositories = &doc["paths"]["/v1/repositories"]["get"];
+    assert_eq!(
+        repositories["security"],
+        json!([{"repositoryBearer":[]},{}])
+    );
+    assert_eq!(
+        repositories["parameters"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|parameter| parameter["name"] == "limit")
+            .unwrap()["schema"]["default"],
+        50
+    );
+    let page = &doc["components"]["schemas"]["RepositoryPage"];
+    for field in ["version", "generation", "repositories"] {
+        assert!(page["required"].as_array().unwrap().contains(&json!(field)));
+    }
+    assert!(
+        !page["required"]
+            .as_array()
+            .unwrap()
+            .contains(&json!("next_cursor"))
+    );
+    assert_eq!(
+        doc["components"]["schemas"]["EffectivePermission"]["enum"],
+        json!(["read", "write", "admin"])
     );
     let backup = &doc["components"]["schemas"]["BackupStatus"];
     assert!(

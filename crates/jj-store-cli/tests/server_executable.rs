@@ -43,6 +43,18 @@ fn success(output: Output) -> String {
 impl Fixture {
     fn new() -> Self {
         let root = tempfile::tempdir().unwrap();
+        let identity = jj_store_server::installation::Identity {
+            version: 1,
+            installation: "ab".repeat(16),
+        };
+        write_private(
+            &root.path().join("installation.json"),
+            &serde_json::to_vec(&identity).unwrap(),
+        );
+        write_private(
+            &root.path().join("repositories.json"),
+            &serde_json::to_vec(&jj_store_server::installation::Catalog::empty(&identity)).unwrap(),
+        );
         let config = root.path().join("server.toml");
         fs::write(
             &config,
@@ -160,6 +172,19 @@ impl Fixture {
         running.event = serde_json::from_str(&line).unwrap();
         running
     }
+}
+
+fn write_private(path: &Path, bytes: &[u8]) {
+    use std::io::Write as _;
+    let mut options = fs::OpenOptions::new();
+    options.write(true).create_new(true);
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::OpenOptionsExt as _;
+        options.mode(0o600);
+    }
+    let mut file = options.open(path).unwrap();
+    file.write_all(bytes).unwrap();
 }
 struct Running {
     child: Child,
@@ -384,7 +409,16 @@ async fn local_trusted_executable_bootstraps_registers_and_serves_without_tokens
     let bootstrap: serde_json::Value = bootstrap.json().await.unwrap();
     assert_eq!(bootstrap["access_mode"], "local_trusted");
     assert_eq!(bootstrap["storage"]["ready"], true);
-    assert_eq!(bootstrap["repositories"], serde_json::json!([]));
+    assert!(bootstrap.get("repositories").is_none());
+    let repositories: serde_json::Value = http
+        .get(format!("{origin}/v1/repositories"))
+        .send()
+        .await
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    assert_eq!(repositories["repositories"], serde_json::json!([]));
 
     let jj_config = root.path().join("jj.toml");
     fs::write(
@@ -404,6 +438,8 @@ async fn local_trusted_executable_bootstraps_registers_and_serves_without_tokens
                 "--format=json",
                 "init",
                 workspace.to_str().unwrap(),
+                "--name",
+                "lapis/local-acceptance",
                 "--cache",
                 root.path().join("cache").to_str().unwrap(),
                 "--state-dir",
@@ -469,25 +505,6 @@ async fn local_trusted_executable_bootstraps_registers_and_serves_without_tokens
     );
     running.terminate();
 
-    let registered: serde_json::Value = serde_json::from_str(&success(
-        command()
-            .args([
-                "repository",
-                "register",
-                "--config",
-                config.to_str().unwrap(),
-                "--repo-id",
-                repository,
-                "--name",
-                "Local acceptance",
-                "--format=json",
-            ])
-            .output()
-            .unwrap(),
-    ))
-    .unwrap();
-    assert_eq!(registered["catalog_entries"], 1);
-
     let search = format!(
         r#"
 [[search]]
@@ -514,17 +531,19 @@ name = "local-acceptance"
     .unwrap();
 
     let mut restarted = start_local_trusted_server(root.path(), &config);
-    let bootstrap: serde_json::Value = http
-        .get(format!("{origin}/v1/bootstrap"))
+    let repositories: serde_json::Value = http
+        .get(format!("{origin}/v1/repositories"))
         .send()
         .await
         .unwrap()
         .json()
         .await
         .unwrap();
-    assert_eq!(bootstrap["repositories"][0]["id"], repository);
-    assert_eq!(bootstrap["repositories"][0]["name"], "Local acceptance");
-    assert!(bootstrap["backups"].as_array().unwrap().is_empty());
+    assert_eq!(repositories["repositories"][0]["id"], repository);
+    assert_eq!(
+        repositories["repositories"][0]["name"],
+        "lapis/local-acceptance"
+    );
     let base = format!("{origin}/v1/repos/{repository}");
     let ready = wait_search_ready(&http, None, &base).await;
     assert_eq!(ready["is_stale"], false);
@@ -645,6 +664,53 @@ fn operator_commands_provision_list_and_revoke_without_exposing_credentials() {
         !fs::read_to_string(policy)
             .unwrap()
             .contains(&token.expose()[38..])
+    );
+}
+
+#[test]
+fn token_generate_prints_one_valid_manual_credential() {
+    let generated: serde_json::Value = serde_json::from_str(&success(
+        command()
+            .args(["--format=json", "token", "generate"])
+            .output()
+            .unwrap(),
+    ))
+    .unwrap();
+    let credential = generated["credential"].as_str().unwrap();
+    let token = BearerToken::parse(credential).unwrap();
+    assert_eq!(generated["version"], 1);
+    assert_eq!(generated["token_id"], token.id().to_string());
+}
+
+#[test]
+fn registry_init_creates_one_private_authenticated_catalog() {
+    let root = tempfile::tempdir().unwrap();
+    let state = root.path().join("authenticated");
+    let initialized: serde_json::Value = serde_json::from_str(&success(
+        command()
+            .args([
+                "--format=json",
+                "registry",
+                "init",
+                "--state-dir",
+                state.to_str().unwrap(),
+            ])
+            .output()
+            .unwrap(),
+    ))
+    .unwrap();
+    assert_eq!(initialized["version"], 1);
+    let canonical = state.canonicalize().unwrap();
+    assert_eq!(initialized["state_dir"], canonical.to_str().unwrap());
+    assert!(state.join("installation.json").is_file());
+    assert!(state.join("repositories.json").is_file());
+    assert!(
+        !command()
+            .args(["registry", "init", "--state-dir", state.to_str().unwrap()])
+            .output()
+            .unwrap()
+            .status
+            .success()
     );
 }
 #[cfg(unix)]

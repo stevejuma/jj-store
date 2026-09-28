@@ -5,8 +5,11 @@ configuration, and `config check --config PATH/server.toml` to validate it.
 Older formats are rejected; this unreleased application has no compatibility or
 migration command. Paths are relative to the configuration file. Keep state
 outside Git/JJ checkouts. Unknown keys and invalid budgets fail.
-`config example` documents the tagged schema used by deferred
-authenticated/external deployments; it is not the local application setup path.
+`config example` documents authenticated access with external S3 authority.
+Initialize its private installation identity and empty repository catalog with
+`jj-store registry init --state-dir PATH`, then reference those two files from
+`[access]`. External-provider release qualification remains deferred; this is
+not the LocalTrusted application setup path.
 
 Format 2 tags `[access]` and `[storage]`, and accepts repeated `[[backup]]`
 targets. Run `init --local --state-dir PATH` for the supported application
@@ -17,9 +20,9 @@ persistent volume, and backups disabled.
 Format 2 names environment or OS-credential references explicitly. Secret values
 are never accepted in TOML. A new managed installation creates its bucket once,
 publishes and verifies the installation sentinel, then requires both on every
-restart. Authenticated shared deployments, external S3 authority, backup
-targets, replication and restore are retained only as future design space and
-are not release-qualified in the current local application scope.
+restart. Manual-token authenticated repository discovery is implemented. Shared
+deployment release qualification, external S3 provider qualification, backup
+targets, replication and restore remain future work.
 
 Shared listeners require TLS certificate and private-key paths. Plain HTTP is
 allowed only for an explicitly enabled literal loopback listener and endpoint.

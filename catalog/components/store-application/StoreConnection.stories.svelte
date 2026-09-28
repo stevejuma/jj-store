@@ -27,25 +27,20 @@
 
 <Story
   name="Connect"
-  args={{ status: disconnected, onConnect: fn() }}
+  args={{ status: disconnected, storageReady: true, onConnect: fn() }}
   play={async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
-    const repository = "12".repeat(16);
-    await userEvent.type(canvas.getByLabelText("Repository ID"), repository);
-    await userEvent.type(
-      canvas.getByLabelText("Repository token"),
-      "secret-token",
-    );
-    const submit = canvas.getByRole("button", { name: "Open repository" });
+    await userEvent.type(canvas.getByLabelText("Access token"), "secret-token");
+    const submit = canvas.getByRole("button", { name: "Continue" });
     await waitFor(() => expect(submit).toBeEnabled());
     await userEvent.click(submit);
     await waitFor(() =>
       expect(args.onConnect).toHaveBeenCalledWith({
-        repository,
+        repository: "",
         token: "secret-token",
       }),
     );
-    await expect(canvas.getByLabelText("Repository token")).toHaveValue("");
+    await expect(canvas.getByLabelText("Access token")).toHaveValue("");
   }}
 />
 
@@ -57,21 +52,33 @@
       connection: "failed",
       error: "Repository access was denied.",
     },
+    storageReady: true,
     onConnect: fn(),
   }}
 />
 
 <Story
-  name="Restored repository"
+  name="Authorized repositories"
   args={{
-    status: disconnected,
-    initialRepository: "12".repeat(16),
+    status: { ...disconnected, repositories: "ready" },
+    storageReady: true,
+    repositories: [
+      { id: "12".repeat(16), name: "lapis/notes" },
+      { id: "34".repeat(16), name: "lapis/community" },
+    ],
     onConnect: fn(),
   }}
-  play={async ({ canvasElement }) => {
-    await expect(
-      within(canvasElement).getByLabelText("Repository ID"),
-    ).toHaveValue("12".repeat(16));
+  play={async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(
+      canvas.getByRole("button", { name: /lapis\/community/ }),
+    );
+    await waitFor(() =>
+      expect(args.onConnect).toHaveBeenCalledWith({
+        repository: "34".repeat(16),
+        token: null,
+      }),
+    );
   }}
 />
 

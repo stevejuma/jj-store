@@ -21,6 +21,7 @@ pub struct Options {
     pub insecure_loopback: bool,
     pub ca_certificate: Option<PathBuf>,
     pub destination: PathBuf,
+    pub name: Option<String>,
     pub cache: Option<PathBuf>,
     pub workspace: Option<String>,
     pub state: Option<PathBuf>,
@@ -35,6 +36,7 @@ struct Record {
     destination: PathBuf,
     cache: PathBuf,
     workspace: Option<String>,
+    name: String,
     created: bool,
 }
 pub struct Initialization {
@@ -46,6 +48,13 @@ pub struct Initialization {
 impl Initialization {
     pub fn open(options: Options) -> AuthorityResult<Self> {
         let destination = attachment::target(&options.destination)?;
+        let name = options.name.unwrap_or_else(|| {
+            destination
+                .file_name()
+                .and_then(|value| value.to_str())
+                .unwrap_or("repository")
+                .to_owned()
+        });
         let state = jj_store_server::policy::outside_checkout(&attachment::state_path(
             &destination,
             options.cache.as_deref(),
@@ -56,6 +65,7 @@ impl Initialization {
             || destination.starts_with(&cache)
             || state.starts_with(&destination)
             || destination.starts_with(&state)
+            || !jj_store_server::registry::valid_name(&name)
             || options.workspace.as_ref().is_some_and(|name| {
                 name.is_empty()
                     || name.len() > 128
@@ -99,6 +109,7 @@ impl Initialization {
                 || record.destination != destination
                 || record.cache != cache
                 || record.workspace != options.workspace
+                || record.name != name
                 || record.connection.endpoint != probe.endpoint
                 || record.connection.insecure_loopback != probe.insecure_loopback
                 || record.connection.ca_certificate != probe.ca_certificate
@@ -144,6 +155,7 @@ impl Initialization {
                     destination,
                     cache,
                     workspace: options.workspace,
+                    name,
                     created: false,
                 },
                 token,
@@ -181,14 +193,18 @@ impl Initialization {
                 } else {
                     let operator = credentials::operator_resolve(&self.record.connection.endpoint)?;
                     let client = self.record.connection.connect_with(operator).await?;
-                    client.create_repository(self.record.epoch, token).await?;
+                    client
+                        .create_repository_named(self.record.epoch, token, &self.record.name)
+                        .await?;
                 }
             } else {
                 let local = self.record.connection.connect().await?;
                 match local.heads().await {
                     Ok(_) => {}
                     Err(_) => {
-                        local.create_repository_local(self.record.epoch).await?;
+                        local
+                            .create_repository_local_named(self.record.epoch, &self.record.name)
+                            .await?;
                     }
                 }
             }
