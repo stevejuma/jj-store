@@ -2,8 +2,8 @@
 
 The service and HTTP transport expose notification-only SSE. Event positions
 refer to selected WAL publications, not native operation ancestry or staged
-objects. See E-M4-015 in the implementation ledger for actual validation and
-remaining deployment evidence.
+objects. See E-M4-015 in the implementation ledger for actual focused and
+deployment validation.
 
 ## Wire contract
 
@@ -65,7 +65,16 @@ queued revocation, stalled storage, local wake without waiting for the poll,
 lagged hints across 70 publications with two-record pages, HTTP resume headers,
 independent stream admission and unpolled-body expiry.
 
-The production server fixture has been extended to verify native RPC publication
-through TLS SSE, resume after server/RustFS restart and cache deletion, and live
-token revocation. Its new deployment results must be recorded in the ledger;
-focused fake-store acceptance cannot substitute for that run.
+The production server fixture verifies native RPC publication through TLS SSE,
+resume after server/RustFS restart and cache deletion, and live token
+revocation. On 28 September 2026 the full external harness passed all nine
+probes against pinned RustFS
+`rustfs/rustfs@sha256:b7014e0ce2bc703c1316b3ef760e29dfae61fe4a50d1a66fa89638e0f8ea211f`.
+The run used 20 rounds with 16 contenders for create and CAS, then cold-started
+the generated localhost TLS server with explicit certificate trust. It proved
+live committed notification, `Last-Event-ID` replay after server and RustFS
+process restart plus cache deletion, durable graph/file recovery, stream
+termination on token revocation, and continuing HTTP/native denial. The uniquely
+named container and volume were removed afterward. Multi-node routing, external
+certificate provisioning, and load balancer behavior remain outside the
+single-node M4.2 gate.

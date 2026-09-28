@@ -183,9 +183,11 @@ release performance and browser qualification are separate gates.
 
 The committed-event contract and admission defaults are documented in
 [the SSE evidence guide](../../docs/evidence/m4-committed-events.md). E-M4-015
-in the ledger distinguishes focused service/HTTP evidence from the production
-TLS and real RustFS deployment fixture. A Docker availability failure cannot be
-reported as a passing deployment run.
+in the ledger combines focused service/HTTP evidence with the production TLS and
+real RustFS deployment fixture. The full pinned-image run passed the single-node
+restart, cache-loss replay, `Last-Event-ID`, live revocation and cleanup
+contract. Multi-node routing, external certificate provisioning and load
+balancers remain outside this qualification.
 
 Generated read contracts live in schemas/openapi.json and
 web/src/lib/api/generated.ts. Contract checks regenerate both into memory and

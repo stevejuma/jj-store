@@ -27,7 +27,7 @@ adds evidence here in its enclosing Jujutsu change.
 | M3.3        | Done        | M3.2        | JST-CLI-001,JST-CLI-002,JST-CLI-003,JST-CLI-004                         | Custom command presentation and capability parity                                                                   | Retain native slice acceptance                           | E-M3-006,E-M3-009,E-M3-010,E-M3-011,E-M3-012,E-M3-013,E-M3-014,E-M3-015                                                                                                                                                    |
 | M4          | In progress | M3          | JST-API-001,JST-API-005                                                 | Structured reads and served UI match native semantics                                                               | Release Design Core; complete deferred UI and TLS gates  | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010,E-M4-011,E-M4-012,E-M4-013,E-M4-014,E-M4-015,E-M4-016,E-M4-017,E-M4-018,E-SCOPE-001,E-UI-007,E-UI-008,E-UI-016,E-UI-017,E-UI-018 |
 | M4.1        | Done        | M3          | JST-API-001,JST-API-002,JST-JJ-003                                      | Pinned three-graph reads with zero GET publications                                                                 | Retain pinned read conformance                           | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010,E-M4-011,E-M4-012,E-M4-013,E-M4-014                                                                                              |
-| M4.2        | In progress | M4.1        | JST-API-003,JST-API-006                                                 | Committed SSE and generated API contract deployment qualification                                                   | Qualify real RustFS/TLS SSE                              | E-M4-015,E-M4-016,E-M4-017,E-SCOPE-001                                                                                                                                                                                     |
+| M4.2        | Done        | M4.1        | JST-API-003,JST-API-006                                                 | Committed SSE and generated API contract deployment qualification                                                   | Retain real RustFS/TLS SSE conformance                   | E-M4-015,E-M4-016,E-M4-017,E-SCOPE-001                                                                                                                                                                                     |
 | M4.3        | In progress | M4.1,M5,M6  | JST-API-004,JST-API-005                                                 | Complete browsing integration, then mutations/conflicts/search and deployed browser acceptance                      | Release Design Core; implement conflict controls         | E-SCOPE-001,E-UI-007,E-UI-008,E-M4-018,E-UI-016,E-UI-017,E-UI-018                                                                                                                                                          |
 | M4.4        | Done        | Bootstrap   | JST-UI-001                                                              | Isolated catalog types, interaction/a11y and static build                                                           | Implement shell stories                                  | E-UI-001                                                                                                                                                                                                                   |
 | M4.5        | Done        | M4.4        | JST-UI-002                                                              | Community shell mechanics and navigation acceptance                                                                 | Implement repository fixture views                       | E-UI-002                                                                                                                                                                                                                   |
@@ -291,7 +291,7 @@ and named tests are checked by the progress gate.
   {
     "id": "E-M1-001",
     "tasks": ["M1", "M1.1"],
-    "date": "2026-09-27",
+    "date": "2026-09-28",
     "kind": "native-codec",
     "files": [
       "Cargo.lock",
@@ -4555,13 +4555,35 @@ and named tests are checked by the progress gate.
         "result": "pass",
         "failures": 0,
         "note": "Rustfmt and Prettier pass."
+      },
+      {
+        "command": "python3 scripts/rustfs-contract.py --run --server --output .scratch/m4-sse-rustfs.json",
+        "result": "pass",
+        "failures": 0,
+        "note": "All nine full-concurrency external probes pass against the pinned RustFS digest, including 20 rounds with 16 contenders for create and CAS plus the ignored real_rustfs_server_cli_restart_and_revocation process test. The generated localhost TLS server accepts explicitly trusted native and HTTP clients; publication wakes SSE, Last-Event-ID resumes after server/RustFS restart and cache deletion, authoritative graph/file history recovers, queued revocation closes the stream and subsequent native/HTTP reads remain denied. The uniquely named container and volume were removed."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "fail",
+        "failures": 1,
+        "note": "The first evidence-only draft updated the governed deployment report without its mapped Compatibility chapter. The chapter now records the passing single-node TLS/RustFS/SSE boundary and retains multi-node, external certificate and load-balancer work outside this gate."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "The deployment report and ledger map to both required canonical chapters after the Compatibility update."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools VITEST_MAX_WORKERS=1 pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 18 canonical lanes pass with M4.2 closed, including cold catalog and production-browser acceptance, 68 Storybook interaction/accessibility cases, generated contracts, architecture and boundaries, the complete locked Rust workspace and mdBook. Visual baselines remain skipped."
       }
     ],
-    "result": "pending",
-    "remaining": [
-      "Docker Desktop logs confirm the engine stopped on disk-full error. Repository-generated cache cleanup restored free space, but shared-engine restart needs user approval under AGENTS.md. The isolated harness remains live at docker volume creation; SSE real TLS/RustFS restart/revocation evidence is pending, not passed. Generated OpenAPI/client contracts and browser remain M4.2; M5/M6/M8a unfinished."
-    ],
-    "versions": "Rust 1.97.1; jj-cli/jj-lib 0.45.1 at 7c41cdeb16b6b321c64e789a966b6adf723816a5; existing pinned Axum/tonic/Tokio unchanged.",
+    "result": "pass",
+    "remaining": [],
+    "versions": "Rust 1.97.1; jj-cli/jj-lib 0.45.1 at 7c41cdeb16b6b321c64e789a966b6adf723816a5; existing pinned Axum/tonic/Tokio unchanged; RustFS rustfs/rustfs@sha256:b7014e0ce2bc703c1316b3ef760e29dfae61fe4a50d1a66fa89638e0f8ea211f (image id sha256:6063afb658b569520afbac082418f17b369fa72f4702a6a90a4a010b13117124).",
     "formats": "Additive authenticated SSE route with V1 repository/epoch/position IDs, ready/changed/reset events and authorized heartbeat comments. Bounded process-local wake hints and independent SSE admission. Native persistence, manifest/WAL/receipt, RPC wire and existing read cursor formats unchanged."
   },
   {
