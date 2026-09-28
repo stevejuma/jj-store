@@ -209,6 +209,14 @@ The service owns graph continuation signing and a bounded process-local snapshot
 registry. It retains immutable read pins without retaining session credentials;
 native query execution remains in the JJ integration crate.
 
+The collaboration read service consumes owned AgentStore models only through the
+WAL facade and its audited `AgentStoreSnapshot`, then returns service-owned
+DTOs. Its signed process-local session continuations retain an exact immutable
+AgentStore root and closure under shared request, concurrency, expiry and object
+budgets. Visual components and HTTP types do not enter the service, and neither
+the service nor transport can obtain a collaboration publication capability from
+a read cursor.
+
 The HTTP crate owns Axum request parsing, stable JSON errors, media headers and
 transport admission. It consumes service-exported owned read contracts and bound
 native sessions; it has no direct object-store or upstream JJ dependency. The

@@ -262,3 +262,13 @@ publication method.
 Selected adapter records expose the authenticated principal from their verified
 receipt, without exposing raw receipt result bytes. This accessor changes no
 persistence format and never derives actors from operation descriptions.
+
+## Selected AgentStore reads
+
+The WAL layer exposes an audited `AgentStoreSnapshot` for one manifest-selected
+root. Its exact transitive object count is available to higher-layer read-budget
+enforcement together with the already verified immutable object map; this count
+does not enumerate bucket state, stage an object, construct a delta or expose a
+publication method. Root-pinned session paging keeps that snapshot alive across
+later publications without changing the manifest, WAL, receipts, domain version
+or repository position.

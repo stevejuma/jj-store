@@ -376,6 +376,13 @@ intent, stages no native object or upload, creates no receipt and cannot invoke
 publication. Mutation authorization and guarded apply semantics remain
 unchanged.
 
+The M9.4 AgentStore session pager is another read-only service capability. It
+reauthorizes every page, resolves summaries only from one audited selected
+AgentStore root and retains no principal credential in its process-local cursor.
+The pager exposes neither a typed AgentStore delta nor a request/publication ID,
+receipt lookup, staging method or publication coordinator. Resuming a cursor
+therefore cannot create a collaboration write or dispatch an agent.
+
 ## Browser mutation orchestration
 
 The authenticated browser constructs only the existing typed V1 command union.

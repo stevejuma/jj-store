@@ -2,6 +2,7 @@
 #![forbid(unsafe_code)]
 pub mod assets;
 mod body;
+mod collaboration;
 pub mod contract;
 mod dto;
 mod error;
@@ -25,6 +26,7 @@ use jj_store_service::registry::RepositoryRegistry;
 use jj_store_service::{
     administration::RepositoryHost,
     auth::{BearerToken, Permission, SystemClock},
+    collaboration::AgentSessionPager,
     commands, events, index_tasks,
     native::NativeSession,
     pagination::{
@@ -137,6 +139,7 @@ struct State {
     directories: DirectoryPager,
     browser: BrowserPager,
     operation_browser: OperationBrowserPager,
+    agent_sessions: AgentSessionPager,
     tasks: index_tasks::IndexTasks,
     commands: jj_store_service::mutations::CommandService,
     uploads: jj_store_service::uploads::Uploads,
@@ -198,22 +201,22 @@ impl HttpApi {
             .map_err(|_| "HTTP search limits")?;
             search.insert(repo, pager);
         }
+        let paging_limits = pagination::Limits {
+            concurrency: config.concurrency,
+            read: config.read,
+            ..Default::default()
+        };
         let cursors = Arc::new(
-            SnapshotCursors::new(
-                pagination::Limits {
-                    concurrency: config.concurrency,
-                    read: config.read,
-                    ..Default::default()
-                },
-                Arc::new(SystemClock),
-            )
-            .map_err(|_| "HTTP cursor limits")?,
+            SnapshotCursors::new(paging_limits, Arc::new(SystemClock))
+                .map_err(|_| "HTTP cursor limits")?,
         );
         let graphs = GraphPager::with_cursors(queries.graph().clone(), cursors.clone());
         let directories = DirectoryPager::with_cursors(queries.content().clone(), cursors.clone());
         let browser = BrowserPager::with_cursors(queries.content().clone(), cursors.clone());
         let operation_browser =
             OperationBrowserPager::with_cursors(queries.content().clone(), cursors);
+        let agent_sessions = AgentSessionPager::new(paging_limits, Arc::new(SystemClock))
+            .map_err(|_| "HTTP collaboration cursor limits")?;
         let tasks = index_tasks::IndexTasks::new(
             queries.graph().clone(),
             index_tasks::Limits {
@@ -242,6 +245,7 @@ impl HttpApi {
             directories,
             browser,
             operation_browser,
+            agent_sessions,
             tasks,
             commands,
             uploads,

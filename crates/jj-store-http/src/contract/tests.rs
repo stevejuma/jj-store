@@ -72,6 +72,47 @@ fn contract_preserves_native_shapes_and_hex_id_widths() {
 }
 
 #[test]
+fn collaboration_contract_exposes_root_pinned_agent_session_pages() {
+    let doc = openapi();
+    let path = &doc["paths"]["/v1/repos/{repo}/agent/sessions"];
+    assert!(path.get("get").is_some());
+    let operation = &path["get"];
+    let parameters = operation["parameters"].as_array().unwrap();
+    assert_eq!(
+        parameters
+            .iter()
+            .find(|parameter| parameter["name"] == "limit")
+            .unwrap()["schema"]["default"],
+        50
+    );
+    assert!(
+        parameters
+            .iter()
+            .any(|parameter| parameter["name"] == "cursor")
+    );
+    let page = &doc["components"]["schemas"]["AgentSessionPage"];
+    for field in ["version", "snapshot", "sessions", "next_cursor"] {
+        assert!(page["required"].as_array().unwrap().contains(&json!(field)));
+    }
+    let snapshot = &doc["components"]["schemas"]["AgentReadSnapshot"];
+    for field in [
+        "repo_id",
+        "epoch",
+        "published_seq",
+        "manifest_revision",
+        "agent_root",
+        "agent_state_version",
+    ] {
+        assert!(
+            snapshot["required"]
+                .as_array()
+                .unwrap()
+                .contains(&json!(field))
+        );
+    }
+}
+
+#[test]
 fn contract_inventory_covers_security_methods_media_and_task_bodies() {
     let doc = openapi();
     assert_eq!(doc["security"], json!([]));
@@ -80,7 +121,7 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
         json!(["authenticated", "local_trusted"])
     );
     let paths = doc["paths"].as_object().unwrap();
-    assert_eq!(paths.len(), 29);
+    assert_eq!(paths.len(), 30);
     let mut ids = std::collections::BTreeSet::new();
     for (name, path) in paths {
         for (method, operation) in path.as_object().unwrap() {

@@ -174,6 +174,13 @@ struct Repositories {
     #[serde(default = "limit")]
     limit: usize,
 }
+#[derive(Deserialize, schemars::JsonSchema)]
+#[serde(deny_unknown_fields)]
+struct AgentSessions {
+    cursor: Option<String>,
+    #[serde(default = "limit")]
+    limit: usize,
+}
 
 // One declaration registers both executable routes and their generated contracts.
 macro_rules! endpoints {
@@ -182,6 +189,7 @@ macro_rules! endpoints {
             (get, "/repos/{repo}/capabilities", capabilities, Empty, Capabilities, Reply::Json(200)),
             (get, "/repos/{repo}/search", search, SearchQuery, search_paging::Page, Reply::Json(200)),
             (get, "/repos/{repo}/search/status", search_status, Empty, search_paging::Status, Reply::Json(200)),
+            (get, "/repos/{repo}/agent/sessions", agent_sessions, AgentSessions, crate::collaboration::SessionPage, Reply::Json(200)),
             (get, "/repos/{repo}/snapshot", snapshot, Empty, reads::HeadSnapshot, Reply::Json(200)),
             (get, "/repos/{repo}/events", events, Events, events::Event, Reply::Events),
             (get, "/repos/{repo}/objects/{kind}/{id}", object, Selection, Envelope<c::Object>, Reply::Json(200)),
@@ -282,6 +290,14 @@ async fn snapshot(
         .await
         .map_err(reads::Error::from)?;
     state.json(&reads::HeadSnapshot::from(snapshot.manifest()))
+}
+async fn agent_sessions(
+    ExtractState(state): ExtractState<Arc<State>>,
+    context: Context,
+    args: Input<AgentSessions>,
+) -> Result<Response> {
+    let args = input(args)?;
+    crate::collaboration::sessions(&state, context.session, args.cursor, args.limit).await
 }
 async fn object(
     ExtractState(state): ExtractState<Arc<State>>,

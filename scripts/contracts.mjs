@@ -86,6 +86,10 @@ if (mode === "--check") {
         "http_browsing_acceptance::http_browsing_windows_are_authorized_pinned_cursor_bound_and_contract_captured",
         "JJ_STORE_BROWSING_CONTRACT_CAPTURE",
       ],
+      [
+        "http_collaboration_acceptance::local_trusted_http_lists_root_pinned_agent_sessions_without_bearer_credentials",
+        "JJ_STORE_COLLABORATION_CONTRACT_CAPTURE",
+      ],
     ]) {
       const capture = join(directory, `${variable}.json`);
       const { stdout } = await run(

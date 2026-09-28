@@ -172,6 +172,15 @@ impl Document {
             operation["responses"]["503"]["description"] =
                 json!("search_not_ready, busy, unavailable, corrupt_index, or incomplete history.");
         }
+        if path.contains("/agent/") {
+            operation["tags"] = json!(["collaboration"]);
+            operation["description"] = json!(
+                "Requires current repository read permission. Session rows resolve from one immutable AgentStore root. Signed process-local continuations retain that exact root and page size, reauthorize every page, and reset after expiry, restart or epoch replacement. Reads never dispatch an agent or publish repository state."
+            );
+            operation["responses"]["409"]["description"] = json!(
+                "cursor_reset after expiry, process restart, or repository epoch replacement."
+            );
+        }
         if path.ends_with("/conflict-uploads") {
             operation["tags"] = json!(["mutations"]);
             operation["description"] = json!(
@@ -242,7 +251,7 @@ impl Document {
         json!({"openapi":"3.1.0", "jsonSchemaDialect":"https://json-schema.org/draft/2020-12/schema",
             "info":{"title":"jj-store application API", "version":"1.0.0", "license":{"name":"Apache-2.0","identifier":"Apache-2.0"},
                 "description":"Native JJ read and typed mutation contracts. Access is deployment-dependent: authenticated deployments require repository Bearer credentials, while LocalTrusted installations admit only protected literal-loopback requests and bind an installation principal. Tokens never appear in paths, query strings or cookies. Shared deployments require TLS. Numeric JSON values retain Rust widths: clients must handle precision beyond JavaScript safe integers explicitly."},
-            "servers":[{"url":"/"}], "tags":[{"name":"reads"},{"name":"mutations"},{"name":"search"}],
+            "servers":[{"url":"/"}], "tags":[{"name":"reads"},{"name":"mutations"},{"name":"search"},{"name":"collaboration"}],
             "security":[],
             "x-jj-store-access-policies":["authenticated","local_trusted"],
             "paths":self.paths,

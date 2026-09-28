@@ -326,6 +326,30 @@ reset an already-consumed stream or repeatedly extend its byte allowance. File
 streams reauthorize every chunk. JSON source strings are data; no endpoint
 returns trusted source HTML.
 
+## Collaboration read transport
+
+`GET /v1/repos/{repo}/agent/sessions` is the first bounded collaboration route.
+LocalTrusted admits it through the existing literal-loopback protection and
+installation principal, without a bearer credential. Authenticated deployments
+retain their repository bearer policy. Both modes require current repository
+read permission on the initial request and every resumed page.
+
+The JSON response contains version 1, an exact AgentStore read snapshot, bounded
+session summaries and an optional continuation. The snapshot carries repository,
+epoch, publication position, manifest revision, AgentStore root digest and state
+version. Session rows keep full stable session and immutable snapshot
+identities; integration, state, optional parent, coverage and bounded object
+counts are service-owned presentation data rather than serialized WAL records.
+
+`limit` defaults to the common page size and accepts 1 through 256. The opaque
+continuation is bound to the entire snapshot and original page size, retains its
+immutable root after later publications and is never suitable for a permanent
+URL. Invalid or query-mismatched continuations return `invalid_cursor`; expiry,
+process restart or epoch replacement returns `cursor_reset`. Request
+concurrency, retained pins, transitive closure objects and lifetime are bounded
+by the shared read limits. The route has no request body, mutation capability,
+receipt or agent dispatch behavior.
+
 ## Committed event subscriptions
 
 SSE at /v1/repos/{repo}/events emits only manifest-selected publications, in

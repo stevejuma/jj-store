@@ -140,6 +140,20 @@ impl From<p::Error> for Error {
         }
     }
 }
+impl From<jj_store_service::collaboration::Error> for Error {
+    fn from(error: jj_store_service::collaboration::Error) -> Self {
+        use jj_store_service::collaboration::Error as E;
+        match error {
+            E::Denied => Self::denied(),
+            E::InvalidCursor => Self::new(StatusCode::BAD_REQUEST, "invalid_cursor"),
+            E::CursorReset => Self::new(StatusCode::CONFLICT, "cursor_reset"),
+            E::Limit => Self::limit(),
+            E::Busy => Self::busy(),
+            E::Corrupt => Self::new(StatusCode::SERVICE_UNAVAILABLE, "corrupt_history"),
+            E::Unavailable => Self::unavailable(),
+        }
+    }
+}
 impl From<transport::Error> for Error {
     fn from(e: transport::Error) -> Self {
         match e {

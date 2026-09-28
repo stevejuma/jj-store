@@ -384,3 +384,12 @@ mutation/upload intent bytes still decode byte-for-byte. Native RPC and OpenAPI
 snapshots add `code_state_version`; this repository is unreleased, so no public
 wire downgrade is promised. The explicit collaboration-enable publication is the
 only supported format-1 adoption path and never rewrites native objects.
+
+M9.4 additively registers `GET /v1/repos/{repo}/agent/sessions` and its owned
+AgentStore snapshot, coverage, session-summary and page schemas in OpenAPI and
+the generated TypeScript declarations. The response preserves native repository
+and AgentStore identity widths and uses an opaque process-local continuation;
+there is no persistence-format, WAL, receipt or native-ID change. Captured
+LocalTrusted responses validate the registered handler as part of contract drift
+checking. A continuation intentionally resets across server restart, expiry and
+epoch replacement and is not a durable compatibility token.

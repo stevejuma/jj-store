@@ -1103,6 +1103,9 @@ mod browsing_acceptance;
 #[path = "native_lifecycle/http_browsing.rs"]
 mod http_browsing_acceptance;
 
+#[path = "native_lifecycle/http_collaboration.rs"]
+mod http_collaboration_acceptance;
+
 #[path = "native_lifecycle/events.rs"]
 mod event_acceptance;
 

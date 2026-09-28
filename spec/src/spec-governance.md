@@ -161,6 +161,13 @@ operation-change and diff-summary handlers. It proves repository authorization,
 exact snapshot pinning, signed query-bound forward/backward continuations and
 zero publication rather than validating generated shapes alone.
 
+The generated-contract lane also executes the registered LocalTrusted AgentStore
+session handler and captures its first and resumed pages. The fixture must
+report one executed test, preserve one root snapshot across pages and validate
+both responses against generated OpenAPI. A zero-test filter, schema-only
+assertion or uncaptured response cannot count as collaboration transport
+evidence.
+
 Browser checks include Svelte/TypeScript analysis, focused client tests and cold
 Playwright interactions/accessibility against built assets. Functional and
 accessibility failures remain blocking; visual review is separate and remains

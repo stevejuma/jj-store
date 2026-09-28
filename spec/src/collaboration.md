@@ -126,6 +126,31 @@ increasing chunk sequences across linked pages and enforce both a record count
 and an eight MiB caller-selected byte ceiling. Session/checkpoint enumeration,
 relation traversal and transcript streaming do not depend on Tantivy.
 
+## LocalTrusted collaboration reads
+
+The first M9.4 service surface lists AgentStore sessions from one exact selected
+root. Its owned response identifies the repository, epoch, publication position,
+manifest revision, AgentStore root digest and AgentStore state version. Each row
+retains the complete stable session ID and immutable session-snapshot object ID,
+then exposes only bounded integration, lifecycle, parent, coverage and
+referenced object counts. Transport DTOs do not expose WAL objects or
+reinterpret stable session identities as immutable object identities.
+
+Initial and resumed pages require current repository read permission. Page sizes
+are limited to 1 through 256. An opaque signed continuation binds repository,
+epoch, publication position, manifest revision, AgentStore root, AgentStore
+state version, page size and the radix key after the last row. The process-local
+cursor registry retains the exact audited immutable AgentStore snapshot across
+later publications, bounds retained snapshots and closure objects, reauthorizes
+every page and resets after expiry, server restart or epoch replacement.
+Tampering, repository reuse and page-size changes fail explicitly. Reads neither
+dispatch an agent nor stage or publish repository state.
+
+Session detail, transcript, relation and checkpoint reads, ReviewStore reads and
+typed writes, user-facing CLI commands, durable receipts and live collaboration
+hints remain later M9.4 slices. This session collection alone does not complete
+JST-COLLAB-004.
+
 ## Capture sanitization boundary
 
 The capture boundary uses MongoDB Kingfisher 2.7.0 in-process at source revision

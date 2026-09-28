@@ -21,6 +21,9 @@ impl AgentStoreSnapshot {
     pub fn root(&self) -> &AgentRootV1 {
         &self.root
     }
+    pub fn object_count(&self) -> usize {
+        self.objects.len()
+    }
     pub async fn lookup(
         &self,
         catalog: AgentCatalogKind,

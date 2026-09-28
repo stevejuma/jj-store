@@ -15,6 +15,7 @@ pub mod index_tasks;
 pub mod pagination;
 pub mod reads;
 
+pub mod collaboration;
 pub mod commands;
 pub mod mutations;
 
