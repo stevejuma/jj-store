@@ -2,6 +2,9 @@
 #![forbid(unsafe_code)]
 pub mod agent_capture;
 mod agent_capture_files;
+pub mod agent_commands;
+pub mod agent_integrations;
+mod agent_probe;
 pub mod attachment;
 pub mod binding;
 pub mod commands;
@@ -10,5 +13,6 @@ pub mod initialization;
 pub mod presentation;
 pub mod remote;
 pub mod server_commands;
+mod store_commands;
 
 pub mod token_commands;

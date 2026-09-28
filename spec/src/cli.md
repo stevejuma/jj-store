@@ -129,8 +129,18 @@ removes only unacknowledged atomic temporary files. Changed retries, corrupt,
 symlink or unexpected entries and concurrent ownership fail closed. Completion
 requires the matching prepared request/publication identity, so unprepared or
 unknown-outcome captures remain recoverable. The journal is implemented as an
-internal boundary; `jj agent enable/setup/status` command presentation and
-harness installation remain pending M9.2 work.
+internal boundary.
+
+`jj agent status` refreshes the device-local integration registry with bounded
+PATH probes for exactly Codex 0.156.1, Cursor 3.22.7 and OpenCode 1.18.30. It
+reports missing, supported, unsupported-version and probe-failed states without
+retaining subprocess stderr. `jj agent enable --non-interactive --agent ...`
+requires explicit supported selections and durably records desired enablement;
+`--dry-run` returns the prospective registry without writing it. The registry is
+bound to one native repository and canonical workspace, keeps a stable device
+identity across restart and reports setup independently as not installed. Owned
+`jj agent setup`, drift-safe hook/plugin mutation and capture ingestion remain
+pending M9.2 work.
 
 `store init` provisions a new repository using a separate operator credential,
 durably retaining generated repository/epoch IDs before contacting the server.

@@ -390,5 +390,23 @@ validates every pending entry. Corruption, symlinks, unexpected files,
 concurrent ownership and byte-limit exhaustion fail closed. Completion removes
 only a prepared entry whose request and publication IDs match the committed
 outcome, then synchronizes the directory. An unprepared capture cannot be
-discarded through the completion path. Owned harness discovery, setup/status
-commands and the ingestion loop remain unfinished M9.2 work.
+discarded through the completion path.
+
+## Device-local integration registry
+
+The CLI owns a versioned registry outside the checkout for each native
+repository and canonical physical workspace. It persists one nonzero random
+device identity and separate detection, desired enablement and setup state for
+Codex, Cursor and OpenCode under an exclusive user-restricted lock. Atomic
+synced replacement and strict repository/workspace validation preserve the
+identity across restart and reject another authority opening the state.
+
+Discovery searches the current PATH for each owned executable and executes a
+two-second, 256-byte version probe. Only the exact qualified versions Codex
+0.156.1, Cursor 3.22.7 and OpenCode 1.18.30 are supported. Missing executables,
+other versions and failed probes are explicit states; stderr is discarded and
+never enters the registry or command output. Explicit noninteractive enablement
+may select only supported integrations, and dry-run does not modify durable
+state. Enablement records desired policy while setup remains not installed.
+Owned hook/plugin setup, drift-safe removal and the ingestion loop remain
+unfinished M9.2 work.

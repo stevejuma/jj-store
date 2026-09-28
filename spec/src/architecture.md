@@ -159,6 +159,15 @@ agent request, persists outside checkouts under an exclusive user-restricted
 lock and never becomes repository authority. Only the WAL coordinator can
 publish its prepared delta through the manifest CAS and durable receipt path.
 
+The same CLI boundary owns a device-local integration registry outside the
+checkout. It binds one stable random device identity and explicit desired
+enablement to the native repository plus canonical physical workspace. Registry
+writes are locked, atomic, synchronized and user-restricted. Discovery runs
+bounded version probes for the exact qualified Codex, Cursor and OpenCode
+versions; failed probe stderr is never retained or presented. Detection and
+desired enablement remain separate from owned hook/plugin setup, so discovery
+alone cannot claim capture is active.
+
 The CLI builds both development executables. Repository creation is a durable
 client workflow that provisions its OS-held admin credential before remote
 creation and then delegates physical checkout setup to resumable attachment.

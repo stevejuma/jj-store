@@ -1,5 +1,5 @@
 //! Shared typed token administration with durable, secret-free retry intents.
-use crate::{binding::Connection, commands::ConnectionArgs, credentials};
+use crate::{binding::Connection, credentials, store_commands::ConnectionArgs};
 use clap::{Args, Subcommand, ValueEnum};
 use jj_cli::ui::Ui;
 use jj_store_jj::operation_stores::AuthorityResult;
