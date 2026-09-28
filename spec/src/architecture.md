@@ -273,9 +273,11 @@ recursive-path, operation-change and diff-summary contracts add no presentation,
 fixture or mutation dependency, and their cursors remain service-owned rather
 than becoming native repository state.
 
-The local pnpm hook follows the workspace source-first boundary for Design Core.
-When `../design-core` exists it resolves the declared dependency from that
-source for development validation; otherwise it leaves the released semver range
-intact. It never rewrites peer ranges. `package.json` and `pnpm-lock.yaml`
-remain registry-resolved, and final dependency integration still requires a
-released registry version.
+The local pnpm hook follows the workspace source-first boundary for Design Core
+and Agent Redaction. When the sibling source exists it resolves the declared
+dependency from that checkout for development validation; otherwise it leaves
+the semver range intact. It never rewrites peer ranges. The publishable manifest
+retains registry ranges while a locally installed lock records the explicit
+sibling source. Final dependency integration still requires released registry
+versions; `@lapismd/agent-redaction` 0.1.0 is currently validated from sibling
+revision `9583b512` because the package is not yet available from the registry.

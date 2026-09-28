@@ -3,6 +3,10 @@ const path = require("node:path");
 
 const localPackages = new Map([
   ["@lapismd/design-core", { protocol: "file:", path: "../design-core" }],
+  [
+    "@lapismd/agent-redaction",
+    { protocol: "file:", path: "../agent-redaction" },
+  ],
 ]);
 
 function createHooks({

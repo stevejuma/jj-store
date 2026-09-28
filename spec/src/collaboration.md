@@ -70,3 +70,19 @@ source generation separate and root an ordered immutable chunk-page closure
 sufficient for direct reconstruction; they have no indispensable
 previous-manifest link. Checkpoint discovery remains in its root-level catalog,
 so a session snapshot has no mutable or circular checkpoint reference.
+
+## Capture sanitization boundary
+
+The Node capture boundary uses `@lapismd/agent-redaction` 0.1.0 at source
+revision `9583b512`. It submits the complete untrusted observation to the
+package before reading capture fields, then rebuilds an allowlisted DTO from the
+sanitized result. Accessors, unsupported values and unknown integration IDs are
+omitted without forwarding source values or diagnostics. The returned DTO
+records the package policy identity and sanitization summary; disposal is
+mandatory after every observation.
+
+This boundary currently admits only `codex`, `cursor` and `opencode` integration
+identifiers and the source-kind vocabulary owned by `SanitizedObservationV1`. It
+proves the pre-spool sanitization contract but does not yet qualify a harness
+decoder, local discovery, durable spool or capture publication path. Those
+remain M9.2 work and support is not claimed from the adapter test alone.

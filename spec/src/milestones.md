@@ -61,9 +61,9 @@ adds evidence here in its enclosing Jujutsu change.
 | M7          | Deferred    | M8a         | JST-ADAPT-005                                                           | Complete read-only replica through applied position                                                                 | After first release                                     | -                                                                                                                                                                                                                          |
 | M7.1        | Deferred    | M8a.4       | JST-ADAPT-006                                                           | Asynchronous verified S3 backup remains independent from passive serving and promotion                              | Future backup release after local application           | -                                                                                                                                                                                                                          |
 | M8b         | Deferred    | M8a         | JST-COMPAT-004                                                          | Verified lossless import with source safety                                                                         | Separate migration release                              | -                                                                                                                                                                                                                          |
-| M9          | Partial     | M8a.4       | JST-COLLAB-001,JST-COLLAB-005                                           | Repository-native agent activity and exact review discussions in the LocalTrusted application                       | Add checkpoints, sanitizer and capture integrations     | E-M9-001,E-M9-002,E-M9-003                                                                                                                                                                                                 |
+| M9          | Partial     | M8a.4       | JST-COLLAB-001,JST-COLLAB-005                                           | Repository-native agent activity and exact review discussions in the LocalTrusted application                       | Add checkpoints, normalizers and capture integrations   | E-M9-001,E-M9-002,E-M9-003,E-M9-004                                                                                                                                                                                        |
 | M9.1        | Done        | M8a.4       | JST-PUB-007,JST-PUB-008                                                 | Independent code/agent/review roots, code-state fencing and non-destructive collaboration enablement                | Implement AgentStore typed root objects                 | E-M9-001                                                                                                                                                                                                                   |
-| M9.2        | In progress | M9.1        | JST-COLLAB-001,JST-COLLAB-002,JST-COLLAB-006                            | AgentStore model, immutable snapshots/catalogs, sanitized evidence and Codex/Cursor/OpenCode normalizers            | Add checkpoints, typed deltas and packaged sanitizer    | E-M9-002,E-M9-003                                                                                                                                                                                                          |
+| M9.2        | In progress | M9.1        | JST-COLLAB-001,JST-COLLAB-002,JST-COLLAB-006                            | AgentStore model, immutable snapshots/catalogs, sanitized evidence and Codex/Cursor/OpenCode normalizers            | Add checkpoints, typed deltas and harness normalizers   | E-M9-002,E-M9-003,E-M9-004                                                                                                                                                                                                 |
 | M9.3        | Planned     | M9.2        | JST-COLLAB-001,JST-COLLAB-003                                           | ReviewStore exact artifact anchors and stale-safe thread/comment workflow                                           | Add exact anchors and review command store              | -                                                                                                                                                                                                                          |
 | M9.4        | Planned     | M9.2,M9.3   | JST-COLLAB-004                                                          | LocalTrusted bounded CLI/HTTP APIs, pagination, receipts and live collaboration hints                               | Wire first-party service and generated contracts        | -                                                                                                                                                                                                                          |
 | M9.5        | Planned     | M9.4        | JST-COLLAB-005                                                          | Community-owned thread/agent widgets and Design Core exact diff selection integrated into the application           | Implement accessible virtualized application routes     | -                                                                                                                                                                                                                          |
@@ -12413,6 +12413,77 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Rust 1.98.1; AgentStore schema v1; initial harness targets Codex 0.156.1, Cursor 3.22.7 and OpenCode 1.18.30.",
     "formats": "SanitizedObservationBatchV1, AgentEventBatchV1, AgentSessionSnapshotV1, ToolInvocationSnapshotV1 and TranscriptManifest/Page/ChunkV1 are separate canonical immutable objects. Transcript manifests root complete chunk-page closures and session snapshots do not reference checkpoints."
+  },
+  {
+    "id": "E-M9-004",
+    "tasks": ["M9", "M9.2"],
+    "date": "2026-09-28",
+    "kind": "implementation",
+    "files": [
+      "package.json",
+      "pnpm-lock.yaml",
+      "scripts/agent-capture-sanitizer.mjs",
+      "scripts/agent-capture-sanitizer.test.mjs",
+      "scripts/local-package-pnpmfile.cjs",
+      "scripts/local-package-pnpmfile.test.mjs",
+      "spec/src/architecture.md",
+      "spec/src/collaboration.md",
+      "spec/src/spec-governance.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "scripts/agent-capture-sanitizer.test.mjs#sanitizes before returning a capture-ready observation",
+      "scripts/agent-capture-sanitizer.test.mjs#fails closed without touching hostile or unsupported capture input",
+      "scripts/agent-capture-sanitizer.test.mjs#accepts only the initial qualified integration identifiers",
+      "scripts/local-package-pnpmfile.test.mjs#local package hook uses available agent redaction source"
+    ],
+    "runs": [
+      {
+        "command": "node --test scripts/agent-capture-sanitizer.test.mjs",
+        "result": "fail",
+        "failures": 1,
+        "note": "The exact regression failed because jj-store had no packaged capture sanitizer boundary."
+      },
+      {
+        "command": "node --test scripts/agent-capture-sanitizer.test.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Three focused tests prove whole-record sanitization before field access, fail-closed hostile inputs, input immutability, path and secret removal, allowlisted output and the three initial integration identifiers."
+      },
+      {
+        "command": "node --test scripts/local-package-pnpmfile.test.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Three focused tests prove sibling resolution for Design Core and Agent Redaction while absent siblings preserve declared ranges."
+      },
+      {
+        "command": "pnpm spec:first; pnpm exec prettier --check <changed files>",
+        "result": "fail",
+        "failures": 2,
+        "note": "The mapped gate required the new protected capture script in spec-governance.md, and formatting required one collaboration paragraph reflow."
+      },
+      {
+        "command": "pnpm test:governance; pnpm check:architecture; pnpm check:boundaries; pnpm spec:validate; pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 26 governance tests, 198 web architecture modules, 12 package boundaries, 84 canonical requirements and 60 task records pass; the sanitizer implementation is 80 lines against the 300-line production budget."
+      },
+      {
+        "command": "pnpm spec:first; pnpm exec prettier --check <changed files>",
+        "result": "pass",
+        "failures": 0,
+        "note": "The mapped canonical chapters and all changed JavaScript, JSON, YAML and Markdown files pass their focused gates."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Checkpoint and code-association schemas with native dependency retention",
+      "AgentStore root-pinned read/staging facade and typed publication deltas",
+      "Version-bound Codex, Cursor and OpenCode fixtures and normalizers",
+      "Released registry acceptance for @lapismd/agent-redaction"
+    ],
+    "versions": "Rust 1.98.1; @lapismd/agent-redaction 0.1.0 at sibling revision 9583b512; Codex CLI 0.156.1; Cursor 3.22.7; OpenCode 1.18.30.",
+    "formats": "The Node adapter returns only an allowlisted capture-ready DTO plus the agent-redaction policy identity and sanitization summary. It admits the three initial integration IDs and the source-kind vocabulary owned by SanitizedObservationV1."
   }
 ]
 ```

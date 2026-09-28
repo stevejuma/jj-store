@@ -9,6 +9,9 @@
     "node": ">=22"
   },
   "type": "module",
+  "dependencies": {
+    "@lapismd/agent-redaction": "^0.1.0"
+  },
   "scripts": {
     "build": "pnpm build-storybook && pnpm web:build && pnpm build:embedded-rustfs && cargo build --workspace --locked",
     "check": "pnpm spec:validate && pnpm check:boundaries && pnpm check:architecture && pnpm check:progress && pnpm format:rust:check && pnpm check:embedded-rustfs && pnpm contracts:check && pnpm web:check && pnpm catalog:check && cargo clippy --workspace --all-targets --locked -- -D warnings",

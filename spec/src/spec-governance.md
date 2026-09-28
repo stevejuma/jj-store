@@ -95,6 +95,13 @@ depend on the neutral model layer; it cannot depend on WAL, service, native JJ,
 transport or presentation layers. WAL may depend on `jj-agent` to validate typed
 roots and immutable objects before shared publication.
 
+Capture tooling consumes the public Agent Redaction contract through a
+publishable semver dependency. The local pnpm hook may substitute the sibling
+source for development validation without changing the manifest range. Its
+focused tests must prove both sibling resolution and the no-sibling fallback.
+The capture sanitizer script must remain below the production line budget and
+return only sanitized, allowlisted DTOs or package-safe omission reasons.
+
 Server composition has an explicit layer in the boundary checker. Regression
 coverage rejects dependencies on CLI presentation and direct upstream JJ types,
 while permitting the owned native/service/RPC composition interfaces.

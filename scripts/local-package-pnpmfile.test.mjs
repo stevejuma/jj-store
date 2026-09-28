@@ -26,6 +26,24 @@ test("local package hook uses available Design Core source", () => {
   assert.equal(result.peerDependencies["@lapismd/design-core"], "^0.2.0");
 });
 
+test("local package hook uses available agent redaction source", () => {
+  const root = "/workspace/jj-store";
+  const agentRedaction = path.resolve(root, "../agent-redaction");
+  const manifest = {
+    dependencies: { "@lapismd/agent-redaction": "^0.1.0" },
+  };
+
+  const result = createHooks({
+    root,
+    fileExists: (candidate) => candidate === agentRedaction,
+  }).hooks.readPackage(manifest);
+
+  assert.equal(
+    result.dependencies["@lapismd/agent-redaction"],
+    `file:${agentRedaction}`,
+  );
+});
+
 test("local package hook retains registry range when source is absent", () => {
   const manifest = {
     devDependencies: { "@lapismd/design-core": "^0.2.0" },
