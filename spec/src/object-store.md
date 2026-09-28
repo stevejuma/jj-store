@@ -8,12 +8,13 @@ rollout; GET followed by unconditional PUT is not a substitute.
 
 ## Requirements
 
-| ID          | Requirement                                                                                                                                                         |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| JST-OBJ-001 | Object storage MUST provide get, head, immutable create, conditional compare-exchange, range reads, and explicit Applied, PreconditionFailed, and Unknown outcomes. |
-| JST-OBJ-002 | Acknowledged writes MUST satisfy tested cross-route read-after-write and conditional-write semantics for the exact pinned RustFS image and topology.                |
-| JST-OBJ-003 | Immutable uploads MUST enforce size and checksum limits and verify existing native content on collisions; large blobs MUST stream with bounded memory.              |
-| JST-OBJ-004 | Normal graph reads MUST NOT rely on bucket LIST; destructive delete MUST remain disabled for core v1.                                                               |
+| ID          | Requirement                                                                                                                                                                                                                                                                                              |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| JST-OBJ-001 | Object storage MUST provide get, head, immutable create, conditional compare-exchange, range reads, and explicit Applied, PreconditionFailed, and Unknown outcomes.                                                                                                                                      |
+| JST-OBJ-002 | Acknowledged writes MUST satisfy tested cross-route read-after-write and conditional-write semantics for the exact pinned RustFS image and topology.                                                                                                                                                     |
+| JST-OBJ-003 | Immutable uploads MUST enforce size and checksum limits and verify existing native content on collisions; large blobs MUST stream with bounded memory.                                                                                                                                                   |
+| JST-OBJ-004 | Normal graph reads MUST NOT rely on bucket LIST; destructive delete MUST remain disabled for core v1.                                                                                                                                                                                                    |
+| JST-OBJ-005 | Managed embedded storage MUST own one pinned RustFS runtime, explicit persistent volume, readiness and shutdown; hold an installation lock; verify a storage sentinel and bucket before recovery; and fail closed when identity, credentials, volume, sentinel, or ownership is missing or inconsistent. |
 
 ## Qualified primitive probe
 

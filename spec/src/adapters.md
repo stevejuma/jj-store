@@ -9,13 +9,14 @@ adapters.
 
 ## Requirements
 
-| ID            | Requirement                                                                                                                                                                                 |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| JST-ADAPT-001 | Adapters MUST consume only selected committed records in repository order, with at-least-once replay and checkpoints identifying repo, epoch, segment, schema/config, and durable artifact. |
-| JST-ADAPT-002 | Adapter failure MUST NOT fail repository publication or skip poison records; cursor advancement MUST follow durable destination effects.                                                    |
-| JST-ADAPT-003 | Tantivy MUST remain a local rebuildable projection with deterministic keys, commit payloads, one writer owner, explicit source scopes, and separately reported indexed positions.           |
-| JST-ADAPT-004 | Lost index files MUST trigger compatible restore or rebuild even with an advanced remote cursor; search pagination MUST pin a reader generation and apply fresh authorization.              |
-| JST-ADAPT-005 | Passive replicas MUST publish applied manifests only after complete dependency transfer and MUST remain read-only until separately verified fenced promotion.                               |
+| ID            | Requirement                                                                                                                                                                                                                                                                                                                 |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| JST-ADAPT-001 | Adapters MUST consume only selected committed records in repository order, with at-least-once replay and checkpoints identifying repo, epoch, segment, schema/config, and durable artifact.                                                                                                                                 |
+| JST-ADAPT-002 | Adapter failure MUST NOT fail repository publication or skip poison records; cursor advancement MUST follow durable destination effects.                                                                                                                                                                                    |
+| JST-ADAPT-003 | Tantivy MUST remain a local rebuildable projection with deterministic keys, commit payloads, one writer owner, explicit source scopes, and separately reported indexed positions.                                                                                                                                           |
+| JST-ADAPT-004 | Lost index files MUST trigger compatible restore or rebuild even with an advanced remote cursor; search pagination MUST pin a reader generation and apply fresh authorization.                                                                                                                                              |
+| JST-ADAPT-005 | Passive replicas MUST publish applied manifests only after complete dependency transfer and MUST remain read-only until separately verified fenced promotion.                                                                                                                                                               |
+| JST-ADAPT-006 | Backup adapters MUST copy a pinned WAL recovery closure without blocking publication, verify streamed destination bytes and exact object versions, bind checkpoints to source and destination identity, publish immutable inventories/certificates, and advance a latest-verified pointer only after complete verification. |
 
 ## Delivery and checkpoint contract
 

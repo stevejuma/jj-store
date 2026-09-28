@@ -1,4 +1,5 @@
 /target/
+/runtime/embedded-rustfs/target/
 /node_modules/
 /spec/book/
 /.scratch/

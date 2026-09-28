@@ -52,9 +52,18 @@ authorization. Its publication guard uses owned WAL snapshots/settings and
 requires an explicit native semantic validator, keeping authentication shared
 between future HTTP and RPC adapters.
 
-The development toolchain includes rustfmt with a tracked edition-2024 policy.
-Rust formatting is part of the shared formatting commands, normal checks and
-canonical specification checks.
+The development toolchain uses Rust 1.98.1 and includes rustfmt with a tracked
+edition-2024 policy. Rust formatting is part of the shared formatting commands,
+normal checks and canonical specification checks.
+
+The released RustFS embedded crate cannot share a Rust dependency graph with the
+pinned `jj-cli` because both require different unconditional sys crates with the
+same native mimalloc link identity. Its exact unpatched crate therefore builds
+in a separately locked helper executable. Server composition owns the helper's
+private credential environment, concrete loopback address, persistent volume,
+readiness and shutdown channels, and process lifetime while accessing authority
+through the same owned `S3Store`. The helper is a packaged runtime boundary and
+does not become a separately administered storage deployment.
 
 Browser architecture uses Community's counted-line metric: blank and
 comment-only lines are excluded; complete Svelte markup and styles count. New

@@ -1,19 +1,20 @@
 # Compatibility and release
 
-Rust 1.97.1 and edition 2024 are the starting toolchain. New native repositories
-ship first, with repository-scoped token authentication. M8a hardens that
-release; M8b handles controlled migration later. A new image or topology
-invalidates old storage qualification until contract tests rerun. Read-only
-proof results do not constitute deployment or publication approval.
+Rust 1.98.1 and edition 2024 are the qualified toolchain for managed RustFS. New
+native repositories ship first, with repository-scoped token authentication. M8a
+hardens that release; M8b handles controlled migration later. A new image or
+topology invalidates old storage qualification until contract tests rerun.
+Read-only proof results do not constitute deployment or publication approval.
 
 ## Requirements
 
-| ID             | Requirement                                                                                                                                                                         |
-| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| JST-COMPAT-001 | Both JJ crates MUST be pinned to the same tested 0.45.1 release and upstream revision, with licenses, trait coverage, and golden identities recorded before native storage rollout. |
-| JST-COMPAT-002 | M0 MUST prove compiled extension/context/query boundaries and real RustFS conditional writes before dependent storage milestones can be completed.                                  |
-| JST-COMPAT-003 | Release qualification MUST include empty-cache recovery, restore drills, bounded performance measurements, security, semantic parity, and cold browser/lifecycle evidence.          |
-| JST-COMPAT-004 | Migration and passive replication MUST remain deferred for the first release; failed future imports MUST leave source repositories untouched and MUST NOT silently remap IDs.       |
+| ID             | Requirement                                                                                                                                                                                                                                                                     |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| JST-COMPAT-001 | Both JJ crates MUST be pinned to the same tested 0.45.1 release and upstream revision, with licenses, trait coverage, and golden identities recorded before native storage rollout.                                                                                             |
+| JST-COMPAT-002 | M0 MUST prove compiled extension/context/query boundaries and real RustFS conditional writes before dependent storage milestones can be completed.                                                                                                                              |
+| JST-COMPAT-003 | Release qualification MUST include empty-cache recovery, restore drills, bounded performance measurements, security, semantic parity, and cold browser/lifecycle evidence.                                                                                                      |
+| JST-COMPAT-004 | Migration and passive replication MUST remain deferred for the first release; failed future imports MUST leave source repositories untouched and MUST NOT silently remap IDs.                                                                                                   |
+| JST-COMPAT-005 | Release qualification MUST pin the embedded RustFS crate/source/features, external image and generic-S3 target; prove macOS ARM64 and Linux x86_64 packaged startup and restore; and state unsupported platforms, providers, replication, and migration without broader claims. |
 
 ## M0 audit evidence
 

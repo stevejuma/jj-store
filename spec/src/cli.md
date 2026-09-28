@@ -16,12 +16,13 @@ installation policy. Secrets stay out of argv, output, and checked-in config.
 
 ## Requirements
 
-| ID          | Requirement                                                                                                                                                                                |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| JST-CLI-001 | Custom commands MUST use jj store under upstream CliRunner, and the server MUST use explicit jj-store run with configuration, diagnostics, and token administration.                       |
-| JST-CLI-002 | Custom command families MUST provide authored Markdown long help, short help, keyword help, hints, JSON results, TTY paging, no-pager, color controls, completions, and build information. |
-| JST-CLI-003 | Ordinary JJ commands MUST preserve upstream behavior; a tested capability matrix MUST report unsupported backend commands honestly.                                                        |
-| JST-CLI-004 | Development MUST use explicit build paths and MUST NOT replace installed jj or start unrelated services.                                                                                   |
+| ID          | Requirement                                                                                                                                                                                                                                                                                                                 |
+| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| JST-CLI-001 | Custom commands MUST use jj store under upstream CliRunner, and the server MUST use explicit jj-store run with configuration, diagnostics, and token administration.                                                                                                                                                        |
+| JST-CLI-002 | Custom command families MUST provide authored Markdown long help, short help, keyword help, hints, JSON results, TTY paging, no-pager, color controls, completions, and build information.                                                                                                                                  |
+| JST-CLI-003 | Ordinary JJ commands MUST preserve upstream behavior; a tested capability matrix MUST report unsupported backend commands honestly.                                                                                                                                                                                         |
+| JST-CLI-004 | Development MUST use explicit build paths and MUST NOT replace installed jj or start unrelated services.                                                                                                                                                                                                                    |
+| JST-CLI-005 | Configuration format 2 MUST explicitly tag access, authority storage and repeated backup targets; format 1 MUST remain authenticated external S3; migration MUST emit a separate reviewable file; and local init, catalog repair, backup control, verified restore, help and completions MUST be explicit bounded commands. |
 
 ## M0 extension qualification
 

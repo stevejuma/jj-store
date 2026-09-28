@@ -50,9 +50,16 @@ adds evidence here in its enclosing Jujutsu change.
 | M6          | Done        | M5          | JST-ADAPT-001,JST-ADAPT-002,JST-ADAPT-003,JST-ADAPT-004                 | Replay-equivalent searchable projection with freshness                                                              | Retain snapshot, search and deployment conformance      | E-M6-001,E-M6-002,E-M6-003,E-M6-004,E-M6-005,E-M6-006,E-M6-007,E-M6-008,E-M6-009,E-M6-010                                                                                                                                  |
 | M6.1        | Done        | M5          | JST-ADAPT-001,JST-ADAPT-002                                             | Ordered committed reader and durable replay-safe checkpoints                                                        | Implement Tantivy projection and search                 | E-M6-001                                                                                                                                                                                                                   |
 | M6.2        | Done        | M6.1        | JST-ADAPT-003,JST-ADAPT-004                                             | Tantivy crash/rebuild/generation and revocation tests                                                               | Retain snapshot, search and deployment conformance      | E-SCOPE-001,E-M6-002,E-M6-003,E-M6-004,E-M6-005,E-M6-006,E-M6-007,E-M6-008,E-M6-009,E-M6-010                                                                                                                               |
-| M8a         | Planned     | M6,M4.3     | JST-COMPAT-003,JST-SEC-005                                              | Pinned release, restore, security, performance and cold UI evidence                                                 | Complete backend hardening; retain deferred UI gate     | E-SCOPE-001                                                                                                                                                                                                                |
+| M8a         | In progress | M6,M4.3     | JST-COMPAT-003,JST-COMPAT-005,JST-SEC-005,JST-SEC-006                   | Pinned release, managed local authority, verified backup/restore, security, performance and cold UI evidence        | Complete A0-A5 while retaining deferred UI gate         | E-SCOPE-001,E-M8A-001                                                                                                                                                                                                      |
 | M8a.1       | Planned     | M6          | JST-COMPAT-003,JST-SEC-005                                              | Local/shared examples, diagnostics, restore and request budgets                                                     | Run non-UI release acceptance                           | E-SCOPE-001                                                                                                                                                                                                                |
+| M8a.2       | Done        | M6          | JST-COMPAT-005,JST-OBJ-005                                              | A0: Rust 1.98.1, exact embedded RustFS pin, lifecycle starter, capability report and platform plan                  | Implement A1 format-2 local authority lifecycle         | E-M8A-001                                                                                                                                                                                                                  |
+| M8a.3       | Planned     | M8a.2       | JST-OBJ-005,JST-CLI-005                                                 | A1: format-2 configuration, local initialization, locked volume, sentinel and managed storage lifecycle             | Implement after A0                                      | -                                                                                                                                                                                                                          |
+| M8a.4       | Planned     | M8a.3       | JST-SEC-006,JST-API-007,JST-UI-010,JST-CLI-005                          | A2: LocalTrusted policy, Unix RPC, loopback HTTP protections, bootstrap/catalog and local application               | Implement after A1                                      | -                                                                                                                                                                                                                          |
+| M8a.5       | Planned     | M8a.4       | JST-ADAPT-006,JST-COMPAT-005                                            | A3: wal-copy projection and pinned generic-S3 transfer qualification                                                | Implement after A2                                      | -                                                                                                                                                                                                                          |
+| M8a.6       | Planned     | M8a.5       | JST-ADAPT-006,JST-CLI-005,JST-COMPAT-005                                | A4: immutable verified inventories/certificates, fault qualification and offline restore                            | Implement after A3                                      | -                                                                                                                                                                                                                          |
+| M8a.7       | Planned     | M8a.6       | JST-COMPAT-003,JST-COMPAT-005,JST-SEC-006,JST-UI-010                    | A5: packaged macOS/Linux drills, browser/CLI/CSP/resource evidence and full gates                                   | Implement after A4                                      | -                                                                                                                                                                                                                          |
 | M7          | Deferred    | M8a         | JST-ADAPT-005                                                           | Complete read-only replica through applied position                                                                 | After first release                                     | -                                                                                                                                                                                                                          |
+| M7.1        | Planned     | M8a.4       | JST-ADAPT-006                                                           | Asynchronous verified S3 backup remains independent from passive serving and promotion                              | Implement wal-copy under A3/A4                          | -                                                                                                                                                                                                                          |
 | M8b         | Deferred    | M8a         | JST-COMPAT-004                                                          | Verified lossless import with source safety                                                                         | Separate migration release                              | -                                                                                                                                                                                                                          |
 
 The user reopened production browsing integration on 27 September 2026 after
@@ -10965,6 +10972,119 @@ and named tests are checked by the progress gate.
     "remaining": [],
     "versions": "Community source 9d82df591548a1efc49681b744f7a5f244b8ac99; Design Core source 7beeb4eb9a9d4c75da61df9ae9f3ad02694078df inspected with public MergeEditor, DialogFrame, Button, Alert, Spinner and confirmation primitives consumed through registry range ^0.2.0 and the guarded local source hook; @tanstack/svelte-query 6.3.0; Storybook 10.5.7; Vitest 4.1.11; Playwright 1.63.x; RustFS rustfs/rustfs@sha256:b7014e0ce2bc703c1316b3ef760e29dfae61fe4a50d1a66fa89638e0f8ea211f.",
     "formats": "The UI consumes existing V1 conflict descriptors, conflict-upload responses and resolve_conflicts mutation requests. Every command retains full native commit IDs, path fingerprints, ordered terms and scoped upload handles. Staging content does not publish; only a committed durable receipt advances the selected snapshot. No native object, WAL, API, credential, URL or persistent-layout format changes. The dev:restart task rebuilds and restarts only checkout-owned services and prints credentials without storing the bearer token in the checkout or runtime metadata. Visual tests remain skipped at the user's request and stories remain visual-pending."
+  },
+  {
+    "id": "E-M8A-001",
+    "tasks": ["M8a", "M8a.2"],
+    "date": "2026-09-28",
+    "kind": "embedded-rustfs",
+    "files": [
+      ".gitignore",
+      "rust-toolchain.toml",
+      "Cargo.toml",
+      "crates/jj-store-object/src/s3.rs",
+      "crates/jj-store-server/Cargo.toml",
+      "crates/jj-store-server/src/lib.rs",
+      "crates/jj-store-server/src/storage.rs",
+      "crates/jj-store-server/tests/embedded_storage.rs",
+      "runtime/embedded-rustfs/Cargo.toml",
+      "runtime/embedded-rustfs/Cargo.lock",
+      "runtime/embedded-rustfs/src/main.rs",
+      "README.md",
+      "package.json",
+      "docs/upstream-lock.md",
+      "docs/embedded-rustfs-qualification.md",
+      "docs/implementation-plan.md",
+      "docs/licenses/NOTICE.md",
+      "scripts/check-progress.mjs",
+      "spec-validator.config.mjs",
+      "spec/src/security.md",
+      "spec/src/object-store.md",
+      "spec/src/adapters.md",
+      "spec/src/compatibility.md",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/ui.md",
+      "spec/src/spec-governance.md",
+      "spec/src/verification.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "crates/jj-store-server/tests/embedded_storage.rs#embedded_rustfs_preserves_objects_across_graceful_restart"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-server --test embedded_storage --no-run",
+        "result": "fail",
+        "failures": 4,
+        "note": "Test-first boundary: the embedded storage module and RustFS runtime dependency did not exist; the draft also exposed two test API corrections before implementation."
+      },
+      {
+        "command": "cargo test -p jj-store-server --test embedded_storage --no-run",
+        "result": "fail",
+        "failures": 1,
+        "note": "The exact released rustfs crate and jj-cli each require a different native sys crate declaring links=mimalloc. Cargo correctly rejected one dependency graph, so the unpatched embedded API moved to a separately locked helper owned by the server."
+      },
+      {
+        "command": "CARGO_BUILD_JOBS=4 cargo build --manifest-path runtime/embedded-rustfs/Cargo.toml --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "The first clean macOS ARM64 helper build completed in 20m12s with RustFS 1.0.0 default features disabled. The separately locked helper avoids the released jj-cli and RustFS mimalloc links conflict without patching either upstream crate."
+      },
+      {
+        "command": "JJ_STORE_RUSTFS_RUNTIME=<absolute helper> cargo test -p jj-store-server --test embedded_storage --locked -- --ignored --exact embedded_rustfs_preserves_objects_across_graceful_restart --nocapture (three test-first attempts)",
+        "result": "fail",
+        "failures": 3,
+        "note": "The focused acceptance first found a credential-redaction assertion that reused bucket text, then a package-relative helper path, then a real Tokio worker-stack overflow while RustFS reopened persisted data. The helper now requires absolute owned paths and matches RustFS's 8 MiB debug worker-stack policy."
+      },
+      {
+        "command": "JJ_STORE_RUSTFS_RUNTIME=$PWD/runtime/embedded-rustfs/target/debug/jj-store-rustfs cargo test -p jj-store-server --test embedded_storage --locked -- --ignored --exact embedded_rustfs_preserves_objects_across_graceful_restart --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Real embedded RustFS created the bucket, accepted an S3Store conditional object write, shut down through the owned channel, reopened the same volume and returned exact bytes. Debug measurements: 899687824-byte binary; first start 11808 ms at 115696 KiB RSS; restart 107 ms at 110880 KiB RSS."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate; pnpm check:boundaries; pnpm check:architecture; pnpm check:progress; pnpm format:check; pnpm contracts:check; pnpm web:check; pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Protected mappings, all 75 requirements, 11 package boundaries, the 186-module web budget, 53 milestone tasks, Rust and Prettier formatting, 51 captured HTTP/SSE responses, six contract tests and production/catalog diagnostics pass."
+      },
+      {
+        "command": "pnpm check:embedded-rustfs; pnpm test:embedded-rustfs",
+        "result": "pass",
+        "failures": 0,
+        "note": "The exact pinned helper passes Clippy with warnings denied, then the package-owned task rebuilds it and passes the ignored real-runtime restart acceptance through an absolute helper path."
+      },
+      {
+        "command": "pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Specification, package boundaries, architecture budgets, progress, formatting, embedded-helper Clippy, captured contracts, production/catalog diagnostics and the complete locked Rust workspace Clippy lane pass."
+      },
+      {
+        "command": "VITEST_MAX_WORKERS=1 pnpm test",
+        "result": "pass",
+        "failures": 0,
+        "note": "The complete non-visual aggregate passes 23 governance tests, three storage-harness tests, the real embedded restart, six contract tests, 40 production web tests, 34 catalog unit tests, 68 Storybook interaction/accessibility cases, cold catalog browser acceptance and the complete locked Rust workspace. Declared external-service and OS-credential cases remain ignored in the ordinary workspace lane."
+      },
+      {
+        "command": "pnpm build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Cold Storybook and production browser bundles, the separately locked embedded RustFS helper and the complete locked Rust workspace build successfully. Existing Design Core :global selector and bundle-size diagnostics remain warnings."
+      },
+      {
+        "command": "VITEST_MAX_WORKERS=1 pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 18 canonical lanes pass, including cold catalog/browser evidence, interaction/accessibility, locked Rust checks/tests/builds and mdBook."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "versions": "Rust 1.98.1; rustfs crate 1.0.0 with default features disabled, crates.io checksum ecfecedc774cfa9f40fb0b475e2605cbff858282d18e52927a57ccb5105e5dd4 and published source revision d47f54bfb2f39f48bd1adda334bd27e151fe85b8; external RustFS image rustfs/rustfs@sha256:b7014e0ce2bc703c1316b3ef760e29dfae61fe4a50d1a66fa89638e0f8ea211f; generic-S3 target cgr.dev/chainguard/minio@sha256:6a1d0b45c8669726bba580ced0bfa4cb9fdeed1ed636dfabd81d1577beb6937b remains unqualified until A3.",
+    "formats": "No native object, WAL, receipt, manifest, API, or configuration format change in A0. The embedded runtime has a separate Cargo lock because released RustFS and jj-cli have incompatible unconditional mimalloc link packages. Credentials pass only through the owned child environment; readiness and shutdown use private stdio. Absolute executable and volume paths remove working-directory ambiguity, and the helper's 8 MiB worker stack matches the upstream debug runtime policy."
   }
 ]
 ```

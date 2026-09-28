@@ -16,7 +16,7 @@ existing repository migration is provided.
 
 ## Development
 
-Use Rust 1.97.1, Node 22 or newer, pnpm 10.32.1, and mdBook. Install tooling
+Use Rust 1.98.1, Node 22 or newer, pnpm 10.32.1, and mdBook. Install tooling
 with `pnpm install --frozen-lockfile`. Run `pnpm spec:check`, `pnpm check`,
 `pnpm test`, and `pnpm build`. The pinned Rust toolchain includes rustfmt.
 `pnpm format` formats Rust, authored Markdown and tooling; `pnpm format:check`

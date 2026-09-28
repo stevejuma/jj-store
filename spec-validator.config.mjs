@@ -97,7 +97,7 @@ export default defineConfig(tableRequirements(), {
         },
         {
           pattern:
-            "^(?:crates/jj-store-testkit/|fixtures/|schemas/|proto/|docs/upstream-lock|docs/codec|docs/compatibility|docs/licenses/|docs/evidence/|scripts/.*(?:rustfs|spike|upstream)|deploy/)",
+            "^(?:crates/jj-store-testkit/|runtime/|fixtures/|schemas/|proto/|docs/upstream-lock|docs/embedded-rustfs-qualification|docs/codec|docs/compatibility|docs/licenses/|docs/evidence/|scripts/.*(?:rustfs|spike|upstream)|deploy/)",
           chapters: ["spec/src/compatibility.md"],
         },
         {

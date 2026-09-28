@@ -15,14 +15,15 @@ attachment section 10 is implemented under /v1/repos/{repo}.
 
 ## Requirements
 
-| ID          | Requirement                                                                                                                                                                         |
-| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| JST-API-001 | Read APIs MUST expose versioned DTOs for capabilities, snapshots, native objects, commit/operation/evolution graphs, trees, files, diffs, and conflicts without parsing CLI output. |
-| JST-API-002 | Pagination MUST bind an explicit operation, query, repository, and epoch; ambiguous heads and workspace-dependent expressions MUST require explicit resolution.                     |
-| JST-API-003 | SSE MUST resume from committed positions and detect writes from other serving processes; slow consumers MUST NOT block repository publication.                                      |
-| JST-API-004 | Queries MUST enforce authorization and resource budgets, safely render untrusted source content, and expose incomplete history or rebuild tasks explicitly.                         |
-| JST-API-005 | The Svelte UI MUST show repository selection, snapshot state, three graph views, object/diff inspection, conflict editing, mutation previews/results, and search freshness.         |
-| JST-API-006 | HTTP routes and owned DTOs MUST generate OpenAPI and TypeScript contracts; normal and specification checks MUST reject drift and validate representative actual responses.          |
+| ID          | Requirement                                                                                                                                                                                                                                                                    |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| JST-API-001 | Read APIs MUST expose versioned DTOs for capabilities, snapshots, native objects, commit/operation/evolution graphs, trees, files, diffs, and conflicts without parsing CLI output.                                                                                            |
+| JST-API-002 | Pagination MUST bind an explicit operation, query, repository, and epoch; ambiguous heads and workspace-dependent expressions MUST require explicit resolution.                                                                                                                |
+| JST-API-003 | SSE MUST resume from committed positions and detect writes from other serving processes; slow consumers MUST NOT block repository publication.                                                                                                                                 |
+| JST-API-004 | Queries MUST enforce authorization and resource budgets, safely render untrusted source content, and expose incomplete history or rebuild tasks explicitly.                                                                                                                    |
+| JST-API-005 | The Svelte UI MUST show repository selection, snapshot state, three graph views, object/diff inspection, conflict editing, mutation previews/results, and search freshness.                                                                                                    |
+| JST-API-006 | HTTP routes and owned DTOs MUST generate OpenAPI and TypeScript contracts; normal and specification checks MUST reject drift and validate representative actual responses.                                                                                                     |
+| JST-API-007 | Versioned bootstrap and status APIs MUST expose access mode, public capabilities, storage readiness, LocalTrusted repository discovery, and read-only backup progress/restore-point state without exposing credentials or treating discovery metadata as repository authority. |
 
 ## Read-session foundation
 

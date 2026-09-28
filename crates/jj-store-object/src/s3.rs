@@ -112,6 +112,15 @@ impl S3Store {
     ) -> Result<reqwest::RequestBuilder> {
         let mut url = self.endpoint.clone();
         url.set_path(&format!("/{}/{}", self.config.bucket, key.as_str()));
+        Ok(self.signed_request(method, url, payload, extra))
+    }
+    fn signed_request(
+        &self,
+        method: Method,
+        url: Url,
+        payload: [u8; 32],
+        extra: BTreeMap<String, String>,
+    ) -> reqwest::RequestBuilder {
         let headers = sign(
             &method,
             &url,
@@ -125,7 +134,7 @@ impl S3Store {
         for (name, value) in headers {
             request = request.header(name, value);
         }
-        Ok(request)
+        request
     }
     fn metadata(&self, response: &Response) -> Result<Metadata> {
         let len = response
@@ -141,6 +150,24 @@ impl S3Store {
             len,
             version: version(response)?,
         })
+    }
+    /// Create the configured bucket if it is absent.
+    ///
+    /// This is an explicit provisioning operation for a managed storage
+    /// runtime. Ordinary object reads and writes never list or provision.
+    pub async fn ensure_bucket(&self) -> Result<()> {
+        let mut url = self.endpoint.clone();
+        url.set_path(&format!("/{}", self.config.bucket));
+        let response = self
+            .signed_request(Method::PUT, url, Sha256::digest([]).into(), BTreeMap::new())
+            .body(Vec::new())
+            .send()
+            .await
+            .map_err(|_| Error::Transport)?;
+        match response.status() {
+            StatusCode::OK | StatusCode::CREATED | StatusCode::NO_CONTENT => Ok(()),
+            status => Err(Error::Rejected(status.as_u16())),
+        }
     }
 }
 fn version(response: &Response) -> Result<VersionToken> {

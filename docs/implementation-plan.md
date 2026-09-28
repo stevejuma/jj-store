@@ -54,6 +54,22 @@ work continues commit/operation inspection cursors, removes eager recursive tree
 reads, adds lazy directory expansion, validates the upstream FileListing change
 in Community and consumes a released Design Core version before M4.14.
 
+## Execution scope update — 28 September 2026
+
+M8a now adds a trusted-local deployment without weakening authenticated shared
+servers. A0-A5 qualify Rust 1.98.1, a released embedded RustFS 1.0.0 runtime,
+format-2 access/storage/backup configuration, LocalTrusted Unix and guarded
+loopback transports, installation-owned repository discovery, asynchronous
+verified `wal-copy` backup, offline restore, and packaged macOS ARM64/Linux
+x86_64 drills. The existing external RustFS image lane remains independent.
+Generic S3 backup targets a pinned MinIO image; AWS is not claimed.
+
+The work does not add automatic failover, writable promotion, destructive GC,
+delete replication, multi-writer authority, existing-authority migration,
+Windows, Git, Nostr, or Smart HTTP. Bucket replication remains disabled unless
+its separate embedded-to-generic-S3 qualification passes. Visual baselines stay
+deferred while functional interactions and accessibility remain required.
+
 ## Repository foundation and progress tracking
 
 Create a tracked agent guide, unchanged attachment archive, this execution plan,
@@ -94,13 +110,12 @@ codecs initially live with JJ integration. Storage/publication never depend on
 UI, search, or future projections.
 
 Pin jj-cli and jj-lib together at 0.45.1, upstream revision
-`7c41cdeb16b6b321c64e789a966b6adf723816a5`. Start with Rust 1.97.1, edition
-2024, and Apache-2.0. Commit dependency locks, reference revisions, and
-attribution. Use pinned SimpleBackend identity and SimpleOpStore operation/view
-hashing as references. Complete project codecs include copy histories and
-submodule entries missing from SimpleBackend, native ordering, signatures,
-roots, and absent versus empty predecessors. Envelope checksums are distinct
-from native IDs.
+`7c41cdeb16b6b321c64e789a966b6adf723816a5`. Use Rust 1.98.1, edition 2024, and
+Apache-2.0. Commit dependency locks, reference revisions, and attribution. Use
+pinned SimpleBackend identity and SimpleOpStore operation/view hashing as
+references. Complete project codecs include copy histories and submodule entries
+missing from SimpleBackend, native ordering, signatures, roots, and absent
+versus empty predecessors. Envelope checksums are distinct from native IDs.
 
 Immutable objects, dependency inventories, receipts, and attempt-unique WAL
 candidates precede one conditional manifest update. Only selected records are

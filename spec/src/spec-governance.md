@@ -18,23 +18,23 @@ status; reports hold immutable evidence rather than competing status summaries.
 
 ## Change map
 
-| Protected area                                                                                                                                                                                   | Required chapter     |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------- |
-| `^(?:catalog/\|\.storybook/\|docs/catalog\.md$)`                                                                                                                                                 | `ui.md`              |
-| `^rustfmt\.toml$`                                                                                                                                                                                | `spec-governance.md` |
-| `^crates/jj-store-model/`                                                                                                                                                                        | `identity.md`        |
-| `^crates/jj-store-object/`                                                                                                                                                                       | `object-store.md`    |
-| `^crates/jj-store-wal/`                                                                                                                                                                          | `publication.md`     |
-| `^crates/jj-store-jj/`                                                                                                                                                                           | `jj-integration.md`  |
-| `^crates/jj-store-service/`                                                                                                                                                                      | `mutations.md`       |
-| `^crates/jj-store-rpc/`                                                                                                                                                                          | `jj-integration.md`  |
-| `^crates/jj-store-server/`                                                                                                                                                                       | `cli.md`             |
-| `^(?:crates/jj-store-http/\|web/\|docs/browser\.md$)`                                                                                                                                            | `api.md`             |
-| `^crates/jj-store-(?:adapters\|tantivy)/`                                                                                                                                                        | `adapters.md`        |
-| `^(?:crates/jj-store-cli/\|bins/\|docs/cli/)`                                                                                                                                                    | `cli.md`             |
-| `^(?:crates/jj-store-testkit/\|fixtures/\|schemas/\|proto/\|docs/upstream-lock\|docs/codec\|docs/compatibility\|docs/licenses/\|docs/evidence/\|scripts/.*(?:rustfs\|spike\|upstream)\|deploy/)` | `compatibility.md`   |
-| `^(?:scripts/\|AGENTS\.md$\|spec-validator\.config\.mjs$\|spec/book\.toml$\|\.gitignore$\|\.pnpmfile\.cjs$\|\.prettier)`                                                                         | `spec-governance.md` |
-| `^(?:Cargo\.(?:toml\|lock)$\|rust-toolchain\.toml$\|package\.json$\|pnpm-lock\.yaml$\|README\.md$\|LICENSE\.md$\|docs/implementation-plan\.md$\|docs/reference/)`                                | `architecture.md`    |
+| Protected area                                                                                                                                                                                                                                 | Required chapter     |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
+| `^(?:catalog/\|\.storybook/\|docs/catalog\.md$)`                                                                                                                                                                                               | `ui.md`              |
+| `^rustfmt\.toml$`                                                                                                                                                                                                                              | `spec-governance.md` |
+| `^crates/jj-store-model/`                                                                                                                                                                                                                      | `identity.md`        |
+| `^crates/jj-store-object/`                                                                                                                                                                                                                     | `object-store.md`    |
+| `^crates/jj-store-wal/`                                                                                                                                                                                                                        | `publication.md`     |
+| `^crates/jj-store-jj/`                                                                                                                                                                                                                         | `jj-integration.md`  |
+| `^crates/jj-store-service/`                                                                                                                                                                                                                    | `mutations.md`       |
+| `^crates/jj-store-rpc/`                                                                                                                                                                                                                        | `jj-integration.md`  |
+| `^crates/jj-store-server/`                                                                                                                                                                                                                     | `cli.md`             |
+| `^(?:crates/jj-store-http/\|web/\|docs/browser\.md$)`                                                                                                                                                                                          | `api.md`             |
+| `^crates/jj-store-(?:adapters\|tantivy)/`                                                                                                                                                                                                      | `adapters.md`        |
+| `^(?:crates/jj-store-cli/\|bins/\|docs/cli/)`                                                                                                                                                                                                  | `cli.md`             |
+| `^(?:crates/jj-store-testkit/\|runtime/\|fixtures/\|schemas/\|proto/\|docs/upstream-lock\|docs/embedded-rustfs-qualification\|docs/codec\|docs/compatibility\|docs/licenses/\|docs/evidence/\|scripts/.*(?:rustfs\|spike\|upstream)\|deploy/)` | `compatibility.md`   |
+| `^(?:scripts/\|AGENTS\.md$\|spec-validator\.config\.mjs$\|spec/book\.toml$\|\.gitignore$\|\.pnpmfile\.cjs$\|\.prettier)`                                                                                                                       | `spec-governance.md` |
+| `^(?:Cargo\.(?:toml\|lock)$\|rust-toolchain\.toml$\|package\.json$\|pnpm-lock\.yaml$\|README\.md$\|LICENSE\.md$\|docs/implementation-plan\.md$\|docs/reference/)`                                                                              | `architecture.md`    |
 
 The M0 contract harness is validated in both normal tests and spec checks. Real
 storage qualification remains an explicit lane and cannot be inferred from the
@@ -65,10 +65,11 @@ post-kill recovery process; neither is inferred from normal ignored tests.
 
 The pinned Rust toolchain includes rustfmt. The root rustfmt.toml fixes Rust and
 formatting editions to 2024 and uses Unix line endings. `pnpm format:rust`
-formats every workspace crate, including examples and tests;
-`pnpm format:rust:check` checks those files without changing them. `pnpm format`
-and `pnpm format:check` include Rust alongside Prettier. Both `pnpm check` and
-`pnpm spec:check` reject Rust formatting drift.
+formats every workspace crate and the separately locked embedded RustFS runtime,
+including examples and tests; `pnpm format:rust:check` checks those files
+without changing them. `pnpm format` and `pnpm format:check` include Rust
+alongside Prettier. Both `pnpm check` and `pnpm spec:check` reject Rust
+formatting drift.
 
 The RPC layer may consume the owned object streaming interface. Its native JJ
 trait adapters remain in the CLI crate, and direct upstream JJ dependencies in
