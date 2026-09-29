@@ -38,16 +38,16 @@ and the [server guide](docs/cli/server.md). Use
 paths; development never replaces the installed `jj`.
 
 For the browser UI, `pnpm dev:restart` rebuilds the UI, embedded RustFS helper
-and development binaries, initializes a private LocalTrusted installation,
-creates and registers a native demo repository, then prints its URL and runtime
-directory. It requires no repository token or Docker service. The installation
-identity, repository authority and RustFS volume persist under the operating
-system temporary directory until `pnpm dev:stop` removes the owned stack.
-`pnpm web:test:real` cold-starts that same token-free stack, publishes a change
-through a separate native CLI process, verifies SSE notification and explicit
-browser refresh through the built UI, then removes the disposable services.
-Search indexing remains a separately configured/deferred service and is not
-started by the local demo.
+and development binaries, then starts the private LocalTrusted installation in
+`.local/dev-demo`. It initializes and seeds the native demo repository only when
+that ignored directory is empty. `pnpm dev:stop` stops the owned processes while
+preserving the repository, installation identity and embedded RustFS volume;
+`pnpm dev:reset` replaces them with the deterministic sample fixture. No
+repository token or Docker service is required. `pnpm web:test:real` uses its
+own OS-temporary fixture, publishes a change through a separate native CLI
+process, verifies SSE notification and explicit browser refresh through the
+built UI, then removes that isolated fixture. The local demo configures its
+search worker and reports ready only after the seeded repository is indexed.
 
 On macOS with Xcode license prompts, prefix checks with
 `DEVELOPER_DIR=/Library/Developer/CommandLineTools` to use the installed Command

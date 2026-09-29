@@ -3,6 +3,7 @@
 /node_modules/
 /spec/book/
 /.scratch/
+/.local/
 /web/node_modules/
 /web/dist/
 /web/.svelte-kit/

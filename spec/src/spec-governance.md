@@ -56,6 +56,13 @@ runtime acceptance without same-change governance review. Upstream Community and
 Design Core changes remain separate source-owned changes with consumer
 acceptance in this repository.
 
+The checkout-owned development harness stores its interactive fixture only in
+the ignored `.local/dev-demo` subtree. Restart and stop preserve that fixture;
+reset is the explicit destructive reseed boundary. Cold browser acceptance must
+provide a separate temporary root so its publications and cleanup cannot alter
+interactive state. Harness state and process markers remain separate so a stop
+cannot leave a stale PID that blocks the next restart.
+
 ## M0 extension qualification
 
 Native compatibility probes are normal Rust test targets. Their source/fixture

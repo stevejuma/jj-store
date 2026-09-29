@@ -1,7 +1,7 @@
 use jj_store_model::{PrincipalId, RepositoryId};
 use jj_store_server::{
     config::{Config, EXAMPLE},
-    policy::{PolicyFile, exclusive_lock, outside_checkout},
+    policy::{PolicyFile, exclusive_lock, outside_checkout, outside_checkout_for_development},
 };
 use jj_store_service::{
     administration::OperatorPolicies as _,
@@ -102,6 +102,29 @@ fn insecure_shared_endpoints_credentials_and_checkout_control_paths_are_rejected
         load(
             root.path(),
             &EXAMPLE.replace("./operators.json", "./repo/operators.json")
+        )
+        .is_err()
+    );
+}
+
+#[test]
+fn explicit_ignored_development_root_allows_only_its_descendants() {
+    let root = tempfile::tempdir().unwrap();
+    let checkout = root.path().join("repo");
+    fs::create_dir(&checkout).unwrap();
+    fs::create_dir(checkout.join(".jj")).unwrap();
+    let development = checkout.join(".local/dev-demo");
+    fs::create_dir_all(&development).unwrap();
+
+    assert_eq!(
+        outside_checkout_for_development(&development.join("state"), Some(&development)).unwrap(),
+        development.canonicalize().unwrap().join("state")
+    );
+    assert!(outside_checkout_for_development(&checkout.join("other"), Some(&development)).is_err());
+    assert!(
+        outside_checkout_for_development(
+            &checkout.join("state"),
+            Some(&checkout.join("not-local"))
         )
         .is_err()
     );

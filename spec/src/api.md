@@ -560,12 +560,13 @@ transport behavior. Clean environments without the sibling source use the
 registry range and committed registry lockfile.
 
 Real browser deployment acceptance is a separate opt-in lane from captured
-response tests. It initializes a persistent LocalTrusted installation, starts
-the built bundle and native server with checkout-owned embedded RustFS,
-auto-opens the sole catalog repository without credentials, publishes through
-another native CLI process over the owner-only Unix socket, and requires
-explicit refresh before the displayed operation changes. The selected bookmark,
-commit and change identities must survive that refresh.
+response tests. It resets an isolated OS-temporary LocalTrusted installation,
+starts the built bundle and native server with embedded RustFS, auto-opens the
+sole catalog repository without credentials, publishes through another native
+CLI process over the owner-only Unix socket, and requires explicit refresh
+before the displayed operation changes. The selected bookmark, commit and change
+identities must survive that refresh. Its environment-selected fixture root and
+cleanup cannot alter the interactive `.local/dev-demo` installation.
 
 The disposable repository used by this lane contains a native unresolved
 multi-parent file conflict and a concurrent rewrite pair with one JJ change ID

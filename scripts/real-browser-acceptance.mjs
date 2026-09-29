@@ -1,13 +1,15 @@
 #!/usr/bin/env node
 
 import { execFileSync } from "node:child_process";
-import { readFileSync } from "node:fs";
-import { arch, platform } from "node:os";
+import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { arch, platform, tmpdir } from "node:os";
 import { join } from "node:path";
 import { resolve } from "node:path";
 
 const repositoryRoot = resolve(import.meta.dirname, "..");
 const keep = process.env.JJ_STORE_REAL_KEEP === "1";
+const acceptanceRoot = mkdtempSync(join(tmpdir(), "jj-store-real-browser-"));
+const demoEnvironment = { JJ_STORE_DEV_ROOT: acceptanceRoot };
 
 function execute(command, args, options = {}) {
   return execFileSync(command, args, {
@@ -27,7 +29,10 @@ function field(output, label) {
 
 let started = false;
 try {
-  const output = execute("pnpm", ["dev:restart"], { encoding: "utf8" });
+  const output = execute("pnpm", ["dev:reset"], {
+    encoding: "utf8",
+    env: demoEnvironment,
+  });
   started = true;
   const baseURL = field(output, "URL");
   const repository = field(output, "Repository ID");
@@ -76,7 +81,14 @@ try {
     },
   );
 } finally {
-  if (started && !keep) execute("pnpm", ["dev:stop"], { stdio: "inherit" });
+  if (started && !keep)
+    execute("pnpm", ["dev:stop"], {
+      env: demoEnvironment,
+      stdio: "inherit",
+    });
+  if (!keep) rmSync(acceptanceRoot, { force: true, recursive: true });
   else if (started)
-    console.log("JJ_STORE_REAL_KEEP=1 left the development stack running.");
+    console.log(
+      `JJ_STORE_REAL_KEEP=1 left the development stack running at ${acceptanceRoot}.`,
+    );
 }

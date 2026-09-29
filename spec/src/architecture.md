@@ -246,11 +246,14 @@ the browser bundle before the Rust executables.
 
 The development demo orchestrator owns one pinned embedded RustFS child, one
 recorded native server process, the built browser bundle, a private LocalTrusted
-installation and one disposable native checkout under the operating system
-temporary directory. The real browser acceptance runner auto-opens the verified
-catalog entry without credentials, publishes through a separate Unix-RPC CLI
-process and removes the owned stack. It refuses unowned listeners and process
-identities and records bounded startup/RSS measurements.
+installation and one persistent native checkout under the ignored
+`.local/dev-demo` subtree. Durable fixture metadata is separate from ephemeral
+process metadata: restart and stop preserve repository/RustFS state, while reset
+is the explicit destructive reseed boundary. The real browser acceptance runner
+uses a separate operating-system temporary root, auto-opens the verified catalog
+entry without credentials, publishes through a separate Unix-RPC CLI process and
+removes only that isolated stack. Both paths refuse unowned listeners and
+process identities and record bounded startup/RSS measurements.
 
 The user deferred shared-deployment browser release qualification on 28
 September 2026. Manual-token authenticated discovery and repository selection

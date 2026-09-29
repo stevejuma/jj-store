@@ -40,6 +40,7 @@
     "web:dev": "vite --config web/vite.config.ts",
     "web:preview": "vite preview --config web/vite.config.ts",
     "dev:restart": "node scripts/dev-demo.mjs restart",
+    "dev:reset": "node scripts/dev-demo.mjs reset",
     "dev:stop": "node scripts/dev-demo.mjs stop",
     "web:test": "tsx --test web/tests/*.test.ts",
     "web:test:browser": "pnpm web:build && node scripts/browser-fixtures.mjs && playwright test --config web/playwright.config.ts",

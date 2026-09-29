@@ -3,7 +3,6 @@
 import { spawn } from "node:child_process";
 import { openSync } from "node:fs";
 import { chmod, mkdir, readFile, rm, writeFile } from "node:fs/promises";
-import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import {
   execute,
@@ -12,18 +11,24 @@ import {
   waitForServer,
 } from "./dev-demo-services.mjs";
 import { seedRepository } from "./dev-demo-repository.mjs";
+import {
+  developmentLayout,
+  loadFixture,
+  rewriteServerConfiguration,
+  writeFixture,
+} from "./dev-demo-state.mjs";
 
 const repositoryRoot = resolve(import.meta.dirname, "..");
-const userSuffix =
-  typeof process.getuid === "function" ? process.getuid() : "user";
-const runtimeRoot = join(tmpdir(), `jj-store-dev-${userSuffix}`);
-const runtimeFile = join(runtimeRoot, "runtime.json");
+const layout = developmentLayout(repositoryRoot);
 const serverPort = Number(process.env.JJ_STORE_DEV_PORT ?? "7460");
+const developmentEnvironment = {
+  JJ_STORE_DEVELOPMENT_STATE_ROOT: layout.runtimeRoot,
+};
 
 async function run(command, args, options = {}) {
   return execute(command, args, {
     cwd: repositoryRoot,
-    env: options.env,
+    env: { ...developmentEnvironment, ...options.env },
   });
 }
 
@@ -34,7 +39,7 @@ function startServer(serverConfig, logHandle) {
     {
       cwd: repositoryRoot,
       detached: true,
-      env: process.env,
+      env: { ...process.env, ...developmentEnvironment },
       stdio: ["ignore", logHandle, logHandle],
     },
   );
@@ -111,25 +116,28 @@ async function waitForSearch(origin, repositoryId) {
   );
 }
 
-async function restart() {
-  await stopPrevious({
-    owner: repositoryRoot,
-    runtimeFile,
-    runtimeRoot,
-  });
+async function assertPortAvailable() {
   try {
     await fetch(`http://127.0.0.1:${serverPort}/`);
     throw new Error(`port ${serverPort} is occupied by an unowned service`);
   } catch (error) {
     if (!String(error.message).includes("fetch failed")) throw error;
   }
-  await rm(runtimeRoot, { recursive: true, force: true });
-  await mkdir(runtimeRoot, { recursive: true, mode: 0o700 });
-  await run("pnpm", ["web:build"]);
-  await run("pnpm", ["build:embedded-rustfs"]);
-  await run("cargo", ["build", "-p", "jj-store-cli", "--bins", "--locked"]);
-  const origin = `http://127.0.0.1:${serverPort}/`;
-  const stateRoot = join(runtimeRoot, "local");
+}
+
+async function refreshServerConfiguration(origin) {
+  const generated = await readFile(layout.serverConfig, "utf8");
+  await writeFile(
+    layout.serverConfig,
+    rewriteServerConfiguration(generated, {
+      origin,
+      webRoot: join(repositoryRoot, "web/dist"),
+    }),
+    { mode: 0o600 },
+  );
+}
+
+async function initializeFixture(origin, logHandle) {
   const rustfsRuntime = resolve(
     repositoryRoot,
     "runtime/embedded-rustfs/target/debug/jj-store-rustfs",
@@ -138,58 +146,68 @@ async function restart() {
     "init",
     "--local",
     "--state-dir",
-    stateRoot,
+    layout.stateRoot,
     "--rustfs-executable",
     rustfsRuntime,
     "--format=json",
   ]);
-  const serverConfig = join(stateRoot, "server.toml");
-  const unixSocket = join(stateRoot, "native.sock");
-  const generated = await readFile(serverConfig, "utf8");
-  await writeFile(
-    serverConfig,
-    generated
-      .replace('bind = "127.0.0.1:7443"', `bind = "127.0.0.1:${serverPort}"`)
-      .replace(
-        'public_url = "http://127.0.0.1:7443/"',
-        `public_url = "${origin}"`,
-      )
-      .replace(
-        /operator_policy = (.+)\n/u,
-        `operator_policy = $1\nweb_root = ${JSON.stringify(join(repositoryRoot, "web/dist"))}\n`,
-      ),
-    { mode: 0o600 },
-  );
-  const logPath = join(runtimeRoot, "server.log");
-  const logHandle = openSync(logPath, "a", 0o600);
-  let started = performance.now();
-  let server = startServer(serverConfig, logHandle);
-  await waitForServer(origin);
-  const firstStartupMillis = Math.round(performance.now() - started);
-  const repositoryId = await seedRepository({
-    repositoryRoot,
-    runtimeRoot,
-    run,
-    unixSocket,
-  });
-  await stopServer(server);
+  await refreshServerConfiguration(origin);
+  const started = performance.now();
+  const server = startServer(layout.serverConfig, logHandle);
+  let repositoryId;
+  let firstStartupMillis;
+  try {
+    await waitForServer(origin);
+    firstStartupMillis = Math.round(performance.now() - started);
+    repositoryId = await seedRepository({
+      repositoryRoot,
+      runtimeRoot: layout.runtimeRoot,
+      run,
+      unixSocket: layout.unixSocket,
+    });
+  } finally {
+    await stopServer(server);
+  }
   await run(resolve(repositoryRoot, "target/debug/jj-store"), [
     "repository",
     "register",
     "--config",
-    serverConfig,
+    layout.serverConfig,
     "--repo-id",
     repositoryId,
     "--name",
     "jj-store demo",
     "--format=json",
   ]);
-  await configureSearch(serverConfig, repositoryId);
-  started = performance.now();
-  server = startServer(serverConfig, logHandle);
+  await configureSearch(layout.serverConfig, repositoryId);
+  return writeFixture(layout, {
+    firstStartupMillis,
+    repositoryId,
+  });
+}
+
+async function restart({ reset = false } = {}) {
+  await stopPrevious({
+    owner: repositoryRoot,
+    runtimeFile: layout.runtimeFile,
+    runtimeRoot: layout.runtimeRoot,
+  });
+  if (reset) await rm(layout.runtimeRoot, { recursive: true, force: true });
+  await assertPortAvailable();
+  await run("pnpm", ["web:build"]);
+  await run("pnpm", ["build:embedded-rustfs"]);
+  await run("cargo", ["build", "-p", "jj-store-cli", "--bins", "--locked"]);
+  const origin = `http://127.0.0.1:${serverPort}/`;
+  let fixture = await loadFixture(layout);
+  await mkdir(layout.runtimeRoot, { recursive: true, mode: 0o700 });
+  const logHandle = openSync(layout.logPath, "a", 0o600);
+  if (fixture) await refreshServerConfiguration(origin);
+  else fixture = await initializeFixture(origin, logHandle);
+  const started = performance.now();
+  const server = startServer(layout.serverConfig, logHandle);
   try {
     await waitForServer(origin);
-    await waitForSearch(origin, repositoryId);
+    await waitForSearch(origin, fixture.repositoryId);
   } catch (error) {
     await stopServer(server);
     throw error;
@@ -202,39 +220,44 @@ async function restart() {
     storageMode: "embedded-rustfs",
     serverPid: server.pid,
     origin,
-    repositoryId,
-    runtimeRoot,
-    serverConfig,
+    repositoryId: fixture.repositoryId,
+    runtimeRoot: layout.runtimeRoot,
+    serverConfig: layout.serverConfig,
     resources: {
-      firstStartupMillis,
+      firstStartupMillis: fixture.firstStartupMillis,
       restartStartupMillis,
       ...processes,
     },
   };
-  await writeFile(runtimeFile, `${JSON.stringify(runtime, null, 2)}\n`, {
+  await writeFile(layout.runtimeFile, `${JSON.stringify(runtime, null, 2)}\n`, {
     mode: 0o600,
   });
-  await chmod(runtimeRoot, 0o700);
+  await chmod(layout.runtimeRoot, 0o700);
   console.log(
-    `JJ Store LocalTrusted development demo is ready.\n\nURL: ${origin}\nRepository ID: ${repositoryId}\nCredentials: none (local loopback access)\nRuntime: ${runtimeRoot}\nStorage: embedded RustFS\nSearch: ready\nStartup: ${firstStartupMillis} ms cold, ${restartStartupMillis} ms restart\nResident memory: ${processes.totalRssKiB} KiB server plus storage\n\nThe repository, installation identity and RustFS volume persist under the runtime directory until pnpm dev:stop.`,
+    `JJ Store LocalTrusted development demo is ready.\n\nURL: ${origin}\nRepository ID: ${fixture.repositoryId}\nCredentials: none (local loopback access)\nRuntime: ${layout.runtimeRoot}\nStorage: embedded RustFS\nFixture: ${reset ? "reset and seeded" : "reused or initialized"}\nSearch: ready\nStartup: ${fixture.firstStartupMillis} ms cold, ${restartStartupMillis} ms restart\nResident memory: ${processes.totalRssKiB} KiB server plus storage\n\nThe repository, installation identity and RustFS volume persist across restart and stop. Run pnpm dev:reset to replace them with a deterministic sample fixture.`,
   );
 }
 
 async function stop() {
   await stopPrevious({
     owner: repositoryRoot,
-    runtimeFile,
-    runtimeRoot,
+    runtimeFile: layout.runtimeFile,
+    runtimeRoot: layout.runtimeRoot,
   });
-  await rm(runtimeRoot, { recursive: true, force: true });
-  console.log("JJ Store development demo stopped.");
+  console.log(
+    `JJ Store development demo stopped. Preserved state: ${layout.runtimeRoot}`,
+  );
 }
 
 const action = process.argv[2] ?? "restart";
 try {
   if (action === "restart") await restart();
+  else if (action === "reset") await restart({ reset: true });
   else if (action === "stop") await stop();
-  else throw new Error(`unknown action ${action}; expected restart or stop`);
+  else
+    throw new Error(
+      `unknown action ${action}; expected restart, reset or stop`,
+    );
 } catch (error) {
   console.error(error.stderr || error.stack || error.message);
   process.exitCode = 1;

@@ -1,4 +1,3 @@
-import { randomBytes } from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 
@@ -49,7 +48,7 @@ async function seedLinearHistory(repository, jj) {
   await mkdir(join(repository, "assets"), { recursive: true });
   await writeFile(
     join(repository, "README.md"),
-    "# jj-store demo\n\nThis native repository is created by `pnpm dev:restart`.\n",
+    "# jj-store demo\n\nThis native repository is recreated by `pnpm dev:reset` and preserved by `pnpm dev:restart`.\n",
   );
   await writeFile(join(repository, "LICENSE"), "Apache-2.0\n");
   await writeFile(
@@ -60,7 +59,12 @@ async function seedLinearHistory(repository, jj) {
     join(repository, "src/lib.rs"),
     'pub fn repository_name() -> &\'static str {\n    "jj-store demo"\n}\n',
   );
-  await writeFile(join(repository, "assets/logo.bin"), randomBytes(96));
+  await writeFile(
+    join(repository, "assets/logo.bin"),
+    Buffer.from(
+      Array.from({ length: 96 }, (_, index) => (index * 37 + 11) % 256),
+    ),
+  );
   await jj(["describe", "-m", "Bootstrap native repository"]);
   await jj(["bookmark", "create", "release/0.1", "-r", "@"]);
   await jj(["new", "-m", "Add repository browser"]);

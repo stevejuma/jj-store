@@ -51,9 +51,9 @@ adds evidence here in its enclosing Jujutsu change.
 | M6.1        | Done        | M5          | JST-ADAPT-001,JST-ADAPT-002                                             | Ordered committed reader and durable replay-safe checkpoints                                                        | Implement Tantivy projection and search                 | E-M6-001                                                                                                                                                                                                                                                    |
 | M6.2        | Done        | M6.1        | JST-ADAPT-003,JST-ADAPT-004                                             | Tantivy crash/rebuild/generation and revocation tests                                                               | Retain snapshot, search and deployment conformance      | E-SCOPE-001,E-M6-002,E-M6-003,E-M6-004,E-M6-005,E-M6-006,E-M6-007,E-M6-008,E-M6-009,E-M6-010                                                                                                                                                                |
 | M8a         | Deferred    | M6          | JST-COMPAT-003,JST-COMPAT-005,JST-SEC-005,JST-SEC-006                   | LocalTrusted macOS release is complete; backup, provider and cross-platform children remain deferred                | Future backup/shared/platform release                   | E-SCOPE-001,E-M8A-001,E-M8A-002,E-M8A-003,E-M8A-004                                                                                                                                                                                                         |
-| M8a.1       | Done        | M6          | JST-COMPAT-003,JST-SEC-005                                              | Local examples, graceful/abrupt restart, startup-fault diagnostics, request budgets and macOS release acceptance    | Retain local release acceptance                         | E-SCOPE-001,E-M8A-004                                                                                                                                                                                                                                       |
+| M8a.1       | Done        | M6          | JST-COMPAT-003,JST-SEC-005                                              | Local examples, graceful/abrupt restart, startup-fault diagnostics, request budgets and macOS release acceptance    | Retain local release acceptance                         | E-SCOPE-001,E-M8A-004,E-M8A-006                                                                                                                                                                                                                             |
 | M8a.2       | Done        | M6          | JST-COMPAT-005,JST-OBJ-005                                              | A0: Rust 1.98.1, exact embedded RustFS pin, lifecycle starter, capability report and platform plan                  | Implement A1 format-2 local authority lifecycle         | E-M8A-001                                                                                                                                                                                                                                                   |
-| M8a.3       | Done        | M8a.2       | JST-OBJ-005,JST-CLI-005                                                 | A1: strict format-2 configuration, local initialization, locked volume, sentinel and managed storage lifecycle      | Retain local lifecycle acceptance                       | E-M8A-002                                                                                                                                                                                                                                                   |
+| M8a.3       | Done        | M8a.2       | JST-OBJ-005,JST-CLI-005                                                 | A1: strict format-2 configuration, local initialization, locked volume, sentinel and managed storage lifecycle      | Retain local lifecycle acceptance                       | E-M8A-002,E-M8A-006                                                                                                                                                                                                                                         |
 | M8a.4       | Done        | M8a.3       | JST-SEC-006,JST-API-007,JST-UI-010,JST-CLI-005                          | A2: LocalTrusted policy, Unix RPC, loopback HTTP protections, bootstrap/catalog and local application               | Retain LocalTrusted acceptance                          | E-M8A-003                                                                                                                                                                                                                                                   |
 | M8a.5       | Deferred    | M8a.4       | JST-ADAPT-006,JST-COMPAT-005                                            | A3: wal-copy projection and pinned generic-S3 transfer qualification                                                | Future backup release                                   | -                                                                                                                                                                                                                                                           |
 | M8a.6       | Deferred    | M8a.5       | JST-ADAPT-006,JST-CLI-005,JST-COMPAT-005                                | A4: immutable verified inventories/certificates, fault qualification and offline restore                            | Future backup/restore release                           | -                                                                                                                                                                                                                                                           |
@@ -14966,6 +14966,98 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Rust 1.98.1; ReviewCommandV1 and ReviewCommandResultV1 schema v1; ReviewCommand request/outcome/status response v1; OpenAPI 3.1; generated TypeScript contracts.",
     "formats": "Adds JSON POST /v1/repos/{repo}/reviews/commands and GET /v1/repos/{repo}/reviews/commands/{request_id}. The service derives the authenticated principal and jj-store/review-publication/v1 publication ID, validates canonical result bytes and returns the existing manifest-selected receipt. Native objects, manifest format 2, WAL and ReviewStore persistence remain unchanged."
+  },
+  {
+    "id": "E-M8A-006",
+    "tasks": ["M8a.1", "M8a.3"],
+    "date": "2026-09-29",
+    "kind": "persistent-local-development-fixture",
+    "files": [
+      ".gitignore",
+      "README.md",
+      "crates/jj-store-server/src/policy.rs",
+      "crates/jj-store-server/tests/configuration.rs",
+      "docs/browser.md",
+      "package.json",
+      "scripts/dev-demo-repository.mjs",
+      "scripts/dev-demo-services.mjs",
+      "scripts/dev-demo-state.mjs",
+      "scripts/dev-demo-state.test.mjs",
+      "scripts/dev-demo.mjs",
+      "scripts/real-browser-acceptance.mjs",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/milestones.md",
+      "spec/src/security.md",
+      "spec/src/spec-governance.md"
+    ],
+    "tests": [
+      "scripts/dev-demo-state.test.mjs#development layout defaults to ignored checkout state and accepts isolation",
+      "scripts/dev-demo-state.test.mjs#fixture marker distinguishes reusable state from partial state",
+      "scripts/dev-demo-state.test.mjs#server configuration refresh is idempotent",
+      "crates/jj-store-server/tests/configuration.rs#explicit_ignored_development_root_allows_only_its_descendants"
+    ],
+    "runs": [
+      {
+        "command": "node --test scripts/dev-demo-state.test.mjs",
+        "result": "fail",
+        "failures": 1,
+        "note": "The test-first state boundary failed because the persistent development-layout module did not exist."
+      },
+      {
+        "command": "cargo test -p jj-store-server --test configuration explicit_ignored_development_root_allows_only_its_descendants --locked -- --exact",
+        "result": "fail",
+        "failures": 1,
+        "note": "The exact policy regression failed to compile because no constrained ignored-checkout development-root boundary existed."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm dev:reset",
+        "result": "fail",
+        "failures": 1,
+        "note": "The first live reset reached the expected production safety boundary and rejected checkout-local credentials and process state."
+      },
+      {
+        "command": "node --test scripts/dev-demo-state.test.mjs; node --check scripts/dev-demo.mjs; node --check scripts/real-browser-acceptance.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "All three state/layout/configuration regressions pass and both lifecycle entrypoints parse."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo test -p jj-store-server --test configuration --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All ten focused configuration and control-path cases pass, including production checkout rejection, symlink rejection and the exact .local descendant exception."
+      },
+      {
+        "command": "cargo fmt --all -- --check; DEVELOPER_DIR=/Library/Developer/CommandLineTools cargo clippy -p jj-store-server --all-targets --locked -- -D warnings",
+        "result": "pass",
+        "failures": 0,
+        "note": "The affected server package is formatted and warning-free across all targets; production policy.rs contains 193 lines and changed scripts contain at most 264 lines."
+      },
+      {
+        "command": "pnpm dev:reset; capture repository and head operation; pnpm dev:restart; pnpm dev:stop; assert fixture/repository/RustFS remain and runtime.json is absent; pnpm dev:restart; compare repository and head operation",
+        "result": "pass",
+        "failures": 0,
+        "note": "The explicit reset seeded repository 8365d3c280132ba662bd6af82e2fb763 under .local/dev-demo. Restart and stop/start retained that repository and head operation 855d9848...f8cadd, while stop removed only process metadata. The final stack is running on 127.0.0.1:7460 without credentials."
+      },
+      {
+        "command": "pnpm spec:validate; pnpm spec:first; pnpm check:progress; pnpm check:architecture; pnpm exec prettier --check <changed files>",
+        "result": "fail",
+        "failures": 2,
+        "note": "Specification validation passed all 89 requirements; the same-change gate then required the API chapter for browser-harness isolation and architecture for the durable-fixture/process-state split."
+      },
+      {
+        "command": "pnpm spec:validate; pnpm spec:first; pnpm check:progress; pnpm check:architecture; pnpm exec prettier --check <changed files>",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 89 requirements, 12 protected files across six canonical chapters, 61 progress tasks and 200 governed web modules validate; every changed prose, script and manifest file is formatted."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "versions": "Rust 1.98.1; Node.js 26.9.0; development fixture marker format 1; server runtime metadata format 2; configuration format 2.",
+    "formats": "Adds an ignored .local/dev-demo fixture marker that separates durable repository, installation and embedded RustFS state from runtime process metadata. An explicit development-only environment root permits only descendants of the checkout's .local subtree; ordinary production and sibling checkout paths remain rejected. Reset may regenerate native JJ IDs, while ordinary restart and stop preserve them. Real browser acceptance uses a separate OS-temporary root."
   }
 ]
 ```

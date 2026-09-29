@@ -428,10 +428,17 @@ command.
 The browser mutation acceptance reuses the native lifecycle fixture and
 development `jj` binary for create, describe, bookmark, abandon, reconcile and
 resolve semantics; it does not add a parallel command implementation. The
-`pnpm dev:restart` task cold-builds the UI and binaries, replaces only its
-labelled disposable services, seeds a native repository, starts its LocalTrusted
-search worker and prints the URL and repository ID with `Credentials: none`.
-`pnpm dev:stop` removes only that owned stack.
+`pnpm dev:restart` task cold-builds the UI and binaries, restarts only its owned
+processes and reuses the ignored `.local/dev-demo` native repository,
+installation identity and embedded RustFS volume. It initializes that fixture
+only when absent, starts its LocalTrusted search worker and prints the URL and
+repository ID with `Credentials: none`. `pnpm dev:stop` preserves the fixture.
+`pnpm dev:reset` is the only development command that deletes and reseeds it;
+the sample file bytes and history shape are deterministic while native IDs may
+be regenerated. A missing or invalid fixture marker with partial local state
+fails closed and directs the operator to the explicit reset command. Cold
+browser acceptance supplies an isolated temporary root and cannot mutate the
+interactive fixture.
 
 The existing native administration RPC and CLI clients retain the selected
 code-state version in snapshot preconditions. This prepares the command layer

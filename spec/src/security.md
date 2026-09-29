@@ -8,15 +8,15 @@ not make authoritative storage unready.
 
 ## Requirements
 
-| ID          | Requirement                                                                                                                                                                                                                                                                                       |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| JST-SEC-001 | RPC and HTTP MUST authenticate one principal model with revocable repository-scoped read/write/admin tokens and a separate repository-creation operator capability.                                                                                                                               |
-| JST-SEC-002 | Credentials MUST remain outside checkouts; servers MUST retain token verifiers, CLI credentials MUST use the OS credential facility or automation environment, and browser tokens MUST remain in memory.                                                                                          |
-| JST-SEC-003 | Authorization MUST precede every object, historical, staging, search, preview, and publication request; knowledge of an object ID MUST NOT grant access.                                                                                                                                          |
-| JST-SEC-004 | Shared deployments MUST use TLS; unauthenticated operation MUST require an explicit restricted-loopback development setting.                                                                                                                                                                      |
-| JST-SEC-005 | Server operations MUST NOT execute repository hooks, arbitrary programs, editors, or merge tools; paths, bodies, queries, and work queues MUST have explicit limits.                                                                                                                              |
-| JST-SEC-006 | LocalTrusted MUST accept only verified local peers, assign stable installation principals, and protect every browser route with exact loopback authority, origin, fetch-metadata, protocol-version, method, and media-type checks; authenticated shared deployment remains deferred.              |
-| JST-SEC-007 | Authenticated discovery MUST derive candidates from a token ID without treating that index as authority, reauthorize the full token against every current repository policy, preserve independent permission, expiry and revocation per repository, and reveal no repository for a forged secret. |
+| ID          | Requirement                                                                                                                                                                                                                                                                                               |
+| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| JST-SEC-001 | RPC and HTTP MUST authenticate one principal model with revocable repository-scoped read/write/admin tokens and a separate repository-creation operator capability.                                                                                                                                       |
+| JST-SEC-002 | Production credentials MUST remain outside checkouts; an explicit owner-only development fixture MAY use an ignored `.local` subtree, while servers MUST retain token verifiers, CLI credentials MUST use the OS credential facility or automation environment, and browser tokens MUST remain in memory. |
+| JST-SEC-003 | Authorization MUST precede every object, historical, staging, search, preview, and publication request; knowledge of an object ID MUST NOT grant access.                                                                                                                                                  |
+| JST-SEC-004 | Shared deployments MUST use TLS; unauthenticated operation MUST require an explicit restricted-loopback development setting.                                                                                                                                                                              |
+| JST-SEC-005 | Server operations MUST NOT execute repository hooks, arbitrary programs, editors, or merge tools; paths, bodies, queries, and work queues MUST have explicit limits.                                                                                                                                      |
+| JST-SEC-006 | LocalTrusted MUST accept only verified local peers, assign stable installation principals, and protect every browser route with exact loopback authority, origin, fetch-metadata, protocol-version, method, and media-type checks; authenticated shared deployment remains deferred.                      |
+| JST-SEC-007 | Authenticated discovery MUST derive candidates from a token ID without treating that index as authority, reauthorize the full token against every current repository policy, preserve independent permission, expiry and revocation per repository, and reveal no repository for a forged secret.         |
 
 ## Repository token foundation
 
@@ -101,7 +101,12 @@ resource budgets and insecure shared listeners. External S3 credentials use
 explicit environment or OS-credential references. Managed RustFS reads its
 restricted internal credential file from private installation state and never
 serializes those bytes into configuration or diagnostics. Operator policy,
-credential, volume and process-state paths must be outside Git/JJ checkouts.
+credential, volume and process-state paths must be outside Git/JJ checkouts. The
+development harness has one narrow exception: an explicit process setting may
+name a descendant of the checkout's `.local` directory. Only paths below that
+exact root are accepted, the directory is ignored and owner-only, and the
+override is supplied only to the owned development processes. A sibling path, an
+arbitrary checkout path or an ordinary production launch remains rejected.
 Operator policy files contain only verifiers, use bounded canonical encoding,
 and reject symlinks. Local policy updates lock a stable sibling lock, atomically
 replace the file and sync it; each creation request reloads policy. The storage

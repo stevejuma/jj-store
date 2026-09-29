@@ -14,6 +14,36 @@ use std::{
 /// Resolve existing ancestors before checking checkout boundaries. This also
 /// works for a not-yet-created state directory, without creating it first.
 pub fn outside_checkout(path: &Path) -> Result<PathBuf> {
+    let development = std::env::var_os("JJ_STORE_DEVELOPMENT_STATE_ROOT").map(PathBuf::from);
+    outside_checkout_for_development(path, development.as_deref())
+}
+
+/// Permit one explicit ignored `.local` subtree for the development harness.
+/// Production callers omit the environment override and retain the checkout
+/// rejection.
+pub fn outside_checkout_for_development(
+    path: &Path,
+    development_root: Option<&Path>,
+) -> Result<PathBuf> {
+    let resolved = resolve_control_path(path)?;
+    let development_root = development_root.map(resolve_control_path).transpose()?;
+    for parent in resolved.ancestors() {
+        if parent.join(".jj").exists() || parent.join(".git").exists() {
+            let local = parent.join(".local");
+            if development_root.as_ref().is_some_and(|root| {
+                root.starts_with(&local) && root != &local && resolved.starts_with(root)
+            }) {
+                return Ok(resolved);
+            }
+            return Err(Error::Config(
+                "credentials and process state must be outside checkouts",
+            ));
+        }
+    }
+    Ok(resolved)
+}
+
+fn resolve_control_path(path: &Path) -> Result<PathBuf> {
     let absolute = if path.is_absolute() {
         path.to_owned()
     } else {
@@ -36,13 +66,6 @@ pub fn outside_checkout(path: &Path) -> Result<PathBuf> {
     let mut resolved = ancestor.canonicalize()?;
     for component in suffix.into_iter().rev() {
         resolved.push(component);
-    }
-    for parent in resolved.ancestors() {
-        if parent.join(".jj").exists() || parent.join(".git").exists() {
-            return Err(Error::Config(
-                "credentials and process state must be outside checkouts",
-            ));
-        }
     }
     Ok(resolved)
 }

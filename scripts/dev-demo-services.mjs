@@ -1,6 +1,6 @@
 import { createHash, createHmac, randomBytes } from "node:crypto";
 import { execFile } from "node:child_process";
-import { readFile } from "node:fs/promises";
+import { readFile, rm } from "node:fs/promises";
 import { request } from "node:http";
 import { join } from "node:path";
 import { promisify } from "node:util";
@@ -101,6 +101,7 @@ export async function stopPrevious({ owner, runtimeFile, runtimeRoot }) {
       cwd: owner,
     });
   }
+  await rm(runtimeFile, { force: true });
 }
 
 function signedHeaders(url, accessKey, secretKey) {
