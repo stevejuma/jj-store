@@ -45,6 +45,7 @@ export default defineConfig({
       "@lapismd/design-core",
       "@lapismd/design-core/shell",
       "@lapismd/design-core/shadcn/column-canvas",
+      "@tursodatabase/database-wasm",
     ],
   },
 });

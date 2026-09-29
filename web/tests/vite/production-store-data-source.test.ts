@@ -234,3 +234,167 @@ test("search pages preserve the snapshot query and opaque cursor", async () => {
   ]);
   source.close();
 });
+
+test("collaboration reads use bounded cursors and stable identities", async () => {
+  const queryClient = createStoreQueryClient();
+  const requests: URL[] = [];
+  const source = new HttpStoreDataSource(
+    repository,
+    null,
+    queryClient,
+    "local-session",
+    () => {},
+    async (input) => {
+      requests.push(new URL(String(input), "http://jj-store.test"));
+      return json({});
+    },
+  );
+  const session = "12".repeat(16);
+  const transcript = "34".repeat(32);
+  const thread = "56".repeat(16);
+
+  await source.agentSessions("agent-cursor");
+  await source.agentSession(session);
+  await source.agentTranscript(
+    session,
+    {
+      transcript_id: transcript,
+      source_instance_id: "78".repeat(16),
+      source_generation: 4,
+      source_format: "codex-jsonl",
+      decoder_version: "v1",
+      sanitizer_version: "v1",
+      representation: "sanitized_native",
+      logical_byte_length: 12,
+      record_count: 2,
+      gaps: 0,
+    },
+    "transcript-cursor",
+  );
+  await source.reviewThreads("review-cursor");
+  await source.reviewThread(thread);
+
+  expect(requests.map(({ pathname }) => pathname)).toEqual([
+    `/v1/repos/${repository}/agent/sessions`,
+    `/v1/repos/${repository}/agent/sessions/${session}`,
+    `/v1/repos/${repository}/agent/sessions/${session}/transcripts/${transcript}`,
+    `/v1/repos/${repository}/reviews/threads`,
+    `/v1/repos/${repository}/reviews/threads/${thread}`,
+  ]);
+  expect(Object.fromEntries(requests[0]!.searchParams)).toEqual({
+    cursor: "agent-cursor",
+    limit: "50",
+  });
+  expect(Object.fromEntries(requests[2]!.searchParams)).toEqual({
+    source: "78".repeat(16),
+    generation: "4",
+    cursor: "transcript-cursor",
+    limit: "50",
+    max_bytes: "262144",
+  });
+  expect(Object.fromEntries(requests[3]!.searchParams)).toEqual({
+    cursor: "review-cursor",
+    limit: "50",
+  });
+  source.close();
+});
+
+test("review commands keep exact request and precondition values", async () => {
+  const queryClient = createStoreQueryClient();
+  let body = "";
+  const source = new HttpStoreDataSource(
+    repository,
+    null,
+    queryClient,
+    "local-session",
+    () => {},
+    async (_input, init) => {
+      body = String(init?.body ?? "");
+      return json({ status: "outcome_unknown", request_id: "ab".repeat(16) });
+    },
+  );
+  const requestId = "ab".repeat(16);
+  const threadId = "cd".repeat(16);
+  const result = await source.applyReviewCommand({
+    version: 1,
+    request_id: requestId,
+    command: {
+      command: "append_reply",
+      thread_id: threadId,
+      expected_workflow_version: 9,
+      parent_comment_id: null,
+      body: {
+        schema_version: 1,
+        format: "safe_markdown",
+        text: "Review reply",
+        sanitizer_version: "review-markdown-v1",
+      },
+    },
+  });
+
+  expect(result).toEqual({ status: "outcome_unknown", request_id: requestId });
+  expect(JSON.parse(body)).toEqual({
+    version: 1,
+    request_id: requestId,
+    command: {
+      command: "append_reply",
+      thread_id: threadId,
+      expected_workflow_version: 9,
+      parent_comment_id: null,
+      body: {
+        schema_version: 1,
+        format: "safe_markdown",
+        text: "Review reply",
+        sanitizer_version: "review-markdown-v1",
+      },
+    },
+  });
+  source.close();
+});
+
+test("explicit snapshot refresh invalidates cached collaboration roots", async () => {
+  const queryClient = createStoreQueryClient();
+  let agentRoot = "12".repeat(32);
+  const source = new HttpStoreDataSource(
+    repository,
+    null,
+    queryClient,
+    "local-session",
+    () => {},
+    async (input) => {
+      const path = String(input);
+      if (path.endsWith("/snapshot"))
+        return json({
+          repository,
+          epoch: "34".repeat(16),
+          position: 2,
+          revision: 2,
+          heads: ["56".repeat(64)],
+        });
+      if (path.includes("/agent/sessions"))
+        return json({
+          version: 1,
+          snapshot: {
+            repo_id: repository,
+            epoch: "34".repeat(16),
+            published_seq: 2,
+            manifest_revision: 2,
+            agent_root: agentRoot,
+            agent_state_version: 1,
+          },
+          sessions: [],
+          next_cursor: null,
+        });
+      throw new Error(`unexpected request ${path}`);
+    },
+  );
+
+  expect((await source.agentSessions()).snapshot.agent_root).toBe(agentRoot);
+  agentRoot = "78".repeat(32);
+  expect((await source.agentSessions()).snapshot.agent_root).not.toBe(
+    agentRoot,
+  );
+  await source.snapshot(true);
+  expect((await source.agentSessions()).snapshot.agent_root).toBe(agentRoot);
+  source.close();
+});

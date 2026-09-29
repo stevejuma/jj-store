@@ -85,6 +85,8 @@
     { id: "branches", label: "Branches", kind: "branches" },
     { id: "log", label: "JJ Log", kind: "log" },
     { id: "oplog", label: "Op Log", kind: "oplog" },
+    { id: "agents", label: "Agents", kind: "agents" },
+    { id: "reviews", label: "Reviews", kind: "reviews" },
   ];
   const navigation: CommunityNavigationModel = $derived({
     primaryItems: pages,
@@ -103,7 +105,7 @@
   const title = $derived(
     current.page === "files"
       ? "Files"
-      : pages.find((p) => p.id === current.page)!.label,
+      : (pages.find((p) => p.id === current.page)?.label ?? "Repository"),
   );
   function select(item: CommunityNavigationItemModel) {
     if (item.kind === "repository") controller.actions.openRepository(item.id);

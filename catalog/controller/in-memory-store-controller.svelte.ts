@@ -22,15 +22,15 @@ import { createInMemoryStoreRepository } from "./in-memory-store-repository.svel
 import { inMemoryStoreMember } from "./in-memory-store-member.js";
 import { createInMemoryStoreConflicts } from "./in-memory-store-conflicts.js";
 import { createInMemoryStoreBranchActions } from "./in-memory-store-branch-actions.js";
+import { createInMemoryStoreCollaboration } from "./in-memory-store-collaboration.svelte.js";
+import { inMemoryStoreStatus } from "./in-memory-store-status.js";
+import { inMemoryStoreDetail } from "./in-memory-store-history.js";
+import type { InMemoryStoreControllerOptions } from "./in-memory-store-options.js";
 
 /** Each story owns this instance. It has no persistence or transport effects. */
 export function createInMemoryStoreController(
   initialPage: StorePage = "branches",
-  options: {
-    large?: boolean;
-    mutationOutcome?: "committed" | "unknown";
-    mutationFailure?: string;
-  } = {},
+  options: InMemoryStoreControllerOptions = {},
 ): StoreController {
   const repositoryData = createInMemoryStoreRepository(options.large);
   const revisionGraph = options.large ? largeGraph : undefined;
@@ -79,6 +79,12 @@ export function createInMemoryStoreController(
     route: () => route,
     push,
   });
+  const collaboration = createInMemoryStoreCollaboration({
+    route: () => route,
+    push,
+    now: fixture.NOW,
+    outcome: options.reviewOutcome,
+  });
   const actions: StoreController["actions"] = {
     async connect() {
       authenticated = true;
@@ -120,6 +126,8 @@ export function createInMemoryStoreController(
         comparisonGroupId: null,
         path: null,
         directory: "",
+        agentSessionId: null,
+        reviewThreadId: null,
       });
     },
     selectPage(page) {
@@ -134,6 +142,8 @@ export function createInMemoryStoreController(
         comparisonGroupId: null,
         path: null,
         directory: "",
+        agentSessionId: null,
+        reviewThreadId: null,
       });
     },
     navigate(delta) {
@@ -187,6 +197,7 @@ export function createInMemoryStoreController(
         throw new Error("Directory absent from selected snapshot");
       push({ ...route, directory, path: null });
     },
+    ...collaboration.actions,
     selectRef(value) {
       const choice = repositoryData.choices.find(
         (choice) => choice.value === value,
@@ -236,6 +247,9 @@ export function createInMemoryStoreController(
         canLoadMoreGraph: false,
         canLoadMoreFiles: false,
         canLoadMoreDetail: false,
+        canLoadMoreAgents: false,
+        canLoadMoreTranscript: false,
+        canLoadMoreReviews: false,
         fileViewMode,
         collapsedDirectoryPaths,
         bookmarks: repositoryData.bookmarks,
@@ -246,6 +260,7 @@ export function createInMemoryStoreController(
         blob: snapshot?.files.find((file) => file.path === route.path),
         search: search.state,
         mutation: mutations.state,
+        ...collaboration.view,
         graph:
           route.page === "oplog"
             ? fixture.operations
@@ -259,35 +274,24 @@ export function createInMemoryStoreController(
                 route.commitId ? [route.commitId] : undefined,
               )),
         now: fixture.NOW,
-        detail:
-          (route.commitId || route.inspectedOperationId) &&
-          ![...repositoryData.revisions, ...fixture.operations.revisions].find(
-            (revision) =>
-              revision.eventId ===
-              (route.page === "oplog"
-                ? route.inspectedOperationId
-                : route.commitId),
-          )?.empty
-            ? options.large
-              ? largeDetail
-              : fixture.sampleDetail
-            : undefined,
+        detail: inMemoryStoreDetail(
+          route,
+          [...repositoryData.revisions, ...fixture.operations.revisions],
+          options.large ? largeDetail : fixture.sampleDetail,
+        ),
         authenticated,
         member: inMemoryStoreMember(authenticated),
-        status: {
-          connection: authenticated ? "connected" : "disconnected",
-          navigation: "ready",
-          repositories: "ready",
-          bookmarks: repositoryData.bookmarks.length ? "ready" : "empty",
-          graph: "ready",
-          files: snapshot?.files.length ? "ready" : "empty",
-          detail:
-            route.commitId || route.inspectedOperationId ? "ready" : "idle",
+        status: inMemoryStoreStatus({
+          authenticated,
+          hasBookmarks: repositoryData.bookmarks.length > 0,
+          hasFiles: Boolean(snapshot?.files.length),
+          hasDetail: Boolean(route.commitId || route.inspectedOperationId),
+          hasAgentSession: Boolean(route.agentSessionId),
+          hasAgents: collaboration.view.agentSessions.length > 0,
+          hasReviews: collaboration.view.reviewThreads.length > 0,
+          reviewAction: collaboration.reviewActionStatus,
           search: search.state.status,
-          live: authenticated ? "live" : "disconnected",
-          refreshAvailable: false,
-          error: "",
-        },
+        }),
       };
     },
     actions,

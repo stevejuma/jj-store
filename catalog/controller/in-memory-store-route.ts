@@ -16,6 +16,8 @@ export function initialStoreRoute(page: StorePage): StoreRoute {
     comparisonGroupId: null,
     path: null,
     directory: "",
+    agentSessionId: null,
+    reviewThreadId: null,
   };
 }
 

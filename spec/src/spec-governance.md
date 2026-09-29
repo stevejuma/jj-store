@@ -272,6 +272,15 @@ unchanged. Governance tests cover both local-source resolution and the registry
 fallback when that sibling is absent; local installation uses `--lockfile=false`
 so validation state cannot rewrite the release lock.
 
+M9.5 extends that guarded development resolution to the declared
+`@lapismd/lapis-community` range. The manifest remains a normal registry range;
+the hook substitutes only an available clean sibling checkout for local
+acceptance, and its focused tests prove both substitution and registry fallback.
+The catalog provenance record pins the inspected Community and Design Core
+source revisions and states whether code was consumed through public exports or
+adapted locally. Collaboration stories remain `visual-pending` while their
+Chromium interactions and automatic accessibility checks are blocking.
+
 M4.8 review acceptance covers populated and filtered branch dividers, the
 absence of duplicate history-page titles, shared column header styling, and
 directory navigation history. It also covers the Files page navigation

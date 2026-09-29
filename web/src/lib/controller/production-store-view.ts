@@ -41,6 +41,9 @@ export function productionStoreView(
       nextPathPage(data.pathPages, data.fileViewMode, route.directory),
     ),
     canLoadMoreDetail: data.inspectionContinuation !== null,
+    canLoadMoreAgents: data.agentCursor !== null,
+    canLoadMoreTranscript: data.transcriptCursor !== null,
+    canLoadMoreReviews: data.reviewCursor !== null,
     fileViewMode: data.fileViewMode,
     collapsedDirectoryPaths: data.collapsedDirectoryPaths,
     graph: data.graph,
@@ -64,6 +67,13 @@ export function productionStoreView(
       truncated: data.searchTruncated,
     },
     mutation: data.mutation,
+    agentSessions: data.agentSessions,
+    agentSession: data.agentSession,
+    agentTranscript: data.agentTranscript,
+    reviewThreads: data.reviewThreads,
+    reviewThread: data.reviewThread,
+    reviewActionMessage: data.reviewActionMessage,
+    reviewActionRequestId: data.reviewActionRequestId,
     authenticated: options.connected && data.status.connection === "connected",
     member: {
       id:

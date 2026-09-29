@@ -68,6 +68,17 @@ export interface ProductionStoreState {
   graphPageSnapshot: Snapshot | null;
   head: Head | null;
   mutation: MutableStoreMutationState;
+  agentSessions: Model<"AgentSessionSummary">[];
+  agentSession: Model<"AgentSessionDetail"> | undefined;
+  agentTranscript: Model<"AgentTranscriptChunk">[];
+  agentCursor: string | null;
+  transcriptCursor: string | null;
+  transcriptDescriptor: Model<"AgentTranscriptDescriptor"> | undefined;
+  reviewThreads: Model<"ReviewThreadSummary">[];
+  reviewThread: Model<"ReviewThreadDetail"> | undefined;
+  reviewCursor: string | null;
+  reviewActionMessage: string;
+  reviewActionRequestId: string | null;
 }
 
 export const emptyGraph = (): RepositoryLogGraph => ({
@@ -84,6 +95,10 @@ export const initialStatus = (): MutableStatus => ({
   files: "idle",
   detail: "idle",
   search: "idle",
+  agents: "idle",
+  transcript: "idle",
+  reviews: "idle",
+  reviewAction: "idle",
   live: "disconnected",
   refreshAvailable: false,
   error: "",
@@ -134,6 +149,17 @@ export function createProductionStoreState(): ProductionStoreState {
     graphPageSnapshot: null,
     head: null,
     mutation: initialStoreMutationState(),
+    agentSessions: [],
+    agentSession: undefined,
+    agentTranscript: [],
+    agentCursor: null,
+    transcriptCursor: null,
+    transcriptDescriptor: undefined,
+    reviewThreads: [],
+    reviewThread: undefined,
+    reviewCursor: null,
+    reviewActionMessage: "",
+    reviewActionRequestId: null,
   });
   return state;
 }
@@ -163,4 +189,15 @@ export function clearProductionStoreView(state: ProductionStoreState) {
   state.inspectionContinuation = null;
   state.refsPageSnapshot = null;
   state.graphPageSnapshot = null;
+  state.agentSessions = [];
+  state.agentSession = undefined;
+  state.agentTranscript = [];
+  state.agentCursor = null;
+  state.transcriptCursor = null;
+  state.transcriptDescriptor = undefined;
+  state.reviewThreads = [];
+  state.reviewThread = undefined;
+  state.reviewCursor = null;
+  state.reviewActionMessage = "";
+  state.reviewActionRequestId = null;
 }

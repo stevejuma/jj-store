@@ -62,6 +62,12 @@ export function createProductionStoreActions(options: {
       if (collection === "detail") await options.reader.loadMoreDetail();
       if (collection === "search" && options.data.searchCursor)
         await options.search.loadMore();
+      if (collection === "agents" && options.data.agentCursor)
+        await options.reader.loadAgents(true);
+      if (collection === "transcript" && options.data.transcriptCursor)
+        await options.reader.loadTranscript(true);
+      if (collection === "reviews" && options.data.reviewCursor)
+        await options.reader.loadReviews(true);
     },
     search: options.search.run,
     selectSearchResult: options.search.select,
@@ -99,6 +105,17 @@ export function createProductionStoreActions(options: {
       else await options.reader.loadPatch(path);
     },
     selectDirectory: options.reader.selectDirectory,
+    async selectAgentSession(id) {
+      options.invalidate();
+      await options.reader.selectAgentSession(id);
+    },
+    async selectReviewThread(id) {
+      options.invalidate();
+      await options.reader.selectReviewThread(id);
+    },
+    replyToReview: options.reader.reply,
+    setReviewResolved: options.reader.setResolved,
+    checkReviewAction: options.reader.checkAction,
     selectRef: (value) => options.reader.selectRef(value),
     signIn() {},
     signOut: options.disconnect,

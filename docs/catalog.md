@@ -31,6 +31,20 @@ results. It replaces rooms, messages and members with snapshot-bound native
 operations, commits and files, and consumes the released Design Core Command
 View and Dialog exports without copying them.
 
+Agent and review presentation was inspected at Community revision
+`5691eebd61d2ae387a4cf2fd70af5a525c2bc1e3`; its focused public component
+subpaths were accepted at revision `0df681141dcd6c70c31c1ba796323a7934c3488e`.
+Design Core was inspected at revision
+`5596d04ee7b2b6da9b0f3f066c5c0c2db7037f4d`. jj-store consumes Community's public
+`CommunityMessage`, `CommunityChatComposer` and presentation-model exports
+through their focused subpaths and the normal `@lapismd/lapis-community@^0.1.0`
+manifest range. The local pnpm hook resolves the clean sibling source for
+development acceptance without changing the publishable range. Native stable
+identities, root pins, pagination, durable review commands, route state and
+layout storage remain jj-store-owned. Design Core's public Column Canvas, Empty,
+Alert, Button and Skeleton exports provide the shared interaction primitives; no
+upstream component was copied for this slice.
+
 | Community source                                                                                                                                                                                                    | jj-store destination                                                                         | Adaptation                                                                                                                                               |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `src/components/community-chip/CommunityChip.svelte`                                                                                                                                                                | `web/src/lib/ui/community-chip/CommunityChip.svelte`                                         | Direct copy; catalog-local imports where needed.                                                                                                         |

@@ -13,6 +13,8 @@ const inspected = "56".repeat(64);
 const parent = "78".repeat(64);
 const change = "9a".repeat(16);
 const group = "bc".repeat(16);
+const session = "de".repeat(16);
+const thread = "f0".repeat(16);
 
 const route: StoreRoute = {
   page: "oplog",
@@ -26,6 +28,8 @@ const route: StoreRoute = {
   comparisonGroupId: group,
   path: "src/native objects.rs",
   directory: "src",
+  agentSessionId: null,
+  reviewThreadId: null,
 };
 
 test("native operation route hash round-trips every stable selection", () => {
@@ -34,6 +38,35 @@ test("native operation route hash round-trips every stable selection", () => {
   assert.ok(hash.includes("file=src%2Fnative+objects.rs"));
   assert.deepEqual(storeRouteFromHash(hash), { kind: "route", route });
   assert.doesNotMatch(hash, /token|cursor/u);
+});
+
+test("collaboration routes preserve stable session and thread selections", () => {
+  const agentRoute: StoreRoute = {
+    ...route,
+    page: "agents",
+    bookmark: "",
+    inspectedOperationId: null,
+    changeId: null,
+    comparisonParentId: null,
+    comparisonGroupId: null,
+    path: null,
+    directory: "",
+    agentSessionId: session,
+  };
+  const reviewRoute: StoreRoute = {
+    ...agentRoute,
+    page: "reviews",
+    agentSessionId: null,
+    reviewThreadId: thread,
+  };
+  assert.deepEqual(storeRouteFromHash(storeRouteToHash(agentRoute)!), {
+    kind: "route",
+    route: agentRoute,
+  });
+  assert.deepEqual(storeRouteFromHash(storeRouteToHash(reviewRoute)!), {
+    kind: "route",
+    route: reviewRoute,
+  });
 });
 
 test("repository paths and bookmark names remain safely encoded", () => {
@@ -64,6 +97,8 @@ test("malformed, duplicate, foreign and unsafe route data fails closed", () => {
     `#/repos/${repository}/files?bookmark=main`,
     `#/repos/${repository}/files?at_op=${operation}&operation=${inspected}`,
     `#/repos/${repository}/files?future=value`,
+    `#/repos/${repository}/files?at_op=${operation}&session=${session}`,
+    `#/repos/${repository}/agents?at_op=${operation}&thread=${thread}`,
     "#/repos/%zz/files",
   ]) {
     assert.equal(storeRouteFromHash(hash).kind, "invalid", hash);

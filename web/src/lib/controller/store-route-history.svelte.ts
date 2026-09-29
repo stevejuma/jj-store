@@ -26,6 +26,8 @@ export const initialStoreRoute = (): StoreRoute => ({
   comparisonGroupId: null,
   path: null,
   directory: "",
+  agentSessionId: null,
+  reviewThreadId: null,
 });
 
 function browserNavigation(): StoreRouteBrowser | undefined {
@@ -145,6 +147,8 @@ export function createStoreRouteHistory(
         comparisonGroupId: null,
         path: null,
         directory: "",
+        agentSessionId: null,
+        reviewThreadId: null,
       });
     },
     page(page: StorePage) {
@@ -159,6 +163,8 @@ export function createStoreRouteHistory(
         comparisonGroupId: null,
         path: null,
         directory: "",
+        agentSessionId: null,
+        reviewThreadId: null,
       });
     },
     navigate(delta: -1 | 1) {

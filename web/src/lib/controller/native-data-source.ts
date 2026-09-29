@@ -1,4 +1,12 @@
-import type { Envelope, Graph, Head, Model, Task } from "../api/client.js";
+import type {
+  Envelope,
+  Exact,
+  Graph,
+  Head,
+  Model,
+  Task,
+} from "../api/client.js";
+import type { operations } from "../api/generated.js";
 import type {
   StoreMutationOutcome,
   StoreMutationPreview,
@@ -30,6 +38,11 @@ export interface SearchQuery {
   cursor?: string;
   limit?: number;
 }
+export type StoreReviewCommandRequest = Exact<
+  NonNullable<
+    operations["review_command_apply"]["requestBody"]
+  >["content"]["application/json"]
+>;
 
 export interface StoreDataSource {
   readonly repository: string;
@@ -90,6 +103,19 @@ export interface StoreDataSource {
     bytes: Uint8Array,
   ): Promise<Model<"ConflictUpload">>;
   search(query: SearchQuery): Promise<Model<"SearchPage">>;
+  agentSessions(cursor?: string): Promise<Model<"AgentSessionPage">>;
+  agentSession(id: string): Promise<Model<"AgentSessionDetail">>;
+  agentTranscript(
+    session: string,
+    transcript: Model<"AgentTranscriptDescriptor">,
+    cursor?: string,
+  ): Promise<Model<"AgentTranscriptPage">>;
+  reviewThreads(cursor?: string): Promise<Model<"ReviewThreadPage">>;
+  reviewThread(id: string): Promise<Model<"ReviewThreadDetail">>;
+  applyReviewCommand(
+    request: StoreReviewCommandRequest,
+  ): Promise<Model<"ReviewCommandOutcome">>;
+  reviewCommandStatus(id: string): Promise<Model<"ReviewCommandStatus">>;
   previewMutation(request: StoreMutationRequest): Promise<StoreMutationPreview>;
   applyMutation(request: StoreMutationRequest): Promise<StoreMutationOutcome>;
   mutationStatus(requestId: string): Promise<StoreMutationStatusResponse>;

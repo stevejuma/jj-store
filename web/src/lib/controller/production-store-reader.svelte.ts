@@ -15,6 +15,7 @@ import {
 } from "./production-store-loaders.js";
 import type { ProductionStoreState } from "./production-store-state.svelte.js";
 import { restoreProductionStoreRoute } from "./production-route-restorer.js";
+import { createProductionStoreCollaboration } from "./production-store-collaboration.svelte.js";
 import type { createStoreRouteHistory } from "./store-route-history.svelte.js";
 
 interface ReaderContext {
@@ -30,6 +31,7 @@ interface ReaderContext {
 export function createProductionStoreReader(context: ReaderContext) {
   const { data, history } = context;
   const fileReader = createProductionFileReader(context);
+  const collaboration = createProductionStoreCollaboration(context);
   async function loadReferences(more = false) {
     const source = context.source(),
       operation = fullId(context.operation() ?? ""),
@@ -234,6 +236,7 @@ export function createProductionStoreReader(context: ReaderContext) {
     loadPatch,
     loadMoreDetail,
     selectRef,
+    ...collaboration,
   };
   return {
     ...reads,

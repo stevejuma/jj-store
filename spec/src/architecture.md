@@ -348,6 +348,16 @@ recursive-path, operation-change and diff-summary contracts add no presentation,
 fixture or mutation dependency, and their cursors remain service-owned rather
 than becoming native repository state.
 
+M9.5 keeps collaboration transport, asynchronous state and presentation as
+separate production modules. The HTTP collaboration source owns generated DTOs,
+session-scoped query keys and ReviewCommand transport. The collaboration
+controller owns paging, stale-response rejection, durable unknown-outcome state
+and hash selection actions. Agent and review components depend only on the
+shared controller contract plus Community and Design Core public exports.
+Catalog collaboration fixtures and state wrappers remain transport-free and
+cannot be imported by production. These extractions keep every production module
+and complete Svelte file within the governed counted-line budget.
+
 The local pnpm hook follows the workspace source-first boundary for Design Core.
 When the sibling source exists it resolves the declared dependency from that
 checkout for development validation; otherwise it leaves the semver range

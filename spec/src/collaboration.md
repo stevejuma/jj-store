@@ -217,6 +217,41 @@ replay remain authoritative across lost, coalesced or lagged hints. This closes
 the LocalTrusted CLI and live-hint portion of JST-COLLAB-004 without adding a
 public listener or controller dispatch.
 
+## Application presentation
+
+The LocalTrusted application exposes Agent activity and Reviews as first-class
+repository pages. Their stable hash routes retain the selected operation plus
+either the complete stable session or thread identity. Reload and browser
+Back/Forward restore that exact selection; collaboration identities never occupy
+native operation, commit or change fields.
+
+Agent session, transcript and review-thread collections use cursor-paged
+TanStack Query reads scoped to the active access session and repository.
+Measured virtual rows bound rendered session, transcript, thread and comment
+collections. The selected session displays its independently pinned AgentStore
+root alongside the selected native code snapshot. Review detail displays its
+independently pinned ReviewStore root and exact anchor, retaining the durable
+request ID whenever a command outcome is unknown. Reply, resolve and reopen use
+the same optimistic-concurrency inputs and status route as the LocalTrusted
+service contract.
+
+The presentation consumes Community's public `CommunityMessage` and
+`CommunityChatComposer` components, then adapts native agent and review records
+into their public presentation models. Design Core supplies the column canvas,
+Empty, Alert, Button and Skeleton primitives. Both collaboration canvases are
+keyboard and pointer resizable and persist their versioned layout through the
+application's public storage boundary. Catalog stories inject memory storage and
+cover ready interaction, pagination-compatible virtualization, loading, empty,
+failed and durable command states with automatic accessibility checks.
+
+Repository SSE events announce that newer collaboration history exists without
+mutating displayed roots or records. Explicit Refresh invalidates the complete
+repository-session query scope, captures the current operation heads and then
+restores the selected collaboration route against the new snapshot. Disconnect,
+credential replacement and repository switching cancel requests and clear the
+protected query cache; late detail responses are ignored before assigning
+session or thread state.
+
 ## Capture sanitization boundary
 
 The capture boundary uses MongoDB Kingfisher 2.7.0 in-process at source revision

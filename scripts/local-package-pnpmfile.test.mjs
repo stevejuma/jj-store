@@ -38,3 +38,21 @@ test("local package hook retains registry range when source is absent", () => {
 
   assert.deepEqual(result, manifest);
 });
+
+test("local package hook uses available Community source", () => {
+  const root = "/workspace/jj-store";
+  const community = path.resolve(root, "../lapis-community");
+  const manifest = {
+    devDependencies: { "@lapismd/lapis-community": "^0.1.0" },
+  };
+
+  const result = createHooks({
+    root,
+    fileExists: (candidate) => candidate === community,
+  }).hooks.readPackage(manifest);
+
+  assert.equal(
+    result.devDependencies["@lapismd/lapis-community"],
+    `file:${community}`,
+  );
+});

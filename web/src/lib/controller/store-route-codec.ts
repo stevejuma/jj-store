@@ -4,7 +4,15 @@ import type { StoreRoute } from "./contracts.js";
 const repositoryId = /^[0-9a-f]{32}$/u;
 const objectId = /^[0-9a-f]{128}$/u;
 const changeId = /^[0-9a-f]{32}$/u;
-const pages = new Set<StorePage>(["branches", "log", "oplog", "files"]);
+const stableId = /^[0-9a-f]{32}$/u;
+const pages = new Set<StorePage>([
+  "branches",
+  "log",
+  "oplog",
+  "files",
+  "agents",
+  "reviews",
+]);
 const queryKeys = new Set([
   "at_op",
   "bookmark",
@@ -15,6 +23,8 @@ const queryKeys = new Set([
   "group",
   "file",
   "directory",
+  "session",
+  "thread",
 ]);
 
 export type StoreRouteHashResult =
@@ -64,6 +74,8 @@ export function storeRouteToHash(route: StoreRoute): string | null {
   if (route.comparisonGroupId) query.set("group", route.comparisonGroupId);
   if (route.path) query.set("file", route.path);
   if (route.directory) query.set("directory", route.directory);
+  if (route.agentSessionId) query.set("session", route.agentSessionId);
+  if (route.reviewThreadId) query.set("thread", route.reviewThreadId);
   const suffix = query.toString();
   return `#/repos/${route.repository}/${route.page}${suffix ? `?${suffix}` : ""}`;
 }
@@ -98,6 +110,8 @@ export function storeRouteFromHash(hash: string): StoreRouteHashResult {
   const comparisonGroupId = one(query, "group");
   const path = one(query, "file");
   const directory = one(query, "directory");
+  const agentSessionId = one(query, "session");
+  const reviewThreadId = one(query, "thread");
   const valid =
     validOptional(snapshotOperationId, objectId) &&
     validOptional(commitId, objectId) &&
@@ -110,7 +124,9 @@ export function storeRouteFromHash(hash: string): StoreRouteHashResult {
     path !== undefined &&
     (path === null || safePath(path)) &&
     directory !== undefined &&
-    (directory === null || safePath(directory));
+    (directory === null || safePath(directory)) &&
+    validOptional(agentSessionId, stableId) &&
+    validOptional(reviewThreadId, stableId);
   if (!valid)
     return { kind: "invalid", message: "Invalid repository route value." };
   const hasSnapshotSelection = Boolean(
@@ -121,7 +137,9 @@ export function storeRouteFromHash(hash: string): StoreRouteHashResult {
     comparisonParentId ||
     comparisonGroupId ||
     path ||
-    directory,
+    directory ||
+    agentSessionId ||
+    reviewThreadId,
   );
   if (hasSnapshotSelection && !snapshotOperationId)
     return {
@@ -148,6 +166,31 @@ export function storeRouteFromHash(hash: string): StoreRouteHashResult {
     !path.startsWith(`${directory}/`)
   )
     return { kind: "invalid", message: "File is outside its directory route." };
+  if (page !== "agents" && agentSessionId)
+    return {
+      kind: "invalid",
+      message: "Agent session selections require the Agents page.",
+    };
+  if (page !== "reviews" && reviewThreadId)
+    return {
+      kind: "invalid",
+      message: "Review thread selections require the Reviews page.",
+    };
+  if (
+    (page === "agents" || page === "reviews") &&
+    (bookmark ||
+      commitId ||
+      change ||
+      inspectedOperationId ||
+      comparisonParentId ||
+      comparisonGroupId ||
+      path ||
+      directory)
+  )
+    return {
+      kind: "invalid",
+      message: "Collaboration routes contain an incompatible code selection.",
+    };
   return {
     kind: "route",
     route: {
@@ -162,6 +205,8 @@ export function storeRouteFromHash(hash: string): StoreRouteHashResult {
       comparisonGroupId,
       path,
       directory: directory ?? "",
+      agentSessionId,
+      reviewThreadId,
     },
   };
 }

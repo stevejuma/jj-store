@@ -69,6 +69,8 @@ export interface StoreRoute {
   comparisonGroupId: string | null;
   path: string | null;
   directory: string;
+  agentSessionId: string | null;
+  reviewThreadId: string | null;
 }
 export type StoreLoadStatus =
   | "idle"
@@ -88,6 +90,10 @@ export interface StoreControllerStatus {
   readonly files: StoreLoadStatus;
   readonly detail: StoreLoadStatus;
   readonly search: StoreLoadStatus;
+  readonly agents: StoreLoadStatus;
+  readonly transcript: StoreLoadStatus;
+  readonly reviews: StoreLoadStatus;
+  readonly reviewAction: StoreLoadStatus;
   readonly live: "disconnected" | "connecting" | "live" | "reconnecting";
   readonly refreshAvailable: boolean;
   readonly error: string;
@@ -116,6 +122,9 @@ export interface StoreControllerState {
   readonly canLoadMoreGraph: boolean;
   readonly canLoadMoreFiles: boolean;
   readonly canLoadMoreDetail: boolean;
+  readonly canLoadMoreAgents: boolean;
+  readonly canLoadMoreTranscript: boolean;
+  readonly canLoadMoreReviews: boolean;
   readonly fileViewMode: FileListingViewMode;
   readonly collapsedDirectoryPaths: ReadonlySet<string>;
   readonly graph: RepositoryLogGraph;
@@ -129,6 +138,13 @@ export interface StoreControllerState {
   readonly blob: RepositoryBlob | undefined;
   readonly search: StoreSearchState;
   readonly mutation: StoreMutationState;
+  readonly agentSessions: readonly Model<"AgentSessionSummary">[];
+  readonly agentSession: Model<"AgentSessionDetail"> | undefined;
+  readonly agentTranscript: readonly Model<"AgentTranscriptChunk">[];
+  readonly reviewThreads: readonly Model<"ReviewThreadSummary">[];
+  readonly reviewThread: Model<"ReviewThreadDetail"> | undefined;
+  readonly reviewActionMessage: string;
+  readonly reviewActionRequestId: string | null;
   readonly authenticated: boolean;
   readonly member: CommunityMemberModel;
   readonly status: StoreControllerStatus;
@@ -145,7 +161,15 @@ export interface StoreController {
     selectComparisonParent(id: string): Promise<void>;
     prepareIndex(): Promise<void>;
     loadMore(
-      collection: "bookmarks" | "graph" | "files" | "detail" | "search",
+      collection:
+        | "bookmarks"
+        | "graph"
+        | "files"
+        | "detail"
+        | "search"
+        | "agents"
+        | "transcript"
+        | "reviews",
     ): Promise<void>;
     search(query: string): Promise<void>;
     selectSearchResult(result: StoreSearchResult): Promise<void>;
@@ -169,6 +193,11 @@ export interface StoreController {
     selectRevision(id: string | null): void | Promise<void>;
     selectFile(path: string | null): void | Promise<void>;
     selectDirectory(path: string): void | Promise<void>;
+    selectAgentSession(id: string | null): void | Promise<void>;
+    selectReviewThread(id: string | null): void | Promise<void>;
+    replyToReview(text: string, parentCommentId?: string): Promise<void>;
+    setReviewResolved(resolved: boolean): Promise<void>;
+    checkReviewAction(): Promise<void>;
     selectRef(value: string): void | Promise<void>;
     signIn(): void | Promise<void>;
     signOut(): void | Promise<void>;

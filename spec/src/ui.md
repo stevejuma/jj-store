@@ -196,9 +196,10 @@ stale time, ten-minute inactive collection and disabled focus refetch. Query
 keys bind the in-memory authentication session, repository, selected operation
 and resource inputs. Disconnect, replacement and revocation close transport,
 cancel pending work and clear protected cache entries. The production bundle
-uses the catalog's released Design Core theme plus bundled DM Sans and Source
-Code Pro WOFF2 assets; the static manifest and router allow only hashed JS, CSS
-and WOFF2 files with explicit media types under the existing self-only CSP.
+uses the catalog's released Design Core theme plus bundled DM Sans, Source Code
+Pro and Community composer font assets; the static manifest and router allow no
+more than 256 hashed JS, CSS, WOFF2, WOFF and TTF files with explicit media
+types under the existing self-only CSP.
 
 M4.12 owns the typed hash route
 `#/repos/<repository-id>/<page>?at_op=<operation-id>&…`. Permanent routes use
@@ -259,6 +260,23 @@ affected-change cursor plus each exact comparison's changed-path cursor, fetch
 one exact group at a time, and keep ambiguous groups explicit. Empty exact pages
 and metadata-only groups advance without presenting invented files; every
 visible path remains bound to its precise native comparison.
+
+M9.5 adds Agent activity and Reviews to the same application shell and typed
+hash history. Agent and review pages encode only a full stable session or thread
+identity beside the selected operation. Their two-column canvases persist
+versioned width and collapse state through the shared injected storage boundary
+and keep collection scrolling inside the columns. Session, transcript, thread
+and comment rows use measured virtualization. Ready, loading, empty and failed
+states use the same production components in Storybook.
+
+Agent transcript chunks and review comments render through Community's public
+message component. Open review threads compose Community's public chat composer
+with exact optimistic-concurrency actions; resolved threads remove the composer
+and expose Reopen. The detail headers distinguish the selected native code
+snapshot from the independent AgentStore or ReviewStore root. An unknown review
+outcome remains an explicit alert with a Check status action. SSE freshness does
+not replace displayed collaboration records; only explicit Refresh captures new
+heads, invalidates the session cache and restores the deep route.
 
 M4.15 adapts Community's global search trigger and command dialog to native
 repository search. `Command+K`/`Control+K` and the sidebar open the same

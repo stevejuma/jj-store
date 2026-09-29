@@ -14,9 +14,11 @@ fn bundle(root: &std::path::Path) {
     .unwrap();
     fs::write(root.join("assets/app-123.js"), "export const version=1;").unwrap();
     fs::write(root.join("assets/font-123.woff2"), b"wOF2fixture").unwrap();
+    fs::write(root.join("assets/font-123.woff"), b"wOFFfixture").unwrap();
+    fs::write(root.join("assets/font-123.ttf"), b"TTFfixture").unwrap();
     fs::write(
         root.join("asset-manifest.json"),
-        r#"{"version":1,"files":["index.html","assets/app-123.js","assets/font-123.woff2"]}"#,
+        r#"{"version":1,"files":["index.html","assets/app-123.js","assets/font-123.woff2","assets/font-123.woff","assets/font-123.ttf"]}"#,
     )
     .unwrap();
 }
@@ -44,18 +46,24 @@ async fn browser_assets_are_allowlisted_preloaded_and_sandboxed() {
             .unwrap()
             .contains("Browser")
     );
-    let response = router
-        .clone()
-        .oneshot(
-            Request::builder()
-                .uri("/assets/font-123.woff2")
-                .body(Body::empty())
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-    assert_eq!(response.status(), StatusCode::OK);
-    assert_eq!(response.headers()["content-type"], "font/woff2");
+    for (path, content_type) in [
+        ("font-123.woff2", "font/woff2"),
+        ("font-123.woff", "font/woff"),
+        ("font-123.ttf", "font/ttf"),
+    ] {
+        let response = router
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .uri(format!("/assets/{path}"))
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(response.status(), StatusCode::OK);
+        assert_eq!(response.headers()["content-type"], content_type);
+    }
     for uri in [
         "/asset-manifest.json",
         "/../secret",
@@ -138,6 +146,8 @@ fn browser_asset_symlinks_are_rejected() {
     assert!(BrowserAssets::load(root.path()).is_err());
     fs::remove_file(root.path().join("assets/app-123.js")).unwrap();
     fs::remove_file(root.path().join("assets/font-123.woff2")).unwrap();
+    fs::remove_file(root.path().join("assets/font-123.woff")).unwrap();
+    fs::remove_file(root.path().join("assets/font-123.ttf")).unwrap();
     fs::remove_dir(root.path().join("assets")).unwrap();
     symlink(root.path(), root.path().join("assets")).unwrap();
     assert!(BrowserAssets::load(root.path()).is_err());

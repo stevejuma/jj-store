@@ -3,12 +3,10 @@ import {
   ApiError,
   Client,
   fullId,
-  pretty,
   type Envelope,
   type Graph,
   type Head,
   type Model,
-  type Task,
 } from "../api/client.js";
 import type {
   GraphQuery,
@@ -18,11 +16,15 @@ import type {
 } from "./native-data-source.js";
 import type { StoreMutationRequest } from "./store-mutation-types.js";
 import { storeQueryKeys, type StoreQueryScope } from "./store-query-keys.js";
+import { HttpCollaborationDataSource } from "./http-collaboration-data-source.js";
+import { HttpStoreWriteDataSource } from "./http-store-write-data-source.js";
 
 export class HttpStoreDataSource implements StoreDataSource {
   readonly repository: string;
   readonly #client: Client;
   readonly #scope: StoreQueryScope;
+  readonly #collaboration: HttpCollaborationDataSource;
+  readonly #writes: HttpStoreWriteDataSource;
   #active = true;
 
   constructor(
@@ -36,6 +38,13 @@ export class HttpStoreDataSource implements StoreDataSource {
     this.#client = new Client(repository, token, denied, fetcher);
     this.repository = this.#client.repository;
     this.#scope = { repository, session };
+    this.#writes = new HttpStoreWriteDataSource(this.#client);
+    this.#collaboration = new HttpCollaborationDataSource(
+      this.#client,
+      queryClient,
+      this.#scope,
+      () => this.#active,
+    );
   }
 
   #query<T>(
@@ -65,7 +74,9 @@ export class HttpStoreDataSource implements StoreDataSource {
   async snapshot(fresh = false) {
     const key = storeQueryKeys.resource(this.#scope, "snapshot", null);
     if (fresh)
-      await this.queryClient.invalidateQueries({ queryKey: key, exact: true });
+      await this.queryClient.invalidateQueries({
+        queryKey: storeQueryKeys.root(this.#scope),
+      });
     return this.#query<Head>("snapshot", null, {}, (signal) =>
       this.#client.request("snapshot", {}, { signal }),
     );
@@ -205,23 +216,7 @@ export class HttpStoreDataSource implements StoreDataSource {
     fingerprint: string,
     bytes: Uint8Array,
   ) {
-    return this.#client.request<Model<"ConflictUpload">>(
-      "conflict-uploads",
-      {
-        epoch: head.epoch,
-        position: head.published_seq,
-        code_state_version: head.code_state_version,
-        operation: fullId(head.heads[0]!),
-        commit: fullId(commit),
-        path,
-        fingerprint: fullId(fingerprint),
-      },
-      {
-        method: "POST",
-        headers: { "content-type": "application/octet-stream" },
-        body: Uint8Array.from(bytes).buffer,
-      },
-    );
+    return this.#writes.uploadConflict(head, commit, path, fingerprint, bytes);
   }
   search(input: SearchQuery) {
     const query = {
@@ -238,38 +233,47 @@ export class HttpStoreDataSource implements StoreDataSource {
       (signal) => this.#client.request("search", query, { signal }),
     );
   }
+  agentSessions(cursor?: string) {
+    return this.#collaboration.agentSessions(cursor);
+  }
+  agentSession(id: string) {
+    return this.#collaboration.agentSession(id);
+  }
+  agentTranscript(
+    session: string,
+    transcript: Model<"AgentTranscriptDescriptor">,
+    cursor?: string,
+  ) {
+    return this.#collaboration.agentTranscript(session, transcript, cursor);
+  }
+  reviewThreads(cursor?: string) {
+    return this.#collaboration.reviewThreads(cursor);
+  }
+  reviewThread(id: string) {
+    return this.#collaboration.reviewThread(id);
+  }
+  async applyReviewCommand(
+    request: import("./native-data-source.js").StoreReviewCommandRequest,
+  ) {
+    return this.#collaboration.applyReviewCommand(request);
+  }
+  reviewCommandStatus(id: string) {
+    return this.#collaboration.reviewCommandStatus(id);
+  }
   previewMutation(request: StoreMutationRequest) {
-    return this.#client.request<Model<"Preview">>(
-      "mutations/preview",
-      {},
-      mutationInit(request),
-    );
+    return this.#writes.previewMutation(request);
   }
   applyMutation(request: StoreMutationRequest) {
-    return this.#client.request<Model<"Outcome">>(
-      "mutations",
-      {},
-      mutationInit(request),
-    );
+    return this.#writes.applyMutation(request);
   }
   mutationStatus(requestId: string) {
-    return this.#client.request<Model<"Status">>(
-      `mutations/${fullId(requestId, 32)}`,
-    );
+    return this.#writes.mutationStatus(requestId);
   }
   prepareIndex(operation: string) {
-    return this.#client.request<Task>(
-      "index/tasks",
-      {},
-      {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ operation }),
-      },
-    );
+    return this.#writes.prepareIndex(operation);
   }
   indexTask(id: string) {
-    return this.#client.request<Task>(`index/tasks/${encodeURIComponent(id)}`);
+    return this.#writes.indexTask(id);
   }
   events(
     after: string | undefined,
@@ -284,14 +288,6 @@ export class HttpStoreDataSource implements StoreDataSource {
     void this.queryClient.cancelQueries();
     this.queryClient.clear();
   }
-}
-
-function mutationInit(request: StoreMutationRequest): RequestInit {
-  return {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: pretty(request),
-  };
 }
 
 export function storeErrorMessage(cause: unknown): string {

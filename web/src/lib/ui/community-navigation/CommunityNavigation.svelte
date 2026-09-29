@@ -7,11 +7,7 @@
   import * as Tooltip from "@lapismd/design-core/shadcn/tooltip";
   import { AppShell } from "@lapismd/design-core/shell";
   import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
-  import GitBranchIcon from "@lucide/svelte/icons/git-branch";
-  import GitCommitIcon from "@lucide/svelte/icons/git-commit-horizontal";
-  import HistoryIcon from "@lucide/svelte/icons/history";
-  import FolderGit2Icon from "@lucide/svelte/icons/folder-git-2";
-  import { type Component, type Snippet } from "svelte";
+  import { type Snippet } from "svelte";
   import CommunityNavigationSearch from "./CommunityNavigationSearch.svelte";
   import {
     type CommunityNavigationItemModel,
@@ -19,6 +15,7 @@
     type CommunityNavigationSectionModel,
     communityNavigationSectionKind,
   } from "./model.js";
+  import { navigationItemIcon, navigationSectionIcon } from "./icons.js";
   let {
     model,
     activeItemId,
@@ -47,17 +44,6 @@
     if (compactSectionId && compactSectionSearchInput)
       compactSectionSearchInput.focus();
   });
-  function iconFor(item: CommunityNavigationItemModel): Component {
-    if (item.kind === "branches") return GitBranchIcon;
-    if (item.kind === "log") return GitCommitIcon;
-    if (item.kind === "oplog") return HistoryIcon;
-    return FolderGit2Icon;
-  }
-  function iconForSection(
-    _section: CommunityNavigationSectionModel,
-  ): Component {
-    return FolderGit2Icon;
-  }
   function sectionContainsActive(
     section: CommunityNavigationSectionModel,
   ): boolean {
@@ -121,7 +107,7 @@
 </script>
 
 {#snippet itemIcon(item: CommunityNavigationItemModel)}
-  {@const Icon = iconFor(item)}<Icon aria-hidden="true" />
+  {@const Icon = navigationItemIcon(item)}<Icon aria-hidden="true" />
 {/snippet}
 {#if onSearch}<CommunityNavigationSearch {compact} {onSearch} />{/if}
 <AppShell.Sidebar.Body class="lc-community-navigation__body">
@@ -171,7 +157,7 @@
 
       {#each model.sections as section (section.id)}
         {#if compact}
-          {@const SectionIcon = iconForSection(section)}
+          {@const SectionIcon = navigationSectionIcon()}
 
           <div class="lc-community-navigation__compact-section">
             <Popover.Root

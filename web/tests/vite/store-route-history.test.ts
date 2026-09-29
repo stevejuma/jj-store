@@ -7,6 +7,8 @@ import { storeRouteToHash } from "../../src/lib/controller/store-route-codec.js"
 
 const repository = "ab".repeat(16);
 const operation = "12".repeat(64);
+const session = "34".repeat(16);
+const thread = "56".repeat(16);
 
 function fakeBrowser(initial: string) {
   let hash = initial;
@@ -91,5 +93,38 @@ test("invalid owned hashes remain explicit and never change selection", () => {
   navigation.visit(`#/repos/${repository}/files?file=../secret`);
   expect(history.route).toEqual(before);
   expect(history.error).toBe("Invalid repository route value.");
+  history.destroy();
+});
+
+test("collaboration selections survive reload and browser Back and Forward", () => {
+  const agentHash = `#/repos/${repository}/agents?at_op=${operation}&session=${session}`;
+  const navigation = fakeBrowser(agentHash);
+  const history = createStoreRouteHistory(navigation.browser);
+  expect(history.route).toMatchObject({
+    page: "agents",
+    agentSessionId: session,
+    reviewThreadId: null,
+  });
+
+  history.page("reviews");
+  history.push({ ...history.route, reviewThreadId: thread });
+  const reviewHash = storeRouteToHash(history.route)!;
+  navigation.visit(agentHash);
+  expect(history.route).toMatchObject({
+    page: "agents",
+    agentSessionId: session,
+  });
+  navigation.visit(reviewHash);
+  expect(history.route).toMatchObject({
+    page: "reviews",
+    reviewThreadId: thread,
+  });
+
+  const reloaded = createStoreRouteHistory(fakeBrowser(reviewHash).browser);
+  expect(reloaded.route).toMatchObject({
+    page: "reviews",
+    reviewThreadId: thread,
+  });
+  reloaded.destroy();
   history.destroy();
 });

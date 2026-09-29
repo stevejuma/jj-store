@@ -540,6 +540,16 @@ path pages separately from commit detail. Operation inspection continues
 affected-change groups and each selected group's changed paths separately, while
 preserving the explicit comparison parent and exact before/after identities.
 
+Agent sessions, selected session detail, transcript chunks, review threads and
+selected review detail use the same repository-session query cache and bounded
+HTTP client. Their keys include the active access-session identity, repository
+and exact stable resource identity; server continuations remain opaque and
+memory-only. A committed review command invalidates the repository-session scope
+before refetching its list and exact thread. A durable unknown outcome retains
+the complete request ID for the status route. Repository SSE changes only set
+the shared freshness flag. Explicit snapshot refresh invalidates the same scope
+before collaboration reads can expose a newer AgentStore or ReviewStore root.
+
 ## Browsing UI execution
 
 The LocalTrusted application reuses the reviewed Storybook shell for Files,

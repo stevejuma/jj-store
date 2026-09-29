@@ -8,6 +8,10 @@
     createDetailLoadingStoreController,
     createLoadingStoreController,
   } from "../controller/loading-store-controller.js";
+  import {
+    createCollaborationStateStoreController,
+    type CatalogCollaborationState,
+  } from "../controller/collaboration-store-controller.js";
   import { IDS } from "./repository.js";
   import { createMemoryStoryStorage } from "./memory-storage.js";
 
@@ -18,6 +22,8 @@
     large = false,
     loading = false,
     detailLoading = false,
+    collaborationState = "ready",
+    reviewOutcome,
   }: {
     initialPage?: StorePage;
     initiallyCollapsed?: boolean;
@@ -25,10 +31,20 @@
     large?: boolean;
     loading?: boolean;
     detailLoading?: boolean;
+    collaborationState?: CatalogCollaborationState;
+    reviewOutcome?: "committed" | "unknown";
   } = $props();
 
   const controller = untrack(() => {
-    const fixture = createInMemoryStoreController(initialPage, { large });
+    const fixture = createInMemoryStoreController(initialPage, {
+      large,
+      reviewOutcome,
+    });
+    if (collaborationState !== "ready")
+      return createCollaborationStateStoreController(
+        fixture,
+        collaborationState,
+      );
     if (loading) return createLoadingStoreController(fixture);
     if (!detailLoading) return fixture;
     if (initialPage === "files") fixture.actions.selectFile("README.md");

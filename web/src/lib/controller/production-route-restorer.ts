@@ -13,6 +13,10 @@ interface RouteReads {
   loadCommit(id: string): Promise<void>;
   loadOperation(id: string, parent?: string): Promise<void>;
   loadPatch(path: string): Promise<void>;
+  loadAgents(): Promise<void>;
+  loadAgent(id: string): Promise<void>;
+  loadReviews(): Promise<void>;
+  loadReview(id: string): Promise<void>;
 }
 
 function unavailable(
@@ -109,7 +113,13 @@ export async function restoreProductionStoreRoute(
 ) {
   data.status.error = "";
   data.status.navigation = "loading";
-  if (desired.page === "files")
+  if (desired.page === "agents") {
+    await reads.loadAgents();
+    if (desired.agentSessionId) await reads.loadAgent(desired.agentSessionId);
+  } else if (desired.page === "reviews") {
+    await reads.loadReviews();
+    if (desired.reviewThreadId) await reads.loadReview(desired.reviewThreadId);
+  } else if (desired.page === "files")
     await restoreFiles(desired, data, history, reads);
   else {
     await reads.loadReferences();

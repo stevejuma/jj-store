@@ -4,6 +4,8 @@
   import StoreApplication from "./StoreApplication.svelte";
   import CommunityProjectsRepositoryLog from "../community-projects/CommunityProjectsRepositoryLog.svelte";
   import CommunityProjectsRepositoryFiles from "../community-projects/CommunityProjectsRepositoryFiles.svelte";
+  import StoreAgentSessions from "../store-collaboration/StoreAgentSessions.svelte";
+  import StoreReviewThreads from "../store-collaboration/StoreReviewThreads.svelte";
   import * as Alert from "@lapismd/design-core/shadcn/alert";
   import { Button } from "@lapismd/design-core/shadcn/button";
   let {
@@ -53,6 +55,14 @@
           </div>
         </Alert.Root>
       </section>
+    {:else if page === "agents"}<StoreAgentSessions
+        {controller}
+        {layoutStorage}
+      />
+    {:else if page === "reviews"}<StoreReviewThreads
+        {controller}
+        {layoutStorage}
+      />
     {:else if page === "files"}<CommunityProjectsRepositoryFiles
         {controller}
         now={state.now}

@@ -47,7 +47,7 @@ impl BrowserAssets {
         let manifest: Manifest =
             serde_json::from_slice(&regular(&root.join("asset-manifest.json"), 16384)?)
                 .map_err(|_| "browser manifest")?;
-        if manifest.version != 1 || manifest.files.is_empty() || manifest.files.len() > 64 {
+        if manifest.version != 1 || manifest.files.is_empty() || manifest.files.len() > 256 {
             return Err("browser manifest limits");
         }
         let mut files = BTreeMap::new();
@@ -77,6 +77,10 @@ impl BrowserAssets {
                     "text/css; charset=utf-8"
                 } else if file.ends_with(".woff2") {
                     "font/woff2"
+                } else if file.ends_with(".woff") {
+                    "font/woff"
+                } else if file.ends_with(".ttf") {
+                    "font/ttf"
                 } else {
                     return Err("browser asset media");
                 }
