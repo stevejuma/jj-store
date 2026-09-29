@@ -7,7 +7,7 @@ use sha2::{Digest as _, Sha256};
 use std::sync::Arc;
 
 pub const MAX_RECORD_BYTES: u64 = 16 * 1024 * 1024;
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum RecordKind {
     Catalog,
@@ -37,7 +37,7 @@ impl RecordKind {
         }
     }
 }
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct RecordRef {
     pub kind: RecordKind,
@@ -112,7 +112,7 @@ impl Records {
         }
         Ok(reference)
     }
-    async fn read_bytes(&self, reference: RecordRef) -> Result<Vec<u8>> {
+    pub(crate) async fn read_bytes(&self, reference: RecordRef) -> Result<Vec<u8>> {
         let bytes = self
             .store
             .get(&reference.key(self.repository)?, None)

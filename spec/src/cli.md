@@ -155,6 +155,15 @@ target, preserves unrelated JSON values, rejects configuration symlinks and
 becomes idempotent after success. Status audits the installed hash on restart;
 drift is reported and blocks replacement.
 
+The M9.6 local qualification uses the same production PATH probe against the
+installed executables, but binds the registry and setup previews to disposable
+state and workspace paths. It accepts Codex 0.156.1 at `/opt/homebrew/bin/codex`
+and OpenCode 1.18.30 at `/opt/homebrew/bin/opencode`. The installed Cursor agent
+at `/Users/stevejuma/.local/bin/cursor-agent` reports `2026.09.26-dd393fe`,
+remains `unsupported_version` against the qualified 3.22.7 contract and cannot
+be enabled. Setup preview writes no hook files and the qualification makes no
+model or network call.
+
 `jj agent remove <codex|cursor|opencode> [--dry-run]` does not require the
 harness executable or supported version to remain installed. It accepts only a
 validated ownership record and target matching either the exact owned hash or

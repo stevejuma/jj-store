@@ -9,6 +9,7 @@ mod agent_reads;
 mod application;
 mod collaboration;
 mod domains;
+mod native_copy;
 mod reader;
 mod review;
 mod review_audit;
@@ -49,6 +50,7 @@ pub use jj_review::{
     ReviewThreadId, ReviewThreadSnapshotV1, ThreadStatusV1, decode_command_result,
     encode_command_result,
 };
+pub use native_copy::NativeCopyOutcome;
 pub use reader::SelectedRecord;
 pub use review_catalog::ReviewStoreSnapshot;
 pub use review_commands::{ReviewCommandError, ReviewCommandRequest};

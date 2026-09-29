@@ -205,6 +205,24 @@ reading unchanged radix subtrees repeatedly. Ordinary startup may read the
 manifest's already folded state; the explicit integrity recovery performs a full
 retained-data audit and fails if its configured budget is insufficient.
 
+`Coordinator::copy_native_to` begins with that full recovery and derives an
+exact bounded closure from selected catalogs rather than storage listing. It
+includes every retained native inventory entry, catalog page/value, WAL record,
+receipt, settings record, checkpoint and current or historical AgentStore and
+ReviewStore root/object dependency. Review-owned AgentStore references remain
+part of the copied closure. Stored native objects and immutable control records
+are conditionally created before the canonical selected manifest is installed as
+the final object.
+
+The destination may be empty or already contain byte-identical immutable
+objects. Different bytes under any selected key fail closed. A lost manifest
+write acknowledgement resolves only by reading back the exact bytes. After the
+manifest is visible, a coordinator backed by the destination's native dependency
+source performs cold recovery and must reproduce the source manifest digest and
+all three roots. History, object and byte budgets plus the coordinator timeout
+bound the operation. This primitive introduces no list, delete, remap,
+promotion, backup or migration authority.
+
 Selected settings are readable from a checked ManifestSnapshot using an owned
 storage accessor, so request-scoped guards can verify policy without
 constructing a second publication coordinator or using mutable global

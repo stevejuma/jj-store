@@ -95,7 +95,7 @@ impl Coordinator {
     }
 }
 
-fn agent_record(reference: AgentObjectRef) -> RecordRef {
+pub(super) fn agent_record(reference: AgentObjectRef) -> RecordRef {
     RecordRef {
         kind: RecordKind::AgentObject,
         digest: RecordDigest::new(*reference.id.as_bytes()),

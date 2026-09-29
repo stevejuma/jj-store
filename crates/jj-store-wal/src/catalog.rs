@@ -7,6 +7,7 @@ use futures::future::BoxFuture;
 use jj_store_model::RecordDigest;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
+use std::collections::BTreeSet;
 
 const LEAF_CAPACITY: usize = 32;
 #[derive(Clone, Serialize, Deserialize)]
@@ -31,6 +32,11 @@ pub(crate) struct CatalogAudit<'a> {
     expected: &'a BTreeMap<RecordDigest, RecordRef>,
     seen: BTreeMap<RecordDigest, String>,
     max_pages: usize,
+}
+
+pub(crate) struct CatalogClosure {
+    pub pages: BTreeSet<RecordRef>,
+    pub entries: BTreeMap<RecordDigest, RecordRef>,
 }
 impl<'a> CatalogAudit<'a> {
     pub(crate) fn new(expected: &'a BTreeMap<RecordDigest, RecordRef>, max_pages: usize) -> Self {
@@ -241,5 +247,43 @@ impl Catalog {
             }
         }
         Ok(out)
+    }
+
+    /// Enumerate an exact selected catalog without relying on bucket LIST.
+    pub(crate) async fn closure(
+        &self,
+        root: Option<RecordRef>,
+        limit: usize,
+    ) -> Result<CatalogClosure> {
+        let mut entries = BTreeMap::new();
+        let mut pages = BTreeSet::new();
+        let mut stack = root
+            .into_iter()
+            .map(|reference| (reference, String::new()))
+            .collect::<Vec<_>>();
+        let max_pages = limit.saturating_mul(65).saturating_add(1);
+        while let Some((reference, prefix)) = stack.pop() {
+            if !pages.insert(reference) {
+                continue;
+            }
+            if pages.len() > max_pages {
+                return Err(Error::Limit("catalog pages"));
+            }
+            match self.load(reference, &prefix).await? {
+                Node::Leaf { entries: leaf, .. } => {
+                    if entries.len().saturating_add(leaf.len()) > limit {
+                        return Err(Error::Limit("catalog entries"));
+                    }
+                    entries.extend(leaf);
+                }
+                Node::Branch { children, .. } => stack.extend(
+                    children
+                        .into_iter()
+                        .rev()
+                        .map(|(nibble, child)| (child, format!("{prefix}{nibble}"))),
+                ),
+            }
+        }
+        Ok(CatalogClosure { pages, entries })
     }
 }

@@ -2,6 +2,7 @@ use jj_agent::{DeviceId, IntegrationId};
 use jj_store_cli::agent_integrations::{
     AgentIntegrationRegistry, HarnessSupportV1, IntegrationStateV1,
 };
+use jj_store_cli::agent_setup::{SetupRequestV1, setup};
 use jj_store_model::RepositoryId;
 use std::{fs, path::Path};
 
@@ -148,4 +149,59 @@ fn agent_command_requires_explicit_noninteractive_enablement() {
     assert_eq!(agents.len(), 2);
     assert!(dry_run);
     assert!(non_interactive);
+}
+
+#[cfg(unix)]
+#[test]
+fn real_path_qualification_accepts_codex_and_opencode_and_rejects_cursor_drift() {
+    if std::env::var_os("JJ_STORE_QUALIFY_REAL_HARNESSES").as_deref()
+        != Some(std::ffi::OsStr::new("1"))
+    {
+        return;
+    }
+    let temporary = tempfile::tempdir().unwrap();
+    let state = temporary.path().join("state");
+    let workspace = temporary.path().join("workspace");
+    fs::create_dir_all(&workspace).unwrap();
+    let mut registry =
+        AgentIntegrationRegistry::open(&state, &workspace, RepositoryId::new([9; 16])).unwrap();
+    let status = registry.refresh_environment().unwrap();
+    let codex = status.integration(IntegrationId::Codex).unwrap();
+    assert_eq!(codex.detected_version.as_deref(), Some("0.156.1"));
+    assert_eq!(codex.support, HarnessSupportV1::Supported);
+    assert!(codex.executable.as_ref().is_some_and(|path| path.is_file()));
+    let opencode = status.integration(IntegrationId::OpenCode).unwrap();
+    assert_eq!(opencode.detected_version.as_deref(), Some("1.18.30"));
+    assert_eq!(opencode.support, HarnessSupportV1::Supported);
+    assert!(
+        opencode
+            .executable
+            .as_ref()
+            .is_some_and(|path| path.is_file())
+    );
+    let cursor = status.integration(IntegrationId::Cursor).unwrap();
+    assert_eq!(
+        cursor.detected_version.as_deref(),
+        Some("2026.09.26-dd393fe")
+    );
+    assert_eq!(cursor.support, HarnessSupportV1::UnsupportedVersion);
+    assert!(registry.enable(&[IntegrationId::Cursor], false).is_err());
+
+    registry
+        .enable(&[IntegrationId::Codex, IntegrationId::OpenCode], false)
+        .unwrap();
+    for integration in [IntegrationId::Codex, IntegrationId::OpenCode] {
+        let preview = setup(
+            &mut registry,
+            SetupRequestV1 {
+                integration,
+                executable: std::env::current_exe().unwrap(),
+                dry_run: true,
+            },
+        )
+        .unwrap();
+        assert!(preview.changed);
+        assert!(preview.dry_run);
+        assert!(!preview.target.exists());
+    }
 }

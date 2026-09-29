@@ -7,6 +7,7 @@ const MAX_REVIEW_DEPENDENCIES: usize = 16_384;
 
 pub(super) struct ReviewDependencyClosure {
     pub objects: BTreeSet<ReviewObjectRef>,
+    pub agent_objects: BTreeSet<AgentObjectRef>,
     pub native: BTreeSet<ObjectKey>,
 }
 
@@ -94,14 +95,18 @@ impl Coordinator {
             agent.extend(object.agent_dependencies().map_err(review_error)?);
             pending.extend(object.review_dependencies().map_err(review_error)?);
         }
-        self.audit_review_agent_dependencies(agent).await?;
-        Ok(ReviewDependencyClosure { objects, native })
+        let agent_objects = self.audit_review_agent_dependencies(agent).await?;
+        Ok(ReviewDependencyClosure {
+            objects,
+            agent_objects,
+            native,
+        })
     }
 
     async fn audit_review_agent_dependencies(
         &self,
         mut pending: BTreeSet<AgentObjectRef>,
-    ) -> Result<()> {
+    ) -> Result<BTreeSet<AgentObjectRef>> {
         let mut seen = BTreeSet::new();
         while let Some(reference) = pending.pop_first() {
             if !seen.insert(reference) {
@@ -113,11 +118,11 @@ impl Coordinator {
             let object = self.read_agent_object(reference).await?;
             pending.extend(object.dependencies().map_err(super::agent::agent_error)?);
         }
-        Ok(())
+        Ok(seen)
     }
 }
 
-fn review_record(reference: ReviewObjectRef) -> RecordRef {
+pub(super) fn review_record(reference: ReviewObjectRef) -> RecordRef {
     RecordRef {
         kind: RecordKind::ReviewObject,
         digest: RecordDigest::new(*reference.id.as_bytes()),

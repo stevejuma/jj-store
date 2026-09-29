@@ -29,8 +29,9 @@ The active sequence is publication foundation, AgentStore model and capture,
 ReviewStore exact anchors, LocalTrusted API/CLI integrations, shared UI, then
 cold recovery and real-harness qualification. Codex CLI 0.156.1, Cursor 3.22.7
 and OpenCode 1.18.30 are the initial compatibility surfaces. Deterministic
-sanitized contract fixtures exist for all three; an executed capability matrix
-and real-harness smoke tests remain required before support is claimed.
+sanitized contract fixtures exist for all three. The executed local capability
+matrix accepts exact installed Codex and OpenCode versions and records the
+installed Cursor drift as unsupported without invoking a paid or network model.
 
 Authenticated/shared serving, remote replication, backup/restore, Git or Nostr
 export, controller job dispatch, arbitrary cross-repository targets, CRDT/edit
@@ -304,10 +305,14 @@ OpenCode fixture follows the exact `@opencode-ai/plugin` and SDK 1.18.30
 callbacks; the published plugin archive observed during qualification had npm
 integrity
 `sha512-bXWcA2VD478PXXke1qAYANTq58fCcbgY0GAUqZIFZqPpo48FoG8RH37nNZ78eHtz+ddiKIhFTBZJRaHF3IgFqw==`.
-Both remain sanitized synthetic contract fixtures rather than captured smoke
-runs. Cursor 3.22.7 is synthetic contract acceptance only because the locally
-available Cursor agent reports a different 2026.09.26 build. These distinctions
-must remain visible until M9.6 executes pinned real-harness qualification.
+Both remain sanitized synthetic contract fixtures rather than captured model
+runs. M9.6 additionally probes the actual local executables through the bounded
+device registry and previews their owned project integration in disposable
+workspace/state directories. Codex 0.156.1 and OpenCode 1.18.30 match their
+qualified contracts. Cursor 3.22.7 remains synthetic contract acceptance only:
+the installed agent reports `2026.09.26-dd393fe`, is recorded as
+`unsupported_version`, and cannot be enabled. Qualification never invokes a
+model, sends captured content or modifies the active workspace hooks.
 
 ## Exact review anchors
 
@@ -614,5 +619,27 @@ The Codex contract follows `openai/codex` tag `rust-v0.156.1` at source revision
 `3104c1428ec91f809e5ab86631300de41eb6952e`. Cursor uses the documented version-1
 project hooks shape, but remains synthetic setup acceptance because the local
 agent reports `2026.09.26-dd393fe` rather than qualified `3.22.7`. Drift-safe
-removal and source-ordered exact publication are implemented; pinned
-real-harness qualification remains M9.6 work.
+removal and source-ordered exact publication are implemented. The M9.6 real-PATH
+gate accepts the installed Codex and OpenCode versions, rejects the Cursor
+drift, and proves side-effect-free setup previews in a disposable workspace. It
+does not claim compatibility for the unqualified Cursor build.
+
+## Cold three-root native copy
+
+The WAL authority can build one bounded copy closure from a manifest selected by
+successful cold recovery. It enumerates native inventory, current and retained
+catalog pages, WAL/control records, settings, receipts, checkpoints, and the
+exact AgentStore and ReviewStore root/object closures without bucket listing.
+Review objects retain any referenced AgentStore objects, and every current or
+historical domain root is included. The same publication, closure, byte and
+timeout budgets that bound recovery also bound copying.
+
+Stored native objects and immutable control dependencies are copied with
+conditional creation and exact byte comparison. The canonical selected manifest
+is installed last. A lost final acknowledgement succeeds only when the
+destination contains those exact manifest bytes; different pre-existing bytes
+fail closed. The destination then cold-recovers through its own native
+dependency source and must reproduce the exact manifest digest plus code,
+AgentStore and ReviewStore roots before success is returned. This is a local
+native snapshot copy primitive, not backup, migration, remote export, failover
+or promotion; those deployment behaviors remain deferred.
