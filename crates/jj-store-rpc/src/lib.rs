@@ -3,6 +3,7 @@
 pub mod administration;
 pub mod agent;
 pub mod client;
+pub mod review;
 pub mod server;
 pub mod wire {
     tonic::include_proto!("jj_store.native.v1");

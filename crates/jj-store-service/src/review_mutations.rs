@@ -64,7 +64,7 @@ impl From<wal::Error> for Error {
     }
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Deserialize, schemars::JsonSchema)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[schemars(rename = "ReviewCommandRequest")]
 #[serde(deny_unknown_fields)]
 pub struct Request {
@@ -73,7 +73,7 @@ pub struct Request {
     pub command: ReviewCommandV1,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[schemars(rename = "ReviewCommandReceipt")]
 pub struct Receipt {
     pub version: u32,
@@ -84,7 +84,7 @@ pub struct Receipt {
     pub result: ReviewCommandResultV1,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[schemars(rename = "ReviewCommandOutcome")]
 #[serde(tag = "status", rename_all = "snake_case")]
 pub enum Outcome {
@@ -92,7 +92,7 @@ pub enum Outcome {
     OutcomeUnknown { request_id: m::RequestId },
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[schemars(rename = "ReviewCommandStatus")]
 #[serde(tag = "status", rename_all = "snake_case")]
 pub enum Status {

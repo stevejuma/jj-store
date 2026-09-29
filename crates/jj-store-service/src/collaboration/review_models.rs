@@ -5,11 +5,11 @@ use jj_store_wal::publication::{
     ThreadStatusV1,
 };
 use schemars::JsonSchema;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 pub type ReviewThreadIdentity = ReviewThreadId;
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, JsonSchema)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 pub struct ReviewReadSnapshot {
     pub repo_id: m::RepositoryId,
     pub epoch: m::EpochId,
@@ -19,7 +19,7 @@ pub struct ReviewReadSnapshot {
     pub review_state_version: u64,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, JsonSchema)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 pub struct ReviewThreadSummary {
     pub thread_id: ReviewThreadId,
     pub snapshot_id: ReviewObjectId,
@@ -34,7 +34,7 @@ pub struct ReviewThreadSummary {
     pub last_event_sequence: u64,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, JsonSchema)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 pub struct ReviewThreadPage {
     pub version: u32,
     pub snapshot: ReviewReadSnapshot,
@@ -42,13 +42,13 @@ pub struct ReviewThreadPage {
     pub next_cursor: Option<String>,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, JsonSchema)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 pub struct ReviewAnchor {
     pub object_id: ReviewObjectId,
     pub value: ArtifactAnchorV1,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, JsonSchema)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(tag = "state", rename_all = "snake_case")]
 pub enum ReviewCommentContent {
     Visible {
@@ -65,7 +65,7 @@ pub enum ReviewCommentContent {
     },
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, JsonSchema)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 pub struct ReviewComment {
     pub comment_id: CommentId,
     pub revision_id: ReviewObjectId,
@@ -77,7 +77,7 @@ pub struct ReviewComment {
     pub content: ReviewCommentContent,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, JsonSchema)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(tag = "action", rename_all = "snake_case")]
 pub enum ReviewEventKind {
     Created {
@@ -105,7 +105,7 @@ pub enum ReviewEventKind {
     },
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, JsonSchema)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 pub struct ReviewEvent {
     pub event_id: ReviewObjectId,
     pub sequence: u64,
@@ -114,7 +114,7 @@ pub struct ReviewEvent {
     pub event: ReviewEventKind,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, JsonSchema)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 pub struct ReviewThreadDetail {
     pub version: u32,
     pub snapshot: ReviewReadSnapshot,

@@ -11,6 +11,7 @@ use jj_store_service::{
     collaboration::{Error, ReviewCommentContent, ReviewEventKind, ReviewThreadPager},
     native::{NativeSession, SessionLimits, create_repository_local_trusted},
     pagination,
+    review_mutations::{Outcome, Request as ReviewRequest, ReviewCommandService},
 };
 use jj_store_wal::{
     self as wal,
@@ -246,4 +247,60 @@ async fn review_thread_detail_limits_combined_visible_body_bytes() {
             .unwrap_err(),
         Error::Limit
     );
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn review_command_wakes_idle_subscription_at_accepted_position() {
+    use jj_store_service::events::{EventKind, Limits as EventLimits, Subscription};
+    use std::time::Duration;
+
+    let fixture = Fixture::new().await;
+    let mut subscription = Subscription::open(
+        fixture.session.clone(),
+        None,
+        EventLimits {
+            poll_interval: Duration::from_secs(60),
+            ..EventLimits::default()
+        },
+    )
+    .await
+    .unwrap();
+    assert!(matches!(
+        subscription.next().await.unwrap().unwrap().kind,
+        EventKind::Ready { .. }
+    ));
+    let outcome = ReviewCommandService
+        .apply(
+            fixture.session,
+            &ReviewRequest {
+                version: 1,
+                request_id: m::RequestId::new([77; 16]),
+                command: ReviewCommandV1::CreateThread {
+                    anchor: Box::new(ArtifactAnchorV1 {
+                        schema_version: 1,
+                        repository_id: REPOSITORY,
+                        target: ArtifactTargetV1::Repository,
+                        created_context: CreatedContextV1 {
+                            publication_position: None,
+                            code_state_version: None,
+                            agent_root: None,
+                        },
+                        sensitivity: SensitivityV1::Repository,
+                    }),
+                    body: body("Wake the review feed"),
+                },
+            },
+        )
+        .await
+        .unwrap();
+    let Outcome::Committed { receipt } = outcome else {
+        panic!("review command outcome was unknown")
+    };
+    let event = tokio::time::timeout(Duration::from_secs(2), subscription.next())
+        .await
+        .unwrap()
+        .unwrap()
+        .unwrap();
+    assert!(matches!(event.kind, EventKind::Changed));
+    assert_eq!(event.cursor.position, receipt.accepted.position);
 }

@@ -62,6 +62,13 @@ WAL layer depends on `jj-review` for typed object, root and delta validation,
 then owns repository-bound staging, root-pinned reads and publication. No
 reverse dependency or second storage or transaction service is introduced.
 
+The custom CLI depends on `jj-review` only to construct validated typed review
+commands from explicit user input. Native RPC production code stays behind the
+service and WAL facades: it transports bounded canonical JSON for the same
+service-owned ReviewStore page/detail and command/status models used by HTTP.
+This adds no reverse model dependency, raw coordinator access or second review
+implementation.
+
 The service crate owns repository/operator token policies and request-bound
 authorization. Its publication guard uses owned WAL snapshots/settings and
 requires an explicit native semantic validator, keeping authentication shared

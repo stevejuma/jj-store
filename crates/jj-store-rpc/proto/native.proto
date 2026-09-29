@@ -14,6 +14,10 @@ service NativeStore {
   rpc Publish(PublishRequest) returns (Empty);
   rpc PrepareAgentCapture(AgentCapturePrepareRequest) returns (AgentCapturePrepared);
   rpc PublishAgentDelta(AgentDeltaPublishRequest) returns (AgentPublicationReply);
+  rpc ReviewThreads(ReviewThreadsRequest) returns (JsonReply);
+  rpc ReviewThread(ReviewThreadRequest) returns (JsonReply);
+  rpc ApplyReviewCommand(ReviewCommandRequest) returns (JsonReply);
+  rpc ReviewCommandStatus(ReviewCommandStatusRequest) returns (JsonReply);
   rpc HeadObject(ObjectRequest) returns (ObjectMetadata);
   rpc ReadObject(ObjectRequest) returns (stream ObjectChunk);
   rpc WriteObject(stream UploadChunk) returns (UploadResult);
@@ -77,6 +81,13 @@ message AgentReceipt {
 message AgentPublicationReply {
   oneof outcome { AgentReceipt committed = 1; AgentPublicationIdentity unknown = 2; }
 }
+// ReviewStore models cross RPC as bounded canonical JSON so the native CLI and
+// HTTP application consume the same public service contracts.
+message ReviewThreadsRequest { bytes repository = 1; uint32 limit = 2; string cursor = 3; }
+message ReviewThreadRequest { bytes repository = 1; bytes thread_id = 2; }
+message ReviewCommandRequest { bytes repository = 1; bytes request_json = 2; }
+message ReviewCommandStatusRequest { bytes repository = 1; bytes request_id = 2; }
+message JsonReply { bytes json = 1; }
 message ObjectId { uint32 kind = 1; bytes id = 2; }
 message ObjectRequest { bytes repository = 1; ObjectId object = 2; }
 message ObjectMetadata { uint64 length = 1; string version = 2; }

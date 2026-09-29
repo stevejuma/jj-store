@@ -1,5 +1,5 @@
 use crate::{
-    CHUNK_BYTES, MAX_IDS, REQUEST_BYTES, RESPONSE_BYTES, administration as admin, agent,
+    CHUNK_BYTES, MAX_IDS, REQUEST_BYTES, RESPONSE_BYTES, administration as admin, agent, review,
     wire::{self, native_store_client::NativeStoreClient},
     wire_object,
 };
@@ -381,6 +381,68 @@ impl NativeClient {
             .await?
             .into_inner();
         agent::outcome(response, request)
+    }
+    pub async fn review_threads(
+        &self,
+        cursor: Option<&str>,
+        limit: usize,
+    ) -> Result<jj_store_service::collaboration::ReviewThreadPage, Status> {
+        let limit =
+            u32::try_from(limit).map_err(|_| Status::invalid_argument("review page limit"))?;
+        let reply = self
+            .wire()
+            .review_threads(self.request(wire::ReviewThreadsRequest {
+                repository: self.repository.as_bytes().to_vec(),
+                limit,
+                cursor: cursor.unwrap_or_default().to_owned(),
+            }))
+            .await?
+            .into_inner();
+        review::response(reply)
+    }
+    pub async fn review_thread(
+        &self,
+        thread: jj_store_service::collaboration::ReviewThreadIdentity,
+    ) -> Result<jj_store_service::collaboration::ReviewThreadDetail, Status> {
+        let reply = self
+            .wire()
+            .review_thread(self.request(wire::ReviewThreadRequest {
+                repository: self.repository.as_bytes().to_vec(),
+                thread_id: thread.as_bytes().to_vec(),
+            }))
+            .await?
+            .into_inner();
+        review::response(reply)
+    }
+    pub async fn apply_review_command(
+        &self,
+        request: &jj_store_service::review_mutations::Request,
+    ) -> Result<jj_store_service::review_mutations::Outcome, Status> {
+        let request_json = serde_json::to_vec(request)
+            .map_err(|_| Status::invalid_argument("review JSON request"))?;
+        let reply = self
+            .wire()
+            .apply_review_command(self.request(wire::ReviewCommandRequest {
+                repository: self.repository.as_bytes().to_vec(),
+                request_json,
+            }))
+            .await?
+            .into_inner();
+        review::response(reply)
+    }
+    pub async fn review_command_status(
+        &self,
+        request_id: m::RequestId,
+    ) -> Result<jj_store_service::review_mutations::Status, Status> {
+        let reply = self
+            .wire()
+            .review_command_status(self.request(wire::ReviewCommandStatusRequest {
+                repository: self.repository.as_bytes().to_vec(),
+                request_id: request_id.as_bytes().to_vec(),
+            }))
+            .await?
+            .into_inner();
+        review::response(reply)
     }
     fn object_request(&self, key: m::ObjectKey) -> Request<wire::ObjectRequest> {
         self.request(wire::ObjectRequest {

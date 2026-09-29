@@ -463,4 +463,14 @@ events, and returns 404 for a missing stable thread. The same fixture applies
 typed ReviewStore commands, reconstructs the HTTP composition and validates
 durable status plus identical replay, stale preconditions, changed intent and
 read-only denial. This adds no user-facing CLI command; collaboration command
-presentation remains subsequent M9.4 work.
+presentation was completed by the final M9.4 slice below.
+
+`jj review` now uses the current workspace's native connection and the same
+service-owned ReviewStore contracts as HTTP. `list` and `show` expose bounded
+current-root data; all writes require caller-retained request IDs and their
+exact optimistic-concurrency values. `create` reads one bounded typed anchor
+document and rejects a foreign repository. `status` distinguishes committed,
+not-known and outcome-unknown receipt states. The owner-only LocalTrusted Unix
+socket requires no bearer credential, while authenticated connections retain
+their existing token behavior. Review publication wakes the existing SSE feed;
+the hint is only an in-process repository ID and WAL replay supplies the event.

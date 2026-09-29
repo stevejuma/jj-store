@@ -1,6 +1,6 @@
 use crate::{
     CHUNK_BYTES, MAX_IDS, REQUEST_BYTES, RESPONSE_BYTES, administration as admin, agent, object,
-    service_error,
+    review, service_error,
     wire::{
         self,
         native_store_server::{NativeStore, NativeStoreServer},
@@ -11,7 +11,9 @@ use jj_store_model as m;
 use jj_store_object::{StagedUpload, WriteOutcome};
 use jj_store_service::{
     administration::RepositoryHost,
-    auth::{BearerToken, Permission},
+    auth::{BearerToken, Permission, SystemClock},
+    collaboration::ReviewThreadPager,
+    pagination,
     registry::{self, RepositoryRegistry},
     transport::{NativeEndpoint, NativeRequest},
 };
@@ -52,6 +54,7 @@ pub struct NativeRpc {
     limits: Limits,
     access: RpcAccess,
     registry: Option<Arc<dyn RepositoryRegistry>>,
+    review_threads: Arc<ReviewThreadPager>,
 }
 #[derive(Clone)]
 enum RpcAccess {
@@ -93,6 +96,10 @@ impl NativeRpc {
             limits,
             access: RpcAccess::Authenticated,
             registry: None,
+            review_threads: Arc::new(
+                ReviewThreadPager::new(pagination::Limits::default(), Arc::new(SystemClock))
+                    .map_err(review::read_error)?,
+            ),
         })
     }
     pub fn hosted(host: RepositoryHost, limits: Limits) -> Result<Self, Status> {
@@ -496,6 +503,83 @@ impl NativeStore for NativeRpc {
                 .await
                 .map_err(service_error)?;
             Ok(agent::wire_outcome(outcome))
+        })
+        .await
+    }
+    async fn review_threads(
+        &self,
+        request: Request<wire::ReviewThreadsRequest>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        let access = self.request_access(&request)?;
+        let body = request.into_inner();
+        let session = self.bind(&body.repository, access)?.into_session();
+        let limit = usize::try_from(body.limit)
+            .map_err(|_| Status::invalid_argument("review page limit"))?;
+        let pager = self.review_threads.clone();
+        self.bounded(async move {
+            let page = if body.cursor.is_empty() {
+                pager.begin(session, limit).await
+            } else {
+                pager.resume(session, &body.cursor, limit).await
+            }
+            .map_err(review::read_error)?;
+            review::reply(&page)
+        })
+        .await
+    }
+    async fn review_thread(
+        &self,
+        request: Request<wire::ReviewThreadRequest>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        let access = self.request_access(&request)?;
+        let body = request.into_inner();
+        let thread =
+            jj_store_service::collaboration::ReviewThreadIdentity::from_slice(&body.thread_id)
+                .map_err(|_| Status::invalid_argument("review thread ID"))?;
+        let session = self.bind(&body.repository, access)?.into_session();
+        let pager = self.review_threads.clone();
+        self.bounded(async move {
+            review::reply(
+                &pager
+                    .detail(session, thread)
+                    .await
+                    .map_err(review::read_error)?,
+            )
+        })
+        .await
+    }
+    async fn apply_review_command(
+        &self,
+        request: Request<wire::ReviewCommandRequest>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        let access = self.request_access(&request)?;
+        let body = request.into_inner();
+        let command = review::request(&body.request_json)?;
+        let session = self.bind(&body.repository, access)?.into_session();
+        self.bounded(async move {
+            let outcome = jj_store_service::review_mutations::ReviewCommandService
+                .apply(session, &command)
+                .await
+                .map_err(review::command_error)?;
+            review::reply(&outcome)
+        })
+        .await
+    }
+    async fn review_command_status(
+        &self,
+        request: Request<wire::ReviewCommandStatusRequest>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        let access = self.request_access(&request)?;
+        let body = request.into_inner();
+        let request_id = m::RequestId::from_slice(&body.request_id)
+            .map_err(|_| Status::invalid_argument("review request ID"))?;
+        let session = self.bind(&body.repository, access)?.into_session();
+        self.bounded(async move {
+            let status = jj_store_service::review_mutations::ReviewCommandService
+                .status(session, request_id)
+                .await
+                .map_err(review::command_error)?;
+            review::reply(&status)
         })
         .await
     }

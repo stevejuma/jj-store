@@ -3973,6 +3973,7 @@ dependencies = [
  "futures 0.3.34",
  "hyper-util",
  "jj-agent",
+ "jj-review",
  "jj-store-jj",
  "jj-store-model",
  "jj-store-object",

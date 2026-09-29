@@ -425,6 +425,14 @@ selection and its already selected anchor, comment and event objects. The routes
 accept no expected version, review command, request/publication identity or
 typed delta, so they cannot reply, edit, resolve, re-anchor or publish.
 
+The shared ReviewStore command request, outcome, receipt and status DTOs support
+both serialization and deserialization so HTTP and native RPC use one public
+contract. Transport callers provide only the versioned request ID and typed
+command. The service still derives principal and publication identity, enforces
+exact workflow/revision/thread preconditions and decodes only the selected
+durable receipt. A committed command emits the existing repository-only wake
+hint after publication; collaboration bodies and credentials never enter it.
+
 ## Browser mutation orchestration
 
 The authenticated browser constructs only the existing typed V1 command union.

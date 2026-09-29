@@ -441,3 +441,11 @@ round-trip the field so collaboration-only WAL activity does not make a strict
 native policy or code request stale. A missing field decodes as zero for
 pre-feature canonical snapshots; new current snapshots always return the
 selected value.
+
+Native RPC V1 also exposes bounded ReviewStore list, detail, command and status
+methods for the bound repository. Wire messages contain repository and stable
+identity bytes plus bounded canonical JSON encoded from service-owned models;
+the RPC layer does not import the review model in production or expose WAL
+coordinators. LocalTrusted calls retain owner-peer verification and
+authenticated calls retain bearer policy. Cursor pins, command authorization,
+receipt replay and outcome classification remain service responsibilities.

@@ -17,6 +17,9 @@ pub enum Extension {
     /// Capture repository-owned activity from supported coding agents
     #[command(long_about = include_str!("../../../docs/cli/agent.md"))]
     Agent(crate::agent_commands::AgentArgs),
+    /// Read and update repository-owned review threads
+    #[command(long_about = include_str!("../../../docs/cli/review.md"))]
+    Review(crate::review_commands::ReviewArgs),
     /// Manage authenticated native JJ repositories
     #[command(long_about = include_str!("../../../docs/cli/store.md"), after_long_help = "Use 'jj store help -k commands' for the native command guide.")]
     Store(StoreArgs),
@@ -78,6 +81,7 @@ pub async fn run(
 ) -> Result<(), CommandError> {
     let args = match command {
         Extension::Agent(args) => return crate::agent_commands::run(ui, helper, args).await,
+        Extension::Review(args) => return crate::review_commands::run(ui, helper, args).await,
         Extension::Store(args) => args,
     };
     let Some(command) = args.command else {

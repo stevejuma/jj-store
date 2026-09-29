@@ -201,8 +201,21 @@ return that durable receipt. An unavailable or timed-out apply remains
 rejection. Stale workflow and thread-version preconditions fail without
 publication.
 
-User-facing CLI commands and live collaboration hints remain later M9.4 slices.
-Read-only and HTTP ReviewStore surfaces alone do not complete JST-COLLAB-004.
+The native RPC exposes the same bounded ReviewStore page, detail, typed command
+and durable status models used by HTTP. `jj review list/show` preserve full
+stable identities and cursors, while create, reply, edit, tombstone, hide,
+resolve and reopen require an explicit request ID and exact applicable workflow,
+revision or thread-snapshot precondition. Thread creation accepts one complete
+typed anchor document for the bound repository rather than inferring an anchor
+from display text. Text and lossless JSON presentation share this contract.
+
+A committed ReviewStore command sends only the existing bounded process-local
+repository wake hint. An already idle subscription replays the selected WAL
+record and reports `repository-changed` at the receipt's accepted position; the
+hint contains neither collaboration content nor credentials. Polling and WAL
+replay remain authoritative across lost, coalesced or lagged hints. This closes
+the LocalTrusted CLI and live-hint portion of JST-COLLAB-004 without adding a
+public listener or controller dispatch.
 
 ## Capture sanitization boundary
 

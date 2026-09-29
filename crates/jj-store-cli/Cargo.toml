@@ -8,6 +8,7 @@ publish = false
 
 [dependencies]
 jj-agent.workspace = true
+jj-review.workspace = true
 jj-cli.workspace = true
 jj-lib.workspace = true
 async-trait = "0.1"
@@ -55,7 +56,6 @@ name = "jj-store"
 path = "src/server_main.rs"
 
 [dev-dependencies]
-jj-review.workspace = true
 jj-store-tantivy.workspace = true
 jj-store-adapters.workspace = true
 reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "http2", "json"] }

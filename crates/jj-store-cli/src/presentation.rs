@@ -106,12 +106,16 @@ pub fn result(
 pub fn help(ui: &mut Ui, helper: &CommandHelper, path: &[String]) -> Result<(), CommandError> {
     let mut app = helper.app().clone();
     app.build();
+    let (root, tail) = match path.first().map(String::as_str) {
+        Some("agent" | "review" | "store") => (path[0].as_str(), &path[1..]),
+        _ => ("store", path),
+    };
     let mut command = app
-        .find_subcommand_mut("store")
-        .expect("registered store command");
-    for name in path {
+        .find_subcommand_mut(root)
+        .expect("registered custom command");
+    for name in tail {
         command = command.find_subcommand_mut(name).ok_or_else(|| {
-            user_error("Unknown native help command").hinted("Use 'jj store help -k commands'.")
+            user_error("Unknown native help command").hinted("Use the command with --help.")
         })?;
     }
     let rendered = command.render_long_help();
@@ -120,14 +124,7 @@ pub fn help(ui: &mut Ui, helper: &CommandHelper, path: &[String]) -> Result<(), 
     } else {
         rendered.to_string()
     };
-    text(
-        ui,
-        helper,
-        &format!(
-            "{}\nUse 'jj store help -k commands' for the native command guide.\n",
-            markdown(&raw, ui.color())
-        ),
-    )
+    text(ui, helper, &format!("{}\n", markdown(&raw, ui.color())))
 }
 pub async fn dispatch(
     ui: &mut Ui,

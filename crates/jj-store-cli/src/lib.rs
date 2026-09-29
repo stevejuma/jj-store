@@ -19,6 +19,8 @@ pub mod credentials;
 pub mod initialization;
 pub mod presentation;
 pub mod remote;
+pub mod review_commands;
+mod review_presentation;
 pub mod server_commands;
 mod store_commands;
 
