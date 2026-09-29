@@ -179,6 +179,7 @@ export function storeRouteFromHash(hash: string): StoreRouteHashResult {
   if (
     reviewThreadId &&
     page !== "reviews" &&
+    page !== "agents" &&
     page !== "log" &&
     page !== "branches"
   )

@@ -1,5 +1,4 @@
 <script lang="ts">
-  import CommunityCommitDiff from "../community-commit-diff/CommunityCommitDiff.svelte";
   import {
     FileChangeStats,
     type FileDiffComposerFileContext,
@@ -20,6 +19,7 @@
   import type { StoreController } from "../../controller/contracts.js";
   import { anchorPath } from "../../collaboration/presentation.js";
   import StoreReviewConversation from "../store-collaboration/StoreReviewConversation.svelte";
+  import StoreCommentableCommitDiff from "../store-collaboration/StoreCommentableCommitDiff.svelte";
   import "./repository-log-diff.css";
 
   let {
@@ -53,7 +53,8 @@
     Boolean(
       path &&
       controller?.state.reviewThread &&
-      anchorPath(controller.state.reviewThread.anchor.value) === path,
+      anchorPath(controller.state.reviewThread.anchor.value) === path &&
+      controller.state.reviewPatch?.lineNumber === undefined,
     ),
   );
 </script>
@@ -121,7 +122,13 @@
             class="community-projects-repository-log-diff__file-card"
             aria-label="Selected file diff"
           >
-            <CommunityCommitDiff files={[{ path, patch }]} {viewMode} {wrap}>
+            <StoreCommentableCommitDiff
+              {controller}
+              {path}
+              {patch}
+              {viewMode}
+              {wrap}
+            >
               {#snippet fileHeaderTrailing(
                 _context: FileDiffComposerFileContext,
               )}
@@ -132,7 +139,7 @@
                 />
                 <CommunityDiffControls bind:viewMode bind:wrap />
               {/snippet}
-            </CommunityCommitDiff>
+            </StoreCommentableCommitDiff>
             {@render inlineDiscussion()}
           </section>
         {:else if path}
@@ -199,9 +206,11 @@
           layout="diff"
           label="Loading selected comparison"
         />{:else if path && patch}
-        <CommunityCommitDiff
+        <StoreCommentableCommitDiff
+          {controller}
           single
-          files={[{ path, patch }]}
+          {path}
+          {patch}
           {viewMode}
           {wrap}
         />

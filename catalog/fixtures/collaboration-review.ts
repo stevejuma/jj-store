@@ -88,9 +88,10 @@ export const reviewThreads: ReviewThread[] = [
             id: id32("a2"),
           },
           owner: {
-            kind: "message",
-            message_id: id16("43"),
-            snapshot: { kind: "message_snapshot", id: id32("2d") },
+            kind: "tool",
+            tool_call_id: id16("d5"),
+            snapshot: { kind: "tool_snapshot", id: id32("d6") },
+            attempt_id: id16("d5"),
           },
         },
       },

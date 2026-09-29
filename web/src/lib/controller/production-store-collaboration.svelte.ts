@@ -4,7 +4,7 @@ import type { createStoreRouteHistory } from "./store-route-history.svelte.js";
 import {
   anchorCommit,
   anchorMatchesOperation,
-  anchorPath,
+  anchorMatchesPath,
 } from "../collaboration/presentation.js";
 import {
   readAgentRelations,
@@ -12,6 +12,7 @@ import {
 } from "./production-collaboration-context.js";
 import { readReviewAnchorPatch } from "./review-anchor-patch.js";
 import { createProductionReviewActions } from "./production-review-actions.js";
+import { createProductionInlineReviewActions } from "./production-inline-review-actions.js";
 
 interface Context {
   data: ProductionStoreState;
@@ -219,17 +220,21 @@ export function createProductionStoreCollaboration(context: Context) {
     loadMatchingPathReview(
       (thread) =>
         anchorCommit(thread.anchor) === commit &&
-        anchorPath(thread.anchor) === path,
+        anchorMatchesPath(thread.anchor, path),
     );
   const loadOperationPathReview = (operation: string, path: string) =>
     loadMatchingPathReview(
       (thread) =>
         anchorMatchesOperation(thread.anchor, operation) &&
-        anchorPath(thread.anchor) === path,
+        anchorMatchesPath(thread.anchor, path),
     );
 
   async function selectAgentSession(id: string | null) {
-    history.push({ ...history.route, agentSessionId: id });
+    history.push({
+      ...history.route,
+      agentSessionId: id,
+      reviewThreadId: null,
+    });
     data.agentSession = undefined;
     data.agentTranscript = [];
     data.transcriptDescriptor = undefined;
@@ -247,6 +252,14 @@ export function createProductionStoreCollaboration(context: Context) {
     ...context,
     reloadReviews: () => loadReviews(),
     reloadReview: loadReview,
+    selectReview: (id) =>
+      history.replace({ ...history.route, reviewThreadId: id }),
+  });
+
+  const inlineReviewActions = createProductionInlineReviewActions({
+    ...context,
+    loadReview,
+    reviewActions,
   });
 
   return {
@@ -261,6 +274,7 @@ export function createProductionStoreCollaboration(context: Context) {
     loadOperationPathReview,
     selectAgentSession,
     selectReviewThread,
+    ...inlineReviewActions,
     ...reviewActions,
   };
 }

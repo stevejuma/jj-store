@@ -67,6 +67,8 @@ export async function readMoreCommitInspection(
     comparisons: comparisonEntries(changes, {
       from: continuation.from,
       to: continuation.to,
+      beforeOperation: continuation.operation,
+      afterOperation: continuation.operation,
     }),
     unavailableComparisons: 0,
     continuation: page.next_cursor
@@ -89,7 +91,13 @@ async function readGroupPaths(
   const changes = page.data.changes;
   return {
     files: presentChangedFiles(changes),
-    comparisons: comparisonEntries(changes, { from, to, group }),
+    comparisons: comparisonEntries(changes, {
+      from,
+      to,
+      group,
+      beforeOperation: continuation.parent,
+      afterOperation: continuation.operation,
+    }),
     unavailableComparisons: 0,
     continuation: {
       ...continuation,

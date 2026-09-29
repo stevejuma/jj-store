@@ -336,8 +336,14 @@ an exact AgentCodeAssociation.
 Code-text and code-artifact review discussions place their compact message
 thread above the exact inline file diff. The JJ Log and Op Log diff column uses
 the same inline thread and bottom composer when the selected file has a loaded
-review. The repository detail rail follows Community's section typography and
-spacing; selecting a JJ Log or Op Log row replaces generic repository facts with
-its metadata and the same enabled mutation actions exposed by the header menu,
-including bookmark creation and conflict resolution when their native
-capabilities and exact selection permit them.
+review. Each text row reveals Design Core's comment action on hover or focus;
+the resulting composer and exact anchored thread occupy that row's annotation
+slot. Agent tool calls reveal a Community-style reply toolbar on hover or focus,
+show an icon count for an existing thread, and place its composer and reply
+thread directly after the call. Both inline surfaces remain keyboard reachable
+and preserve the route-selected discussion column. The repository detail rail
+follows Community's section typography and spacing; selecting a JJ Log or Op Log
+row replaces generic repository facts with its metadata and the same enabled
+mutation actions exposed by the header menu, including bookmark creation and
+conflict resolution when their native capabilities and exact selection permit
+them.

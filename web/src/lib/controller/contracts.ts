@@ -1,4 +1,5 @@
 import type { FileListingViewMode } from "@lapismd/design-core/diff";
+import type { FileDiffLineContext } from "@lapismd/design-core/diff";
 import type { Model } from "../api/client.js";
 export type StoreConflictDescriptor = Model<"ConflictDescriptor">;
 export type StoreConflictUpload = Model<"ConflictUpload">;
@@ -201,6 +202,11 @@ export interface StoreController {
     selectAgentSession(id: string | null): void | Promise<void>;
     selectReviewThread(id: string | null): void | Promise<void>;
     replyToReview(text: string, parentCommentId?: string): Promise<void>;
+    commentOnDiffLine(
+      context: FileDiffLineContext,
+      text: string,
+    ): Promise<void>;
+    commentOnAgentTool(toolCallId: string, text: string): Promise<void>;
     setReviewResolved(resolved: boolean): Promise<void>;
     checkReviewAction(): Promise<void>;
     selectRef(value: string): void | Promise<void>;

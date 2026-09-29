@@ -109,6 +109,7 @@
     </header>
     {#if selected.activity.length}
       <StoreAgentTranscript
+        {controller}
         activity={selected.activity}
         {agent}
         member={{

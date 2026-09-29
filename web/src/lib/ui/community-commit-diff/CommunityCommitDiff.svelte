@@ -17,5 +17,7 @@
     patch={diff.files[0].patch ?? ""}
     viewMode={diff.viewMode ?? "unified"}
     {wrap}
+    lineAccessory={diff.lineAccessory}
+    lineAnnotation={diff.lineAnnotation}
   />
 {:else}<FileDiffComposer {...diff} />{/if}

@@ -2,20 +2,23 @@
   import * as Chat from "@lapismd/design-core/ai/chat";
   import { CommunityMessage } from "@lapismd/lapis-community/components/community-message";
   import type { CommunityMemberModel } from "@lapismd/lapis-community/components/community-message";
-  import type { Model } from "../../api/client.js";
   import type { CommunityMessageModel } from "@lapismd/lapis-community/components/community-message";
-  import StoreAgentToolDetail from "./StoreAgentToolDetail.svelte";
+  import type { Model } from "../../api/client.js";
+  import type { StoreController } from "../../controller/contracts.js";
+  import StoreAgentToolReview from "./StoreAgentToolReview.svelte";
 
   let {
     activity,
     agent,
     member,
     patches = {},
+    controller,
   }: {
     activity: readonly Model<"AgentActivity">[];
     agent: CommunityMemberModel;
     member: CommunityMemberModel;
     patches?: Readonly<Record<string, string>>;
+    controller: StoreController;
   } = $props();
 
   const members = $derived([agent, member]);
@@ -40,23 +43,6 @@
       timestamp: `#${Number(entry.sequence) + 1}`,
     };
   }
-
-  function status(state: Model<"ToolState">) {
-    if (state === "succeeded") return "complete" as const;
-    if (state === "failed" || state === "cancelled" || state === "interrupted")
-      return "error" as const;
-    if (state === "running") return "running" as const;
-    if (state === "pending") return "pending" as const;
-    return "unknown" as const;
-  }
-
-  function target(tool: Model<"AgentToolActivity">): string | undefined {
-    return (
-      tool.code.flatMap((association) => association.paths)[0] ??
-      tool.observed_paths[0] ??
-      Chat.toolCallTarget(tool.input?.content)
-    );
-  }
 </script>
 
 <Chat.MessageList
@@ -75,23 +61,7 @@
         highlighted={entry.role === "user"}
       />
     {:else if entry.type === "tool"}
-      {#snippet detail()}
-        <StoreAgentToolDetail tool={entry.tool} {patches} />
-      {/snippet}
-      <Chat.ToolCalls
-        label="Tool activity"
-        calls={[
-          {
-            id: entry.tool.tool_call_id,
-            name: entry.tool.native_name,
-            status: status(entry.tool.state),
-            target: target(entry.tool),
-            errorMessage:
-              entry.tool.state === "failed" ? "Tool failed" : undefined,
-            detail,
-          },
-        ]}
-      />
+      <StoreAgentToolReview tool={entry.tool} {patches} {controller} />
     {:else if entry.type === "capture_gap"}
       <Chat.SystemMessage>
         Capture gap from {entry.missing_from} to {entry.missing_to}

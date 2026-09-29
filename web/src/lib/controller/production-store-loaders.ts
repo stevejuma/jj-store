@@ -41,6 +41,8 @@ export interface Comparison {
   from: string;
   to: string;
   group?: string;
+  beforeOperation: string;
+  afterOperation: string;
 }
 
 export async function readReferences(
@@ -187,7 +189,15 @@ export async function readCommitInspection(
   return {
     detail: { files: presentChangedFiles(changes), patches: {} },
     comparisons: new Map(
-      changes.map((change) => [change.path, { from: parent!, to: id }]),
+      changes.map((change) => [
+        change.path,
+        {
+          from: parent!,
+          to: id,
+          beforeOperation: operation,
+          afterOperation: operation,
+        },
+      ]),
     ),
     conflicts: conflicts.data.conflicts,
     continuation:
@@ -250,7 +260,16 @@ export async function readOperationInspection(
   );
   return {
     detail: { files: page.files, patches: {} },
-    comparisons: page.comparisons,
+    comparisons: new Map(
+      [...page.comparisons].map(([path, comparison]) => [
+        path,
+        {
+          ...comparison,
+          beforeOperation: selectedParent,
+          afterOperation: id,
+        },
+      ]),
+    ),
     parents: [],
     selectedParent,
     unavailableComparisons: page.unavailableComparisons,

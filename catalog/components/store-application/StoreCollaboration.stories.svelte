@@ -106,6 +106,40 @@
     await expect(
       expandedTool.getBoundingClientRect().right,
     ).toBeLessThanOrEqual(transcript.getBoundingClientRect().right);
+    const toolReview = expandedTool.closest<HTMLElement>(
+      '[data-ui-part="agent-tool-review"]',
+    );
+    if (!toolReview) throw new Error("Tool review surface was not rendered");
+    await fireEvent.pointerEnter(toolReview);
+    const replyToTool = canvas.getByRole("button", {
+      name: "Reply to apply_patch tool call",
+    });
+    const toolActions = canvas.getByRole("group", {
+      name: "Actions for apply_patch tool call",
+    });
+    await expect(toolActions).toHaveAttribute("data-visible", "");
+    await waitFor(() =>
+      expect(getComputedStyle(toolActions).opacity).toBe("1"),
+    );
+    await fireEvent.click(replyToTool);
+    let toolComposer: HTMLElement | null = null;
+    await waitFor(() => {
+      toolComposer = canvasElement.querySelector<HTMLElement>(
+        '[data-ui-part="agent-tool-reply-composer"]',
+      );
+      expect(toolComposer).not.toBeNull();
+    });
+    if (!toolComposer) throw new Error("Tool reply composer was not rendered");
+    const toolEditor = within(toolComposer).getByRole("textbox", {
+      name: "Markdown editor",
+    });
+    await userEvent.type(toolEditor, "Keep this tool result pinned.");
+    await userEvent.click(
+      within(toolComposer).getByRole("button", { name: "Reply" }),
+    );
+    await expect(
+      canvas.getByText("Keep this tool result pinned."),
+    ).toBeVisible();
     const resize = canvas.getByRole("separator", {
       name: "Resize Agent sessions and Agent response columns",
     });
@@ -158,6 +192,37 @@
         selector: ".store-collaboration__detail-title",
       }),
     ).toBeVisible();
+    const lineComment = canvas.getAllByRole("button", {
+      name: /Comment on src\/lib\.rs line/u,
+    })[0]!;
+    const diffRow = lineComment.closest<HTMLElement>(
+      '[data-ui-part="diff-row"]',
+    );
+    if (!diffRow) throw new Error("Commentable diff row was not rendered");
+    await userEvent.hover(diffRow);
+    lineComment.focus();
+    await fireEvent.click(lineComment);
+    const lineComposer = canvasElement.querySelector<HTMLElement>(
+      '[data-ui-part="diff-line-composer"]',
+    );
+    if (!lineComposer) throw new Error("Diff line composer was not rendered");
+    const lineEditor = within(lineComposer).getByRole("textbox", {
+      name: "Markdown editor",
+    });
+    await userEvent.type(lineEditor, "Keep this exact line covered.");
+    await userEvent.click(
+      within(lineComposer).getByRole("button", {
+        name: "Comment",
+      }),
+    );
+    await expect(
+      canvas.getAllByText("Keep this exact line covered.")[0],
+    ).toBeVisible();
+    await expect(
+      diffRow.nextElementSibling?.querySelector(
+        '[data-ui-part="diff-line-review"]',
+      ) ?? canvasElement.querySelector('[data-ui-part="diff-line-review"]'),
+    ).not.toBeNull();
   }}
 >
   {#snippet template(args)}<StoreRepositoryApplication {...args} />{/snippet}
@@ -183,7 +248,7 @@
     ).toBeVisible();
     await userEvent.click(canvas.getByRole("button", { name: "src/lib.rs" }));
     await expect(
-      canvas.getAllByRole("group", { name: "Reviewed file src/lib.rs" })[0],
+      canvas.getAllByRole("list", { name: "Review comments" })[0],
     ).toBeVisible();
   }}
 >

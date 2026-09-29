@@ -2,6 +2,7 @@ import type {
   StoreDataSource,
   StoreReviewCommandRequest,
 } from "./native-data-source.js";
+import type { Model } from "../api/client.js";
 import type { ProductionStoreState } from "./production-store-state.svelte.js";
 
 interface Context {
@@ -11,6 +12,7 @@ interface Context {
   requestId?(): string;
   reloadReviews(): Promise<void>;
   reloadReview(id: string): Promise<void>;
+  selectReview(id: string): void;
 }
 
 const defaultRequestId = () =>
@@ -40,12 +42,27 @@ export function createProductionReviewActions(context: Context) {
       }
       data.reviewActionRequestId = null;
       data.status.reviewAction = "ready";
+      context.selectReview(outcome.receipt.result.thread_id);
       await context.reloadReviews();
       await context.reloadReview(outcome.receipt.result.thread_id);
     } catch (cause) {
       data.status.reviewAction = "failed";
       context.report(cause);
     }
+  }
+
+  async function create(anchor: Model<"ArtifactAnchorV1">, text: string) {
+    if (!text.trim()) return;
+    await apply({
+      command: "create_thread",
+      anchor,
+      body: {
+        schema_version: 1,
+        format: "safe_markdown",
+        text: text.trim(),
+        sanitizer_version: "review-markdown-v1",
+      },
+    });
   }
 
   async function reply(text: string, parentCommentId?: string) {
@@ -84,9 +101,10 @@ export function createProductionReviewActions(context: Context) {
     data.reviewActionRequestId = null;
     data.reviewActionMessage = "Review update committed.";
     data.status.reviewAction = "ready";
+    context.selectReview(status.receipt.result.thread_id);
     await context.reloadReviews();
     await context.reloadReview(status.receipt.result.thread_id);
   }
 
-  return { reply, setResolved, checkAction };
+  return { create, reply, setResolved, checkAction };
 }

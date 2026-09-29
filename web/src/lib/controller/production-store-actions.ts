@@ -123,6 +123,8 @@ export function createProductionStoreActions(options: {
       await options.reader.selectReviewThread(id);
     },
     replyToReview: options.reader.reply,
+    commentOnDiffLine: options.reader.commentOnDiffLine,
+    commentOnAgentTool: options.reader.commentOnAgentTool,
     setReviewResolved: options.reader.setResolved,
     checkReviewAction: options.reader.checkAction,
     selectRef: (value) => options.reader.selectRef(value),

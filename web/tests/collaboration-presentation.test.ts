@@ -8,9 +8,11 @@ import {
   agentMember,
   agentSessionTiming,
   anchorMatchesOperation,
+  anchorMatchesPath,
   anchorOperationIds,
   formatAgentSessionDuration,
   reviewCommentRows,
+  reviewPatchMatchesLine,
 } from "../src/lib/collaboration/presentation.js";
 import { revisionCollaboration } from "../src/lib/collaboration/revision-collaboration.js";
 
@@ -168,6 +170,24 @@ test("operation collaboration includes explicit code comparison context", () => 
     afterOperation,
   ]);
   assert.equal(anchorMatchesOperation(anchor, beforeOperation), true);
+  assert.equal(anchorMatchesPath(anchor, "src/lib.rs"), true);
+  assert.equal(
+    reviewPatchMatchesLine(
+      {
+        path: "src/lib.rs",
+        patch: "@@ -1 +1 @@",
+        lineNumber: 4,
+        side: "before",
+      },
+      {
+        path: "src/lib.rs",
+        lineNumber: 4,
+        variant: "removed",
+        text: "old",
+      },
+    ),
+    true,
+  );
 
   const state = {
     agentSessions: [summary(1, 2)],

@@ -63,6 +63,11 @@ test("collaboration routes preserve stable session and thread selections", () =>
     kind: "route",
     route: agentRoute,
   });
+  const agentReviewRoute = { ...agentRoute, reviewThreadId: thread };
+  assert.deepEqual(storeRouteFromHash(storeRouteToHash(agentReviewRoute)!), {
+    kind: "route",
+    route: agentReviewRoute,
+  });
   assert.deepEqual(storeRouteFromHash(storeRouteToHash(reviewRoute)!), {
     kind: "route",
     route: reviewRoute,
@@ -117,7 +122,6 @@ test("malformed, duplicate, foreign and unsafe route data fails closed", () => {
     `#/repos/${repository}/files?at_op=${operation}&operation=${inspected}`,
     `#/repos/${repository}/files?future=value`,
     `#/repos/${repository}/files?at_op=${operation}&session=${session}`,
-    `#/repos/${repository}/agents?at_op=${operation}&thread=${thread}`,
     "#/repos/%zz/files",
   ]) {
     assert.equal(storeRouteFromHash(hash).kind, "invalid", hash);

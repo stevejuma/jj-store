@@ -4,6 +4,8 @@ import type {
   CommunityMessageModel,
 } from "@lapismd/lapis-community/components/community-message";
 import { agentAvatarUrl } from "./agent-avatar.js";
+import type { FileDiffLineContext } from "@lapismd/design-core/diff";
+import type { ReviewInlinePatch } from "../controller/review-anchor-patch.js";
 
 export function shortIdentity(value: string, length = 12): string {
   return value.length <= length ? value : `${value.slice(0, length)}…`;
@@ -42,6 +44,40 @@ export function anchorAgentSession(
   const { target } = anchor;
   if (target.target === "agent_text" || target.target === "agent_artifact")
     return target.value.session_id;
+}
+
+export function anchorAgentTool(
+  anchor: Model<"ArtifactAnchorV1">,
+): { sessionId: string; toolCallId: string } | undefined {
+  const { target } = anchor;
+  if (target.target !== "agent_artifact" || target.value.owner.kind !== "tool")
+    return;
+  return {
+    sessionId: target.value.session_id,
+    toolCallId: target.value.owner.tool_call_id,
+  };
+}
+
+export function reviewForAgentTool(
+  threads: readonly Model<"ReviewThreadSummary">[],
+  sessionId: string,
+  toolCallId: string,
+) {
+  return threads.find((thread) => {
+    const tool = anchorAgentTool(thread.anchor);
+    return tool?.sessionId === sessionId && tool.toolCallId === toolCallId;
+  });
+}
+
+export function reviewPatchMatchesLine(
+  patch: ReviewInlinePatch | undefined,
+  context: FileDiffLineContext,
+): boolean {
+  if (!patch || patch.lineNumber !== context.lineNumber) return false;
+  if (patch.path !== context.path) return false;
+  return patch.side === "before"
+    ? context.variant === "removed"
+    : context.variant !== "removed";
 }
 
 export function anchorAgentMember(
@@ -273,4 +309,18 @@ export function anchorPath(
   const { target } = anchor;
   if (target.target === "code_text" || target.target === "code_artifact")
     return target.value.path;
+}
+
+export function anchorMatchesPath(
+  anchor: Model<"ArtifactAnchorV1">,
+  path: string,
+): boolean {
+  const target = anchor.target;
+  if (target.target === "code_artifact") return target.value.path === path;
+  if (target.target !== "code_text") return false;
+  return (
+    target.value.path === path ||
+    target.value.diff_context?.before_path === path ||
+    target.value.diff_context?.after_path === path
+  );
 }

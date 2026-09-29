@@ -268,6 +268,26 @@ bounded reply-tree indentation, guides and connectors, retain copyable
 author/comment identities and keep the composer at the bottom of an open
 discussion.
 
+Each rendered text-diff row exposes a keyboard and pointer reachable comment
+action through Design Core's line-accessory boundary. Activating it opens an
+inline composer after that row. A committed first comment creates one
+`code_text` ReviewStore thread whose immutable file object, UTF-8 byte
+selection, digest and explicit before/after comparison operations are resolved
+from the selected native comparison; an ambiguous, mismatched, conflicted or
+unselectable row fails closed. The resulting discussion renders through the
+line-annotation boundary immediately after the anchored row. Existing code-text
+threads use the same exact row placement, while whole-file anchors retain their
+below-diff placement.
+
+Each agent tool-call row likewise exposes a keyboard and pointer reachable reply
+action. Its first committed comment creates one `agent_artifact` thread bound to
+the selected session snapshot and exact tool snapshot; subsequent comments
+append through the thread's normal workflow precondition. A captured V1 tool
+call without finer attempt evidence uses its stable tool-call identity as the
+single coalesced attempt identity. Tool discussions render directly after the
+call with the same bounded reply indentation as Community review threads, and
+the Agents route retains the selected review-thread identity.
+
 Design Core supplies the column canvas, diff, Empty, Alert, Button and Skeleton
 primitives. Revision and operation selection follow bounded association and
 review pages to the exact commit or operation match, open sibling Agent context

@@ -15,7 +15,14 @@
   let {
     controller,
     inline = false,
-  }: { controller: StoreController; inline?: boolean } = $props();
+    showComposer = true,
+    showDiff = !inline,
+  }: {
+    controller: StoreController;
+    inline?: boolean;
+    showComposer?: boolean;
+    showDiff?: boolean;
+  } = $props();
   const view = $derived(controller.state);
   const detail = $derived(view.reviewThread);
   const commentRows = $derived(reviewCommentRows(detail?.comments ?? []));
@@ -115,7 +122,7 @@
         {/snippet}
       </CommunityProjectsVirtualRows>
     </div>
-    {#if path}<div
+    {#if showDiff && path}<div
         class="store-review-conversation__diff"
         role="group"
         aria-label={`Reviewed file ${path}`}
@@ -130,7 +137,7 @@
             The exact text diff is unavailable for this anchored file.
           </p>{/if}
       </div>{/if}
-    {#if detail.thread.status === "open"}
+    {#if showComposer && detail.thread.status === "open"}
       <div class="store-collaboration__composer">
         <CommunityChatComposer
           mode="form"
@@ -194,6 +201,6 @@
   }
 
   .store-review-conversation[data-inline="true"] {
-    border-top: 1px solid var(--border);
+    padding-block: 0.35rem;
   }
 </style>

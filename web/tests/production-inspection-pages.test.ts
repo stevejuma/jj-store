@@ -139,6 +139,8 @@ test("commit inspection continues opaque changed-path pages", async () => {
   assert.deepEqual(page.comparisons.get("src/two.rs"), {
     from: beforeA,
     to: afterA,
+    beforeOperation: operation,
+    afterOperation: operation,
   });
   assert.equal(page.continuation, null);
 });

@@ -151,6 +151,8 @@ const association: Model<"AgentCodeAssociation"> = {
   paths: ["src/lib.rs"],
   created_at_millis: 1_796_000_000_000,
 };
+const toolCallId = id16("71");
+const toolSnapshotId = id32("72");
 const reviewDetail = (): Model<"ReviewThreadDetail"> => ({
   version: 1,
   snapshot: {
@@ -205,8 +207,26 @@ const agentDetail = (): Model<"AgentSessionDetail"> => ({
   evidence: [],
   event_batches: [],
   transcripts: [descriptor],
-  tools: [],
-  activity: [],
+  tools: [{ tool_call_id: toolCallId, snapshot_id: toolSnapshotId }],
+  activity: [
+    {
+      type: "tool",
+      sequence: 1,
+      event_id: id16("73"),
+      tool: {
+        tool_call_id: toolCallId,
+        snapshot_id: toolSnapshotId,
+        turn_id: null,
+        native_name: "shell",
+        kind: "execute",
+        state: "succeeded",
+        input: null,
+        output: null,
+        observed_paths: [],
+        code: [],
+      },
+    },
+  ],
   activity_truncated: false,
   code: [],
   code_truncated: false,
@@ -333,6 +353,138 @@ function harness(
   });
   return { controller, data, history, commands, source };
 }
+
+test("diff line comments create an exact code-text thread and select its receipt", async () => {
+  const { controller, data, commands, history, source } = harness();
+  const fileId = id32("74");
+  data.comparisons = new Map([
+    [
+      "src/lib.rs",
+      {
+        from: beforeCommit,
+        to: commit,
+        beforeOperation,
+        afterOperation: operation,
+      },
+    ],
+  ]);
+  source.diff = async () => ({
+    snapshot: {
+      version: 1,
+      repo_id: source.repository,
+      epoch: id16("32"),
+      published_seq: 4,
+      manifest_revision: 5,
+      code_state_version: 2,
+      heads: [operation],
+      operation_id: operation,
+    },
+    data: {
+      version: 1,
+      from: beforeCommit,
+      to: commit,
+      path: "src/lib.rs",
+      changes: [
+        {
+          path: "src/lib.rs",
+          before: [],
+          after: [
+            {
+              type: "file",
+              id: fileId,
+              executable: false,
+              copy: { type: "placeholder" },
+            },
+          ],
+          sources: [],
+          content: {
+            status: "text",
+            hunks: [
+              {
+                kind: "different",
+                before_start: 1,
+                after_start: 1,
+                before: "",
+                after: "hello\n",
+              },
+            ],
+          },
+        },
+      ],
+      stats: {
+        visited_objects: 1,
+        visited_bytes: 1,
+        elapsed_millis: 1,
+        cache_hits: 0,
+      },
+    },
+    next_cursor: null,
+  });
+  source.file = async () => ({ text: "hello\n", bytes: 6 });
+
+  await controller.commentOnDiffLine(
+    {
+      path: "src/lib.rs",
+      lineNumber: 1,
+      variant: "added",
+      text: "hello",
+    },
+    "Please keep this line",
+  );
+
+  expect(commands[0]).toMatchObject({
+    command: {
+      command: "create_thread",
+      anchor: {
+        target: {
+          target: "code_text",
+          value: {
+            operation_id: operation,
+            commit_id: commit,
+            file_id: fileId,
+            diff_context: {
+              before_operation_id: beforeOperation,
+              after_operation_id: operation,
+              side: "after",
+            },
+          },
+        },
+      },
+      body: { text: "Please keep this line" },
+    },
+  });
+  expect(history.route.reviewThreadId).toBe(thread.thread_id);
+});
+
+test("tool comments create an exact agent-artifact thread", async () => {
+  const { controller, commands } = harness();
+  await controller.loadAgent(session.session_id);
+  await controller.commentOnAgentTool(toolCallId, "Explain this call");
+  expect(commands[0]).toMatchObject({
+    command: {
+      command: "create_thread",
+      anchor: {
+        target: {
+          target: "agent_artifact",
+          value: {
+            session_id: session.session_id,
+            session_snapshot: {
+              kind: "session_snapshot",
+              id: session.snapshot_id,
+            },
+            owner: {
+              kind: "tool",
+              tool_call_id: toolCallId,
+              snapshot: { kind: "tool_snapshot", id: toolSnapshotId },
+              attempt_id: toolCallId,
+            },
+          },
+        },
+      },
+      body: { text: "Explain this call" },
+    },
+  });
+});
 
 test("agent sessions load a selected transcript without mixing identities", async () => {
   const { controller, data, history } = harness();
@@ -551,12 +703,15 @@ test("code text review loads its exact pinned comparison pair", async () => {
       next_cursor: null,
     };
   };
+  source.file = async () => ({ text: "old\nnew line\n", bytes: 13 });
 
   await controller.loadReview(codeTextThread.thread_id);
 
   expect(calls).toEqual([[operation, beforeCommit, commit, "src/lib.rs"]]);
   expect(data.reviewPatch?.path).toBe("src/lib.rs");
   expect(data.reviewPatch?.patch).toContain("-old");
+  expect(data.reviewPatch?.lineNumber).toBe(2);
+  expect(data.reviewPatch?.side).toBe("after");
   expect(data.status.reviewAction).toBe("ready");
 });
 

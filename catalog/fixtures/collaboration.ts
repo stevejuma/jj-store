@@ -182,4 +182,6 @@ export const agentTranscript: readonly AgentChunk[] = [
 export const reviewPatch = {
   path: "src/lib.rs",
   patch: sampleDetail.patches["src/lib.rs"]!,
+  lineNumber: 1,
+  side: "after" as const,
 };

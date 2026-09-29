@@ -484,5 +484,7 @@ test("explicit operation parent maps each changed path to its comparison", async
     from: before,
     to: after,
     group: change,
+    beforeOperation: parent,
+    afterOperation: operation,
   });
 });

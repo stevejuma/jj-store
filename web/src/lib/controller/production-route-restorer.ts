@@ -114,8 +114,9 @@ export async function restoreProductionStoreRoute(
   data.status.error = "";
   data.status.navigation = "loading";
   if (desired.page === "agents") {
-    await reads.loadAgents();
+    await Promise.all([reads.loadAgents(), reads.loadReviews()]);
     if (desired.agentSessionId) await reads.loadAgent(desired.agentSessionId);
+    if (desired.reviewThreadId) await reads.loadReview(desired.reviewThreadId);
   } else if (desired.page === "reviews") {
     await reads.loadReviews();
     if (desired.reviewThreadId) await reads.loadReview(desired.reviewThreadId);

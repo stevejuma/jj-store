@@ -612,6 +612,17 @@ code-text or code-artifact review anchors may load their immutable comparison
 through the existing pinned diff reads so the discussion can render the comment
 above its inline file diff.
 
+The production diff controller passes Design Core line accessories and
+annotations through its single-file wrapper. Creating a line comment resolves
+the selected before or after file object at its explicit comparison operation,
+verifies the displayed line text, derives the UTF-8 byte interval and digest,
+and sends one typed `create_thread` command. Tool reply actions bind
+`agent_artifact` anchors to the loaded session and tool snapshots, using the
+tool-call identity as the V1 attempt identity when capture supplies no separate
+attempt. A committed receipt refreshes summaries, selects and reloads the exact
+returned thread, and renders it inline; `outcome_unknown` retains the stable
+request ID for the existing status route.
+
 Local workspace validation may resolve `@lapismd/design-core` from the sibling
 source repository through the guarded pnpm hook. That development resolution
 does not change browser request contracts, static-asset policy or runtime
