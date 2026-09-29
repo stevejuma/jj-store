@@ -55,8 +55,7 @@ impl BrowserAssets {
         for name in manifest.files {
             let media = if name == "index.html" {
                 "text/html; charset=utf-8"
-            } else {
-                let file = name.strip_prefix("assets/").ok_or("browser asset path")?;
+            } else if let Some(file) = name.strip_prefix("assets/") {
                 if file.is_empty()
                     || !file
                         .bytes()
@@ -84,6 +83,25 @@ impl BrowserAssets {
                 } else {
                     return Err("browser asset media");
                 }
+            } else if let Some(file) = name.strip_prefix("agent-icons/") {
+                if file.is_empty()
+                    || !file
+                        .bytes()
+                        .all(|b| b.is_ascii_alphanumeric() || b"-_.".contains(&b))
+                    || file.contains("..")
+                    || !file.ends_with(".svg")
+                {
+                    return Err("browser asset path");
+                }
+                if !fs::symlink_metadata(root.join("agent-icons"))
+                    .map_err(|_| "browser asset directory")?
+                    .is_dir()
+                {
+                    return Err("browser asset directory");
+                }
+                "image/svg+xml"
+            } else {
+                return Err("browser asset path");
             };
             let bytes = regular(&root.join(&name), 8 * 1024 * 1024)?;
             total += bytes.len();
@@ -118,7 +136,7 @@ impl BrowserAssets {
                     headers.insert(header::CACHE_CONTROL, "no-store".parse().unwrap());
                     headers.insert(header::X_CONTENT_TYPE_OPTIONS, "nosniff".parse().unwrap());
                     headers.insert(header::REFERRER_POLICY, "no-referrer".parse().unwrap());
-                    headers.insert(header::CONTENT_SECURITY_POLICY, "default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self'; font-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'".parse().unwrap());
+                    headers.insert(header::CONTENT_SECURITY_POLICY, "default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' https://www.gravatar.com; font-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'".parse().unwrap());
                     response
                 }
             }));

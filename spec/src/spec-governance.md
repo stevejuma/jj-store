@@ -249,7 +249,9 @@ requests, verify responsive navigation and fresh-instance state, and retain
 unapproved screenshots only as local review artifacts. Virtual-row geometry is
 compared within each component's directly owned row container and in rendered
 vertical order, so nested listings and independent columns cannot produce false
-overlap failures.
+overlap failures. The production web manifest includes only flat, regular
+`agent-icons/*.svg` files from the public icon directory; source attribution
+documents and all other public files remain outside the served allowlist.
 
 Normal checks also run the Community-derived browser architecture audit. It
 enforces counted-line limits and exact no-growth budgets for existing hotspots,

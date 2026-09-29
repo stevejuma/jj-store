@@ -532,10 +532,13 @@ follow repository content. JSON integers outside JavaScript's safe range remain
 exact through lossless parsing and bigint presentation.
 
 Static browser assets are loaded once from a bounded, explicit manifest. Only
-listed index/JavaScript/CSS files are served; repository paths cannot select
-filesystem content. The document permits same-origin scripts/styles/connects and
-prohibits framing, plugins and inline script. The browser read client is
-independent of the later typed mutation and search capabilities.
+the listed index, JavaScript, CSS, font and fixed `agent-icons/*.svg` files are
+served; repository paths cannot select filesystem content. Agent icons retain
+their stable same-origin `/agent-icons/<name>.svg` URLs. The document permits
+same-origin scripts, styles, connections and images plus image loads from the
+exact `https://www.gravatar.com` origin; it prohibits framing, plugins and
+inline script. The browser read client is independent of the later typed
+mutation and search capabilities.
 
 Generated schemas express reference siblings through equivalent allOf
 composition so client generators retain internal enum discriminators. The
