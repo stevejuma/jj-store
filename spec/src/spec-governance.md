@@ -58,10 +58,14 @@ acceptance in this repository.
 
 The checkout-owned development harness stores its interactive fixture only in
 the ignored `.local/dev-demo` subtree. Restart and stop preserve that fixture;
-reset is the explicit destructive reseed boundary. Cold browser acceptance must
-provide a separate temporary root so its publications and cleanup cannot alter
-interactive state. Harness state and process markers remain separate so a stop
-cannot leave a stale PID that blocks the next restart.
+reset is the explicit destructive reseed boundary. Reset publishes
+representative Codex, Cursor and OpenCode activity through the production hook
+path, then creates repository, operation, revision, code-text, code-artifact,
+agent-text and agent-artifact review anchors through the production ReviewStore
+command route. Cold browser acceptance must provide a separate temporary root so
+its publications and cleanup cannot alter interactive state. Harness state and
+process markers remain separate so a stop cannot leave a stale PID that blocks
+the next restart.
 
 ## M0 extension qualification
 

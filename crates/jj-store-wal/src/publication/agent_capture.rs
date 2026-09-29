@@ -85,6 +85,10 @@ impl Coordinator {
                     .into_iter()
                     .flat_map(|values| values.iter().map(|(key, value)| (*key, *value))),
             );
+            if let Some(chunks) = objects.transcript_chunks.get(&session_id) {
+                self.stage_capture_transcript(base, batch, normalized, &mut session, chunks)
+                    .await?;
+            }
             session.coverage.completeness = CompletenessV1::Partial;
             session.coverage.gaps = session.coverage.gaps.saturating_add(gaps);
             let replacement = self
@@ -235,7 +239,10 @@ fn selected_state(
         })
 }
 
-fn capture_gaps(batch: &SanitizedObservationBatchV1, normalized: &NormalizationBatchV1) -> u32 {
+pub(super) fn capture_gaps(
+    batch: &SanitizedObservationBatchV1,
+    normalized: &NormalizationBatchV1,
+) -> u32 {
     let sequence_gaps = batch
         .observations
         .windows(2)

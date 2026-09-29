@@ -6,11 +6,19 @@ import { chmod, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import {
   execute,
+  executeWithInput,
   processTreeMetrics,
   stopPrevious,
   waitForServer,
 } from "./dev-demo-services.mjs";
+import { seedAgentActivity } from "./dev-demo-agents.mjs";
+import { seedReviews } from "./dev-demo-reviews.mjs";
 import { seedRepository } from "./dev-demo-repository.mjs";
+import {
+  configureSearch,
+  repositoryPosition,
+  waitForSearch,
+} from "./dev-demo-search.mjs";
 import {
   developmentLayout,
   loadFixture,
@@ -27,6 +35,13 @@ const developmentEnvironment = {
 
 async function run(command, args, options = {}) {
   return execute(command, args, {
+    cwd: repositoryRoot,
+    env: { ...developmentEnvironment, ...options.env },
+  });
+}
+
+async function runInput(command, args, input, options = {}) {
+  return executeWithInput(command, args, input, {
     cwd: repositoryRoot,
     env: { ...developmentEnvironment, ...options.env },
   });
@@ -59,61 +74,6 @@ async function stopServer(server) {
     }
   }
   throw new Error("temporary native server did not stop");
-}
-
-async function configureSearch(serverConfig, repositoryId) {
-  const generated = await readFile(serverConfig, "utf8");
-  const search = `
-[[search]]
-repository = "${repositoryId}"
-poll_millis = 100
-timeout_seconds = 30
-snapshot_every = 32
-
-[search.source.scopes.main]
-kind = "bookmark"
-name = "main"
-`;
-  await writeFile(
-    serverConfig,
-    `${generated.replace(/^search = \[\]\n/mu, "")}${search}`,
-    { mode: 0o600 },
-  );
-}
-
-async function waitForSearch(origin, repositoryId) {
-  const deadline = performance.now() + 120_000;
-  const url = `${origin}v1/repos/${repositoryId}/search/status`;
-  let lastResponse = "no response";
-  while (performance.now() < deadline) {
-    try {
-      const response = await fetch(url, {
-        headers: {
-          Origin: new URL(origin).origin,
-          "Sec-Fetch-Dest": "empty",
-          "Sec-Fetch-Mode": "cors",
-          "Sec-Fetch-Site": "same-origin",
-          "X-JJ-Store-Protocol": "1",
-        },
-      });
-      const searchState = await response.json();
-      lastResponse = `${response.status} ${JSON.stringify(searchState)}`;
-      if (
-        response.ok &&
-        searchState.index_generation &&
-        searchState.is_stale === false &&
-        searchState.degraded === false
-      ) {
-        return searchState;
-      }
-    } catch (error) {
-      lastResponse = String(error.message ?? error);
-    }
-    await new Promise((resolveWait) => setTimeout(resolveWait, 100));
-  }
-  throw new Error(
-    `native search did not become ready within 120 seconds: ${lastResponse}`,
-  );
 }
 
 async function assertPortAvailable() {
@@ -154,12 +114,12 @@ async function initializeFixture(origin, logHandle) {
   await refreshServerConfiguration(origin);
   const started = performance.now();
   const server = startServer(layout.serverConfig, logHandle);
-  let repositoryId;
+  let seed;
   let firstStartupMillis;
   try {
     await waitForServer(origin);
     firstStartupMillis = Math.round(performance.now() - started);
-    repositoryId = await seedRepository({
+    seed = await seedRepository({
       repositoryRoot,
       runtimeRoot: layout.runtimeRoot,
       run,
@@ -174,16 +134,19 @@ async function initializeFixture(origin, logHandle) {
     "--config",
     layout.serverConfig,
     "--repo-id",
-    repositoryId,
+    seed.repositoryId,
     "--name",
     "jj-store demo",
     "--format=json",
   ]);
-  await configureSearch(layout.serverConfig, repositoryId);
-  return writeFixture(layout, {
-    firstStartupMillis,
-    repositoryId,
-  });
+  await configureSearch(layout.serverConfig, seed.repositoryId);
+  return {
+    fixture: {
+      firstStartupMillis,
+      repositoryId: seed.repositoryId,
+    },
+    references: seed.references,
+  };
 }
 
 async function restart({ reset = false } = {}) {
@@ -199,20 +162,45 @@ async function restart({ reset = false } = {}) {
   await run("cargo", ["build", "-p", "jj-store-cli", "--bins", "--locked"]);
   const origin = `http://127.0.0.1:${serverPort}/`;
   let fixture = await loadFixture(layout);
+  let references;
   await mkdir(layout.runtimeRoot, { recursive: true, mode: 0o700 });
   const logHandle = openSync(layout.logPath, "a", 0o600);
   if (fixture) await refreshServerConfiguration(origin);
-  else fixture = await initializeFixture(origin, logHandle);
+  else {
+    const initialized = await initializeFixture(origin, logHandle);
+    fixture = initialized.fixture;
+    references = initialized.references;
+  }
   const started = performance.now();
   const server = startServer(layout.serverConfig, logHandle);
   try {
     await waitForServer(origin);
     await waitForSearch(origin, fixture.repositoryId);
+    if (references) {
+      await seedAgentActivity({
+        repositoryRoot,
+        runtimeRoot: layout.runtimeRoot,
+        repository: layout.repository,
+        run,
+        runInput,
+      });
+      await seedReviews({
+        origin,
+        repositoryId: fixture.repositoryId,
+        references,
+      });
+      await waitForSearch(
+        origin,
+        fixture.repositoryId,
+        await repositoryPosition(origin, fixture.repositoryId),
+      );
+    }
   } catch (error) {
     await stopServer(server);
     throw error;
   }
   const restartStartupMillis = Math.round(performance.now() - started);
+  if (references) fixture = await writeFixture(layout, fixture);
   const processes = await processTreeMetrics(server.pid);
   const runtime = {
     format: 2,

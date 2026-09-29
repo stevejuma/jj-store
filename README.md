@@ -42,12 +42,15 @@ and development binaries, then starts the private LocalTrusted installation in
 `.local/dev-demo`. It initializes and seeds the native demo repository only when
 that ignored directory is empty. `pnpm dev:stop` stops the owned processes while
 preserving the repository, installation identity and embedded RustFS volume;
-`pnpm dev:reset` replaces them with the deterministic sample fixture. No
-repository token or Docker service is required. `pnpm web:test:real` uses its
-own OS-temporary fixture, publishes a change through a separate native CLI
-process, verifies SSE notification and explicit browser refresh through the
-built UI, then removes that isolated fixture. The local demo configures its
-search worker and reports ready only after the seeded repository is indexed.
+`pnpm dev:reset` replaces them with the deterministic sample fixture. The reset
+publishes representative Codex, Cursor and OpenCode sessions and creates open
+and resolved reviews across all seven repository, operation, revision, code and
+agent anchor types. No repository token or Docker service is required.
+`pnpm web:test:real` uses its own OS-temporary fixture, publishes a change
+through a separate native CLI process, verifies SSE notification and explicit
+browser refresh through the built UI, then removes that isolated fixture. The
+local demo configures its search worker and reports ready only after the
+complete seeded repository position is indexed.
 
 On macOS with Xcode license prompts, prefix checks with
 `DEVELOPER_DIR=/Library/Developer/CommandLineTools` to use the installed Command

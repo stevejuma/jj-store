@@ -4,13 +4,21 @@ use jj_agent::{
     AgentContentV1, AgentEventBatchV1, AgentEventV1, AgentObjectV1, AgentSessionId,
     NormalizationBatchV1, NormalizedActivityRecordV1, NormalizerProfileV1,
     SanitizedObservationBatchV1, SanitizedPayloadV1, ToolCallId, ToolInvocationSnapshotV1,
-    normalized_event_id,
+    TranscriptChunkV1, normalized_event_id,
 };
 
 pub(super) struct CaptureObjects {
     pub evidence: AgentObjectRef,
     pub event_batch: AgentObjectRef,
     pub tools: BTreeMap<AgentSessionId, BTreeMap<ToolCallId, AgentObjectRef>>,
+    pub transcript_chunks: BTreeMap<AgentSessionId, Vec<TranscriptChunkSelection>>,
+}
+
+#[derive(Clone, Copy)]
+pub(super) struct TranscriptChunkSelection {
+    pub sequence: u64,
+    pub bytes: u64,
+    pub reference: AgentObjectRef,
 }
 
 pub(super) async fn stage_capture_objects(
@@ -23,6 +31,7 @@ pub(super) async fn stage_capture_objects(
         .stage_agent_object(&AgentObjectV1::ObservationBatch(source.clone()))
         .await?;
     let mut events = Vec::with_capacity(normalized.records.len());
+    let mut transcript_chunks: BTreeMap<_, Vec<_>> = BTreeMap::new();
     for record in &normalized.records {
         let (sequence, kind) = record_identity(record);
         let event_id = normalized_event_id(
@@ -39,6 +48,22 @@ pub(super) async fn stage_capture_objects(
             },
             NormalizedActivityRecordV1::Message(value) => {
                 let content = stage_content(coordinator, &value.content).await?;
+                let reference = coordinator
+                    .stage_agent_object(&AgentObjectV1::TranscriptChunk(TranscriptChunkV1 {
+                        schema_version: 1,
+                        source_instance_id: source.source_instance_id,
+                        source_generation: 1,
+                        sequence: value.source_sequence,
+                        payload: value.content.clone(),
+                    }))
+                    .await?;
+                transcript_chunks.entry(value.session_id).or_default().push(
+                    TranscriptChunkSelection {
+                        sequence: value.source_sequence,
+                        bytes: value.content.bytes().len() as u64,
+                        reference,
+                    },
+                );
                 AgentEventV1::MessageCompleted {
                     event_id,
                     session_id: value.session_id,
@@ -108,6 +133,7 @@ pub(super) async fn stage_capture_objects(
         evidence,
         event_batch,
         tools,
+        transcript_chunks,
     })
 }
 

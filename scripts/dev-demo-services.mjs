@@ -1,5 +1,5 @@
 import { createHash, createHmac, randomBytes } from "node:crypto";
-import { execFile } from "node:child_process";
+import { execFile, spawn } from "node:child_process";
 import { readFile, rm } from "node:fs/promises";
 import { request } from "node:http";
 import { join } from "node:path";
@@ -18,6 +18,48 @@ export async function execute(command, args, options = {}) {
     maxBuffer: 16 * 1024 * 1024,
   });
   return { stdout: stdout.trim(), stderr: stderr.trim() };
+}
+
+export async function executeWithInput(command, args, input, options = {}) {
+  return new Promise((resolveExecute, rejectExecute) => {
+    const child = spawn(command, args, {
+      cwd: options.cwd,
+      env: { ...process.env, ...options.env },
+      stdio: ["pipe", "pipe", "pipe"],
+    });
+    const stdout = [];
+    const stderr = [];
+    let bytes = 0;
+    const collect = (target) => (chunk) => {
+      bytes += chunk.length;
+      if (bytes > 16 * 1024 * 1024) {
+        child.kill("SIGKILL");
+        return;
+      }
+      target.push(chunk);
+    };
+    child.stdout.on("data", collect(stdout));
+    child.stderr.on("data", collect(stderr));
+    child.on("error", rejectExecute);
+    child.on("close", (code, signal) => {
+      const result = {
+        stdout: Buffer.concat(stdout).toString("utf8").trim(),
+        stderr: Buffer.concat(stderr).toString("utf8").trim(),
+      };
+      if (code === 0 && bytes <= 16 * 1024 * 1024) {
+        resolveExecute(result);
+        return;
+      }
+      const error = new Error(
+        bytes > 16 * 1024 * 1024
+          ? `${command} output exceeded 16 MiB`
+          : `${command} exited with ${code ?? signal}`,
+      );
+      Object.assign(error, result);
+      rejectExecute(error);
+    });
+    child.stdin.end(input);
+  });
 }
 
 async function ownedContainerExists({ containerName, owner, cwd }) {

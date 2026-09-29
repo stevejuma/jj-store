@@ -29,7 +29,7 @@ impl SanitizedPayloadV1 {
         let bytes = match media_type {
             SanitizedMediaType::Json => {
                 let value: serde_json::Value = serde_json::from_slice(bytes)?;
-                serde_json::to_vec(&value)?
+                serde_json::to_vec(&canonical_json(value))?
             }
             SanitizedMediaType::Text => {
                 std::str::from_utf8(bytes)
@@ -50,6 +50,25 @@ impl SanitizedPayloadV1 {
             return Err(Error::Invalid("noncanonical sanitized payload"));
         }
         Ok(())
+    }
+}
+
+fn canonical_json(value: serde_json::Value) -> serde_json::Value {
+    match value {
+        serde_json::Value::Array(values) => {
+            serde_json::Value::Array(values.into_iter().map(canonical_json).collect())
+        }
+        serde_json::Value::Object(values) => {
+            let mut entries = values.into_iter().collect::<Vec<_>>();
+            entries.sort_unstable_by(|left, right| left.0.cmp(&right.0));
+            serde_json::Value::Object(
+                entries
+                    .into_iter()
+                    .map(|(key, value)| (key, canonical_json(value)))
+                    .collect(),
+            )
+        }
+        scalar => scalar,
     }
 }
 

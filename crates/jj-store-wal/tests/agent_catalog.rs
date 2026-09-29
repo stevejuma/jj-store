@@ -114,6 +114,29 @@ fn codex_batch() -> SanitizedObservationBatchV1 {
     }
 }
 
+fn codex_followup_batch() -> SanitizedObservationBatchV1 {
+    SanitizedObservationBatchV1 {
+        schema_version: 1,
+        batch_id: CaptureBatchId::new([75; 16]),
+        integration: IntegrationId::Codex,
+        source_instance_id: SourceInstanceId::new([71; 16]),
+        sanitizer_version: "agent-redaction@0.1.0".into(),
+        representation: SanitizedRepresentation::SanitizedNative,
+        observations: vec![SanitizedObservationV1 {
+            observation_id: ObservationId::new([75; 16]),
+            source_sequence: 11,
+            occurred_at_millis: Some(1_725_000_000_011),
+            source_kind: SourceKind::Hook,
+            source_trust: SourceTrust::LocalUserHook,
+            payload: SanitizedPayloadV1::new(
+                SanitizedMediaType::Json,
+                br#"{"hook_event_name":"UserPromptSubmit","session_id":"thr_demo","turn_id":"turn_2","prompt":"Explain the failure"}"#,
+            )
+            .unwrap(),
+        }],
+    }
+}
+
 fn session(byte: u8) -> AgentObjectV1 {
     AgentObjectV1::SessionSnapshot(AgentSessionSnapshotV1 {
         schema_version: 1,
@@ -221,10 +244,81 @@ async fn normalized_capture_stages_one_root_pinned_publication_delta() {
     assert_eq!(session.session_id, session_id);
     assert_eq!(session.evidence.len(), 1);
     assert_eq!(session.event_batches.len(), 1);
+    assert_eq!(session.transcripts.len(), 1);
     assert_eq!(session.tools.len(), 3);
+    let first_transcript = session.transcripts[0];
+    let first_range = store
+        .transcript_range(
+            first_transcript,
+            batch.source_instance_id,
+            1,
+            None,
+            10,
+            1024,
+        )
+        .await
+        .unwrap();
+    assert_eq!(first_range.chunks.len(), 1);
+    assert_eq!(first_range.chunks[0].sequence, 2);
+    assert_eq!(first_range.chunks[0].payload.bytes(), b"Update the parser");
     assert_eq!(
         coordinator.publish_agent_delta(&request).await.unwrap(),
         first
+    );
+
+    let followup = codex_followup_batch();
+    let delta = coordinator
+        .stage_agent_capture(&store, &profile, &followup, 1_725_000_000_011)
+        .await
+        .unwrap();
+    let request = AgentDeltaRequest::new(
+        jj_store_model::PrincipalId::new([76; 16]),
+        jj_store_model::RequestId::new([77; 16]),
+        jj_store_model::PublicationId::new([78; 16]),
+        delta,
+        b"captured codex followup".to_vec(),
+    )
+    .unwrap();
+    coordinator.publish_agent_delta(&request).await.unwrap();
+    let current = coordinator.read().await.unwrap();
+    let store = coordinator
+        .agent_store(current.manifest().agent_root.unwrap())
+        .await
+        .unwrap();
+    let reference = store
+        .lookup(AgentCatalogKind::Sessions, key)
+        .await
+        .unwrap()
+        .unwrap();
+    let AgentObjectV1::SessionSnapshot(session) = store.read_object(reference).await.unwrap()
+    else {
+        panic!("expected session snapshot");
+    };
+    assert_eq!(session.evidence.len(), 2);
+    assert_eq!(session.event_batches.len(), 2);
+    assert_eq!(session.transcripts.len(), 1);
+    assert_ne!(session.transcripts[0], first_transcript);
+    let range = store
+        .transcript_range(
+            session.transcripts[0],
+            batch.source_instance_id,
+            1,
+            None,
+            10,
+            1024,
+        )
+        .await
+        .unwrap();
+    assert_eq!(
+        range
+            .chunks
+            .iter()
+            .map(|chunk| (chunk.sequence, chunk.payload.bytes()))
+            .collect::<Vec<_>>(),
+        vec![
+            (2, b"Update the parser".as_slice()),
+            (11, b"Explain the failure".as_slice())
+        ]
     );
 }
 

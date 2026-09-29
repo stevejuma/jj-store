@@ -261,10 +261,11 @@ features are disabled, so validation and network calls are not compiled. Base64
 decoding is also disabled. The fixed policy identity is
 `mongodb-kingfisher@2.7.0/builtin-medium/v1`.
 
-Each hook submits one bounded JSON object. The boundary canonicalizes the
-object, normalizes the canonical workspace path to `$WORKSPACE`, scans those
-in-memory bytes with the built-in medium-confidence rules and replaces merged
-finding byte ranges with `[REDACTED]`. It reparses the result before
+Each hook submits one bounded JSON object. The boundary canonicalizes the object
+with recursively sorted keys independently of workspace dependency feature
+unification, normalizes the canonical workspace path to `$WORKSPACE`, scans
+those in-memory bytes with the built-in medium-confidence rules and replaces
+merged finding byte ranges with `[REDACTED]`. It reparses the result before
 constructing the bounded sanitized payload. Invalid JSON, oversized input or
 output, scanner/cache errors and invalid finding ranges produce a fixed omitted
 state without returning raw values or secret-bearing diagnostics. The raw hook
@@ -498,12 +499,15 @@ AgentStore object closure before the returned delta can select it.
 
 The returned `AgentDeltaV1` updates session, alias, source and projection
 catalogs in one existing manifest-domain publication. Session snapshots retain
-prior selected evidence, event batches, transcripts and tool versions. Source
-state rejects repeated or overlapping receipts, records the accepted native
-sequence and carries forward explicit coverage gaps. Projection updates replace
-superseded session/source versions while preserving prior immutable event
-batches. The caller must durably retain the resulting delta and request identity
-before publication.
+prior selected evidence, event batches, transcripts and tool versions. Each
+accepted batch replaces a selected transcript manifest with a cumulative,
+self-contained immutable closure containing the prior ordered chunks plus the
+new normalized message chunks; reconstruction never depends on an unselected
+earlier manifest. Source state rejects repeated or overlapping receipts, records
+the accepted native sequence and carries forward explicit coverage gaps.
+Projection updates replace superseded session/source versions while preserving
+prior immutable event batches. The caller must durably retain the resulting
+delta and request identity before publication.
 
 ## Durable pending capture
 

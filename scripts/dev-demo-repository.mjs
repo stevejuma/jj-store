@@ -40,7 +40,33 @@ export async function seedRepository(options) {
   await seedLinearHistory(repository, jj);
   await seedConflict(repository, jj);
   await seedDivergence(jj);
-  return repositoryId;
+  const operationId = (
+    await jj([
+      "op",
+      "log",
+      "--at-op=@",
+      "--ignore-working-copy",
+      "-n",
+      "1",
+      "--no-graph",
+      "-T",
+      "self.id()",
+    ])
+  ).stdout;
+  const commitId = (
+    await jj(["log", "-r", "main", "-T", "commit_id", "--no-graph"])
+  ).stdout;
+  const changeId = (
+    await jj([
+      "log",
+      "-r",
+      "main",
+      "-T",
+      "change_id.normal_hex()",
+      "--no-graph",
+    ])
+  ).stdout;
+  return { repositoryId, references: { operationId, commitId, changeId } };
 }
 
 async function seedLinearHistory(repository, jj) {

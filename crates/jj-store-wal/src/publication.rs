@@ -3,6 +3,7 @@ mod agent;
 mod agent_capture;
 mod agent_capture_projection;
 mod agent_capture_records;
+mod agent_capture_transcript;
 mod agent_catalog;
 mod agent_delta;
 mod agent_reads;
