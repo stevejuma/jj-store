@@ -60,6 +60,7 @@
     "@lapismd/lapis-community": "^0.1.0",
     "@lapismd/spec-validator": "^0.1.0",
     "@lucide/svelte": "^1.21.0",
+    "@noble/hashes": "^2.4.0",
     "@playwright/test": "^1.63.0",
     "@storybook/addon-a11y": "10.5.7",
     "@storybook/addon-docs": "10.5.7",

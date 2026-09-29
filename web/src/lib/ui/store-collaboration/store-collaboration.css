@@ -15,8 +15,9 @@
 }
 
 .store-collaboration__row {
+  position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   width: 100%;
   min-height: 4rem;
   box-sizing: border-box;
@@ -33,24 +34,42 @@
 }
 
 .store-collaboration__row-select {
-  display: grid;
-  min-width: 0;
-  gap: 0.35rem;
+  position: absolute;
+  z-index: 0;
+  inset: 0;
   padding: 0;
-  color: inherit;
   background: transparent;
   border: 0;
-  font: inherit;
-  text-align: start;
   cursor: pointer;
 }
 
-.store-collaboration__row-select:focus-visible {
+.store-collaboration__row:has(.store-collaboration__row-select:focus-visible) {
   outline: 2px solid var(--ring);
-  outline-offset: 2px;
+  outline-offset: -2px;
+}
+
+.store-collaboration__row-leading,
+.store-collaboration__row-main {
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.store-collaboration__row-leading {
+  display: flex;
+  align-items: flex-start;
+}
+
+.store-collaboration__row-main {
+  display: grid;
+  min-width: 0;
+  align-content: start;
+  gap: 0.35rem;
 }
 
 .store-collaboration__row-actions {
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: flex-start;
   gap: 0.35rem;
@@ -79,11 +98,33 @@
   white-space: nowrap;
 }
 
+.store-collaboration__detail-identity {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.55rem;
+}
+
 .store-collaboration__agent-title {
   display: flex;
   min-width: 0;
   align-items: center;
   gap: 0.55rem;
+}
+
+.store-collaboration__review-leading {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--muted-foreground);
+  background: var(--muted);
+}
+
+.store-collaboration__review-leading svg {
+  width: 1rem;
+  height: 1rem;
 }
 
 .store-collaboration__agent-title .store-collaboration__row-title {
@@ -98,6 +139,18 @@
 
 .store-collaboration__agent-duration {
   flex-shrink: 0;
+}
+
+.store-collaboration__metric {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  white-space: nowrap;
+}
+
+.store-collaboration__metric svg {
+  width: 0.8rem;
+  height: 0.8rem;
 }
 
 .store-collaboration__row-meta,
@@ -157,9 +210,26 @@
 }
 
 .store-collaboration__message {
+  --store-review-avatar-center: 1.125rem;
+  --store-review-guide-bleed: 0.25rem;
+  --store-review-guide-color: color-mix(
+    in srgb,
+    var(--border) 58%,
+    transparent
+  );
+
   position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
   padding: 0.2rem 0.75rem;
-  border-bottom: 1px solid var(--border);
+  padding-inline-start: calc(0.75rem + var(--store-review-indent, 0rem));
+}
+
+.store-collaboration__message-content {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
 }
 
 .store-collaboration__message-identities {
@@ -169,9 +239,48 @@
   padding-block: 0.2rem;
 }
 
-.store-collaboration__message[data-reply] {
-  margin-inline-start: 1.8rem;
-  border-inline-start: 2px solid var(--border);
+.store-collaboration__message-guide,
+.store-collaboration__message-connector,
+.store-collaboration__message-descendant-guide {
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.store-collaboration__message-guide {
+  inset-block: calc(-1 * var(--store-review-guide-bleed));
+  inset-inline-start: calc(
+    0.75rem + var(--store-review-guide-indent) +
+      var(--store-review-avatar-center)
+  );
+  border-inline-start: 1.5px solid var(--store-review-guide-color);
+}
+
+.store-collaboration__message-connector {
+  inset-block-start: calc(-1 * var(--store-review-guide-bleed));
+  inset-inline-start: calc(
+    0.75rem + var(--store-review-connector-indent) +
+      var(--store-review-avatar-center)
+  );
+  width: calc(
+    var(--store-review-indent) - var(--store-review-connector-indent) -
+      var(--store-review-avatar-center) - 0.25rem
+  );
+  height: calc(
+    var(--store-review-avatar-center) + var(--store-review-guide-bleed)
+  );
+  border-block-end: 1.5px solid var(--store-review-guide-color);
+  border-inline-start: 1.5px solid var(--store-review-guide-color);
+  border-end-start-radius: 1rem;
+}
+
+.store-collaboration__message-descendant-guide {
+  inset-block-start: var(--store-review-avatar-center);
+  inset-block-end: calc(-1 * var(--store-review-guide-bleed));
+  inset-inline-start: calc(
+    0.75rem + var(--store-review-indent) + var(--store-review-avatar-center)
+  );
+  border-inline-start: 1.5px solid var(--store-review-guide-color);
 }
 
 .store-collaboration__composer {

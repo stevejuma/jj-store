@@ -3,8 +3,13 @@
   import * as Empty from "@lapismd/design-core/shadcn/empty";
   import { onDestroy, untrack } from "svelte";
   import BotIcon from "@lucide/svelte/icons/bot";
+  import MessagesSquareIcon from "@lucide/svelte/icons/messages-square";
+  import WrenchIcon from "@lucide/svelte/icons/wrench";
   import type { StoreController } from "../../controller/contracts.js";
-  import { createCollaborationCanvas } from "../../collaboration/collaboration-canvas.js";
+  import {
+    COLLABORATION_COMPACT_BREAKPOINT,
+    createCollaborationCanvas,
+  } from "../../collaboration/collaboration-canvas.js";
   import {
     agentMember,
     agentSessionTiming,
@@ -45,7 +50,10 @@
   aria-label="Agent activity"
   aria-busy={state.status.agents === "loading"}
 >
-  <ColumnCanvas.Root controller={canvas}>
+  <ColumnCanvas.Root
+    controller={canvas}
+    compactBreakpoint={COLLABORATION_COMPACT_BREAKPOINT}
+  >
     <ColumnCanvas.Column
       id="collection"
       title="Agent sessions"
@@ -87,6 +95,7 @@
                 <div role="listitem">
                   <div
                     class="store-collaboration__row"
+                    data-kind="agent"
                     data-selected={state.route.agentSessionId ===
                     session.session_id
                       ? "true"
@@ -95,24 +104,26 @@
                     <button
                       type="button"
                       class="store-collaboration__row-select"
+                      aria-label={`Open ${agent.name} ${session.state} agent session`}
                       aria-pressed={state.route.agentSessionId ===
                         session.session_id}
                       onclick={() =>
                         controller.actions.selectAgentSession(
                           session.session_id,
                         )}
-                    >
-                      <span class="store-collaboration__agent-title">
-                        <CommunityMemberAvatar
-                          member={agent}
-                          size="small"
-                          showPresence
-                          decorative
-                        />
-                        <span class="store-collaboration__row-title"
-                          >{agent.name}</span
-                        >
-                      </span>
+                    ></button>
+                    <span class="store-collaboration__row-leading">
+                      <CommunityMemberAvatar
+                        member={agent}
+                        size="small"
+                        showPresence
+                        decorative
+                      />
+                    </span>
+                    <span class="store-collaboration__row-main">
+                      <span class="store-collaboration__row-title"
+                        >{agent.name}</span
+                      >
                       <span class="store-collaboration__row-meta"
                         ><CommunityChip
                           size="compact"
@@ -132,11 +143,22 @@
                             title={`Session duration ${timing.durationLabel}`}
                             >{timing.durationLabel}</CommunityChip
                           >{/if}<span
-                          >{session.transcript_count} transcripts · {session.tool_count}
-                          tools</span
+                          class="store-collaboration__metric"
+                          aria-label={`${session.transcript_count} transcripts`}
+                          title={`${session.transcript_count} transcripts`}
+                          ><MessagesSquareIcon
+                            aria-hidden="true"
+                          />{session.transcript_count}</span
+                        ><span
+                          class="store-collaboration__metric"
+                          aria-label={`${session.tool_count} tools`}
+                          title={`${session.tool_count} tools`}
+                          ><WrenchIcon
+                            aria-hidden="true"
+                          />{session.tool_count}</span
                         ></span
                       >
-                    </button>
+                    </span>
                     <span class="store-collaboration__row-actions">
                       <StoreIdentityCopy
                         value={session.session_id}

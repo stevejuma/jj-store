@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Snippet } from "svelte";
   import type { CommunityMemberModel } from "../community-workspace/model.js";
+  import type { StoreControllerState } from "../../controller/contracts.js";
 
   import CommunityProjectsRevisionGraphCopy from "./CommunityProjectsRevisionGraphCopy.svelte";
   import CommunityProjectsRevisionGraphIds from "./CommunityProjectsRevisionGraphIds.svelte";
@@ -38,6 +39,7 @@
     hasMore = false,
     loading = false,
     onLoadMore,
+    collaborationContext,
   }: {
     revisions: RepositoryLogRevision[];
     members?: readonly CommunityMemberModel[];
@@ -53,6 +55,7 @@
     hasMore?: boolean | undefined;
     loading?: boolean | undefined;
     onLoadMore?: (() => void) | undefined;
+    collaborationContext?: StoreControllerState | undefined;
   } = $props();
 
   const rows = $derived(buildRepositoryLogGraph(revisions, devices));
@@ -184,6 +187,7 @@
           {now}
           href={revisionHref?.(row.revision)}
           onSelect={onSelect ? () => onSelect?.(row.revision) : undefined}
+          {collaborationContext}
         />
         <CommunityProjectsRevisionGraphIds
           changeId={row.changeIdEncoded}

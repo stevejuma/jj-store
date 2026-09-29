@@ -9,6 +9,26 @@
   } from "storybook/test";
   import StoreRepositoryApplication from "../../fixtures/StoreRepositoryApplicationFixture.svelte";
 
+  async function expectSelectionSurfaceCoversRow(selection: HTMLElement) {
+    const row = selection.closest<HTMLElement>(".store-collaboration__row");
+    if (!row) throw new Error("Collaboration row was not rendered");
+    const rowRect = row.getBoundingClientRect();
+    const selectionRect = selection.getBoundingClientRect();
+    await expect(
+      Math.abs(selectionRect.left - rowRect.left),
+    ).toBeLessThanOrEqual(1);
+    await expect(Math.abs(selectionRect.top - rowRect.top)).toBeLessThanOrEqual(
+      1,
+    );
+    await expect(
+      Math.abs(selectionRect.right - rowRect.right),
+    ).toBeLessThanOrEqual(1);
+    await expect(
+      Math.abs(selectionRect.bottom - rowRect.bottom),
+    ).toBeLessThanOrEqual(1);
+    return row;
+  }
+
   const { Story } = defineMeta({
     title: "JJ Store/Collaboration",
     component: StoreRepositoryApplication,
@@ -32,15 +52,27 @@
         canvas.getByRole("list", { name: "Agent sessions" }),
       ).toBeVisible(),
     );
-    const sessionCard = canvas.getByRole("button", { name: /Codex ended/u });
+    const sessionSelection = canvas.getByRole("button", {
+      name: /Codex ended/u,
+    });
+    const sessionCard = await expectSelectionSurfaceCoversRow(sessionSelection);
     const avatar = sessionCard.querySelector(
       '[data-ui-component="community-member-avatar"]',
     );
     if (!avatar) throw new Error("Agent session card avatar was not rendered");
     await expect(avatar).toBeVisible();
+    await expect(avatar.querySelector("img")).toHaveAttribute(
+      "src",
+      "/agent-icons/codex.svg",
+    );
     await expect(sessionCard).toHaveTextContent("Started");
     await expect(sessionCard).toHaveTextContent("5m");
-    await userEvent.click(sessionCard);
+    await expect(
+      within(sessionCard).getByLabelText("1 transcripts"),
+    ).toBeVisible();
+    await expect(within(sessionCard).getByLabelText("3 tools")).toBeVisible();
+    await userEvent.click(sessionSelection);
+    await expect(sessionCard).toHaveAttribute("data-selected", "true");
     await expect(
       canvas.getByRole("log", { name: "Agent conversation activity" }),
     ).toBeVisible();
@@ -64,6 +96,16 @@
     await expect(
       canvas.getByRole("button", { name: /tool call ID/u }),
     ).toBeVisible();
+    const transcript = canvas.getByRole("log", {
+      name: "Agent conversation activity",
+    });
+    const expandedTool = canvas
+      .getByRole("button", { name: "Hide details for apply_patch" })
+      .closest<HTMLElement>('[data-ui-component="ai-chat-tool-calls"]');
+    if (!expandedTool) throw new Error("Expanded tool row was not rendered");
+    await expect(
+      expandedTool.getBoundingClientRect().right,
+    ).toBeLessThanOrEqual(transcript.getBoundingClientRect().right);
     const resize = canvas.getByRole("separator", {
       name: "Resize Agent sessions and Agent response columns",
     });
@@ -82,6 +124,10 @@
   args={{ initialPage: "log" }}
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    await expect(
+      canvas.getAllByRole("group", { name: "Collaboration participants" })[0],
+    ).toBeVisible();
+    await expect(canvas.getAllByLabelText(/review replies/u)[0]).toBeVisible();
     await userEvent.click(
       canvas.getByRole("button", {
         name: "Merge native storage and publication",
@@ -96,11 +142,48 @@
     await expect(
       canvas.getByRole("link", { name: /Open related change/u }),
     ).toBeVisible();
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Toggle details" }),
+    );
+    const details = canvas.getByRole("complementary", {
+      name: "Repository details",
+    });
+    await expect(within(details).getByText("Selected change")).toBeVisible();
+    await expect(
+      within(details).getByRole("button", { name: "Create bookmark" }),
+    ).toBeVisible();
     await userEvent.click(canvas.getByRole("button", { name: "src/lib.rs" }));
     await expect(
       canvas.getByText("src/lib.rs", {
         selector: ".store-collaboration__detail-title",
       }),
+    ).toBeVisible();
+  }}
+>
+  {#snippet template(args)}<StoreRepositoryApplication {...args} />{/snippet}
+</Story>
+
+<Story
+  name="Operation collaboration context"
+  args={{ initialPage: "oplog" }}
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(
+      canvas.getAllByRole("group", { name: "Collaboration participants" })[0],
+    ).toBeVisible();
+    await expect(canvas.getAllByLabelText(/review replies/u)[0]).toBeVisible();
+    await userEvent.click(
+      canvas.getByRole("button", { name: "describe: native object history" }),
+    );
+    await expect(
+      canvas.getByRole("button", { name: "Close Agent context column" }),
+    ).toBeVisible();
+    await expect(
+      canvas.getByRole("button", { name: "Close Review discussion column" }),
+    ).toBeVisible();
+    await userEvent.click(canvas.getByRole("button", { name: "src/lib.rs" }));
+    await expect(
+      canvas.getAllByRole("group", { name: "Reviewed file src/lib.rs" })[0],
     ).toBeVisible();
   }}
 >
@@ -156,9 +239,30 @@
         canvas.getByRole("list", { name: "Review threads" }),
       ).toBeVisible(),
     );
-    await userEvent.click(
-      canvas.getAllByRole("button", { name: /Revision open/u })[0]!,
+    const agentReviewSelection = canvas.getByRole("button", {
+      name: /Open Agent session open review with 2 comments/u,
+    });
+    const agentReviewCard =
+      await expectSelectionSurfaceCoversRow(agentReviewSelection);
+    await expect(agentReviewCard.querySelector("img")).toHaveAttribute(
+      "src",
+      "/agent-icons/codex.svg",
     );
+    await expect(
+      within(agentReviewCard).getByLabelText("2 comments"),
+    ).toBeVisible();
+    await userEvent.click(agentReviewSelection);
+    await expect(
+      canvasElement.querySelector(
+        ".store-review-discussion .store-collaboration__detail-header img",
+      ),
+    ).toBeVisible();
+    const reviewSelection = canvas.getAllByRole("button", {
+      name: /Revision open/u,
+    })[0]!;
+    const reviewCard = await expectSelectionSurfaceCoversRow(reviewSelection);
+    await userEvent.click(reviewSelection);
+    await expect(reviewCard).toHaveAttribute("data-selected", "true");
     await expect(
       canvas.getByRole("list", { name: "Review comments" }),
     ).toBeVisible();
@@ -167,6 +271,35 @@
         "Can we preserve the exact operation when this retry races?",
       ),
     ).toBeVisible();
+    await expect(
+      canvas.getByText(
+        "The nested follow-up stays attached to the reply branch.",
+      ),
+    ).toBeVisible();
+    const reviewComments = canvas.getByRole("list", {
+      name: "Review comments",
+    });
+    const commentRows = Array.from(
+      reviewComments.querySelectorAll<HTMLElement>(
+        ".store-collaboration__message",
+      ),
+    );
+    await expect(commentRows).toHaveLength(3);
+    await expect(getComputedStyle(commentRows[0]!).borderBottomWidth).toBe(
+      "0px",
+    );
+    await expect(commentRows[2]!.dataset.threadDepth).toBe("2");
+    await expect(
+      commentRows[2]!.querySelector('[data-ui-part="review-reply-connector"]'),
+    ).not.toBeNull();
+    const resize = canvas.getByRole("separator", {
+      name: "Resize Review threads and Discussion columns",
+    });
+    const width = resize.getAttribute("aria-valuenow");
+    await fireEvent.keyDown(resize, { key: "ArrowRight" });
+    await waitFor(() =>
+      expect(resize).not.toHaveAttribute("aria-valuenow", width),
+    );
     const editor = canvas.getByRole("textbox", {
       name: "Markdown editor",
     });

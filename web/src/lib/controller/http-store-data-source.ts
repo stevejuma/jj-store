@@ -239,8 +239,11 @@ export class HttpStoreDataSource implements StoreDataSource {
   agentSession(id: string) {
     return this.#collaboration.agentSession(id);
   }
-  agentRelations(commit: string, cursor?: string) {
-    return this.#collaboration.agentRelations(commit, cursor);
+  agentRelations(
+    subject: { commit: string } | { operation: string },
+    cursor?: string,
+  ) {
+    return this.#collaboration.agentRelations(subject, cursor);
   }
   agentTranscript(
     session: string,

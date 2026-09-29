@@ -109,6 +109,9 @@
   }
 
   :global([data-ui-component="ai-chat-tool-calls"]) {
+    box-sizing: border-box;
+    width: calc(100% - 2.85rem);
+    max-width: 42rem;
     margin-inline: 2.6rem 0.25rem;
   }
 </style>

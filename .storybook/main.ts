@@ -2,6 +2,7 @@ import type { StorybookConfig } from "@storybook/svelte-vite";
 import { mergeConfig } from "vite";
 const config: StorybookConfig = {
   stories: ["../catalog/**/*.stories.svelte"],
+  staticDirs: ["../web/public"],
   addons: [
     "@storybook/addon-docs",
     "@storybook/addon-a11y",

@@ -126,6 +126,14 @@ test("cold_catalog_contract", { timeout: 60000 }, async () => {
     });
     await context.route("**/*", async (route) => {
       const url = new URL(route.request().url());
+      if (
+        url.origin === "https://www.gravatar.com" &&
+        /^\/avatar\/[0-9a-f]{32}$/u.test(url.pathname) &&
+        url.search === "?d=identicon&s=80"
+      ) {
+        await route.abort();
+        return;
+      }
       if (url.origin !== origin || url.pathname.startsWith("/v1/")) {
         unexpected.push(url.href);
         await route.abort();
@@ -188,7 +196,8 @@ test("cold_catalog_contract", { timeout: 60000 }, async () => {
     await expect(
       page
         .locator('[data-ui-part="column"][data-column-id="diff"]')
-        .locator('[data-ui-component="file-diff"]'),
+        .locator('[data-ui-component="file-diff"]')
+        .first(),
     ).toContainText("publish_native_objects()?;");
     const shell = page.locator('[data-ui-component="community-app-shell"]');
     assert.equal(await shell.getAttribute("data-display-mode"), "desktop");

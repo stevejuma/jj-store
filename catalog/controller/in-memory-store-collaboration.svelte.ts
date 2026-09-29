@@ -4,11 +4,16 @@ import type {
   StoreRoute,
 } from "../../web/src/lib/controller/contracts.js";
 import {
+  anchorMatchesOperation,
+  anchorPath,
+} from "../../web/src/lib/collaboration/presentation.js";
+import {
   agentDetail,
   agentRelations,
   agentSessions,
   agentTranscript,
   reviewDetail,
+  reviewPatch,
   reviewThreads,
 } from "../fixtures/collaboration.js";
 
@@ -39,6 +44,23 @@ export function createInMemoryStoreCollaboration(options: {
           }
         : {}),
     };
+  }
+  function selectedContext(
+    relation: (typeof agentRelations)[number] | undefined,
+    thread: (typeof reviewThreads)[number] | undefined,
+  ) {
+    selectReviewDetail(thread);
+    return {
+      agentSessionId: relation?.association?.session_id ?? null,
+      reviewThreadId: thread?.thread_id ?? null,
+    };
+  }
+  function selectPathReview(
+    matches: (thread: (typeof reviewThreads)[number]) => boolean,
+  ) {
+    const thread = reviewThreads.find(matches);
+    selectReviewDetail(thread);
+    return thread?.thread_id ?? null;
   }
   const actions: Pick<
     StoreController["actions"],
@@ -141,6 +163,12 @@ export function createInMemoryStoreCollaboration(options: {
         agentTranscript: route.agentSessionId ? agentTranscript : [],
         reviewThreads,
         reviewThread: route.reviewThreadId ? selectedReview : undefined,
+        reviewPatch:
+          route.reviewThreadId &&
+          (selectedReview.anchor.value.target.target === "code_text" ||
+            selectedReview.anchor.value.target.target === "code_artifact")
+            ? reviewPatch
+            : undefined,
         reviewActionMessage,
         reviewActionRequestId,
       };
@@ -161,14 +189,23 @@ export function createInMemoryStoreCollaboration(options: {
           target.value.commit_id === commit
         );
       });
-      selectReviewDetail(thread);
-      return {
-        agentSessionId: relation?.association?.session_id ?? null,
-        reviewThreadId: thread?.thread_id ?? null,
-      };
+      return selectedContext(relation, thread);
+    },
+    operationContext(operation: string) {
+      const relation = agentRelations.find((candidate) => {
+        const association = candidate.association;
+        return (
+          association?.before_operations.includes(operation) ||
+          association?.after_operations.includes(operation)
+        );
+      });
+      const thread = reviewThreads.find((candidate) =>
+        anchorMatchesOperation(candidate.anchor, operation),
+      );
+      return selectedContext(relation, thread);
     },
     pathReview(commit: string, path: string) {
-      const thread = reviewThreads.find((candidate) => {
+      return selectPathReview((candidate) => {
         const target = candidate.anchor.target;
         return (
           (target.target === "code_text" ||
@@ -177,8 +214,13 @@ export function createInMemoryStoreCollaboration(options: {
           target.value.path === path
         );
       });
-      selectReviewDetail(thread);
-      return thread?.thread_id ?? null;
+    },
+    operationPathReview(operation: string, path: string) {
+      return selectPathReview(
+        (candidate) =>
+          anchorMatchesOperation(candidate.anchor, operation) &&
+          anchorPath(candidate.anchor) === path,
+      );
     },
   };
 }

@@ -74,6 +74,7 @@ export function productionStoreView(
     agentTranscript: data.agentTranscript,
     reviewThreads: data.reviewThreads,
     reviewThread: data.reviewThread,
+    reviewPatch: data.reviewPatch,
     reviewActionMessage: data.reviewActionMessage,
     reviewActionRequestId: data.reviewActionRequestId,
     authenticated: options.connected && data.status.connection === "connected",

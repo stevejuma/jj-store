@@ -6,6 +6,7 @@
   import CommunityProjectsRepositoryFiles from "../community-projects/CommunityProjectsRepositoryFiles.svelte";
   import StoreAgentSessions from "../store-collaboration/StoreAgentSessions.svelte";
   import StoreReviewThreads from "../store-collaboration/StoreReviewThreads.svelte";
+  import StoreRepositoryDetails from "./StoreRepositoryDetails.svelte";
   import * as Alert from "@lapismd/design-core/shadcn/alert";
   import { Button } from "@lapismd/design-core/shadcn/button";
   let {
@@ -106,31 +107,39 @@
         onLoadMoreFiles={() => controller.actions.loadMore("detail")}
       />{/if}
   {/snippet}
-  {#snippet details()}
-    <dl class="store-repository-application__details">
-      <dt>Repository</dt>
-      <dd>{state.repository.name}</dd>
-      <dt>Snapshot</dt>
-      <dd>
-        {state.route.snapshotOperationId?.slice(0, 12) ?? "Choose a head"}
-      </dd>
-      <dt>Connection</dt>
-      <dd>{state.status.live}</dd>
-      {#each state.backups as backup (backup.target)}
-        <dt>Backup · {backup.target}</dt>
+  {#snippet details(page)}
+    <StoreRepositoryDetails
+      {controller}
+      title={page === "files"
+        ? "Files"
+        : page === "log"
+          ? "JJ Log"
+          : page === "oplog"
+            ? "Op Log"
+            : page[0]!.toUpperCase() + page.slice(1)}
+    />
+    {#if !selectedId && (state.backups.length || state.conflictCount !== null)}
+      <dl class="store-repository-application__details">
+        <dt>Snapshot</dt>
         <dd>
-          Transfer: {backup.transfer.state} · {backup.transfer
-            .completed_objects}
-          objects<br />
-          Last verified restore point:
-          {backup.last_verified_restore_point
-            ? `${backup.last_verified_restore_point.operation.slice(0, 12)} at position ${backup.last_verified_restore_point.position}`
-            : "none"}
+          {state.route.snapshotOperationId?.slice(0, 12) ?? "Choose a head"}
         </dd>
-      {/each}
-      {#if state.conflictCount !== null}<dt>Conflicts</dt>
-        <dd>{state.conflictCount}</dd>{/if}
-    </dl>
+        {#each state.backups as backup (backup.target)}
+          <dt>Backup · {backup.target}</dt>
+          <dd>
+            Transfer: {backup.transfer.state} · {backup.transfer
+              .completed_objects}
+            objects<br />
+            Last verified restore point:
+            {backup.last_verified_restore_point
+              ? `${backup.last_verified_restore_point.operation.slice(0, 12)} at position ${backup.last_verified_restore_point.position}`
+              : "none"}
+          </dd>
+        {/each}
+        {#if state.conflictCount !== null}<dt>Conflicts</dt>
+          <dd>{state.conflictCount}</dd>{/if}
+      </dl>
+    {/if}
     {#if state.comparisonParents.length}<Alert.Root>
         <Alert.Title>Choose comparison parent</Alert.Title>
         <Alert.Description

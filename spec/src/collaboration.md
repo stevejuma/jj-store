@@ -259,21 +259,26 @@ The presentation consumes Community's public `CommunityMessage` and
 detail primitives, then adapts native agent and review records into their public
 presentation models. Agent activity renders as a normal Community conversation;
 tool rows retain their native kind and state, expose copyable stable identities
-and use a kind-specific detail. Edit, delete and move details embed the exact
-changed-file diff when the loaded revision patch or sanitized old/new tool input
-can supply it. The agent header exposes the associated Git/JJ identities and a
-route link back to the related change. Review comments use the Community thread
-rail and reply treatment, retain copyable author/comment identities and keep the
-composer at the bottom of an open discussion.
+and use a kind-specific detail without escaping the transcript's inline inset.
+Edit, delete and move details embed the exact changed-file diff when the loaded
+revision patch or sanitized old/new tool input can supply it. The agent header
+exposes the associated Git/JJ identities and a route link back to the related
+change. Review comments use Community's separator-free compact timeline and
+bounded reply-tree indentation, guides and connectors, retain copyable
+author/comment identities and keep the composer at the bottom of an open
+discussion.
 
 Design Core supplies the column canvas, diff, Empty, Alert, Button and Skeleton
-primitives. Revision selection follows bounded association and review pages to
-the exact revision match, opens sibling Agent context and Review discussion
-columns when present and records both stable selections in the route. Selecting
-a changed path follows review pages to the exact code-text or code-artifact
-anchor and replaces the review column with that discussion. Repeated cursors or
-more than 4,096 inspected context rows fail closed. Agent and review list rows
-use the same separator, metadata and tag hierarchy as Branches and Op Log, and
+primitives. Revision and operation selection follow bounded association and
+review pages to the exact commit or operation match, open sibling Agent context
+and Review discussion columns when present and record both stable selections in
+the route. Operation review matching includes direct operation anchors,
+revision/code anchor operation IDs and both sides of an explicit code-text diff
+context. Selecting a changed path follows review pages to the exact code-text or
+code-artifact anchor for the selected revision or operation and keeps that
+discussion in the review and inline diff surfaces. Repeated cursors or more than
+4,096 inspected context rows fail closed. Agent and review list rows use the
+same separator, metadata and tag hierarchy as Branches and Op Log, and
 SHA-shaped identities are presented through the existing copy controls instead
 of bare shortened text. The Files header resolves the selected commit
 independently of graph history and displays its author avatar, message, Git/JJ

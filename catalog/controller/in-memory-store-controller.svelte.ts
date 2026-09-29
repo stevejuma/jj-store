@@ -1,17 +1,9 @@
 import type { FileListingViewMode } from "@lapismd/design-core/diff";
 import * as fixture from "../fixtures/repository.js";
 import { repositories, repositorySnapshot } from "../fixtures/snapshots.js";
-import type {
-  StoreController,
-  StoreControllerState,
-  StoreRoute,
-} from "../../web/src/lib/controller/contracts.js";
+import type * as StoreContract from "../../web/src/lib/controller/contracts.js";
 import type { StorePage } from "../../web/src/lib/ui/community-navigation/model.js";
-import {
-  largeDetail,
-  largeGraph,
-  largeRepositorySnapshot,
-} from "../fixtures/large-repository.js";
+import * as large from "../fixtures/large-repository.js";
 import { createInMemoryStoreSearch } from "./in-memory-store-search.svelte.js";
 import { createInMemoryStoreMutations } from "./in-memory-store-mutations.svelte.js";
 import {
@@ -32,10 +24,11 @@ import type { InMemoryStoreControllerOptions } from "./in-memory-store-options.j
 export function createInMemoryStoreController(
   initialPage: StorePage = "branches",
   options: InMemoryStoreControllerOptions = {},
-): StoreController {
+): StoreContract.StoreController {
   const repositoryData = createInMemoryStoreRepository(options.large);
-  const revisionGraph = options.large ? largeGraph : undefined;
-  let history = $state<StoreRoute[]>([initialStoreRoute(initialPage)]);
+  let history = $state<StoreContract.StoreRoute[]>([
+    initialStoreRoute(initialPage),
+  ]);
   let index = $state(0);
   let authenticated = $state(true);
   let fileViewMode = $state<FileListingViewMode>("tree");
@@ -54,12 +47,12 @@ export function createInMemoryStoreController(
         (revision) => revision.eventId === targets[0],
       )
       ? options.large
-        ? largeRepositorySnapshot(route.repository, targets[0]!)
+        ? large.largeRepositorySnapshot(route.repository, targets[0]!)
         : repositorySnapshot(route.repository, targets[0]!)
       : undefined,
   );
   const conflictController = createInMemoryStoreConflicts(() => route);
-  function push(next: StoreRoute) {
+  function push(next: StoreContract.StoreRoute) {
     if (JSON.stringify(next) === JSON.stringify(route)) return;
     history = [...history.slice(0, index + 1), next];
     index++;
@@ -86,7 +79,7 @@ export function createInMemoryStoreController(
     now: fixture.NOW,
     outcome: options.reviewOutcome,
   });
-  const actions: StoreController["actions"] = {
+  const actions: StoreContract.StoreController["actions"] = {
     async connect() {
       authenticated = true;
     },
@@ -152,19 +145,18 @@ export function createInMemoryStoreController(
     },
     ...branchActions,
     selectRevision(id) {
-      if (
-        id &&
-        ![...repositoryData.revisions, ...fixture.operations.revisions].some(
-          (revision) => revision.eventId === id,
-        )
-      )
-        throw new Error("Unknown fixture revision");
+      const revision = [
+        ...repositoryData.revisions,
+        ...fixture.operations.revisions,
+      ].find((revision) => revision.eventId === id);
+      if (id && !revision) throw new Error("Unknown fixture revision");
       const context = id
-        ? collaboration.revisionContext(id)
+        ? route.page === "oplog"
+          ? collaboration.operationContext(id)
+          : collaboration.revisionContext(id)
         : { agentSessionId: null, reviewThreadId: null };
       const changeId =
-        repositoryData.revisions.find((revision) => revision.eventId === id)
-          ?.changeId ?? null;
+        route.page === "oplog" ? null : (revision?.changeId ?? null);
       push(revisionSelectedRoute(route, id, changeId, context));
     },
     selectFile(path) {
@@ -183,7 +175,12 @@ export function createInMemoryStoreController(
         reviewThreadId:
           path && route.commitId
             ? collaboration.pathReview(route.commitId, path)
-            : null,
+            : path && route.inspectedOperationId
+              ? collaboration.operationPathReview(
+                  route.inspectedOperationId,
+                  path,
+                )
+              : null,
       });
     },
     selectDirectory(directory) {
@@ -226,7 +223,7 @@ export function createInMemoryStoreController(
     },
   };
   return {
-    get state(): StoreControllerState {
+    get state(): StoreContract.StoreControllerState {
       return {
         accessMode: "authenticated",
         storageReady: true,
@@ -261,20 +258,21 @@ export function createInMemoryStoreController(
         graph:
           route.page === "oplog"
             ? fixture.operations
-            : (revisionGraph ??
-              fixture.fixtureGraph(
-                route.page === "branches" && route.bookmark
-                  ? route.bookmark
-                  : undefined,
-                repositoryData.bookmarks,
-                repositoryData.revisions,
-                route.commitId ? [route.commitId] : undefined,
-              )),
+            : options.large
+              ? large.largeGraph
+              : fixture.fixtureGraph(
+                  route.page === "branches" && route.bookmark
+                    ? route.bookmark
+                    : undefined,
+                  repositoryData.bookmarks,
+                  repositoryData.revisions,
+                  route.commitId ? [route.commitId] : undefined,
+                ),
         now: fixture.NOW,
         detail: inMemoryStoreDetail(
           route,
           [...repositoryData.revisions, ...fixture.operations.revisions],
-          options.large ? largeDetail : fixture.sampleDetail,
+          options.large ? large.largeDetail : fixture.sampleDetail,
         ),
         fileRevision: snapshot
           ? repositoryData.revisions.find(

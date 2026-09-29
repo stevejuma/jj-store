@@ -79,6 +79,7 @@ export interface ProductionStoreState {
   transcriptDescriptor: Model<"AgentTranscriptDescriptor"> | undefined;
   reviewThreads: Model<"ReviewThreadSummary">[];
   reviewThread: Model<"ReviewThreadDetail"> | undefined;
+  reviewPatch: import("./review-anchor-patch.js").ReviewInlinePatch | undefined;
   reviewCursor: string | null;
   reviewActionMessage: string;
   reviewActionRequestId: string | null;
@@ -162,6 +163,7 @@ export function createProductionStoreState(): ProductionStoreState {
     transcriptDescriptor: undefined,
     reviewThreads: [],
     reviewThread: undefined,
+    reviewPatch: undefined,
     reviewCursor: null,
     reviewActionMessage: "",
     reviewActionRequestId: null,
@@ -204,6 +206,7 @@ export function clearProductionStoreView(state: ProductionStoreState) {
   state.transcriptDescriptor = undefined;
   state.reviewThreads = [];
   state.reviewThread = undefined;
+  state.reviewPatch = undefined;
   state.reviewCursor = null;
   state.reviewActionMessage = "";
   state.reviewActionRequestId = null;

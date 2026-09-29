@@ -95,6 +95,12 @@ extracted when integration changes their responsibilities. Production web
 modules cannot import catalog fixtures, and presentation modules cannot import
 the API or controller layers.
 
+The browser may bundle reviewed static integration artwork under `web/public`
+and Storybook serves that same directory so catalog and production use one
+asset. Git author presentation depends directly on the locked browser-safe hash
+library to reproduce Community's normalized Gravatar URL; that presentation
+dependency cannot enter storage, publication, service or transport crates.
+
 The production mutation controller is an asynchronous controller concern. It
 owns captured native request identity, preview/apply/status transitions, session
 cancellation and committed-snapshot refresh without importing visual components.

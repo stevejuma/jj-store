@@ -599,6 +599,16 @@ input. Revision and path selections open route-addressable Agent context and
 Review discussion columns, and an agent header links back to its associated
 change.
 
+The browser derives integration avatars from bundled, reviewed agent artwork;
+agent identities keep Community's rounded-square shape while people and device
+authors remain circular. Git author email is normalized before the same Gravatar
+identicon lookup used by Community. Collaboration summaries may group the agent
+and review participants already proven by the loaded root-pinned context, but do
+not infer associations that the collaboration APIs did not return. Exact
+code-text or code-artifact review anchors may load their immutable comparison
+through the existing pinned diff reads so the discussion can render the comment
+above its inline file diff.
+
 Local workspace validation may resolve `@lapismd/design-core` from the sibling
 source repository through the guarded pnpm hook. That development resolution
 does not change browser request contracts, static-asset policy or runtime

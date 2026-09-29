@@ -146,6 +146,8 @@ export interface StoreControllerState {
   readonly agentTranscript: readonly Model<"AgentTranscriptChunk">[];
   readonly reviewThreads: readonly Model<"ReviewThreadSummary">[];
   readonly reviewThread: Model<"ReviewThreadDetail"> | undefined;
+  readonly reviewPatch:
+    import("./review-anchor-patch.js").ReviewInlinePatch | undefined;
   readonly reviewActionMessage: string;
   readonly reviewActionRequestId: string | null;
   readonly authenticated: boolean;

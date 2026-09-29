@@ -206,6 +206,7 @@
               hasMore={hasMoreGraph}
               {loading}
               onLoadMore={() => void onLoadMoreGraph()}
+              collaborationContext={controller?.state}
             >
               {#snippet selectedFiles()}
                 <CommunityProjectsRepositoryLogFiles
@@ -235,6 +236,7 @@
       loading={detailLoading}
       {now}
       onSelectOperation={onSelectRevision}
+      {controller}
     />
     {#if controller?.state.route.agentSessionId}
       <ColumnCanvas.Column id="agent">

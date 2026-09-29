@@ -1,11 +1,10 @@
 import type { StoreControllerState } from "../../web/src/lib/controller/contracts.js";
-import { IDS, NOW, revisions } from "./repository.js";
+import { IDS, NOW, revisions, sampleDetail } from "./repository.js";
 
 type AgentSession = StoreControllerState["agentSessions"][number];
 type AgentDetail = NonNullable<StoreControllerState["agentSession"]>;
 type AgentChunk = StoreControllerState["agentTranscript"][number];
-type ReviewThread = StoreControllerState["reviewThreads"][number];
-type ReviewDetail = NonNullable<StoreControllerState["reviewThread"]>;
+export { reviewDetail, reviewThreads } from "./collaboration-review.js";
 
 const id16 = (byte: string) => byte.repeat(16);
 const id32 = (byte: string) => byte.repeat(32);
@@ -180,121 +179,7 @@ export const agentTranscript: readonly AgentChunk[] = [
   },
 ];
 
-const threadId = id16("e1");
-const reviewer = id16("e2");
-const reviewAnchor = {
-  schema_version: 1,
-  repository_id: id16("c1"),
-  target: {
-    target: "revision" as const,
-    value: {
-      operation_id: IDS.opLeft,
-      commit_id: relatedRevision.eventId,
-      change_id: relatedRevision.changeId,
-    },
-  },
-  created_context: {
-    publication_position: 20,
-    code_state_version: 7,
-    agent_root: id32("c3"),
-  },
-  sensitivity: "repository" as const,
+export const reviewPatch = {
+  path: "src/lib.rs",
+  patch: sampleDetail.patches["src/lib.rs"]!,
 };
-const summary: ReviewThread = {
-  thread_id: threadId,
-  snapshot_id: id32("e3"),
-  original_anchor_id: id32("e4"),
-  anchor: reviewAnchor,
-  event_page_root_id: id32("e5"),
-  status: "open",
-  selected_workflow_action: null,
-  thread_version: 1,
-  content_version: 1,
-  workflow_version: 1,
-  comment_count: 2,
-  last_event_sequence: 2,
-};
-
-export const reviewThreads: ReviewThread[] = [
-  summary,
-  {
-    ...summary,
-    thread_id: id16("f1"),
-    snapshot_id: id32("f2"),
-    status: "resolved",
-  },
-  {
-    ...summary,
-    thread_id: id16("18"),
-    snapshot_id: id32("19"),
-    original_anchor_id: id32("1a"),
-    anchor: {
-      ...reviewAnchor,
-      target: {
-        target: "code_artifact",
-        value: {
-          operation_id: IDS.opLeft,
-          commit_id: relatedRevision.eventId,
-          change_id: relatedRevision.changeId,
-          path: "src/lib.rs",
-          object: { kind: "file", id: id32("1b") },
-          value_kind: "file",
-        },
-      },
-    },
-  },
-];
-
-export function reviewDetail(): ReviewDetail {
-  return {
-    version: 1,
-    snapshot: {
-      repo_id: id16("c1"),
-      epoch: id16("c2"),
-      published_seq: 24,
-      manifest_revision: 11,
-      review_root: id32("f3"),
-      review_state_version: 5,
-    },
-    thread: { ...summary },
-    anchor: {
-      object_id: summary.original_anchor_id,
-      value: reviewAnchor,
-    },
-    comments: [
-      {
-        comment_id: id16("11"),
-        revision_id: id32("12"),
-        parent_comment_id: null,
-        author: reviewer,
-        actor: reviewer,
-        created_at_millis: 1_796_000_000_000,
-        previous_revision_id: null,
-        content: {
-          state: "visible",
-          body_id: id32("13"),
-          format: "safe_markdown",
-          text: "Can we preserve the exact operation when this retry races?",
-          sanitizer_version: "review-markdown-v1",
-        },
-      },
-      {
-        comment_id: id16("14"),
-        revision_id: id32("15"),
-        parent_comment_id: id16("11"),
-        author: id16("16"),
-        actor: id16("16"),
-        created_at_millis: 1_796_000_060_000,
-        previous_revision_id: null,
-        content: {
-          state: "visible",
-          body_id: id32("17"),
-          format: "safe_markdown",
-          text: "Yes. The command keeps the original request identity and precondition.",
-          sanitizer_version: "review-markdown-v1",
-        },
-      },
-    ],
-    events: [],
-  };
-}

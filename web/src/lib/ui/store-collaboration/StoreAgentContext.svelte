@@ -10,6 +10,7 @@
   } from "../../collaboration/presentation.js";
   import { storeRouteToHash } from "../../controller/store-route-codec.js";
   import CommunityChip from "../community-chip/CommunityChip.svelte";
+  import CommunityMemberAvatar from "../community-member-avatar/CommunityMemberAvatar.svelte";
   import CommunityProjectsRevisionGraphIds from "../community-projects/CommunityProjectsRevisionGraphIds.svelte";
   import CommunityProjectsVirtualRows from "../community-projects/CommunityProjectsVirtualRows.svelte";
   import StoreAgentTranscript from "./StoreAgentTranscript.svelte";
@@ -61,7 +62,15 @@
   <div class="store-agent-context">
     <header class="store-collaboration__detail-header">
       <div class="store-collaboration__detail-title-row">
-        <span class="store-collaboration__detail-title">{agent.name}</span>
+        <span class="store-collaboration__detail-identity">
+          <CommunityMemberAvatar
+            member={agent}
+            size="small"
+            showPresence
+            decorative
+          />
+          <span class="store-collaboration__detail-title">{agent.name}</span>
+        </span>
         <StoreIdentityCopy
           value={selected.session.session_id}
           label="agent session ID"

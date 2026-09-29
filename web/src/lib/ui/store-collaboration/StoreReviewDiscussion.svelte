@@ -3,50 +3,42 @@
   import * as Empty from "@lapismd/design-core/shadcn/empty";
   import MessageSquareIcon from "@lucide/svelte/icons/message-square";
   import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
-  import { CommunityChatComposer } from "@lapismd/lapis-community/components/community-chat-composer";
-  import { CommunityMessage } from "@lapismd/lapis-community/components/community-message";
   import type { StoreController } from "../../controller/contracts.js";
   import {
+    anchorAgentMember,
     anchorLabel,
-    principalMember,
-    reviewMessage,
   } from "../../collaboration/presentation.js";
   import CommunityChip from "../community-chip/CommunityChip.svelte";
+  import CommunityMemberAvatar from "../community-member-avatar/CommunityMemberAvatar.svelte";
   import CommunityProjectsColumnAlert from "../community-projects/CommunityProjectsColumnAlert.svelte";
-  import CommunityProjectsVirtualRows from "../community-projects/CommunityProjectsVirtualRows.svelte";
   import StoreIdentityCopy from "./StoreIdentityCopy.svelte";
   import StoreReviewAnchorIdentity from "./StoreReviewAnchorIdentity.svelte";
+  import StoreReviewConversation from "./StoreReviewConversation.svelte";
 
   let { controller }: { controller: StoreController } = $props();
   const view = $derived(controller.state);
   const detail = $derived(view.reviewThread);
-  const members = $derived(
+  const agent = $derived(
     detail
-      ? [
-          ...new Map(
-            detail.comments.map((comment) => [
-              comment.author,
-              principalMember(comment.author),
-            ]),
-          ).values(),
-        ]
-      : [],
+      ? anchorAgentMember(detail.anchor.value, view.agentSessions)
+      : undefined,
   );
-  let draft = $state("");
-
-  async function submit(content: string) {
-    await controller.actions.replyToReview(content);
-    if (controller.state.status.reviewAction === "ready") draft = "";
-  }
 </script>
 
 {#if detail}
   <div class="store-review-discussion">
     <header class="store-collaboration__detail-header">
       <div class="store-collaboration__detail-title-row">
-        <span class="store-collaboration__detail-title"
-          >{anchorLabel(detail.anchor.value)}</span
-        >
+        <span class="store-collaboration__detail-identity">
+          {#if agent}<CommunityMemberAvatar
+              member={agent}
+              size="small"
+              decorative
+            />{/if}
+          <span class="store-collaboration__detail-title"
+            >{anchorLabel(detail.anchor.value)}</span
+          >
+        </span>
         <StoreIdentityCopy
           value={detail.thread.thread_id}
           label="review thread ID"
@@ -97,59 +89,7 @@
         {/if}
       </CommunityProjectsColumnAlert>
     {/if}
-    <div
-      class="store-collaboration__messages"
-      role="list"
-      aria-label="Review comments"
-    >
-      <CommunityProjectsVirtualRows
-        rows={detail.comments}
-        getKey={(comment) => comment.comment_id}
-        estimateSize={() => 118}
-      >
-        {#snippet row(comment)}
-          {@const author = principalMember(comment.author)}
-          <div
-            class="store-collaboration__message"
-            data-reply={comment.parent_comment_id ? "" : undefined}
-            role="listitem"
-          >
-            <div class="store-collaboration__message-identities">
-              <StoreIdentityCopy
-                value={comment.author}
-                label="review author ID"
-              />
-              <StoreIdentityCopy
-                value={comment.comment_id}
-                label="review comment ID"
-              />
-            </div>
-            <CommunityMessage
-              message={reviewMessage(comment)}
-              {author}
-              {members}
-              highlighted={comment.parent_comment_id !== null}
-            />
-          </div>
-        {/snippet}
-      </CommunityProjectsVirtualRows>
-    </div>
-    {#if detail.thread.status === "open"}
-      <div class="store-collaboration__composer">
-        <CommunityChatComposer
-          mode="form"
-          showSubmitButton
-          bind:value={draft}
-          {members}
-          disabled={view.status.reviewAction === "refreshing"}
-          busy={view.status.reviewAction === "refreshing"}
-          ariaLabel="Reply to review thread"
-          submitLabel="Reply"
-          placeholder="Reply with Markdown"
-          onSubmit={(submission) => submit(submission.content)}
-        />
-      </div>
-    {/if}
+    <StoreReviewConversation {controller} />
   </div>
 {:else}
   <Empty.Root class="store-collaboration__empty">

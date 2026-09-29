@@ -44,8 +44,10 @@ export function createProductionRevisionSelector(
       inspectionContinuation: null,
     });
     if (!id) return;
-    if (page === "oplog") await reader.loadOperation(id);
-    else if (page === "files") await reader.loadFiles(id);
+    if (page === "oplog") {
+      await reader.loadOperation(id);
+      await reader.loadOperationContext(id);
+    } else if (page === "files") await reader.loadFiles(id);
     else {
       await reader.loadCommit(id);
       await reader.loadRevisionContext(id);

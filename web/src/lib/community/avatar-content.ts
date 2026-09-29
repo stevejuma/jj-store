@@ -4,7 +4,7 @@ export type CommunityMemberAvatarContent =
   | { kind: "initials"; initials: string };
 
 export function isCommunityAvatarImage(value: string): boolean {
-  return /^(https?:\/\/|data:image\/|blob:)/i.test(value.trim());
+  return /^(https?:\/\/|data:image\/|blob:|\/(?!\/))/i.test(value.trim());
 }
 
 export function isCommunityAvatarEmoji(value: string): boolean {

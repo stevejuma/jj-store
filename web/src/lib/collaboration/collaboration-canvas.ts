@@ -5,6 +5,8 @@ import {
 import type { StorePage } from "../ui/community-navigation/model.js";
 import { repositoryColumnCanvasStorageKey } from "../ui/layout-storage.js";
 
+export const COLLABORATION_COMPACT_BREAKPOINT = 720;
+
 export function createCollaborationCanvas(
   page: Extract<StorePage, "agents" | "reviews">,
   storage?: Storage,

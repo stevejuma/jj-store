@@ -17,6 +17,9 @@
   import { repositoryLogFileStats } from "../../projects/repository-log-files.js";
   import CommunityProjectsRepositoryLogRail from "./CommunityProjectsRepositoryLogRail.svelte";
   import CommunityProjectsRepositorySkeleton from "./CommunityProjectsRepositorySkeleton.svelte";
+  import type { StoreController } from "../../controller/contracts.js";
+  import { anchorPath } from "../../collaboration/presentation.js";
+  import StoreReviewConversation from "../store-collaboration/StoreReviewConversation.svelte";
   import "./repository-log-diff.css";
 
   let {
@@ -27,6 +30,7 @@
     loading = false,
     now,
     onSelectOperation,
+    controller,
   }: {
     path: string | null;
     patch: string | undefined;
@@ -35,6 +39,7 @@
     loading?: boolean | undefined;
     now?: number | undefined;
     onSelectOperation?: ((id: string) => void) | undefined;
+    controller?: StoreController | undefined;
   } = $props();
 
   let viewMode = $state<FileDiffViewMode>("unified");
@@ -44,7 +49,21 @@
   const operationPanelId = $derived(
     operation ? `operation-details-${operation.eventId.slice(0, 16)}` : "",
   );
+  const inlineReview = $derived(
+    Boolean(
+      path &&
+      controller?.state.reviewThread &&
+      anchorPath(controller.state.reviewThread.anchor.value) === path,
+    ),
+  );
 </script>
+
+{#snippet inlineDiscussion()}
+  {#if inlineReview && controller}<StoreReviewConversation
+      {controller}
+      inline
+    />{/if}
+{/snippet}
 
 <ColumnCanvas.Column
   id="diff"
@@ -114,6 +133,7 @@
                 <CommunityDiffControls bind:viewMode bind:wrap />
               {/snippet}
             </CommunityCommitDiff>
+            {@render inlineDiscussion()}
           </section>
         {:else if path}
           <section
@@ -134,6 +154,7 @@
                 >
               </Empty.Header>
             </Empty.Root>
+            {@render inlineDiscussion()}
           </section>
         {:else}
           <section
@@ -184,6 +205,7 @@
           {viewMode}
           {wrap}
         />
+        {@render inlineDiscussion()}
       {:else if path}<Empty.Root
           class="community-projects-repository-log-diff__empty"
           role="status"
@@ -197,7 +219,9 @@
               >Binary or unavailable text diff for {path}.</Empty.Description
             >
           </Empty.Header>
-        </Empty.Root>{:else}<Empty.Root
+        </Empty.Root>
+        {@render inlineDiscussion()}
+      {:else}<Empty.Root
           class="community-projects-repository-log-diff__empty"
           role="status"
         >

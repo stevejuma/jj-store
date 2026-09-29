@@ -314,11 +314,30 @@ message/tool compositions, exposes the related native change in its header and
 renders a changed-file diff inside a tool only when an exact code association or
 recorded path ties that tool to the file.
 
-Selecting a revision may append Agent Context and Review discussion columns from
-exact root-pinned associations; selecting a changed path narrows review context
-to its exact anchor. Close controls clear their route selections. Review detail
-uses Community thread messages and keeps the composer at the bottom while the
-thread is open. The Files summary shows the selected commit author's avatar and
-name, message, Git revision and relative time. Catalog fixtures prove combined
-Agent and Review columns; the live sample may show only Review until its capture
-path publishes an exact AgentCodeAssociation.
+The complete Agent or Review card surface selects its detail except for nested
+copy and action controls. Integration artwork appears in the leading identity
+cell and in related Agent and Review headers; Community's identity shape keeps
+agents rounded-square and people or devices circular. Comment and tool totals
+use labelled Lucide glyphs with numeric values. JJ Log and Op Log rows expose a
+compact Community avatar group and reply summary only for collaboration already
+associated with that exact revision or operation. Author email supplies a
+Gravatar identicon when no known member image is available.
+
+Selecting a revision or operation may append Agent Context and Review discussion
+columns from exact root-pinned associations; selecting a changed path narrows
+review context to its exact anchor for that revision or operation. Close
+controls clear their route selections. Review detail uses Community thread
+messages and keeps the composer at the bottom while the thread is open. The
+Files summary shows the selected commit author's avatar and name, message, Git
+revision and relative time. Catalog fixtures prove combined Agent and Review
+columns; the live sample may show only Review until its capture path publishes
+an exact AgentCodeAssociation.
+
+Code-text and code-artifact review discussions place their compact message
+thread above the exact inline file diff. The JJ Log and Op Log diff column uses
+the same inline thread and bottom composer when the selected file has a loaded
+review. The repository detail rail follows Community's section typography and
+spacing; selecting a JJ Log or Op Log row replaces generic repository facts with
+its metadata and the same enabled mutation actions exposed by the header menu,
+including bookmark creation and conflict resolution when their native
+capabilities and exact selection permit them.

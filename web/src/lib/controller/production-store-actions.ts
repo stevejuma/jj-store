@@ -106,6 +106,11 @@ export function createProductionStoreActions(options: {
         await options.reader.loadPatch(path);
         const commit = options.history.route.commitId;
         if (commit) await options.reader.loadPathReview(commit, path);
+        else if (options.history.route.inspectedOperationId)
+          await options.reader.loadOperationPathReview(
+            options.history.route.inspectedOperationId,
+            path,
+          );
       }
     },
     selectDirectory: options.reader.selectDirectory,

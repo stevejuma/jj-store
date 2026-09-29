@@ -252,6 +252,8 @@ test("collaboration reads use bounded cursors and stable identities", async () =
   const session = "12".repeat(16);
   const transcript = "34".repeat(32);
   const thread = "56".repeat(16);
+  const commit = "9a".repeat(64);
+  const operation = "9b".repeat(64);
 
   await source.agentSessions("agent-cursor");
   await source.agentSession(session);
@@ -271,6 +273,8 @@ test("collaboration reads use bounded cursors and stable identities", async () =
     },
     "transcript-cursor",
   );
+  await source.agentRelations({ commit }, "relation-cursor");
+  await source.agentRelations({ operation });
   await source.reviewThreads("review-cursor");
   await source.reviewThread(thread);
 
@@ -278,6 +282,8 @@ test("collaboration reads use bounded cursors and stable identities", async () =
     `/v1/repos/${repository}/agent/sessions`,
     `/v1/repos/${repository}/agent/sessions/${session}`,
     `/v1/repos/${repository}/agent/sessions/${session}/transcripts/${transcript}`,
+    `/v1/repos/${repository}/agent/associations`,
+    `/v1/repos/${repository}/agent/associations`,
     `/v1/repos/${repository}/reviews/threads`,
     `/v1/repos/${repository}/reviews/threads/${thread}`,
   ]);
@@ -293,6 +299,15 @@ test("collaboration reads use bounded cursors and stable identities", async () =
     max_bytes: "262144",
   });
   expect(Object.fromEntries(requests[3]!.searchParams)).toEqual({
+    commit,
+    cursor: "relation-cursor",
+    limit: "256",
+  });
+  expect(Object.fromEntries(requests[4]!.searchParams)).toEqual({
+    operation,
+    limit: "256",
+  });
+  expect(Object.fromEntries(requests[5]!.searchParams)).toEqual({
     cursor: "review-cursor",
     limit: "50",
   });

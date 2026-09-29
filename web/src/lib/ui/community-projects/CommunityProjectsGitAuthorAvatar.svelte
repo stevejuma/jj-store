@@ -3,6 +3,7 @@
 
   import CommunityMemberAvatar from "../community-member-avatar/CommunityMemberAvatar.svelte";
   import type { CommunityMemberModel } from "../community-workspace/model.js";
+  import { repositoryLogGravatarUrl } from "../../projects/repository-log-author.js";
 
   let {
     email = "",
@@ -17,20 +18,20 @@
   } = $props();
 
   const trimmedEmail = $derived(email.trim());
-  const pubkey = $derived(undefined);
   const member = $derived(
     members.find((member) => member.handle === trimmedEmail) ??
       gitAuthorMember(name, trimmedEmail),
   );
-  const label = $derived(pubkey ? member.name : trimmedEmail);
+  const label = $derived(trimmedEmail || member.name);
 
   function gitAuthorMember(
     displayName: string,
     authorEmail: string,
   ): CommunityMemberModel {
     const label = displayName.trim() || authorEmail || "Author";
+    const avatarUrl = repositoryLogGravatarUrl(authorEmail);
     return {
-      id: pubkey ?? (authorEmail || label),
+      id: authorEmail || label,
       name: label,
       handle: authorEmail || label,
       initials: label
@@ -39,6 +40,7 @@
         .map((part) => part[0])
         .join("")
         .toUpperCase(),
+      ...(avatarUrl ? { avatarUrl } : {}),
     };
   }
 </script>
@@ -55,7 +57,7 @@
             role="img"
             aria-label={label}
           >
-            <CommunityMemberAvatar {member} {size} shape="rounded" decorative />
+            <CommunityMemberAvatar {member} {size} decorative />
           </span>
         {/snippet}
       </Tooltip.Trigger>
@@ -64,7 +66,7 @@
   </Tooltip.Provider>
 {:else}
   <span class="community-projects-git-author-avatar" data-ui-part="git-author">
-    <CommunityMemberAvatar {member} {size} shape="rounded" decorative />
+    <CommunityMemberAvatar {member} {size} decorative />
   </span>
 {/if}
 

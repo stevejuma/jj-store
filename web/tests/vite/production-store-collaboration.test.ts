@@ -67,6 +67,9 @@ const thread: Model<"ReviewThreadSummary"> = {
 };
 const commit = "61".repeat(64);
 const change = id16("62");
+const operation = "60".repeat(64);
+const beforeOperation = "67".repeat(64);
+const beforeCommit = "68".repeat(64);
 const revisionThread: Model<"ReviewThreadSummary"> = {
   ...thread,
   thread_id: id16("25"),
@@ -75,7 +78,7 @@ const revisionThread: Model<"ReviewThreadSummary"> = {
     target: {
       target: "revision",
       value: {
-        operation_id: "60".repeat(64),
+        operation_id: operation,
         commit_id: commit,
         change_id: change,
       },
@@ -90,12 +93,46 @@ const codeThread: Model<"ReviewThreadSummary"> = {
     target: {
       target: "code_artifact",
       value: {
-        operation_id: "60".repeat(64),
+        operation_id: operation,
         commit_id: commit,
         change_id: change,
         path: "src/lib.rs",
         object: { kind: "file", id: id32("63") },
         value_kind: "file",
+      },
+    },
+  },
+};
+const codeTextThread: Model<"ReviewThreadSummary"> = {
+  ...revisionThread,
+  thread_id: id16("27"),
+  anchor: {
+    ...revisionThread.anchor,
+    target: {
+      target: "code_text",
+      value: {
+        operation_id: operation,
+        commit_id: commit,
+        change_id: change,
+        path: "src/lib.rs",
+        file_id: id32("69"),
+        value_kind: "file",
+        text: {
+          encoding: "utf8",
+          start_byte: "4",
+          end_byte: "12",
+          selected_sha256: id32("6a"),
+        },
+        diff_context: {
+          before_operation_id: beforeOperation,
+          before_commit_id: beforeCommit,
+          before_path: "src/lib.rs",
+          after_operation_id: operation,
+          after_commit_id: commit,
+          after_path: "src/lib.rs",
+          side: "after",
+          comparison: "explicit_pair",
+        },
       },
     },
   },
@@ -107,7 +144,7 @@ const association: Model<"AgentCodeAssociation"> = {
   tool_call_ids: [],
   relation: "validated_revision",
   before_operations: [],
-  after_operations: ["60".repeat(64)],
+  after_operations: [operation],
   before_commits: [],
   after_commits: [commit],
   changes: [change],
@@ -141,6 +178,17 @@ const reviewDetail = (): Model<"ReviewThreadDetail"> => ({
   },
   comments: [],
   events: [],
+});
+
+const reviewDetailFor = (
+  selected: Model<"ReviewThreadSummary">,
+): Model<"ReviewThreadDetail"> => ({
+  ...reviewDetail(),
+  thread: selected,
+  anchor: {
+    object_id: selected.original_anchor_id,
+    value: selected.anchor,
+  },
 });
 
 const agentDetail = (): Model<"AgentSessionDetail"> => ({
@@ -191,11 +239,14 @@ function harness(
     async agentSession() {
       return agentDetail();
     },
-    async agentRelations(commit: string) {
+    async agentRelations(subject: { commit: string } | { operation: string }) {
       return {
         version: 1,
         snapshot: agentDetail().snapshot,
-        subject: { subject: "revision" as const, commit_id: commit },
+        subject: {
+          subject: "revision" as const,
+          commit_id: "commit" in subject ? subject.commit : commit,
+        },
         relations: [],
         next_cursor: null,
       };
@@ -352,7 +403,7 @@ test("late collaboration details cannot repopulate an invalidated session", asyn
 
 test("revision context follows paged exact agent and review associations", async () => {
   const { controller, data, history, source } = harness();
-  source.agentRelations = async (_commit, cursor) => ({
+  source.agentRelations = async (_subject, cursor) => ({
     version: 1,
     snapshot: agentDetail().snapshot,
     subject: { subject: "revision", commit_id: commit },
@@ -392,4 +443,154 @@ test("path context continues review pages to the exact code anchor", async () =>
 
   expect(history.route.reviewThreadId).toBe(codeThread.thread_id);
   expect(data.reviewThreads).toEqual([revisionThread, codeThread]);
+});
+
+test("operation context follows associations and every exact operation anchor", async () => {
+  const { controller, data, history, source } = harness();
+  const subjects: ({ commit: string } | { operation: string })[] = [];
+  source.agentRelations = async (subject) => {
+    subjects.push(subject);
+    return {
+      version: 1,
+      snapshot: agentDetail().snapshot,
+      subject: { subject: "operation", operation_id: operation },
+      relations: [
+        { kind: "association", object_id: association.object_id, association },
+      ],
+      next_cursor: null,
+    };
+  };
+  source.reviewThreads = async () => ({
+    version: 1,
+    snapshot: reviewDetail().snapshot,
+    threads: [codeTextThread],
+    next_cursor: null,
+  });
+  source.reviewThread = async () => reviewDetailFor(codeTextThread);
+  source.diff = async () => {
+    throw new Error("Patch unavailable in this context test");
+  };
+
+  await controller.loadOperationContext(operation);
+
+  expect(subjects).toEqual([{ operation }]);
+  expect(data.agentRelations.at(-1)?.association).toEqual(association);
+  expect(history.route.agentSessionId).toBe(session.session_id);
+  expect(history.route.reviewThreadId).toBe(codeTextThread.thread_id);
+  expect(data.reviewThread?.thread.thread_id).toBe(codeTextThread.thread_id);
+});
+
+test("operation path context keeps the exact anchored review selected", async () => {
+  const { controller, data, history, source } = harness();
+  data.reviewThreads = [revisionThread, codeThread];
+  source.reviewThread = async () => reviewDetailFor(codeThread);
+  source.commit = async () => {
+    throw new Error("Patch unavailable in this context test");
+  };
+
+  await controller.loadOperationPathReview(operation, "src/lib.rs");
+
+  expect(history.route.reviewThreadId).toBe(codeThread.thread_id);
+  expect(data.reviewThread?.thread.thread_id).toBe(codeThread.thread_id);
+});
+
+test("code text review loads its exact pinned comparison pair", async () => {
+  const { controller, data, source } = harness();
+  const calls: [string, string, string, string][] = [];
+  source.reviewThread = async () => reviewDetailFor(codeTextThread);
+  source.commit = async () => {
+    throw new Error("The explicit diff pair must not read commit parents");
+  };
+  source.diff = async (selectedOperation, from, to, path) => {
+    calls.push([selectedOperation, from, to, path]);
+    return {
+      snapshot: {
+        version: 1,
+        repo_id: source.repository,
+        epoch: id16("32"),
+        published_seq: 4,
+        manifest_revision: 5,
+        code_state_version: 2,
+        heads: [selectedOperation],
+        operation_id: selectedOperation,
+      },
+      data: {
+        version: 1,
+        from,
+        to,
+        path,
+        changes: [
+          {
+            path,
+            before: [],
+            after: [],
+            sources: [],
+            content: {
+              status: "text",
+              hunks: [
+                {
+                  kind: "different",
+                  before_start: 1,
+                  after_start: 1,
+                  before: "old\n",
+                  after: "new\n",
+                },
+              ],
+            },
+          },
+        ],
+        stats: {
+          metadata_nodes: 1,
+          predicate_file_bytes: 0,
+          predicate_lines: 0,
+          object_reads: 1,
+          object_bytes: 8,
+          work: 1,
+        },
+      },
+      next_cursor: null,
+    };
+  };
+
+  await controller.loadReview(codeTextThread.thread_id);
+
+  expect(calls).toEqual([[operation, beforeCommit, commit, "src/lib.rs"]]);
+  expect(data.reviewPatch?.path).toBe("src/lib.rs");
+  expect(data.reviewPatch?.patch).toContain("-old");
+  expect(data.status.reviewAction).toBe("ready");
+});
+
+test("a review patch failure preserves the loaded conversation", async () => {
+  const { controller, data, source } = harness();
+  source.reviewThread = async () => reviewDetailFor(codeTextThread);
+  source.diff = async () => {
+    throw new Error("Diff was pruned");
+  };
+
+  await controller.loadReview(codeTextThread.thread_id);
+
+  expect(data.reviewThread?.thread.thread_id).toBe(codeTextThread.thread_id);
+  expect(data.reviewPatch).toBeUndefined();
+  expect(data.status.reviewAction).toBe("ready");
+});
+
+test("a stale review patch failure cannot clear newer state", async () => {
+  let active = true;
+  let rejectPatch!: (cause: unknown) => void;
+  const { controller, data, source } = harness("committed", () => active);
+  source.reviewThread = async () => reviewDetailFor(codeTextThread);
+  source.diff = () =>
+    new Promise((_resolve, reject) => {
+      rejectPatch = reject;
+    });
+
+  const read = controller.loadReview(codeTextThread.thread_id);
+  await Promise.resolve();
+  await Promise.resolve();
+  active = false;
+  data.reviewPatch = { path: "newer.rs", patch: "newer" };
+  rejectPatch(new Error("Late patch failure"));
+  await read;
+
+  expect(data.reviewPatch).toEqual({ path: "newer.rs", patch: "newer" });
 });

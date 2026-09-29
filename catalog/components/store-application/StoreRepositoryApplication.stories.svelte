@@ -121,6 +121,21 @@
     const canvas = within(canvasElement),
       body = within(canvasElement.ownerDocument.body);
     await userEvent.click(canvas.getByRole("button", { name: "jj-store" }));
+    const fileSummary = within(
+      canvasElement.querySelector<HTMLElement>(
+        ".community-projects__file-browser-summary",
+      )!,
+    );
+    await expect(
+      fileSummary.getByRole("img", { name: "maya@example.test" }),
+    ).toBeVisible();
+    await expect(
+      fileSummary.getByRole("button", { name: "View commit Working copy" }),
+    ).toBeVisible();
+    await expect(
+      fileSummary.getByRole("button", { name: /Copy full Git revision/u }),
+    ).toBeVisible();
+    await expect(fileSummary.getByText(/seconds ago|just now/u)).toBeVisible();
     await expect(
       canvas.getByRole("list", { name: "Files breadcrumb" }),
     ).toBeVisible();

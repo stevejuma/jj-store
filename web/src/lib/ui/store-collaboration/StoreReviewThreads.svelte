@@ -4,10 +4,17 @@
   import { onDestroy, untrack } from "svelte";
   import MessageSquareIcon from "@lucide/svelte/icons/message-square";
   import type { StoreController } from "../../controller/contracts.js";
-  import { createCollaborationCanvas } from "../../collaboration/collaboration-canvas.js";
-  import { anchorLabel } from "../../collaboration/presentation.js";
+  import {
+    COLLABORATION_COMPACT_BREAKPOINT,
+    createCollaborationCanvas,
+  } from "../../collaboration/collaboration-canvas.js";
+  import {
+    anchorAgentMember,
+    anchorLabel,
+  } from "../../collaboration/presentation.js";
   import { resolveLayoutStorage } from "../layout-storage.js";
   import CommunityChip from "../community-chip/CommunityChip.svelte";
+  import CommunityMemberAvatar from "../community-member-avatar/CommunityMemberAvatar.svelte";
   import CommunityProjectsColumnAlert from "../community-projects/CommunityProjectsColumnAlert.svelte";
   import CommunityProjectsVirtualRows from "../community-projects/CommunityProjectsVirtualRows.svelte";
   import StoreCollaborationSkeleton from "./StoreCollaborationSkeleton.svelte";
@@ -41,7 +48,10 @@
   aria-label="Repository reviews"
   aria-busy={view.status.reviews === "loading"}
 >
-  <ColumnCanvas.Root controller={canvas}>
+  <ColumnCanvas.Root
+    controller={canvas}
+    compactBreakpoint={COLLABORATION_COMPACT_BREAKPOINT}
+  >
     <ColumnCanvas.Column
       id="collection"
       title="Review threads"
@@ -77,9 +87,15 @@
               loadingLabel="Loading more review threads"
               onLoadMore={() => void controller.actions.loadMore("reviews")}
             >
-              {#snippet row(thread)}<div role="listitem">
+              {#snippet row(thread)}
+                {@const agent = anchorAgentMember(
+                  thread.anchor,
+                  view.agentSessions,
+                )}
+                <div role="listitem">
                   <div
                     class="store-collaboration__row"
+                    data-kind={agent ? "agent-review" : "review"}
                     data-selected={view.route.reviewThreadId ===
                     thread.thread_id
                       ? "true"
@@ -88,11 +104,23 @@
                     <button
                       type="button"
                       class="store-collaboration__row-select"
+                      aria-label={`Open ${anchorLabel(thread.anchor)} ${thread.status} review with ${thread.comment_count} comments`}
                       aria-pressed={view.route.reviewThreadId ===
                         thread.thread_id}
                       onclick={() =>
                         controller.actions.selectReviewThread(thread.thread_id)}
-                    >
+                    ></button>
+                    <span class="store-collaboration__row-leading">
+                      {#if agent}<CommunityMemberAvatar
+                          member={agent}
+                          size="small"
+                          decorative
+                        />{:else}<span
+                          class="store-collaboration__review-leading"
+                          aria-hidden="true"><MessageSquareIcon /></span
+                        >{/if}
+                    </span>
+                    <span class="store-collaboration__row-main">
                       <span class="store-collaboration__row-title"
                         >{anchorLabel(thread.anchor)}</span
                       >
@@ -100,9 +128,16 @@
                         ><CommunityChip
                           tone={thread.status === "open" ? "accent" : "success"}
                           >{thread.status}</CommunityChip
-                        >{thread.comment_count} comments · version {thread.thread_version}</span
+                        ><span
+                          class="store-collaboration__metric"
+                          aria-label={`${thread.comment_count} comments`}
+                          title={`${thread.comment_count} comments`}
+                          ><MessageSquareIcon
+                            aria-hidden="true"
+                          />{thread.comment_count}</span
+                        ><span>version {thread.thread_version}</span></span
                       >
-                    </button>
+                    </span>
                     <span class="store-collaboration__row-actions">
                       <StoreIdentityCopy
                         value={thread.thread_id}
@@ -111,7 +146,8 @@
                       <StoreReviewAnchorIdentity anchor={thread.anchor} />
                     </span>
                   </div>
-                </div>{/snippet}
+                </div>
+              {/snippet}
             </CommunityProjectsVirtualRows>
           </div>
         {/if}

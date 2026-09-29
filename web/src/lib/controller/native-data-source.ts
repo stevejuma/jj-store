@@ -106,7 +106,7 @@ export interface StoreDataSource {
   agentSessions(cursor?: string): Promise<Model<"AgentSessionPage">>;
   agentSession(id: string): Promise<Model<"AgentSessionDetail">>;
   agentRelations(
-    commit: string,
+    subject: { commit: string } | { operation: string },
     cursor?: string,
   ): Promise<Model<"AgentRelationPage">>;
   agentTranscript(

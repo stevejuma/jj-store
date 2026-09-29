@@ -70,3 +70,15 @@ test("controller_restores_directory_history", () => {
     "Directory absent",
   );
 });
+
+test("operation selection and file drill-down retain exact collaboration", () => {
+  const controller = createInMemoryStoreController("oplog");
+  controller.actions.selectRevision(IDS.opLeft);
+  expect(controller.state.route.agentSessionId).not.toBeNull();
+  expect(controller.state.route.reviewThreadId).not.toBeNull();
+  controller.actions.selectFile("src/lib.rs");
+  expect(controller.state.route.reviewThreadId).not.toBeNull();
+  expect(controller.state.reviewThread?.anchor.value.target.target).toBe(
+    "code_artifact",
+  );
+});

@@ -162,6 +162,7 @@
         {#if latestCommit}
           <CommunityProjectsRevisionGraphIds
             commitId={latestCommit.eventId}
+            commitLabel="Git revision"
             placement="inline"
           />
           {#if latestCommitDate}

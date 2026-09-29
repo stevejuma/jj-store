@@ -65,7 +65,11 @@ agent-text and agent-artifact review anchors through the production ReviewStore
 command route. Cold browser acceptance must provide a separate temporary root so
 its publications and cleanup cannot alter interactive state. Harness state and
 process markers remain separate so a stop cannot leave a stale PID that blocks
-the next restart.
+the next restart. When inline anchored review patches coexist with a primary
+changed-file disclosure, browser acceptance MUST select the primary disclosure
+explicitly. The loopback-only harness may recognize an exact validated Gravatar
+request only to abort it locally; it MUST NOT permit an external response or
+widen general network access.
 
 ## M0 extension qualification
 

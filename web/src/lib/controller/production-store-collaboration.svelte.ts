@@ -1,14 +1,17 @@
-import type {
-  StoreDataSource,
-  StoreReviewCommandRequest,
-} from "./native-data-source.js";
+import type { StoreDataSource } from "./native-data-source.js";
 import type { ProductionStoreState } from "./production-store-state.svelte.js";
 import type { createStoreRouteHistory } from "./store-route-history.svelte.js";
-import { anchorCommit, anchorPath } from "../collaboration/presentation.js";
 import {
-  readRevisionAgentRelations,
+  anchorCommit,
+  anchorMatchesOperation,
+  anchorPath,
+} from "../collaboration/presentation.js";
+import {
+  readAgentRelations,
   readReviewContext,
 } from "./production-collaboration-context.js";
+import { readReviewAnchorPatch } from "./review-anchor-patch.js";
+import { createProductionReviewActions } from "./production-review-actions.js";
 
 interface Context {
   data: ProductionStoreState;
@@ -19,11 +22,6 @@ interface Context {
   report(cause: unknown): void;
   requestId?(): string;
 }
-
-const defaultRequestId = () =>
-  [...crypto.getRandomValues(new Uint8Array(16))]
-    .map((value) => value.toString(16).padStart(2, "0"))
-    .join("");
 
 export function createProductionStoreCollaboration(context: Context) {
   const { data, history } = context;
@@ -119,10 +117,19 @@ export function createProductionStoreCollaboration(context: Context) {
     const source = context.source(),
       ticket = context.version();
     data.status.reviewAction = "loading";
+    data.reviewPatch = undefined;
     try {
       const thread = await source.reviewThread(id);
       if (!context.current(ticket, source)) return;
       data.reviewThread = thread;
+      try {
+        const patch = await readReviewAnchorPatch(source, thread.anchor.value);
+        if (!context.current(ticket, source)) return;
+        data.reviewPatch = patch;
+      } catch {
+        if (!context.current(ticket, source)) return;
+        data.reviewPatch = undefined;
+      }
       data.status.reviewAction = "ready";
     } catch (cause) {
       if (!context.current(ticket, source)) return;
@@ -131,18 +138,18 @@ export function createProductionStoreCollaboration(context: Context) {
     }
   }
 
-  async function loadRevisionContext(commit: string) {
+  async function loadContext(
+    subject: { commit: string } | { operation: string },
+    matches: Parameters<typeof readReviewContext>[1],
+  ) {
     const source = context.source(),
       ticket = context.version();
     data.status.agents = "loading";
     data.status.reviews = "loading";
     try {
       const [relations, reviews] = await Promise.all([
-        readRevisionAgentRelations(source, commit),
-        readReviewContext(
-          source,
-          (thread) => anchorCommit(thread.anchor) === commit,
-        ),
+        readAgentRelations(source, subject),
+        readReviewContext(source, matches),
       ]);
       if (!context.current(ticket, source)) return;
       data.agentRelations = relations;
@@ -173,16 +180,23 @@ export function createProductionStoreCollaboration(context: Context) {
     }
   }
 
-  async function loadPathReview(commit: string, path: string) {
+  const loadRevisionContext = (commit: string) =>
+    loadContext({ commit }, (thread) => anchorCommit(thread.anchor) === commit);
+  const loadOperationContext = (operation: string) =>
+    loadContext({ operation }, (thread) =>
+      anchorMatchesOperation(thread.anchor, operation),
+    );
+
+  async function loadMatchingPathReview(
+    matches: Parameters<typeof readReviewContext>[1],
+  ) {
     const source = context.source(),
       ticket = context.version();
     data.status.reviews = "loading";
     try {
       const reviews = await readReviewContext(
         source,
-        (thread) =>
-          anchorCommit(thread.anchor) === commit &&
-          anchorPath(thread.anchor) === path,
+        matches,
         data.reviewThreads,
         data.reviewCursor,
       );
@@ -201,6 +215,19 @@ export function createProductionStoreCollaboration(context: Context) {
     }
   }
 
+  const loadPathReview = (commit: string, path: string) =>
+    loadMatchingPathReview(
+      (thread) =>
+        anchorCommit(thread.anchor) === commit &&
+        anchorPath(thread.anchor) === path,
+    );
+  const loadOperationPathReview = (operation: string, path: string) =>
+    loadMatchingPathReview(
+      (thread) =>
+        anchorMatchesOperation(thread.anchor, operation) &&
+        anchorPath(thread.anchor) === path,
+    );
+
   async function selectAgentSession(id: string | null) {
     history.push({ ...history.route, agentSessionId: id });
     data.agentSession = undefined;
@@ -216,73 +243,11 @@ export function createProductionStoreCollaboration(context: Context) {
     if (id) await loadReview(id);
   }
 
-  async function apply(command: StoreReviewCommandRequest["command"]) {
-    const source = context.source();
-    const requestId = (context.requestId ?? defaultRequestId)();
-    data.status.reviewAction = "refreshing";
-    data.reviewActionMessage = "";
-    data.reviewActionRequestId = requestId;
-    try {
-      const outcome = await source.applyReviewCommand({
-        version: 1,
-        request_id: requestId,
-        command,
-      });
-      if (outcome.status === "outcome_unknown") {
-        data.status.reviewAction = "unavailable";
-        data.reviewActionMessage =
-          "The review outcome is unknown. Check the durable request status before retrying.";
-        return;
-      }
-      data.reviewActionRequestId = null;
-      data.status.reviewAction = "ready";
-      await loadReviews();
-      await loadReview(outcome.receipt.result.thread_id);
-    } catch (cause) {
-      data.status.reviewAction = "failed";
-      context.report(cause);
-    }
-  }
-
-  async function reply(text: string, parentCommentId?: string) {
-    const detail = data.reviewThread;
-    if (!detail || !text.trim()) return;
-    await apply({
-      command: "append_reply",
-      thread_id: detail.thread.thread_id,
-      expected_workflow_version: detail.thread.workflow_version,
-      parent_comment_id: parentCommentId ?? null,
-      body: {
-        schema_version: 1,
-        format: "safe_markdown",
-        text: text.trim(),
-        sanitizer_version: "review-markdown-v1",
-      },
-    });
-  }
-
-  async function setResolved(resolved: boolean) {
-    const detail = data.reviewThread;
-    if (!detail) return;
-    await apply({
-      command: resolved ? "resolve_thread" : "reopen_thread",
-      thread_id: detail.thread.thread_id,
-      expected_thread_version: detail.thread.snapshot_id,
-      reason: null,
-    });
-  }
-
-  async function checkAction() {
-    const id = data.reviewActionRequestId;
-    if (!id) return;
-    const status = await context.source().reviewCommandStatus(id);
-    if (status.status !== "committed") return;
-    data.reviewActionRequestId = null;
-    data.reviewActionMessage = "Review update committed.";
-    data.status.reviewAction = "ready";
-    await loadReviews();
-    await loadReview(status.receipt.result.thread_id);
-  }
+  const reviewActions = createProductionReviewActions({
+    ...context,
+    reloadReviews: () => loadReviews(),
+    reloadReview: loadReview,
+  });
 
   return {
     loadAgents,
@@ -291,11 +256,11 @@ export function createProductionStoreCollaboration(context: Context) {
     loadReviews,
     loadReview,
     loadRevisionContext,
+    loadOperationContext,
     loadPathReview,
+    loadOperationPathReview,
     selectAgentSession,
     selectReviewThread,
-    reply,
-    setResolved,
-    checkAction,
+    ...reviewActions,
   };
 }

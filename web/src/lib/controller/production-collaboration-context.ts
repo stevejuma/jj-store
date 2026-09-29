@@ -3,9 +3,9 @@ import type { StoreDataSource } from "./native-data-source.js";
 
 const MAX_CONTEXT_LINKS = 4_096;
 
-export async function readRevisionAgentRelations(
+export async function readAgentRelations(
   source: StoreDataSource,
-  commit: string,
+  subject: { commit: string } | { operation: string },
 ): Promise<Model<"AgentRelationLink">[]> {
   const relations: Model<"AgentRelationLink">[] = [];
   const seen = new Set<string>();
@@ -13,7 +13,7 @@ export async function readRevisionAgentRelations(
   let inspected = 0;
   let cursor: string | undefined;
   do {
-    const page = await source.agentRelations(commit, cursor);
+    const page = await source.agentRelations(subject, cursor);
     inspected += Math.max(1, page.relations.length);
     if (inspected > MAX_CONTEXT_LINKS)
       throw new Error("Agent context exceeds the browser read bound.");

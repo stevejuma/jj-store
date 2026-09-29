@@ -5,6 +5,9 @@
   import CommunityProjectsGitAuthorAvatar from "./CommunityProjectsGitAuthorAvatar.svelte";
   import CommunityProjectsRevisionGraphMessage from "./CommunityProjectsRevisionGraphMessage.svelte";
   import type { CommunityMemberModel } from "../community-workspace/model.js";
+  import type { StoreControllerState } from "../../controller/contracts.js";
+  import { revisionCollaboration } from "../../collaboration/revision-collaboration.js";
+  import CommunityProjectsRevisionCollaboration from "./CommunityProjectsRevisionCollaboration.svelte";
 
   let {
     row,
@@ -12,13 +15,20 @@
     now,
     href,
     onSelect,
+    collaborationContext,
   }: {
     row: RepositoryLogGraphRow;
     members?: readonly CommunityMemberModel[];
     now?: number;
     href?: string | undefined;
     onSelect?: (() => void) | undefined;
+    collaborationContext?: StoreControllerState | undefined;
   } = $props();
+  const activity = $derived(
+    collaborationContext
+      ? revisionCollaboration(row.revision, collaborationContext)
+      : undefined,
+  );
 </script>
 
 <span class="community-revision-graph-copy">
@@ -87,6 +97,7 @@
       </span>
     {/if}
   </span>
+  {#if activity}<CommunityProjectsRevisionCollaboration {activity} />{/if}
 </span>
 
 <style>
