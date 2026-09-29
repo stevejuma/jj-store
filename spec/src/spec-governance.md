@@ -52,11 +52,13 @@ foundation is governed by `publication.md`; new domain crates and capture,
 anchor, review or collaboration behavior are governed by `collaboration.md`.
 Browser diff-line and agent-tool review creation, exact anchor resolution, route
 retention and inline presentation are jointly governed by `collaboration.md` and
-`api.md`. Each separately registered captured-response fixture in
-`scripts/contracts.mjs` must be recorded here and in the M9 evidence ledger so
-generation cannot widen runtime acceptance without same-change governance
-review. Upstream Community and Design Core changes remain separate source-owned
-changes with consumer acceptance in this repository.
+`api.md`. This includes byte-offset to line-coordinate presentation and the
+exact CSP allowance required by the pinned Community emoji dependency. Each
+separately registered captured-response fixture in `scripts/contracts.mjs` must
+be recorded here and in the M9 evidence ledger so generation cannot widen
+runtime acceptance without same-change governance review. Upstream Community and
+Design Core changes remain separate source-owned changes with consumer
+acceptance in this repository.
 
 The checkout-owned development harness stores its interactive fixture only in
 the ignored `.local/dev-demo` subtree. Restart and stop preserve that fixture;

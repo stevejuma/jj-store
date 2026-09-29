@@ -536,9 +536,11 @@ the listed index, JavaScript, CSS, font and fixed `agent-icons/*.svg` files are
 served; repository paths cannot select filesystem content. Agent icons retain
 their stable same-origin `/agent-icons/<name>.svg` URLs. The document permits
 same-origin scripts, styles, connections and images plus image loads from the
-exact `https://www.gravatar.com` origin; it prohibits framing, plugins and
-inline script. The browser read client is independent of the later typed
-mutation and search capabilities.
+exact `https://www.gravatar.com` origin. The only admitted inline style is the
+exact SHA-256 hash of the pinned emoji-mart 5.6.0 shadow stylesheet used by
+Community's emoji picker; arbitrary inline style and every inline script remain
+blocked. The document also prohibits framing and plugins. The browser read
+client is independent of the later typed mutation and search capabilities.
 
 Generated schemas express reference siblings through equivalent allOf
 composition so client generators retain internal enum discriminators. The

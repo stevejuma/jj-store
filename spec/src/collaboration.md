@@ -279,6 +279,12 @@ line-annotation boundary immediately after the anchored row. Existing code-text
 threads use the same exact row placement, while whole-file anchors retain their
 below-diff placement.
 
+Native diff hunk starts remain byte offsets in the transport. Before exposing a
+line comment action, presentation MUST derive one-based unified-diff positions
+by accumulating the ordered hunk contents on each side; a zero-length side uses
+the preceding position required by unified diff syntax. A native byte offset
+MUST NOT be presented or resolved as a source line number.
+
 Each agent tool-call row likewise exposes a keyboard and pointer reachable reply
 action. Its first committed comment creates one `agent_artifact` thread bound to
 the selected session snapshot and exact tool snapshot; subsequent comments

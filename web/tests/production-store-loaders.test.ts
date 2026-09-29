@@ -309,8 +309,8 @@ test("graph and diff presentation retain native edges and text statistics", () =
       hunks: [
         {
           kind: "different",
-          before_start: 4,
-          after_start: 4,
+          before_start: 0,
+          after_start: 0,
           before: "old\nvalue\n",
           after: "new\nvalue\nextra\n",
         },
@@ -320,7 +320,61 @@ test("graph and diff presentation retain native edges and text statistics", () =
   assert.deepEqual(presentChangedFiles([changed]), [
     { path: "src/lib.rs", additions: 3, deletions: 2 },
   ]);
-  assert.match(presentPatch(changed) ?? "", /@@ -4,2 \+4,3 @@/u);
+  assert.match(presentPatch(changed) ?? "", /@@ -1,2 \+1,3 @@/u);
+});
+
+test("native byte offsets become one-based unified diff line coordinates", () => {
+  const changed = {
+    path: "src/lib.rs",
+    before: [],
+    after: [],
+    sources: [],
+    content: {
+      status: "text",
+      hunks: [
+        {
+          kind: "matching",
+          before_start: 0,
+          after_start: 0,
+          before: "one\n",
+          after: "one\n",
+        },
+        {
+          kind: "different",
+          before_start: 4,
+          after_start: 4,
+          before: "two\n",
+          after: "TWO\n",
+        },
+        {
+          kind: "matching",
+          before_start: 8,
+          after_start: 8,
+          before: "three\n",
+          after: "three\n",
+        },
+        {
+          kind: "different",
+          before_start: 14,
+          after_start: 14,
+          before: "",
+          after: "inserted\n",
+        },
+        {
+          kind: "matching",
+          before_start: 14,
+          after_start: 23,
+          before: "four\n",
+          after: "four\n",
+        },
+      ],
+    },
+  } as Model<"FileDiffChange">;
+
+  assert.match(
+    presentPatch(changed) ?? "",
+    /@@ -1,1 \+1,1 @@[\s\S]*@@ -2,1 \+2,1 @@[\s\S]*@@ -3,1 \+3,1 @@[\s\S]*@@ -3,0 \+4,1 @@[\s\S]*@@ -4,1 \+5,1 @@/u,
+  );
 });
 
 test("branch graph requests bind exact target ancestry", async () => {

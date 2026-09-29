@@ -230,12 +230,18 @@ function patchLines(value: string, prefix: string): string {
 export function presentPatch(change: DiffChange): string | undefined {
   if (change.content.status !== "text") return undefined;
   let patch = `diff --git a/${change.path} b/${change.path}\n--- a/${change.path}\n+++ b/${change.path}\n`;
+  let beforeLine = 1;
+  let afterLine = 1;
   for (const hunk of change.content.hunks) {
     const before = lineCount(hunk.before);
     const after = lineCount(hunk.after);
-    patch += `@@ -${hunk.before_start},${before} +${hunk.after_start},${after} @@\n`;
+    const beforeStart = before === 0 ? beforeLine - 1 : beforeLine;
+    const afterStart = after === 0 ? afterLine - 1 : afterLine;
+    patch += `@@ -${beforeStart},${before} +${afterStart},${after} @@\n`;
     if (hunk.kind === "matching") patch += patchLines(hunk.before, " ");
     else patch += patchLines(hunk.before, "-") + patchLines(hunk.after, "+");
+    beforeLine += before;
+    afterLine += after;
   }
   return patch;
 }
