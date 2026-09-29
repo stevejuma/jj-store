@@ -102,7 +102,11 @@ export function createProductionStoreActions(options: {
       if (!path) return;
       if (options.history.route.page === "files")
         await options.reader.loadBlob(path);
-      else await options.reader.loadPatch(path);
+      else {
+        await options.reader.loadPatch(path);
+        const commit = options.history.route.commitId;
+        if (commit) await options.reader.loadPathReview(commit, path);
+      }
     },
     selectDirectory: options.reader.selectDirectory,
     async selectAgentSession(id) {

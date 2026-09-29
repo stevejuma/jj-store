@@ -31,6 +31,7 @@ export default defineConfig({
       "@lucide/svelte/icons/x",
       "@lucide/svelte/icons/code-xml",
       "@lucide/svelte/icons/eye",
+      "@lucide/svelte/icons/external-link",
       "@lucide/svelte/icons/file",
       "@lucide/svelte/icons/file-code-2",
       "@lucide/svelte/icons/file-search",

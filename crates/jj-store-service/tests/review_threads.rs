@@ -153,6 +153,8 @@ async fn review_threads_are_root_pinned_and_details_resolve_selected_objects() {
 
     let page = pager.begin(fixture.session.clone(), 1).await.unwrap();
     assert_eq!(page.threads.len(), 1);
+    assert_eq!(page.threads[0].anchor.repository_id, REPOSITORY);
+    assert_eq!(page.threads[0].anchor.target, ArtifactTargetV1::Repository);
     let cursor = page.next_cursor.clone().unwrap();
     let initial_snapshot = page.snapshot.clone();
 

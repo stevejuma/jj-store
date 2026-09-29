@@ -65,11 +65,7 @@
       view.route.directory,
     ),
   );
-  const latestCommit = $derived(
-    view.graph.revisions.find(
-      (revision) => revision.eventId === view.snapshot?.id,
-    ),
-  );
+  const latestCommit = $derived(view.fileRevision);
   const pathCommits = $derived(
     Object.fromEntries(entries.map((entry) => [entry.path, latestCommit])),
   );

@@ -109,9 +109,12 @@ fn association(seed: u8, session_id: AgentSessionId) -> CodeAssociationV1 {
             operations: BTreeSet::from([m::OperationId::new([0; 64])]),
             commits: BTreeSet::new(),
         },
-        after: CodeAnchorV1::default(),
-        changes: BTreeSet::new(),
-        paths: vec![],
+        after: CodeAnchorV1 {
+            operations: BTreeSet::new(),
+            commits: BTreeSet::new(),
+        },
+        changes: BTreeSet::from([m::ChangeId::new([seed; 16])]),
+        paths: vec!["src/lib.rs".into()],
         granularity: AssociationGranularity::Operation,
         evidence_method: EvidenceMethod::HookBoundary,
         source_trust: SourceTrust::LocalUserHook,
@@ -260,6 +263,10 @@ async fn relation_pages_retain_root_and_reject_subject_cursor_reuse() {
         .unwrap();
     assert_eq!(first.relations.len(), 1);
     assert_eq!(first.relations[0].kind, AgentRelationKind::Association);
+    let association = first.relations[0].association.as_ref().unwrap();
+    assert_eq!(association.session_id, session_id);
+    assert_eq!(association.changes, [m::ChangeId::new([62; 16])]);
+    assert_eq!(association.paths, ["src/lib.rs"]);
     let cursor = first.next_cursor.clone().unwrap();
 
     publish_unrelated(&fixture).await;

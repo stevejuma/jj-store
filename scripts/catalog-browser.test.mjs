@@ -185,9 +185,11 @@ test("cold_catalog_contract", { timeout: 60000 }, async () => {
     const file = page.getByRole("button", { name: "src/lib.rs", exact: true });
     await file.focus();
     await file.press("Enter");
-    await expect(page.locator('[data-ui-component="file-diff"]')).toContainText(
-      "publish_native_objects()?;",
-    );
+    await expect(
+      page
+        .locator('[data-ui-part="column"][data-column-id="diff"]')
+        .locator('[data-ui-component="file-diff"]'),
+    ).toContainText("publish_native_objects()?;");
     const shell = page.locator('[data-ui-component="community-app-shell"]');
     assert.equal(await shell.getAttribute("data-display-mode"), "desktop");
     await mkdir(".scratch", { recursive: true });

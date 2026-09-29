@@ -360,6 +360,10 @@ async fn local_trusted_http_lists_root_pinned_agent_sessions_without_bearer_cred
     assert!(detail["event_batches"].is_array());
     assert!(detail["transcripts"].is_array());
     assert!(detail["tools"].is_array());
+    assert!(detail["activity"].is_array());
+    assert!(detail["activity_truncated"].is_boolean());
+    assert!(detail["code"].is_array());
+    assert!(detail["code_truncated"].is_boolean());
 
     let (status, missing) = json(&router, &format!("agent/sessions/{}", "99".repeat(16))).await;
     assert_eq!(status, StatusCode::NOT_FOUND, "{missing}");
@@ -376,6 +380,11 @@ async fn local_trusted_http_lists_root_pinned_agent_sessions_without_bearer_cred
     assert_eq!(
         transcript_detail["transcripts"][0]["source_format"],
         "codex-jsonl"
+    );
+    assert_eq!(transcript_detail["code"].as_array().unwrap().len(), 2);
+    assert_eq!(
+        transcript_detail["code"][0]["session_id"],
+        transcript_session.to_string()
     );
     let transcript_path = format!(
         "agent/sessions/{transcript_session}/transcripts/{transcript_id}?source={source}&generation=5&limit=1&max_bytes=1024"
@@ -399,6 +408,10 @@ async fn local_trusted_http_lists_root_pinned_agent_sessions_without_bearer_cred
     let (status, relation_first) = json(&router, &relation_path).await;
     assert_eq!(status, StatusCode::OK, "{relation_first}");
     assert_eq!(relation_first["relations"][0]["kind"], "association");
+    assert_eq!(
+        relation_first["relations"][0]["association"]["session_id"],
+        transcript_session.to_string()
+    );
     assert_eq!(
         relation_first["relations"][0]["object_id"],
         associations[0].to_string()

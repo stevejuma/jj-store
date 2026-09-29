@@ -1,4 +1,5 @@
 import type { StoreControllerState } from "../../web/src/lib/controller/contracts.js";
+import { IDS, NOW, revisions } from "./repository.js";
 
 type AgentSession = StoreControllerState["agentSessions"][number];
 type AgentDetail = NonNullable<StoreControllerState["agentSession"]>;
@@ -8,6 +9,9 @@ type ReviewDetail = NonNullable<StoreControllerState["reviewThread"]>;
 
 const id16 = (byte: string) => byte.repeat(16);
 const id32 = (byte: string) => byte.repeat(32);
+const relatedRevision = revisions.find(
+  (revision) => revision.eventId === IDS.merge,
+)!;
 
 export const agentSessions: readonly AgentSession[] = [
   {
@@ -16,6 +20,8 @@ export const agentSessions: readonly AgentSession[] = [
     integration: "codex",
     state: "ended",
     parent_session_id: null,
+    first_activity_at_millis: (NOW - 480) * 1_000,
+    last_activity_at_millis: (NOW - 180) * 1_000,
     coverage: {
       completeness: "complete",
       gaps: 0,
@@ -33,6 +39,8 @@ export const agentSessions: readonly AgentSession[] = [
     integration: "open_code",
     state: "active",
     parent_session_id: null,
+    first_activity_at_millis: (NOW - 120) * 1_000,
+    last_activity_at_millis: (NOW - 30) * 1_000,
     coverage: {
       completeness: "partial",
       gaps: 1,
@@ -43,6 +51,29 @@ export const agentSessions: readonly AgentSession[] = [
     event_batch_count: 1,
     transcript_count: 1,
     tool_count: 1,
+  },
+];
+
+const agentAssociation: AgentDetail["code"][number] = {
+  association_id: id16("a3"),
+  object_id: id32("a4"),
+  session_id: agentSessions[0]!.session_id,
+  tool_call_ids: [id16("d5")],
+  relation: "validated_revision",
+  before_operations: [IDS.opRoot],
+  after_operations: [IDS.opLeft],
+  before_commits: [IDS.left],
+  after_commits: [relatedRevision.eventId],
+  changes: [relatedRevision.changeId],
+  paths: ["src/lib.rs"],
+  created_at_millis: 1_796_000_000_000,
+};
+
+export const agentRelations: StoreControllerState["agentRelations"] = [
+  {
+    kind: "association",
+    object_id: agentAssociation.object_id,
+    association: agentAssociation,
   },
 ];
 
@@ -74,6 +105,62 @@ export const agentDetail: AgentDetail = {
     },
   ],
   tools: [{ tool_call_id: id16("d5"), snapshot_id: id32("d6") }],
+  activity: [
+    {
+      type: "message",
+      sequence: 1,
+      event_id: id16("41"),
+      turn_id: id16("42"),
+      message_id: id16("43"),
+      role: "user",
+      content: {
+        media_type: "text",
+        content: "Update the native parser and keep its review anchors exact.",
+      },
+    },
+    {
+      type: "tool",
+      sequence: 2,
+      event_id: id16("44"),
+      tool: {
+        tool_call_id: id16("d5"),
+        snapshot_id: id32("d6"),
+        turn_id: id16("42"),
+        native_name: "apply_patch",
+        kind: "edit",
+        state: "succeeded",
+        input: {
+          media_type: "json",
+          content: JSON.stringify({
+            path: "src/lib.rs",
+            old_string: "fn old() {}",
+            new_string: "fn main() {}",
+          }),
+        },
+        output: {
+          media_type: "json",
+          content: JSON.stringify({ success: true }),
+        },
+        observed_paths: ["src/lib.rs"],
+        code: [agentAssociation],
+      },
+    },
+    {
+      type: "message",
+      sequence: 3,
+      event_id: id16("45"),
+      turn_id: id16("42"),
+      message_id: id16("46"),
+      role: "assistant",
+      content: {
+        media_type: "text",
+        content: "Updated the parser and verified the focused contract.",
+      },
+    },
+  ],
+  activity_truncated: false,
+  code: [agentAssociation],
+  code_truncated: false,
 };
 
 export const agentTranscript: readonly AgentChunk[] = [
@@ -95,10 +182,29 @@ export const agentTranscript: readonly AgentChunk[] = [
 
 const threadId = id16("e1");
 const reviewer = id16("e2");
+const reviewAnchor = {
+  schema_version: 1,
+  repository_id: id16("c1"),
+  target: {
+    target: "revision" as const,
+    value: {
+      operation_id: IDS.opLeft,
+      commit_id: relatedRevision.eventId,
+      change_id: relatedRevision.changeId,
+    },
+  },
+  created_context: {
+    publication_position: 20,
+    code_state_version: 7,
+    agent_root: id32("c3"),
+  },
+  sensitivity: "repository" as const,
+};
 const summary: ReviewThread = {
   thread_id: threadId,
   snapshot_id: id32("e3"),
   original_anchor_id: id32("e4"),
+  anchor: reviewAnchor,
   event_page_root_id: id32("e5"),
   status: "open",
   selected_workflow_action: null,
@@ -117,6 +223,26 @@ export const reviewThreads: ReviewThread[] = [
     snapshot_id: id32("f2"),
     status: "resolved",
   },
+  {
+    ...summary,
+    thread_id: id16("18"),
+    snapshot_id: id32("19"),
+    original_anchor_id: id32("1a"),
+    anchor: {
+      ...reviewAnchor,
+      target: {
+        target: "code_artifact",
+        value: {
+          operation_id: IDS.opLeft,
+          commit_id: relatedRevision.eventId,
+          change_id: relatedRevision.changeId,
+          path: "src/lib.rs",
+          object: { kind: "file", id: id32("1b") },
+          value_kind: "file",
+        },
+      },
+    },
+  },
 ];
 
 export function reviewDetail(): ReviewDetail {
@@ -133,24 +259,7 @@ export function reviewDetail(): ReviewDetail {
     thread: { ...summary },
     anchor: {
       object_id: summary.original_anchor_id,
-      value: {
-        schema_version: 1,
-        repository_id: id16("c1"),
-        target: {
-          target: "revision",
-          value: {
-            operation_id: "01".repeat(64),
-            commit_id: "02".repeat(64),
-            change_id: id16("03"),
-          },
-        },
-        created_context: {
-          publication_position: 20,
-          code_state_version: 7,
-          agent_root: id32("c3"),
-        },
-        sensitivity: "repository",
-      },
+      value: reviewAnchor,
     },
     comments: [
       {

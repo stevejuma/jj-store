@@ -16,6 +16,8 @@ const session: Model<"AgentSessionSummary"> = {
   integration: "codex",
   state: "ended",
   parent_session_id: null,
+  first_activity_at_millis: 1_725_000_000_000,
+  last_activity_at_millis: 1_725_000_125_000,
   coverage: {
     completeness: "complete",
     gaps: 0,
@@ -43,6 +45,17 @@ const thread: Model<"ReviewThreadSummary"> = {
   thread_id: id16("21"),
   snapshot_id: id32("22"),
   original_anchor_id: id32("23"),
+  anchor: {
+    schema_version: 1,
+    repository_id: id16("31"),
+    target: { target: "repository" },
+    created_context: {
+      publication_position: 3,
+      code_state_version: 1,
+      agent_root: null,
+    },
+    sensitivity: "repository",
+  },
   event_page_root_id: id32("24"),
   status: "open",
   selected_workflow_action: null,
@@ -51,6 +64,55 @@ const thread: Model<"ReviewThreadSummary"> = {
   workflow_version: 3,
   comment_count: 1,
   last_event_sequence: 1,
+};
+const commit = "61".repeat(64);
+const change = id16("62");
+const revisionThread: Model<"ReviewThreadSummary"> = {
+  ...thread,
+  thread_id: id16("25"),
+  anchor: {
+    ...thread.anchor,
+    target: {
+      target: "revision",
+      value: {
+        operation_id: "60".repeat(64),
+        commit_id: commit,
+        change_id: change,
+      },
+    },
+  },
+};
+const codeThread: Model<"ReviewThreadSummary"> = {
+  ...revisionThread,
+  thread_id: id16("26"),
+  anchor: {
+    ...revisionThread.anchor,
+    target: {
+      target: "code_artifact",
+      value: {
+        operation_id: "60".repeat(64),
+        commit_id: commit,
+        change_id: change,
+        path: "src/lib.rs",
+        object: { kind: "file", id: id32("63") },
+        value_kind: "file",
+      },
+    },
+  },
+};
+const association: Model<"AgentCodeAssociation"> = {
+  association_id: id16("64"),
+  object_id: id32("65"),
+  session_id: session.session_id,
+  tool_call_ids: [],
+  relation: "validated_revision",
+  before_operations: [],
+  after_operations: ["60".repeat(64)],
+  before_commits: [],
+  after_commits: [commit],
+  changes: [change],
+  paths: ["src/lib.rs"],
+  created_at_millis: 1_796_000_000_000,
 };
 const reviewDetail = (): Model<"ReviewThreadDetail"> => ({
   version: 1,
@@ -96,6 +158,10 @@ const agentDetail = (): Model<"AgentSessionDetail"> => ({
   event_batches: [],
   transcripts: [descriptor],
   tools: [],
+  activity: [],
+  activity_truncated: false,
+  code: [],
+  code_truncated: false,
 });
 
 function harness(
@@ -124,6 +190,15 @@ function harness(
     },
     async agentSession() {
       return agentDetail();
+    },
+    async agentRelations(commit: string) {
+      return {
+        version: 1,
+        snapshot: agentDetail().snapshot,
+        subject: { subject: "revision" as const, commit_id: commit },
+        relations: [],
+        next_cursor: null,
+      };
     },
     async agentTranscript() {
       return {
@@ -273,4 +348,48 @@ test("late collaboration details cannot repopulate an invalidated session", asyn
   resolveReview(reviewDetail());
   await reviewRead;
   expect(data.reviewThread).toBeUndefined();
+});
+
+test("revision context follows paged exact agent and review associations", async () => {
+  const { controller, data, history, source } = harness();
+  source.agentRelations = async (_commit, cursor) => ({
+    version: 1,
+    snapshot: agentDetail().snapshot,
+    subject: { subject: "revision", commit_id: commit },
+    relations: cursor
+      ? [{ kind: "association", object_id: association.object_id, association }]
+      : [{ kind: "checkpoint", object_id: id32("66"), association: null }],
+    next_cursor: cursor ? null : "agent-context-next",
+  });
+  source.reviewThreads = async (cursor) => ({
+    version: 1,
+    snapshot: reviewDetail().snapshot,
+    threads: cursor ? [revisionThread] : [thread],
+    next_cursor: cursor ? null : "review-context-next",
+  });
+
+  await controller.loadRevisionContext(commit);
+
+  expect(data.agentRelations.at(-1)?.association).toEqual(association);
+  expect(history.route.agentSessionId).toBe(session.session_id);
+  expect(history.route.reviewThreadId).toBe(revisionThread.thread_id);
+  expect(data.agentSession?.session.session_id).toBe(session.session_id);
+  expect(data.reviewThreads).toEqual([thread, revisionThread]);
+});
+
+test("path context continues review pages to the exact code anchor", async () => {
+  const { controller, data, history, source } = harness();
+  data.reviewThreads = [revisionThread];
+  data.reviewCursor = "path-context-next";
+  source.reviewThreads = async (cursor) => ({
+    version: 1,
+    snapshot: reviewDetail().snapshot,
+    threads: cursor === "path-context-next" ? [codeThread] : [],
+    next_cursor: null,
+  });
+
+  await controller.loadPathReview(commit, "src/lib.rs");
+
+  expect(history.route.reviewThreadId).toBe(codeThread.thread_id);
+  expect(data.reviewThreads).toEqual([revisionThread, codeThread]);
 });

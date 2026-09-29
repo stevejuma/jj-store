@@ -3,20 +3,21 @@
   import * as Empty from "@lapismd/design-core/shadcn/empty";
   import { onDestroy, untrack } from "svelte";
   import BotIcon from "@lucide/svelte/icons/bot";
-  import { CommunityMessage } from "@lapismd/lapis-community/components/community-message";
   import type { StoreController } from "../../controller/contracts.js";
   import { createCollaborationCanvas } from "../../collaboration/collaboration-canvas.js";
   import {
     agentMember,
-    integrationLabel,
-    shortIdentity,
-    transcriptMessage,
+    agentSessionTiming,
   } from "../../collaboration/presentation.js";
   import { resolveLayoutStorage } from "../layout-storage.js";
   import CommunityChip from "../community-chip/CommunityChip.svelte";
+  import CommunityMemberAvatar from "../community-member-avatar/CommunityMemberAvatar.svelte";
   import CommunityProjectsColumnAlert from "../community-projects/CommunityProjectsColumnAlert.svelte";
   import CommunityProjectsVirtualRows from "../community-projects/CommunityProjectsVirtualRows.svelte";
+  import CommunityRelativeTime from "../community-relative-time/CommunityRelativeTime.svelte";
   import StoreCollaborationSkeleton from "./StoreCollaborationSkeleton.svelte";
+  import StoreAgentContext from "./StoreAgentContext.svelte";
+  import StoreIdentityCopy from "./StoreIdentityCopy.svelte";
   import "./store-collaboration.css";
 
   let {
@@ -27,7 +28,6 @@
   const canvas = createCollaborationCanvas("agents", storage);
   const state = $derived(controller.state);
   const selected = $derived(state.agentSession);
-  const member = $derived(selected ? agentMember(selected.session) : undefined);
   onDestroy(() => void canvas.dispose());
 
   $effect(() => {
@@ -81,28 +81,71 @@
               loadingLabel="Loading more agent sessions"
               onLoadMore={() => void controller.actions.loadMore("agents")}
             >
-              {#snippet row(session)}<div role="listitem">
-                  <ColumnCanvas.Item
+              {#snippet row(session)}
+                {@const agent = agentMember(session)}
+                {@const timing = agentSessionTiming(session)}
+                <div role="listitem">
+                  <div
                     class="store-collaboration__row"
-                    selected={state.route.agentSessionId === session.session_id}
-                    onclick={() =>
-                      controller.actions.selectAgentSession(session.session_id)}
+                    data-selected={state.route.agentSessionId ===
+                    session.session_id
+                      ? "true"
+                      : undefined}
                   >
-                    <span class="store-collaboration__row-title"
-                      >{integrationLabel(session.integration)} · {shortIdentity(
-                        session.session_id,
-                      )}</span
+                    <button
+                      type="button"
+                      class="store-collaboration__row-select"
+                      aria-pressed={state.route.agentSessionId ===
+                        session.session_id}
+                      onclick={() =>
+                        controller.actions.selectAgentSession(
+                          session.session_id,
+                        )}
                     >
-                    <span class="store-collaboration__row-meta"
-                      ><CommunityChip
-                        tone={session.state === "active"
-                          ? "success"
-                          : "neutral"}>{session.state}</CommunityChip
-                      >{session.transcript_count} transcripts · {session.tool_count}
-                      tools</span
-                    >
-                  </ColumnCanvas.Item>
-                </div>{/snippet}
+                      <span class="store-collaboration__agent-title">
+                        <CommunityMemberAvatar
+                          member={agent}
+                          size="small"
+                          showPresence
+                          decorative
+                        />
+                        <span class="store-collaboration__row-title"
+                          >{agent.name}</span
+                        >
+                      </span>
+                      <span class="store-collaboration__row-meta"
+                        ><CommunityChip
+                          size="compact"
+                          tone={session.state === "active"
+                            ? "success"
+                            : "neutral"}>{session.state}</CommunityChip
+                        >{#if timing}<span
+                            class="store-collaboration__agent-start"
+                            >Started <CommunityRelativeTime
+                              timestamp={timing.startedAt}
+                            /></span
+                          ><CommunityChip
+                            class="store-collaboration__agent-duration"
+                            variant="subtle"
+                            size="compact"
+                            ariaLabel={`Session duration ${timing.durationLabel}`}
+                            title={`Session duration ${timing.durationLabel}`}
+                            >{timing.durationLabel}</CommunityChip
+                          >{/if}<span
+                          >{session.transcript_count} transcripts · {session.tool_count}
+                          tools</span
+                        ></span
+                      >
+                    </button>
+                    <span class="store-collaboration__row-actions">
+                      <StoreIdentityCopy
+                        value={session.session_id}
+                        label="agent session ID"
+                      />
+                    </span>
+                  </div>
+                </div>
+              {/snippet}
             </CommunityProjectsVirtualRows>
           </div>
         {/if}
@@ -112,76 +155,7 @@
       <ColumnCanvas.Body>
         {#if state.status.transcript === "loading" && !selected}
           <StoreCollaborationSkeleton label="Loading agent response" />
-        {:else if selected && member}
-          <header class="store-collaboration__detail-header">
-            <span class="store-collaboration__detail-title"
-              >{member.name} · {shortIdentity(
-                selected.session.session_id,
-              )}</span
-            >
-            <span class="store-collaboration__detail-meta"
-              ><CommunityChip
-                tone={selected.session.state === "active"
-                  ? "success"
-                  : "neutral"}>{selected.session.state}</CommunityChip
-              >Pinned activity root {shortIdentity(
-                selected.snapshot.agent_root,
-              )} · code snapshot {shortIdentity(
-                state.route.snapshotOperationId ?? "none",
-              )}</span
-            >
-          </header>
-          {#if state.agentTranscript.length}
-            <div
-              class="store-collaboration__messages"
-              role="list"
-              aria-label="Agent response transcript"
-            >
-              <CommunityProjectsVirtualRows
-                rows={state.agentTranscript}
-                getKey={(chunk) => String(chunk.sequence)}
-                estimateSize={() => 118}
-                hasMore={state.canLoadMoreTranscript}
-                loading={state.status.transcript === "refreshing"}
-                loadingAsListItem
-                loadingLabel="Loading more transcript activity"
-                onLoadMore={() =>
-                  void controller.actions.loadMore("transcript")}
-              >
-                {#snippet row(chunk)}<div
-                    class="store-collaboration__message"
-                    role="listitem"
-                  >
-                    <CommunityMessage
-                      message={transcriptMessage(chunk, selected.session)}
-                      author={member}
-                      members={[member]}
-                      avatarShape="rounded"
-                    />
-                  </div>{/snippet}
-              </CommunityProjectsVirtualRows>
-            </div>
-          {:else}<Empty.Root class="store-collaboration__empty"
-              ><Empty.Header
-                ><Empty.Media variant="icon"
-                  ><BotIcon aria-hidden="true" /></Empty.Media
-                ><Empty.Title>No transcript activity</Empty.Title
-                ><Empty.Description
-                  >This session has no selected transcript records.</Empty.Description
-                ></Empty.Header
-              ></Empty.Root
-            >{/if}
-        {:else}<Empty.Root class="store-collaboration__empty"
-            ><Empty.Header
-              ><Empty.Media variant="icon"
-                ><BotIcon aria-hidden="true" /></Empty.Media
-              ><Empty.Title>Select an agent session</Empty.Title
-              ><Empty.Description
-                >Choose a session to inspect its pinned, sanitized response
-                activity.</Empty.Description
-              ></Empty.Header
-            ></Empty.Root
-          >{/if}
+        {:else}<StoreAgentContext {controller} />{/if}
       </ColumnCanvas.Body>
     </ColumnCanvas.Column>
   </ColumnCanvas.Root>

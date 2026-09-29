@@ -3,6 +3,7 @@ mod agent_checkpoints;
 mod agent_cursors;
 mod agent_details;
 mod agent_relations;
+mod agent_session_timing;
 mod agent_transcripts;
 mod checkpoint_models;
 mod cursor_position;
@@ -194,7 +195,8 @@ async fn resolve(
         if session.catalog_key().map_err(|_| Error::Corrupt)? != key {
             return Err(Error::Corrupt);
         }
-        rows.push(models::summary(reference, &session));
+        let timing = agent_session_timing::resolve(store, &session).await?;
+        rows.push(models::summary(reference, &session, timing));
     }
     Ok(rows)
 }

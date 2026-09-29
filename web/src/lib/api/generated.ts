@@ -973,6 +973,10 @@ export interface components {
       integration: components["schemas"]["IntegrationId"];
       state: components["schemas"]["SessionState"];
       parent_session_id: components["schemas"]["AgentSessionId"] | null;
+      /** Format: int64 */
+      first_activity_at_millis: number | null;
+      /** Format: int64 */
+      last_activity_at_millis: number | null;
       coverage: components["schemas"]["AgentCoverage"];
       /** Format: uint */
       evidence_count: number;
@@ -1008,6 +1012,10 @@ export interface components {
       event_batches: components["schemas"]["AgentObjectId"][];
       transcripts: components["schemas"]["AgentTranscriptDescriptor"][];
       tools: components["schemas"]["AgentToolLink"][];
+      activity: components["schemas"]["AgentActivity"][];
+      activity_truncated: boolean;
+      code: components["schemas"]["AgentCodeAssociation"][];
+      code_truncated: boolean;
     };
     AgentTranscriptDescriptor: {
       transcript_id: components["schemas"]["AgentObjectId"];
@@ -1033,6 +1041,134 @@ export interface components {
       snapshot_id: components["schemas"]["AgentObjectId"];
     };
     ToolCallId: string;
+    AgentActivity:
+      | {
+          /** Format: uint64 */
+          sequence: number;
+          event_id: components["schemas"]["AgentEventId"];
+          state: components["schemas"]["SessionState"];
+          /** @constant */
+          type: "session_state";
+        }
+      | {
+          /** Format: uint64 */
+          sequence: number;
+          event_id: components["schemas"]["AgentEventId"];
+          turn_id: components["schemas"]["TurnId"] | null;
+          message_id: components["schemas"]["MessageId"];
+          role: components["schemas"]["MessageRole"];
+          content: components["schemas"]["AgentContent"];
+          /** @constant */
+          type: "message";
+        }
+      | {
+          /** Format: uint64 */
+          sequence: number;
+          event_id: components["schemas"]["AgentEventId"];
+          tool: components["schemas"]["AgentToolActivity"];
+          /** @constant */
+          type: "tool";
+        }
+      | {
+          /** Format: uint64 */
+          sequence: number;
+          event_id: components["schemas"]["AgentEventId"];
+          tool_call_id: components["schemas"]["ToolCallId"] | null;
+          state: components["schemas"]["PermissionState"];
+          /** @constant */
+          type: "permission";
+        }
+      | {
+          /** Format: uint64 */
+          sequence: number;
+          event_id: components["schemas"]["AgentEventId"];
+          path: string;
+          /** @constant */
+          type: "file_observed";
+        }
+      | {
+          /** Format: uint64 */
+          sequence: number;
+          event_id: components["schemas"]["AgentEventId"];
+          /** Format: uint64 */
+          missing_from: number;
+          /** Format: uint64 */
+          missing_to: number;
+          /** @constant */
+          type: "capture_gap";
+        };
+    AgentEventId: string;
+    TurnId: string;
+    MessageId: string;
+    /** @enum {string} */
+    MessageRole: "user" | "assistant" | "system" | "tool";
+    AgentContent: {
+      media_type: components["schemas"]["SanitizedMediaType"];
+      content: string;
+    };
+    /** @enum {string} */
+    SanitizedMediaType: "json" | "text";
+    AgentToolActivity: {
+      tool_call_id: components["schemas"]["ToolCallId"];
+      snapshot_id: components["schemas"]["AgentObjectId"];
+      turn_id: components["schemas"]["TurnId"] | null;
+      native_name: string;
+      kind: components["schemas"]["ToolKind"];
+      state: components["schemas"]["ToolState"];
+      input: components["schemas"]["AgentContent"] | null;
+      output: components["schemas"]["AgentContent"] | null;
+      observed_paths: string[];
+      code: components["schemas"]["AgentCodeAssociation"][];
+    };
+    /** @enum {string} */
+    ToolKind:
+      | "read"
+      | "edit"
+      | "delete"
+      | "move"
+      | "search"
+      | "execute"
+      | "fetch"
+      | "plan"
+      | "delegate"
+      | "other";
+    /** @enum {string} */
+    ToolState:
+      | "pending"
+      | "running"
+      | "succeeded"
+      | "failed"
+      | "cancelled"
+      | "interrupted"
+      | "skipped"
+      | "unknown";
+    AgentCodeAssociation: {
+      association_id: components["schemas"]["AssociationId"];
+      object_id: components["schemas"]["AgentObjectId"];
+      session_id: components["schemas"]["AgentSessionId"];
+      tool_call_ids: components["schemas"]["ToolCallId"][];
+      relation: components["schemas"]["AssociationRelation"];
+      before_operations: components["schemas"]["OperationId"][];
+      after_operations: components["schemas"]["OperationId"][];
+      before_commits: components["schemas"]["CommitId"][];
+      after_commits: components["schemas"]["CommitId"][];
+      changes: components["schemas"]["ChangeId"][];
+      paths: string[];
+      /** Format: int64 */
+      created_at_millis: number;
+    };
+    AssociationId: string;
+    /** @enum {string} */
+    AssociationRelation:
+      | "initiated_revision"
+      | "rewrote_revision"
+      | "contributed_to_snapshot"
+      | "observed_during_interval"
+      | "read_revision"
+      | "validated_revision"
+      | "manual_assertion";
+    /** @enum {string} */
+    PermissionState: "not_observed" | "requested" | "granted" | "denied";
     AgentTranscriptPage: {
       /** Format: uint32 */
       version: number;
@@ -1051,8 +1187,6 @@ export interface components {
       media_type: components["schemas"]["SanitizedMediaType"];
       content: string;
     };
-    /** @enum {string} */
-    SanitizedMediaType: "json" | "text";
     AgentRelationPage: {
       /** Format: uint32 */
       version: number;
@@ -1092,6 +1226,7 @@ export interface components {
     AgentRelationLink: {
       kind: components["schemas"]["AgentRelationKind"];
       object_id: components["schemas"]["AgentObjectId"];
+      association: components["schemas"]["AgentCodeAssociation"] | null;
     };
     /** @enum {string} */
     AgentRelationKind: "checkpoint" | "association";
@@ -1125,7 +1260,6 @@ export interface components {
       association_count: number;
       supersedes: components["schemas"]["AgentObjectId"] | null;
     };
-    TurnId: string;
     ProvenanceScopeId: string;
     AgentCodeAnchor: {
       operations: components["schemas"]["OperationId"][];
@@ -1186,6 +1320,7 @@ export interface components {
       thread_id: components["schemas"]["ReviewThreadId"];
       snapshot_id: components["schemas"]["ReviewObjectId"];
       original_anchor_id: components["schemas"]["ReviewObjectId"];
+      anchor: components["schemas"]["ArtifactAnchorV1"];
       event_page_root_id: components["schemas"]["ReviewObjectId"];
       status: components["schemas"]["ThreadStatusV1"];
       selected_workflow_action: components["schemas"]["ReviewActionId"] | null;
@@ -1202,22 +1337,6 @@ export interface components {
     };
     ReviewThreadId: string;
     ReviewObjectId: string;
-    /** @enum {string} */
-    ThreadStatusV1: "open" | "resolved";
-    ReviewActionId: string;
-    ReviewThreadDetail: {
-      /** Format: uint32 */
-      version: number;
-      snapshot: components["schemas"]["ReviewReadSnapshot"];
-      thread: components["schemas"]["ReviewThreadSummary"];
-      anchor: components["schemas"]["ReviewAnchor"];
-      comments: components["schemas"]["ReviewComment"][];
-      events: components["schemas"]["ReviewEvent"][];
-    };
-    ReviewAnchor: {
-      object_id: components["schemas"]["ReviewObjectId"];
-      value: components["schemas"]["ArtifactAnchorV1"];
-    };
     ArtifactAnchorV1: {
       /** Format: uint32 */
       schema_version: number;
@@ -1417,7 +1536,6 @@ export interface components {
           kind: "plan";
         };
     ToolAttemptId: string;
-    MessageId: string;
     BlockId: string;
     /** @enum {string} */
     AgentContentPart:
@@ -1439,6 +1557,22 @@ export interface components {
     };
     /** @enum {string} */
     SensitivityV1: "public" | "repository" | "restricted";
+    /** @enum {string} */
+    ThreadStatusV1: "open" | "resolved";
+    ReviewActionId: string;
+    ReviewThreadDetail: {
+      /** Format: uint32 */
+      version: number;
+      snapshot: components["schemas"]["ReviewReadSnapshot"];
+      thread: components["schemas"]["ReviewThreadSummary"];
+      anchor: components["schemas"]["ReviewAnchor"];
+      comments: components["schemas"]["ReviewComment"][];
+      events: components["schemas"]["ReviewEvent"][];
+    };
+    ReviewAnchor: {
+      object_id: components["schemas"]["ReviewObjectId"];
+      value: components["schemas"]["ArtifactAnchorV1"];
+    };
     ReviewComment: {
       comment_id: components["schemas"]["CommentId"];
       revision_id: components["schemas"]["ReviewObjectId"];

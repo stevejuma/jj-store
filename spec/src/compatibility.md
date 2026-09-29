@@ -411,3 +411,11 @@ retain the exact request, derived publication, intent digest, accepted snapshot
 and immutable ReviewStore result identities. Captured LocalTrusted responses
 validate all four handlers, replay and `not_known` status without changing WAL,
 manifest or ReviewStore object formats.
+
+The collaboration presentation extension is additive to the version-1 HTTP
+schemas: agent session summaries may expose nullable first and last captured
+activity milliseconds derived from already selected evidence. Missing, unmatched
+or beyond-bound evidence leaves both values absent. Cold Storybook, production
+bundle and LocalTrusted reset evidence use the pinned Codex 0.156.1, Cursor
+3.22.7 and OpenCode 1.18.30 fixtures without changing their native AgentStore
+encodings.

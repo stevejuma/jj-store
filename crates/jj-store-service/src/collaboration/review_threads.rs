@@ -28,7 +28,7 @@ impl ReviewThreadPager {
         let pin = self.pin(&session).await?;
         let snapshot = pin.snapshot.clone();
         let page = pin.store.list_threads(None, limit).await.map_err(map_wal)?;
-        let threads = resolve_threads(&pin.store, page.selections).await?;
+        let threads = resolve_threads(&pin.store, pin.snapshot.repo_id, page.selections).await?;
         authorize_epoch(&session, snapshot.epoch).await?;
         let next_cursor = page
             .next_after
@@ -71,7 +71,7 @@ impl ReviewThreadPager {
             .list_threads(Some(claims.after), limit)
             .await
             .map_err(map_wal)?;
-        let threads = resolve_threads(&pin.store, page.selections).await?;
+        let threads = resolve_threads(&pin.store, pin.snapshot.repo_id, page.selections).await?;
         authorize_epoch(&session, pin.snapshot.epoch).await?;
         let next_cursor = self.cursors.next(&claims, page.next_after)?;
         Ok(ReviewThreadPage {
@@ -115,8 +115,8 @@ impl ReviewThreadPager {
         if value.thread_id != thread_id {
             return Err(Error::Corrupt);
         }
-        let thread = review_models::summary(reference, &value);
         let anchor = load_anchor(&pin, value.original_anchor).await?;
+        let thread = review_models::summary(reference, &value, anchor.value.clone());
         let comments = load_comments(&pin, thread_id, &value.comments).await?;
         let events = load_events(&pin, thread_id, value.event_page_root).await?;
         if events.len() as u64 != value.last_event_sequence {
@@ -162,6 +162,7 @@ impl ReviewThreadPager {
 
 async fn resolve_threads(
     store: &wal::publication::ReviewStoreSnapshot,
+    repository: m::RepositoryId,
     selections: Vec<(ReviewCatalogKey, ReviewObjectRef)>,
 ) -> Result<Vec<ReviewThreadSummary>> {
     let mut rows = Vec::with_capacity(selections.len());
@@ -176,7 +177,17 @@ async fn resolve_threads(
         if key != expected {
             return Err(Error::Corrupt);
         }
-        rows.push(review_models::summary(reference, &value));
+        let ReviewObjectV1::Anchor(anchor) = store
+            .read_object(value.original_anchor)
+            .await
+            .map_err(map_wal)?
+        else {
+            return Err(Error::Corrupt);
+        };
+        if anchor.repository_id != repository {
+            return Err(Error::Corrupt);
+        }
+        rows.push(review_models::summary(reference, &value, *anchor));
     }
     Ok(rows)
 }

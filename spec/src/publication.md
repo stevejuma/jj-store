@@ -334,3 +334,10 @@ that selected object, bounds unique traversal at 4,096 versions and rejects
 cycles or identity substitution. These reads use the already audited AgentStore
 closure and introduce no alternate object lookup, manifest pointer or
 publication transition.
+
+Session activity timing follows normalized event IDs into the exact observation
+batch referenced by each selected event batch. It reports the minimum and
+maximum matched `occurred_at_millis` only when they are available within the
+4,096-event read bound; missing, mismatched or over-bound evidence reports no
+timing. The derived fields are service presentation data and add no AgentStore
+object, manifest, WAL or receipt encoding.

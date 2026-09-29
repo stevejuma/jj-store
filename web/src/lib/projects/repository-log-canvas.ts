@@ -37,6 +37,22 @@ export function createRepositoryLogCanvas(
         closeable: true,
         resizable: true,
       },
+      agent: {
+        defaultWidth: 660,
+        minWidth: 420,
+        maxWidth: 1040,
+        pathLevel: branches ? 2 : 1,
+        closeable: true,
+        resizable: true,
+      },
+      review: {
+        defaultWidth: 620,
+        minWidth: 400,
+        maxWidth: 960,
+        pathLevel: branches ? 2 : 1,
+        closeable: true,
+        resizable: true,
+      },
     },
     ...(storage
       ? {

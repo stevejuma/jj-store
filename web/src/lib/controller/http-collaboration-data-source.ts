@@ -44,6 +44,15 @@ export class HttpCollaborationDataSource {
     );
   }
 
+  agentRelations(commit: string, cursor?: string) {
+    const query = { commit: fullId(commit), cursor, limit: 256 };
+    return this.query<Model<"AgentRelationPage">>(
+      "agent-relations",
+      query,
+      (signal) => this.client.request("agent/associations", query, { signal }),
+    );
+  }
+
   agentTranscript(
     session: string,
     transcript: Model<"AgentTranscriptDescriptor">,

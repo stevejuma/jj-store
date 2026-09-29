@@ -94,6 +94,15 @@ fn collaboration_contract_exposes_root_pinned_agent_session_pages() {
     for field in ["version", "snapshot", "sessions", "next_cursor"] {
         assert!(page["required"].as_array().unwrap().contains(&json!(field)));
     }
+    let summary = &doc["components"]["schemas"]["AgentSessionSummary"];
+    for field in ["first_activity_at_millis", "last_activity_at_millis"] {
+        assert!(
+            summary["required"]
+                .as_array()
+                .unwrap()
+                .contains(&json!(field))
+        );
+    }
     let snapshot = &doc["components"]["schemas"]["AgentReadSnapshot"];
     for field in [
         "repo_id",
@@ -126,6 +135,10 @@ fn collaboration_contract_exposes_root_pinned_agent_session_pages() {
         "event_batches",
         "transcripts",
         "tools",
+        "activity",
+        "activity_truncated",
+        "code",
+        "code_truncated",
     ] {
         assert!(
             schema["required"]

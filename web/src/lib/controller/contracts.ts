@@ -6,6 +6,7 @@ import type { CommunityMemberModel } from "../ui/community-workspace/model.js";
 import type { StorePage } from "../ui/community-navigation/model.js";
 import type {
   RepositoryLogGraph,
+  RepositoryLogRevision,
   RepositoryWorkingCopy,
 } from "../projects/repository-log.js";
 import type { Bookmark, RevisionDetail } from "../projects/presentation.js";
@@ -130,6 +131,7 @@ export interface StoreControllerState {
   readonly graph: RepositoryLogGraph;
   readonly now: number;
   readonly detail: RevisionDetail | undefined;
+  readonly fileRevision: RepositoryLogRevision | undefined;
   readonly bookmarks: readonly Bookmark[];
   readonly choices: readonly RepositoryChoice[];
   readonly workingCopies: readonly RepositoryWorkingCopy[];
@@ -140,6 +142,7 @@ export interface StoreControllerState {
   readonly mutation: StoreMutationState;
   readonly agentSessions: readonly Model<"AgentSessionSummary">[];
   readonly agentSession: Model<"AgentSessionDetail"> | undefined;
+  readonly agentRelations: readonly Model<"AgentRelationLink">[];
   readonly agentTranscript: readonly Model<"AgentTranscriptChunk">[];
   readonly reviewThreads: readonly Model<"ReviewThreadSummary">[];
   readonly reviewThread: Model<"ReviewThreadDetail"> | undefined;

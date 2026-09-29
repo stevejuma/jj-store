@@ -4,6 +4,11 @@ import type {
 } from "./native-data-source.js";
 import type { ProductionStoreState } from "./production-store-state.svelte.js";
 import type { createStoreRouteHistory } from "./store-route-history.svelte.js";
+import { anchorCommit, anchorPath } from "../collaboration/presentation.js";
+import {
+  readRevisionAgentRelations,
+  readReviewContext,
+} from "./production-collaboration-context.js";
 
 interface Context {
   data: ProductionStoreState;
@@ -126,6 +131,76 @@ export function createProductionStoreCollaboration(context: Context) {
     }
   }
 
+  async function loadRevisionContext(commit: string) {
+    const source = context.source(),
+      ticket = context.version();
+    data.status.agents = "loading";
+    data.status.reviews = "loading";
+    try {
+      const [relations, reviews] = await Promise.all([
+        readRevisionAgentRelations(source, commit),
+        readReviewContext(
+          source,
+          (thread) => anchorCommit(thread.anchor) === commit,
+        ),
+      ]);
+      if (!context.current(ticket, source)) return;
+      data.agentRelations = relations;
+      data.reviewThreads = reviews.threads;
+      data.reviewCursor = reviews.cursor;
+      data.status.agents = data.agentRelations.length ? "ready" : "empty";
+      data.status.reviews = data.reviewThreads.length ? "ready" : "empty";
+      const sessionId = data.agentRelations.find(
+        (relation) => relation.association,
+      )?.association?.session_id;
+      const reviewId = reviews.selected?.thread_id;
+      history.replace({
+        ...history.route,
+        agentSessionId: sessionId ?? null,
+        reviewThreadId: reviewId ?? null,
+      });
+      data.agentSession = undefined;
+      data.reviewThread = undefined;
+      await Promise.all([
+        sessionId ? loadAgent(sessionId) : Promise.resolve(),
+        reviewId ? loadReview(reviewId) : Promise.resolve(),
+      ]);
+    } catch (cause) {
+      if (!context.current(ticket, source)) return;
+      data.status.agents = "failed";
+      data.status.reviews = "failed";
+      context.report(cause);
+    }
+  }
+
+  async function loadPathReview(commit: string, path: string) {
+    const source = context.source(),
+      ticket = context.version();
+    data.status.reviews = "loading";
+    try {
+      const reviews = await readReviewContext(
+        source,
+        (thread) =>
+          anchorCommit(thread.anchor) === commit &&
+          anchorPath(thread.anchor) === path,
+        data.reviewThreads,
+        data.reviewCursor,
+      );
+      if (!context.current(ticket, source)) return;
+      data.reviewThreads = reviews.threads;
+      data.reviewCursor = reviews.cursor;
+      data.status.reviews = data.reviewThreads.length ? "ready" : "empty";
+      const reviewId = reviews.selected?.thread_id;
+      history.replace({ ...history.route, reviewThreadId: reviewId ?? null });
+      data.reviewThread = undefined;
+      if (reviewId) await loadReview(reviewId);
+    } catch (cause) {
+      if (!context.current(ticket, source)) return;
+      data.status.reviews = "failed";
+      context.report(cause);
+    }
+  }
+
   async function selectAgentSession(id: string | null) {
     history.push({ ...history.route, agentSessionId: id });
     data.agentSession = undefined;
@@ -215,6 +290,8 @@ export function createProductionStoreCollaboration(context: Context) {
     loadAgent,
     loadReviews,
     loadReview,
+    loadRevisionContext,
+    loadPathReview,
     selectAgentSession,
     selectReviewThread,
     reply,

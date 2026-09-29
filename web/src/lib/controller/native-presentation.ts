@@ -86,7 +86,9 @@ export function presentReferences(
   return { bookmarks, choices, workingCopies: [...workingCopies.values()] };
 }
 
-function presentCommit(node: Model<"GraphCommitNode">): RepositoryLogRevision {
+export function presentCommit(
+  node: Model<"GraphCommitNode">,
+): RepositoryLogRevision {
   const commit = node.commit;
   return {
     eventId: commit.id,

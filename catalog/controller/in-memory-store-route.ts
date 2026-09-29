@@ -33,3 +33,23 @@ export function mutationCommittedRoute(
     return { ...route, bookmark: "", path: null };
   return null;
 }
+
+export function revisionSelectedRoute(
+  route: StoreRoute,
+  commitId: string | null,
+  changeId: string | null,
+  context: Pick<StoreRoute, "agentSessionId" | "reviewThreadId">,
+): StoreRoute {
+  const operation = route.page === "oplog";
+  return {
+    ...route,
+    inspectedOperationId: operation ? commitId : null,
+    commitId: operation ? null : commitId,
+    changeId: operation ? null : changeId,
+    comparisonParentId: null,
+    comparisonGroupId: null,
+    path: null,
+    directory: "",
+    ...context,
+  };
+}

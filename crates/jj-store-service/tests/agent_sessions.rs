@@ -3,17 +3,18 @@ use jj_store_model as m;
 use jj_store_object::memory::MemoryStore;
 use jj_store_service::{
     auth::{Permission, SystemClock},
-    collaboration::{AgentSessionPager, AgentTranscriptRequest, Error},
+    collaboration::{AgentActivity, AgentSessionPager, AgentTranscriptRequest, Error},
     native::{NativeSession, SessionLimits, create_repository_local_trusted},
     pagination,
 };
 use jj_store_wal::publication::{
     AgentCatalogEditV1, AgentCatalogKey, AgentCatalogKind, AgentDeltaRequest, AgentDeltaV1,
-    AgentObjectV1, AgentSessionId, AgentSessionSnapshotV1, CaptureBatchId, CompletenessV1,
-    Coordinator, CoverageV1, IntegrationId, NormalizerProfileV1, ObservationId, PublicationGuard,
-    SanitizedMediaType, SanitizedObservationBatchV1, SanitizedObservationV1, SanitizedPayloadV1,
-    SanitizedRepresentation, SessionState, SourceInstanceId, SourceKind, SourceTrust,
-    TranscriptChunkV1, TranscriptManifestV1, TranscriptPageV1, TranscriptStreamV1,
+    AgentEventBatchV1, AgentEventId, AgentEventV1, AgentObjectV1, AgentSessionId,
+    AgentSessionSnapshotV1, CaptureBatchId, CompletenessV1, Coordinator, CoverageV1, IntegrationId,
+    MessageRole, NormalizerProfileV1, ObservationId, PublicationGuard, SanitizedMediaType,
+    SanitizedObservationBatchV1, SanitizedObservationV1, SanitizedPayloadV1,
+    SanitizedRepresentation, SessionState, SourceInstanceId, SourceKind, SourceTrust, ToolKind,
+    ToolState, TranscriptChunkV1, TranscriptManifestV1, TranscriptPageV1, TranscriptStreamV1,
 };
 use jj_store_wal::publication::{Limits, PublishOutcome};
 use std::{collections::BTreeMap, collections::BTreeSet, sync::Arc};
@@ -46,6 +47,37 @@ fn batch(seed: u8, native_session: &str) -> SanitizedObservationBatchV1 {
             )
             .unwrap(),
         }],
+    }
+}
+
+fn rich_cursor_batch() -> SanitizedObservationBatchV1 {
+    let values: Vec<serde_json::Value> = serde_json::from_slice(include_bytes!(
+        "../../jj-agent/tests/fixtures/cursor-3.22.7-hooks.json"
+    ))
+    .unwrap();
+    SanitizedObservationBatchV1 {
+        schema_version: 1,
+        batch_id: CaptureBatchId::new([101; 16]),
+        integration: IntegrationId::Cursor,
+        source_instance_id: SourceInstanceId::new([102; 16]),
+        sanitizer_version: "mongodb-kingfisher@2.7.0/builtin-medium/v1".into(),
+        representation: SanitizedRepresentation::SanitizedNative,
+        observations: values
+            .into_iter()
+            .enumerate()
+            .map(|(index, value)| SanitizedObservationV1 {
+                observation_id: ObservationId::new([index as u8 + 1; 16]),
+                source_sequence: index as u64 + 1,
+                occurred_at_millis: Some(1_725_000_000_000 + index as i64),
+                source_kind: SourceKind::Hook,
+                source_trust: SourceTrust::LocalUserHook,
+                payload: SanitizedPayloadV1::new(
+                    SanitizedMediaType::Json,
+                    &serde_json::to_vec(&value).unwrap(),
+                )
+                .unwrap(),
+            })
+            .collect(),
     }
 }
 
@@ -183,6 +215,11 @@ async fn session_detail_resolves_current_stable_identity_and_exact_links() {
         AgentSessionPager::new(pagination::Limits::default(), Arc::new(SystemClock)).unwrap();
     let page = pager.begin(session.clone(), 10).await.unwrap();
     let summary = page.sessions.first().unwrap();
+    assert_eq!(summary.first_activity_at_millis, Some(1_725_000_000_041));
+    assert_eq!(
+        summary.last_activity_at_millis,
+        summary.first_activity_at_millis
+    );
 
     let detail = pager
         .detail(session.clone(), summary.session_id)
@@ -206,6 +243,155 @@ async fn session_detail_resolves_current_stable_identity_and_exact_links() {
             .unwrap_err(),
         Error::NotFound
     );
+}
+
+#[tokio::test]
+async fn session_detail_resolves_bounded_messages_and_final_tool_snapshots() {
+    let fixture = fixture().await;
+    let request = fixture
+        .session
+        .prepare_agent_capture(
+            m::RequestId::new([103; 16]),
+            m::PublicationId::new([104; 16]),
+            &NormalizerProfileV1::cursor_3_22_7(),
+            &rich_cursor_batch(),
+            b"accepted rich cursor activity".to_vec(),
+        )
+        .await
+        .unwrap();
+    assert!(matches!(
+        fixture.session.publish_agent_delta(&request).await.unwrap(),
+        PublishOutcome::Committed(_)
+    ));
+    let pager =
+        AgentSessionPager::new(pagination::Limits::default(), Arc::new(SystemClock)).unwrap();
+    let page = pager.begin(fixture.session.clone(), 10).await.unwrap();
+    let detail = pager
+        .detail(fixture.session, page.sessions[0].session_id)
+        .await
+        .unwrap();
+
+    assert_eq!(
+        detail.session.first_activity_at_millis,
+        Some(1_725_000_000_000)
+    );
+    assert_eq!(
+        detail.session.last_activity_at_millis,
+        Some(1_725_000_000_010)
+    );
+    assert!(!detail.activity_truncated);
+    assert!(detail.activity.iter().any(|item| matches!(
+        item,
+        AgentActivity::Message { role: MessageRole::User, content, .. }
+            if content.content == "Update the parser"
+    )));
+    assert!(detail.activity.iter().any(|item| matches!(
+        item,
+        AgentActivity::Message { role: MessageRole::Assistant, content, .. }
+            if content.content == "Updated the parser."
+    )));
+    let tool = detail
+        .activity
+        .iter()
+        .find_map(|item| match item {
+            AgentActivity::Tool { tool, .. } if tool.kind == ToolKind::Edit => Some(tool),
+            _ => None,
+        })
+        .unwrap();
+    assert_eq!(tool.state, ToolState::Succeeded);
+    assert!(tool.input.is_some());
+    assert!(tool.output.is_some());
+    assert_eq!(tool.observed_paths, ["<workspace>/src/lib.rs"]);
+}
+
+#[tokio::test]
+async fn session_detail_marks_activity_beyond_the_event_bound_truncated() {
+    let fixture = fixture().await;
+    let session_id = AgentSessionId::new([111; 16]);
+    let evidence = fixture
+        .staging
+        .stage_agent_object(&AgentObjectV1::ObservationBatch(batch(
+            112,
+            "bounded-session",
+        )))
+        .await
+        .unwrap();
+    let event = |index: u32| {
+        let mut bytes = [0; 16];
+        bytes[12..].copy_from_slice(&index.to_be_bytes());
+        AgentEventV1::SessionStateChanged {
+            event_id: AgentEventId::new(bytes),
+            session_id,
+            state: SessionState::Active,
+        }
+    };
+    let first = fixture
+        .staging
+        .stage_agent_object(&AgentObjectV1::EventBatch(AgentEventBatchV1 {
+            schema_version: 1,
+            normalizer_version: "bounded-test/v1".into(),
+            evidence,
+            events: (0..4_096).map(event).collect(),
+        }))
+        .await
+        .unwrap();
+    let overflow = fixture
+        .staging
+        .stage_agent_object(&AgentObjectV1::EventBatch(AgentEventBatchV1 {
+            schema_version: 1,
+            normalizer_version: "bounded-test/v1".into(),
+            evidence,
+            events: vec![event(4_096)],
+        }))
+        .await
+        .unwrap();
+    let snapshot = fixture
+        .staging
+        .stage_agent_object(&AgentObjectV1::SessionSnapshot(AgentSessionSnapshotV1 {
+            schema_version: 1,
+            session_id,
+            integration: IntegrationId::Codex,
+            state: SessionState::Active,
+            parent_session_id: None,
+            evidence: vec![evidence],
+            event_batches: vec![first, overflow],
+            transcripts: vec![],
+            tools: BTreeMap::new(),
+            coverage: CoverageV1 {
+                completeness: CompletenessV1::Partial,
+                gaps: 0,
+                redacted_fields: 0,
+                truncated: false,
+            },
+        }))
+        .await
+        .unwrap();
+    let request = AgentDeltaRequest::new(
+        PRINCIPAL,
+        m::RequestId::new([113; 16]),
+        m::PublicationId::new([114; 16]),
+        AgentDeltaV1 {
+            schema_version: 1,
+            edits: vec![AgentCatalogEditV1 {
+                catalog: AgentCatalogKind::Sessions,
+                key: AgentCatalogKey::derive("session", session_id.as_bytes()).unwrap(),
+                expected: None,
+                replacement: Some(snapshot),
+            }],
+        },
+        b"published bounded activity fixture".to_vec(),
+    )
+    .unwrap();
+    assert!(matches!(
+        fixture.session.publish_agent_delta(&request).await.unwrap(),
+        PublishOutcome::Committed(_)
+    ));
+    let pager =
+        AgentSessionPager::new(pagination::Limits::default(), Arc::new(SystemClock)).unwrap();
+    let detail = pager.detail(fixture.session, session_id).await.unwrap();
+
+    assert_eq!(detail.activity.len(), 4_096);
+    assert!(detail.activity_truncated);
 }
 
 async fn publish_transcript(

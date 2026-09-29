@@ -35,6 +35,8 @@ export function createProductionRevisionSelector(
         data.graph.revisions.find((revision) => revision.eventId === id)
           ?.changeId ?? null,
       path: null,
+      agentSessionId: null,
+      reviewThreadId: null,
     });
     Object.assign(data, {
       detail: undefined,
@@ -44,7 +46,10 @@ export function createProductionRevisionSelector(
     if (!id) return;
     if (page === "oplog") await reader.loadOperation(id);
     else if (page === "files") await reader.loadFiles(id);
-    else await reader.loadCommit(id);
+    else {
+      await reader.loadCommit(id);
+      await reader.loadRevisionContext(id);
+    }
   };
 }
 

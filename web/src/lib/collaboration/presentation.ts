@@ -23,7 +23,7 @@ export function agentMember(
   return {
     id: summary.session_id,
     name,
-    handle: shortIdentity(summary.session_id),
+    handle: `${name.toLowerCase()} agent`,
     initials: name.slice(0, 2).toUpperCase(),
     kind: "agent",
     presence: summary.state === "active" ? "online" : "offline",
@@ -32,12 +32,49 @@ export function agentMember(
   };
 }
 
+export interface AgentSessionTiming {
+  startedAt: number;
+  durationMs: number;
+  durationLabel: string;
+}
+
+export function agentSessionTiming(
+  summary: Model<"AgentSessionSummary">,
+): AgentSessionTiming | undefined {
+  const first = summary.first_activity_at_millis;
+  const last = summary.last_activity_at_millis;
+  if (first === null || last === null) return;
+  const start = Number(first);
+  const end = Number(last);
+  if (!Number.isSafeInteger(start) || !Number.isSafeInteger(end) || end < start)
+    return;
+  const durationMs = end - start;
+  return {
+    startedAt: Math.floor(start / 1_000),
+    durationMs,
+    durationLabel: formatAgentSessionDuration(durationMs),
+  };
+}
+
+export function formatAgentSessionDuration(durationMs: number): string {
+  const totalSeconds = Math.max(0, Math.round(durationMs / 1_000));
+  const days = Math.floor(totalSeconds / 86_400);
+  const hours = Math.floor((totalSeconds % 86_400) / 3_600);
+  const minutes = Math.floor((totalSeconds % 3_600) / 60);
+  const seconds = totalSeconds % 60;
+  if (days > 0) return hours > 0 ? `${days}d ${hours}h` : `${days}d`;
+  if (hours > 0) return minutes > 0 ? `${hours}h ${minutes}m` : `${hours}h`;
+  if (minutes > 0)
+    return seconds > 0 ? `${minutes}m ${seconds}s` : `${minutes}m`;
+  return `${seconds}s`;
+}
+
 export function principalMember(principal: string): CommunityMemberModel {
   const local = principal === "local" || principal.endsWith("local");
   return {
     id: principal,
-    name: local ? "Local reviewer" : `Reviewer ${shortIdentity(principal, 8)}`,
-    handle: shortIdentity(principal),
+    name: local ? "Local reviewer" : "Repository reviewer",
+    handle: local ? "local reviewer" : "repository principal",
     initials: local ? "LR" : principal.slice(0, 2).toUpperCase(),
     presence: "offline",
     role: "Reviewer",
@@ -87,11 +124,29 @@ export function reviewMessage(
 export function anchorLabel(anchor: Model<"ArtifactAnchorV1">): string {
   const { target } = anchor;
   if (target.target === "repository") return "Repository";
-  if (target.target === "operation")
-    return `Operation ${shortIdentity(target.value.operation_id)}`;
-  if (target.target === "revision")
-    return `Revision ${shortIdentity(target.value.commit_id)}`;
+  if (target.target === "operation") return "Operation";
+  if (target.target === "revision") return "Revision";
   if (target.target === "code_text" || target.target === "code_artifact")
     return target.value.path;
-  return `Agent session ${shortIdentity(target.value.session_id)}`;
+  return "Agent session";
+}
+
+export function anchorCommit(
+  anchor: Model<"ArtifactAnchorV1">,
+): string | undefined {
+  const { target } = anchor;
+  if (
+    target.target === "revision" ||
+    target.target === "code_text" ||
+    target.target === "code_artifact"
+  )
+    return target.value.commit_id;
+}
+
+export function anchorPath(
+  anchor: Model<"ArtifactAnchorV1">,
+): string | undefined {
+  const { target } = anchor;
+  if (target.target === "code_text" || target.target === "code_artifact")
+    return target.value.path;
 }

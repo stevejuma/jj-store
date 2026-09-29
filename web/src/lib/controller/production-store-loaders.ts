@@ -15,10 +15,27 @@ import {
 import { assertPinned, assertSameSnapshot } from "./production-snapshot.js";
 import {
   presentChangedFiles,
+  presentCommit,
   presentGraph,
   presentPatch,
   presentReferences,
 } from "./native-presentation.js";
+
+export async function readRevision(
+  source: StoreDataSource,
+  operation: string,
+  id: string,
+) {
+  const value = await source.commit(id, operation);
+  assertPinned(value.snapshot, source, operation);
+  return presentCommit({
+    commit: value.data.commit,
+    edges: value.data.commit.parents.map((target) => ({
+      target,
+      kind: "direct" as const,
+    })),
+  });
+}
 
 export interface Comparison {
   from: string;

@@ -349,17 +349,27 @@ epoch, publication position, manifest revision, AgentStore root digest and state
 version. Session rows keep full stable session and immutable snapshot
 identities; integration, state, optional parent, coverage and bounded object
 counts are service-owned presentation data rather than serialized WAL records.
+Nullable first and last activity milliseconds are derived only from exact event
+IDs matched to their selected sanitized observation evidence. Missing
+timestamps, unmatched evidence or a session beyond the 4,096-event timing bound
+yields null timing fields.
 
 The detail route accepts one canonical full stable session ID. It resolves that
 key only through the current selected AgentStore session catalog and returns 404
 when no matching selection exists. Its response repeats the exact read snapshot
 and session summary, then supplies ordered immutable IDs for evidence and event
 batches, stream descriptors for each selected transcript manifest and stable
-tool-call to immutable tool-snapshot links. Each transcript descriptor retains
-the manifest and source identities, generation, source/decoder/sanitizer
-versions, representation, logical byte count, record count and gaps. It never
-fetches unselected objects, returns native capture payloads or treats an
-immutable snapshot ID as a stable session route.
+tool-call to immutable tool-snapshot links. It also resolves at most 4,096
+sequence-ordered activity events, eight MiB of sanitized message/tool content
+and 64 exact code associations from those selected objects. Activity variants
+retain session state, message, tool, permission, observed-file or capture-gap
+semantics. A final tool record carries its stable call and snapshot identities,
+native name, kind, state, optional sanitized input/output, observed paths and
+matching code associations. Separate truncation flags make both bounds visible.
+Each transcript descriptor retains the manifest and source identities,
+generation, source/decoder/sanitizer versions, representation, logical byte
+count, record count and gaps. It never fetches unselected objects, returns raw
+capture payloads or treats an immutable snapshot ID as a stable session route.
 
 The transcript route requires the full stable session ID, immutable transcript
 manifest ID, source instance, generation and a caller-selected byte ceiling. It
@@ -374,8 +384,11 @@ The associations route accepts exactly one typed subject: `session`,
 `tool_session` together with `tool`, `operation`, `commit` or `checkpoint`.
 Missing, incomplete or contradictory selectors fail as an invalid request. A
 version 1 page repeats the exact typed subject and returns ordered immutable
-links containing either a checkpoint-version or association object ID. A valid
-subject with no links returns an empty page rather than inventing an
+links containing either a checkpoint-version or association object ID. An
+association link additionally returns the verified stable association, session
+and tool identities, relation, native before/after operation and commit anchors,
+change IDs, paths and creation time needed for bounded browser context lookup. A
+valid subject with no links returns an empty page rather than inventing an
 association. Raw AgentStore objects are not serialized by this route.
 
 The checkpoint collection enumerates stable checkpoint IDs and their currently
@@ -397,13 +410,15 @@ The review collection enumerates stable thread IDs and their current immutable
 snapshots from one exact ReviewStore root. Its version 1 response carries the
 repository, epoch, publication position, manifest revision, ReviewStore root
 digest and state version. Thread summaries preserve exact snapshot, anchor and
-event-page object IDs, workflow state and version counters. Stable-thread detail
-returns the validated anchor value, ordered selected comment revisions with safe
-visible bodies or explicit tombstone/moderation states, and the complete bounded
-immutable event stream. The combined visible comment bodies in one detail
-response are limited to eight MiB. Each item retains its exact object identity
-and authenticated actor. Missing stable threads return 404; no route reads an
-arbitrary ReviewStore object or an unvalidated historical snapshot.
+event-page object IDs, the validated typed anchor, workflow state and version
+counters. The collection rejects an anchor whose repository identity differs
+from the pinned repository. Stable-thread detail returns the same validated
+anchor value, ordered selected comment revisions with safe visible bodies or
+explicit tombstone/moderation states, and the complete bounded immutable event
+stream. The combined visible comment bodies in one detail response are limited
+to eight MiB. Each item retains its exact object identity and authenticated
+actor. Missing stable threads return 404; no route reads an arbitrary
+ReviewStore object or an unvalidated historical snapshot.
 
 `POST /v1/repos/{repo}/reviews/commands` accepts a strict version-1 request ID
 and one typed ReviewStore command. The authenticated session supplies the actor
@@ -550,6 +565,15 @@ the complete request ID for the status route. Repository SSE changes only set
 the shared freshness flag. Explicit snapshot refresh invalidates the same scope
 before collaboration reads can expose a newer AgentStore or ReviewStore root.
 
+Revision context lookup follows opaque association and review continuations
+until it finds the exact selected commit; path context likewise requires an
+exact code-text or code-artifact commit/path anchor. It deduplicates rows,
+rejects repeated cursors and inspects no more than 4,096 rows. The resulting
+stable session and thread IDs are retained together in Log or Branches routes so
+Agent context and Review discussion render as sibling columns. Selecting a path
+replaces the thread selection with its exact anchored review. Closing either
+column clears only that route identity.
+
 ## Browsing UI execution
 
 The LocalTrusted application reuses the reviewed Storybook shell for Files,
@@ -562,6 +586,18 @@ command only when that index is configured. M4 registry-only dependency
 finalization and shared browser release qualification are deferred. The
 authenticated browser supports one memory-only manual token and bounded
 repository discovery without adding an account or OIDC layer.
+
+The Files controller fetches the selected commit independently from graph
+history so the production header can show the last author avatar, commit
+message, Git revision, JJ change ID and commit time. Collaboration presentation
+uses the Community message/thread/composer models and Design Core tool/diff
+primitives. Agent session cards show the integration's agent avatar and name,
+state, captured start time and compact captured duration when evidence supplies
+both endpoints. SHA-shaped agent, review and anchor identities use copy
+controls; tool details can embed an exact loaded patch or sanitized old/new edit
+input. Revision and path selections open route-addressable Agent context and
+Review discussion columns, and an agent header links back to its associated
+change.
 
 Local workspace validation may resolve `@lapismd/design-core` from the sibling
 source repository through the guarded pnpm hook. That development resolution

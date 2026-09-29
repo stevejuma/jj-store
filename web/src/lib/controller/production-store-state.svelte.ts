@@ -38,6 +38,8 @@ export interface ProductionStoreState {
   snapshot: RepositorySnapshot | undefined;
   blob: RepositoryBlob | undefined;
   detail: RevisionDetail | undefined;
+  fileRevision:
+    import("../projects/repository-log.js").RepositoryLogRevision | undefined;
   comparisonParents: string[];
   conflictCount: number | null;
   conflicts: Model<"ConflictDescriptor">[];
@@ -70,6 +72,7 @@ export interface ProductionStoreState {
   mutation: MutableStoreMutationState;
   agentSessions: Model<"AgentSessionSummary">[];
   agentSession: Model<"AgentSessionDetail"> | undefined;
+  agentRelations: Model<"AgentRelationLink">[];
   agentTranscript: Model<"AgentTranscriptChunk">[];
   agentCursor: string | null;
   transcriptCursor: string | null;
@@ -119,6 +122,7 @@ export function createProductionStoreState(): ProductionStoreState {
     snapshot: undefined,
     blob: undefined,
     detail: undefined,
+    fileRevision: undefined,
     comparisonParents: [],
     conflictCount: null,
     conflicts: [],
@@ -151,6 +155,7 @@ export function createProductionStoreState(): ProductionStoreState {
     mutation: initialStoreMutationState(),
     agentSessions: [],
     agentSession: undefined,
+    agentRelations: [],
     agentTranscript: [],
     agentCursor: null,
     transcriptCursor: null,
@@ -173,6 +178,7 @@ export function clearProductionStoreView(state: ProductionStoreState) {
   state.snapshot = undefined;
   state.blob = undefined;
   state.detail = undefined;
+  state.fileRevision = undefined;
   state.comparisonParents = [];
   state.conflictCount = null;
   state.conflicts = [];
@@ -191,6 +197,7 @@ export function clearProductionStoreView(state: ProductionStoreState) {
   state.graphPageSnapshot = null;
   state.agentSessions = [];
   state.agentSession = undefined;
+  state.agentRelations = [];
   state.agentTranscript = [];
   state.agentCursor = null;
   state.transcriptCursor = null;

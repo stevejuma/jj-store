@@ -8,6 +8,7 @@
   } from "../../projects/repository-log.js";
   import type { Bookmark } from "../../projects/presentation.js";
   import type { StorePage } from "../community-navigation/model.js";
+  import type { StoreController } from "../../controller/contracts.js";
   import { createRepositoryLogCanvas } from "../../projects/repository-log-canvas.js";
   import CommunityProjectsRevisionGraph from "./CommunityProjectsRevisionGraph.svelte";
   import CommunityProjectsColumnAlert from "./CommunityProjectsColumnAlert.svelte";
@@ -18,6 +19,8 @@
   import CommunityProjectsRepositorySkeleton from "./CommunityProjectsRepositorySkeleton.svelte";
   import CommunityRepositoryBranchCommand from "../community-repository-branch-command/CommunityRepositoryBranchCommand.svelte";
   import { resolveLayoutStorage } from "../layout-storage.js";
+  import StoreAgentContext from "../store-collaboration/StoreAgentContext.svelte";
+  import StoreReviewDiscussion from "../store-collaboration/StoreReviewDiscussion.svelte";
   let {
     page = "log",
     graph,
@@ -45,6 +48,7 @@
     onLoadMoreBookmarks = () => {},
     onLoadMoreGraph = () => {},
     onLoadMoreFiles = () => {},
+    controller,
   }: {
     page?: StorePage;
     graph: RepositoryLogGraph;
@@ -72,6 +76,7 @@
     onLoadMoreBookmarks?: () => void | Promise<void>;
     onLoadMoreGraph?: () => void | Promise<void>;
     onLoadMoreFiles?: () => void | Promise<void>;
+    controller?: StoreController;
   } = $props();
   const storage = untrack(() => resolveLayoutStorage(layoutStorage));
   const canvas = createRepositoryLogCanvas(
@@ -98,7 +103,9 @@
     const branch = selectedBranch,
       revision = selectedId,
       path = selectedPath,
-      depth = revisionDepth;
+      depth = revisionDepth,
+      agentSession = controller?.state.route.agentSessionId,
+      reviewThread = controller?.state.route.reviewThreadId;
     untrack(() => {
       canvas.clear();
       if (depth === 1 && branch) canvas.select(0, branch);
@@ -110,6 +117,8 @@
         canvas.select(depth + 1, path);
         canvas.open("diff");
       }
+      if (agentSession) canvas.open("agent");
+      if (reviewThread) canvas.open("review");
     });
   });
   function selectRevision(id: string) {
@@ -227,6 +236,36 @@
       {now}
       onSelectOperation={onSelectRevision}
     />
+    {#if controller?.state.route.agentSessionId}
+      <ColumnCanvas.Column id="agent">
+        <ColumnCanvas.Header>
+          <ColumnCanvas.Title>Agent context</ColumnCanvas.Title>
+          <ColumnCanvas.Close
+            aria-label="Close Agent context column"
+            title="Close Agent context"
+            onclick={() => void controller.actions.selectAgentSession(null)}
+          />
+        </ColumnCanvas.Header>
+        <ColumnCanvas.Body>
+          <StoreAgentContext {controller} />
+        </ColumnCanvas.Body>
+      </ColumnCanvas.Column>
+    {/if}
+    {#if controller?.state.route.reviewThreadId}
+      <ColumnCanvas.Column id="review">
+        <ColumnCanvas.Header>
+          <ColumnCanvas.Title>Review discussion</ColumnCanvas.Title>
+          <ColumnCanvas.Close
+            aria-label="Close Review discussion column"
+            title="Close Review discussion"
+            onclick={() => void controller.actions.selectReviewThread(null)}
+          />
+        </ColumnCanvas.Header>
+        <ColumnCanvas.Body>
+          <StoreReviewDiscussion {controller} />
+        </ColumnCanvas.Body>
+      </ColumnCanvas.Column>
+    {/if}
   </ColumnCanvas.Root>
 </section>
 

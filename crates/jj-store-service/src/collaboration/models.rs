@@ -1,8 +1,10 @@
 use jj_store_model as m;
 use jj_store_wal::publication::{
-    AgentCheckpointId, AgentObjectId, AgentObjectRef, AgentRelationSubjectV1, AgentSessionId,
-    AgentSessionSnapshotV1, CompletenessV1, IntegrationId, SanitizedMediaType,
-    SanitizedRepresentation, SessionState, SourceInstanceId, ToolCallId, TranscriptStreamV1,
+    AgentCheckpointId, AgentEventId, AgentObjectId, AgentObjectRef, AgentRelationSubjectV1,
+    AgentSessionId, AgentSessionSnapshotV1, AssociationId, AssociationRelation, CodeAssociationV1,
+    CompletenessV1, IntegrationId, MessageId, MessageRole, PermissionState, SanitizedMediaType,
+    SanitizedRepresentation, SessionState, SourceInstanceId, ToolCallId, ToolKind, ToolState,
+    TranscriptStreamV1, TurnId,
 };
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -38,6 +40,8 @@ pub struct AgentSessionSummary {
     pub integration: IntegrationId,
     pub state: SessionState,
     pub parent_session_id: Option<AgentSessionId>,
+    pub first_activity_at_millis: Option<i64>,
+    pub last_activity_at_millis: Option<i64>,
     pub coverage: AgentCoverage,
     pub evidence_count: usize,
     pub event_batch_count: usize,
@@ -57,6 +61,82 @@ pub struct AgentSessionPage {
 pub struct AgentToolLink {
     pub tool_call_id: ToolCallId,
     pub snapshot_id: AgentObjectId,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, JsonSchema)]
+pub struct AgentContent {
+    pub media_type: SanitizedMediaType,
+    pub content: String,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, JsonSchema)]
+pub struct AgentCodeAssociation {
+    pub association_id: AssociationId,
+    pub object_id: AgentObjectId,
+    pub session_id: AgentSessionId,
+    pub tool_call_ids: Vec<ToolCallId>,
+    pub relation: AssociationRelation,
+    pub before_operations: Vec<m::OperationId>,
+    pub after_operations: Vec<m::OperationId>,
+    pub before_commits: Vec<m::CommitId>,
+    pub after_commits: Vec<m::CommitId>,
+    pub changes: Vec<m::ChangeId>,
+    pub paths: Vec<String>,
+    pub created_at_millis: i64,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, JsonSchema)]
+pub struct AgentToolActivity {
+    pub tool_call_id: ToolCallId,
+    pub snapshot_id: AgentObjectId,
+    pub turn_id: Option<TurnId>,
+    pub native_name: String,
+    pub kind: ToolKind,
+    pub state: ToolState,
+    pub input: Option<AgentContent>,
+    pub output: Option<AgentContent>,
+    pub observed_paths: Vec<String>,
+    pub code: Vec<AgentCodeAssociation>,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, JsonSchema)]
+#[serde(tag = "type", rename_all = "snake_case")]
+pub enum AgentActivity {
+    SessionState {
+        sequence: u64,
+        event_id: AgentEventId,
+        state: SessionState,
+    },
+    Message {
+        sequence: u64,
+        event_id: AgentEventId,
+        turn_id: Option<TurnId>,
+        message_id: MessageId,
+        role: MessageRole,
+        content: AgentContent,
+    },
+    Tool {
+        sequence: u64,
+        event_id: AgentEventId,
+        tool: AgentToolActivity,
+    },
+    Permission {
+        sequence: u64,
+        event_id: AgentEventId,
+        tool_call_id: Option<ToolCallId>,
+        state: PermissionState,
+    },
+    FileObserved {
+        sequence: u64,
+        event_id: AgentEventId,
+        path: String,
+    },
+    CaptureGap {
+        sequence: u64,
+        event_id: AgentEventId,
+        missing_from: u64,
+        missing_to: u64,
+    },
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, JsonSchema)]
@@ -144,6 +224,7 @@ pub enum AgentRelationKind {
 pub struct AgentRelationLink {
     pub kind: AgentRelationKind,
     pub object_id: AgentObjectId,
+    pub association: Option<AgentCodeAssociation>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, JsonSchema)]
@@ -164,11 +245,16 @@ pub struct AgentSessionDetail {
     pub event_batches: Vec<AgentObjectId>,
     pub transcripts: Vec<AgentTranscriptDescriptor>,
     pub tools: Vec<AgentToolLink>,
+    pub activity: Vec<AgentActivity>,
+    pub activity_truncated: bool,
+    pub code: Vec<AgentCodeAssociation>,
+    pub code_truncated: bool,
 }
 
 pub(super) fn summary(
     reference: AgentObjectRef,
     session: &AgentSessionSnapshotV1,
+    timing: super::agent_session_timing::SessionTiming,
 ) -> AgentSessionSummary {
     AgentSessionSummary {
         session_id: session.session_id,
@@ -176,6 +262,8 @@ pub(super) fn summary(
         integration: session.integration,
         state: session.state,
         parent_session_id: session.parent_session_id,
+        first_activity_at_millis: timing.first_activity_at_millis,
+        last_activity_at_millis: timing.last_activity_at_millis,
         coverage: AgentCoverage {
             completeness: session.coverage.completeness,
             gaps: session.coverage.gaps,
@@ -189,19 +277,28 @@ pub(super) fn summary(
     }
 }
 
+pub(super) struct AgentSessionDetailContent {
+    pub timing: super::agent_session_timing::SessionTiming,
+    pub transcripts: Vec<AgentTranscriptDescriptor>,
+    pub activity: Vec<AgentActivity>,
+    pub activity_truncated: bool,
+    pub code: Vec<AgentCodeAssociation>,
+    pub code_truncated: bool,
+}
+
 pub(super) fn detail(
     snapshot: AgentReadSnapshot,
     reference: AgentObjectRef,
     session: AgentSessionSnapshotV1,
-    transcripts: Vec<AgentTranscriptDescriptor>,
+    content: AgentSessionDetailContent,
 ) -> AgentSessionDetail {
     AgentSessionDetail {
         version: 1,
         snapshot,
-        session: summary(reference, &session),
+        session: summary(reference, &session, content.timing),
         evidence: session.evidence.iter().map(|value| value.id).collect(),
         event_batches: session.event_batches.iter().map(|value| value.id).collect(),
-        transcripts,
+        transcripts: content.transcripts,
         tools: session
             .tools
             .iter()
@@ -210,6 +307,10 @@ pub(super) fn detail(
                 snapshot_id: value.id,
             })
             .collect(),
+        activity: content.activity,
+        activity_truncated: content.activity_truncated,
+        code: content.code,
+        code_truncated: content.code_truncated,
     }
 }
 
@@ -228,5 +329,25 @@ pub(super) fn transcript_descriptor(
         logical_byte_length: stream.logical_byte_length,
         record_count: stream.record_count,
         gaps: stream.gaps,
+    }
+}
+
+pub(super) fn code_association(
+    object_id: AgentObjectId,
+    value: &CodeAssociationV1,
+) -> AgentCodeAssociation {
+    AgentCodeAssociation {
+        association_id: value.association_id,
+        object_id,
+        session_id: value.session_id,
+        tool_call_ids: value.tool_call_ids.iter().copied().collect(),
+        relation: value.relation,
+        before_operations: value.before.operations.iter().copied().collect(),
+        after_operations: value.after.operations.iter().copied().collect(),
+        before_commits: value.before.commits.iter().copied().collect(),
+        after_commits: value.after.commits.iter().copied().collect(),
+        changes: value.changes.iter().copied().collect(),
+        paths: value.paths.clone(),
+        created_at_millis: value.created_at_millis,
     }
 }

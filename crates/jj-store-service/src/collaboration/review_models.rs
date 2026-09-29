@@ -24,6 +24,7 @@ pub struct ReviewThreadSummary {
     pub thread_id: ReviewThreadId,
     pub snapshot_id: ReviewObjectId,
     pub original_anchor_id: ReviewObjectId,
+    pub anchor: ArtifactAnchorV1,
     pub event_page_root_id: ReviewObjectId,
     pub status: ThreadStatusV1,
     pub selected_workflow_action: Option<ReviewActionId>,
@@ -127,11 +128,13 @@ pub struct ReviewThreadDetail {
 pub(super) fn summary(
     reference: ReviewObjectRef,
     value: &ReviewThreadSnapshotV1,
+    anchor: ArtifactAnchorV1,
 ) -> ReviewThreadSummary {
     ReviewThreadSummary {
         thread_id: value.thread_id,
         snapshot_id: reference.id,
         original_anchor_id: value.original_anchor.id,
+        anchor,
         event_page_root_id: value.event_page_root.id,
         status: value.status,
         selected_workflow_action: value.selected_workflow_action,

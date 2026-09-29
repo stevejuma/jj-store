@@ -67,6 +67,25 @@ test("collaboration routes preserve stable session and thread selections", () =>
     kind: "route",
     route: reviewRoute,
   });
+  for (const page of ["log", "branches"] as const) {
+    const contextRoute: StoreRoute = {
+      ...route,
+      page,
+      inspectedOperationId: null,
+      commitId: commit,
+      changeId: change,
+      comparisonParentId: null,
+      comparisonGroupId: null,
+      path: null,
+      directory: "",
+      agentSessionId: session,
+      reviewThreadId: thread,
+    };
+    assert.deepEqual(storeRouteFromHash(storeRouteToHash(contextRoute)!), {
+      kind: "route",
+      route: contextRoute,
+    });
+  }
 });
 
 test("repository paths and bookmark names remain safely encoded", () => {

@@ -139,15 +139,28 @@ repository, epoch, publication position, manifest revision, AgentStore root
 digest and AgentStore state version. Each session row retains the complete
 stable session ID and immutable session-snapshot object ID, then exposes only
 bounded integration, lifecycle, parent, coverage and referenced object counts.
-Session detail also returns the exact immutable observation-batch, event-batch
-and tool-snapshot IDs selected by that session; tool links retain their full
-stable tool-call IDs. Selected transcript manifests expand only into stream
-descriptors carrying the exact manifest/source identity, generation,
+Session summaries derive optional first and last activity times only by matching
+selected normalized event IDs to timestamps in their exact sanitized observation
+batches; missing or over-bound evidence leaves timing absent rather than
+inferred. Session detail also returns the exact immutable observation-batch,
+event-batch and tool-snapshot IDs selected by that session; tool links retain
+their full stable tool-call IDs. Selected transcript manifests expand only into
+stream descriptors carrying the exact manifest/source identity, generation,
 format/decoder/sanitizer versions, representation, byte and record counts and
-gaps. Relation pages repeat the exact typed subject and return ordered immutable
-checkpoint-version or association links; an unlinked subject returns an empty
-page. Transport DTOs do not expose WAL objects or reinterpret stable entity
-identities as immutable object identities.
+gaps. The same detail resolves a presentation-ready, sequence-ordered activity
+stream from the selected event batches. It preserves session-state, message,
+tool, permission, observed-file and capture-gap variants; message and tool
+payloads remain sanitized native content. Final tool state resolves the selected
+tool snapshot, optional input/output, observed paths and exact code
+associations. One response admits at most 4,096 source events, eight MiB of
+resolved content and 64 code associations, and reports activity or association
+truncation explicitly. Relation pages repeat the exact typed subject and return
+ordered immutable checkpoint-version or association links; association links
+also expose their verified stable association/session/tool identities, relation,
+native before/after operation and commit anchors, change IDs, paths and creation
+time. An unlinked subject returns an empty page. Transport DTOs do not expose
+WAL objects or reinterpret stable entity identities as immutable object
+identities.
 
 Checkpoint summaries keep their complete stable checkpoint and immutable version
 IDs, session, optional turn/scope, native before/after anchors, code relation,
@@ -161,15 +174,18 @@ reads from the selected AgentStore closure.
 ReviewStore thread collection likewise enumerates the stable thread catalog from
 one exact selected root. Each summary retains the stable thread and current
 immutable snapshot IDs, exact anchor and event-page object IDs, workflow state,
-three monotonic versions and bounded comment/event counts. Stable-thread detail
-resolves that current catalog selection, its validated anchor, ordered selected
-comment revisions and safe bodies, plus the complete bounded immutable event
-stream. The combined visible comment bodies in one detail response are limited
-to eight MiB. Comment and event DTOs retain exact object IDs and authenticated
-actors; tombstone and moderation states remain explicit. The service never
-serializes a raw `ReviewObjectV1` envelope or permits arbitrary closure-object
-reads. No historical thread-version route exists because v1 thread snapshots do
-not carry a validated predecessor chain.
+three monotonic versions and bounded comment/event counts. Collection reads
+resolve and return the validated typed anchor so a browser can select an exact
+revision or path without issuing an unbounded detail request; the anchor's
+repository must equal the pinned repository. Stable-thread detail resolves that
+current catalog selection, its validated anchor, ordered selected comment
+revisions and safe bodies, plus the complete bounded immutable event stream. The
+combined visible comment bodies in one detail response are limited to eight MiB.
+Comment and event DTOs retain exact object IDs and authenticated actors;
+tombstone and moderation states remain explicit. The service never serializes a
+raw `ReviewObjectV1` envelope or permits arbitrary closure-object reads. No
+historical thread-version route exists because v1 thread snapshots do not carry
+a validated predecessor chain.
 
 Initial and resumed pages require current repository read permission. Page sizes
 are limited to 1 through 256. An opaque signed continuation binds repository,
@@ -229,7 +245,9 @@ native operation, commit or change fields.
 Agent session, transcript and review-thread collections use cursor-paged
 TanStack Query reads scoped to the active access session and repository.
 Measured virtual rows bound rendered session, transcript, thread and comment
-collections. The selected session displays its independently pinned AgentStore
+collections. Agent session rows pair the integration's agent avatar and name
+with state, captured start time and captured duration when exact evidence timing
+is available. The selected session displays its independently pinned AgentStore
 root alongside the selected native code snapshot. Review detail displays its
 independently pinned ReviewStore root and exact anchor, retaining the durable
 request ID whenever a command outcome is unknown. Reply, resolve and reopen use
@@ -237,13 +255,36 @@ the same optimistic-concurrency inputs and status route as the LocalTrusted
 service contract.
 
 The presentation consumes Community's public `CommunityMessage` and
-`CommunityChatComposer` components, then adapts native agent and review records
-into their public presentation models. Design Core supplies the column canvas,
-Empty, Alert, Button and Skeleton primitives. Both collaboration canvases are
-keyboard and pointer resizable and persist their versioned layout through the
-application's public storage boundary. Catalog stories inject memory storage and
-cover ready interaction, pagination-compatible virtualization, loading, empty,
-failed and durable command states with automatic accessibility checks.
+`CommunityChatComposer` components plus Design Core chat tool-call and tool
+detail primitives, then adapts native agent and review records into their public
+presentation models. Agent activity renders as a normal Community conversation;
+tool rows retain their native kind and state, expose copyable stable identities
+and use a kind-specific detail. Edit, delete and move details embed the exact
+changed-file diff when the loaded revision patch or sanitized old/new tool input
+can supply it. The agent header exposes the associated Git/JJ identities and a
+route link back to the related change. Review comments use the Community thread
+rail and reply treatment, retain copyable author/comment identities and keep the
+composer at the bottom of an open discussion.
+
+Design Core supplies the column canvas, diff, Empty, Alert, Button and Skeleton
+primitives. Revision selection follows bounded association and review pages to
+the exact revision match, opens sibling Agent context and Review discussion
+columns when present and records both stable selections in the route. Selecting
+a changed path follows review pages to the exact code-text or code-artifact
+anchor and replaces the review column with that discussion. Repeated cursors or
+more than 4,096 inspected context rows fail closed. Agent and review list rows
+use the same separator, metadata and tag hierarchy as Branches and Op Log, and
+SHA-shaped identities are presented through the existing copy controls instead
+of bare shortened text. The Files header resolves the selected commit
+independently of graph history and displays its author avatar, message, Git/JJ
+identities and relative time. Collaboration columns have explicit close actions
+that clear their route selections. All canvases are keyboard and pointer
+resizable and persist their versioned layout through the application's public
+storage boundary. Catalog stories inject memory storage and cover ready
+interaction, exact revision/path context, pagination-compatible virtualization,
+loading, empty, failed and durable command states with automatic accessibility
+checks. Stories remain `visual-pending`; interaction and accessibility evidence
+does not approve a visual baseline.
 
 Repository SSE events announce that newer collaboration history exists without
 mutating displayed roots or records. Explicit Refresh invalidates the complete
@@ -564,12 +605,13 @@ version, recorded installed state and current owned project-file hash. A missing
 compiled-rule cache fails closed and does not trigger a cold hook-time build.
 
 Standard input is bounded to four MiB plus one overflow byte. After in-memory
-sanitization, a dedicated bounded lock allocates a strictly increasing native
-sequence under one stable random source instance and generation. The source
-reservation is atomically synchronized before spool enqueue; a failed or
-interrupted enqueue can leave an explicit sequence gap, while restart and
-unknown outcomes cannot reuse the sequence. Batch and observation IDs are
-domain-separated hashes of source identity, generation and sequence.
+sanitization, a dedicated bounded lock records the local observation time and
+allocates a strictly increasing native sequence under one stable random source
+instance and generation. The source reservation is atomically synchronized
+before spool enqueue; a failed or interrupted enqueue can leave an explicit
+sequence gap, while restart and unknown outcomes cannot reuse the sequence.
+Batch and observation IDs are domain-separated hashes of source identity,
+generation and sequence.
 
 Codex and Cursor observations use local-hook trust; OpenCode observations use
 local-plugin trust. Every batch records the exact Kingfisher policy and matching

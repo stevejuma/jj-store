@@ -40,7 +40,11 @@
       "callID": "shell_1",
       "args": { "command": "cargo test" }
     },
-    "output": { "title": "Tests", "output": "test failed", "metadata": { "exit": 1 } }
+    "output": {
+      "title": "Tests",
+      "output": "test failed",
+      "metadata": { "exit": 1 }
+    }
   },
   {
     "hook": "tool.execute.before",
@@ -75,7 +79,12 @@
   {
     "hook": "tool.execute.before",
     "input": { "tool": "edit", "sessionID": "ses_demo", "callID": "edit_1" },
-    "output": { "args": { "filePath": "<workspace>/src/lib.rs", "newString": "fn main() {}" } }
+    "output": {
+      "args": {
+        "filePath": "<workspace>/src/lib.rs",
+        "newString": "fn main() {}"
+      }
+    }
   },
   {
     "hook": "tool.execute.after",
@@ -83,9 +92,16 @@
       "tool": "edit",
       "sessionID": "ses_demo",
       "callID": "edit_1",
-      "args": { "filePath": "<workspace>/src/lib.rs", "newString": "fn main() {}" }
+      "args": {
+        "filePath": "<workspace>/src/lib.rs",
+        "newString": "fn main() {}"
+      }
     },
-    "output": { "title": "Edited", "output": "Done", "metadata": { "success": true } }
+    "output": {
+      "title": "Edited",
+      "output": "Done",
+      "metadata": { "success": true }
+    }
   },
   {
     "hook": "tool.execute.before",
@@ -100,7 +116,11 @@
       "callID": "read_1",
       "args": { "filePath": "<workspace>/src/lib.rs" }
     },
-    "output": { "title": "Read", "output": "fn main() {}", "metadata": { "success": true } }
+    "output": {
+      "title": "Read",
+      "output": "fn main() {}",
+      "metadata": { "success": true }
+    }
   },
   {
     "hook": "event",

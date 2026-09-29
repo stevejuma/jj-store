@@ -12,6 +12,7 @@ import {
   readBlob,
   readLandingDocuments,
   readPaths,
+  readRevision,
 } from "./production-store-loaders.js";
 import type { ProductionStoreState } from "./production-store-state.svelte.js";
 import type { createStoreRouteHistory } from "./store-route-history.svelte.js";
@@ -47,13 +48,19 @@ export function createProductionFileReader(context: FileReaderContext) {
     if (more && !previous?.cursor) return false;
     data.status.files = more ? "refreshing" : "loading";
     try {
-      const value = await readPaths(source, operation, commit, {
-        path,
-        recursive,
-        cursor: more ? (previous?.cursor ?? undefined) : undefined,
-        expected: more ? previous?.snapshot : undefined,
-      });
+      const [value, revision] = await Promise.all([
+        readPaths(source, operation, commit, {
+          path,
+          recursive,
+          cursor: more ? (previous?.cursor ?? undefined) : undefined,
+          expected: more ? previous?.snapshot : undefined,
+        }),
+        !more && data.fileRevision?.eventId !== commit
+          ? readRevision(source, operation, commit)
+          : Promise.resolve(data.fileRevision),
+      ]);
       if (!context.current(ticket, source)) return false;
+      if (revision) data.fileRevision = revision;
       data.pathPages = storePathPage(
         data.pathPages,
         {

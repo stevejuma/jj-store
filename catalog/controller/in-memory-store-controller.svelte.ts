@@ -17,6 +17,7 @@ import { createInMemoryStoreMutations } from "./in-memory-store-mutations.svelte
 import {
   initialStoreRoute,
   mutationCommittedRoute,
+  revisionSelectedRoute,
 } from "./in-memory-store-route.js";
 import { createInMemoryStoreRepository } from "./in-memory-store-repository.svelte.js";
 import { inMemoryStoreMember } from "./in-memory-store-member.js";
@@ -158,21 +159,13 @@ export function createInMemoryStoreController(
         )
       )
         throw new Error("Unknown fixture revision");
-      push({
-        ...route,
-        inspectedOperationId: route.page === "oplog" ? id : null,
-        commitId: route.page === "oplog" ? null : id,
-        changeId:
-          route.page === "oplog"
-            ? null
-            : (repositoryData.revisions.find(
-                (revision) => revision.eventId === id,
-              )?.changeId ?? null),
-        comparisonParentId: null,
-        comparisonGroupId: null,
-        path: null,
-        directory: "",
-      });
+      const context = id
+        ? collaboration.revisionContext(id)
+        : { agentSessionId: null, reviewThreadId: null };
+      const changeId =
+        repositoryData.revisions.find((revision) => revision.eventId === id)
+          ?.changeId ?? null;
+      push(revisionSelectedRoute(route, id, changeId, context));
     },
     selectFile(path) {
       if (
@@ -187,6 +180,10 @@ export function createInMemoryStoreController(
         directory: path
           ? path.split("/").slice(0, -1).join("/")
           : route.directory,
+        reviewThreadId:
+          path && route.commitId
+            ? collaboration.pathReview(route.commitId, path)
+            : null,
       });
     },
     selectDirectory(directory) {
@@ -279,6 +276,11 @@ export function createInMemoryStoreController(
           [...repositoryData.revisions, ...fixture.operations.revisions],
           options.large ? largeDetail : fixture.sampleDetail,
         ),
+        fileRevision: snapshot
+          ? repositoryData.revisions.find(
+              (revision) => revision.eventId === snapshot.id,
+            )
+          : undefined,
         authenticated,
         member: inMemoryStoreMember(authenticated),
         status: inMemoryStoreStatus({

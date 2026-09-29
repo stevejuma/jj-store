@@ -166,12 +166,22 @@ export function storeRouteFromHash(hash: string): StoreRouteHashResult {
     !path.startsWith(`${directory}/`)
   )
     return { kind: "invalid", message: "File is outside its directory route." };
-  if (page !== "agents" && agentSessionId)
+  if (
+    agentSessionId &&
+    page !== "agents" &&
+    page !== "log" &&
+    page !== "branches"
+  )
     return {
       kind: "invalid",
       message: "Agent session selections require the Agents page.",
     };
-  if (page !== "reviews" && reviewThreadId)
+  if (
+    reviewThreadId &&
+    page !== "reviews" &&
+    page !== "log" &&
+    page !== "branches"
+  )
     return {
       kind: "invalid",
       message: "Review thread selections require the Reviews page.",

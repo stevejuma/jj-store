@@ -483,3 +483,9 @@ not-known and outcome-unknown receipt states. The owner-only LocalTrusted Unix
 socket requires no bearer credential, while authenticated connections retain
 their existing token behavior. Review publication wakes the existing SSE feed;
 the hint is only an in-process repository ID and WAL replay supplies the event.
+
+Installed `jj agent` hooks stamp accepted observations with the local system
+clock before normalization and publication. The hook keeps source timestamps
+optional, rejects disabled integrations before capture state exists and retains
+the existing secret-redaction and restart-ordering boundaries. This adds no
+installed service, controller dispatch or credential persistence.

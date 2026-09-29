@@ -69,6 +69,7 @@
         {layoutStorage}
       />
     {:else}<CommunityProjectsRepositoryLog
+        {controller}
         {page}
         graph={state.graph}
         bookmarks={[...state.bookmarks]}

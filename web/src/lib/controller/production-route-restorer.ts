@@ -151,6 +151,8 @@ export async function restoreProductionStoreRoute(
       );
     else if (selected) await reads.loadCommit(selected);
     if (desired.path && selected) await reads.loadPatch(desired.path);
+    if (desired.agentSessionId) await reads.loadAgent(desired.agentSessionId);
+    if (desired.reviewThreadId) await reads.loadReview(desired.reviewThreadId);
   }
   data.status.navigation = data.status.error ? "failed" : "ready";
 }

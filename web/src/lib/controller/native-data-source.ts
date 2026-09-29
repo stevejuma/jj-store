@@ -105,6 +105,10 @@ export interface StoreDataSource {
   search(query: SearchQuery): Promise<Model<"SearchPage">>;
   agentSessions(cursor?: string): Promise<Model<"AgentSessionPage">>;
   agentSession(id: string): Promise<Model<"AgentSessionDetail">>;
+  agentRelations(
+    commit: string,
+    cursor?: string,
+  ): Promise<Model<"AgentRelationPage">>;
   agentTranscript(
     session: string,
     transcript: Model<"AgentTranscriptDescriptor">,

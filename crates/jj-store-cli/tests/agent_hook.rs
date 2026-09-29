@@ -158,6 +158,7 @@ fn hook_ingestion_survives_restart_orders_sequences_and_never_persists_raw_input
         assert_eq!(entry.batch.source_instance_id, source);
         assert_eq!(entry.batch.sanitizer_version, KINGFISHER_POLICY);
         assert_eq!(entry.batch.observations[0].source_sequence, sequence);
+        assert!(entry.batch.observations[0].occurred_at_millis.is_some());
         assert_eq!(
             entry.cursor.position,
             SourcePositionV1::NativeSequence { sequence }

@@ -25,7 +25,7 @@ use std::{
     io::{Read as _, Write as _},
     path::{Path, PathBuf},
     thread,
-    time::{Duration, Instant},
+    time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
 
 const MAX_SPOOL_BYTES: u64 = 64 * 1024 * 1024;
@@ -116,6 +116,12 @@ pub fn ingest_hook(
     persist_source(&sources, &path, &source)?;
 
     let sequence = source.last_sequence;
+    let occurred_at_millis = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map_err(|_| "system clock precedes the Unix epoch")?
+        .as_millis()
+        .try_into()
+        .map_err(|_| "system clock exceeds the capture timestamp range")?;
     let batch_id = CaptureBatchId::new(derived_id(b"batch", &source, sequence));
     let observation_id = ObservationId::new(derived_id(b"observation", &source, sequence));
     let batch = SanitizedObservationBatchV1 {
@@ -128,7 +134,7 @@ pub fn ingest_hook(
         observations: vec![SanitizedObservationV1 {
             observation_id,
             source_sequence: sequence,
-            occurred_at_millis: None,
+            occurred_at_millis: Some(occurred_at_millis),
             source_kind: source_kind(integration),
             source_trust: source_trust(integration),
             payload,

@@ -5,6 +5,7 @@ import type {
 } from "../../web/src/lib/controller/contracts.js";
 import {
   agentDetail,
+  agentRelations,
   agentSessions,
   agentTranscript,
   reviewDetail,
@@ -23,6 +24,22 @@ export function createInMemoryStoreCollaboration(options: {
   let reviewActionRequestId = $state<string | null>(null);
   let reviewActionStatus = $state<StoreLoadStatus>("ready");
   let pendingResolved = false;
+  function selectReviewDetail(
+    thread: (typeof reviewThreads)[number] | undefined,
+  ) {
+    selectedReview = {
+      ...reviewDetail(),
+      ...(thread
+        ? {
+            thread,
+            anchor: {
+              object_id: thread.original_anchor_id,
+              value: thread.anchor,
+            },
+          }
+        : {}),
+    };
+  }
   const actions: Pick<
     StoreController["actions"],
     | "selectAgentSession"
@@ -44,7 +61,7 @@ export function createInMemoryStoreCollaboration(options: {
         (candidate) => candidate.thread_id === id,
       );
       if (id && !thread) throw new Error("Unknown fixture review thread");
-      selectedReview = { ...reviewDetail(), ...(thread ? { thread } : {}) };
+      selectReviewDetail(thread);
       options.push({ ...options.route(), reviewThreadId: id });
     },
     async replyToReview(text) {
@@ -120,6 +137,7 @@ export function createInMemoryStoreCollaboration(options: {
       return {
         agentSessions,
         agentSession: route.agentSessionId ? selectedAgent : undefined,
+        agentRelations,
         agentTranscript: route.agentSessionId ? agentTranscript : [],
         reviewThreads,
         reviewThread: route.reviewThreadId ? selectedReview : undefined,
@@ -129,6 +147,38 @@ export function createInMemoryStoreCollaboration(options: {
     },
     get reviewActionStatus() {
       return reviewActionStatus;
+    },
+    revisionContext(commit: string) {
+      const relation = agentRelations.find((candidate) =>
+        candidate.association?.after_commits.includes(commit),
+      );
+      const thread = reviewThreads.find((candidate) => {
+        const target = candidate.anchor.target;
+        return (
+          (target.target === "revision" ||
+            target.target === "code_text" ||
+            target.target === "code_artifact") &&
+          target.value.commit_id === commit
+        );
+      });
+      selectReviewDetail(thread);
+      return {
+        agentSessionId: relation?.association?.session_id ?? null,
+        reviewThreadId: thread?.thread_id ?? null,
+      };
+    },
+    pathReview(commit: string, path: string) {
+      const thread = reviewThreads.find((candidate) => {
+        const target = candidate.anchor.target;
+        return (
+          (target.target === "code_text" ||
+            target.target === "code_artifact") &&
+          target.value.commit_id === commit &&
+          target.value.path === path
+        );
+      });
+      selectReviewDetail(thread);
+      return thread?.thread_id ?? null;
     },
   };
 }

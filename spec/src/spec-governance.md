@@ -319,3 +319,10 @@ scrolling, repository menus and dialogs disable redundant body scroll locks and
 tests require body pointer/overflow state to be restored before navigation.
 Visual tests remain skipped at the user's request and stories remain
 visual-pending.
+
+Collaboration presentation acceptance keeps focused agent/review Storybook
+interactions, the complete 84-story interaction and accessibility suite, a cold
+static catalog browser, production controller tests and an owned LocalTrusted
+reset distinct in the evidence ledger. The live reset must record that seeded
+hook capture currently lacks an exact code-association publication path; catalog
+association coverage cannot be presented as live Agent Context evidence.

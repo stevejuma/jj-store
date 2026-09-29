@@ -32,19 +32,38 @@
         canvas.getByRole("list", { name: "Agent sessions" }),
       ).toBeVisible(),
     );
-    await userEvent.click(
-      canvas.getByRole("button", { name: /Codex · a1a1a1/u }),
+    const sessionCard = canvas.getByRole("button", { name: /Codex ended/u });
+    const avatar = sessionCard.querySelector(
+      '[data-ui-component="community-member-avatar"]',
     );
+    if (!avatar) throw new Error("Agent session card avatar was not rendered");
+    await expect(avatar).toBeVisible();
+    await expect(sessionCard).toHaveTextContent("Started");
+    await expect(sessionCard).toHaveTextContent("5m");
+    await userEvent.click(sessionCard);
     await expect(
-      canvas.getByRole("list", { name: "Agent response transcript" }),
+      canvas.getByRole("log", { name: "Agent conversation activity" }),
     ).toBeVisible();
-    await expect(canvas.getByText(/Pinned activity root/u)).toBeVisible();
+    await expect(
+      canvas.getByRole("button", { name: /agent root/u }),
+    ).toBeVisible();
     await expect(
       canvas.getByText(
-        "I inspected the publication boundary and kept the read pinned.",
+        "Update the native parser and keep its review anchors exact.",
       ),
     ).toBeVisible();
-    await expect(canvas.getByText(/redacted/u)).toBeVisible();
+    await expect(
+      canvas.getByText("Updated the parser and verified the focused contract."),
+    ).toBeVisible();
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Show details for apply_patch" }),
+    );
+    await expect(
+      canvas.getByRole("region", { name: "Changed file src/lib.rs" }),
+    ).toBeVisible();
+    await expect(
+      canvas.getByRole("button", { name: /tool call ID/u }),
+    ).toBeVisible();
     const resize = canvas.getByRole("separator", {
       name: "Resize Agent sessions and Agent response columns",
     });
@@ -53,6 +72,36 @@
     await waitFor(() =>
       expect(resize).not.toHaveAttribute("aria-valuenow", width),
     );
+  }}
+>
+  {#snippet template(args)}<StoreRepositoryApplication {...args} />{/snippet}
+</Story>
+
+<Story
+  name="Revision collaboration context"
+  args={{ initialPage: "log" }}
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(
+      canvas.getByRole("button", {
+        name: "Merge native storage and publication",
+      }),
+    );
+    await expect(
+      canvas.getByRole("button", { name: "Close Agent context column" }),
+    ).toBeVisible();
+    await expect(
+      canvas.getByRole("button", { name: "Close Review discussion column" }),
+    ).toBeVisible();
+    await expect(
+      canvas.getByRole("link", { name: /Open related change/u }),
+    ).toBeVisible();
+    await userEvent.click(canvas.getByRole("button", { name: "src/lib.rs" }));
+    await expect(
+      canvas.getByText("src/lib.rs", {
+        selector: ".store-collaboration__detail-title",
+      }),
+    ).toBeVisible();
   }}
 >
   {#snippet template(args)}<StoreRepositoryApplication {...args} />{/snippet}
@@ -108,7 +157,7 @@
       ).toBeVisible(),
     );
     await userEvent.click(
-      canvas.getAllByRole("button", { name: /Thread e1e1e1/u })[0]!,
+      canvas.getAllByRole("button", { name: /Revision open/u })[0]!,
     );
     await expect(
       canvas.getByRole("list", { name: "Review comments" }),
@@ -145,7 +194,7 @@
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(
-      canvas.getAllByRole("button", { name: /Thread e1e1e1/u })[0]!,
+      canvas.getAllByRole("button", { name: /Revision open/u })[0]!,
     );
     await userEvent.click(canvas.getByRole("button", { name: "Resolve" }));
     await expect(canvas.getByText("Review outcome unknown")).toBeVisible();

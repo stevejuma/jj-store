@@ -305,3 +305,20 @@ editor shapes with their native reason, and offers only server-advertised term,
 delete or bounded uploaded-file actions. The complete multi-path selection is
 previewed and applied atomically through the same durable request workflow;
 stale fingerprints never trigger an implicit reread or partial publication.
+
+M9.5 collaboration cards use the same bordered row structure and metadata/action
+placement as Branches and Op Log. Agent cards show the integration avatar, name,
+state, captured start and compact captured duration when exact timing exists.
+Full identifiers use labelled copy controls. Agent detail reuses Community
+message/tool compositions, exposes the related native change in its header and
+renders a changed-file diff inside a tool only when an exact code association or
+recorded path ties that tool to the file.
+
+Selecting a revision may append Agent Context and Review discussion columns from
+exact root-pinned associations; selecting a changed path narrows review context
+to its exact anchor. Close controls clear their route selections. Review detail
+uses Community thread messages and keeps the composer at the bottom while the
+thread is open. The Files summary shows the selected commit author's avatar and
+name, message, Git revision and relative time. Catalog fixtures prove combined
+Agent and Review columns; the live sample may show only Review until its capture
+path publishes an exact AgentCodeAssociation.

@@ -34,15 +34,17 @@ pub use collaboration::{CollaborationOutcome, CollaborationRequest};
 pub use domains::{Domain, DomainRequest, DomainState, RepositoryDomains};
 pub use jj_agent::{
     AgentCatalogEditV1, AgentCatalogKey, AgentCatalogKind, AgentCheckpointId,
-    AgentCheckpointVersionV1, AgentDeltaV1, AgentObjectId, AgentObjectKind, AgentObjectRef,
-    AgentObjectV1, AgentRelationPageV1, AgentRelationSubjectV1, AgentRootV1, AgentSessionId,
+    AgentCheckpointVersionV1, AgentContentV1, AgentDeltaV1, AgentEventBatchV1, AgentEventId,
+    AgentEventV1, AgentObjectId, AgentObjectKind, AgentObjectRef, AgentObjectV1,
+    AgentRelationPageV1, AgentRelationSubjectV1, AgentRootV1, AgentSessionId,
     AgentSessionSnapshotV1, AssociationGranularity, AssociationId, AssociationRelation,
     CaptureBatchId, CaptureStatusV1, CodeAnchorV1, CodeAssociationV1, CodeRelation, CompletenessV1,
-    CoverageV1, EvidenceMethod, ExecutionOutcomeV1, IntegrationId, NormalizerProfileV1,
-    ObservationId, ProvenanceScopeId, SanitizedMediaType, SanitizedObservationBatchV1,
-    SanitizedObservationV1, SanitizedPayloadV1, SanitizedRepresentation, SessionState,
-    SourceInstanceId, SourceKind, SourceTrust, ToolCallId, TranscriptChunkV1, TranscriptManifestV1,
-    TranscriptPageV1, TranscriptStreamV1, TurnId,
+    CoverageV1, EvidenceMethod, ExecutionOutcomeV1, IntegrationId, MessageId, MessageRole,
+    NormalizerProfileV1, ObservationId, PermissionState, ProvenanceScopeId, SanitizedMediaType,
+    SanitizedObservationBatchV1, SanitizedObservationV1, SanitizedPayloadV1,
+    SanitizedRepresentation, SessionState, SourceInstanceId, SourceKind, SourceTrust, ToolCallId,
+    ToolInvocationSnapshotV1, ToolKind, ToolState, TranscriptChunkV1, TranscriptManifestV1,
+    TranscriptPageV1, TranscriptStreamV1, TurnId, normalized_event_id,
 };
 pub use jj_review::{
     ArtifactAnchorV1, CommentId, CommentRevisionContentV1, CommentSelectionV1, ReviewActionId,

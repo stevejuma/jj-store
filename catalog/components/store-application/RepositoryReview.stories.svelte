@@ -115,7 +115,7 @@
     const headers = canvasElement.querySelectorAll(
       '[data-ui-part="column-header"]',
     );
-    await expect(headers).toHaveLength(3);
+    await expect(headers).toHaveLength(5);
     for (const header of headers) {
       await expect(getComputedStyle(header).backgroundColor).toBe(
         getComputedStyle(heading).backgroundColor,
