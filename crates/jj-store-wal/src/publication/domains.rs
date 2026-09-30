@@ -46,6 +46,17 @@ pub struct DomainRequest {
     pub expected: DomainState,
     pub root: RecordRef,
     pub result: Vec<u8>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub facts: Option<DomainFactsV1>,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct DomainFactsV1 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub agent: Option<AgentDeltaV1>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub review: Option<ReviewDeltaV1>,
 }
 impl DomainRequest {
     pub fn new(
@@ -65,9 +76,28 @@ impl DomainRequest {
             expected,
             root,
             result,
+            facts: None,
         };
         request.validate()?;
         Ok(request)
+    }
+    pub fn with_agent_facts(mut self, delta: AgentDeltaV1) -> Result<Self> {
+        delta.validate().map_err(super::agent::agent_error)?;
+        self.facts = Some(DomainFactsV1 {
+            agent: Some(delta),
+            review: None,
+        });
+        self.validate()?;
+        Ok(self)
+    }
+    pub fn with_review_facts(mut self, delta: ReviewDeltaV1) -> Result<Self> {
+        delta.validate().map_err(super::review::review_error)?;
+        self.facts = Some(DomainFactsV1 {
+            agent: None,
+            review: Some(delta),
+        });
+        self.validate()?;
+        Ok(self)
     }
     fn validate(&self) -> Result<()> {
         if self.result.len() > 1024 * 1024
@@ -75,6 +105,10 @@ impl DomainRequest {
             || self.expected.root.kind != self.domain.record_kind()
             || self.root.attempt.is_some()
             || self.expected.root.attempt.is_some()
+            || self.facts.as_ref().is_some_and(|facts| match self.domain {
+                Domain::Agent => facts.agent.is_none() || facts.review.is_some(),
+                Domain::Review => facts.agent.is_some() || facts.review.is_none(),
+            })
         {
             return Err(Error::Corrupt("domain publication request"));
         }
@@ -210,6 +244,7 @@ impl Coordinator {
                     Some(after_domains),
                     inventory,
                     BTreeSet::from([changed_domain]),
+                    request.facts.clone(),
                 )
                 .await?;
             let replication_root = origin

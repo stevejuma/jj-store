@@ -68,6 +68,7 @@ pub enum ReviewCommandError {
 
 pub(super) struct AppliedReviewCommand {
     pub root: RecordRef,
+    pub delta: ReviewDeltaV1,
     pub result: ReviewCommandResultV1,
 }
 
@@ -151,7 +152,8 @@ impl Coordinator {
                 current,
                 applied.root,
                 result,
-            )?;
+            )?
+            .with_review_facts(applied.delta)?;
             match self.publish_domain_inner(&domain, intent).await {
                 Err(Error::Stale) => continue,
                 Ok(receipt) => return Ok(receipt),

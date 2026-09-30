@@ -33,6 +33,12 @@ impl AgentDeltaRequest {
         if self.result.len() > 1024 * 1024 {
             return Err(Error::Limit("agent delta result"));
         }
+        if self.delta.edits.iter().any(|edit| {
+            edit.replacement
+                .is_some_and(|value| value.kind == AgentObjectKind::CatalogConflict)
+        }) {
+            return Err(Error::Corrupt("authored agent conflict object"));
+        }
         self.delta.validate().map_err(agent_error)
     }
     fn intent(&self, repository: RepositoryId) -> Result<IntentDigest> {
@@ -105,7 +111,8 @@ impl Coordinator {
                 current,
                 root,
                 request.result.clone(),
-            )?;
+            )?
+            .with_agent_facts(request.delta.clone())?;
             match self.publish_domain_inner(&domain, intent).await {
                 Err(Error::Stale) => continue,
                 result => return result,

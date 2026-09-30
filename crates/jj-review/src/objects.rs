@@ -1,7 +1,8 @@
 use crate::{
-    ArtifactAnchorV1, Error, Result, ReviewCommentBodyV1, ReviewCommentRevisionV1,
-    ReviewEventPageV1, ReviewIndexPageV1, ReviewObjectId, ReviewRelationPageV1, ReviewStatusPageV1,
-    ReviewThreadEventV1, ReviewThreadSnapshotV1,
+    ArtifactAnchorV1, Error, Result, ReviewCommentBodyV1, ReviewCommentConflictV1,
+    ReviewCommentRevisionV1, ReviewEventGraphV1, ReviewEventPageV1, ReviewIndexPageV1,
+    ReviewObjectId, ReviewRelationPageV1, ReviewStatusPageV1, ReviewThreadEventV1,
+    ReviewThreadMergeV1, ReviewThreadSnapshotV1,
 };
 use jj_agent::AgentObjectRef;
 use jj_store_model::ObjectKey;
@@ -65,9 +66,12 @@ pub enum ReviewObjectV1 {
     Anchor(Box<ArtifactAnchorV1>),
     CommentBody(ReviewCommentBodyV1),
     CommentRevision(Box<ReviewCommentRevisionV1>),
+    CommentConflict(Box<ReviewCommentConflictV1>),
     ThreadEvent(Box<ReviewThreadEventV1>),
     EventPage(ReviewEventPageV1),
+    EventGraph(ReviewEventGraphV1),
     ThreadSnapshot(Box<ReviewThreadSnapshotV1>),
+    ThreadMerge(Box<ReviewThreadMergeV1>),
     RelationPage(ReviewRelationPageV1),
     StatusPage(ReviewStatusPageV1),
 }
@@ -78,9 +82,12 @@ impl ReviewObjectV1 {
             Self::Anchor(_) => ReviewObjectKind::Anchor,
             Self::CommentBody(_) => ReviewObjectKind::CommentBody,
             Self::CommentRevision(_) => ReviewObjectKind::CommentRevision,
+            Self::CommentConflict(_) => ReviewObjectKind::CommentRevision,
             Self::ThreadEvent(_) => ReviewObjectKind::ThreadEvent,
             Self::EventPage(_) => ReviewObjectKind::EventPage,
+            Self::EventGraph(_) => ReviewObjectKind::EventPage,
             Self::ThreadSnapshot(_) => ReviewObjectKind::ThreadSnapshot,
+            Self::ThreadMerge(_) => ReviewObjectKind::ThreadSnapshot,
             Self::RelationPage(_) => ReviewObjectKind::RelationPage,
             Self::StatusPage(_) => ReviewObjectKind::StatusPage,
         }
@@ -91,9 +98,12 @@ impl ReviewObjectV1 {
             Self::Anchor(value) => value.validate(),
             Self::CommentBody(value) => value.validate(),
             Self::CommentRevision(value) => value.validate(),
+            Self::CommentConflict(value) => value.validate(),
             Self::ThreadEvent(value) => value.validate(),
             Self::EventPage(value) => value.validate(),
+            Self::EventGraph(value) => value.validate(),
             Self::ThreadSnapshot(value) => value.validate(),
+            Self::ThreadMerge(value) => value.validate(),
             Self::RelationPage(value) => value.validate(),
             Self::StatusPage(value) => value.validate(),
         }
@@ -104,9 +114,12 @@ impl ReviewObjectV1 {
             Self::IndexPage(value) => value.dependencies(),
             Self::Anchor(_) | Self::CommentBody(_) => Vec::new(),
             Self::CommentRevision(value) => value.review_dependencies()?.into_iter().collect(),
+            Self::CommentConflict(value) => value.review_dependencies()?.into_iter().collect(),
             Self::ThreadEvent(value) => value.review_dependencies()?.into_iter().collect(),
             Self::EventPage(value) => value.review_dependencies()?.into_iter().collect(),
+            Self::EventGraph(value) => value.review_dependencies()?.into_iter().collect(),
             Self::ThreadSnapshot(value) => value.review_dependencies()?.into_iter().collect(),
+            Self::ThreadMerge(value) => value.review_dependencies()?.into_iter().collect(),
             Self::RelationPage(value) => value.dependencies().into_iter().collect(),
             Self::StatusPage(value) => value.dependencies().into_iter().collect(),
         })

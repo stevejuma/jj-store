@@ -13,6 +13,13 @@ workflow version, comment changes require the selected revision ID, and workflow
 changes require the selected thread snapshot ID. Reusing a request ID with
 changed intent fails. Retrying the same request returns its durable receipt.
 
+When a replicated comment has concurrent revisions,
+`jj review resolve-comment-conflict` requires every displayed alternative
+through repeated `--expected-revision-id` arguments. The CLI sorts the bounded
+set before sending the typed command. A missing or stale alternative fails
+without selecting a winner; a successful replacement records every superseded
+revision.
+
 Thread creation requires `--anchor PATH`, a complete `ArtifactAnchorV1` JSON
 document for the current repository. This keeps code, diff, agent, revision,
 operation and repository anchors exact rather than inferring an identity from a

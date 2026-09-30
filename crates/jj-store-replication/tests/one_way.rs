@@ -145,10 +145,12 @@ fn operation(value: u8) -> OperationId {
     OperationId::new([value; 64])
 }
 
-fn native_fixture() -> (
+type NativeFixture = (
     Arc<BTreeMap<ObjectKey, VerifiedNode>>,
     Vec<(ObjectKey, Vec<u8>)>,
-) {
+);
+
+fn native_fixture() -> NativeFixture {
     let root = ObjectKey::Operation(operation(0));
     let first = ObjectKey::Operation(operation(1));
     let second = ObjectKey::Operation(operation(2));

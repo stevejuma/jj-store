@@ -103,7 +103,12 @@ single destination manifest CAS. A pure import preserves the original origin
 keys and digests and creates no authored origin. A duplicate-only batch returns
 the selected destination receipts without another WAL entry or state-version
 advance. Code heads use the configured pinned JJ operation-ancestry reducer;
-collaboration origins are rejected until their accepted-fact reducers exist.
+AgentStore and ReviewStore roots use their typed accepted-fact reducers. Each
+reducer derives only immutable objects and catalog selections from the imported
+delta and authored root. It does not invoke a normalizer, review command,
+controller, hook or external adapter. All changed collaboration roots and their
+derived relation/status catalogs remain part of the same destination manifest
+CAS as the accepted-origin receipts.
 
 Agent and review roots are typed `AgentRootV1` and `ReviewRootV1` records rather
 than caller-supplied opaque payloads. Their catalog and selected object edges

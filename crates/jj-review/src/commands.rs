@@ -23,6 +23,11 @@ pub enum ReviewCommandV1 {
         expected_revision_id: CommentRevisionId,
         replacement_body: ReviewCommentBodyV1,
     },
+    ResolveCommentConflict {
+        comment_id: CommentId,
+        expected_revision_ids: Vec<CommentRevisionId>,
+        replacement_body: ReviewCommentBodyV1,
+    },
     TombstoneComment {
         comment_id: CommentId,
         expected_revision_id: CommentRevisionId,
@@ -65,6 +70,21 @@ impl ReviewCommandV1 {
             Self::EditComment {
                 replacement_body, ..
             } => replacement_body.validate(),
+            Self::ResolveCommentConflict {
+                expected_revision_ids,
+                replacement_body,
+                ..
+            } => {
+                if expected_revision_ids.len() < 2
+                    || expected_revision_ids.len() > 64
+                    || expected_revision_ids
+                        .windows(2)
+                        .any(|pair| pair[0] >= pair[1])
+                {
+                    return Err(Error::Invalid("review comment conflict versions"));
+                }
+                replacement_body.validate()
+            }
             Self::TombstoneComment { reason, .. }
             | Self::ResolveThread { reason, .. }
             | Self::ReopenThread { reason, .. } => validate_reason(reason.as_deref(), false),

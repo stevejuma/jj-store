@@ -1,8 +1,9 @@
 use crate::{
-    AgentAliasV1, AgentCheckpointVersionV1, AgentContentV1, AgentEventBatchV1, AgentIndexPageV1,
-    AgentObjectId, AgentProjectionCatalogV1, AgentRelationPageV1, AgentSessionSnapshotV1,
-    CaptureSourceStateV1, CodeAssociationV1, Result, SanitizedObservationBatchV1,
-    ToolInvocationSnapshotV1, TranscriptChunkV1, TranscriptManifestV1, TranscriptPageV1,
+    AgentAliasV1, AgentCatalogConflictV1, AgentCheckpointVersionV1, AgentContentV1,
+    AgentEventBatchV1, AgentIndexPageV1, AgentObjectId, AgentProjectionCatalogV1,
+    AgentRelationPageV1, AgentSessionSnapshotV1, CaptureSourceStateV1, CodeAssociationV1, Result,
+    SanitizedObservationBatchV1, ToolInvocationSnapshotV1, TranscriptChunkV1, TranscriptManifestV1,
+    TranscriptPageV1,
 };
 use jj_store_model::ObjectKey;
 use serde::{Deserialize, Serialize};
@@ -41,6 +42,7 @@ pub enum AgentObjectKind {
     RelationPage,
     SourceState,
     ProjectionCatalog,
+    CatalogConflict,
 }
 
 #[derive(
@@ -85,6 +87,7 @@ pub enum AgentObjectV1 {
     RelationPage(AgentRelationPageV1),
     SourceState(CaptureSourceStateV1),
     ProjectionCatalog(AgentProjectionCatalogV1),
+    CatalogConflict(AgentCatalogConflictV1),
 }
 impl AgentObjectV1 {
     pub const fn kind(&self) -> AgentObjectKind {
@@ -104,6 +107,7 @@ impl AgentObjectV1 {
             Self::RelationPage(_) => AgentObjectKind::RelationPage,
             Self::SourceState(_) => AgentObjectKind::SourceState,
             Self::ProjectionCatalog(_) => AgentObjectKind::ProjectionCatalog,
+            Self::CatalogConflict(_) => AgentObjectKind::CatalogConflict,
         }
     }
     pub fn validate(&self) -> Result<()> {
@@ -123,6 +127,7 @@ impl AgentObjectV1 {
             Self::RelationPage(value) => value.validate(),
             Self::SourceState(value) => value.validate(),
             Self::ProjectionCatalog(value) => value.validate(),
+            Self::CatalogConflict(value) => value.validate(),
         }
     }
     pub fn dependencies(&self) -> Result<Vec<AgentObjectRef>> {
@@ -140,6 +145,7 @@ impl AgentObjectV1 {
             Self::Alias(_) | Self::SourceState(_) => Vec::new(),
             Self::RelationPage(value) => value.dependencies()?.into_iter().collect(),
             Self::ProjectionCatalog(value) => value.dependencies()?.into_iter().collect(),
+            Self::CatalogConflict(value) => value.dependencies()?,
         })
     }
     pub fn native_dependencies(&self) -> Result<BTreeSet<ObjectKey>> {
@@ -147,6 +153,7 @@ impl AgentObjectV1 {
         match self {
             Self::CheckpointVersion(value) => value.native_dependencies(),
             Self::Association(value) => value.native_dependencies(),
+            Self::CatalogConflict(_) => Ok(BTreeSet::new()),
             _ => Ok(BTreeSet::new()),
         }
     }

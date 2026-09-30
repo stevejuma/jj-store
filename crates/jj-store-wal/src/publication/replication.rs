@@ -52,6 +52,8 @@ pub struct OriginPublicationV1 {
     pub review_root: Option<RecordRef>,
     pub required_inventory_root: RecordRef,
     pub changed_domains: BTreeSet<OriginDomainV1>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub domain_facts: Option<DomainFactsV1>,
 }
 
 impl OriginPublicationV1 {
@@ -72,6 +74,25 @@ impl OriginPublicationV1 {
             || self.changed_domains.is_empty()
         {
             return Err(Error::Corrupt("origin publication"));
+        }
+        if let Some(facts) = &self.domain_facts {
+            if (facts.agent.is_some() != self.changed_domains.contains(&OriginDomainV1::Agent))
+                || (facts.review.is_some()
+                    != self.changed_domains.contains(&OriginDomainV1::Review))
+                || (facts.agent.is_none() && facts.review.is_none())
+            {
+                return Err(Error::Corrupt("origin domain facts"));
+            }
+            if let Some(delta) = &facts.agent {
+                delta
+                    .validate()
+                    .map_err(|_| Error::Corrupt("origin agent facts"))?;
+            }
+            if let Some(delta) = &facts.review {
+                delta
+                    .validate()
+                    .map_err(|_| Error::Corrupt("origin review facts"))?;
+            }
         }
         let mut previous = None;
         for prefix in &self.causal_frontier {
@@ -209,6 +230,7 @@ impl Coordinator {
         after_domains: Option<RepositoryDomains>,
         inventory: Option<RecordRef>,
         changed_domains: BTreeSet<OriginDomainV1>,
+        domain_facts: Option<DomainFactsV1>,
     ) -> Result<Option<AuthoredOrigin>> {
         let Some(root_ref) = base.manifest.replication_root else {
             return Ok(None);
@@ -237,6 +259,7 @@ impl Coordinator {
             review_root: after_domains.map(|domains| domains.review.root),
             required_inventory_root: inventory.ok_or(Error::Corrupt("origin inventory root"))?,
             changed_domains,
+            domain_facts,
         };
         let origin_digest = publication.digest()?;
         let envelope = self

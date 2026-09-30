@@ -88,8 +88,30 @@ Code reduction adds only the operation heads explicitly named by accepted
 origins. Production native sessions pass those candidates through the pinned
 `jj-lib` operation-parent walk, removing delayed ancestors while retaining
 concurrent siblings. Import and reads do not create a reconciliation operation.
-AgentStore and ReviewStore imports remain disabled until their accepted-fact
-reducers are selected by the same atomic receiver path.
+AgentStore reduction applies the exact authored typed deltas as accepted facts.
+Disjoint sessions, tools, evidence, event batches, transcripts, projections and
+relations form bounded canonical unions. Causal descendants supersede checkpoint
+and association ancestors; source-state descendants require receipt prefix
+continuity. Terminal tool observations dominate nonterminal ones, while
+incomparable terminal outcomes and legacy alias collisions select explicit
+catalog-conflict objects containing every maximal alternative. A normal authored
+delta cannot directly create those internal conflict selections.
+
+ReviewStore reduction combines immutable thread events as a bounded causal
+graph. It retains independent replies, reduces workflow state only from causal
+coverage, and selects explicit comment-conflict objects for concurrent maximal
+revisions. A resolution is a new revision that names the complete sorted set of
+superseded alternatives; a stale or incomplete set cannot commit. Relation and
+status catalogs are rebuilt from the reduced core selections in the same
+destination CAS. Destination WAL order and accepted timestamps never select a
+winner.
+
+Both collaboration reducers operate only inside the restricted replication
+capability. Import cannot enter ordinary publication authorization, authored
+domain commands, native transition validation, normalization, controller or
+external adapter dispatch. Native copy and cold recovery retain the selected
+conflict objects, their complete dependency closure and accepted-origin
+receipts.
 
 ## Delivery sequence
 

@@ -59,6 +59,8 @@ pub struct ReviewCommentRevisionV1 {
     pub actor: PrincipalId,
     pub created_at_millis: i64,
     pub previous_revision: Option<ReviewObjectRef>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub superseded_revisions: Vec<ReviewObjectRef>,
     pub content: CommentRevisionContentV1,
 }
 impl ReviewCommentRevisionV1 {
@@ -68,6 +70,21 @@ impl ReviewCommentRevisionV1 {
         }
         if let Some(previous) = self.previous_revision {
             expect_kind(previous, ReviewObjectKind::CommentRevision)?;
+        }
+        if (!self.superseded_revisions.is_empty()
+            && (self.previous_revision.is_some()
+                || self.superseded_revisions.len() < 2
+                || self.superseded_revisions.len() > 64
+                || self
+                    .superseded_revisions
+                    .windows(2)
+                    .any(|pair| pair[0] >= pair[1])))
+            || self
+                .superseded_revisions
+                .iter()
+                .any(|reference| reference.kind != ReviewObjectKind::CommentRevision)
+        {
+            return Err(Error::Invalid("review comment supersession"));
         }
         match &self.content {
             CommentRevisionContentV1::Visible { body } => {
@@ -93,6 +110,7 @@ impl ReviewCommentRevisionV1 {
         Ok(self
             .previous_revision
             .into_iter()
+            .chain(self.superseded_revisions.iter().copied())
             .chain(match self.content {
                 CommentRevisionContentV1::Visible { body } => Some(body),
                 _ => None,

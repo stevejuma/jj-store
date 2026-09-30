@@ -13,12 +13,17 @@ mod domains;
 mod native_copy;
 mod reader;
 mod replication;
+mod replication_agent;
+mod replication_domains;
 mod replication_import;
+mod replication_review;
+mod replication_review_graph;
 mod replication_transfer;
 mod review;
 mod review_audit;
 mod review_audit_events;
 mod review_audit_relations;
+mod review_audit_replication;
 mod review_catalog;
 mod review_command_apply;
 mod review_command_commit;
@@ -34,26 +39,30 @@ pub use agent_delta::AgentDeltaRequest;
 pub use agent_reads::{AgentCatalogPage, AgentRelationCursor, AgentRelationRange, TranscriptRange};
 pub use application::ApplicationIntent;
 pub use collaboration::{CollaborationOutcome, CollaborationRequest};
-pub use domains::{Domain, DomainRequest, DomainState, RepositoryDomains};
+pub use domains::{Domain, DomainFactsV1, DomainRequest, DomainState, RepositoryDomains};
 pub use jj_agent::{
-    AgentCatalogEditV1, AgentCatalogKey, AgentCatalogKind, AgentCheckpointId,
-    AgentCheckpointVersionV1, AgentContentV1, AgentDeltaV1, AgentEventBatchV1, AgentEventId,
-    AgentEventV1, AgentObjectId, AgentObjectKind, AgentObjectRef, AgentObjectV1,
-    AgentRelationPageV1, AgentRelationSubjectV1, AgentRootV1, AgentSessionId,
+    AgentAliasV1, AgentCatalogConflictV1, AgentCatalogEditV1, AgentCatalogKey, AgentCatalogKind,
+    AgentCheckpointId, AgentCheckpointVersionV1, AgentContentV1, AgentDeltaV1, AgentEntityRefV1,
+    AgentEventBatchV1, AgentEventId, AgentEventV1, AgentObjectId, AgentObjectKind, AgentObjectRef,
+    AgentObjectV1, AgentRelationPageV1, AgentRelationSubjectV1, AgentRootV1, AgentSessionId,
     AgentSessionSnapshotV1, AssociationGranularity, AssociationId, AssociationRelation,
     CaptureBatchId, CaptureStatusV1, CodeAnchorV1, CodeAssociationV1, CodeRelation, CompletenessV1,
-    CoverageV1, EvidenceMethod, ExecutionOutcomeV1, IntegrationId, MessageId, MessageRole,
-    NormalizerProfileV1, ObservationId, PermissionState, ProvenanceScopeId, SanitizedMediaType,
-    SanitizedObservationBatchV1, SanitizedObservationV1, SanitizedPayloadV1,
-    SanitizedRepresentation, SessionState, SourceInstanceId, SourceKind, SourceTrust, ToolCallId,
-    ToolInvocationSnapshotV1, ToolKind, ToolState, TranscriptChunkV1, TranscriptManifestV1,
-    TranscriptPageV1, TranscriptStreamV1, TurnId, normalized_event_id,
+    CoverageV1, EvidenceMethod, ExecutionAttemptId, ExecutionOutcomeV1, IntegrationId, MessageId,
+    MessageRole, NativeEntityKind, NormalizerProfileV1, ObservationId, PermissionState,
+    ProvenanceScopeId, SanitizedMediaType, SanitizedObservationBatchV1, SanitizedObservationV1,
+    SanitizedPayloadV1, SanitizedRepresentation, SessionState, SourceInstanceId, SourceKind,
+    SourceTrust, ToolCallId, ToolInvocationSnapshotV1, ToolKind, ToolState, TranscriptChunkV1,
+    TranscriptManifestV1, TranscriptPageV1, TranscriptStreamV1, TurnId, normalized_event_id,
 };
 pub use jj_review::{
-    ArtifactAnchorV1, CommentId, CommentRevisionContentV1, CommentSelectionV1, ReviewActionId,
-    ReviewBodyFormatV1, ReviewCatalogKey, ReviewCommandResultV1, ReviewCommandV1, ReviewDeltaV1,
-    ReviewObjectId, ReviewObjectRef, ReviewObjectV1, ReviewRootV1, ReviewThreadEventKindV1,
-    ReviewThreadId, ReviewThreadSnapshotV1, ThreadStatusV1, decode_command_result,
+    ArtifactAnchorV1, ArtifactTargetV1, CommentId, CommentRevisionContentV1, CommentRevisionId,
+    CommentSelectionV1, CreatedContextV1, ReviewActionId, ReviewBodyFormatV1, ReviewCatalogEditV1,
+    ReviewCatalogKey, ReviewCatalogKind, ReviewCommandResultV1, ReviewCommandV1,
+    ReviewCommentBodyV1, ReviewCommentConflictV1, ReviewCommentRevisionV1, ReviewDeltaV1,
+    ReviewEventGraphV1, ReviewEventNodeV1, ReviewObjectId, ReviewObjectRef, ReviewObjectV1,
+    ReviewRelationPageV1, ReviewRelationSubjectV1, ReviewRootV1, ReviewStatusPageV1,
+    ReviewThreadEventKindV1, ReviewThreadId, ReviewThreadMergeV1, ReviewThreadRelationV1,
+    ReviewThreadSnapshotV1, SensitivityV1, ThreadSnapshotId, ThreadStatusV1, decode_command_result,
     encode_command_result,
 };
 pub use native_copy::NativeCopyOutcome;
@@ -786,6 +795,7 @@ impl Coordinator {
                     base.manifest.domains(),
                     inventory,
                     changed_domains,
+                    None,
                 )
                 .await?;
             let replication_root = origin

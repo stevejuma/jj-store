@@ -55,6 +55,7 @@ impl Coordinator {
                 actor: request.principal,
                 created_at_millis: accepted_at_millis,
                 previous_revision: None,
+                superseded_revisions: Vec::new(),
                 content: CommentRevisionContentV1::Visible { body },
             })
             .await?;
@@ -125,6 +126,7 @@ impl Coordinator {
                 actor: request.principal,
                 created_at_millis: accepted_at_millis,
                 previous_revision: Some(previous),
+                superseded_revisions: Vec::new(),
                 content,
             })
             .await?;
@@ -143,6 +145,105 @@ impl Coordinator {
                 revision,
             },
             Some((comment_id, Some(previous), revision)),
+            Some(comment_id),
+            None,
+            Some(revision),
+            accepted_at_millis,
+        )
+        .await
+    }
+
+    pub(super) async fn resolve_review_comment_conflict(
+        &self,
+        store: &ReviewStoreSnapshot,
+        request: &ReviewCommandRequest,
+        comment_id: CommentId,
+        expected_revision_ids: &[CommentRevisionId],
+        replacement_body: &ReviewCommentBodyV1,
+        accepted_at_millis: i64,
+    ) -> std::result::Result<AppliedReviewCommand, ReviewCommandError> {
+        let conflict_ref = store
+            .lookup(
+                ReviewCatalogKind::Comments,
+                super::review_command_history::comment_key(comment_id)?,
+            )
+            .await?
+            .ok_or(ReviewCommandError::NotFound("comment"))?;
+        let ReviewObjectV1::CommentConflict(conflict) = store.read_object(conflict_ref).await?
+        else {
+            return Err(ReviewCommandError::Stale);
+        };
+        if conflict.comment_id != comment_id {
+            return Err(Error::Corrupt("review comment conflict identity").into());
+        }
+        let expected = expected_revision_ids
+            .iter()
+            .map(|id| id.as_bytes())
+            .collect::<Vec<_>>();
+        let actual = conflict
+            .alternatives
+            .iter()
+            .map(|reference| reference.id.as_bytes())
+            .collect::<Vec<_>>();
+        if expected != actual {
+            return Err(ReviewCommandError::Stale);
+        }
+        let loaded = self.load_review_thread(store, conflict.thread_id).await?;
+        let position = loaded
+            .snapshot
+            .comments
+            .iter()
+            .position(|selection| {
+                selection.comment_id == comment_id && selection.revision == conflict_ref
+            })
+            .ok_or(Error::Corrupt("review conflict thread selection"))?;
+        let mut author = None;
+        for alternative in &conflict.alternatives {
+            let ReviewObjectV1::CommentRevision(revision) = store.read_object(*alternative).await?
+            else {
+                return Err(Error::Corrupt("review conflict alternative kind").into());
+            };
+            if revision.thread_id != conflict.thread_id || revision.comment_id != comment_id {
+                return Err(Error::Corrupt("review conflict alternative identity").into());
+            }
+            match author {
+                Some(selected) if selected != revision.author => {
+                    return Err(Error::Corrupt("review conflict author identity").into());
+                }
+                None => author = Some(revision.author),
+                _ => {}
+            }
+        }
+        let revision = self
+            .stage_review_revision(ReviewCommentRevisionV1 {
+                schema_version: 1,
+                thread_id: conflict.thread_id,
+                comment_id,
+                author: author.ok_or(Error::Corrupt("review conflict author"))?,
+                actor: request.principal,
+                created_at_millis: accepted_at_millis,
+                previous_revision: None,
+                superseded_revisions: conflict.alternatives.clone(),
+                content: CommentRevisionContentV1::Visible {
+                    body: self.stage_review_body(replacement_body).await?,
+                },
+            })
+            .await?;
+        let mut next = loaded.snapshot.clone();
+        next.comments[position].revision = revision;
+        next.thread_version = increment(next.thread_version, "review thread version")?;
+        next.content_version = increment(next.content_version, "review content version")?;
+        self.commit_review_thread(
+            store,
+            request,
+            loaded,
+            next,
+            ReviewThreadEventKindV1::CommentConflictResolved {
+                comment_id,
+                superseded_revisions: conflict.alternatives,
+                revision,
+            },
+            Some((comment_id, Some(conflict_ref), revision)),
             Some(comment_id),
             None,
             Some(revision),

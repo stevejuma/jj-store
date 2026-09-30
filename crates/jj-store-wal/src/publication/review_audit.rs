@@ -74,12 +74,16 @@ impl Coordinator {
             .iter()
             .filter(|value| value.kind == jj_review::ReviewObjectKind::ThreadSnapshot)
         {
-            let ReviewObjectV1::ThreadSnapshot(snapshot) =
-                self.read_review_object(*reference).await?
-            else {
-                return Err(Error::Corrupt("review thread snapshot kind"));
-            };
-            self.audit_review_thread(&snapshot, objects).await?;
+            match self.read_review_object(*reference).await? {
+                ReviewObjectV1::ThreadSnapshot(snapshot) => {
+                    self.audit_review_thread(&snapshot, objects).await?;
+                }
+                ReviewObjectV1::ThreadMerge(snapshot) => {
+                    self.audit_replicated_review_thread(&snapshot, objects)
+                        .await?;
+                }
+                _ => return Err(Error::Corrupt("review thread snapshot kind")),
+            }
         }
         Ok(())
     }

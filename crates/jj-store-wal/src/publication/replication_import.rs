@@ -102,6 +102,10 @@ impl Coordinator {
         request: &ApplyOriginsRequestV1,
         intent: IntentDigest,
     ) -> Result<ApplyOriginsResultV1> {
+        let authorization_base = self.read().await?;
+        self.guard
+            .authorize_replication(&authorization_base, request)
+            .await?;
         let mut inventories = BTreeMap::new();
         for envelope in &request.origins {
             inventories.insert(
@@ -166,6 +170,9 @@ impl Coordinator {
             let mut heads = base.manifest.heads.clone();
             let mut published_operations = BTreeSet::new();
             let before_domains = base.manifest.domains();
+            let mut after_domains = before_domains;
+            let mut agent_changed = false;
+            let mut review_changed = false;
             for envelope in &ordered {
                 for (key, reference) in inventories
                     .get(&envelope.publication.origin_key)
@@ -193,12 +200,66 @@ impl Coordinator {
                 if envelope
                     .publication
                     .changed_domains
-                    .iter()
-                    .any(|domain| matches!(domain, OriginDomainV1::Agent | OriginDomainV1::Review))
+                    .contains(&OriginDomainV1::Agent)
                 {
-                    return Err(Error::Corrupt(
-                        "collaboration replication reducer unavailable",
-                    ));
+                    let delta = envelope
+                        .publication
+                        .domain_facts
+                        .as_ref()
+                        .and_then(|facts| facts.agent.as_ref())
+                        .ok_or(Error::Corrupt("origin agent facts missing"))?;
+                    let authored = envelope
+                        .publication
+                        .agent_root
+                        .ok_or(Error::Corrupt("origin agent root missing"))?;
+                    let domains = after_domains
+                        .as_mut()
+                        .ok_or(Error::Corrupt("agent domain unavailable"))?;
+                    let reduced = self
+                        .reduce_imported_agent_facts(domains.agent.root, authored, delta)
+                        .await?;
+                    agent_changed |= reduced != domains.agent.root;
+                    domains.agent.root = reduced;
+                }
+                if envelope
+                    .publication
+                    .changed_domains
+                    .contains(&OriginDomainV1::Review)
+                {
+                    let delta = envelope
+                        .publication
+                        .domain_facts
+                        .as_ref()
+                        .and_then(|facts| facts.review.as_ref())
+                        .ok_or(Error::Corrupt("origin review facts missing"))?;
+                    let authored = envelope
+                        .publication
+                        .review_root
+                        .ok_or(Error::Corrupt("origin review root missing"))?;
+                    let domains = after_domains
+                        .as_mut()
+                        .ok_or(Error::Corrupt("review domain unavailable"))?;
+                    let reduced = self
+                        .reduce_imported_review_facts(domains.review.root, authored, delta)
+                        .await?;
+                    review_changed |= reduced != domains.review.root;
+                    domains.review.root = reduced;
+                }
+            }
+            if let Some(domains) = after_domains.as_mut() {
+                if agent_changed {
+                    domains.agent.version = domains
+                        .agent
+                        .version
+                        .checked_add(1)
+                        .ok_or(Error::Limit("agent state version"))?;
+                }
+                if review_changed {
+                    domains.review.version = domains
+                        .review
+                        .version
+                        .checked_add(1)
+                        .ok_or(Error::Limit("review state version"))?;
                 }
             }
             let candidates = heads;
@@ -310,7 +371,7 @@ impl Coordinator {
                 kind: SemanticKind::ReplicationImported,
                 published_operations,
                 before_domains,
-                after_domains: before_domains,
+                after_domains,
                 origins: origin_refs,
             };
             let tail = self
@@ -337,6 +398,10 @@ impl Coordinator {
                 receipts,
                 history,
                 code_state_version,
+                agent_root: after_domains.map(|domains| domains.agent.root),
+                agent_state_version: after_domains.map_or(0, |domains| domains.agent.version),
+                review_root: after_domains.map(|domains| domains.review.root),
+                review_state_version: after_domains.map_or(0, |domains| domains.review.version),
                 replication_root: Some(replication_root),
                 ..base.manifest.clone()
             };

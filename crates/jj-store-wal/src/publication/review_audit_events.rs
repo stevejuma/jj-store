@@ -93,6 +93,11 @@ impl Coordinator {
                     .checked_add(1)
                     .ok_or(Error::Limit("review content version"))?;
             }
+            ReviewThreadEventKindV1::CommentConflictResolved { .. } => {
+                return Err(Error::Corrupt(
+                    "conflict resolution requires a review event graph",
+                ));
+            }
             ReviewThreadEventKindV1::Resolved { action_id, .. } => {
                 if *status != ThreadStatusV1::Open {
                     return Err(Error::Corrupt("review resolve transition"));

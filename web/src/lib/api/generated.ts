@@ -1324,6 +1324,7 @@ export interface components {
       event_page_root_id: components["schemas"]["ReviewObjectId"];
       status: components["schemas"]["ThreadStatusV1"];
       selected_workflow_action: components["schemas"]["ReviewActionId"] | null;
+      selected_workflow_actions: components["schemas"]["ReviewActionId"][];
       /** Format: uint64 */
       thread_version: number;
       /** Format: uint64 */
@@ -1332,6 +1333,8 @@ export interface components {
       workflow_version: number;
       /** Format: uint */
       comment_count: number;
+      /** Format: uint */
+      comment_conflict_count: number;
       /** Format: uint64 */
       last_event_sequence: number;
     };
@@ -1514,7 +1517,8 @@ export interface components {
       | "alias"
       | "relation_page"
       | "source_state"
-      | "projection_catalog";
+      | "projection_catalog"
+      | "catalog_conflict";
     AgentContentOwnerV1:
       | {
           tool_call_id: components["schemas"]["ToolCallId"];
@@ -1567,6 +1571,7 @@ export interface components {
       thread: components["schemas"]["ReviewThreadSummary"];
       anchor: components["schemas"]["ReviewAnchor"];
       comments: components["schemas"]["ReviewComment"][];
+      comment_conflicts: components["schemas"]["ReviewCommentConflict"][];
       events: components["schemas"]["ReviewEvent"][];
     };
     ReviewAnchor: {
@@ -1582,6 +1587,7 @@ export interface components {
       /** Format: int64 */
       created_at_millis: number;
       previous_revision_id: components["schemas"]["ReviewObjectId"] | null;
+      superseded_revision_ids: components["schemas"]["ReviewObjectId"][];
       content: components["schemas"]["ReviewCommentContent"];
     };
     CommentId: string;
@@ -1607,8 +1613,24 @@ export interface components {
         };
     /** @enum {string} */
     ReviewBodyFormatV1: "plain_text" | "safe_markdown";
+    ReviewCommentConflict: {
+      comment_id: components["schemas"]["CommentId"];
+      parent_comment_id: components["schemas"]["CommentId"] | null;
+      alternatives: components["schemas"]["ReviewCommentVersion"][];
+    };
+    ReviewCommentVersion: {
+      revision_id: components["schemas"]["ReviewObjectId"];
+      author: components["schemas"]["PrincipalId"];
+      actor: components["schemas"]["PrincipalId"];
+      /** Format: int64 */
+      created_at_millis: number;
+      previous_revision_id: components["schemas"]["ReviewObjectId"] | null;
+      superseded_revision_ids: components["schemas"]["ReviewObjectId"][];
+      content: components["schemas"]["ReviewCommentContent"];
+    };
     ReviewEvent: {
       event_id: components["schemas"]["ReviewObjectId"];
+      causal_parent_ids: components["schemas"]["ReviewObjectId"][];
       /** Format: uint64 */
       sequence: number;
       actor: components["schemas"]["PrincipalId"];
@@ -1637,6 +1659,13 @@ export interface components {
           revision_id: components["schemas"]["ReviewObjectId"];
           /** @constant */
           action: "comment_revised";
+        }
+      | {
+          comment_id: components["schemas"]["CommentId"];
+          superseded_revision_ids: components["schemas"]["ReviewObjectId"][];
+          revision_id: components["schemas"]["ReviewObjectId"];
+          /** @constant */
+          action: "comment_conflict_resolved";
         }
       | {
           action_id: components["schemas"]["ReviewActionId"];
@@ -6112,7 +6141,8 @@ export interface operations {
                               | "alias"
                               | "relation_page"
                               | "source_state"
-                              | "projection_catalog";
+                              | "projection_catalog"
+                              | "catalog_conflict";
                             id: string;
                           };
                           owner:
@@ -6138,7 +6168,8 @@ export interface operations {
                                     | "alias"
                                     | "relation_page"
                                     | "source_state"
-                                    | "projection_catalog";
+                                    | "projection_catalog"
+                                    | "catalog_conflict";
                                   id: string;
                                 };
                                 attempt_id: string;
@@ -6167,7 +6198,8 @@ export interface operations {
                                     | "alias"
                                     | "relation_page"
                                     | "source_state"
-                                    | "projection_catalog";
+                                    | "projection_catalog"
+                                    | "catalog_conflict";
                                   id: string;
                                 };
                                 /** @constant */
@@ -6195,7 +6227,8 @@ export interface operations {
                                     | "alias"
                                     | "relation_page"
                                     | "source_state"
-                                    | "projection_catalog";
+                                    | "projection_catalog"
+                                    | "catalog_conflict";
                                   id: string;
                                 };
                                 /** @constant */
@@ -6222,7 +6255,8 @@ export interface operations {
                               | "alias"
                               | "relation_page"
                               | "source_state"
-                              | "projection_catalog";
+                              | "projection_catalog"
+                              | "catalog_conflict";
                             id: string;
                           };
                           /** @enum {string} */
@@ -6252,7 +6286,8 @@ export interface operations {
                               | "alias"
                               | "relation_page"
                               | "source_state"
-                              | "projection_catalog";
+                              | "projection_catalog"
+                              | "catalog_conflict";
                             id: string;
                           };
                           representation_version: string;
@@ -6299,7 +6334,8 @@ export interface operations {
                               | "alias"
                               | "relation_page"
                               | "source_state"
-                              | "projection_catalog";
+                              | "projection_catalog"
+                              | "catalog_conflict";
                             id: string;
                           };
                           owner:
@@ -6325,7 +6361,8 @@ export interface operations {
                                     | "alias"
                                     | "relation_page"
                                     | "source_state"
-                                    | "projection_catalog";
+                                    | "projection_catalog"
+                                    | "catalog_conflict";
                                   id: string;
                                 };
                                 attempt_id: string;
@@ -6354,7 +6391,8 @@ export interface operations {
                                     | "alias"
                                     | "relation_page"
                                     | "source_state"
-                                    | "projection_catalog";
+                                    | "projection_catalog"
+                                    | "catalog_conflict";
                                   id: string;
                                 };
                                 /** @constant */
@@ -6382,7 +6420,8 @@ export interface operations {
                                     | "alias"
                                     | "relation_page"
                                     | "source_state"
-                                    | "projection_catalog";
+                                    | "projection_catalog"
+                                    | "catalog_conflict";
                                   id: string;
                                 };
                                 /** @constant */
@@ -6460,6 +6499,20 @@ export interface operations {
                 };
                 /** @constant */
                 command: "edit_comment";
+              }
+            | {
+                comment_id: string;
+                expected_revision_ids: string[];
+                replacement_body: {
+                  /** Format: uint32 */
+                  schema_version: number;
+                  /** @enum {string} */
+                  format: "plain_text" | "safe_markdown";
+                  text: string;
+                  sanitizer_version: string;
+                };
+                /** @constant */
+                command: "resolve_comment_conflict";
               }
             | {
                 comment_id: string;
