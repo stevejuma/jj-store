@@ -9,14 +9,16 @@
     controller,
     detailsOpen,
     toggleDetails,
+    disabled = false,
   }: {
     controller: StoreController;
     detailsOpen: boolean;
     toggleDetails: () => void;
+    disabled?: boolean;
   } = $props();
 </script>
 
-<StoreRepositoryActions {controller} />
+<StoreRepositoryActions {controller} {disabled} />
 <Button
   variant={controller.state.status.refreshAvailable ? "outline" : "ghost"}
   size="icon-sm"
@@ -24,7 +26,7 @@
     ? "Refresh snapshot (new history available)"
     : "Refresh snapshot"}
   title="Refresh snapshot"
-  disabled={controller.state.status.connection !== "connected"}
+  disabled={disabled || controller.state.status.connection !== "connected"}
   onclick={() => controller.actions.refresh()}
   ><RefreshCwIcon aria-hidden="true" /></Button
 >
@@ -32,6 +34,7 @@
   variant="ghost"
   size="icon-sm"
   aria-label="Toggle details"
+  {disabled}
   aria-expanded={detailsOpen}
   onclick={toggleDetails}
   ><CommunitySidebarToggleIcon side="right" expanded={detailsOpen} /></Button

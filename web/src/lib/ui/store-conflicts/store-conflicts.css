@@ -1,6 +1,32 @@
-.store-conflict-editor__paths {
+.store-conflict-editor__title {
+  margin: 0;
+  font-size: 0.875rem;
+}
+.store-conflict-editor__body
+  > [data-ui-part="scroll-area"]
+  > [data-ui-part="scroll-area-viewport"]
+  > div {
+  height: 100%;
+}
+.store-conflict-editor__layout {
   display: grid;
+  height: 100%;
+  min-height: 0;
+  grid-template-rows: minmax(0, 1fr) auto;
+}
+.store-conflict-editor__main {
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  grid-template-columns: 11rem minmax(0, 1fr);
+}
+.store-conflict-editor__paths {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
   gap: 0.25rem;
+  overflow: auto;
+  padding: 0.5rem;
 }
 .store-conflict-editor__paths button {
   justify-content: space-between;
@@ -14,88 +40,77 @@
 .store-conflict-editor__paths svg {
   flex: none;
 }
-.store-conflict-path {
-  display: grid;
-  gap: 1rem;
-  padding: 0.75rem 1rem 1rem;
-}
-.store-conflict-path__header {
+.store-conflict-editor__content {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid var(--border);
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  overflow: auto;
 }
-.store-conflict-path__header h3,
-.store-conflict-path__header p {
-  margin: 0;
-}
-.store-conflict-path__header h3 {
-  font-size: 0.875rem;
-}
-.store-conflict-path__header p {
-  color: var(--muted-foreground);
-  font-size: 0.75rem;
-}
-.store-conflict-path__header code {
-  max-width: 15rem;
-  overflow: hidden;
-  color: var(--muted-foreground);
-  font-size: 0.6875rem;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.store-conflict-path__terms {
-  display: grid;
+.store-conflict-editor__path,
+.store-conflict-path {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
   gap: 0.5rem;
 }
-.store-conflict-path__term {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.625rem 0.75rem;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: var(--background);
+.store-conflict-editor__path[hidden] {
+  display: none;
 }
-.store-conflict-path__term div {
-  display: grid;
+.store-conflict-path__editor {
   min-width: 0;
+  min-height: 0;
+  flex: 1;
 }
-.store-conflict-path__term span,
-.store-conflict-path__stage span,
-.store-conflict-path__delete span {
+.store-conflict-path__unsupported {
+  display: grid;
+  align-content: start;
+  gap: 0.75rem;
+  flex: 1;
+}
+.store-conflict-path__terms,
+.store-conflict-path__controls,
+.store-conflict-editor__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+.store-conflict-path__controls {
+  flex-shrink: 0;
+}
+.store-conflict-path__stage {
+  margin-inline-start: auto;
+}
+.store-conflict-path__controls span {
   color: var(--muted-foreground);
   font-size: 0.75rem;
 }
-.store-conflict-path__editor {
-  min-height: 22rem;
-  overflow: hidden;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: var(--background);
-}
-.store-conflict-path__editor [data-ui-component="merge-editor"] {
-  min-height: 19rem;
-}
-.store-conflict-path__stage,
-.store-conflict-path__delete {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.625rem 0.75rem;
+.store-conflict-editor__footer {
+  justify-content: flex-end;
+  padding: 0.5rem 0.75rem;
   border-top: 1px solid var(--border);
-}
-.store-conflict-path__delete {
-  padding-inline: 0;
-  border-top: 0;
 }
 .store-conflict-path__error,
 .store-conflict-editor__error {
   margin: 0;
   color: var(--destructive);
   font-size: 0.8125rem;
+}
+@media (max-width: 700px) {
+  .store-conflict-editor__main {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+  .store-conflict-editor__paths {
+    flex-direction: row;
+  }
+  .store-conflict-editor__paths button {
+    width: auto;
+    flex-shrink: 0;
+  }
 }

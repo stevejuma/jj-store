@@ -11,16 +11,26 @@
     tags: ["visual-pending"],
   });
 
-  async function dialogFor(canvasElement: HTMLElement) {
+  async function sheetFor(canvasElement: HTMLElement) {
     const page = within(canvasElement.ownerDocument.body);
-    const dialog = await page.findByRole("dialog", {
+    await userEvent.click(
+      page.getByRole("button", { name: "Repository actions" }),
+    );
+    await userEvent.click(
+      page.getByRole("menuitem", { name: "Resolve conflicts" }),
+    );
+    const dialog = await page.findByRole("region", {
       name: "Resolve native conflicts",
     });
     return { page, dialog, view: within(dialog) };
   }
 
   async function chooseTerms(view: ReturnType<typeof within>) {
-    await userEvent.click(view.getByRole("button", { name: "Use native" }));
+    await userEvent.click(
+      view.getByRole("button", {
+        name: "Accept All Incoming Changes from Left",
+      }),
+    );
     await userEvent.click(
       view.getByRole("button", { name: "assets/logo.bin" }),
     );
@@ -33,8 +43,7 @@
 <Story
   name="Atomic term resolution"
   play={async ({ canvasElement }) => {
-    const { page, dialog, view } = await dialogFor(canvasElement);
-    await expect(view.getByTitle(conflicts[0]!.fingerprint)).toBeVisible();
+    const { page, dialog, view } = await sheetFor(canvasElement);
     await chooseTerms(view);
     await expect(
       view.getByText(/native descriptor reports binary/u),
@@ -53,7 +62,7 @@
     );
     await expect(view.getByText("Conflicts resolved")).toBeVisible();
     const footer = dialog.querySelector<HTMLElement>(
-      '[data-ui-part="dialog-frame-footer"]',
+      ".store-conflict-editor__footer",
     )!;
     await userEvent.click(
       within(footer).getByRole("button", { name: "Close" }),
@@ -70,7 +79,7 @@
 <Story
   name="Staged merged file"
   play={async ({ canvasElement }) => {
-    const { view } = await dialogFor(canvasElement);
+    const { view } = await sheetFor(canvasElement);
     await userEvent.click(
       view.getByRole("button", { name: "Stage merged file" }),
     );
@@ -89,7 +98,7 @@
 <Story
   name="Unknown outcome recovery"
   play={async ({ canvasElement }) => {
-    const { view } = await dialogFor(canvasElement);
+    const { view } = await sheetFor(canvasElement);
     await chooseTerms(view);
     await userEvent.click(view.getByRole("button", { name: "Preview 2/2" }));
     await userEvent.click(
@@ -115,7 +124,7 @@
 <Story
   name="Stale fingerprint"
   play={async ({ canvasElement }) => {
-    const { view } = await dialogFor(canvasElement);
+    const { view } = await sheetFor(canvasElement);
     await chooseTerms(view);
     await userEvent.click(view.getByRole("button", { name: "Preview 2/2" }));
     await expect(
@@ -129,4 +138,71 @@
   {#snippet template()}<StoreConflictEditorFixture
       failure="The conflict fingerprint is stale."
     />{/snippet}
+</Story>
+
+<Story
+  name="Shell merge surface"
+  play={async ({ canvasElement }) => {
+    const { page, dialog, view } = await sheetFor(canvasElement);
+    const main = canvasElement.querySelector<HTMLElement>(
+      '[data-ui-part="main"]',
+    )!;
+    await expect(main).toHaveAttribute("inert");
+    const left = canvasElement.querySelector<HTMLElement>(
+      '[data-ui-part="sidebar"][data-side="left"]',
+    )!;
+    await expect(left).toHaveAttribute("inert");
+    await expect(
+      page.getByRole("button", { name: "Repository actions" }),
+    ).toBeDisabled();
+    await expect(
+      page.getByRole("button", { name: "Refresh snapshot" }),
+    ).toBeDisabled();
+    await expect(
+      view.queryByTitle(conflicts[0]!.fingerprint),
+    ).not.toBeInTheDocument();
+    await expect(
+      view.queryByRole("button", { name: "Use native" }),
+    ).not.toBeInTheDocument();
+    const editor = dialog.querySelector<HTMLElement>(
+      '[data-ui-component="merge-editor"]',
+    )!;
+    await waitFor(() =>
+      expect(editor.getBoundingClientRect().height).toBeGreaterThan(
+        dialog.getBoundingClientRect().height * 0.7,
+      ),
+    );
+    for (const side of ["left", "base", "right"]) {
+      const pane = editor.querySelector<HTMLElement>(
+        `[data-ui-part="merge-view"][data-merge-side="${side}"]`,
+      )!;
+      await expect(
+        pane.querySelector(".ui-code-token-keyword"),
+      ).toBeInTheDocument();
+    }
+    await userEvent.click(
+      view.getByRole("button", {
+        name: "Accept All Incoming Changes from Right",
+      }),
+    );
+    await expect(
+      view.getByRole("button", { name: "Preview 1/2" }),
+    ).toBeVisible();
+    await expect(
+      view.getByRole("textbox", { name: "Edit Resolved" }),
+    ).toHaveValue(
+      conflicts[0]!.editor.status === "text"
+        ? conflicts[0]!.editor.contents[2]
+        : "",
+    );
+    await userEvent.keyboard("{Escape}");
+    await waitFor(() => expect(dialog).not.toBeInTheDocument());
+    await expect(main).not.toHaveAttribute("inert");
+    await expect(left).not.toHaveAttribute("inert");
+    await expect(
+      page.getByRole("button", { name: "Repository actions" }),
+    ).toHaveFocus();
+  }}
+>
+  {#snippet template()}<StoreConflictEditorFixture />{/snippet}
 </Story>

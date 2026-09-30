@@ -33,6 +33,8 @@
   import StoreSettingsNavigation from "../store-settings/StoreSettingsNavigation.svelte";
   import type { StoreSettingsSection } from "../store-settings/model.js";
   import StoreApplicationHeaderActions from "./StoreApplicationHeaderActions.svelte";
+  import StoreConflictEditor from "../store-conflicts/StoreConflictEditor.svelte";
+  import { conflictEditorKey } from "../store-conflicts/conflict-editor.js";
   import {
     loadRepositoryShellLayout,
     repositoryShellStorageKey,
@@ -77,8 +79,18 @@
   onDestroy(() => void shell.dispose());
   const workspaceGuard = $state({ editing: false });
   setContext(workspaceNavigationKey, workspaceGuard);
+  let conflictOpen = $state(false);
+  let conflictReturnFocus = $state<HTMLElement | null>(null);
+  setContext(conflictEditorKey, () => {
+    conflictReturnFocus =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
+    conflictOpen = true;
+  });
   const workspaceBlocked = $derived(
-    workspaceGuard.editing ||
+    conflictOpen ||
+      workspaceGuard.editing ||
       ["previewing", "prepared", "applying", "unknown"].includes(
         controller.state.mutation.status,
       ),
@@ -113,18 +125,22 @@
       ?.label ?? "Repository",
   );
   function selectPage(page: StorePage) {
+    if (conflictOpen) return;
     controller.actions.selectPage(page);
     if (shell.mobile.resolvedMode === "mobile") shell.mobile.showMain();
   }
   function select(item: CommunityNavigationItemModel) {
+    if (conflictOpen) return;
     if (item.kind === "repository") controller.actions.openRepository(item.id);
     else controller.actions.selectPage(item.kind);
     if (shell.mobile.resolvedMode === "mobile") shell.mobile.showMain();
   }
   function navigate(delta: -1 | 1) {
+    if (conflictOpen) return;
     controller.actions.navigate(delta);
   }
   function openSettings() {
+    if (conflictOpen) return;
     settingsOpen = true;
     void controller.actions.refreshSettings();
     if (shell.mobile.resolvedMode === "mobile") shell.mobile.showMain();
@@ -143,19 +159,21 @@
 <CommunityAppShell
   controller={shell}
   {displayMode}
-  {canNavigateBack}
-  {canNavigateForward}
+  canNavigateBack={canNavigateBack && !conflictOpen}
+  canNavigateForward={canNavigateForward && !conflictOpen}
   onNavigateBack={() => navigate(-1)}
   onNavigateForward={() => navigate(1)}
 >
   {#snippet headerEnd()}{#if !settingsOpen}<StoreApplicationHeaderActions
         {controller}
+        disabled={conflictOpen}
         detailsOpen={!shell.right.closed}
         toggleDetails={() =>
           shell.right.closed ? shell.right.open() : shell.right.close()}
       />{/if}{/snippet}
   <AppShell.Sidebar
     side="left"
+    inert={conflictOpen}
     label={settingsOpen ? "Settings sidebar" : "Repository navigation sidebar"}
     mobileLabel={settingsOpen ? "Settings" : "Repositories"}
     resizeLabel="Resize repository navigation sidebar"
@@ -270,6 +288,12 @@
         <StoreRepositoryContextActions {controller} />
       </AppShell.Sidebar.Body>
     </AppShell.Sidebar>{/if}
+  <StoreConflictEditor
+    {controller}
+    open={conflictOpen}
+    returnFocus={conflictReturnFocus}
+    onClose={() => (conflictOpen = false)}
+  />
 </CommunityAppShell>
 {#if !settingsOpen}<StoreSearchOverlay
     {controller}

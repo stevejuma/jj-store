@@ -49,6 +49,7 @@ adds evidence here in its enclosing Jujutsu change.
 | M4.21       | Done        | M4.20       | JST-UI-003,JST-UI-005,JST-API-002                                                                                                                                        | Compact workspace-row comparison picker, native Op Log cards, independent copy and focused interaction/a11y/browser acceptance | Retain exact-parent and workspace regressions; visual review remains separate | E-UI-034                                                                                                                                                                                                                                                                                                                                                       |
 | M4.22       | Done        | M4.21       | JST-UI-014,JST-UI-003,JST-UI-008,JST-API-005                                                                                                                             | Restore selection-aware rail actions with focused interaction, accessibility and browser evidence                              | Retain selection and capability regressions; visual review remains separate   | E-UI-035                                                                                                                                                                                                                                                                                                                                                       |
 | M4.23       | Done        | M4.22       | JST-UI-008,JST-UI-014,JST-API-005                                                                                                                                        | Centered commit-selector content, oval ID chips and zero section margin; focused interaction/accessibility acceptance          | Retain picker/navigation regressions; visual review stays separate            | E-UI-036                                                                                                                                                                                                                                                                                                                                                       |
+| M4.24       | Done        | M4.23,M4.17 | JST-UI-002,JST-UI-009,JST-API-005                                                                                                                                        | Conflict sheet, highlighted editor and accept-all controls; focused and cold browser evidence                                  | Retain merge and shell regressions; visual review remains separate            | E-UI-037                                                                                                                                                                                                                                                                                                                                                       |
 | M5          | Done        | M4.1        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                                                                                                                      | Authenticated typed commands and shared RPC policy                                                                             | Retain mutation conformance; proceed to M6                                    | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-M5-005,E-M5-006,E-M5-007,E-M5-008,E-UI-028                                                                                                                                                                                                                                                                   |
 | M5.1        | Done        | M4.1        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                                                                                                                      | Basic changes/refs/reconcile; preview receipt and semantic policy                                                              | Retain basic mutation acceptance                                              | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-UI-028                                                                                                                                                                                                                                                                                                       |
 | M5.2        | Done        | M5.1        | JST-MUT-003                                                                                                                                                              | Full abandon descendant bookmark workspace/evolution parity                                                                    | Retain abandon acceptance                                                     | E-M5-005                                                                                                                                                                                                                                                                                                                                                       |
@@ -21016,6 +21017,194 @@ and named tests are checked by the progress gate.
     "versions": "Node 24.10.0; pnpm 10.32.1; Svelte 5.57.1; Storybook 10.5.7; Vitest 4.1.11; Vite 8.3.1. Existing released dependency resolution unchanged.",
     "formats": "Styling only. Navigation section top margin is zero. Commit-selector row aligns avatar and body at the vertical center; non-interactive GIT/JJ chips use existing indicator-size pill variants in the selected trigger and options. Full bound native identities, copyable identity controls, selector search, typed commands, controller/HTTP/native object/WAL/manifest/receipt formats are unchanged.",
     "next": "Retain focused commit-picker, mutation and navigation acceptance; human visual baseline approval remains separate."
+  },
+  {
+    "id": "E-UI-037",
+    "tasks": [
+      "M4.24"
+    ],
+    "date": "2026-09-30",
+    "kind": "shell-conflict-merge-editor",
+    "revision": "Enclosing Jujutsu change txqzzrux.",
+    "before": "Clean working change. The editor was a DialogFrame with term/fingerprint cards and standalone native-side buttons. The new sheet regression and four adapted flow stories all failed to find the named AppShell region before implementation.",
+    "files": [
+      "web/src/lib/ui/store-application/StoreApplication.svelte",
+      "web/src/lib/ui/store-application/StoreApplicationHeaderActions.svelte",
+      "web/src/lib/ui/store-conflicts/StoreConflictEditor.svelte",
+      "web/src/lib/ui/store-conflicts/StoreConflictPath.svelte",
+      "web/src/lib/ui/store-conflicts/conflict-editor.ts",
+      "web/src/lib/ui/store-conflicts/store-conflicts.css",
+      "web/src/lib/ui/store-mutations/StoreRepositoryActions.svelte",
+      "catalog/fixtures/StoreConflictEditorFixture.svelte",
+      "catalog/components/store-mutations/StoreConflictEditor.stories.svelte",
+      "web/tests/browser/conflicts.spec.ts",
+      "spec/src/api.md",
+      "spec/src/ui.md",
+      "spec/src/verification.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-mutations/StoreConflictEditor.stories.svelte -t 'Shell merge surface'",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial test-name filter matched no generated story test names; 5 skipped and no acceptance evidence."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-mutations/StoreConflictEditor.stories.svelte",
+        "result": "fail",
+        "failures": 5,
+        "note": "Before production changes: 5 failed at the missing structural-sheet region. Ignored .scratch/conflict-sheet-before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-mutations/StoreConflictEditor.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "After and final narrow runs: 5 Chromium interaction/accessibility checks pass, including dominant editor geometry, Rust tokens in all three panes, accept-all right, disabled header mutation/refresh, Escape/focus restoration, atomic apply, staged merge, unknown recovery and stale fingerprint. Stories remain visual-pending."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-mutations/StoreConflictEditor.stories.svelte catalog/components/store-mutations/StoreRepositoryActions.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte catalog/components/store-application/RepositoryApplication.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "30 directly affected shell, repository action and conflict scenarios pass twice. Direct-consumer coverage follows the new root-level sheet ownership; unrelated stories stay out of scope."
+      },
+      {
+        "command": "pnpm exec tsx --test web/tests/store-conflict-model.test.ts web/tests/production-store-conflicts.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "5 exact native command/upload tests pass: full IDs and fingerprints, complete atomic paths, scoped bytes, upload bounds and executable/copy-term binding."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial and final web checks pass with zero errors/warnings."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial and final catalog checks pass with zero errors/warnings and 75-module catalog boundary audit."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "289 production/catalog/script modules pass ownership and no-growth checks; repeated after final host and styling changes."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Fresh built UI passes. Existing nonfatal Design Core CSS minification and bundle warnings remain. No Rust build. Rebuilt after compact Left/Right labels removed source-term metadata from the editor header."
+      },
+      {
+        "command": "pnpm exec playwright test --config .scratch/workspace-browser.config.mts web/tests/browser/conflicts.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "3 cold built-UI browser tests pass twice. LocalTrusted bootstrap replaces the stale token-control bootstrap in this exact test. Both accept-all controls preserve term 0/2 and full fingerprints; custom edit clears prior selection; staged bytes remain exact and persist through path switching and preview/back; subsequent edits invalidate stale upload selection; desktop and 390px mobile root sheet dismiss cleanly. Fresh isolated Vite preview on 7471 shuts down after each run."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/ui/store-conflicts web/src/lib/ui/store-application/StoreApplication.svelte web/src/lib/ui/store-mutations/StoreRepositoryActions.svelte catalog/fixtures/StoreConflictEditorFixture.svelte catalog/components/store-mutations/StoreConflictEditor.stories.svelte spec/src/ui.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed implementation, fixtures and canonical chapter formatted; additional exact changed-file subsets were formatted after edits."
+      },
+      {
+        "command": "node .scratch/restart-workspace-ui.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Owned demo restarted to load each final UI build using existing explicit development binaries and preserved repository data. Final PID 31688 ready at 127.0.0.1:7460. No reset/reseed, Rust rebuild or unrelated daemon restart."
+      },
+      {
+        "command": "CUA live built-UI verification",
+        "result": "pass",
+        "failures": 0,
+        "note": "Separate hidden tab 5 verifies both header-menu and context-aware right-rail entry points. Final compact Left/Resolved/Right editor is 501px of the 664px sheet. Main and right rail are inert while open and restored on Cancel; focus returns to Resolve conflicts. Built-in accept-all left changes center content and Preview 0/1 to 1/1. No live upload, mutation preview or apply was invoked. Screenshot .scratch/conflict-sheet.png saved and temporary tab closed; user tabs preserved."
+      },
+      {
+        "command": "pnpm exec prettier --write web/tests/browser/conflicts.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact cold browser scenarios formatted after LocalTrusted migration and mobile acceptance additions."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/ui/store-application/StoreApplication.svelte web/src/lib/ui/store-application/StoreApplicationHeaderActions.svelte web/src/lib/ui/store-conflicts/StoreConflictEditor.svelte web/src/lib/ui/store-mutations/StoreRepositoryActions.svelte spec/src/api.md spec/src/verification.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final root ownership, header disable guard, focus target and canonical documents formatted."
+      },
+      {
+        "command": "pnpm exec prettier --write catalog/components/store-mutations/StoreConflictEditor.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final disabled-header regression assertions formatted."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/ui/store-conflicts/StoreConflictPath.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final minimal pane labels formatted."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Same-change evidence ledger and task row formatted."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Canonical requirement/verification validators pass."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "Protected UI and API changes have same-change canonical chapter updates."
+      },
+      {
+        "command": "pnpm spec:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Canonical mdBook HTML builds."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Same-change progress/evidence audit passes."
+      },
+      {
+        "command": "pnpm exec prettier --check web/src/lib/ui/store-application/StoreApplication.svelte web/src/lib/ui/store-application/StoreApplicationHeaderActions.svelte web/src/lib/ui/store-conflicts/StoreConflictEditor.svelte web/src/lib/ui/store-conflicts/StoreConflictPath.svelte web/src/lib/ui/store-conflicts/conflict-editor.ts web/src/lib/ui/store-conflicts/store-conflicts.css web/src/lib/ui/store-mutations/StoreRepositoryActions.svelte catalog/fixtures/StoreConflictEditorFixture.svelte catalog/components/store-mutations/StoreConflictEditor.stories.svelte web/tests/browser/conflicts.spec.ts spec/src/api.md spec/src/ui.md spec/src/verification.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 14 changed implementation, regression and canonical files pass formatting."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/ui/store-application/StoreApplication.svelte catalog/components/store-mutations/StoreConflictEditor.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final background-navigation inert guard and its restoration assertion formatted."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/ui.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Canonical background-navigation and snapshot guard prose formatted."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "deferred": [
+      "Changed stories remain visual-pending; baseline approval is separate.",
+      "Root aggregate pnpm spec:check, pnpm check, pnpm test and pnpm build; unrelated Storybook/browser suites; Rust checks/tests/builds, HTTP generation and real-RustFS qualification are out of scope under the targeted UI policy."
+    ],
+    "versions": "jj 0.45.1; Node 24.10.0; pnpm 10.32.1; Svelte 5.57.1; Storybook 10.5.7; Vitest 4.1.11; Vite 8.3.1. Existing dependency resolution unchanged; public Design Core AppShell.SurfaceLayer and MergeEditor APIs used. No sibling package or dependency edits.",
+    "formats": "Presentation and consumer integration only. One shell-root conflict sheet covers main and right, preserves native descriptors in bound state, keeps per-path merge drafts, and omits extra metadata. Built-in accept-all updates the exact native term when center bytes match; custom edits clear a previous term/upload selection until explicitly staged. Stage captures the descriptor and pending upload prevents path switching/dismissal. The complete preview/apply/unknown/stale workflow and request identities remain unchanged. No native object, manifest, WAL, receipt, credential or HTTP format changes. Background repository navigation is inert while the sheet is open, and header mutations/refresh are disabled, so draft resolution stays attached to the captured selection.",
+    "next": "Retain focused native-term, staged-edit, atomic recovery and shell lifecycle regressions; human visual baseline approval remains separate."
   }
 ]
 ```

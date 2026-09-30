@@ -18,7 +18,7 @@ supply interchangeable sources. Deterministic fixtures remain catalog-only.
 | JST-UI-006 | Large repository collections MUST use bounded virtual rows, all resizable shell/canvas regions MUST persist versioned layout state, and catalog stories MUST exercise the production components.                                                                                                                                                                                                                                                                                                                                           |
 | JST-UI-007 | Repository search MUST use the released Design Core Command View in a Community-adapted overlay, query the selected authenticated operation snapshot, represent readiness and paging states, and navigate results with stable full identities.                                                                                                                                                                                                                                                                                             |
 | JST-UI-008 | Authenticated repository commands and text-file edits MUST use Community-adapted actions, composer-backed prose fields, shared commit/change identity rows, searchable Design Core commit selectors and form/confirmation controls, preview the exact typed request before apply, preserve its request ID through unknown outcomes, and advance the displayed snapshot only from a committed receipt.                                                                                                                                      |
-| JST-UI-009 | Conflict editing MUST present the native path, terms, fingerprints and supported resolution actions without flattening conflicts, stage bounded uploads separately, preview the atomic selection, and retain unsupported or stale states explicitly.                                                                                                                                                                                                                                                                                       |
+| JST-UI-009 | Conflict editing MUST use the AppShell structural sheet with a dominant syntax-highlighted merge editor, use its built-in accept-all controls for text sides, retain exact native paths, ordered terms and fingerprints in bound state without extra metadata cards, stage bounded uploads separately, preview the atomic selection, and retain server-advertised unsupported or stale states explicitly.                                                                                                                                  |
 | JST-UI-010 | The application MUST bootstrap before repository UI, auto-open the sole LocalTrusted repository or show its installation catalog chooser, and label unverified loopback identity as Local; operational backup/restore status UI remains deferred.                                                                                                                                                                                                                                                                                          |
 | JST-UI-011 | Authenticated connection MUST request one manual token, keep it only in memory, discover all currently authorized repositories, restore an ID-based deep link or show a chooser, and cancel requests, SSE and protected caches when the token is replaced, revoked or disconnected.                                                                                                                                                                                                                                                        |
 | JST-UI-012 | The profile menu MUST open a transient Settings destination with Local service, Repository and Search sections; replace repository navigation/content/actions/details while open; preserve the unchanged repository route and snapshot on return; keep its destination and selected section out of URL, browser history and storage; render accessible icon-only settings navigation when the desktop sidebar is collapsed; refresh advertised search health explicitly; and prepare only a lag-reported or explicitly selected operation. |
@@ -417,12 +417,20 @@ require the compact awaited confirmation contract. Fixture stories exercise
 prepared, committed, rejected and outcome-unknown states without production
 transport.
 
-M4.17 owns native conflict editing. The editor loads complete descriptors for
-the selected commit, identifies every term and fingerprint, disables unsupported
-editor shapes with their native reason, and offers only server-advertised term,
-delete or bounded uploaded-file actions. The complete multi-path selection is
-previewed and applied atomically through the same durable request workflow;
-stale fingerprints never trigger an implicit reread or partial publication.
+M4.17 owns native conflict editing. M4.24 presents resolution in the AppShell
+structural sheet covering main and the right rail, retaining shell-owned focus,
+Escape dismissal and underlying-surface restoration. Background navigation,
+header mutations and snapshot refresh stay unavailable while the sheet is open,
+keeping the draft bound to its selection. A compact path list and footer frame
+the syntax-highlighted three-way editor; extra native metadata and term cards
+are omitted. Built-in accept-all controls select an exact left/right term when
+the resolved bytes match it; custom center edits invalidate any prior selection
+until explicitly staged. The complete descriptors, ordered terms and
+fingerprints stay bound to the request. Unsupported editor shapes retain their
+native reason and only server-advertised term, delete or bounded uploaded-file
+actions are offered. The complete multi-path selection is previewed and applied
+atomically through the same durable request workflow; stale fingerprints never
+trigger an implicit reread or partial publication.
 
 M9.5 collaboration cards use the same bordered row structure and metadata/action
 placement as Branches and Op Log. Agent cards show the integration avatar, name,

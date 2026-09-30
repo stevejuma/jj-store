@@ -752,6 +752,13 @@ replacement-file actions use the authorized endpoint specified below. M4.17
 connects these declarations to the shared conflict editor without changing the
 native resolution contract.
 
+M4.24 hosts this workflow in the AppShell structural sheet. Built-in text-side
+accept-all controls retain an exact native term selection when the center bytes
+match that side; custom edits clear a previous selection until staged. Native
+term IDs and fingerprints remain in the typed request even though metadata cards
+are omitted from the editor. Uploads capture the selected descriptor so path
+switching cannot rebind staged bytes to another conflict.
+
 EditFile is advertised as `edit_file` and carries the exact local bookmark name
 and expected single target, canonical source and destination paths, bounded
 UTF-8 replacement contents and the new child change description. The same

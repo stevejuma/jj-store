@@ -12,7 +12,11 @@
   import GitCommitIcon from "@lucide/svelte/icons/git-commit-horizontal";
   import FileWarningIcon from "@lucide/svelte/icons/file-warning";
   import type { StoreController } from "../../controller/contracts.js";
-  import StoreConflictEditor from "../store-conflicts/StoreConflictEditor.svelte";
+  import { getContext } from "svelte";
+  import {
+    conflictEditorKey,
+    type OpenConflictEditor,
+  } from "../store-conflicts/conflict-editor.js";
   import StoreMutationDialog from "./StoreMutationDialog.svelte";
   import StoreRepositoryActionsPanel from "./StoreRepositoryActionsPanel.svelte";
   import { mutationActionKind, type StoreMutationAction } from "./model.js";
@@ -22,11 +26,13 @@
     presentation = "menu",
     primaryAction = "new",
     primaryLabel = "Add change",
+    disabled = false,
   }: {
     controller: StoreController;
     presentation?: "menu" | "panel" | "primary";
     primaryAction?: "new" | "bookmark-create";
     primaryLabel?: string;
+    disabled?: boolean;
   } = $props();
   const view = $derived(controller.state);
   const selectedCommit = $derived(
@@ -43,10 +49,14 @@
     null,
   );
   let dialogOpen = $state(false);
-  let conflictOpen = $state(false);
+  const openConflictEditor = getContext<OpenConflictEditor | undefined>(
+    conflictEditorKey,
+  );
 
   function available(value: StoreMutationAction) {
-    return view.mutation.available.includes(mutationActionKind[value]);
+    return (
+      !disabled && view.mutation.available.includes(mutationActionKind[value])
+    );
   }
 
   function select(value: StoreMutationAction | "resolve-conflicts") {
@@ -54,7 +64,7 @@
   }
 
   function activate(value: StoreMutationAction | "resolve-conflicts") {
-    if (value === "resolve-conflicts") conflictOpen = true;
+    if (value === "resolve-conflicts") openConflictEditor?.();
     else {
       action = value;
       dialogOpen = true;
@@ -65,7 +75,7 @@
     if (open || !pendingAction) return;
     if (pendingAction === "resolve-conflicts") {
       pendingAction = null;
-      conflictOpen = true;
+      openConflictEditor?.();
       return;
     }
     action = pendingAction;
@@ -84,7 +94,9 @@
           variant="ghost"
           size="icon-sm"
           aria-label="Repository actions"
-          disabled={!view.authenticated || view.mutation.available.length === 0}
+          disabled={disabled ||
+            !view.authenticated ||
+            view.mutation.available.length === 0}
           ><MoreHorizontalIcon aria-hidden="true" /></Button
         >{/snippet}
     </DropdownMenu.Trigger>
@@ -191,7 +203,4 @@
 
 <Dialog.Root bind:open={dialogOpen}>
   <StoreMutationDialog {controller} {action} open={dialogOpen} />
-</Dialog.Root>
-<Dialog.Root bind:open={conflictOpen}>
-  <StoreConflictEditor {controller} open={conflictOpen} />
 </Dialog.Root>
