@@ -1,26 +1,27 @@
 # Specification governance
 
-Use the parent workspace test escalation ladder. The archived attachment is
-non-normative; requirement changes belong here before or with implementation.
-Generated book output is ignored. Only milestones.md carries implementation
-status; reports hold immutable evidence rather than competing status summaries.
-Integration-modified production modules are extracted below the 300-line budget;
-Storybook interaction and accessibility checks remain required while visual
-baselines stay separately approved. Focused test commands may prove a requested
-slice without running unrelated repository suites when the user narrows test
-scope, but every directly affected boundary and shared helper still needs named
-evidence.
+The targeted verification policy in the tracked agent guide is jj-store's
+controlling interpretation of the parent workspace test escalation ladder. The
+archived attachment is non-normative; requirement changes belong here before or
+with implementation. Generated book output is ignored. Only milestones.md
+carries implementation status; reports hold immutable evidence rather than
+competing status summaries. Integration-modified production modules are
+extracted below the 300-line budget; Storybook interaction and accessibility
+checks remain required while visual baselines stay separately approved. Every
+directly affected boundary still needs named evidence, while unrelated
+repository suites remain outside the default verification scope.
 
 ## Requirements
 
-| ID          | Requirement                                                                                                                                                                                               |
-| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| JST-GOV-001 | The canonical specification MUST live under spec/src, build with mdBook, and assign unique JST requirement IDs with exactly one verification row each.                                                    |
-| JST-GOV-002 | Protected implementation, interface, tooling, and agent-guidance changes MUST update their mapped canonical chapter in the same Jujutsu change.                                                           |
-| JST-GOV-003 | Every implementation slice MUST update milestones.md with actual commands, results, failures, affected files, versions/formats, gaps, and next action in the same change.                                 |
-| JST-GOV-004 | Progress checks MUST validate task/dependency references, evidence links/test names, completion gates, and same-change ledger updates; passing bookkeeping MUST NOT substitute for passing product tests. |
-| JST-GOV-005 | Verified slices MUST be committed with Jujutsu while unrelated work and local workspace configuration remain uncommitted.                                                                                 |
-| JST-GOV-006 | Rust formatting MUST use the pinned toolchain component and tracked rustfmt.toml, and MUST be checked by both normal and specification checks.                                                            |
+| ID          | Requirement                                                                                                                                                                                                                                                              |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| JST-GOV-001 | The canonical specification MUST live under spec/src, build with mdBook, and assign unique JST requirement IDs with exactly one verification row each.                                                                                                                   |
+| JST-GOV-002 | Protected implementation, interface, tooling, and agent-guidance changes MUST update their mapped canonical chapter in the same Jujutsu change.                                                                                                                          |
+| JST-GOV-003 | Every implementation slice MUST update milestones.md with actual commands, results, failures, affected files, versions/formats, gaps, and next action in the same change.                                                                                                |
+| JST-GOV-004 | Progress checks MUST validate task/dependency references, evidence links/test names, completion gates, and same-change ledger updates; passing bookkeeping MUST NOT substitute for passing product tests.                                                                |
+| JST-GOV-005 | Verified slices MUST be committed with Jujutsu while unrelated work and local workspace configuration remain uncommitted.                                                                                                                                                |
+| JST-GOV-006 | Rust formatting MUST use the pinned toolchain component and tracked rustfmt.toml, and MUST be checked by both normal and specification checks.                                                                                                                           |
+| JST-GOV-007 | Verification MUST remain within the changed layer and direct consumers by default; full suites require independent cross-layer or multi-consumer impact, shared infrastructure, release qualification, or an explicit user request, with the escalation reason recorded. |
 
 ## Change map
 
@@ -43,6 +44,24 @@ evidence.
 | `^(?:crates/jj-store-testkit/\|runtime/\|fixtures/\|schemas/\|proto/\|docs/upstream-lock\|docs/embedded-rustfs-qualification\|docs/codec\|docs/compatibility\|docs/licenses/\|docs/evidence/\|scripts/.*(?:rustfs\|spike\|upstream)\|deploy/)` | `compatibility.md`   |
 | `^(?:scripts/\|AGENTS\.md$\|spec-validator\.config\.mjs$\|spec/book\.toml$\|\.gitignore$\|\.pnpmfile\.cjs$\|\.prettier)`                                                                                                                       | `spec-governance.md` |
 | `^(?:Cargo\.(?:toml\|lock)$\|rust-toolchain\.toml$\|package\.json$\|pnpm-lock\.yaml$\|README\.md$\|LICENSE\.md$\|docs/implementation-plan\.md$\|docs/reference/)`                                                                              | `architecture.md`    |
+
+## Verification scope
+
+A logical behavior remains one verification surface when it spans its production
+module, colocated styles, direct tests or stories, canonical chapter and ledger.
+The number of edited files or stories does not trigger aggregate gates. UI-only
+work runs the relevant web or catalog check plus the exact interaction,
+accessibility or browser acceptance for that surface. Rust-only work runs the
+affected package or crate checks and exact regression without unrelated UI or
+workspace lanes.
+
+Escalation to a full relevant suite requires impact across independent product
+layers, packages, deployable surfaces or consumers, or a change to shared build,
+test or runtime infrastructure capable of altering unrelated lanes. Release
+qualification and an explicit user request also authorize escalation. Evidence
+records the concrete reason before the wider command runs. Root aggregate
+`pnpm spec:check`, `pnpm check`, `pnpm test` and `pnpm build` commands are not
+default completion gates for a single-surface change.
 
 Governance commands that read tracked specification state through child
 processes use an explicit bounded output allowance large enough for the current

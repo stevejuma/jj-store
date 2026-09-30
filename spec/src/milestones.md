@@ -8,7 +8,7 @@ adds evidence here in its enclosing Jujutsu change.
 
 | ID          | Status      | Depends     | Requirements                                                                                                                                                             | Gate                                                                                                                | Next                                                               | Evidence                                                                                                                                                                                                                                                                                                                                                       |
 | ----------- | ----------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Bootstrap   | Done        | -           | JST-GOV-001,JST-GOV-002,JST-GOV-003,JST-GOV-004,JST-GOV-005,JST-GOV-006                                                                                                  | Spec, ledger, skeleton, gates and independent commit                                                                | Maintain governance each slice                                     | E-BOOT-001,E-BOOT-002                                                                                                                                                                                                                                                                                                                                          |
+| Bootstrap   | Done        | -           | JST-GOV-001,JST-GOV-002,JST-GOV-003,JST-GOV-004,JST-GOV-005,JST-GOV-006,JST-GOV-007                                                                                      | Spec, ledger, skeleton, gates and independent commit                                                                | Maintain governance each slice                                     | E-BOOT-001,E-BOOT-002,E-GOV-001                                                                                                                                                                                                                                                                                                                                |
 | Bootstrap.1 | Done        | -           | JST-GOV-001,JST-GOV-004,JST-GOV-006                                                                                                                                      | Reference checksum, requirements, progress checker negative tests                                                   | Governance maintained each slice                                   | E-BOOT-001,E-BOOT-002                                                                                                                                                                                                                                                                                                                                          |
 | M0          | Done        | Bootstrap   | JST-COMPAT-001,JST-COMPAT-002                                                                                                                                            | Compiled extension and exact RustFS contract qualified                                                              | Maintain pinned compatibility probes                               | E-M0-001,E-M0-002                                                                                                                                                                                                                                                                                                                                              |
 | M0.1        | Done        | Bootstrap   | JST-COMPAT-001                                                                                                                                                           | Pin references/licenses and complete trait/codec matrix                                                             | Re-audit on upstream upgrades                                      | E-M0-001                                                                                                                                                                                                                                                                                                                                                       |
@@ -19894,6 +19894,40 @@ and named tests are checked by the progress gate.
     "remaining": [],
     "versions": "jj 0.45.1; pnpm 10.32.1; manifest format 2.",
     "formats": "No product API, persistence or wire format change. The guide and CLI help now identify the existing format-2 single-upstream profile as active and keep M10.8 plus stock-JJ filesystem mirroring deferred."
+  },
+  {
+    "id": "E-GOV-001",
+    "tasks": [
+      "Bootstrap"
+    ],
+    "date": "2026-09-30",
+    "kind": "targeted-verification-scope-guidance",
+    "before": "The tracked guide already preferred targeted verification, but canonical governance deferred to the parent ladder and its escalation wording could still treat one shared UI component with several stories as full-suite impact. That ambiguity contributed to root aggregate runs for a small Settings presentation fix.",
+    "files": [
+      "AGENTS.md",
+      "spec/src/milestones.md",
+      "spec/src/spec-governance.md",
+      "spec/src/verification.md"
+    ],
+    "tests": [],
+    "runs": [
+      {
+        "command": "pnpm exec prettier --write AGENTS.md spec/src/spec-governance.md spec/src/verification.md spec/src/milestones.md; pnpm spec:validate; pnpm spec:first; pnpm spec:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "The four guidance files are formatted, all 105 requirements validate, the protected guide maps to the two changed canonical chapters, and mdBook builds."
+      },
+      {
+        "command": "pnpm exec prettier --check AGENTS.md spec/src/spec-governance.md spec/src/verification.md spec/src/milestones.md; pnpm spec:validate; pnpm spec:first; pnpm check:progress; pnpm spec:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final targeted documentation verification passes without running root product aggregates: formatting, 105 requirements, same-change mapping, all 71 task rows and mdBook are valid."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "versions": "jj 0.45.1; pnpm 10.32.1; spec-validator current workspace dependency.",
+    "formats": "Documentation and agent-guidance change only. No product code, API, schema, generated contract, persistence, wire format, test implementation or runtime behavior changes. Root aggregate product gates are out of scope under JST-GOV-007."
   }
 ]
 ```

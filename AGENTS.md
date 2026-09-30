@@ -54,7 +54,8 @@ browser/lifecycle changes. Visual baselines require explicit approval.
 
 Optimize for fast feedback by testing the smallest complete impact surface.
 Start with the exact regression, then run only the checks and tests for the
-changed layer and its direct consumers.
+changed layer and its direct consumers. For jj-store, this section is the
+controlling interpretation of the parent workspace test-scope ladder.
 
 - UI-only changes run the relevant `web` or `catalog` type check and the exact
   unit, Storybook, accessibility, or browser tests for the affected surface.
@@ -65,10 +66,15 @@ changed layer and its direct consumers.
   workspace.
 - Cross-layer changes run focused checks on each affected UI and Rust boundary.
   Public contract generation is checked when the contract changed.
-- Run the full relevant test suite only when the changed code is shared with or
-  consumed by other crates, packages, surfaces, hosts, shared fixtures, or test
-  infrastructure; when release qualification requires it; or when the user
-  explicitly requests it. Record why the wider run is required.
+- Editing multiple files for one behavior does not make a change cross-layer.
+  Its production files, styles, direct tests or stories, canonical chapter and
+  ledger remain one verification surface. A component having several stories
+  does not by itself require the full Storybook or repository suite.
+- Run a full relevant suite only when one change affects two or more independent
+  product layers, packages, deployable surfaces or consumers; changes shared
+  build, test or runtime infrastructure that can alter unrelated lanes; performs
+  release qualification; or when the user explicitly requests it. Record the
+  concrete reason for escalation before running the wider command.
 - Record every command actually run and mark wider lanes not run under this
   policy as out of scope. A focused passing result must not be described as a
   full-suite pass.
