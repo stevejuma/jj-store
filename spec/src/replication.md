@@ -125,6 +125,16 @@ Code reduction adds only the operation heads explicitly named by accepted
 origins. Production native sessions pass those candidates through the pinned
 `jj-lib` operation-parent walk, removing delayed ancestors while retaining
 concurrent siblings. Import and reads do not create a reconciliation operation.
+The authenticated and LocalTrusted native RPC surfaces expose one exact current
+snapshot plus receipt-backed application mutation and status methods. These
+methods reuse the single application `CommandService`; the server derives the
+principal and publication identity from the admitted session.
+`jj sync reconcile` acts only when the exact snapshot has multiple heads,
+chooses the first canonically sorted current head as the merge base and derives
+a stable request ID from the repository and complete snapshot. It merges the
+native views, including distinct workspace targets, through
+`ReconcileOperations`. Repeated requests recover the same receipt. Snapshot/head
+reads, origin import and the replication worker never invoke this command.
 AgentStore reduction applies the exact authored typed deltas as accepted facts.
 Disjoint sessions, tools, evidence, event batches, transcripts, projections and
 relations form bounded canonical unions. Causal descendants supersede checkpoint

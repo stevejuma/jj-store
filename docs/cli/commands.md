@@ -3,6 +3,7 @@
 - `jj store init`: create a new repository and its first physical workspace.
 - `jj store attach`: create a physical workspace for an existing repository.
 - `jj store status`: inspect authoritative operation heads.
+- `jj sync reconcile`: explicitly merge the exact current operation heads.
 - `jj store doctor`: check binding and current access without publishing.
 - `jj store login` and `logout`: manage one OS credential account.
 - `jj store capabilities`: inspect verified and unqualified capabilities.

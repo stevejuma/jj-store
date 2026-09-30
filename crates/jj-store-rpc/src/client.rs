@@ -1,5 +1,6 @@
 use crate::{
-    CHUNK_BYTES, MAX_IDS, REQUEST_BYTES, RESPONSE_BYTES, administration as admin, agent, review,
+    CHUNK_BYTES, MAX_IDS, REQUEST_BYTES, RESPONSE_BYTES, administration as admin, agent,
+    application, review,
     wire::{self, native_store_client::NativeStoreClient},
     wire_object, wire_record,
 };
@@ -306,6 +307,16 @@ impl NativeClient {
         }
         Ok(ids)
     }
+    pub async fn snapshot(&self) -> Result<jj_store_service::transport::Snapshot, Status> {
+        let response = self
+            .wire()
+            .current_snapshot(self.request(wire::Repository {
+                repository: self.repository.as_bytes().to_vec(),
+            }))
+            .await?
+            .into_inner();
+        admin::snapshot(Some(response)).map_err(admin::bad_response)
+    }
     pub async fn inventory(&self, copies: bool, limit: usize) -> Result<Vec<[u8; 64]>, Status> {
         if limit == 0 || limit > MAX_IDS {
             return Err(Status::resource_exhausted("inventory limit"));
@@ -348,6 +359,36 @@ impl NativeClient {
             }))
             .await?;
         Ok(())
+    }
+    pub async fn apply_mutation(
+        &self,
+        request: &jj_store_service::mutations::Request,
+    ) -> Result<jj_store_service::mutations::Outcome, Status> {
+        let request_json = serde_json::to_vec(request)
+            .map_err(|_| Status::invalid_argument("application mutation JSON request"))?;
+        let reply = self
+            .wire()
+            .apply_mutation(self.request(wire::MutationRequest {
+                repository: self.repository.as_bytes().to_vec(),
+                request_json,
+            }))
+            .await?
+            .into_inner();
+        application::response(reply)
+    }
+    pub async fn mutation_status(
+        &self,
+        request_id: m::RequestId,
+    ) -> Result<jj_store_service::mutations::Status, Status> {
+        let reply = self
+            .wire()
+            .mutation_status(self.request(wire::MutationStatusRequest {
+                repository: self.repository.as_bytes().to_vec(),
+                request_id: request_id.as_bytes().to_vec(),
+            }))
+            .await?
+            .into_inner();
+        application::response(reply)
     }
     fn replication_request<T: serde::Serialize>(
         &self,

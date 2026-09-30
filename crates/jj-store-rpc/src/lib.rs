@@ -2,6 +2,7 @@
 #![forbid(unsafe_code)]
 pub mod administration;
 pub mod agent;
+mod application;
 pub mod client;
 pub mod review;
 pub mod server;

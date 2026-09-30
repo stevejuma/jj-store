@@ -23,6 +23,7 @@ pub mod review_commands;
 mod review_presentation;
 pub mod server_commands;
 mod store_commands;
+pub mod sync_commands;
 
 pub mod token_commands;
 mod token_journal;

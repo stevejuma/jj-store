@@ -23,6 +23,9 @@ pub enum Extension {
     /// Manage authenticated native JJ repositories
     #[command(long_about = include_str!("../../../docs/cli/store.md"), after_long_help = "Use 'jj store help -k commands' for the native command guide.")]
     Store(StoreArgs),
+    /// Synchronize and explicitly reconcile a local native repository
+    #[command(long_about = include_str!("../../../docs/cli/sync.md"))]
+    Sync(crate::sync_commands::SyncArgs),
 }
 #[derive(Clone, Debug, Args)]
 #[command(disable_help_subcommand = true)]
@@ -82,6 +85,7 @@ pub async fn run(
     let args = match command {
         Extension::Agent(args) => return crate::agent_commands::run(ui, helper, args).await,
         Extension::Review(args) => return crate::review_commands::run(ui, helper, args).await,
+        Extension::Sync(args) => return crate::sync_commands::run(ui, helper, args).await,
         Extension::Store(args) => args,
     };
     let Some(command) = args.command else {

@@ -1,6 +1,6 @@
 use crate::{
-    CHUNK_BYTES, MAX_IDS, REQUEST_BYTES, RESPONSE_BYTES, administration as admin, agent, object,
-    record, review, service_error,
+    CHUNK_BYTES, MAX_IDS, REQUEST_BYTES, RESPONSE_BYTES, administration as admin, agent,
+    application, object, record, review, service_error,
     wire::{
         self,
         native_store_server::{NativeStore, NativeStoreServer},
@@ -14,6 +14,7 @@ use jj_store_service::{
     administration::RepositoryHost,
     auth::{BearerToken, Permission, SystemClock},
     collaboration::ReviewThreadPager,
+    mutations::CommandService,
     pagination,
     registry::{self, RepositoryRegistry},
     transport::{NativeEndpoint, NativeRequest},
@@ -73,6 +74,7 @@ pub struct NativeRpc {
     access: RpcAccess,
     registry: Option<Arc<dyn RepositoryRegistry>>,
     review_threads: Arc<ReviewThreadPager>,
+    commands: CommandService,
 }
 #[derive(Clone)]
 enum RpcAccess {
@@ -107,6 +109,11 @@ impl NativeRpc {
                 return Err(Status::invalid_argument("duplicate repository"));
             }
         }
+        let executor = jj_store_service::commands::Executor::new(
+            jj_store_service::commands::Limits::default(),
+            limits.concurrent,
+        )
+        .map_err(|_| Status::invalid_argument("native command limits"))?;
         Ok(Self {
             repositories: Arc::new(registry),
             host: None,
@@ -118,6 +125,7 @@ impl NativeRpc {
                 ReviewThreadPager::new(pagination::Limits::default(), Arc::new(SystemClock))
                     .map_err(review::read_error)?,
             ),
+            commands: CommandService::new(executor),
         })
     }
     pub fn hosted(host: RepositoryHost, limits: Limits) -> Result<Self, Status> {
@@ -432,6 +440,27 @@ impl NativeStore for NativeRpc {
         })
         .await
     }
+    async fn current_snapshot(
+        &self,
+        request: Request<wire::Repository>,
+    ) -> Result<Response<wire::Snapshot>, Status> {
+        let session = self
+            .bind(
+                &request.get_ref().repository,
+                self.request_access(&request)?,
+            )?
+            .into_session();
+        self.bounded(async move {
+            let snapshot = session
+                .snapshot()
+                .await
+                .map_err(|error| service_error(error.into()))?
+                .manifest()
+                .snapshot();
+            Ok(admin::wire_snapshot(snapshot))
+        })
+        .await
+    }
     async fn inventory(
         &self,
         request: Request<wire::InventoryRequest>,
@@ -482,6 +511,43 @@ impl NativeStore for NativeRpc {
         self.bounded(async {
             session.publish(old, new).await.map_err(service_error)?;
             Ok(wire::Empty {})
+        })
+        .await
+    }
+    async fn apply_mutation(
+        &self,
+        request: Request<wire::MutationRequest>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        let access = self.request_access(&request)?;
+        let body = request.into_inner();
+        let command = application::request(&body.request_json)?;
+        let session = self.bind(&body.repository, access)?.into_session();
+        let commands = self.commands.clone();
+        self.bounded(async move {
+            let outcome = commands
+                .apply(session, &command)
+                .await
+                .map_err(application::error)?;
+            application::reply(&outcome)
+        })
+        .await
+    }
+    async fn mutation_status(
+        &self,
+        request: Request<wire::MutationStatusRequest>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        let access = self.request_access(&request)?;
+        let body = request.into_inner();
+        let request_id = m::RequestId::from_slice(&body.request_id)
+            .map_err(|_| Status::invalid_argument("application request ID"))?;
+        let session = self.bind(&body.repository, access)?.into_session();
+        let commands = self.commands.clone();
+        self.bounded(async move {
+            let status = commands
+                .status(session, request_id)
+                .await
+                .map_err(application::error)?;
+            application::reply(&status)
         })
         .await
     }

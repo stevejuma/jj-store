@@ -9,9 +9,12 @@ service NativeStore {
   rpc ChangeToken(TokenRequest) returns (TokenReply);
   rpc TokenStatus(TokenRequest) returns (TokenReply);
   rpc Authorize(AccessRequest) returns (Empty);
+  rpc CurrentSnapshot(Repository) returns (Snapshot);
   rpc Heads(Repository) returns (Ids);
   rpc Inventory(InventoryRequest) returns (Ids);
   rpc Publish(PublishRequest) returns (Empty);
+  rpc ApplyMutation(MutationRequest) returns (JsonReply);
+  rpc MutationStatus(MutationStatusRequest) returns (JsonReply);
   rpc PrepareAgentCapture(AgentCapturePrepareRequest) returns (AgentCapturePrepared);
   rpc PublishAgentDelta(AgentDeltaPublishRequest) returns (AgentPublicationReply);
   rpc ReviewThreads(ReviewThreadsRequest) returns (JsonReply);
@@ -64,6 +67,10 @@ message AccessRequest { bytes repository = 1; bool write = 2; }
 message InventoryRequest { bytes repository = 1; bool copies = 2; uint32 limit = 3; }
 message Ids { repeated bytes ids = 1; }
 message PublishRequest { bytes repository = 1; repeated bytes removed = 2; bytes added = 3; }
+// Application mutations use bounded canonical JSON owned by jj-store-service.
+// The server derives the principal and publication identity from the session.
+message MutationRequest { bytes repository = 1; bytes request_json = 2; }
+message MutationStatusRequest { bytes repository = 1; bytes request_id = 2; }
 // Agent models use bounded canonical JSON so their native identities remain
 // byte-equivalent to the durable device spool and WAL request.
 message AgentCapturePrepareRequest {

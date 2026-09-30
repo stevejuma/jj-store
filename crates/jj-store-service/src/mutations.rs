@@ -147,7 +147,7 @@ pub struct Request {
     pub expected: Snapshot,
     pub command: Command,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 pub struct Receipt {
     pub version: u32,
     pub request_id: m::RequestId,
@@ -171,13 +171,13 @@ pub enum Preview {
     Prepared { preview: PreviewReport },
     Committed { receipt: Receipt },
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(tag = "status", rename_all = "snake_case")]
 pub enum Outcome {
     Committed { receipt: Box<Receipt> },
     OutcomeUnknown { request_id: m::RequestId },
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, schemars::JsonSchema)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(tag = "status", rename_all = "snake_case")]
 pub enum Status {
     Committed { receipt: Box<Receipt> },
