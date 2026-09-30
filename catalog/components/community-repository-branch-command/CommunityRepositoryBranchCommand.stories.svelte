@@ -40,6 +40,27 @@
     ).toBe("0px");
     await expect(getComputedStyle(root).borderBottomLeftRadius).toBe("0px");
     await expect(getComputedStyle(root).borderBottomRightRadius).toBe("0px");
+    const hoverProbe = document.createElement("div");
+    hoverProbe.style.background =
+      "color-mix(in srgb, var(--foreground) 7%, var(--background))";
+    root.append(hoverProbe);
+    const expectedHover = getComputedStyle(hoverProbe).backgroundColor;
+    hoverProbe.remove();
+    const unselectedBranch = canvas.getByRole("option", { name: "main" });
+    await userEvent.hover(unselectedBranch);
+    await expect(getComputedStyle(unselectedBranch).backgroundColor).toBe(
+      expectedHover,
+    );
+    await userEvent.unhover(unselectedBranch);
+    const selectedBranch = canvas.getByRole("option", {
+      name: "feature/publication",
+    });
+    const selectedBackground = getComputedStyle(selectedBranch).backgroundColor;
+    await userEvent.hover(selectedBranch);
+    await expect(getComputedStyle(selectedBranch).backgroundColor).toBe(
+      selectedBackground,
+    );
+    await userEvent.unhover(selectedBranch);
     const workingCopyTitle = workingCopy.querySelector("strong")!;
     const branchTitle = canvas
       .getByRole("option", { name: "main" })

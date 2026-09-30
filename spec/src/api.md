@@ -19,16 +19,16 @@ attachment section 10 is implemented under /v1/repos/{repo}.
 
 ## Requirements
 
-| ID          | Requirement                                                                                                                                                                                                                                            |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| JST-API-001 | Read APIs MUST expose versioned DTOs for capabilities, snapshots, native objects, commit/operation/evolution graphs, trees, files, diffs, and conflicts without parsing CLI output.                                                                    |
-| JST-API-002 | Pagination MUST bind an explicit operation, query, repository, and epoch; ambiguous heads and workspace-dependent expressions MUST require explicit resolution.                                                                                        |
-| JST-API-003 | SSE MUST resume from committed positions and detect writes from other serving processes; slow consumers MUST NOT block repository publication.                                                                                                         |
-| JST-API-004 | Queries MUST enforce authorization and resource budgets, safely render untrusted source content, and expose incomplete history or rebuild tasks explicitly.                                                                                            |
-| JST-API-005 | The Svelte UI MUST show repository selection, snapshot state, three graph views, object/diff inspection, conflict editing, mutation previews/results, and search freshness.                                                                            |
-| JST-API-006 | HTTP routes and owned DTOs MUST generate OpenAPI and TypeScript contracts; normal and specification checks MUST reject drift and validate representative actual responses.                                                                             |
-| JST-API-007 | Versioned bootstrap MUST expose LocalTrusted access mode, public capabilities, embedded-storage readiness and installation-owned repository discovery without exposing internal credentials or treating discovery metadata as repository authority.    |
-| JST-API-008 | `GET /v1/repositories` MUST provide bounded cursor-paged installation discovery: all registered repositories in LocalTrusted mode and only currently reauthorized token candidates in authenticated mode; bootstrap MUST NOT embed repository entries. |
+| ID          | Requirement                                                                                                                                                                                                                                               |
+| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| JST-API-001 | Read APIs MUST expose versioned DTOs for capabilities, snapshots, native objects, commit/operation/evolution graphs, trees, files, diffs, and conflicts without parsing CLI output.                                                                       |
+| JST-API-002 | Pagination MUST bind an explicit operation, query, repository, and epoch; ambiguous heads and workspace-dependent expressions MUST require explicit resolution.                                                                                           |
+| JST-API-003 | SSE MUST resume from committed positions and detect writes from other serving processes; slow consumers MUST NOT block repository publication.                                                                                                            |
+| JST-API-004 | Queries MUST enforce authorization and resource budgets, safely render untrusted source content, and expose incomplete history or rebuild tasks explicitly.                                                                                               |
+| JST-API-005 | The Svelte UI MUST show repository selection, snapshot state, three graph views, object/diff inspection, context-aware right-rail metadata/actions, Community-composer mutation prose, conflict editing, mutation previews/results, and search freshness. |
+| JST-API-006 | HTTP routes and owned DTOs MUST generate OpenAPI and TypeScript contracts; normal and specification checks MUST reject drift and validate representative actual responses.                                                                                |
+| JST-API-007 | Versioned bootstrap MUST expose LocalTrusted access mode, public capabilities, embedded-storage readiness and installation-owned repository discovery without exposing internal credentials or treating discovery metadata as repository authority.       |
+| JST-API-008 | `GET /v1/repositories` MUST provide bounded cursor-paged installation discovery: all registered repositories in LocalTrusted mode and only currently reauthorized token candidates in authenticated mode; bootstrap MUST NOT embed repository entries.    |
 
 ## Bootstrap and browser admission
 
@@ -582,10 +582,14 @@ column clears only that route identity.
 ## Browsing UI execution
 
 The LocalTrusted application reuses the reviewed Storybook shell for Files,
-Branches, JJ Log, Op Log, evolution, existing read details, typed mutations and
-native conflict editing. Branch bookmark cards stay square through the final
-visible row; the branch command view container does not round that row. It
-bootstraps the installation catalog and opens the sole repository without
+Branches, JJ Log, Op Log, evolution, context-aware right-rail details, typed
+mutations and native conflict editing. Branch bookmark cards stay square through
+the final visible row; the branch command view container does not round that row
+and its unselected hover matches JJ Log's neutral row hover. Bookmark selection
+exposes exact metadata and branch-capable actions before a revision is selected;
+revision selection replaces that bookmark detail. The rail uses a page-specific
+Community heading and create action instead of a duplicate Details close header.
+It bootstraps the installation catalog and opens the sole repository without
 credentials. An explicitly configured LocalTrusted search entry starts the
 existing background Tantivy projection through a stable installation-derived
 read-only principal; repository capabilities expose the command only when that
@@ -596,15 +600,18 @@ account or OIDC layer.
 
 The Files controller fetches the selected commit independently from graph
 history so the production header can show the last author avatar, commit
-message, Git revision, JJ change ID and commit time. Collaboration presentation
-uses the Community message/thread/composer models and Design Core tool/diff
-primitives. Agent session cards show the integration's agent avatar and name,
-state, captured start time and compact captured duration when evidence supplies
-both endpoints. SHA-shaped agent, review and anchor identities use copy
-controls; tool details can embed an exact loaded patch or sanitized old/new edit
-input. Revision and path selections open route-addressable Agent context and
-Review discussion columns, and an agent header links back to its associated
-change.
+message, Git revision, JJ change ID and commit time. Mutation prose uses
+Community's form composer. A fixed Edit description or Abandon target is
+presented as one compact row with author avatar, existing description, copyable
+Git/JJ identities and relative time rather than an editable or disabled raw ID
+input. Collaboration presentation uses the Community message/thread/composer
+models and Design Core tool/diff primitives. Agent session cards show the
+integration's agent avatar and name, state, captured start time and compact
+captured duration when evidence supplies both endpoints. SHA-shaped agent,
+review and anchor identities use copy controls; tool details can embed an exact
+loaded patch or sanitized old/new edit input. Revision and path selections open
+route-addressable Agent context and Review discussion columns, and an agent
+header links back to its associated change.
 
 The browser derives integration avatars from bundled, reviewed agent artwork;
 agent identities keep Community's rounded-square shape while people and device

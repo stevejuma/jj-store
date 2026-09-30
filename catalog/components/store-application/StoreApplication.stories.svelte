@@ -80,8 +80,12 @@
     await expect(
       canvas.getByRole("complementary", { name: "Repository details" }),
     ).toBeVisible();
+    await expect(canvas.getByText("Files/Repository")).toBeVisible();
+    await expect(
+      canvas.queryByRole("button", { name: "Close details" }),
+    ).not.toBeInTheDocument();
     await userEvent.click(
-      canvas.getByRole("button", { name: "Close details" }),
+      canvas.getByRole("button", { name: "Toggle details" }),
     );
     await waitFor(() =>
       expect(

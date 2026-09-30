@@ -48,7 +48,7 @@
     );
     const dialog = await page.findByRole("dialog", { name: "Create change" });
     await userEvent.type(
-      within(dialog).getByLabelText("Description"),
+      within(dialog).getByRole("textbox", { name: "Markdown editor" }),
       "Create the browser mutation workflow",
     );
     await userEvent.click(
@@ -64,6 +64,57 @@
       `${"ef".repeat(64)} ${"cd".repeat(64)}`,
     );
     await closeDialog(page, dialog, "Create change");
+  }}
+>
+  {#snippet template()}<StoreRepositoryActionsFixture />{/snippet}
+</Story>
+
+<Story
+  name="Edit description context"
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+    await waitUntilInteractive(canvasElement.ownerDocument);
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Repository actions" }),
+    );
+    await userEvent.click(
+      page.getByRole("menuitem", { name: "Edit description" }),
+    );
+    const dialog = await page.findByRole("dialog", {
+      name: "Edit description",
+    });
+    const selectedCommit = within(dialog).getByRole("group", {
+      name: "Selected commit",
+    });
+    await expect(
+      within(selectedCommit).getByRole("img", { name: "maya@example.test" }),
+    ).toBeVisible();
+    await expect(selectedCommit).toHaveTextContent("Working copy");
+    await expect(
+      within(selectedCommit).getByRole("button", {
+        name: /Copy JJ Change ID/u,
+      }),
+    ).toBeVisible();
+    await expect(
+      within(selectedCommit).getByRole("button", {
+        name: /Copy Git commit SHA/u,
+      }),
+    ).toBeVisible();
+    await expect(selectedCommit).toHaveTextContent(/seconds ago|just now/u);
+    await expect(
+      within(dialog).queryByRole("textbox", { name: "Commit" }),
+    ).not.toBeInTheDocument();
+    const description = within(dialog).getByRole("group", {
+      name: "Description",
+    });
+    await expect(description).toHaveAttribute(
+      "data-ui-component",
+      "community-chat-composer",
+    );
+    await expect(
+      within(description).getByRole("textbox", { name: "Markdown editor" }),
+    ).toBeVisible();
   }}
 >
   {#snippet template()}<StoreRepositoryActionsFixture />{/snippet}

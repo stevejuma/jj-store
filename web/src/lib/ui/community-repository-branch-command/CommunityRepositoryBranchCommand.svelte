@@ -177,6 +177,11 @@
     --ui-command-view-list-max-height: max(12rem, calc(100dvh - 16rem));
     --ui-command-view-list-padding: 0;
     --ui-command-view-item-radius: 0px;
+    --ui-command-view-item-selected-background: color-mix(
+      in srgb,
+      var(--foreground) 7%,
+      var(--background)
+    );
     --ui-command-view-radius: 0px;
   }
   :global(.community-bookmark-cards [data-ui-part="command-group"]) {
@@ -208,8 +213,12 @@
     cursor: pointer;
   }
   .community-working-copy-card:hover,
-  .community-working-copy-card:focus-visible,
-  .community-working-copy-card[data-current="true"] {
+  .community-working-copy-card:focus-visible {
+    background: color-mix(in srgb, var(--foreground) 7%, var(--background));
+  }
+  .community-working-copy-card[data-current="true"],
+  .community-working-copy-card[data-current="true"]:hover,
+  .community-working-copy-card[data-current="true"]:focus-visible {
     background: var(--accent);
   }
   .community-working-copy-card:focus-visible {
@@ -235,10 +244,22 @@
     border-bottom: 1px solid var(--border);
     white-space: normal;
   }
-  :global(.community-bookmark-card[data-current="true"]) {
+  :global(
+    [data-ui-component="command-view"][data-ui-part="item"].community-bookmark-card[data-current="true"]
+  ) {
     background: var(--accent);
   }
-  :global(.community-bookmark-card[data-current="true"])::before {
+  :global(
+    [data-ui-component="command-view"][data-ui-part="item"].community-bookmark-card[data-current="true"]:is(
+        :hover,
+        :focus-visible
+      )
+  ) {
+    background: var(--accent);
+  }
+  :global(
+    [data-ui-component="command-view"][data-ui-part="item"].community-bookmark-card[data-current="true"]
+  )::before {
     content: "";
     position: absolute;
     inset-block: 1rem;

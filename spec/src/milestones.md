@@ -33,7 +33,7 @@ adds evidence here in its enclosing Jujutsu change.
 | M4.5        | Done     | M4.4        | JST-UI-002                                                                                               | Community shell mechanics and navigation acceptance                                                                 | Implement repository fixture views                      | E-UI-002                                                                                                                                                                                                                                                                                                                                                       |
 | M4.6        | Done     | M4.5        | JST-UI-003                                                                                               | Native fixture graph/file/diff drill-down and accessibility                                                         | Visual review; live UI remains deferred                 | E-UI-003                                                                                                                                                                                                                                                                                                                                                       |
 | M4.7        | Done     | M4.6        | JST-UI-004                                                                                               | Complete in-memory application, snapshot file browser and profile footer                                            | Retain fixture acceptance; live UI remains deferred     | E-UI-004                                                                                                                                                                                                                                                                                                                                                       |
-| M4.8        | Done     | M4.7        | JST-UI-002,JST-UI-003,JST-UI-004                                                                         | Reviewed shell/card/header styling and directory navigation pass interaction, accessibility and cold catalog checks | Visual review pending; live UI remains deferred         | E-UI-005,E-UI-006,E-UI-009,E-UI-010,E-UI-022,E-UI-025                                                                                                                                                                                                                                                                                                          |
+| M4.8        | Done     | M4.7        | JST-UI-002,JST-UI-003,JST-UI-004                                                                         | Reviewed shell/card/header styling and directory navigation pass interaction, accessibility and cold catalog checks | Visual review pending; live UI remains deferred         | E-UI-005,E-UI-006,E-UI-009,E-UI-010,E-UI-022,E-UI-025,E-UI-026                                                                                                                                                                                                                                                                                                 |
 | M4.9        | Done     | M4.8        | JST-ARCH-004,JST-UI-005                                                                                  | Shared production components/controller and no-growth architecture checks                                           | Retain source ownership and proceed to bounded APIs     | E-UI-007,E-UI-008                                                                                                                                                                                                                                                                                                                                              |
 | M4.10       | Done     | M4.9        | JST-API-001,JST-API-002,JST-API-006                                                                      | Bounded bookmark, directory metadata and operation-change contracts                                                 | Implement M4.11 authenticated browser data/controller   | E-M4-018                                                                                                                                                                                                                                                                                                                                                       |
 | M4.11       | Deferred | M4.10       | JST-API-004,JST-API-005,JST-UI-005                                                                       | Shared authenticated connection and final registry-only browser acceptance                                          | Future shared/package release                           | E-UI-011                                                                                                                                                                                                                                                                                                                                                       |
@@ -41,7 +41,7 @@ adds evidence here in its enclosing Jujutsu change.
 | M4.13       | Deferred | M4.11       | JST-API-002,JST-UI-006                                                                                   | Cross-consumer release of virtual/lazy listing and persisted-layout extensions                                      | Future Design Core release                              | E-UI-013,E-UI-014,E-UI-015                                                                                                                                                                                                                                                                                                                                     |
 | M4.14       | Deferred | M4.12,M4.13 | JST-API-003,JST-API-004,JST-API-005                                                                      | Registry-resolved shared deployment browser acceptance                                                              | Future shared/package release                           | E-UI-016                                                                                                                                                                                                                                                                                                                                                       |
 | M4.15       | Done     | M4.9,M6.1   | JST-UI-007                                                                                               | Community-adapted command search queries real snapshot-bound Tantivy results and restores stable routes             | Retain LocalTrusted and authenticated search acceptance | E-UI-017,E-UI-024                                                                                                                                                                                                                                                                                                                                              |
-| M4.16       | Done     | M4.9,M5.3   | JST-UI-008                                                                                               | Preview/apply/status repository actions use durable typed mutations and committed snapshot refresh                  | Retain mutation acceptance; implement M4.17 conflicts   | E-UI-018                                                                                                                                                                                                                                                                                                                                                       |
+| M4.16       | Done     | M4.9,M5.3   | JST-UI-008                                                                                               | Preview/apply/status repository actions use durable typed mutations and committed snapshot refresh                  | Retain mutation acceptance; implement M4.17 conflicts   | E-UI-018,E-UI-026                                                                                                                                                                                                                                                                                                                                              |
 | M4.17       | Done     | M4.16,M5.3  | JST-UI-009                                                                                               | Native conflict descriptors, uploads and atomic multi-path resolution are editable without flattening               | Retain conflict-editor and real-repository acceptance   | E-UI-019                                                                                                                                                                                                                                                                                                                                                       |
 | M5          | Done     | M4.1        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                                                      | Authenticated typed commands and shared RPC policy                                                                  | Retain mutation conformance; proceed to M6              | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-M5-005,E-M5-006,E-M5-007,E-M5-008                                                                                                                                                                                                                                                                            |
 | M5.1        | Done     | M4.1        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                                                      | Basic changes/refs/reconcile; preview receipt and semantic policy                                                   | Retain basic mutation acceptance                        | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004                                                                                                                                                                                                                                                                                                                |
@@ -16483,6 +16483,93 @@ and named tests are checked by the progress gate.
     "remaining": ["Visual baselines remain unapproved."],
     "versions": "Node.js 24.10.0; pnpm 10.32.1; Svelte 5.57.1; Design Core ^0.2.0.",
     "formats": "No native object, manifest, WAL, receipt or API changes. Branch presentation keeps square card corners by setting the command view container radius to 0px."
+  },
+  {
+    "id": "E-UI-026",
+    "tasks": ["M4.8", "M4.16"],
+    "date": "2026-09-30",
+    "kind": "contextual-branch-rail-and-mutation-composer",
+    "files": [
+      "catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte",
+      "catalog/components/store-application/StoreApplication.stories.svelte",
+      "catalog/components/store-application/StoreRepositoryBranchContext.stories.svelte",
+      "catalog/components/store-mutations/StoreRepositoryActions.stories.svelte",
+      "spec/src/api.md",
+      "spec/src/milestones.md",
+      "spec/src/ui.md",
+      "web/src/lib/ui/community-repository-branch-command/CommunityRepositoryBranchCommand.svelte",
+      "web/src/lib/ui/store-application/StoreApplication.svelte",
+      "web/src/lib/ui/store-application/StoreRepositoryDetails.svelte",
+      "web/src/lib/ui/store-mutations/StoreMutationCommitTarget.svelte",
+      "web/src/lib/ui/store-mutations/StoreMutationDialog.svelte",
+      "web/src/lib/ui/store-mutations/StoreMutationFields.svelte",
+      "web/src/lib/ui/store-mutations/StoreRepositoryActions.svelte",
+      "web/src/lib/ui/store-mutations/StoreRepositoryActionsPanel.svelte"
+    ],
+    "tests": [],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte catalog/components/store-mutations/StoreRepositoryActions.stories.svelte --reporter=dot",
+        "result": "fail",
+        "failures": 4,
+        "note": "Before implementation, unselected branch hover used the accent color, bookmark selection left the rail in generic repository context, the rail retained its redundant Details close header, and Edit description rendered a textarea plus disabled raw commit input."
+      },
+      {
+        "command": "source audit of Community project overview headings, repository create actions, form composers and Design Core Command View selection tokens",
+        "result": "pass",
+        "failures": 0,
+        "note": "The implementation follows Community's compact body heading and trailing create control, consumes the released Community form composer and uses Design Core's selected-row token while preserving jj-store route and mutation ownership."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/StoreRepositoryBranchContext.stories.svelte catalog/components/store-mutations/StoreRepositoryActions.stories.svelte --reporter=dot",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 13 focused Storybook interaction and automatic accessibility stories pass. They cover neutral branch hover with selected accent retention, contextual rail heading without a duplicate close control, bookmark metadata/actions and revision replacement, create/move dialog wiring, Community composer input and compact copyable commit/change context."
+      },
+      {
+        "command": "pnpm check:architecture && pnpm web:check && pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "The source split remains within production and story budgets, both Svelte projects report zero diagnostics and the catalog boundary accepts all 65 modules."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "The complete repository check lane passes, including formatting, specifications, architecture, Svelte diagnostics, catalog boundaries, Clippy and Rust formatting."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test",
+        "result": "pass",
+        "failures": 0,
+        "note": "The complete test lane passes, including governance, storage harnesses, LocalTrusted and contract checks, 54 web tests, 60 catalog unit tests, 87 Storybook interaction/accessibility stories, the cold catalog browser contract and the full Rust workspace suites."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Storybook, the production web bundle, embedded RustFS and the locked Rust workspace build successfully. Existing Lightning CSS :global(svg) and large-chunk warnings remain informational."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm dev:restart and live in-app browser verification at http://127.0.0.1:7460/",
+        "result": "pass",
+        "failures": 0,
+        "note": "The checkout-owned LocalTrusted application restarted against the persisted sample repository. The rebuilt UI removes the duplicate Details close header; shows Branches/Bookmarks with Add bookmark; exposes selected bookmark metadata and move/delete actions; replaces bookmark context with Selected change after revision selection; and renders Edit description with the Community composer plus one avatar, description, Git/JJ copy controls and relative-time row."
+      },
+      {
+        "command": "pnpm spec:check",
+        "result": "fail",
+        "failures": 20,
+        "note": "Specification validation, the cold catalog browser and the catalog browser pass. The inherited production browser lane still has 20 failures because native-browser-fixture.ts waits for removed Repository ID and Repository token controls instead of using LocalTrusted bootstrap; none reaches this presentation slice."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Migrate the inherited production browser fixture from removed Repository ID/token controls to LocalTrusted bootstrap and clear its 20 failures.",
+      "Visual baselines remain unapproved."
+    ],
+    "versions": "Node.js 24.10.0; pnpm 10.32.1; Svelte 5.57.1; Design Core ^0.2.0; Community ^0.1.0.",
+    "formats": "No native object, manifest, WAL, receipt, HTTP, OpenAPI or route format changes. Presentation adds bookmark selection context, page-specific rail headings, existing typed mutation triggers, Community composer prose and a compact commit/change identity row."
   }
 ]
 ```

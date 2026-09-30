@@ -123,6 +123,10 @@
         bind:base={form.base}
         bind:retainBookmarks={form.retainBookmarks}
         bind:restoreDescendants={form.restoreDescendants}
+        selectedRevision={view.graph.revisions.find(
+          (item) => item.eventId === form.target,
+        )}
+        now={view.now}
         onChange={changed}
       />
     </form>

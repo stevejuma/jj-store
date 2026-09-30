@@ -1,8 +1,11 @@
 <script lang="ts">
   import { Input } from "@lapismd/design-core/shadcn/input";
-  import { Textarea } from "@lapismd/design-core/shadcn/textarea";
   import { Checkbox } from "@lapismd/design-core/shadcn/checkbox";
   import * as Field from "@lapismd/design-core/shadcn/field";
+  import { CommunityChatComposer } from "@lapismd/lapis-community/components/community-chat-composer";
+  import { untrack } from "svelte";
+  import type { RepositoryLogRevision } from "../../projects/repository-log.js";
+  import StoreMutationCommitTarget from "./StoreMutationCommitTarget.svelte";
   import type { StoreMutationAction } from "./model.js";
 
   let {
@@ -14,6 +17,8 @@
     base = $bindable(),
     retainBookmarks = $bindable(),
     restoreDescendants = $bindable(),
+    selectedRevision,
+    now,
     onChange,
   }: {
     action: StoreMutationAction;
@@ -24,19 +29,33 @@
     base: string;
     retainBookmarks: boolean;
     restoreDescendants: boolean;
+    selectedRevision?: RepositoryLogRevision;
+    now?: number;
     onChange: () => void;
   } = $props();
+
+  let previousDescription = $state(description);
+  $effect(() => {
+    const current = description;
+    if (current === previousDescription) return;
+    previousDescription = current;
+    untrack(onChange);
+  });
 </script>
 
 <Field.Group>
   {#if action === "new" || action === "describe"}
     <Field.Field>
-      <Field.Label for="store-mutation-description">Description</Field.Label>
-      <Textarea
-        id="store-mutation-description"
+      <Field.Label>Description</Field.Label>
+      <CommunityChatComposer
+        mode="form"
+        showSubmitButton={false}
         bind:value={description}
-        oninput={onChange}
-        rows={4}
+        ariaLabel="Description"
+        placeholder={action === "new"
+          ? "Describe the new change"
+          : "Describe the selected change"}
+        class="store-mutation-description-composer"
       />
     </Field.Field>
   {/if}
@@ -62,7 +81,12 @@
       />
     </Field.Field>
   {/if}
-  {#if action === "new" || action === "describe" || action === "bookmark-create" || action === "bookmark-move" || action === "abandon"}
+  {#if action === "describe" || action === "abandon"}
+    <Field.Field>
+      <Field.Label>Commit</Field.Label>
+      <StoreMutationCommitTarget {target} revision={selectedRevision} {now} />
+    </Field.Field>
+  {:else if action === "new" || action === "bookmark-create" || action === "bookmark-move"}
     <Field.Field>
       <Field.Label for="store-mutation-target">
         {action === "new" ? "Parent commit" : "Commit"}
@@ -73,7 +97,6 @@
         oninput={onChange}
         spellcheck="false"
         autocomplete="off"
-        disabled={action === "describe" || action === "abandon"}
       />
       <Field.Description
         >Use the complete 128-character native ID.</Field.Description

@@ -263,11 +263,6 @@
     resizeLabel="Resize repository details"
     closeable
   >
-    <AppShell.Sidebar.Header
-      ><strong>Details</strong><AppShell.Sidebar.Close
-        label="Close details"
-      /></AppShell.Sidebar.Header
-    >
     <AppShell.Sidebar.Body
       >{#if details}{@render details(
           current.page,

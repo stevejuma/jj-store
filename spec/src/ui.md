@@ -8,19 +8,19 @@ supply interchangeable sources. Deterministic fixtures remain catalog-only.
 
 ## Requirements
 
-| ID         | Requirement                                                                                                                                                                                                                                                                            |
-| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| JST-UI-001 | The catalog MUST build and run independently using registry dependencies, deterministic fixtures, isolated story state, runtime diagnostics and blocking interaction/accessibility checks.                                                                                             |
-| JST-UI-002 | The shell MUST directly adapt Community shell/navigation composition and preserve desktop/mobile, sidebar, header, focus and navigation mechanics using public Design Core exports.                                                                                                    |
-| JST-UI-003 | Branches, JJ Log and Op Log MUST reuse Community graph/row/file/diff compositions, preserve native identities and conflicting targets, and support fixture-only drill-down without transport or mutation capabilities.                                                                 |
-| JST-UI-004 | The complete catalog application MUST expose a typed state/actions controller with independent in-memory navigation, repository snapshots, file contents and profile actions, using copied Community file-browser and footer compositions without backend access.                      |
-| JST-UI-005 | The served browser MUST use the reviewed shell and repository components through an authenticated asynchronous controller with cursor paging, representative page and detail loading skeletons, explicit snapshot refresh and typed hash restoration.                                  |
-| JST-UI-006 | Large repository collections MUST use bounded virtual rows, all resizable shell/canvas regions MUST persist versioned layout state, and catalog stories MUST exercise the production components.                                                                                       |
-| JST-UI-007 | Repository search MUST use the released Design Core Command View in a Community-adapted overlay, query the selected authenticated operation snapshot, represent readiness and paging states, and navigate results with stable full identities.                                         |
-| JST-UI-008 | Authenticated repository commands MUST use Community-adapted action menus and Design Core form/confirmation dialogs, preview the exact typed request before apply, preserve its request ID through unknown outcomes, and advance the displayed snapshot only from a committed receipt. |
-| JST-UI-009 | Conflict editing MUST present the native path, terms, fingerprints and supported resolution actions without flattening conflicts, stage bounded uploads separately, preview the atomic selection, and retain unsupported or stale states explicitly.                                   |
-| JST-UI-010 | The application MUST bootstrap before repository UI, auto-open the sole LocalTrusted repository or show its installation catalog chooser, and label unverified loopback identity as Local; operational backup/restore status UI remains deferred.                                      |
-| JST-UI-011 | Authenticated connection MUST request one manual token, keep it only in memory, discover all currently authorized repositories, restore an ID-based deep link or show a chooser, and cancel requests, SSE and protected caches when the token is replaced, revoked or disconnected.    |
+| ID         | Requirement                                                                                                                                                                                                                                                                                                                                                |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| JST-UI-001 | The catalog MUST build and run independently using registry dependencies, deterministic fixtures, isolated story state, runtime diagnostics and blocking interaction/accessibility checks.                                                                                                                                                                 |
+| JST-UI-002 | The shell MUST directly adapt Community shell/navigation composition and preserve desktop/mobile, sidebar, header, focus and navigation mechanics using public Design Core exports.                                                                                                                                                                        |
+| JST-UI-003 | Branches, JJ Log and Op Log MUST reuse Community graph/row/file/diff compositions, preserve native identities and conflicting targets, support fixture-only drill-down without transport or mutation capabilities, and expose selection-specific Community-styled right-rail context and actions.                                                          |
+| JST-UI-004 | The complete catalog application MUST expose a typed state/actions controller with independent in-memory navigation, repository snapshots, file contents and profile actions, using copied Community file-browser and footer compositions without backend access.                                                                                          |
+| JST-UI-005 | The served browser MUST use the reviewed shell and repository components through an authenticated asynchronous controller with cursor paging, representative page and detail loading skeletons, explicit snapshot refresh and typed hash restoration.                                                                                                      |
+| JST-UI-006 | Large repository collections MUST use bounded virtual rows, all resizable shell/canvas regions MUST persist versioned layout state, and catalog stories MUST exercise the production components.                                                                                                                                                           |
+| JST-UI-007 | Repository search MUST use the released Design Core Command View in a Community-adapted overlay, query the selected authenticated operation snapshot, represent readiness and paging states, and navigate results with stable full identities.                                                                                                             |
+| JST-UI-008 | Authenticated repository commands MUST use Community-adapted action menus, composer-backed prose fields, selected commit/change identity rows and Design Core form/confirmation dialogs, preview the exact typed request before apply, preserve its request ID through unknown outcomes, and advance the displayed snapshot only from a committed receipt. |
+| JST-UI-009 | Conflict editing MUST present the native path, terms, fingerprints and supported resolution actions without flattening conflicts, stage bounded uploads separately, preview the atomic selection, and retain unsupported or stale states explicitly.                                                                                                       |
+| JST-UI-010 | The application MUST bootstrap before repository UI, auto-open the sole LocalTrusted repository or show its installation catalog chooser, and label unverified loopback identity as Local; operational backup/restore status UI remains deferred.                                                                                                          |
+| JST-UI-011 | Authenticated connection MUST request one manual token, keep it only in memory, discover all currently authorized repositories, restore an ID-based deep link or show a chooser, and cancel requests, SSE and protected caches when the token is replaced, revoked or disconnected.                                                                        |
 
 The production controller completes bootstrap before rendering connection
 choices. One ready LocalTrusted catalog entry opens without a token, several
@@ -87,13 +87,15 @@ every target and a deleted bookmark produces an empty graph. Route restoration
 loads references before resolving this scope, so reload and Back/Forward cannot
 briefly substitute the repository-wide default log.
 
-Working-copy cards use the same title size as bookmark cards. A native empty
-working-copy description is presented as `(empty) (no description set)` while
-the workspace chip supplies its identity. Bookmark cards and their final visible
-item remain square with a bottom divider. Empty Workspace and Conflicted filter
-results use the shared Design Core shadcn Empty composition with icon media and
-filter-specific guidance; changing a filter clears any command selection that is
-no longer rendered.
+Working-copy cards use the same title size as bookmark cards. Unselected
+working-copy and bookmark cards use the same neutral grey hover and keyboard
+focus treatment as JJ Log rows; selected cards retain their accent background. A
+native empty working-copy description is presented as
+`(empty) (no description set)` while the workspace chip supplies its identity.
+Bookmark cards and their final visible item remain square with a bottom divider.
+Empty Workspace and Conflicted filter results use the shared Design Core shadcn
+Empty composition with icon media and filter-specific guidance; changing a
+filter clears any command selection that is no longer rendered.
 
 JJ Log rows render local bookmarks as accent chips, remote bookmarks as neutral
 `name@remote` chips, working-copy associations as success chips, divergence as a
@@ -163,7 +165,10 @@ Op Log omit the redundant body title bar; their Column Canvas headers identify
 the views. Their shell body is a fixed, non-scrolling region; only each Column
 Canvas body scrolls vertically. Mobile retains navigation/history/sidebar
 controls without duplicating the page title. The right details rail inherits the
-shell background with no visible border.
+shell background with no visible border. It omits a redundant Details header and
+close icon because the application toolbar already owns the sidebar toggle. Its
+body begins with Community's compact context heading, such as
+`Branches/Bookmarks`, plus the available create action at the end.
 
 Files places its directory breadcrumb in the body page navigation, rooted at
 `Files`. The repository file tree is a shell body-left sidebar with a
@@ -343,8 +348,13 @@ slot. Agent tool calls reveal a Community-style reply toolbar on hover or focus,
 show an icon count for an existing thread, and place its composer and reply
 thread directly after the call. Both inline surfaces remain keyboard reachable
 and preserve the route-selected discussion column. The repository detail rail
-follows Community's section typography and spacing; selecting a JJ Log or Op Log
-row replaces generic repository facts with its metadata and the same enabled
-mutation actions exposed by the header menu, including bookmark creation and
-conflict resolution when their native capabilities and exact selection permit
-them.
+follows Community's section typography and spacing. Selecting a bookmark shows
+its name, description, author, relative update time, target state and exact
+branch actions; selecting a revision then replaces that selection detail with
+change metadata. JJ Log and Op Log selection follows the same replacement rule
+and exposes the enabled mutation actions from the header menu, including
+bookmark creation and conflict resolution when native capabilities and an exact
+selection permit them. Multiline mutation input always uses Community's form
+composer. Edit description and Abandon replace disabled raw commit inputs with a
+single-row author avatar, current message, copyable Git/JJ identifiers and
+relative commit time.
