@@ -52,3 +52,31 @@
   color: var(--sidebar-accent-foreground, var(--accent-foreground));
   background: var(--sidebar-accent, var(--accent));
 }
+
+.store-settings-navigation[data-compact] {
+  align-items: center;
+  padding-inline: 0.5rem;
+}
+
+.store-settings-navigation[data-compact] section {
+  width: 100%;
+  justify-items: center;
+}
+
+.store-settings-navigation[data-compact] h2,
+.store-settings-navigation[data-compact]
+  :is(.store-settings-navigation__back, .store-settings-navigation__item)
+  > span {
+  display: none;
+}
+
+.store-settings-navigation[data-compact]
+  :is(
+    .store-settings-navigation__back,
+    .store-settings-navigation__item
+  )[data-ui-component="button"] {
+  width: 2rem;
+  min-width: 2rem;
+  justify-content: center;
+  padding: 0;
+}

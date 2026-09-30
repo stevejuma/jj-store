@@ -9,10 +9,12 @@
 
   let {
     section,
+    compact = false,
     onSelect,
     onClose,
   }: {
     section: StoreSettingsSection;
+    compact?: boolean;
     onSelect: (section: StoreSettingsSection) => void;
     onClose: () => void;
   } = $props();
@@ -24,14 +26,20 @@
   ] as const;
 </script>
 
-<nav class="store-settings-navigation" aria-label="Settings navigation">
+<nav
+  class="store-settings-navigation"
+  aria-label="Settings navigation"
+  data-compact={compact || undefined}
+>
   <Button
     variant="ghost"
     class="store-settings-navigation__back"
+    aria-label="Back to jj-store"
+    title={compact ? "Back to jj-store" : undefined}
     onclick={onClose}
   >
     <ArrowLeftIcon data-icon="inline-start" aria-hidden="true" />
-    Back to jj-store
+    <span>Back to jj-store</span>
   </Button>
   <section>
     <h2>Store</h2>
@@ -41,10 +49,12 @@
         class="store-settings-navigation__item"
         data-active={section === item.id ? "" : undefined}
         aria-pressed={section === item.id}
+        aria-label={item.label}
+        title={compact ? item.label : undefined}
         onclick={() => onSelect(item.id)}
       >
         <item.icon data-icon="inline-start" aria-hidden="true" />
-        {item.label}
+        <span>{item.label}</span>
       </Button>
     {/each}
   </section>

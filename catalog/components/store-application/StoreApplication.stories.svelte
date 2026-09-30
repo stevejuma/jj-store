@@ -102,6 +102,46 @@
   }}
 />
 <Story
+  name="Settings collapsed"
+  args={{ initiallyCollapsed: false }}
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Open profile menu for Maya Chen" }),
+    );
+    await userEvent.click(
+      await within(canvasElement.ownerDocument.body).findByRole("menuitem", {
+        name: "Settings",
+      }),
+    );
+    await canvas.findByRole("heading", { name: "Local service", level: 1 });
+    const sidebar = await canvas.findByLabelText("Settings sidebar");
+    const navigation = within(sidebar).getByRole("navigation", {
+      name: "Settings navigation",
+    });
+    await expect(navigation).not.toHaveAttribute("data-compact");
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Collapse left sidebar" }),
+    );
+    await waitFor(() =>
+      expect(sidebar).toHaveAttribute("data-state", "collapsed"),
+    );
+    await expect(navigation).toHaveAttribute("data-compact", "true");
+    for (const label of [
+      "Back to jj-store",
+      "Local service",
+      "Repository",
+      "Search",
+    ]) {
+      const item = within(navigation).getByRole("button", { name: label });
+      await expect(item).toBeVisible();
+      await expect(item).toHaveAttribute("title", label);
+      await expect(item.querySelector("svg")).toBeVisible();
+      await expect(item.querySelector("span")).not.toBeVisible();
+    }
+  }}
+/>
+<Story
   name="Settings degraded search"
   args={{ initiallyCollapsed: false, settingsSearch: "degraded" }}
   play={async ({ canvasElement }) => {

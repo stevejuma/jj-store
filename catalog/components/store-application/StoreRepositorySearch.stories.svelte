@@ -41,9 +41,11 @@
     await expect(
       canvas.queryByRole("list", { name: "Repository breadcrumb" }),
     ).not.toBeInTheDocument();
-    await expect(canvas.getByRole("tab", { name: "Commits" })).toHaveAttribute(
-      "data-state",
-      "active",
+    await waitFor(() =>
+      expect(canvas.getByRole("tab", { name: "Commits" })).toHaveAttribute(
+        "data-state",
+        "active",
+      ),
     );
     await expect(
       canvas.getByRole("button", { name: "Close Diff column" }),

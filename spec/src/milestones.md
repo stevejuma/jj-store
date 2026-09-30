@@ -43,7 +43,7 @@ adds evidence here in its enclosing Jujutsu change.
 | M4.15       | Done        | M4.9,M6.1   | JST-UI-007                                                                                                                                                               | Community-adapted command search queries real snapshot-bound Tantivy results and restores stable routes             | Retain LocalTrusted and authenticated search acceptance            | E-UI-017,E-UI-024,E-UI-028                                                                                                                                                                                                                                                                                                                                     |
 | M4.16       | Done        | M4.9,M5.3   | JST-UI-008                                                                                                                                                               | Preview/apply/status repository actions use durable typed mutations and committed snapshot refresh                  | Retain mutation acceptance; implement M4.17 conflicts              | E-UI-018,E-UI-026,E-UI-028                                                                                                                                                                                                                                                                                                                                     |
 | M4.17       | Done        | M4.16,M5.3  | JST-UI-009                                                                                                                                                               | Native conflict descriptors, uploads and atomic multi-path resolution are editable without flattening               | Retain conflict-editor and real-repository acceptance              | E-UI-019                                                                                                                                                                                                                                                                                                                                                       |
-| M4.18       | Done        | M4.15,M8a.4 | JST-UI-012                                                                                                                                                               | Transient Community-styled settings reports existing local, repository and search state and prepares an exact index | Retain regression coverage; visual review remains separate         | E-UI-030                                                                                                                                                                                                                                                                                                                                                       |
+| M4.18       | Done        | M4.15,M8a.4 | JST-UI-012                                                                                                                                                               | Transient Community-styled settings reports existing local, repository and search state and prepares an exact index | Retain regression coverage; visual review remains separate         | E-UI-030,E-UI-031                                                                                                                                                                                                                                                                                                                                              |
 | M5          | Done        | M4.1        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                                                                                                                      | Authenticated typed commands and shared RPC policy                                                                  | Retain mutation conformance; proceed to M6                         | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-M5-005,E-M5-006,E-M5-007,E-M5-008,E-UI-028                                                                                                                                                                                                                                                                   |
 | M5.1        | Done        | M4.1        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                                                                                                                      | Basic changes/refs/reconcile; preview receipt and semantic policy                                                   | Retain basic mutation acceptance                                   | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-UI-028                                                                                                                                                                                                                                                                                                       |
 | M5.2        | Done        | M5.1        | JST-MUT-003                                                                                                                                                              | Full abandon descendant bookmark workspace/evolution parity                                                         | Retain abandon acceptance                                          | E-M5-005                                                                                                                                                                                                                                                                                                                                                       |
@@ -19681,6 +19681,143 @@ and named tests are checked by the progress gate.
     ],
     "versions": "pnpm 10.32.1; Svelte 5.57.1; Storybook 10.5.7; Vitest browser 4.1.11; Playwright 1.63.0; Design Core ^0.2.0.",
     "formats": "No server, OpenAPI, generated contract, persistence or wire-format change. The transient UI consumes existing bootstrap, repository, capability, snapshot, search-status and index-task contracts; stories remain visual-pending."
+  },
+  {
+    "id": "E-UI-031",
+    "tasks": [
+      "M4.18"
+    ],
+    "date": "2026-09-30",
+    "kind": "compact-store-settings-navigation-regression",
+    "before": "Collapsing the desktop left sidebar reduced the shell rail to 48 pixels, but StoreSettingsNavigation did not receive the shell compact state. Its Back, section heading and three section labels remained full width and were clipped instead of rendering the expected icon-only navigation.",
+    "files": [
+      "catalog/components/store-application/StoreApplication.stories.svelte",
+      "catalog/components/store-application/StoreRepositorySearch.stories.svelte",
+      "spec/src/api.md",
+      "spec/src/milestones.md",
+      "spec/src/ui.md",
+      "web/src/lib/ui/store-application/StoreApplication.svelte",
+      "web/src/lib/ui/store-settings/StoreSettingsNavigation.css",
+      "web/src/lib/ui/store-settings/StoreSettingsNavigation.svelte"
+    ],
+    "tests": [],
+    "runs": [
+      {
+        "command": "pnpm exec prettier --write spec/src/ui.md web/src/lib/ui/store-application/StoreApplication.svelte web/src/lib/ui/store-settings/StoreSettingsNavigation.svelte web/src/lib/ui/store-settings/StoreSettingsNavigation.css catalog/components/store-application/StoreApplication.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "The canonical requirement, compact settings presentation and focused story are formatted."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Production Svelte and TypeScript validation reports no errors or warnings."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Catalog Svelte validation reports no errors or warnings and all 69 module boundaries pass."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreApplication.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 11 shell stories pass, including the collapsed Settings regression for four visible icons, hidden text labels, accessible names and active-section semantics; stories remain visual-pending."
+      },
+      {
+        "command": "pnpm build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Storybook, the production web application, embedded RustFS runtime and locked Rust workspace build. Existing Design Core lightningcss global-selector and bundle-size warnings remain non-fatal."
+      },
+      {
+        "command": "pnpm dev:restart",
+        "result": "pass",
+        "failures": 0,
+        "note": "The state-preserving LocalTrusted restart serves the rebuilt browser bundle with the existing repository identity and RustFS volume."
+      },
+      {
+        "command": "LocalTrusted browser acceptance at http://127.0.0.1:7460/",
+        "result": "pass",
+        "failures": 0,
+        "note": "The live Settings sidebar collapses to Back, Local service, Repository and Search icons with full accessible names and title labels; repository content remains usable and the transient route is unchanged."
+      },
+      {
+        "command": "pnpm spec:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "Validation, cold catalog browser, all 21 production browser tests, contracts, Rust formatting and boundaries passed before the progress lane rejected a Storybook story recorded as a named source test. Story interaction evidence belongs in runs, so the unsupported tests entry was removed without changing product code or coverage."
+      },
+      {
+        "command": "pnpm spec:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "The corrected ledger passed and every browser, contract and locked Rust test completed successfully before spec-first found that the protected web shell change also required its mapped api.md chapter in this Jujutsu change. The API chapter now records compact-state consumption without changing any route or DTO."
+      },
+      {
+        "command": "pnpm spec:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "Validation, the cold catalog build and all 68 catalog unit tests passed before the aggregate Storybook lane intermittently observed the untouched CommandSearchNavigation Commits tab as inactive. The run stopped before later lanes."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreRepositorySearch.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "The exact untouched search story passes immediately in isolation, confirming its aggregate failure was transient and unrelated to compact settings navigation."
+      },
+      {
+        "command": "pnpm spec:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "A clean aggregate retry reproduced only the same untouched CommandSearchNavigation timing assertion after validation, cold catalog browser and 68 catalog unit tests passed; the lane again stopped before later checks."
+      },
+      {
+        "command": "pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Specification validation, boundaries, architecture, progress, Rust formatting, embedded RustFS Clippy, generated contracts, production/catalog diagnostics and locked workspace Clippy all pass."
+      },
+      {
+        "command": "pnpm test",
+        "result": "pass",
+        "failures": 0,
+        "note": "All governance, storage, LocalTrusted, contract, web and catalog unit lanes pass; all 94 Storybook interactions including the previously intermittent search story pass, the cold catalog browser contract passes, and the locked Rust workspace plus doc tests pass."
+      },
+      {
+        "command": "pnpm spec:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "A third aggregate specification attempt again reached only the untouched CommandSearchNavigation assertion after the cold catalog and unit lanes passed. Because the same full Storybook suite had just passed under pnpm test, the existing story now awaits the asynchronous Commits-tab activation it previously asserted synchronously."
+      },
+      {
+        "command": "pnpm exec prettier --write catalog/components/store-application/StoreRepositorySearch.stories.svelte spec/src/milestones.md; pnpm catalog:check; pnpm test:storybook catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/StoreRepositorySearch.stories.svelte; pnpm check:progress; pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "The test-only wait is formatted, catalog diagnostics and 69 module boundaries pass, all 12 focused Settings and search interactions pass, and the 71-task ledger maps five protected files to three canonical chapters."
+      },
+      {
+        "command": "pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 18 specification lanes pass after awaiting the existing search transition: cold catalog browser, 68 catalog unit tests, 94 Storybook interactions, 21 production browser tests, contracts, Rust formatting and boundaries, locked workspace tests, mdBook, progress and same-change governance."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md; pnpm check:progress; pnpm spec:validate; pnpm spec:first; pnpm format:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "The final 71-task ledger, all 104 requirements, five protected-file mappings, pinned Rust formatting and tracked-text Prettier checks pass."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "deferred": [
+      "Human visual review and baseline approval."
+    ],
+    "versions": "pnpm 10.32.1; Svelte 5.57.1; Storybook 10.5.7; Vitest browser 4.1.11; Design Core ^0.2.0.",
+    "formats": "No server, OpenAPI, generated contract, persistence or wire-format change. The desktop shell compact state now controls jj-store-owned settings navigation; the story remains visual-pending."
   },
   {
     "id": "E-M10-014",

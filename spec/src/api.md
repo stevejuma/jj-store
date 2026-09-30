@@ -62,6 +62,9 @@ present, otherwise the explicitly selected snapshot operation; concurrent
 unselected heads cannot start a task. Repository switching, disconnection and
 revocation close the source session, abort outstanding requests and clear this
 settings projection. This UI adds no server route, schema or generated contract.
+The transient destination consumes the shell's existing compact state so a
+collapsed desktop rail exposes Back and each settings section as labelled icon
+controls while keeping section selection and repository authority unchanged.
 
 ## Read-session foundation
 

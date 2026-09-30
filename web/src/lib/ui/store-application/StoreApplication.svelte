@@ -172,6 +172,7 @@
   >
     {#if settingsOpen}<StoreSettingsNavigation
         section={settingsSection}
+        {compact}
         onSelect={selectSettings}
         onClose={closeSettings}
       />{:else}<CommunityNavigation
