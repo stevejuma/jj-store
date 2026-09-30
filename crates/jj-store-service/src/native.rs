@@ -13,6 +13,7 @@ use jj_store_jj::{
 };
 use jj_store_model as m;
 use jj_store_object::ObjectStore;
+use jj_store_wal::publication as replication;
 use jj_store_wal::{self as wal, inventory::DependencySource as _, publication::*};
 use sha2::{Digest as _, Sha256};
 use std::{collections::BTreeSet, sync::Arc, time::Duration};
@@ -165,6 +166,163 @@ impl NativeSession {
             self.events.published(self.repository);
         }
         Ok(result)
+    }
+
+    pub async fn negotiate_replica(
+        &self,
+        request: &replication::NegotiateReplicaV1,
+    ) -> wal::Result<replication::ReplicaNegotiationV1> {
+        if request.schema_version != 1
+            || request.repository != self.repository
+            || !replication::ReplicaCapabilitiesV1::default().compatible_with(&request.capabilities)
+        {
+            return Err(wal::Error::Corrupt("replication negotiation"));
+        }
+        self.principal(Permission::Write).await?;
+        let snapshot = self.coordinator.read().await?;
+        let root = self
+            .coordinator
+            .read_replication_root(
+                snapshot
+                    .manifest()
+                    .replication_root
+                    .ok_or(wal::Error::Corrupt("replication root missing"))?,
+            )
+            .await?;
+        if request.peer == root.local_stream.replica {
+            return Err(wal::Error::Corrupt("replication peer identity"));
+        }
+        self.principal(Permission::Write).await?;
+        Ok(replication::ReplicaNegotiationV1 {
+            schema_version: 1,
+            repository: self.repository,
+            replica: root.local_stream.replica,
+            log_epoch: snapshot.manifest().epoch,
+            feed_upper_bound: snapshot.manifest().published,
+            capabilities: replication::ReplicaCapabilitiesV1::default(),
+        })
+    }
+
+    pub async fn replication_feed(
+        &self,
+        request: &replication::FeedRequestV1,
+    ) -> wal::Result<replication::FeedResponseV1> {
+        if request.schema_version != 1 {
+            return Err(wal::Error::Corrupt("replication feed request"));
+        }
+        self.principal(Permission::Write).await?;
+        let snapshot = self.coordinator.read().await?;
+        let page = self
+            .coordinator
+            .committed_origin_feed_at(
+                &snapshot,
+                request.source_replica,
+                request.log_epoch,
+                request.after,
+                request.upper_bound,
+                request.limit,
+            )
+            .await?;
+        self.principal(Permission::Write).await?;
+        Ok(replication::FeedResponseV1 {
+            schema_version: 1,
+            page,
+        })
+    }
+
+    pub async fn offer_origins(
+        &self,
+        request: &replication::OfferOriginsRequestV1,
+    ) -> wal::Result<replication::OfferOriginsResponseV1> {
+        if request.schema_version != 1 {
+            return Err(wal::Error::Corrupt("replication origin offers"));
+        }
+        self.principal(Permission::Write).await?;
+        let snapshot = self.coordinator.read().await?;
+        let results = self
+            .coordinator
+            .offer_origins(&snapshot, &request.offers)
+            .await?;
+        self.principal(Permission::Write).await?;
+        Ok(replication::OfferOriginsResponseV1 {
+            schema_version: 1,
+            results,
+        })
+    }
+
+    pub async fn origin_closure(
+        &self,
+        request: &replication::OriginClosureRequestV1,
+    ) -> wal::Result<replication::OriginClosureResponseV1> {
+        if request.schema_version != 1
+            || request.max_entries == 0
+            || request.max_entries > self.limits.inventory_nodes
+        {
+            return Err(wal::Error::Limit("replication origin closure"));
+        }
+        self.principal(Permission::Write).await?;
+        let snapshot = self.coordinator.read().await?;
+        let closure = self
+            .coordinator
+            .origin_closure(&snapshot, request.origin_key, request.max_entries)
+            .await?;
+        self.principal(Permission::Write).await?;
+        Ok(replication::OriginClosureResponseV1 {
+            schema_version: 1,
+            closure,
+        })
+    }
+
+    pub async fn apply_origins(
+        &self,
+        request: &replication::ApplyOriginsTransportRequestV1,
+    ) -> wal::Result<replication::ApplyOriginsTransportResponseV1> {
+        if request.schema_version != 1 {
+            return Err(wal::Error::Corrupt("replication apply request"));
+        }
+        let principal = self.principal(Permission::Write).await?;
+        let guarded = ApplyOriginsRequestV1 {
+            schema_version: 1,
+            principal: principal.id(),
+            request_id: request.request_id,
+            publication_id: request.publication_id,
+            origins: request.origins.clone(),
+        };
+        let outcome = self.coordinator.apply_origins(&guarded).await?;
+        if matches!(
+            &outcome,
+            ApplyOriginsOutcomeV1::Applied(result) if result.publication_position.is_some()
+        ) {
+            self.events.published(self.repository);
+        }
+        Ok(replication::ApplyOriginsTransportResponseV1 {
+            schema_version: 1,
+            outcome,
+        })
+    }
+
+    pub async fn read_replication_record(
+        &self,
+        reference: wal::records::RecordRef,
+    ) -> wal::Result<Vec<u8>> {
+        self.principal(Permission::Write).await?;
+        let bytes = self.coordinator.read_replication_record(reference).await?;
+        self.principal(Permission::Write).await?;
+        Ok(bytes)
+    }
+
+    pub async fn write_replication_record(
+        &self,
+        reference: wal::records::RecordRef,
+        bytes: &[u8],
+    ) -> wal::Result<jj_store_object::WriteOutcome> {
+        self.principal(Permission::Write).await?;
+        let outcome = self
+            .coordinator
+            .write_replication_record(reference, bytes)
+            .await?;
+        self.principal(Permission::Write).await?;
+        Ok(outcome)
     }
     /// Authentication selects the principal; deterministic transition identity
     /// survives process loss without persisting credentials or volatile counters.

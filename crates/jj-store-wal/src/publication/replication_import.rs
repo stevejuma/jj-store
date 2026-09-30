@@ -65,7 +65,8 @@ pub struct ApplyOriginsResultV1 {
     pub receipts: Vec<OriginReceiptV1>,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(tag = "status", rename_all = "snake_case", deny_unknown_fields)]
 pub enum ApplyOriginsOutcomeV1 {
     Applied(ApplyOriginsResultV1),
     OutcomeUnknown {

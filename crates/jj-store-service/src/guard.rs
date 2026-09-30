@@ -68,6 +68,17 @@ impl PublicationGuard for AuthenticatedGuard {
         }
         Ok(())
     }
+    async fn authorize_replication(
+        &self,
+        snapshot: &ManifestSnapshot,
+        request: &jj_store_wal::publication::ApplyOriginsRequestV1,
+    ) -> wal::Result<()> {
+        let principal = self.access.authorize(snapshot, Permission::Write).await?;
+        if request.principal != principal.id() {
+            return Err(wal::Error::Denied);
+        }
+        Ok(())
+    }
     async fn validate_transition(
         &self,
         before: &ManifestSnapshot,

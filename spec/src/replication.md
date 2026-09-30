@@ -74,6 +74,30 @@ installs only digest-verified native objects and control records. It never
 installs a manifest, WAL candidate or receipt; `apply_origins` remains the sole
 destination publication boundary.
 
+The native authenticated RPC exposes negotiation, committed-feed, offer, closure
+and apply methods. Apply requests carry stable request/publication identities
+and origin envelopes but no principal; the server derives the actor from the
+authenticated session and requires repository write access before the receiver
+reads a transferred closure. Feed pages are bound to the negotiated issuer
+replica, log epoch and fixed upper position, so later source writes do not
+extend an in-flight scan. A changed epoch or issuer fails the scan instead of
+silently reinterpreting its cursor.
+
+Replication control-record streaming accepts only immutable catalog, inventory,
+AgentStore and ReviewStore data records. Both peers verify the exact record
+digest and repository/kind envelope. Manifests, WAL candidates, settings,
+checkpoints, receipts, replication roots and origin receipts cannot enter this
+upload path. Native object streaming retains its existing typed object
+validation.
+
+Peer progress is a separate CAS-selected transport checkpoint, scoped to the
+logical repository and exact local/peer replica pair. Pull and push positions
+each retain their issuer, log epoch, acknowledged position and observed upper
+bound. An update cannot move backwards, change an issuer/epoch in place or erase
+prior progress. An unknown storage response is successful only when a readback
+returns the exact proposed checkpoint. This pointer is not selected by the
+repository manifest and never produces an origin or content WAL event.
+
 `apply_origins` validates the complete native and control closure before its CAS
 loop. Within that loop it authorizes the request, resolves a stable import
 receipt before reducing new data, rejects origin-key digest reuse and orders

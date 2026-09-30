@@ -42,6 +42,21 @@ impl RecordKind {
             Self::OriginReceipt => "origin-receipts",
         }
     }
+
+    /// Immutable data records needed to validate an imported origin. Authority
+    /// records, WAL candidates, receipts and replication state never cross this
+    /// transfer boundary.
+    pub fn replication_transferable(self) -> bool {
+        matches!(
+            self,
+            Self::Catalog
+                | Self::Inventory
+                | Self::AgentRoot
+                | Self::AgentObject
+                | Self::ReviewRoot
+                | Self::ReviewObject
+        )
+    }
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -147,6 +162,44 @@ impl Records {
             return Err(Error::Corrupt("record envelope"));
         }
         Ok(envelope.payload)
+    }
+
+    pub(crate) async fn put_replication_bytes(
+        &self,
+        reference: RecordRef,
+        bytes: &[u8],
+    ) -> Result<WriteOutcome> {
+        if reference.attempt.is_some()
+            || !reference.kind.replication_transferable()
+            || bytes.len() as u64 > MAX_RECORD_BYTES
+            || digest(bytes) != reference.digest
+        {
+            return Err(Error::Corrupt("replication control record"));
+        }
+        let envelope: Envelope<serde_json::Value> = decode(bytes)?;
+        if envelope.format != 1
+            || envelope.repository != self.repository
+            || envelope.kind != reference.kind
+        {
+            return Err(Error::Corrupt("replication control record envelope"));
+        }
+        let upload = StagedUpload::from_bytes(bytes, MAX_RECORD_BYTES).await?;
+        let key = reference.key(self.repository)?;
+        let outcome = self.store.put(&key, Condition::Absent, &upload).await?;
+        match outcome {
+            WriteOutcome::Applied(_) => Ok(outcome),
+            WriteOutcome::PreconditionFailed => match self.read_bytes(reference).await {
+                Ok(existing) if existing == bytes => Ok(outcome),
+                Ok(_) => Err(Error::Corrupt("immutable record collision")),
+                Err(error) => Err(error),
+            },
+            WriteOutcome::Unknown => match self.read_bytes(reference).await {
+                Ok(existing) if existing == bytes => Ok(WriteOutcome::PreconditionFailed),
+                Ok(_) => Err(Error::Corrupt("immutable record collision")),
+                Err(Error::Storage(jj_store_object::Error::NotFound)) => Ok(WriteOutcome::Unknown),
+                Err(error) => Err(error),
+            },
+        }
     }
 }
 pub(crate) fn digest(bytes: &[u8]) -> RecordDigest {

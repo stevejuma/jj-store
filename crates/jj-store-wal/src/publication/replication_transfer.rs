@@ -36,7 +36,8 @@ pub enum OriginOfferResultV1 {
     Known { receipt: OriginReceiptV1 },
 }
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct OriginClosureV1 {
     pub envelope: OriginEnvelopeV1,
     pub native: Vec<VerifiedNode>,
@@ -44,6 +45,21 @@ pub struct OriginClosureV1 {
 }
 
 impl Coordinator {
+    pub async fn read_replication_record(&self, reference: RecordRef) -> Result<Vec<u8>> {
+        if reference.attempt.is_some() || !reference.kind.replication_transferable() {
+            return Err(Error::Corrupt("replication control record"));
+        }
+        self.records.read_bytes(reference).await
+    }
+
+    pub async fn write_replication_record(
+        &self,
+        reference: RecordRef,
+        bytes: &[u8],
+    ) -> Result<WriteOutcome> {
+        self.records.put_replication_bytes(reference, bytes).await
+    }
+
     /// A feed is pinned to the supplied manifest snapshot. `through` advances
     /// over local entries without origins so echo-only scans can make progress.
     pub async fn committed_origin_feed(
@@ -95,6 +111,75 @@ impl Coordinator {
             after,
             through,
             upper_bound: snapshot.manifest.published,
+            origins,
+        })
+    }
+
+    /// Read a page from the issuer and log epoch negotiated by the caller,
+    /// never past the fixed bound captured during that negotiation.
+    pub async fn committed_origin_feed_at(
+        &self,
+        snapshot: &ManifestSnapshot,
+        source_replica: ReplicaId,
+        log_epoch: EpochId,
+        after: WalPosition,
+        upper_bound: WalPosition,
+        limit: usize,
+    ) -> Result<OriginFeedPageV1> {
+        if limit == 0
+            || limit > 1024
+            || snapshot.manifest.epoch != log_epoch
+            || after > upper_bound
+            || upper_bound > snapshot.manifest.published
+        {
+            return Err(Error::Limit("bounded origin feed"));
+        }
+        let root_ref = snapshot
+            .manifest
+            .replication_root
+            .ok_or(Error::Corrupt("replication root missing"))?;
+        let root = self.read_replication_root(root_ref).await?;
+        if root.local_stream.replica != source_replica {
+            return Err(Error::Corrupt("origin feed issuer"));
+        }
+        let remaining = usize::try_from(upper_bound.0 - after.0)
+            .unwrap_or(usize::MAX)
+            .min(limit);
+        let transactions = self.committed(snapshot, after, remaining).await?;
+        let through = transactions
+            .last()
+            .map_or(after, |transaction| transaction.after.position);
+        let mut origins = Vec::new();
+        for transaction in transactions {
+            for reference in transaction.origins {
+                let receipt: OriginReceiptV1 = self
+                    .records
+                    .get(reference, RecordKind::OriginReceipt)
+                    .await?;
+                if receipt.accepted.replica != source_replica
+                    || receipt.accepted.log_epoch != log_epoch
+                    || receipt.accepted.position != transaction.after.position
+                {
+                    return Err(Error::Corrupt("origin feed delivery"));
+                }
+                let publication = self.origin_publication(receipt).await?;
+                origins.push(OriginFeedItemV1 {
+                    local_position: transaction.after.position,
+                    envelope: OriginEnvelopeV1 {
+                        origin_digest: receipt.origin_digest,
+                        publication,
+                    },
+                });
+            }
+        }
+        Ok(OriginFeedPageV1 {
+            schema_version: 1,
+            repository: self.records.repository,
+            source_replica,
+            log_epoch,
+            after,
+            through,
+            upper_bound,
             origins,
         })
     }

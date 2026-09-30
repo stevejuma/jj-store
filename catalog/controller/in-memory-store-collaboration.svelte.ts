@@ -89,6 +89,7 @@ export function createInMemoryStoreCollaboration(options: {
           actor: "20".repeat(16),
           created_at_millis: options.now * 1000,
           previous_revision_id: null,
+          superseded_revision_ids: [],
           content: {
             state: "visible",
             body_id: "21".repeat(32),

@@ -16,6 +16,7 @@ mod replication;
 mod replication_agent;
 mod replication_domains;
 mod replication_import;
+mod replication_protocol;
 mod replication_review;
 mod replication_review_graph;
 mod replication_transfer;
@@ -73,6 +74,12 @@ pub use replication::{
 };
 pub use replication_import::{
     ApplyOriginsOutcomeV1, ApplyOriginsRequestV1, ApplyOriginsResultV1, OriginEnvelopeV1,
+};
+pub use replication_protocol::{
+    ApplyOriginsTransportRequestV1, ApplyOriginsTransportResponseV1, FeedRequestV1, FeedResponseV1,
+    NATIVE_PROFILE, NegotiateReplicaV1, ORIGIN_SCHEMA, OfferOriginsRequestV1,
+    OfferOriginsResponseV1, OriginClosureRequestV1, OriginClosureResponseV1, ReplicaCapabilitiesV1,
+    ReplicaNegotiationV1, SEMANTIC_REDUCER,
 };
 pub use replication_transfer::{
     OriginClosureV1, OriginFeedItemV1, OriginFeedPageV1, OriginOfferResultV1, OriginOfferV1,

@@ -36,10 +36,12 @@ const summary: ReviewThread = {
   event_page_root_id: id32("e5"),
   status: "open",
   selected_workflow_action: null,
+  selected_workflow_actions: [],
   thread_version: 1,
   content_version: 1,
   workflow_version: 1,
   comment_count: 3,
+  comment_conflict_count: 0,
   last_event_sequence: 3,
 };
 
@@ -114,6 +116,7 @@ function visibleReviewComment(
     actor: author,
     created_at_millis: createdAtMillis,
     previous_revision_id: null,
+    superseded_revision_ids: [],
     content: {
       state: "visible",
       body_id: id32(byte),
@@ -163,6 +166,7 @@ export function reviewDetail(): ReviewDetail {
         "The nested follow-up stays attached to the reply branch.",
       ),
     ],
+    comment_conflicts: [],
     events: [],
   };
 }

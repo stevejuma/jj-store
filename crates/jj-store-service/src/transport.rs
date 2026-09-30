@@ -14,10 +14,14 @@ use jj_store_object::{
     Condition, Download, Key, Metadata, ObjectStore, StagedUpload, WriteOutcome,
 };
 use jj_store_wal as wal;
+use jj_store_wal::publication as replication;
 pub use jj_store_wal::publication::{
-    AgentDeltaRequest, NormalizerProfileV1, PublishOutcome, Receipt, SanitizedObservationBatchV1,
-    Snapshot,
+    AgentDeltaRequest, ApplyOriginsTransportRequestV1, ApplyOriginsTransportResponseV1,
+    FeedRequestV1, FeedResponseV1, NegotiateReplicaV1, NormalizerProfileV1, OfferOriginsRequestV1,
+    OfferOriginsResponseV1, OriginClosureRequestV1, OriginClosureResponseV1, PublishOutcome,
+    Receipt, ReplicaCapabilitiesV1, ReplicaNegotiationV1, SanitizedObservationBatchV1, Snapshot,
 };
+pub use jj_store_wal::records::{MAX_RECORD_BYTES, RecordKind, RecordRef};
 use std::{collections::BTreeSet, sync::Arc};
 
 #[derive(Debug, thiserror::Error)]
@@ -186,6 +190,52 @@ impl NativeRequest {
             })
             .await?;
         Ok(())
+    }
+    pub async fn negotiate_replica(
+        &self,
+        request: &replication::NegotiateReplicaV1,
+    ) -> Result<replication::ReplicaNegotiationV1> {
+        Ok(self.session.negotiate_replica(request).await?)
+    }
+    pub async fn replication_feed(
+        &self,
+        request: &replication::FeedRequestV1,
+    ) -> Result<replication::FeedResponseV1> {
+        Ok(self.session.replication_feed(request).await?)
+    }
+    pub async fn offer_origins(
+        &self,
+        request: &replication::OfferOriginsRequestV1,
+    ) -> Result<replication::OfferOriginsResponseV1> {
+        Ok(self.session.offer_origins(request).await?)
+    }
+    pub async fn origin_closure(
+        &self,
+        request: &replication::OriginClosureRequestV1,
+    ) -> Result<replication::OriginClosureResponseV1> {
+        Ok(self.session.origin_closure(request).await?)
+    }
+    pub async fn apply_origins(
+        &self,
+        request: &replication::ApplyOriginsTransportRequestV1,
+    ) -> Result<replication::ApplyOriginsTransportResponseV1> {
+        Ok(self.session.apply_origins(request).await?)
+    }
+    pub async fn read_replication_record(
+        &self,
+        reference: wal::records::RecordRef,
+    ) -> Result<Vec<u8>> {
+        Ok(self.session.read_replication_record(reference).await?)
+    }
+    pub async fn write_replication_record(
+        &self,
+        reference: wal::records::RecordRef,
+        bytes: &[u8],
+    ) -> Result<WriteOutcome> {
+        Ok(self
+            .session
+            .write_replication_record(reference, bytes)
+            .await?)
     }
     fn path(&self, key: m::ObjectKey) -> Key {
         Key::new(key.storage_path(self.endpoint.repository)).expect("typed object path")

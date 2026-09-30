@@ -1,7 +1,7 @@
 use crate::{
     CHUNK_BYTES, MAX_IDS, REQUEST_BYTES, RESPONSE_BYTES, administration as admin, agent, review,
     wire::{self, native_store_client::NativeStoreClient},
-    wire_object,
+    wire_object, wire_record,
 };
 use jj_store_model as m;
 use jj_store_object::{
@@ -12,9 +12,12 @@ use jj_store_service::administration::{
     AdministrationSnapshot, TokenListing, TokenReceipt, TokenRequest,
 };
 use jj_store_service::auth::BearerToken;
+use jj_store_service::transport as replication;
+use jj_store_service::transport::RecordRef;
 use jj_store_service::transport::{
     AgentDeltaRequest, NormalizerProfileV1, PublishOutcome, SanitizedObservationBatchV1,
 };
+use sha2::{Digest as _, Sha256};
 use std::{collections::BTreeSet, sync::Arc, time::Duration};
 use tokio::{io::AsyncReadExt as _, time::Instant};
 use tonic::{
@@ -345,6 +348,167 @@ impl NativeClient {
             }))
             .await?;
         Ok(())
+    }
+    fn replication_request<T: serde::Serialize>(
+        &self,
+        request: &T,
+    ) -> Result<Request<wire::ReplicationRequest>, Status> {
+        let request_json = serde_json::to_vec(request)
+            .map_err(|_| Status::invalid_argument("replication request encoding"))?;
+        if request_json.len() > REQUEST_BYTES {
+            return Err(Status::resource_exhausted("replication request limit"));
+        }
+        Ok(self.request(wire::ReplicationRequest {
+            repository: self.repository.as_bytes().to_vec(),
+            request_json,
+        }))
+    }
+    fn replication_response<T: serde::de::DeserializeOwned>(
+        &self,
+        reply: wire::JsonReply,
+    ) -> Result<T, Status> {
+        if reply.json.len() > RESPONSE_BYTES {
+            return Err(Status::resource_exhausted("replication response limit"));
+        }
+        serde_json::from_slice(&reply.json)
+            .map_err(|_| Status::data_loss("invalid replication response"))
+    }
+    pub async fn negotiate_replica(
+        &self,
+        request: &replication::NegotiateReplicaV1,
+    ) -> Result<replication::ReplicaNegotiationV1, Status> {
+        let body = self.replication_request(request)?;
+        let reply = self.wire().negotiate_replica(body).await?.into_inner();
+        self.replication_response(reply)
+    }
+    pub async fn committed_feed(
+        &self,
+        request: &replication::FeedRequestV1,
+    ) -> Result<replication::FeedResponseV1, Status> {
+        let body = self.replication_request(request)?;
+        let reply = self.wire().get_committed_feed(body).await?.into_inner();
+        self.replication_response(reply)
+    }
+    pub async fn offer_origins(
+        &self,
+        request: &replication::OfferOriginsRequestV1,
+    ) -> Result<replication::OfferOriginsResponseV1, Status> {
+        let body = self.replication_request(request)?;
+        let reply = self.wire().offer_origins(body).await?.into_inner();
+        self.replication_response(reply)
+    }
+    pub async fn origin_closure(
+        &self,
+        request: &replication::OriginClosureRequestV1,
+    ) -> Result<replication::OriginClosureResponseV1, Status> {
+        let body = self.replication_request(request)?;
+        let reply = self.wire().get_origin_closure(body).await?.into_inner();
+        self.replication_response(reply)
+    }
+    pub async fn apply_origins(
+        &self,
+        request: &replication::ApplyOriginsTransportRequestV1,
+    ) -> Result<replication::ApplyOriginsTransportResponseV1, Status> {
+        let body = self.replication_request(request)?;
+        let reply = self.wire().apply_origins(body).await?.into_inner();
+        self.replication_response(reply)
+    }
+    fn control_request(&self, reference: RecordRef) -> Request<wire::ControlRecordRequest> {
+        self.request(wire::ControlRecordRequest {
+            repository: self.repository.as_bytes().to_vec(),
+            record: Some(wire_record(reference)),
+        })
+    }
+    pub async fn read_control_record(&self, reference: RecordRef) -> Result<Vec<u8>, Status> {
+        let deadline = Instant::now() + self.options.timeout;
+        let mut response = self
+            .wire()
+            .read_control_record(self.control_request(reference))
+            .await?
+            .into_inner();
+        let first = tokio::time::timeout_at(deadline, response.message())
+            .await
+            .map_err(|_| Status::deadline_exceeded("control download deadline"))??;
+        let Some(wire::ObjectChunk {
+            part: Some(wire::object_chunk::Part::Metadata(metadata)),
+        }) = first
+        else {
+            return Err(Status::data_loss("control record metadata required"));
+        };
+        if metadata.length == 0
+            || metadata.length > replication::MAX_RECORD_BYTES
+            || metadata.length > self.options.object_bytes
+            || metadata.version != reference.digest.to_string()
+        {
+            return Err(Status::data_loss("control record metadata"));
+        }
+        let mut bytes = Vec::with_capacity(metadata.length as usize);
+        while let Some(part) = tokio::time::timeout_at(deadline, response.message())
+            .await
+            .map_err(|_| Status::deadline_exceeded("control download deadline"))??
+        {
+            let Some(wire::object_chunk::Part::Data(chunk)) = part.part else {
+                return Err(Status::data_loss("invalid control record chunk"));
+            };
+            if chunk.is_empty() || chunk.len() > CHUNK_BYTES {
+                return Err(Status::data_loss("control record chunk limit"));
+            }
+            if bytes.len().saturating_add(chunk.len()) > metadata.length as usize {
+                return Err(Status::data_loss("control record length mismatch"));
+            }
+            bytes.extend_from_slice(&chunk);
+        }
+        if bytes.len() as u64 != metadata.length
+            || m::RecordDigest::new(Sha256::digest(&bytes).into()) != reference.digest
+        {
+            return Err(Status::data_loss("control record digest mismatch"));
+        }
+        Ok(bytes)
+    }
+    pub async fn write_control_record(
+        &self,
+        reference: RecordRef,
+        bytes: Vec<u8>,
+    ) -> Result<WriteOutcome, Status> {
+        if bytes.is_empty()
+            || bytes.len() as u64 > replication::MAX_RECORD_BYTES
+            || bytes.len() as u64 > self.options.object_bytes
+            || m::RecordDigest::new(Sha256::digest(&bytes).into()) != reference.digest
+        {
+            return Err(Status::invalid_argument("control record bytes"));
+        }
+        let start = wire::ControlUploadStart {
+            repository: self.repository.as_bytes().to_vec(),
+            record: Some(wire_record(reference)),
+            length: bytes.len() as u64,
+        };
+        let messages = std::iter::once(wire::ControlUploadChunk {
+            part: Some(wire::control_upload_chunk::Part::Start(start)),
+        })
+        .chain(
+            bytes
+                .chunks(CHUNK_BYTES)
+                .map(|chunk| wire::ControlUploadChunk {
+                    part: Some(wire::control_upload_chunk::Part::Data(chunk.to_vec())),
+                }),
+        )
+        .collect::<Vec<_>>();
+        let reply = self
+            .wire()
+            .write_control_record(self.request(tokio_stream::iter(messages)))
+            .await?
+            .into_inner();
+        match wire::upload_result::Outcome::try_from(reply.outcome) {
+            Ok(wire::upload_result::Outcome::Stored) => Ok(WriteOutcome::Applied(
+                VersionToken::new(reply.version)
+                    .map_err(|_| Status::data_loss("control upload version"))?,
+            )),
+            Ok(wire::upload_result::Outcome::AlreadyPresent) => {
+                Ok(WriteOutcome::PreconditionFailed)
+            }
+            Ok(wire::upload_result::Outcome::Unknown) => Ok(WriteOutcome::Unknown),
+            _ => Err(Status::data_loss("invalid control upload outcome")),
+        }
     }
     pub async fn prepare_agent_capture(
         &self,
