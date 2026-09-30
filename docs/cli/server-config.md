@@ -22,7 +22,7 @@ are never accepted in TOML. A new managed installation creates its bucket once,
 publishes and verifies the installation sentinel, then requires both on every
 restart. Manual-token authenticated repository discovery is implemented. Shared
 deployment release qualification, external S3 provider qualification, backup
-targets, replication and restore remain future work.
+targets and restore remain future work.
 
 Shared listeners require TLS certificate and private-key paths. Plain HTTP is
 allowed only for an explicitly enabled literal loopback listener and endpoint.
@@ -60,3 +60,44 @@ permissions; writer leases live under `state_dir/adapters`. The running server
 owns and cancels these workers. Search faults degrade indexing independently of
 native repository serving. `/v1/repos/{repository}/search/status` reports live
 freshness; `jj-store doctor` reads that endpoint with the caller's token.
+
+## Writable replication
+
+Add one `[[replication]]` entry for each local repository that should exchange
+accepted publications with one independently writable upstream:
+
+```toml
+[[replication]]
+repository = "00000000000000000000000000000000"
+upstream = "https://jj.example.test/"
+token_environment = "JJ_STORE_REPLICATION_TOKEN_MAIN"
+ca_certificate = "./upstream-ca.pem"
+```
+
+Issue a write token for the same repository on the upstream and place it only in
+the named environment variable before starting `jj-store`. Names must begin with
+`JJ_STORE_REPLICATION_TOKEN_`. The configuration stores the name, never the
+credential. The server resolves the credential lazily into memory and
+re-resolves it after a transport failure, which allows token rotation without
+putting credentials in a checkout or status response.
+
+Upstreams require HTTPS. A literal loopback HTTP endpoint additionally requires
+`insecure_loopback = true`. At most eight repositories may be configured and a
+repository may appear only once. Each entry can override the bounded defaults
+under `[replication.limits]`: 128 origins per page, 100,000 closure entries,
+100,000 objects and 1 GiB per step, 64 MiB per native object, a five-second
+poll, 500 ms initial retry, 60-second maximum retry, an eight-failure circuit,
+60-second circuit cooldown and a 30-second control timeout.
+
+The server starts and stops every configured worker with its own lifecycle.
+Remote failure degrades replication only; foreground repository reads and
+mutations remain local. Durable push and pull checkpoints live in the local
+authoritative object store. Accepted imports wake committed-change SSE and, when
+search is configured for that repository, advance the search adapter from the
+destination WAL position.
+
+The initial activation profile is qualified by focused configuration, lifecycle,
+outage, authenticated RPC, worker, SSE and search-projection tests. Exhaustive
+pressure and fault soak, expanded memory and disk matrices, browser replication
+UI, cold two-instance real-RustFS replication, pressure archive or export
+tooling and additional deployment topologies are deferred.

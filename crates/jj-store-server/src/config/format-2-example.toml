@@ -38,3 +38,11 @@ inventory_nodes = 100000
 [protection]
 bookmarks = []
 commits = []
+
+# One independently writable upstream can be configured for each local repository.
+# Credentials are resolved only from process memory and are never written here.
+# [[replication]]
+# repository = "00000000000000000000000000000000"
+# upstream = "https://jj.example.test/"
+# token_environment = "JJ_STORE_REPLICATION_TOKEN_MAIN"
+# ca_certificate = "./upstream-ca.pem"

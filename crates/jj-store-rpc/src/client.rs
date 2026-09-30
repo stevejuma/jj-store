@@ -13,6 +13,7 @@ use jj_store_service::administration::{
     AdministrationSnapshot, TokenListing, TokenReceipt, TokenRequest,
 };
 use jj_store_service::auth::BearerToken;
+use jj_store_service::replication_control as control;
 use jj_store_service::transport as replication;
 use jj_store_service::transport::RecordRef;
 use jj_store_service::transport::{
@@ -452,6 +453,61 @@ impl NativeClient {
     ) -> Result<replication::ApplyOriginsTransportResponseV1, Status> {
         let body = self.replication_request(request)?;
         let reply = self.wire().apply_origins(body).await?.into_inner();
+        self.replication_response(reply)
+    }
+    fn repository_request(&self) -> Request<wire::Repository> {
+        self.request(wire::Repository {
+            repository: self.repository.as_bytes().to_vec(),
+        })
+    }
+    pub async fn replication_status(&self) -> Result<control::StatusV1, Status> {
+        let request = self.repository_request();
+        let reply = self.wire().replication_status(request).await?.into_inner();
+        self.replication_response(reply)
+    }
+    pub async fn replication_now(&self) -> Result<control::StatusV1, Status> {
+        let request = self.repository_request();
+        let reply = self.wire().replication_now(request).await?.into_inner();
+        self.replication_response(reply)
+    }
+    pub async fn replication_pause(&self) -> Result<control::StatusV1, Status> {
+        let request = self.repository_request();
+        let reply = self.wire().replication_pause(request).await?.into_inner();
+        self.replication_response(reply)
+    }
+    pub async fn replication_resume(&self) -> Result<control::StatusV1, Status> {
+        let request = self.repository_request();
+        let reply = self.wire().replication_resume(request).await?.into_inner();
+        self.replication_response(reply)
+    }
+    pub async fn replication_capture_barrier(&self) -> Result<control::BarrierV1, Status> {
+        let request = self.repository_request();
+        let reply = self
+            .wire()
+            .replication_capture_barrier(request)
+            .await?
+            .into_inner();
+        self.replication_response(reply)
+    }
+    pub async fn replication_wait(
+        &self,
+        request: &control::WaitRequestV1,
+    ) -> Result<control::WaitOutcomeV1, Status> {
+        let request_json = serde_json::to_vec(request)
+            .map_err(|_| Status::invalid_argument("replication control encoding"))?;
+        if request_json.len() > REQUEST_BYTES {
+            return Err(Status::resource_exhausted("replication control limit"));
+        }
+        let request = self.request(wire::ReplicationControlRequest {
+            repository: self.repository.as_bytes().to_vec(),
+            request_json,
+        });
+        let reply = self.wire().replication_wait(request).await?.into_inner();
+        self.replication_response(reply)
+    }
+    pub async fn replica_inspect(&self) -> Result<control::StatusV1, Status> {
+        let request = self.repository_request();
+        let reply = self.wire().replica_inspect(request).await?.into_inner();
         self.replication_response(reply)
     }
     fn control_request(&self, reference: RecordRef) -> Request<wire::ControlRecordRequest> {

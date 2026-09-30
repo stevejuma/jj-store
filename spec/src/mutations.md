@@ -162,6 +162,15 @@ commitment. Event readers reauthorize and follow selected WAL records; unknown
 outcomes and writes by another process are recovered by periodic manifest reads.
 No subscriber callback is awaited by publication.
 
+Replication import is a restricted data-only mutation capability. It verifies
+the complete offered closure and can expose imported code, AgentStore and
+ReviewStore state only through the destination's durable manifest CAS and
+receipt path. After that publication commits, it emits the same repository-only
+freshness wake as a local mutation and exposes the destination-local WAL
+position to rebuildable search adapters. Import cannot execute tools, hooks,
+controllers, messages, Git or Nostr work, and imported origin positions never
+replace the destination's issuer-bound WAL position.
+
 Read snapshots, index-task outcomes and committed events export schema traits
 for generated HTTP contracts. Schema descriptions are informational and cannot
 construct read capabilities, restore credentials or grant publication access.

@@ -296,3 +296,58 @@ permission = "admin""#,
     assert!(load(root.path(), &format!("{EXAMPLE}{local_search}")).is_err());
     assert!(load(root.path(), &format!("{local}{search}")).is_err());
 }
+
+#[test]
+fn replication_configuration_is_one_upstream_per_repository_bounded_and_secret_free() {
+    let root = tempfile::tempdir().unwrap();
+    let repository = RepositoryId::new([92; 16]);
+    let replication = format!(
+        r#"
+[[replication]]
+repository = "{repository}"
+upstream = "https://hub.example.test/"
+token_environment = "JJ_STORE_REPLICATION_TOKEN_MAIN"
+ca_certificate = "./hub-ca.pem"
+
+[replication.limits]
+max_batch_origins = 64
+poll_millis = 250
+retry_initial_millis = 100
+retry_max_seconds = 10
+timeout_seconds = 15
+"#
+    );
+    let config = load(root.path(), &format!("{EXAMPLE}{replication}")).unwrap();
+    assert_eq!(config.replication.len(), 1);
+    assert_eq!(config.replication[0].repository, repository);
+    assert_eq!(
+        config.replication[0].ca_certificate.as_deref(),
+        Some(
+            root.path()
+                .canonicalize()
+                .unwrap()
+                .join("hub-ca.pem")
+                .as_path()
+        )
+    );
+    let redacted = toml::to_string(&config).unwrap();
+    assert!(redacted.contains("JJ_STORE_REPLICATION_TOKEN_MAIN"));
+    assert!(!redacted.contains("jst1_"));
+
+    for bad in [
+        format!("{replication}{replication}"),
+        replication.replace("https://hub.example.test/", "http://hub.example.test/"),
+        replication.replace(
+            "JJ_STORE_REPLICATION_TOKEN_MAIN",
+            "JJ_STORE_REPLICATION_TOKEN_main",
+        ),
+        replication.replace("max_batch_origins = 64", "max_batch_origins = 0"),
+        replication.replace("poll_millis = 250", "poll_millis = 60001"),
+        replication.replace("timeout_seconds = 15", "token = 'must-not-echo-secret'"),
+    ] {
+        let error = load(root.path(), &format!("{EXAMPLE}{bad}"))
+            .unwrap_err()
+            .to_string();
+        assert!(!error.contains("must-not-echo-secret"));
+    }
+}

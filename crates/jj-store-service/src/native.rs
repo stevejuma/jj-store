@@ -25,6 +25,13 @@ pub struct SessionLimits {
     pub publication: Limits,
     pub policy: PolicyLimits,
 }
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct ReplicaDescriptor {
+    pub replica: m::ReplicaId,
+    pub log_epoch: m::EpochId,
+    pub feed_upper_bound: m::WalPosition,
+}
 impl Default for SessionLimits {
     fn default() -> Self {
         Self {
@@ -232,6 +239,28 @@ impl NativeSession {
             feed_upper_bound: snapshot.manifest().published,
             bootstrap: self.coordinator.bootstrap_checkpoint(&snapshot).await?,
             capabilities: replication::ReplicaCapabilitiesV1::default(),
+        })
+    }
+
+    /// Read the local issuer identity without inventing a peer or opening a
+    /// transport. Server composition uses this before contacting an upstream.
+    pub async fn replica_descriptor(&self) -> wal::Result<ReplicaDescriptor> {
+        self.principal(Permission::Write).await?;
+        let snapshot = self.coordinator.read().await?;
+        let root = self
+            .coordinator
+            .read_replication_root(
+                snapshot
+                    .manifest()
+                    .replication_root
+                    .ok_or(wal::Error::Corrupt("replication root missing"))?,
+            )
+            .await?;
+        self.principal(Permission::Write).await?;
+        Ok(ReplicaDescriptor {
+            replica: root.local_stream.replica,
+            log_epoch: snapshot.manifest().epoch,
+            feed_upper_bound: snapshot.manifest().published,
         })
     }
 

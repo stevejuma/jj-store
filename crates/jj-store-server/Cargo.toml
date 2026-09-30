@@ -12,6 +12,7 @@ jj-store-object.workspace = true
 jj-store-jj.workspace = true
 jj-store-service.workspace = true
 jj-store-rpc.workspace = true
+jj-store-replication.workspace = true
 jj-store-http.workspace = true
 jj-store-adapters.workspace = true
 jj-store-tantivy.workspace = true

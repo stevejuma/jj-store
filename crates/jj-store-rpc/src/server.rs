@@ -17,6 +17,7 @@ use jj_store_service::{
     mutations::CommandService,
     pagination,
     registry::{self, RepositoryRegistry},
+    replication_control as control,
     transport::{NativeEndpoint, NativeRequest},
 };
 use std::{
@@ -32,6 +33,57 @@ use tokio::{
     time::Instant,
 };
 use tonic::{Request, Response, Status, metadata::MetadataMap};
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ReplicationControlError {
+    NotConfigured,
+    Invalid,
+    Unavailable,
+    Timeout,
+}
+
+#[tonic::async_trait]
+pub trait ReplicationControls: Send + Sync {
+    async fn status(
+        &self,
+        repository: m::RepositoryId,
+    ) -> Result<control::StatusV1, ReplicationControlError>;
+    async fn wake(
+        &self,
+        repository: m::RepositoryId,
+    ) -> Result<control::StatusV1, ReplicationControlError>;
+    async fn set_paused(
+        &self,
+        repository: m::RepositoryId,
+        paused: bool,
+    ) -> Result<control::StatusV1, ReplicationControlError>;
+    async fn capture_barrier(
+        &self,
+        repository: m::RepositoryId,
+    ) -> Result<control::BarrierV1, ReplicationControlError>;
+    async fn wait(
+        &self,
+        repository: m::RepositoryId,
+        request: &control::WaitRequestV1,
+    ) -> Result<control::WaitOutcomeV1, ReplicationControlError>;
+}
+
+fn replication_control_error(error: ReplicationControlError) -> Status {
+    match error {
+        ReplicationControlError::NotConfigured => {
+            Status::failed_precondition("replication is not configured for this repository")
+        }
+        ReplicationControlError::Invalid => {
+            Status::invalid_argument("invalid replication control request")
+        }
+        ReplicationControlError::Unavailable => {
+            Status::unavailable("replication worker is unavailable")
+        }
+        ReplicationControlError::Timeout => {
+            Status::deadline_exceeded("replication barrier deadline exceeded")
+        }
+    }
+}
 
 fn replication_request<T: serde::de::DeserializeOwned>(bytes: &[u8]) -> Result<T, Status> {
     if bytes.len() > REQUEST_BYTES {
@@ -75,6 +127,7 @@ pub struct NativeRpc {
     registry: Option<Arc<dyn RepositoryRegistry>>,
     review_threads: Arc<ReviewThreadPager>,
     commands: CommandService,
+    replication_controls: Option<Arc<dyn ReplicationControls>>,
 }
 #[derive(Clone)]
 enum RpcAccess {
@@ -126,6 +179,7 @@ impl NativeRpc {
                     .map_err(review::read_error)?,
             ),
             commands: CommandService::new(executor),
+            replication_controls: None,
         })
     }
     pub fn hosted(host: RepositoryHost, limits: Limits) -> Result<Self, Status> {
@@ -135,6 +189,10 @@ impl NativeRpc {
     }
     pub fn with_registry(mut self, registry: Arc<dyn RepositoryRegistry>) -> Self {
         self.registry = Some(registry);
+        self
+    }
+    pub fn with_replication_controls(mut self, controls: Arc<dyn ReplicationControls>) -> Self {
+        self.replication_controls = Some(controls);
         self
     }
     pub fn hosted_local_trusted(
@@ -276,6 +334,35 @@ impl NativeRpc {
                 )
             })?
             .map(Response::new)
+    }
+
+    fn controls(&self) -> Result<&Arc<dyn ReplicationControls>, Status> {
+        self.replication_controls
+            .as_ref()
+            .ok_or_else(|| Status::failed_precondition("replication controls are not configured"))
+    }
+
+    async fn replication_action(
+        &self,
+        request: Request<wire::Repository>,
+        paused: Option<bool>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        let access = self.request_access(&request)?;
+        let body = request.into_inner();
+        let repository = m::RepositoryId::from_slice(&body.repository)
+            .map_err(|_| Status::invalid_argument("repository ID length"))?;
+        let session = self.bind(&body.repository, access)?;
+        let controls = self.controls()?.clone();
+        self.bounded(async move {
+            session.authorize(true).await.map_err(service_error)?;
+            let status = match paused {
+                Some(paused) => controls.set_paused(repository, paused).await,
+                None => controls.wake(repository).await,
+            }
+            .map_err(replication_control_error)?;
+            replication_reply(&status)
+        })
+        .await
     }
 }
 #[tonic::async_trait]
@@ -757,6 +844,94 @@ impl NativeStore for NativeRpc {
             )
         })
         .await
+    }
+    async fn replication_status(
+        &self,
+        request: Request<wire::Repository>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        let access = self.request_access(&request)?;
+        let body = request.into_inner();
+        let repository = m::RepositoryId::from_slice(&body.repository)
+            .map_err(|_| Status::invalid_argument("repository ID length"))?;
+        let session = self.bind(&body.repository, access)?;
+        let controls = self.controls()?.clone();
+        self.bounded(async move {
+            session.authorize(false).await.map_err(service_error)?;
+            replication_reply(
+                &controls
+                    .status(repository)
+                    .await
+                    .map_err(replication_control_error)?,
+            )
+        })
+        .await
+    }
+    async fn replication_now(
+        &self,
+        request: Request<wire::Repository>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        self.replication_action(request, None).await
+    }
+    async fn replication_pause(
+        &self,
+        request: Request<wire::Repository>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        self.replication_action(request, Some(true)).await
+    }
+    async fn replication_resume(
+        &self,
+        request: Request<wire::Repository>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        self.replication_action(request, Some(false)).await
+    }
+    async fn replication_capture_barrier(
+        &self,
+        request: Request<wire::Repository>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        let access = self.request_access(&request)?;
+        let body = request.into_inner();
+        let repository = m::RepositoryId::from_slice(&body.repository)
+            .map_err(|_| Status::invalid_argument("repository ID length"))?;
+        let session = self.bind(&body.repository, access)?;
+        let controls = self.controls()?.clone();
+        self.bounded(async move {
+            session.authorize(true).await.map_err(service_error)?;
+            replication_reply(
+                &controls
+                    .capture_barrier(repository)
+                    .await
+                    .map_err(replication_control_error)?,
+            )
+        })
+        .await
+    }
+    async fn replication_wait(
+        &self,
+        request: Request<wire::ReplicationControlRequest>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        let access = self.request_access(&request)?;
+        let body = request.into_inner();
+        let repository = m::RepositoryId::from_slice(&body.repository)
+            .map_err(|_| Status::invalid_argument("repository ID length"))?;
+        let session = self.bind(&body.repository, access)?;
+        let request: control::WaitRequestV1 = replication_request(&body.request_json)?;
+        let controls = self.controls()?.clone();
+        self.bounded(async move {
+            session.authorize(true).await.map_err(service_error)?;
+            replication_reply(
+                &controls
+                    .wait(repository, &request)
+                    .await
+                    .map_err(replication_control_error)?,
+            )
+        })
+        .await
+    }
+    async fn replica_inspect(
+        &self,
+        request: Request<wire::Repository>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        self.replication_status(request).await
     }
     type ReadControlRecordStream =
         Pin<Box<dyn Stream<Item = Result<wire::ObjectChunk, Status>> + Send>>;

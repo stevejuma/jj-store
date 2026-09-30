@@ -8,6 +8,7 @@ pub mod guard;
 pub mod native;
 mod native_agent;
 pub mod registry;
+pub mod replication_control;
 
 pub mod transport;
 

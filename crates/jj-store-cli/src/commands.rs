@@ -26,6 +26,8 @@ pub enum Extension {
     /// Synchronize and explicitly reconcile a local native repository
     #[command(long_about = include_str!("../../../docs/cli/sync.md"))]
     Sync(crate::sync_commands::SyncArgs),
+    /// Inspect configured writable-replica state
+    Replica(crate::sync_commands::ReplicaArgs),
 }
 #[derive(Clone, Debug, Args)]
 #[command(disable_help_subcommand = true)]
@@ -86,6 +88,9 @@ pub async fn run(
         Extension::Agent(args) => return crate::agent_commands::run(ui, helper, args).await,
         Extension::Review(args) => return crate::review_commands::run(ui, helper, args).await,
         Extension::Sync(args) => return crate::sync_commands::run(ui, helper, args).await,
+        Extension::Replica(args) => {
+            return crate::sync_commands::run_replica(ui, helper, args).await;
+        }
         Extension::Store(args) => args,
     };
     let Some(command) = args.command else {

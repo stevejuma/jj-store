@@ -228,6 +228,7 @@ fn local_config(state: &Path, runtime: &Path, bucket: &str) -> config::Config {
         limits: config::Limits::default(),
         protection: config::Protected::default(),
         search: Vec::new(),
+        replication: Vec::new(),
     }
 }
 

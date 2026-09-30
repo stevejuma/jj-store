@@ -17,7 +17,8 @@ use jj_store_rpc::{
 };
 use jj_store_service::{
     auth::{BearerToken, Permission, Scope, SystemClock, TokenPolicy},
-    native::SessionLimits,
+    events::{EventKind, Limits as EventLimits, Subscription},
+    native::{NativeSession, SessionLimits},
     transport::NativeEndpoint,
 };
 use jj_store_wal::{
@@ -58,6 +59,7 @@ impl PublicationGuard for InitializationOnly {
 
 struct RunningReplica {
     client: NativeClient,
+    session: Arc<NativeSession>,
     stop: Option<tokio::sync::oneshot::Sender<()>>,
     task: tokio::task::JoinHandle<()>,
 }
@@ -110,6 +112,7 @@ async fn start(
         4 * 1024 * 1024,
     )
     .unwrap();
+    let session = endpoint.bind(token.clone()).unwrap().into_session();
     let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
     let address = listener.local_addr().unwrap();
     let (stop, stopped) = tokio::sync::oneshot::channel();
@@ -139,8 +142,59 @@ async fn start(
     let _ = objects;
     RunningReplica {
         client,
+        session,
         stop: Some(stop),
         task,
+    }
+}
+
+#[derive(Clone, Default)]
+struct ProjectionState(Arc<Mutex<Option<jj_store_adapters::Checkpoint>>>);
+
+struct RecordingProjection(ProjectionState);
+
+#[async_trait::async_trait]
+impl jj_store_adapters::Projection for RecordingProjection {
+    async fn recover(
+        &mut self,
+        context: jj_store_adapters::Context,
+    ) -> jj_store_adapters::Result<Option<jj_store_adapters::Checkpoint>> {
+        context.check()?;
+        Ok(self.0.0.lock().unwrap().clone())
+    }
+
+    async fn bootstrap(
+        &mut self,
+        snapshot: jj_store_adapters::Snapshot,
+        identity: &jj_store_adapters::Identity,
+        context: jj_store_adapters::Context,
+    ) -> jj_store_adapters::Result<jj_store_adapters::Checkpoint> {
+        context.check()?;
+        let checkpoint = jj_store_adapters::Checkpoint {
+            version: 1,
+            identity: identity.clone(),
+            source: snapshot.position,
+            artifact: m::RecordDigest::new([91; 32]),
+        };
+        *self.0.0.lock().unwrap() = Some(checkpoint.clone());
+        Ok(checkpoint)
+    }
+
+    async fn apply(
+        &mut self,
+        batch: jj_store_adapters::Batch,
+        identity: &jj_store_adapters::Identity,
+        context: jj_store_adapters::Context,
+    ) -> jj_store_adapters::Result<jj_store_adapters::Checkpoint> {
+        context.check()?;
+        let checkpoint = jj_store_adapters::Checkpoint {
+            version: 1,
+            identity: identity.clone(),
+            source: batch.snapshot.position,
+            artifact: m::RecordDigest::new([92; 32]),
+        };
+        *self.0.0.lock().unwrap() = Some(checkpoint.clone());
+        Ok(checkpoint)
     }
 }
 
@@ -344,6 +398,46 @@ async fn authenticated_rpc_applies_a_closure_and_checkpoints_only_after_ack() {
         destination_token.clone(),
     )
     .await;
+    let mut events = Subscription::open(
+        destination.session.clone(),
+        None,
+        EventLimits {
+            poll_interval: Duration::from_secs(5),
+            ..EventLimits::default()
+        },
+    )
+    .await
+    .unwrap();
+    assert!(matches!(
+        events.next().await.unwrap().unwrap().kind,
+        EventKind::Ready { .. }
+    ));
+    let projection_state = ProjectionState::default();
+    let projection_root = tempfile::tempdir().unwrap();
+    let mut projection = jj_store_adapters::Runner::new(
+        destination.session.adapter_source(),
+        jj_store_adapters::Identity {
+            name: "replication-import-test".into(),
+            implementation: "test".into(),
+            schema: 1,
+            config: m::RecordDigest::new([90; 32]),
+        },
+        RecordingProjection(projection_state.clone()),
+        projection_root.path(),
+        jj_store_adapters::Limits::default(),
+    )
+    .unwrap();
+    assert_eq!(
+        projection
+            .step(jj_store_adapters::CancellationToken::new())
+            .await
+            .unwrap()
+            .applied
+            .unwrap()
+            .source
+            .position,
+        m::WalPosition(0)
+    );
 
     let prepared = source
         .client
@@ -463,6 +557,33 @@ async fn authenticated_rpc_applies_a_closure_and_checkpoints_only_after_ack() {
     };
     assert!(first_result.publication_position.is_some());
     assert_eq!(first_result.receipts[0].origin_key, offers[0].origin_key);
+    let changed = tokio::time::timeout(Duration::from_secs(1), events.next())
+        .await
+        .unwrap()
+        .unwrap()
+        .unwrap();
+    assert!(matches!(changed.kind, EventKind::Changed));
+    assert_eq!(changed.cursor.position, m::WalPosition(1));
+    let health = projection
+        .step(jj_store_adapters::CancellationToken::new())
+        .await
+        .unwrap();
+    assert_eq!(
+        health.repository_position.unwrap().position,
+        m::WalPosition(1)
+    );
+    assert_eq!(health.applied.unwrap().source.position, m::WalPosition(1));
+    assert_eq!(
+        projection_state
+            .0
+            .lock()
+            .unwrap()
+            .as_ref()
+            .unwrap()
+            .source
+            .position,
+        m::WalPosition(1)
+    );
 
     let mut checkpoint = checkpoints.empty();
     checkpoint.revision = 1;

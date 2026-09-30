@@ -197,6 +197,9 @@ impl NativeRequest {
     ) -> Result<replication::ReplicaNegotiationV1> {
         Ok(self.session.negotiate_replica(request).await?)
     }
+    pub async fn replica_descriptor(&self) -> Result<crate::native::ReplicaDescriptor> {
+        Ok(self.session.replica_descriptor().await?)
+    }
     pub async fn replication_feed(
         &self,
         request: &replication::FeedRequestV1,

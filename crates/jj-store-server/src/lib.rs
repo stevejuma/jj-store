@@ -8,6 +8,7 @@ pub mod process;
 pub mod registry;
 mod registry_catalog;
 mod registry_persistence;
+mod replication;
 pub mod search;
 mod search_config;
 pub mod storage;

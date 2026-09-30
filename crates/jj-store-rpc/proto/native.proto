@@ -26,6 +26,13 @@ service NativeStore {
   rpc OfferOrigins(ReplicationRequest) returns (JsonReply);
   rpc GetOriginClosure(ReplicationRequest) returns (JsonReply);
   rpc ApplyOrigins(ReplicationRequest) returns (JsonReply);
+  rpc ReplicationStatus(Repository) returns (JsonReply);
+  rpc ReplicationNow(Repository) returns (JsonReply);
+  rpc ReplicationPause(Repository) returns (JsonReply);
+  rpc ReplicationResume(Repository) returns (JsonReply);
+  rpc ReplicationCaptureBarrier(Repository) returns (JsonReply);
+  rpc ReplicationWait(ReplicationControlRequest) returns (JsonReply);
+  rpc ReplicaInspect(Repository) returns (JsonReply);
   rpc ReadControlRecord(ControlRecordRequest) returns (stream ObjectChunk);
   rpc WriteControlRecord(stream ControlUploadChunk) returns (UploadResult);
   rpc HeadObject(ObjectRequest) returns (ObjectMetadata);
@@ -105,6 +112,7 @@ message JsonReply { bytes json = 1; }
 // Replication DTOs use bounded canonical JSON and never carry a principal. The
 // server derives the publication actor from the authenticated request.
 message ReplicationRequest { bytes repository = 1; bytes request_json = 2; }
+message ReplicationControlRequest { bytes repository = 1; bytes request_json = 2; }
 message ControlRecordId { uint32 kind = 1; bytes digest = 2; }
 message ControlRecordRequest { bytes repository = 1; ControlRecordId record = 2; }
 message ControlUploadStart { bytes repository = 1; ControlRecordId record = 2; uint64 length = 3; }
