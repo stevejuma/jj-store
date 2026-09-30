@@ -40,11 +40,11 @@ export async function readLandingDocuments(
       return true;
     })
     .slice(0, 5);
-  const loaded = await Promise.all(
-    documents.map(
-      async ({ path, id }) => [path, await source.file(id, operation)] as const,
-    ),
-  );
+  const loaded: Array<
+    readonly [string, Awaited<ReturnType<StoreDataSource["file"]>>]
+  > = [];
+  for (const { path, id } of documents)
+    loaded.push([path, await source.file(id, operation)]);
   const contents = new Map(loaded);
   return {
     ...snapshot,

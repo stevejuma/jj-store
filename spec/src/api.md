@@ -147,7 +147,10 @@ private spool before exposing any bytes, including for ranges. The stream checks
 current authorization and elapsed budgets before and after every bounded chunk.
 Stream lifetime retains its concurrency permit and private spool. File bytes are
 binary media, not JSON or trusted HTML; HTTP safe content-disposition and
-browser rendering remain transport/presentation requirements.
+browser rendering remain transport/presentation requirements. A client composing
+multiple file previews MUST keep those reads within native admission rather than
+bursting one request per preview; a Busy response must not discard an already
+validated directory listing.
 
 Canceling a chunk invalidates that stream handle. Reusing it fails explicitly;
 resumption requires opening a fresh verified range. This prevents cancellation

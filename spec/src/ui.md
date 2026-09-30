@@ -193,14 +193,16 @@ GitHub-style README, CODE_OF_CONDUCT, CONTRIBUTING, LICENSE/LICENCE and SECURITY
 preview card only when those files exist in the selected fixture snapshot.
 README is ordered first regardless of API order; its tabs are left aligned with
 document icons, use a rounded theme-grey hover and selected treatment, and keep
-a visible active underline. Selecting a file renders a stacked source preview:
-copied commit metadata, deterministic file statistics, then the selected
-content. The metadata header keeps the file-tree toggle as its far-left control
-and exposes Edit file as an icon-only action. Edit mode replaces the selected
-filename breadcrumb segment with the filename input; it does not add an editor
-action row or a second filename field. Markdown files open in safe preview mode
-with a Preview/Source toggle; source mode uses the public Design Core CodeBlock
-with the filename/source body on the theme background. Rust source previews use
+a visible active underline. The production loader reads those landing documents
+sequentially so their preview does not exceed the bounded native read-admission
+budget. Selecting a file renders a stacked source preview: copied commit
+metadata, deterministic file statistics, then the selected content. The metadata
+header keeps the file-tree toggle as its far-left control and exposes Edit file
+as an icon-only action. Edit mode replaces the selected filename breadcrumb
+segment with the filename input; it does not add an editor action row or a
+second filename field. Markdown files open in safe preview mode with a
+Preview/Source toggle; source mode uses the public Design Core CodeBlock with
+the filename/source body on the theme background. Rust source previews use
 CodeBlock's public custom-tokenizer extension point so `.rs` files highlight in
 the catalog while retaining the shared code component.
 

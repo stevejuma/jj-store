@@ -183,6 +183,8 @@ test("empty working copies use the native no-description label", () => {
 
 test("repository landing documents include community files in stable tab order", async () => {
   const requested: string[] = [];
+  let activeReads = 0;
+  let maximumActiveReads = 0;
   const ids = new Map([
     ["SECURITY.md", "01".repeat(64)],
     ["LICENCE", "02".repeat(64)],
@@ -195,6 +197,10 @@ test("repository landing documents include community files in stable tab order",
   const dataSource = source({
     file: async (id) => {
       requested.push(id);
+      activeReads += 1;
+      maximumActiveReads = Math.max(maximumActiveReads, activeReads);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      activeReads -= 1;
       return { text: `contents:${id}` };
     },
   });
@@ -214,6 +220,7 @@ test("repository landing documents include community files in stable tab order",
     ids.get("LICENCE"),
     ids.get("SECURITY.md"),
   ]);
+  assert.equal(maximumActiveReads, 1);
   assert.deepEqual(
     loaded.files
       .filter((candidate) => candidate.contents)

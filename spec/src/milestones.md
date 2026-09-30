@@ -17007,6 +17007,42 @@ and named tests are checked by the progress gate.
         "result": "pass",
         "failures": 0,
         "note": "The requested repository guidance and final ledger are formatted; the spec-first map and progress evidence remain valid with visual approval explicitly pending under the targeted verification policy."
+      },
+      {
+        "command": "PATH=<scratch-cmake> CMAKE=<scratch-cmake> BOOST_ROOT=<scratch-boost> CC=<xcode-wrapper> CXX=<xcode-wrapper> pnpm dev:reset; live browser verification of the main bookmark",
+        "result": "fail",
+        "failures": 1,
+        "note": "The rebuilt demo reset and seeded all five root documents, but the live Files view reported file_unavailable: five parallel landing-document reads exceeded native admission and returned busy for three previews."
+      },
+      {
+        "command": "pnpm exec tsx --test --test-name-pattern='repository landing documents include community files in stable tab order' web/tests/production-store-loaders.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "The focused loader regression proves stable five-tab selection and ordering while limiting landing-document content loading to one active native read."
+      },
+      {
+        "command": "pnpm web:check && pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "The affected Svelte application type check and production bundle pass; only the existing Lightning CSS :global and bundle-size warnings remain."
+      },
+      {
+        "command": "PATH=<scratch-cmake> CMAKE=<scratch-cmake> BOOST_ROOT=<scratch-boost> CC=<xcode-wrapper> CXX=<xcode-wrapper> pnpm dev:restart; live browser verification of repository 1bdb89c409c1b891ac7f180c01a265d5",
+        "result": "pass",
+        "failures": 0,
+        "note": "The warmed demo restart reused the deterministic seed and became ready with search. The live main bookmark shows README, CODE_OF_CONDUCT, CONTRIBUTING, LICENSE and SECURITY tabs, six root files, the far-left tree toggle, icon-only Edit file action and a single breadcrumb filename input in edit mode."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/controller/production-landing-documents.ts web/tests/production-store-loaders.test.ts spec/src/ui.md spec/src/milestones.md && pnpm spec:first && pnpm check:progress",
+        "result": "fail",
+        "failures": 1,
+        "note": "Formatting passed, then spec-first required the API chapter as the second canonical owner for the production landing-document loader; progress validation did not run."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/controller/production-landing-documents.ts web/tests/production-store-loaders.test.ts spec/src/api.md spec/src/ui.md spec/src/milestones.md && pnpm spec:first && pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "The focused source, regression and owning API/UI requirements are formatted; spec-first and progress validation pass for the live admission repair."
       }
     ],
     "result": "pending",
