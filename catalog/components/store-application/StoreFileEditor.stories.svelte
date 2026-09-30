@@ -103,6 +103,9 @@
     await waitFor(() => expect(codeMirror).toHaveClass("cm-focused"));
     await expect(getComputedStyle(codeMirror).outlineStyle).toBe("none");
     await expect(getComputedStyle(codeMirror).boxShadow).toBe("none");
+    await expect(contents).toHaveFocus();
+    await expect(getComputedStyle(contents).outlineStyle).toBe("none");
+    await expect(getComputedStyle(contents).boxShadow).toBe("none");
     await userEvent.clear(contents);
     await userEvent.type(
       contents,
@@ -131,6 +134,8 @@
     });
     await userEvent.clear(description);
     await userEvent.type(description, "Rename README to project notes");
+    await expect(description).toHaveFocus();
+    await expect(getComputedStyle(description).outlineStyle).toBe("none");
     await userEvent.click(
       within(dialog).getByRole("button", { name: "Preview changes" }),
     );

@@ -266,14 +266,18 @@ description before the existing preview, apply, retry and status flow. Edit mode
 uses the public Design Core Mira MDE code editor with line numbers and
 filename-matched CodeMirror language support. It renders flush with the content
 body without a field label, nested border or focus frame; a focused CodeMirror
-surface exposes no outline or box shadow. Its right-aligned line-number gutter
-stays beside and vertically aligned with the content, and the editor, gutter and
-active line retain the content-card theme background. Markdown files open in
-safe preview mode, and draft preview/source modes retain unsaved content. Source
-mode uses the public Design Core CodeBlock with the filename/source body on the
-theme background. Rust source previews use CodeBlock's public custom-tokenizer
-extension point so `.rs` files highlight in the catalog while retaining the
-shared code component.
+surface and its editable content expose no outline or box shadow. A static
+application stylesheet resets the editable content's native focus outline so the
+served asset policy does not depend on CodeMirror's injected reset. The same
+scoped treatment applies to Community prose composers for review comments,
+replies and mutation descriptions, retaining editable focus and toolbar
+controls. Its right-aligned line-number gutter stays beside and vertically
+aligned with the content, and the editor, gutter and active line retain the
+content-card theme background. Markdown files open in safe preview mode, and
+draft preview/source modes retain unsaved content. Source mode uses the public
+Design Core CodeBlock with the filename/source body on the theme background.
+Rust source previews use CodeBlock's public custom-tokenizer extension point so
+`.rs` files highlight in the catalog while retaining the shared code component.
 
 An authenticated single-target bookmark exposes Edit for an existing bounded
 UTF-8 ordinary file. The editor keeps filename and content independently

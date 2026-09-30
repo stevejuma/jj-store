@@ -54,6 +54,7 @@ adds evidence here in its enclosing Jujutsu change.
 | M4.26       | Done        | M4.24       | JST-UI-002,JST-UI-009,JST-API-005                                                                                                                                        | Full-height conflict file browser and header actions; focused and cold browser acceptance                                      | Retain conflict layout/draft regressions; visual review stays separate        | E-UI-039                                                                                                                                                                                                                                                                                                                                                       |
 | M4.27       | Done        | M4.25       | JST-UI-008,JST-API-005                                                                                                                                                   | Commit selector time/chips beneath title and stacked Git/JJ column; focused interaction/accessibility acceptance               | Retain picker regressions; visual review stays separate                       | E-UI-040                                                                                                                                                                                                                                                                                                                                                       |
 | M4.28       | Done        | M4.27       | JST-UI-003,JST-UI-005,JST-UI-009,JST-UI-014,JST-API-002                                                                                                                  | Native Evo Log column, independent pinned anchor/history and chrome alignment; focused and cold browser acceptance             | Retain evolution and chrome regressions; visual review remains separate       | E-UI-041                                                                                                                                                                                                                                                                                                                                                       |
+| M4.29       | Done        | M4.28       | JST-UI-008,JST-API-005                                                                                                                                                   | File editor and prose composers remove native focus ring under served asset policy; focused and cold browser acceptance        | Retain editor/composer focus regressions; visual review remains separate      | E-UI-042                                                                                                                                                                                                                                                                                                                                                       |
 | M5          | Done        | M4.1        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                                                                                                                      | Authenticated typed commands and shared RPC policy                                                                             | Retain mutation conformance; proceed to M6                                    | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-M5-005,E-M5-006,E-M5-007,E-M5-008,E-UI-028                                                                                                                                                                                                                                                                   |
 | M5.1        | Done        | M4.1        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                                                                                                                      | Basic changes/refs/reconcile; preview receipt and semantic policy                                                              | Retain basic mutation acceptance                                              | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-UI-028                                                                                                                                                                                                                                                                                                       |
 | M5.2        | Done        | M5.1        | JST-MUT-003                                                                                                                                                              | Full abandon descendant bookmark workspace/evolution parity                                                                    | Retain abandon acceptance                                                     | E-M5-005                                                                                                                                                                                                                                                                                                                                                       |
@@ -22052,6 +22053,164 @@ and named tests are checked by the progress gate.
     "versions": "jj 0.45.1; Node 24.10.0; pnpm 10.32.1; Svelte 5.57.1; Storybook 10.5.7; Vitest 4.1.11; Vite 8.3.1. Existing dependency resolution unchanged; no sibling or package manifest edits.",
     "formats": "Existing native evolution endpoint consumed with full 128-character commit and pinned operation identities. Independent evolution hash anchor and presentation state preserve the selected main commit and typed mutation target; predecessor edges never substitute commit parents. Opaque pages preserve exact snapshots, deduplicate commits, reject repeated cursors, bound graph display and ignore late responses. Community graph/column canvas reused with local loading, empty, failed and incomplete states. No server DTO, native object, manifest, WAL, receipt or credential format changes.",
     "next": "Retain focused evolution identity/paging/history and chrome regressions; visual baseline approval remains separate."
+  },
+  {
+    "id": "E-UI-042",
+    "tasks": [
+      "M4.29"
+    ],
+    "date": "2026-10-01",
+    "kind": "served-editor-and-composer-focus-treatment",
+    "revision": "Enclosing Jujutsu change uonqxxvs.",
+    "before": "Clean working change after E-UI-041. Live focused editable .cm-content has native auto 1px outline while the outer .cm-editor already has no outline/shadow. Initial 9 strengthened stories pass because Storybook admits injected CodeMirror styles. Exact cold browser regression with production asset CSP fails both editor and prose composer cases: expected outline none, received auto.",
+    "files": [
+      "catalog/components/store-application/StoreCollaboration.stories.svelte",
+      "catalog/components/store-application/StoreFileEditor.stories.svelte",
+      "catalog/components/store-application/collaboration-story-assertions.ts",
+      "spec/src/api.md",
+      "spec/src/milestones.md",
+      "spec/src/ui.md",
+      "spec/src/verification.md",
+      "web/src/lib/ui/community-projects/StoreFileEditor.svelte",
+      "web/src/lib/ui/editor-focus.css",
+      "web/src/lib/ui/store-collaboration/StoreAgentToolReview.svelte",
+      "web/src/lib/ui/store-collaboration/StoreCommentableCommitDiff.svelte",
+      "web/src/lib/ui/store-collaboration/StoreReviewConversation.svelte",
+      "web/src/lib/ui/store-mutations/StoreMutationFields.svelte",
+      "web/tests/browser/editor-focus.spec.ts"
+    ],
+    "tests": [],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreFileEditor.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial 9 interaction/accessibility stories pass, but injected editor styles remain admitted and do not reproduce the production native content ring. Log .scratch/editor-focus-before.log."
+      },
+      {
+        "command": "pnpm exec playwright test --config .scratch/workspace-browser.config.mts web/tests/browser/editor-focus.spec.ts",
+        "result": "fail",
+        "failures": 2,
+        "note": "Exact cold regression under actual production asset CSP: file editor and prose composer both retain auto native focus outline. Log .scratch/editor-focus-browser-before.log."
+      },
+      {
+        "command": "pnpm exec playwright test --config .scratch/workspace-browser.config.mts web/tests/browser/editor-focus.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Same 2 browser cases pass with fresh isolated preview after static host stylesheet. Content remains focused and editable; file-save availability and composer cancellation pass. No live mutation publication. Log .scratch/editor-focus-browser-after.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreFileEditor.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-mutations/StoreRepositoryActions.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 13 direct-consumer interaction/accessibility stories pass, including tool replies, inline comments, review replies, file-save description and mutation composers. Final rerun after unchanged selection-geometry helper extraction also passes 13. Logs .scratch/editor-focus-stories.log and .scratch/editor-focus-stories-final.log. Changed stories remain visual-pending."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero errors/warnings. Log .scratch/editor-focus-web-check.log."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero diagnostics and initial 78-module boundary pass. Final run after helper extraction passes 79 modules. Logs .scratch/editor-focus-catalog-check.log and .scratch/editor-focus-catalog-check-final.log."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "fail",
+        "failures": 1,
+        "note": "Collaboration story reaches 405 counted lines against 400 cap; extracted existing selection-geometry assertion unchanged into its story-local helper. Log .scratch/editor-focus-architecture.log."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "299-module production/catalog boundary and source-size audit passes after unchanged assertion extraction. Log .scratch/editor-focus-architecture-after.log."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Fresh UI output builds with existing nonfatal CSS minification and bundle-size warnings. No Rust build. Log .scratch/editor-focus-build.log."
+      },
+      {
+        "command": "pnpm exec prettier --write web/tests/browser/editor-focus.spec.ts catalog/components/store-application/StoreFileEditor.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Browser regression and strengthened stories formatted."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/ui/editor-focus.css web/src/lib/ui/community-projects/StoreFileEditor.svelte web/src/lib/ui/store-mutations/StoreMutationFields.svelte web/src/lib/ui/store-collaboration/StoreReviewConversation.svelte web/src/lib/ui/store-collaboration/StoreAgentToolReview.svelte web/src/lib/ui/store-collaboration/StoreCommentableCommitDiff.svelte spec/src/ui.md spec/src/api.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Application focus stylesheet, direct consumer imports and canonical chapters formatted."
+      },
+      {
+        "command": "pnpm exec prettier --write catalog/components/store-application/collaboration-story-assertions.ts catalog/components/store-application/StoreCollaboration.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Story-local helper and its consumer formatted."
+      },
+      {
+        "command": "node .scratch/restart-workspace-ui.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Owned live demo ready at 127.0.0.1:7460; PID 58854. Existing explicit binaries and repository data preserved; no reseed or unrelated service restart."
+      },
+      {
+        "command": "CUA live built-UI verification",
+        "result": "pass",
+        "failures": 0,
+        "note": "Focused actual LAYOUT.md editable content and existing review reply composer: activeElement matches content; outline and shadow both none. Screenshots .scratch/editor-focus-final.png and .scratch/editor-focus-review.png. Temporary tab 13 closed; user tabs preserved. No text submitted or live mutation preview/apply."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md spec/src/verification.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final editor/composer evidence ledger and verification matrix formatted."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "4 validators, 18 chapters and 107 requirements pass. Log .scratch/editor-focus-spec-validate.log."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "10 protected files and 3 canonical chapters pass same-change gate. Final evidence rerun also passes. Logs .scratch/editor-focus-spec-first.log and .scratch/editor-focus-spec-first-final.log."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "82 tasks pass evidence bookkeeping audit. Final evidence rerun also passes. Logs .scratch/editor-focus-progress.log and .scratch/editor-focus-progress-final.log."
+      },
+      {
+        "command": "pnpm spec:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Canonical mdBook HTML builds. Log .scratch/editor-focus-spec-build.log."
+      },
+      {
+        "command": "pnpm exec prettier --check catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/StoreFileEditor.stories.svelte catalog/components/store-application/collaboration-story-assertions.ts spec/src/api.md spec/src/milestones.md spec/src/ui.md spec/src/verification.md web/src/lib/ui/community-projects/StoreFileEditor.svelte web/src/lib/ui/editor-focus.css web/src/lib/ui/store-collaboration/StoreAgentToolReview.svelte web/src/lib/ui/store-collaboration/StoreCommentableCommitDiff.svelte web/src/lib/ui/store-collaboration/StoreReviewConversation.svelte web/src/lib/ui/store-mutations/StoreMutationFields.svelte web/tests/browser/editor-focus.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 14 changed production, catalog, regression and canonical files pass formatting."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "deferred": [
+      "Changed stories remain visual-pending; visual baseline approval is separate.",
+      "Root aggregate pnpm spec:check, pnpm check, pnpm test and pnpm build; unrelated UI suites; Rust/native contract generation, real-RustFS and shared release qualification are out of scope under the targeted UI-only policy."
+    ],
+    "versions": "jj 0.45.1; Node 24.10.0; pnpm 10.32.1; Svelte 5.57.1; Storybook 10.5.7; Vitest 4.1.11; Vite 8.3.1. Existing local dependency setup unchanged; no sibling or package manifest edits; registry-only release qualification is not claimed.",
+    "formats": "Static application host stylesheet scopes native editable-content focus outline and shadow removal to file-editor contents and Community composer Mira content. Toolbar/button focus styles and editing/submission semantics remain intact. Actual production asset CSP is applied only to isolated preview HTML in the focused browser regression; no shared fixture/configuration, CSP policy, DTO, native identity, object, manifest, WAL, receipt or credential format changes.",
+    "next": "Retain focused served-policy editor/composer regression and direct-consumer story coverage; visual approval remains separate."
   }
 ]
 ```

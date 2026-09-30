@@ -18,6 +18,7 @@
   import RepositoryFileCodeEditor from "./RepositoryFileCodeEditor.svelte";
   import { tokenizeRepositorySource } from "./repository-source-tokenizer.js";
   import "./store-file-editor.css";
+  import "../editor-focus.css";
 
   let {
     controller,

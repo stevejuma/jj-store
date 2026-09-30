@@ -4,6 +4,7 @@
   import MessageSquareIcon from "@lucide/svelte/icons/message-square";
   import MessageSquareReplyIcon from "@lucide/svelte/icons/message-square-reply";
   import { CommunityChatComposer } from "@lapismd/lapis-community/components/community-chat-composer";
+  import "../editor-focus.css";
   import type { Model } from "../../api/client.js";
   import {
     anchorAgentTool,

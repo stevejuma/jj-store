@@ -8,26 +8,7 @@
     within,
   } from "storybook/test";
   import StoreRepositoryApplication from "../../fixtures/StoreRepositoryApplicationFixture.svelte";
-
-  async function expectSelectionSurfaceCoversRow(selection: HTMLElement) {
-    const row = selection.closest<HTMLElement>(".store-collaboration__row");
-    if (!row) throw new Error("Collaboration row was not rendered");
-    const rowRect = row.getBoundingClientRect();
-    const selectionRect = selection.getBoundingClientRect();
-    await expect(
-      Math.abs(selectionRect.left - rowRect.left),
-    ).toBeLessThanOrEqual(1);
-    await expect(Math.abs(selectionRect.top - rowRect.top)).toBeLessThanOrEqual(
-      1,
-    );
-    await expect(
-      Math.abs(selectionRect.right - rowRect.right),
-    ).toBeLessThanOrEqual(1);
-    await expect(
-      Math.abs(selectionRect.bottom - rowRect.bottom),
-    ).toBeLessThanOrEqual(1);
-    return row;
-  }
+  import { expectSelectionSurfaceCoversRow } from "./collaboration-story-assertions.js";
 
   const { Story } = defineMeta({
     title: "JJ Store/Collaboration",
@@ -134,6 +115,8 @@
       name: "Markdown editor",
     });
     await userEvent.type(toolEditor, "Keep this tool result pinned.");
+    await expect(toolEditor).toHaveFocus();
+    await expect(getComputedStyle(toolEditor).outlineStyle).toBe("none");
     await userEvent.click(
       within(toolComposer).getByRole("button", { name: "Reply" }),
     );
@@ -211,6 +194,8 @@
       name: "Markdown editor",
     });
     await userEvent.type(lineEditor, "Keep this exact line covered.");
+    await expect(lineEditor).toHaveFocus();
+    await expect(getComputedStyle(lineEditor).outlineStyle).toBe("none");
     await userEvent.click(
       within(lineComposer).getByRole("button", {
         name: "Comment",
@@ -371,6 +356,8 @@
     });
     await userEvent.click(editor);
     await userEvent.type(editor, "The pinned root remains exact.");
+    await expect(editor).toHaveFocus();
+    await expect(getComputedStyle(editor).outlineStyle).toBe("none");
     await userEvent.click(canvas.getByRole("button", { name: "Reply" }));
     await expect(
       canvas.getByText("The pinned root remains exact."),

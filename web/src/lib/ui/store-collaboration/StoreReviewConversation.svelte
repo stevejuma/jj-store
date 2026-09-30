@@ -1,6 +1,7 @@
 <script lang="ts">
   import { FileDiff } from "@lapismd/design-core/diff";
   import { CommunityChatComposer } from "@lapismd/lapis-community/components/community-chat-composer";
+  import "../editor-focus.css";
   import { CommunityMessage } from "@lapismd/lapis-community/components/community-message";
   import type { StoreController } from "../../controller/contracts.js";
   import {

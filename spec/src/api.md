@@ -529,7 +529,10 @@ responsive commit-details action and progressive commit-metadata hiding are also
 client presentation; the action selects the Commits page before the same
 complete commit identity. The content-sized breadcrumb filename field,
 line-numbered Mira MDE edit body, focus treatment and filename-selected source
-language do not add file-content fields.
+language do not add file-content fields. Static application focus styling
+suppresses the native editable-content outline in file editors and Community
+comment, reply and mutation composers under the served asset policy. It does not
+require admitting injected editor styles or alter edit/submission semantics.
 
 ## Browser read client
 
