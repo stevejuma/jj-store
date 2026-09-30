@@ -12,6 +12,7 @@ mod collaboration;
 mod domains;
 mod native_copy;
 mod reader;
+mod replication;
 mod review;
 mod review_audit;
 mod review_audit_events;
@@ -55,6 +56,10 @@ pub use jj_review::{
 };
 pub use native_copy::NativeCopyOutcome;
 pub use reader::SelectedRecord;
+pub use replication::{
+    LocalDeliveryV1, OriginDomainV1, OriginKeyV1, OriginPrefixV1, OriginPublicationV1,
+    OriginReceiptV1, OriginStreamV1, ReplicationRootV1,
+};
 pub use review_catalog::ReviewStoreSnapshot;
 pub use review_commands::{ReviewCommandError, ReviewCommandRequest};
 pub use review_reads::ReviewCatalogPage;
@@ -66,8 +71,8 @@ use crate::{
     records::{self, RecordKind, RecordRef, Records},
 };
 use jj_store_model::{
-    AttemptId, EpochId, IntentDigest, ObjectKey, OperationId, PrincipalId, PublicationId,
-    RecordDigest, RepositoryId, RequestId, WalPosition,
+    AttemptId, EpochId, IntentDigest, ObjectKey, OperationId, OriginDigest, PrincipalId,
+    PublicationId, RecordDigest, ReplicaId, RepositoryId, RequestId, WalPosition, WriterEpoch,
 };
 use jj_store_object::{Condition, Key, ObjectStore, StagedUpload, VersionToken, WriteOutcome};
 use serde::{Deserialize, Serialize};
@@ -117,6 +122,8 @@ pub struct Manifest {
     pub review_state_version: u64,
     #[serde(default, skip_serializing_if = "is_zero")]
     pub domain_history_start: u64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub replication_root: Option<RecordRef>,
 }
 impl Manifest {
     pub fn snapshot(&self) -> Snapshot {
@@ -157,7 +164,8 @@ impl Manifest {
                 || self.agent_state_version != 0
                 || self.review_root.is_some()
                 || self.review_state_version != 0
-                || self.domain_history_start != 0 =>
+                || self.domain_history_start != 0
+                || self.replication_root.is_some() =>
             {
                 return Err(Error::Corrupt("legacy manifest domains"));
             }
@@ -177,6 +185,11 @@ impl Manifest {
                 return Err(Error::Corrupt("manifest domain state"));
             }
             _ => {}
+        }
+        if self.replication_root.is_some_and(|reference| {
+            reference.kind != RecordKind::ReplicationRoot || reference.attempt.is_some()
+        }) {
+            return Err(Error::Corrupt("replication root reference"));
         }
         if self.published.0 > self.revision
             || (self.published.0 == 0) != self.tail.is_none()
@@ -365,6 +378,8 @@ pub struct PublishedTransaction {
     pub before_domains: Option<RepositoryDomains>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub after_domains: Option<RepositoryDomains>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub origins: Vec<RecordRef>,
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum PublishOutcome {
@@ -469,6 +484,26 @@ impl Coordinator {
     }
 
     pub async fn initialize(&self, epoch: EpochId, settings: Vec<u8>) -> Result<ManifestSnapshot> {
+        self.initialize_inner(epoch, settings, None).await
+    }
+
+    pub async fn initialize_replica(
+        &self,
+        epoch: EpochId,
+        settings: Vec<u8>,
+        replica: ReplicaId,
+        writer_epoch: WriterEpoch,
+    ) -> Result<ManifestSnapshot> {
+        self.initialize_inner(epoch, settings, Some((replica, writer_epoch)))
+            .await
+    }
+
+    async fn initialize_inner(
+        &self,
+        epoch: EpochId,
+        settings: Vec<u8>,
+        replica: Option<(ReplicaId, WriterEpoch)>,
+    ) -> Result<ManifestSnapshot> {
         if settings.len() > 64 * 1024 {
             return Err(Error::Limit("settings"));
         }
@@ -484,6 +519,17 @@ impl Coordinator {
                 .await?;
             let agent_root = self.stage_agent_root(&AgentRootV1::empty()).await?;
             let review_root = self.stage_review_root(&ReviewRootV1::empty()).await?;
+            let replication_root = match replica {
+                Some((replica, writer_epoch)) => Some(
+                    self.stage_replication_root(&ReplicationRootV1::empty(
+                        self.records.repository,
+                        replica,
+                        writer_epoch,
+                    ))
+                    .await?,
+                ),
+                None => None,
+            };
             let manifest = Manifest {
                 format: 2,
                 repository: self.records.repository,
@@ -504,6 +550,7 @@ impl Coordinator {
                 review_root: Some(review_root),
                 review_state_version: 0,
                 domain_history_start: 1,
+                replication_root,
             };
             let bytes = records::encode(&manifest, MAX_MANIFEST)?;
             let upload = StagedUpload::from_bytes(&bytes, MAX_MANIFEST).await?;
@@ -653,6 +700,40 @@ impl Coordinator {
                     BTreeMap::from([(receipt_keys.0, receipt_ref), (receipt_keys.1, receipt_ref)]),
                 )
                 .await?;
+            let origin_operations = match &request.transition {
+                Some(Transition::Native { add, .. }) => BTreeSet::from([*add]),
+                Some(Transition::Strict { heads, .. }) => {
+                    heads.difference(&base.manifest.heads).copied().collect()
+                }
+                None => BTreeSet::new(),
+            };
+            let changed_domains = BTreeSet::from([if request.transition.is_some() {
+                OriginDomainV1::Code
+            } else {
+                OriginDomainV1::Repository
+            }]);
+            let origin = self
+                .author_origin(
+                    &base,
+                    position,
+                    request.principal,
+                    request.request_id,
+                    request.publication_id,
+                    intent,
+                    origin_operations,
+                    base.manifest.domains(),
+                    inventory,
+                    changed_domains,
+                )
+                .await?;
+            let replication_root = origin
+                .as_ref()
+                .map(|authored| authored.root)
+                .or(base.manifest.replication_root);
+            let origins = origin
+                .into_iter()
+                .map(|authored| authored.receipt)
+                .collect();
             let attempt = records::new_attempt()?;
             let transaction = PublishedTransaction {
                 attempt,
@@ -674,6 +755,7 @@ impl Coordinator {
                     .collect(),
                 before_domains: base.manifest.domains(),
                 after_domains: base.manifest.domains(),
+                origins,
             };
             let tail = self
                 .records
@@ -700,6 +782,7 @@ impl Coordinator {
                 history,
                 settings,
                 code_state_version,
+                replication_root,
                 ..base.manifest
             };
             let bytes = records::encode(&manifest, MAX_MANIFEST)?;
@@ -1114,6 +1197,7 @@ impl Coordinator {
             if history_entries.len() as u64 != manifest.published.0 {
                 return Err(Error::Corrupt("history catalog cardinality"));
             }
+            self.audit_replication(manifest, max_entries).await?;
             let inventory_entries = self
                 .catalog
                 .entries(manifest.inventory, max_entries)

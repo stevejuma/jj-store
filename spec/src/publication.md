@@ -75,6 +75,24 @@ extend the selected native inventory only with complete verified closures that
 its typed artifacts strongly reference. Cold recovery verifies selected current
 and historical roots without Tantivy, Nostr or a second manifest.
 
+A format 2 manifest may also select a versioned replication root. Repositories
+without that optional root retain their existing publication behavior until the
+explicit seed upgrade. A replication-enabled repository records its local origin
+stream, accepted origin receipts and sparse causal prefixes in immutable COW
+records selected by the same manifest. Every authored native, AgentStore or
+ReviewStore publication stages one canonical origin envelope from the successful
+CAS base and selects its receipt and next stream prefix in the same manifest CAS
+as the content roots and WAL candidate. Receipt replay returns the already
+selected publication, and a failed candidate does not advance the accepted
+origin sequence.
+
+Cold recovery follows the selected replication root and verifies every receipt,
+origin key and digest, local delivery identity, predecessor chain, causal prefix
+and contiguous local stream before returning authority. The replication catalog
+does not replace the native inventory or any content root. Its local delivery
+position is destination-owned bookkeeping; the logical origin key and digest
+remain portable.
+
 Agent and review roots are typed `AgentRootV1` and `ReviewRootV1` records rather
 than caller-supplied opaque payloads. Their catalog and selected object edges
 use repository-bound immutable record envelopes. Staging validates canonical
@@ -210,9 +228,10 @@ exact bounded closure from selected catalogs rather than storage listing. It
 includes every retained native inventory entry, catalog page/value, WAL record,
 receipt, settings record, checkpoint and current or historical AgentStore and
 ReviewStore root/object dependency. Review-owned AgentStore references remain
-part of the copied closure. Stored native objects and immutable control records
-are conditionally created before the canonical selected manifest is installed as
-the final object.
+part of the copied closure. When present, the selected replication root, its
+accepted-origin catalog pages, origin receipts and original envelopes are also
+retained. Stored native objects and immutable control records are conditionally
+created before the canonical selected manifest is installed as the final object.
 
 The destination may be empty or already contain byte-identical immutable
 objects. Different bytes under any selected key fail closed. A lost manifest

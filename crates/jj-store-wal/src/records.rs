@@ -20,6 +20,9 @@ pub enum RecordKind {
     AgentObject,
     ReviewRoot,
     ReviewObject,
+    ReplicationRoot,
+    Origin,
+    OriginReceipt,
 }
 impl RecordKind {
     fn path(self) -> &'static str {
@@ -34,6 +37,9 @@ impl RecordKind {
             Self::AgentObject => "agent-objects",
             Self::ReviewRoot => "review-roots",
             Self::ReviewObject => "review-objects",
+            Self::ReplicationRoot => "replication-roots",
+            Self::Origin => "origins",
+            Self::OriginReceipt => "origin-receipts",
         }
     }
 }

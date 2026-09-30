@@ -69,9 +69,9 @@ adds evidence here in its enclosing Jujutsu change.
 | M9.4        | Done        | M9.2,M9.3   | JST-COLLAB-004                                                                                                                                                           | LocalTrusted bounded CLI/HTTP APIs, pagination, receipts and live collaboration hints                               | Implement M9.5 shared application presentation          | E-M9-024,E-M9-025,E-M9-026,E-M9-027,E-M9-028,E-M9-029,E-M9-030,E-M9-031,E-M9-035                                                                                                                                                                                                                                                                               |
 | M9.5        | Done        | M9.4        | JST-COLLAB-005                                                                                                                                                           | Community-owned thread/agent widgets and Design Core exact diff selection integrated into the application           | Retain focused application and Storybook acceptance     | E-M9-032,E-M9-034,E-M9-035,E-M9-036,E-M9-037,E-M9-038,E-M9-039                                                                                                                                                                                                                                                                                                 |
 | M9.6        | Done        | M9.5        | JST-COLLAB-002,JST-COLLAB-006,JST-COLLAB-007                                                                                                                             | Three harness qualification, cold recovery, three-root native copy and bounded fault/security/browser acceptance    | Retain exact-version and native-copy regression gates   | E-M9-033                                                                                                                                                                                                                                                                                                                                                       |
-| M10         | In progress | M9.6        | JST-REPL-001,JST-REPL-002,JST-REPL-003,JST-REPL-004,JST-REPL-005,JST-REPL-006,JST-REPL-007,JST-REPL-008,JST-REPL-009,JST-REPL-010,JST-REPL-011,JST-REPL-012,JST-REPL-013 | Complete local-first writable replication and existing-workspace migration                                          | Implement origin authority and imported publication     | E-M10-001                                                                                                                                                                                                                                                                                                                                                      |
+| M10         | In progress | M9.6        | JST-REPL-001,JST-REPL-002,JST-REPL-003,JST-REPL-004,JST-REPL-005,JST-REPL-006,JST-REPL-007,JST-REPL-008,JST-REPL-009,JST-REPL-010,JST-REPL-011,JST-REPL-012,JST-REPL-013 | Complete local-first writable replication and existing-workspace migration                                          | Implement verified receiver                             | E-M10-001,E-M10-002                                                                                                                                                                                                                                                                                                                                            |
 | M10.1       | In progress | M9.6        | JST-REPL-001,JST-REPL-002,JST-REPL-013                                                                                                                                   | Audit source pins and isolate every foreground storage path from upstream capability                                | Implement M10.2 origin authority                        | E-M10-001                                                                                                                                                                                                                                                                                                                                                      |
-| M10.2       | Planned     | M10.1       | JST-REPL-002,JST-REPL-003,JST-REPL-005                                                                                                                                   | Durable origin streams, causal catalogs and authored publication integration                                        | Implement verified receiver                             | -                                                                                                                                                                                                                                                                                                                                                              |
+| M10.2       | In progress | M10.1       | JST-REPL-002,JST-REPL-003,JST-REPL-005                                                                                                                                   | Durable origin streams, causal catalogs and authored publication integration                                        | Implement verified receiver                             | E-M10-002                                                                                                                                                                                                                                                                                                                                                      |
 | M10.3       | Planned     | M10.2       | JST-REPL-004,JST-REPL-005,JST-REPL-006                                                                                                                                   | Verified one-way transfer, atomic import, durable acknowledgements and lost-response recovery                       | Implement native bidirectional convergence              | -                                                                                                                                                                                                                                                                                                                                                              |
 | M10.4       | Planned     | M10.3       | JST-REPL-007,JST-REPL-013                                                                                                                                                | Bidirectional native operation-head integration, distinct workspaces and explicit reconciliation                    | Implement collaboration reducers                        | -                                                                                                                                                                                                                                                                                                                                                              |
 | M10.5       | Planned     | M10.4       | JST-REPL-008,JST-REPL-009,JST-REPL-013                                                                                                                                   | AgentStore and ReviewStore accepted-fact convergence under reordered and duplicate delivery                         | Implement bootstrap and migration                       | -                                                                                                                                                                                                                                                                                                                                                              |
@@ -182,7 +182,7 @@ and named tests are checked by the progress gate.
         "failures": 0
       }
     ],
-    "result": "pass",
+    "result": "pending",
     "remaining": [],
     "versions": "Rust 1.97.1; jj 0.45.1; spec-validator registry ^0.1.0",
     "formats": "No production format introduced."
@@ -16548,6 +16548,72 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Rust 1.98.1; jj-lib and jj-cli 0.45.1; manifest format 2; AgentStore and ReviewStore schema v1.",
     "formats": "Adds canonical local-first replication requirements and M10 gates only. Existing native objects, manifest format 2, WAL, receipts, RPC and application contracts remain unchanged in this audit slice."
+  },
+  {
+    "id": "E-M10-002",
+    "tasks": ["M10", "M10.2"],
+    "date": "2026-09-30",
+    "kind": "authored-replication-origins",
+    "files": [
+      "crates/jj-store-model/src/ids.rs",
+      "crates/jj-store-wal/src/publication.rs",
+      "crates/jj-store-wal/src/publication/collaboration.rs",
+      "crates/jj-store-wal/src/publication/domains.rs",
+      "crates/jj-store-wal/src/publication/native_copy.rs",
+      "crates/jj-store-wal/src/publication/replication.rs",
+      "crates/jj-store-wal/src/records.rs",
+      "crates/jj-store-wal/tests/native_copy.rs",
+      "crates/jj-store-wal/tests/publication.rs",
+      "spec/src/identity.md",
+      "spec/src/milestones.md",
+      "spec/src/publication.md"
+    ],
+    "tests": [
+      "crates/jj-store-wal/tests/publication.rs#authored_publications_atomically_advance_one_origin_stream",
+      "crates/jj-store-wal/tests/publication.rs#failed_manifest_candidate_does_not_consume_origin_sequence",
+      "crates/jj-store-wal/tests/native_copy.rs#native_copy_restores_code_agent_review_and_installs_manifest_last"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-wal --test publication --locked authored_publications_atomically_advance_one_origin_stream -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "One accepted native publication selects its origin envelope, receipt and local stream prefix at the content WAL position; receipt replay creates neither another WAL entry nor another origin, and the next publication links to the first digest and causal prefix."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --test publication --locked failed_manifest_candidate_does_not_consume_origin_sequence -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "A manifest write with an unknown outcome leaves the selected replication root at sequence zero; the next accepted publication receives sequence one."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --test native_copy --locked native_copy_restores_code_agent_review_and_installs_manifest_last -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "The bounded native-copy closure retains all three authored origin envelopes, receipts and accepted-origin catalog pages and installs the replication-aware manifest last."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All WAL unit, publication, AgentStore, ReviewStore, inventory, native-copy and documentation tests pass, including 31 publication cases."
+      },
+      {
+        "command": "pnpm check",
+        "result": "fail",
+        "failures": 1,
+        "note": "Specification, boundary, architecture, progress, formatting and the ten-minute embedded RustFS clippy lane passed. The following contracts check stopped while building Kingfisher Vectorscan because cmake is not installed on this host; this is the same environment limitation recorded by E-M10-001."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "M10.3 must preserve imported origin keys and digests, atomically reduce unseen content and return durable per-origin receipts.",
+      "Format-2 repositories without a replication root require the M10.6 seed upgrade before authored origins are enabled.",
+      "The repository-wide contracts, check, test, build and specification lanes that compile Kingfisher Vectorscan require cmake on this host.",
+      "Real RustFS, worker, outage and foreground zero-upstream-call qualification remain M10.7 work."
+    ],
+    "versions": "Rust 1.98.1; jj 0.45.1; jj-store-model and jj-store-wal 0.1.0; manifest format 2; replication root, origin envelope and origin receipt schema v1.",
+    "formats": "Manifest format 2 gains an optional replication_root reference. Canonical control records add replication-root, origin and origin-receipt kinds. ReplicaId and WriterEpoch are distinct 128-bit identifiers; OriginDigest is a distinct 32-byte SHA-256 digest. Replication-disabled format-2 repositories remain readable and preserve their previous publication behavior."
   }
 ]
 ```

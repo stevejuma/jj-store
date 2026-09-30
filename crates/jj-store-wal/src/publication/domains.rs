@@ -194,6 +194,32 @@ impl Coordinator {
                 Domain::Agent => after_domains.agent = selected,
                 Domain::Review => after_domains.review = selected,
             }
+            let changed_domain = match request.domain {
+                Domain::Agent => OriginDomainV1::Agent,
+                Domain::Review => OriginDomainV1::Review,
+            };
+            let origin = self
+                .author_origin(
+                    &base,
+                    position,
+                    request.principal,
+                    request.request_id,
+                    request.publication_id,
+                    intent,
+                    BTreeSet::new(),
+                    Some(after_domains),
+                    inventory,
+                    BTreeSet::from([changed_domain]),
+                )
+                .await?;
+            let replication_root = origin
+                .as_ref()
+                .map(|authored| authored.root)
+                .or(base.manifest.replication_root);
+            let origins = origin
+                .into_iter()
+                .map(|authored| authored.receipt)
+                .collect();
             let attempt = records::new_attempt()?;
             let transaction = PublishedTransaction {
                 attempt,
@@ -209,6 +235,7 @@ impl Coordinator {
                 published_operations: BTreeSet::new(),
                 before_domains: Some(before_domains),
                 after_domains: Some(after_domains),
+                origins,
             };
             let tail = self
                 .records
@@ -236,6 +263,7 @@ impl Coordinator {
                 agent_state_version: after_domains.agent.version,
                 review_root: Some(after_domains.review.root),
                 review_state_version: after_domains.review.version,
+                replication_root,
                 ..base.manifest.clone()
             };
             match self.write_manifest(&base, manifest).await {
