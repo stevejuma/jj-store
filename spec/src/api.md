@@ -503,7 +503,9 @@ them with an invented commit message. The working-copy view renders the explicit
 change identities. Repository landing-document ordering, friendly labels,
 responsive overflow, hidden-document selected treatment and selected-document
 edit routing, bookmark-filter empty states and no-file diff states are client
-presentation rules and do not change the read DTOs or transport format.
+presentation rules and do not change the read DTOs or transport format. The
+line-numbered Mira MDE edit body and filename-selected source language are also
+client presentation and do not add file-content fields.
 
 ## Browser read client
 

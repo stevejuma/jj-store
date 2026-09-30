@@ -7,7 +7,6 @@
   import * as Dialog from "@lapismd/design-core/shadcn/dialog";
   import * as Field from "@lapismd/design-core/shadcn/field";
   import { Spinner } from "@lapismd/design-core/shadcn/spinner";
-  import { Textarea } from "@lapismd/design-core/shadcn/textarea";
   import { CommunityChatComposer } from "@lapismd/lapis-community/components/community-chat-composer";
   import { untrack } from "svelte";
   import type {
@@ -16,6 +15,7 @@
   } from "../../controller/contracts.js";
   import StoreMutationPreview from "../store-mutations/StoreMutationPreview.svelte";
   import CommunityProjectsMarkdownPreview from "./CommunityProjectsMarkdownPreview.svelte";
+  import RepositoryFileCodeEditor from "./RepositoryFileCodeEditor.svelte";
   import { tokenizeRepositorySource } from "./repository-source-tokenizer.js";
   import "./store-file-editor.css";
 
@@ -139,20 +139,17 @@
   }
 </script>
 
-<section class="store-file-editor" aria-label={`Edit ${blob.path}`}>
+<section
+  class="store-file-editor"
+  data-mode={mode}
+  aria-label={`Edit ${blob.path}`}
+>
   {#if mode === "edit"}
-    <Field.Group>
-      <Field.Field>
-        <Field.Label for="store-file-editor-contents">Contents</Field.Label>
-        <Textarea
-          id="store-file-editor-contents"
-          class="store-file-editor__contents"
-          bind:value={contents}
-          oninput={changed}
-          spellcheck="false"
-        />
-      </Field.Field>
-    </Field.Group>
+    <RepositoryFileCodeEditor
+      path={filename || blob.path}
+      bind:value={contents}
+      onChange={changed}
+    />
   {:else if mode === "preview" && isMarkdown}
     <div class="store-file-editor__preview">
       <CommunityProjectsMarkdownPreview

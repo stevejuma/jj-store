@@ -41,6 +41,10 @@ export default defineConfig({
       "@lucide/svelte/icons/loader-circle",
       "@lucide/svelte/icons/search",
       "@tanstack/svelte-virtual",
+      "@lapismd/design-core > @lapismd/mira",
+      "@lapismd/mira/**",
+      "debug",
+      "extend",
     ],
     exclude: [
       "@lapismd/design-core",

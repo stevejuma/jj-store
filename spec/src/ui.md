@@ -213,9 +213,14 @@ only the content-card body and replaces the selected filename breadcrumb segment
 with the filename input. It does not add a second filename field. The editor
 footer offers `Save changes` and `Cancel`; saving opens a dialog that captures
 the change description before the existing preview, apply, retry and status
-flow. Markdown files open in safe preview mode, and draft preview/source modes
-retain unsaved content. Source mode uses the public Design Core CodeBlock with
-the filename/source body on the theme background. Rust source previews use
+flow. Edit mode uses the public Design Core Mira MDE code editor with line
+numbers and filename-matched CodeMirror language support. It renders flush with
+the content body without a field label, nested border or focus frame. Its
+right-aligned line-number gutter stays beside and vertically aligned with the
+content, and the editor, gutter and active line retain the content-card theme
+background. Markdown files open in safe preview mode, and draft preview/source
+modes retain unsaved content. Source mode uses the public Design Core CodeBlock
+with the filename/source body on the theme background. Rust source previews use
 CodeBlock's public custom-tokenizer extension point so `.rs` files highlight in
 the catalog while retaining the shared code component.
 

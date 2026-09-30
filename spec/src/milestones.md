@@ -16684,9 +16684,11 @@ and named tests are checked by the progress gate.
     "date": "2026-09-30",
     "kind": "repository-tabs-file-edit-and-search-lifecycle",
     "files": [
+      ".storybook/vite.config.ts",
       "AGENTS.md",
       "catalog/components/community-projects/CommunityProjectsRepositoryDirectory.stories.svelte",
       "catalog/components/community-projects/repository-browser.test.ts",
+      "catalog/components/community-projects/repository-editor-language.test.ts",
       "catalog/components/store-application/RepositoryReview.stories.svelte",
       "catalog/components/store-application/StoreApplication.stories.svelte",
       "catalog/components/store-application/StoreFileEditor.stories.svelte",
@@ -16707,6 +16709,7 @@ and named tests are checked by the progress gate.
       "crates/jj-store-jj/src/commands/mod.rs",
       "crates/jj-store-jj/src/commands/resolve.rs",
       "package.json",
+      "pnpm-lock.yaml",
       "schemas/openapi.json",
       "scripts/dev-demo-repository.mjs",
       "scripts/dev-demo-repository.test.mjs",
@@ -16732,10 +16735,12 @@ and named tests are checked by the progress gate.
       "web/src/lib/ui/community-projects/CommunityProjectsRepositoryFilePanel.svelte",
       "web/src/lib/ui/community-projects/CommunityProjectsRepositoryFilePanelHeader.svelte",
       "web/src/lib/ui/community-projects/CommunityProjectsRepositoryFiles.svelte",
+      "web/src/lib/ui/community-projects/RepositoryFileCodeEditor.svelte",
       "web/src/lib/ui/community-projects/StoreFileEditor.svelte",
       "web/src/lib/ui/community-projects/repository-browser.ts",
       "web/src/lib/ui/community-projects/repository-directory.css",
       "web/src/lib/ui/community-projects/repository-documents.css",
+      "web/src/lib/ui/community-projects/repository-editor-language.ts",
       "web/src/lib/ui/community-projects/repository-files.css",
       "web/src/lib/ui/community-projects/store-file-editor.css",
       "web/src/lib/ui/store-application/StoreApplication.svelte",
@@ -16753,6 +16758,7 @@ and named tests are checked by the progress gate.
       "web/src/lib/ui/store-application/repository-breadcrumb.css"
     ],
     "tests": [
+      "catalog/components/community-projects/repository-editor-language.test.ts#selects source highlighters from repository file names",
       "crates/jj-store-cli/tests/native_lifecycle/commands.rs#typed_edit_file_creates_child_renames_text_and_moves_exact_bookmark",
       "crates/jj-store-cli/tests/native_lifecycle/commands.rs#typed_edit_file_rejects_ambiguous_targets_invalid_paths_and_oversized_text",
       "web/tests/production-store-loaders.test.ts#repository landing documents include community files in stable tab order",
@@ -17191,12 +17197,108 @@ and named tests are checked by the progress gate.
         "result": "pass",
         "failures": 0,
         "note": "The demo restarted with the rebuilt web bundle and existing native binaries. At 540px, selecting the hidden License document gives More the rounded active background and coral underline; the focused Storybook interaction separately verifies the open menu's bold label, leading bar and absence of icons."
+      },
+      {
+        "command": "GitHub file-editor reference and existing StoreFileEditor source audit",
+        "result": "fail",
+        "failures": 4,
+        "note": "Edit mode used a plain textarea with a Contents label, no line numbers, no filename-selected parser and a nested framed field instead of a source editor integrated with the content body."
+      },
+      {
+        "command": "pnpm web:check && pnpm catalog:check && pnpm check:architecture",
+        "result": "fail",
+        "failures": 1,
+        "note": "Both Svelte projects and catalog boundaries passed, while the first inline Mira integration pushed StoreFileEditor to 318 counted lines; the language-backed editor surface was extracted into its own production component."
+      },
+      {
+        "command": "pnpm web:check && pnpm catalog:check && pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both Svelte projects, catalog boundaries and all 260 architecture modules pass after extracting the public Design Core Mira editor surface and filename language resolver."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit catalog/components/community-projects/repository-editor-language.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 6 focused language-selection cases pass for Markdown, TOML, Rust, Shell, TypeScript and extensionless plain text."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreFileEditor.stories.svelte",
+        "result": "fail",
+        "failures": 4,
+        "note": "Four dependency-optimization attempts stopped before the story assertion on CommonJS default interop for extend, debug or highlight.js while Vite first encountered Design Core's nested Mira package. The catalog now prebundles that exact nested Mira dependency as one unit."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreFileEditor.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "The focused Chromium interaction and automatic accessibility story passes for the line-numbered Markdown-highlighted Mira editor, flush zero-border body, removed Contents label, rename, draft preview and save flow; the story remains visual-pending."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "The production UI bundle and manifest rebuild pass with the existing Lightning CSS :global and bundle-size warnings; no Rust build ran."
+      },
+      {
+        "command": "pnpm spec:first && pnpm check:progress",
+        "result": "fail",
+        "failures": 3,
+        "note": "Spec-first required the mapped architecture chapter for the extracted editor and nested Mira optimization boundary. Progress validation rejected one parameterized test label and one Storybook story label as non-literal named tests; the source test now has a literal name and the story remains recorded as run evidence."
+      },
+      {
+        "command": "pnpm spec:first && pnpm check:progress",
+        "result": "fail",
+        "failures": 1,
+        "note": "Spec-first passed for nine protected files and five canonical chapters. Progress validation then required the literal named regression to use its recognized test() declaration instead of it()."
+      },
+      {
+        "command": "live production-CSP computed-style inspection of README.md edit mode",
+        "result": "fail",
+        "failures": 5,
+        "note": "The rejected dynamic CodeMirror base stylesheet left the scroller in block layout, stacked the gutter above the content, collapsed the number column to ten pixels, limited content to its intrinsic width and exposed Design Core's lavender field and active-line surfaces."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreFileEditor.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "The focused Chromium interaction now asserts the flex scroller, first line and line-number alignment within one pixel, content-card background for the editor and gutter, transparent active line, zero border, language highlighting, rename, draft preview and save flow."
+      },
+      {
+        "command": "pnpm web:check && pnpm catalog:check && pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both Svelte projects, all 67 catalog boundaries and all 260 architecture modules pass with the CSP-resilient local editor layout and surface styles."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "The corrected production UI bundle and manifest rebuild pass with the existing Lightning CSS :global and bundle-size warnings."
+      },
+      {
+        "command": "pnpm dev:restart",
+        "result": "fail",
+        "failures": 1,
+        "note": "The helper unconditionally entered its embedded-RustFS and Rust binary build lanes, so it was interrupted; the preserved demo was restarted directly with the existing target/debug binaries after rebuilding only the web bundle."
+      },
+      {
+        "command": "direct existing-binary demo restart and live README.md edit-mode verification",
+        "result": "pass",
+        "failures": 0,
+        "note": "The rebuilt UI runs at 127.0.0.1:7460 with the preserved fixture. The live gutter is 35 pixels wide, line 1 aligns within 0.2 pixels of its content line, content fills the editor width, and the editor, gutter and active line match the white content-card surface."
+      },
+      {
+        "command": "pnpm spec:first && pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "The protected editor styling and interaction regression retain their canonical requirement mapping and the evidence ledger passes."
       }
     ],
     "result": "pending",
     "remaining": ["Visual baselines remain unapproved."],
     "versions": "Rust 1.98.1; Node.js 26.9.0; pnpm 10.32.1; Svelte 5.57.1; Storybook 10.5.7; Design Core ^0.2.0; Community ^0.1.0.",
-    "formats": "The V1 typed mutation command union and capability list add edit_file with an exact bookmark target, canonical source/destination paths, bounded UTF-8 contents and description. Existing mutation request, prepared result, durable receipt, WAL, manifest and native object formats remain unchanged. Friendly landing-document labels/icons, measured More overflow, body tabs/breadcrumb, persistent file display controls, body-only editor state and deferred search routing are browser presentation only; credentials remain memory-only. Changed stories remain visual-pending."
+    "formats": "The V1 typed mutation command union and capability list add edit_file with an exact bookmark target, canonical source/destination paths, bounded UTF-8 contents and description. Existing mutation request, prepared result, durable receipt, WAL, manifest and native object formats remain unchanged. Friendly landing-document labels/icons, measured More overflow, body tabs/breadcrumb, persistent file display controls, the line-numbered filename-highlighted Mira edit body and deferred search routing are browser presentation only; credentials remain memory-only. Changed stories remain visual-pending."
   }
 ]
 ```

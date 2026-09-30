@@ -349,6 +349,14 @@ and opaque continuations remain memory-only. The development orchestrator owns
 the configured Tantivy worker with the server lifecycle and waits for its first
 current generation before reporting the stack ready.
 
+Repository file editing consumes the public Design Core CodeEditor, which owns
+the Mira MDE lifecycle. A focused production component maps the current filename
+to host-provided CodeMirror language support and remains independent of
+controllers and catalog fixtures. The catalog prebundles Design Core's nested
+Mira package so its source-distributed Svelte editor and CommonJS dependencies
+cross the Vite boundary together. The extracted editor surface keeps the owning
+file panel within the counted-line budget.
+
 M4.9 separates snapshot operation, inspected operation, commit, change and
 comparison identities in the shared controller contract. Loading, refreshing,
 paging, empty, failed and unavailable states are explicit. M4.10–M4.14 add the
