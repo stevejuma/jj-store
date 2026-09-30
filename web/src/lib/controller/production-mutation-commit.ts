@@ -19,6 +19,7 @@ export function createProductionMutationCommitter(
         page: "files",
         bookmark: command.bookmark,
         commitId: receipt.result.created[0],
+        evolutionCommitId: null,
         changeId: null,
         path: destination,
         directory: destination.split("/").slice(0, -1).join("/"),

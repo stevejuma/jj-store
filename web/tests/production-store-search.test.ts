@@ -48,6 +48,7 @@ const route: StoreRoute = {
   snapshotOperationId: operation,
   inspectedOperationId: null,
   commitId: null,
+  evolutionCommitId: null,
   changeId: null,
   comparisonParentId: null,
   comparisonGroupId: null,

@@ -439,7 +439,7 @@
 .lc-community-navigation__body
   nav[data-compact]
   .lc-community-navigation__compact-section {
-  margin-block-start: 0.5rem;
+  margin-block-start: 0;
 }
 
 .lc-community-navigation__body

@@ -611,6 +611,19 @@ column clears only that route identity.
 
 ## Browsing UI execution
 
+A selected JJ Log or Branches change exposes a read-only Evo Log action in the
+right-rail Actions section. Its separate resizable column reads the existing
+native evolution graph at the displayed operation, preserves server predecessor
+edges and shows incomplete, empty, loading and failed states. The full anchor
+commit is stored as `evolution` in the hash; opening, closing and selecting a
+history row preserve the main commit, workspace and typed mutation target.
+Snapshot-checked opaque pagination deduplicates identities, rejects repeated
+cursors and caps displayed nodes at 1,000. Browser history and reload restore
+the column; page, main revision, bookmark or workspace changes close it.
+Repositories navigation sections have no top margin in expanded or compact form.
+The conflict sheet header has a bottom border separating its actions from the
+body.
+
 The LocalTrusted application reuses the reviewed Storybook shell for Files,
 Branches, JJ Log, Op Log, evolution, context-aware right-rail details, typed
 mutations and native conflict editing. Branch bookmark cards stay square through

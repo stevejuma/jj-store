@@ -225,3 +225,65 @@
     ).toBeNull();
   }}
 />
+
+<Story
+  name="Collapsed repository section alignment"
+  args={{ initiallyCollapsed: true }}
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const section = canvasElement.querySelector(
+      ".lc-community-navigation__compact-section",
+    )!;
+    await expect(getComputedStyle(section).marginBlockStart).toBe("0px");
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Expand left sidebar" }),
+    );
+    const expanded = canvasElement.querySelector(
+      ".lc-community-navigation__section",
+    )!;
+    await expect(getComputedStyle(expanded).marginBlockStart).toBe("0px");
+  }}
+/>
+
+<Story
+  name="Selected change opens evolution column"
+  args={{ initialPage: "log" }}
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Toggle details" }),
+    );
+    const rail = within(
+      canvas.getByRole("complementary", { name: "Repository details" }),
+    );
+    await expect(rail.queryByRole("button", { name: "Evo Log" })).toBeNull();
+    await userEvent.click(
+      canvas.getByRole("button", {
+        name: "Merge native storage and publication",
+      }),
+    );
+    const open = await rail.findByRole("button", { name: "Evo Log" });
+    await expect(open).toBeEnabled();
+    await userEvent.click(open);
+    const evolution = await canvas.findByRole("list", {
+      name: "Evolution log",
+    });
+    await expect(
+      within(evolution).getAllByRole("listitem").length,
+    ).toBeGreaterThan(0);
+    await expect(
+      canvas.getByRole("list", { name: "Revision graph" }),
+    ).toBeVisible();
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Close Evo Log column" }),
+    );
+    await waitFor(() =>
+      expect(canvas.queryByRole("list", { name: "Evolution log" })).toBeNull(),
+    );
+    await userEvent.click(rail.getByRole("button", { name: /^Op Log$/ }));
+    await userEvent.click(
+      canvas.getByRole("button", { name: "describe: native object history" }),
+    );
+    await expect(rail.queryByRole("button", { name: "Evo Log" })).toBeNull();
+  }}
+/>

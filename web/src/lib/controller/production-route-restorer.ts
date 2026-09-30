@@ -5,6 +5,7 @@ import type { createStoreRouteHistory } from "./store-route-history.svelte.js";
 interface RouteReads {
   loadReferences(): Promise<void>;
   loadGraph(): Promise<void>;
+  loadEvolution(more?: boolean): Promise<void>;
   loadFiles(
     commit: string,
     options?: { path?: string; recursive?: boolean; more?: boolean },
@@ -161,6 +162,7 @@ export async function restoreProductionStoreRoute(
       if (workingCopy) data.targets = [workingCopy.commitId];
     }
     await reads.loadGraph();
+    if (desired.evolutionCommitId) await reads.loadEvolution();
     const selected =
       desired.page === "oplog"
         ? desired.inspectedOperationId

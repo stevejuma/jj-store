@@ -31,6 +31,7 @@ export function createProductionRevisionSelector(
       ...history.route,
       inspectedOperationId: page === "oplog" ? id : null,
       commitId: page === "oplog" ? null : id,
+      evolutionCommitId: null,
       changeId:
         data.graph.revisions.find((revision) => revision.eventId === id)
           ?.changeId ?? null,

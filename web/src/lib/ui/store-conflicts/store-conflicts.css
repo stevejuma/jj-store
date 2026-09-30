@@ -1,5 +1,6 @@
 .store-conflict-editor__header {
   gap: 0.5rem;
+  border-bottom: 1px solid var(--border);
 }
 .store-conflict-editor__title {
   flex: 1;

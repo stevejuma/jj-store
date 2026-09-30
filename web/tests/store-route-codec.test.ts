@@ -24,6 +24,7 @@ const route: StoreRoute = {
   snapshotOperationId: operation,
   inspectedOperationId: inspected,
   commitId: null,
+  evolutionCommitId: null,
   changeId: change,
   comparisonParentId: parent,
   comparisonGroupId: group,
@@ -39,6 +40,31 @@ test("native operation route hash round-trips every stable selection", () => {
   assert.ok(hash.includes("file=src%2Fnative+objects.rs"));
   assert.deepEqual(storeRouteFromHash(hash), { kind: "route", route });
   assert.doesNotMatch(hash, /token|cursor/u);
+});
+
+test("evolution column preserves its full anchor beside the main selected change", () => {
+  const evolutionRoute: StoreRoute = {
+    ...route,
+    page: "log",
+    commitId: commit,
+    evolutionCommitId: inspected,
+    inspectedOperationId: null,
+    comparisonParentId: null,
+    comparisonGroupId: null,
+  };
+  const hash = storeRouteToHash(evolutionRoute)!;
+  assert.ok(hash.includes(`evolution=${inspected}`));
+  assert.deepEqual(storeRouteFromHash(hash), {
+    kind: "route",
+    route: evolutionRoute,
+  });
+  for (const invalid of [
+    hash.replace(`/log?`, `/files?`),
+    hash.replace(`commit=${commit}&`, ""),
+    hash.replace(`evolution=${inspected}`, "evolution=short"),
+    `${hash}&evolution=${inspected}`,
+  ])
+    assert.equal(storeRouteFromHash(invalid).kind, "invalid");
 });
 
 test("collaboration routes preserve stable session and thread selections", () => {

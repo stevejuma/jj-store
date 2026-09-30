@@ -34,6 +34,7 @@ export function createProductionBranchActions(context: {
         ...history.route,
         bookmark: name,
         commitId: null,
+        evolutionCommitId: null,
         changeId: null,
         path: null,
       });
@@ -54,6 +55,7 @@ export function createProductionBranchActions(context: {
         bookmark: "",
         workspace: workingCopy.workspace,
         commitId: workingCopy.commitId,
+        evolutionCommitId: null,
         changeId: workingCopy.changeId,
         path: null,
       });

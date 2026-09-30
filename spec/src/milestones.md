@@ -53,6 +53,7 @@ adds evidence here in its enclosing Jujutsu change.
 | M4.25       | Done        | M4.23       | JST-UI-008,JST-API-005                                                                                                                                                   | Aligned selector ID columns, smaller labels and bottom-right time; focused interaction/accessibility acceptance                | Retain picker regressions; visual review stays separate                       | E-UI-038                                                                                                                                                                                                                                                                                                                                                       |
 | M4.26       | Done        | M4.24       | JST-UI-002,JST-UI-009,JST-API-005                                                                                                                                        | Full-height conflict file browser and header actions; focused and cold browser acceptance                                      | Retain conflict layout/draft regressions; visual review stays separate        | E-UI-039                                                                                                                                                                                                                                                                                                                                                       |
 | M4.27       | Done        | M4.25       | JST-UI-008,JST-API-005                                                                                                                                                   | Commit selector time/chips beneath title and stacked Git/JJ column; focused interaction/accessibility acceptance               | Retain picker regressions; visual review stays separate                       | E-UI-040                                                                                                                                                                                                                                                                                                                                                       |
+| M4.28       | Done        | M4.27       | JST-UI-003,JST-UI-005,JST-UI-009,JST-UI-014,JST-API-002                                                                                                                  | Native Evo Log column, independent pinned anchor/history and chrome alignment; focused and cold browser acceptance             | Retain evolution and chrome regressions; visual review remains separate       | E-UI-041                                                                                                                                                                                                                                                                                                                                                       |
 | M5          | Done        | M4.1        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                                                                                                                      | Authenticated typed commands and shared RPC policy                                                                             | Retain mutation conformance; proceed to M6                                    | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-M5-005,E-M5-006,E-M5-007,E-M5-008,E-UI-028                                                                                                                                                                                                                                                                   |
 | M5.1        | Done        | M4.1        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                                                                                                                      | Basic changes/refs/reconcile; preview receipt and semantic policy                                                              | Retain basic mutation acceptance                                              | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-UI-028                                                                                                                                                                                                                                                                                                       |
 | M5.2        | Done        | M5.1        | JST-MUT-003                                                                                                                                                              | Full abandon descendant bookmark workspace/evolution parity                                                                    | Retain abandon acceptance                                                     | E-M5-005                                                                                                                                                                                                                                                                                                                                                       |
@@ -21820,6 +21821,237 @@ and named tests are checked by the progress gate.
     "versions": "jj 0.45.1; Node 24.10.0; pnpm 10.32.1; Svelte 5.57.1; Storybook 10.5.7; Vitest 4.1.11; Vite 8.3.1. Existing dependency resolution unchanged; no sibling or package manifest edits.",
     "formats": "Presentation only. Selectable commit rows put relative time and bookmark/workspace chips together directly below title and stack Git above JJ in a fixed-width column, reserving a missing JJ row. GIT/JJ badges share a 1.5rem width to align identifier text; existing 10px Community chip token and oval indicator shape retained. Fixed copyable targets retain their metadata placement. Full bound native IDs, search, copy controls, mutation commands, HTTP/native object/manifest/WAL/receipt formats unchanged.",
     "next": "Retain focused picker and direct mutation-form acceptance; visual baseline approval remains separate."
+  },
+  {
+    "id": "E-UI-041",
+    "tasks": [
+      "M4.28"
+    ],
+    "date": "2026-10-01",
+    "kind": "native-evolution-column-and-shell-alignment",
+    "revision": "Enclosing Jujutsu change quurzzvr.",
+    "before": "Clean working change after E-UI-040. Exact navigation/conflict stories fail 3 requested regressions: no Evo Log action, compact Repositories section has 8px top margin, conflict sheet header has 0px bottom border; 9 existing stories pass.",
+    "files": [
+      "catalog/components/store-application/StoreEvolutionColumn.stories.svelte",
+      "catalog/components/store-application/StoreRepositoryNavigation.stories.svelte",
+      "catalog/components/store-mutations/StoreConflictEditor.stories.svelte",
+      "catalog/controller/in-memory-store-branch-actions.ts",
+      "catalog/controller/in-memory-store-controller.svelte.ts",
+      "catalog/controller/in-memory-store-evolution.ts",
+      "catalog/controller/in-memory-store-navigation.ts",
+      "catalog/controller/in-memory-store-route.ts",
+      "catalog/fixtures/StoreEvolutionStatesFixture.svelte",
+      "spec/src/api.md",
+      "spec/src/milestones.md",
+      "spec/src/ui.md",
+      "spec/src/verification.md",
+      "web/src/lib/controller/contracts.ts",
+      "web/src/lib/controller/production-branch-actions.ts",
+      "web/src/lib/controller/production-evolution-reader.ts",
+      "web/src/lib/controller/production-mutation-commit.ts",
+      "web/src/lib/controller/production-route-restorer.ts",
+      "web/src/lib/controller/production-store-actions.ts",
+      "web/src/lib/controller/production-store-lifecycle.svelte.ts",
+      "web/src/lib/controller/production-store-reader.svelte.ts",
+      "web/src/lib/controller/production-store-search.ts",
+      "web/src/lib/controller/production-store-state.svelte.ts",
+      "web/src/lib/controller/production-store-view.ts",
+      "web/src/lib/controller/store-route-codec.ts",
+      "web/src/lib/controller/store-route-history.svelte.ts",
+      "web/src/lib/controller/store-workspaces.ts",
+      "web/src/lib/projects/repository-log-canvas.ts",
+      "web/src/lib/ui/community-navigation/CommunityNavigation.css",
+      "web/src/lib/ui/community-projects/CommunityProjectsRepositoryLog.svelte",
+      "web/src/lib/ui/community-projects/repository-log.css",
+      "web/src/lib/ui/store-application/StoreEvolutionColumn.svelte",
+      "web/src/lib/ui/store-conflicts/store-conflicts.css",
+      "web/src/lib/ui/store-mutations/StoreRepositoryActionsPanel.svelte",
+      "web/tests/browser/context-actions.spec.ts",
+      "web/tests/browser/evolution.spec.ts",
+      "web/tests/production-store-search.test.ts",
+      "web/tests/store-route-codec.test.ts",
+      "web/tests/vite/production-store-evolution.test.ts"
+    ],
+    "tests": [],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreRepositoryNavigation.stories.svelte catalog/components/store-mutations/StoreConflictEditor.stories.svelte",
+        "result": "fail",
+        "failures": 3,
+        "note": "Before: 3 failed, 9 passed. Log .scratch/evolution-chrome-before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreRepositoryNavigation.stories.svelte catalog/components/store-mutations/StoreConflictEditor.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "After: all 12 interaction/accessibility stories pass, including independent evolution column open/close, collapsed/expanded zero margin and 1px conflict header border. Log .scratch/evolution-chrome-after.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreRepositoryNavigation.stories.svelte catalog/components/store-mutations/StoreConflictEditor.stories.svelte catalog/components/store-application/StoreRepositoryBranchContext.stories.svelte catalog/components/store-mutations/StoreRepositoryActions.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "17 directly affected navigation, branch context, action and conflict interaction/accessibility stories pass. Log .scratch/evolution-stories.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-store-evolution.test.ts web/tests/vite/store-route-history.test.ts web/tests/vite/store-workspaces.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "19 tests pass: full pinned native identity, predecessor rather than commit-parent edges, opaque exact-snapshot paging, deduplication, incomplete history, mismatch/repeated-cursor rejection, late-response guards and 1000-node display bound, plus route-history and workspace regressions. Log .scratch/evolution-unit.log."
+      },
+      {
+        "command": "pnpm exec tsx --test web/tests/store-route-codec.test.ts web/tests/production-store-loaders.test.ts web/tests/production-store-search.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "22 direct-consumer route codec, loaders and search tests pass, including evolution route validation/roundtrip. Log .scratch/evolution-node.log."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero errors/warnings. Log .scratch/evolution-web-check.log."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "Story uses unsupported Testing Library exact option. Corrected to anchored Op Log regex; production unaffected. Log .scratch/evolution-catalog-check.log."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero diagnostics; 76-module boundary audit passes after correction. Log .scratch/evolution-catalog-check-after.log."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "fail",
+        "failures": 1,
+        "note": "Repository log component has 303 counted lines against 300 maximum. Extracted its existing leaf CSS unchanged into repository-log.css."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "295-module boundary and source-size audit passes after style extraction."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Fresh UI build passes with existing nonfatal CSS minification and bundle-size warnings; no Rust build. Log .scratch/evolution-build.log."
+      },
+      {
+        "command": "pnpm exec playwright test --config .scratch/workspace-browser.config.mts web/tests/browser/evolution.spec.ts web/tests/browser/context-actions.spec.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "First cold run: 1 failed, 4 passed. Test incorrectly clicked nonexistent Load more history button; graph uses automatic virtual-row pagination. Corrected to verify predecessor row and cursor request. Log .scratch/evolution-browser.log."
+      },
+      {
+        "command": "pnpm exec playwright test --config .scratch/workspace-browser.config.mts web/tests/browser/evolution.spec.ts web/tests/browser/context-actions.spec.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "Second cold run: 1 failed, 4 passed. Paging, selected-anchor browsing, reload and back pass; final test toggle closes already-open rail. Corrected to ensure rail visible before navigation. Log .scratch/evolution-browser-after.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreEvolutionColumn.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "4 interaction/accessibility state stories pass: loading, empty, failed, incomplete predecessor history. Stories remain visual-pending. Log .scratch/evolution-states.log."
+      },
+      {
+        "command": "pnpm exec prettier --write web/tests/browser/evolution.spec.ts web/tests/browser/context-actions.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final browser navigation correction and enabled read-only Evo action with empty mutation capabilities formatted."
+      },
+      {
+        "command": "pnpm exec playwright test --config .scratch/workspace-browser.config.mts web/tests/browser/evolution.spec.ts web/tests/browser/context-actions.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final cold fresh-preview run: all 5 browser tests pass. Native evolution requests use full IDs and pinned operation; automatic paging, independent anchor selection without mutation retargeting, reload, close, back, navigation clearing and read-only action without mutation capabilities pass. Existing selected operation/change rail actions still pass. Log .scratch/evolution-browser-final.log."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final zero errors/warnings. Log .scratch/evolution-web-check-final.log."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final zero diagnostics; 78-module production/catalog boundary audit passes. Log .scratch/evolution-catalog-check-final.log."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final 297-module boundary and source-size audit passes. Log .scratch/evolution-architecture-final.log."
+      },
+      {
+        "command": "node .scratch/restart-workspace-ui.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Owned live demo ready at 127.0.0.1:7460; PID 53682. Existing explicit binaries and repository data preserved; no reseed or unrelated service restart."
+      },
+      {
+        "command": "CUA live built-UI verification",
+        "result": "pass",
+        "failures": 0,
+        "note": "Temporary hidden tab 12 verifies actual native evolution endpoint and JJ Log/Evo Log columns with unchanged main commit/workspace/pinned operation. Compact Repositories top margin is 0px; conflict sheet header is 1px solid. Screenshots .scratch/evolution-final.png and .scratch/evolution-conflict-border.png. Closed sheet and temporary tab; user tabs preserved. No live mutation preview/apply."
+      },
+      {
+        "command": "node .scratch/format-evolution.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 39 changed production, catalog, regression and canonical files formatted. Log .scratch/evolution-format.log."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "4 validators, 18 chapters and 107 requirements pass. Log .scratch/evolution-spec-validate.log. Final rerun after ledger and matrix formatting also passes; log .scratch/evolution-spec-validate-final.log."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "35 protected files and 3 canonical chapters pass same-change gate. Log .scratch/evolution-spec-first.log. Final rerun after ledger and matrix formatting also passes; log .scratch/evolution-spec-first-final.log."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "81 tasks pass evidence bookkeeping audit. Log .scratch/evolution-progress.log. Final rerun after ledger and matrix formatting also passes; log .scratch/evolution-progress-final.log."
+      },
+      {
+        "command": "pnpm spec:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Canonical mdBook HTML builds. Log .scratch/evolution-spec-build.log. Final rerun after ledger and matrix formatting also passes; log .scratch/evolution-spec-build-final.log."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/verification.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final matrix and evidence ledger formatted; matrix padding kept within existing table width."
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/verification.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final canonical matrix and ledger formatting check passes."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "deferred": [
+      "Changed stories remain visual-pending; human visual baseline approval is separate.",
+      "Root aggregate pnpm spec:check, pnpm check, pnpm test and pnpm build; unrelated UI suites; Rust/native contract generation, real-RustFS and shared release qualification are out of scope under targeted UI-only policy."
+    ],
+    "versions": "jj 0.45.1; Node 24.10.0; pnpm 10.32.1; Svelte 5.57.1; Storybook 10.5.7; Vitest 4.1.11; Vite 8.3.1. Existing dependency resolution unchanged; no sibling or package manifest edits.",
+    "formats": "Existing native evolution endpoint consumed with full 128-character commit and pinned operation identities. Independent evolution hash anchor and presentation state preserve the selected main commit and typed mutation target; predecessor edges never substitute commit parents. Opaque pages preserve exact snapshots, deduplicate commits, reject repeated cursors, bound graph display and ignore late responses. Community graph/column canvas reused with local loading, empty, failed and incomplete states. No server DTO, native object, manifest, WAL, receipt or credential format changes.",
+    "next": "Retain focused evolution identity/paging/history and chrome regressions; visual baseline approval remains separate."
   }
 ]
 ```

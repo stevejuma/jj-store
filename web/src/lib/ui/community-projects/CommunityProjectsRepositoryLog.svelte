@@ -21,6 +21,8 @@
   import { resolveLayoutStorage } from "../layout-storage.js";
   import StoreAgentContext from "../store-collaboration/StoreAgentContext.svelte";
   import StoreReviewDiscussion from "../store-collaboration/StoreReviewDiscussion.svelte";
+  import "./repository-log.css";
+  import StoreEvolutionColumn from "../store-application/StoreEvolutionColumn.svelte";
   let {
     page = "log",
     graph,
@@ -106,6 +108,7 @@
       depth = revisionDepth,
       agentSession = controller?.state.route.agentSessionId,
       reviewThread = controller?.state.route.reviewThreadId;
+    const evolution = controller?.state.route.evolutionCommitId;
     untrack(() => {
       canvas.clear();
       if (depth === 1 && branch) canvas.select(0, branch);
@@ -119,6 +122,7 @@
       }
       if (agentSession) canvas.open("agent");
       if (reviewThread) canvas.open("review");
+      if (evolution) canvas.open("evolution");
     });
   });
   function selectRevision(id: string) {
@@ -229,6 +233,9 @@
         {/if}
       </ColumnCanvas.Body>
     </ColumnCanvas.Column>
+    {#if controller?.state.route.evolutionCommitId}
+      <StoreEvolutionColumn {controller} />
+    {/if}
     <CommunityProjectsRepositoryLogDiff
       path={selectedPath}
       {patch}
@@ -271,31 +278,3 @@
     {/if}
   </ColumnCanvas.Root>
 </section>
-
-<style>
-  .store-operation-heads {
-    margin: 0;
-    padding: 0.5rem;
-    background: var(--jj-store-info-row-background);
-    border-bottom: 1px solid var(--border);
-    font-size: var(--community-text-secondary);
-    color: var(--muted-foreground);
-  }
-
-  .community-projects-repository-log {
-    display: flex;
-    min-height: 0;
-    height: 100%;
-    flex: 1 1 auto;
-    flex-direction: column;
-    width: 100%;
-    overflow: hidden;
-  }
-
-  .community-projects-repository-log
-    :global([data-ui-component="column-canvas"][data-ui-part="root"]) {
-    min-height: 0;
-    height: 100%;
-    flex: 1 1 auto;
-  }
-</style>

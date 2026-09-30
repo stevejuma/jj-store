@@ -50,6 +50,7 @@ export function productionStoreView(
     fileViewMode: data.fileViewMode,
     collapsedDirectoryPaths: data.collapsedDirectoryPaths,
     graph: data.graph,
+    evolution: data.evolution,
     now: options.now,
     detail: data.detail,
     fileRevision: data.fileRevision,

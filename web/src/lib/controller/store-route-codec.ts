@@ -18,6 +18,7 @@ const queryKeys = new Set([
   "bookmark",
   "workspace",
   "commit",
+  "evolution",
   "change",
   "operation",
   "parent",
@@ -69,6 +70,7 @@ export function storeRouteToHash(route: StoreRoute): string | null {
   if (route.workspace) query.set("workspace", route.workspace);
   if (route.bookmark) query.set("bookmark", route.bookmark);
   if (route.commitId) query.set("commit", route.commitId);
+  if (route.evolutionCommitId) query.set("evolution", route.evolutionCommitId);
   if (route.changeId) query.set("change", route.changeId);
   if (route.inspectedOperationId)
     query.set("operation", route.inspectedOperationId);
@@ -107,6 +109,7 @@ export function storeRouteFromHash(hash: string): StoreRouteHashResult {
   const bookmark = one(query, "bookmark");
   const workspace = one(query, "workspace");
   const commitId = one(query, "commit");
+  const evolutionCommitId = one(query, "evolution");
   const change = one(query, "change");
   const inspectedOperationId = one(query, "operation");
   const comparisonParentId = one(query, "parent");
@@ -118,6 +121,7 @@ export function storeRouteFromHash(hash: string): StoreRouteHashResult {
   const valid =
     validOptional(snapshotOperationId, objectId) &&
     validOptional(commitId, objectId) &&
+    validOptional(evolutionCommitId, objectId) &&
     validOptional(change, changeId) &&
     validOptional(inspectedOperationId, objectId) &&
     validOptional(comparisonParentId, objectId) &&
@@ -138,6 +142,7 @@ export function storeRouteFromHash(hash: string): StoreRouteHashResult {
     workspace ||
     bookmark ||
     commitId ||
+    evolutionCommitId ||
     change ||
     inspectedOperationId ||
     comparisonParentId ||
@@ -156,6 +161,14 @@ export function storeRouteFromHash(hash: string): StoreRouteHashResult {
     return {
       kind: "invalid",
       message: "Commit selections are unavailable on the operation log.",
+    };
+  if (
+    evolutionCommitId &&
+    (!commitId || (page !== "log" && page !== "branches"))
+  )
+    return {
+      kind: "invalid",
+      message: "Evolution requires a selected JJ Log or Branches commit.",
     };
   if (
     page !== "oplog" &&
@@ -218,6 +231,7 @@ export function storeRouteFromHash(hash: string): StoreRouteHashResult {
       snapshotOperationId,
       inspectedOperationId,
       commitId,
+      evolutionCommitId,
       changeId: change,
       comparisonParentId,
       comparisonGroupId,

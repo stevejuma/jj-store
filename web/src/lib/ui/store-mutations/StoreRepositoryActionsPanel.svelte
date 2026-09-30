@@ -8,6 +8,7 @@
   import GitMergeIcon from "@lucide/svelte/icons/git-merge";
   import GitCommitIcon from "@lucide/svelte/icons/git-commit-horizontal";
   import FileWarningIcon from "@lucide/svelte/icons/file-warning";
+  import HistoryIcon from "@lucide/svelte/icons/history";
   import type { StoreController } from "../../controller/contracts.js";
   import type { StoreMutationAction } from "./model.js";
 
@@ -33,6 +34,18 @@
   aria-label="Selected repository actions"
 >
   {#if selectedCommit}
+    {#if view.route.commitId === selectedCommit && (view.route.page === "log" || view.route.page === "branches") && view.graph.revisions.some((revision) => revision.eventId === selectedCommit && revision.changeId)}
+      <Button
+        type="button"
+        variant="ghost"
+        class="store-repository-actions-panel__action"
+        aria-expanded={Boolean(view.route.evolutionCommitId)}
+        onclick={() => void controller.actions.selectEvolution(selectedCommit)}
+        ><HistoryIcon data-icon="inline-start" aria-hidden="true" /><span
+          >Evo Log</span
+        ></Button
+      >
+    {/if}
     <Button
       type="button"
       variant="ghost"

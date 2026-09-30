@@ -67,6 +67,7 @@ export interface StoreRoute {
   snapshotOperationId: string | null;
   inspectedOperationId: string | null;
   commitId: string | null;
+  evolutionCommitId: string | null;
   changeId: string | null;
   comparisonParentId: string | null;
   comparisonGroupId: string | null;
@@ -83,6 +84,13 @@ export type StoreLoadStatus =
   | "empty"
   | "failed"
   | "unavailable";
+export interface StoreEvolutionState {
+  readonly graph: RepositoryLogGraph;
+  readonly status: StoreLoadStatus;
+  readonly error: string;
+  readonly canLoadMore: boolean;
+  readonly predecessorsUnknown: boolean;
+}
 export interface StoreControllerStatus {
   readonly connection:
     "disconnected" | "connecting" | "connected" | "denied" | "failed";
@@ -146,6 +154,7 @@ export interface StoreControllerState {
   readonly fileViewMode: FileListingViewMode;
   readonly collapsedDirectoryPaths: ReadonlySet<string>;
   readonly graph: RepositoryLogGraph;
+  readonly evolution: StoreEvolutionState;
   readonly now: number;
   readonly detail: RevisionDetail | undefined;
   readonly fileRevision: RepositoryLogRevision | undefined;
@@ -188,6 +197,7 @@ export interface StoreController {
       collection:
         | "bookmarks"
         | "graph"
+        | "evolution"
         | "files"
         | "detail"
         | "search"
@@ -216,6 +226,7 @@ export interface StoreController {
     selectWorkingCopy(commit: string, workspace?: string): void | Promise<void>;
     selectWorkspace(workspace: string | null): void | Promise<void>;
     selectRevision(id: string | null): void | Promise<void>;
+    selectEvolution(id: string | null): void | Promise<void>;
     selectFile(path: string | null): void | Promise<void>;
     selectDirectory(path: string): void | Promise<void>;
     selectAgentSession(id: string | null): void | Promise<void>;

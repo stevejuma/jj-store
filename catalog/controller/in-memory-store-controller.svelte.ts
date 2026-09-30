@@ -18,6 +18,7 @@ import { inMemoryStoreDetail } from "./in-memory-store-history.js";
 import type { InMemoryStoreControllerOptions } from "./in-memory-store-options.js";
 import { createInMemoryStoreSettings } from "./in-memory-store-settings.svelte.js";
 import { createInMemoryStoreSession } from "./in-memory-store-session.svelte.js";
+import { inMemoryStoreEvolution } from "./in-memory-store-evolution.js";
 
 /** Each story owns this instance. It has no persistence or transport effects. */
 export function createInMemoryStoreController(
@@ -130,6 +131,11 @@ export function createInMemoryStoreController(
       index = Math.max(0, Math.min(history.length - 1, index + delta));
     },
     ...branchActions,
+    selectEvolution(id) {
+      if (id && (!route.commitId || !["log", "branches"].includes(route.page)))
+        return;
+      push({ ...route, evolutionCommitId: id });
+    },
     selectRevision(id) {
       const revision = [
         ...repositoryData.revisions,
@@ -189,6 +195,7 @@ export function createInMemoryStoreController(
         inspectedOperationId: null,
         commitId:
           choice.targets.length === 1 ? (choice.targets[0] ?? null) : null,
+        evolutionCommitId: null,
         changeId:
           choice.kind === "change"
             ? (repositoryData.revisions.find(
@@ -225,6 +232,7 @@ export function createInMemoryStoreController(
         canLoadMoreTranscript: false,
         canLoadMoreReviews: false,
         fileViewMode,
+        evolution: inMemoryStoreEvolution(route, repositoryData.revisions),
         collapsedDirectoryPaths,
         bookmarks: repositoryData.bookmarks,
         choices: repositoryData.choices,

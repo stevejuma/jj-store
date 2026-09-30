@@ -12,6 +12,7 @@ export function workspaceSelectedRoute(
     workspace,
     bookmark: "",
     commitId: null,
+    evolutionCommitId: null,
     changeId: null,
     inspectedOperationId: null,
     comparisonParentId: null,

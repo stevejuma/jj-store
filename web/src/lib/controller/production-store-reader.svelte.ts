@@ -2,6 +2,7 @@ import { readWorkingCopies } from "./store-workspaces.js";
 import { fullId } from "../api/client.js";
 import type { StoreDataSource } from "./native-data-source.js";
 import { createProductionFileReader } from "./production-file-reader.svelte.js";
+import { createProductionEvolutionReader } from "./production-evolution-reader.js";
 import {
   normalizeInspectionContinuation,
   readMoreCommitInspection,
@@ -33,6 +34,7 @@ export function createProductionStoreReader(context: ReaderContext) {
   const { data, history } = context;
   const fileReader = createProductionFileReader(context);
   const collaboration = createProductionStoreCollaboration(context);
+  const evolution = createProductionEvolutionReader(context);
   async function loadReferences(more = false) {
     const source = context.source(),
       operation = fullId(context.operation() ?? ""),
@@ -220,6 +222,7 @@ export function createProductionStoreReader(context: ReaderContext) {
       ...history.route,
       bookmark: choice.kind === "bookmark" ? choice.label : "",
       commitId: commit,
+      evolutionCommitId: null,
       changeId: choice.kind === "change" ? choice.value.slice(7) : null,
       path: null,
       directory: "",
@@ -232,6 +235,7 @@ export function createProductionStoreReader(context: ReaderContext) {
   const reads = {
     loadReferences,
     loadGraph,
+    ...evolution,
     ...fileReader,
     loadCommit,
     loadOperation,

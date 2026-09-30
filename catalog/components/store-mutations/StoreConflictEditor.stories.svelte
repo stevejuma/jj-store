@@ -86,6 +86,7 @@
     const body = dialog.querySelector<HTMLElement>(
       '[data-ui-part="surface-layer-body"]',
     )!;
+    await expect(getComputedStyle(header).borderBottomWidth).toBe("1px");
     await expect(sidebar).toBeVisible();
     await expect(
       sidebar.querySelector('[data-ui-component="file-listing"]'),

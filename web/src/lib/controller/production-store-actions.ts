@@ -78,6 +78,8 @@ export function createProductionStoreActions(options: {
         await options.reader.loadReferences(true);
       if (collection === "graph" && options.data.graphCursor)
         await options.reader.loadGraph(true);
+      if (collection === "evolution" && options.data.evolution.canLoadMore)
+        await options.reader.loadEvolution(true);
       if (collection === "files") await options.reader.loadMoreFiles();
       if (collection === "detail") await options.reader.loadMoreDetail();
       if (collection === "search" && options.data.searchCursor)
@@ -115,6 +117,21 @@ export function createProductionStoreActions(options: {
     },
     ...options.branches,
     selectRevision: options.selectRevision,
+    async selectEvolution(id) {
+      const route = options.history.route;
+      if (id && (!route.commitId || !["log", "branches"].includes(route.page)))
+        return;
+      if (
+        id &&
+        id !== route.commitId &&
+        !options.data.evolution.graph.revisions.some(
+          (revision) => revision.eventId === id,
+        )
+      )
+        return;
+      options.history.push({ ...route, evolutionCommitId: id });
+      if (id) await options.reader.loadEvolution();
+    },
     async selectFile(path) {
       options.invalidate();
       options.history.push({ ...options.history.route, path });

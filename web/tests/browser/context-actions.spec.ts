@@ -93,6 +93,9 @@ test("selected change rail commands respect unavailable capabilities", async ({
   const actions = rail.getByRole("group", {
     name: "Selected repository actions",
   });
+  await expect(
+    actions.getByRole("button", { name: "Evo Log", exact: true }),
+  ).toBeEnabled();
   for (const name of [
     "Edit description",
     "Create bookmark",

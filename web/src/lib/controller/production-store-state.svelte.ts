@@ -17,6 +17,10 @@ import type { Comparison } from "./production-store-loaders.js";
 import type { InspectionContinuation } from "./production-inspection-pages.js";
 import type { StoredPathPage } from "./production-file-pages.js";
 import {
+  emptyEvolution,
+  type ProductionEvolutionState,
+} from "./production-evolution-reader.js";
+import {
   initialStoreMutationState,
   type MutableStoreMutationState,
 } from "./store-mutation-types.js";
@@ -41,6 +45,7 @@ export interface ProductionStoreState {
   choices: RepositoryChoice[];
   workingCopies: RepositoryWorkingCopy[];
   graph: RepositoryLogGraph;
+  evolution: ProductionEvolutionState;
   targets: string[];
   snapshot: RepositorySnapshot | undefined;
   blob: RepositoryBlob | undefined;
@@ -132,6 +137,7 @@ export function createProductionStoreState(): ProductionStoreState {
     choices: [],
     workingCopies: [],
     graph: emptyGraph(),
+    evolution: emptyEvolution(),
     targets: [],
     snapshot: undefined,
     blob: undefined,
@@ -189,6 +195,7 @@ export function clearProductionStoreView(state: ProductionStoreState) {
   state.choices = [];
   state.workingCopies = [];
   state.graph = emptyGraph();
+  state.evolution = emptyEvolution();
   state.targets = [];
   state.snapshot = undefined;
   state.blob = undefined;

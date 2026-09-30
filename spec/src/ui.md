@@ -427,19 +427,19 @@ right border. The leading header toggle shows or hides this browser without
 discarding per-path drafts. On narrow screens the browser replaces the editor
 body while open and selecting a file returns to the editor. Delete path, Stage
 merged file and Preview, plus prepared/recovery actions, use compact icon
-buttons in the sheet header. There is no footer or Cancel action; the close
-control owns dismissal. The syntax-highlighted three-way editor fills the
-remaining body; extra native metadata and term cards are omitted. Built-in
-accept-all controls select an exact left/right term when the resolved bytes
-match it; custom center edits invalidate any prior selection until explicitly
-staged. The complete descriptors, ordered terms and fingerprints stay bound to
-the request. Unsupported editor shapes retain their native reason and only
-server-advertised term, delete or bounded uploaded-file actions are offered.
-Path navigation, delete and stage actions remain unavailable during
-upload/preview/apply and while a prepared result is displayed. The complete
-multi-path selection is previewed and applied atomically through the same
-durable request workflow; stale fingerprints never trigger an implicit reread or
-partial publication.
+buttons in the sheet header, which has a bottom border separating it from the
+body. There is no footer or Cancel action; the close control owns dismissal. The
+syntax-highlighted three-way editor fills the remaining body; extra native
+metadata and term cards are omitted. Built-in accept-all controls select an
+exact left/right term when the resolved bytes match it; custom center edits
+invalidate any prior selection until explicitly staged. The complete
+descriptors, ordered terms and fingerprints stay bound to the request.
+Unsupported editor shapes retain their native reason and only server-advertised
+term, delete or bounded uploaded-file actions are offered. Path navigation,
+delete and stage actions remain unavailable during upload/preview/apply and
+while a prepared result is displayed. The complete multi-path selection is
+previewed and applied atomically through the same durable request workflow;
+stale fingerprints never trigger an implicit reread or partial publication.
 
 M9.5 collaboration cards use the same bordered row structure and metadata/action
 placement as Branches and Op Log. Agent cards show the integration avatar, name,
@@ -500,6 +500,20 @@ and aligns the chips across options regardless of message length, reserving the
 JJ row when its change ID is absent. Relative commit time sits directly beneath
 the title at the same left edge, with bookmark/workspace chips alongside it on
 that row. Repository navigation sections have no top margin.
+
+Selecting a JJ change in JJ Log or Branches exposes an Evo Log action in the
+right-rail Actions section independently of mutation permissions. It adds a
+resizable, closeable Community graph column, preserving the main selected
+change, workspace and operation snapshot. The column reads native predecessor
+edges from the evolution endpoint; it never substitutes commit parents. Its full
+commit anchor is retained in the hash and browser history. Selecting a history
+row browses that commit's predecessor history without changing the mutation
+target. Loading, empty, failed and incomplete-predecessor states stay within the
+column; opaque pagination preserves the exact read snapshot, deduplicates
+identities and rejects repeated cursors or more than 1,000 displayed nodes.
+Closing clears only the evolution anchor; changing page, main revision, bookmark
+or workspace closes the column. The compact Repositories section has the same
+zero top margin as the expanded section.
 
 ## Workspace browsing context
 

@@ -58,6 +58,7 @@ export function routeForSearchResult(
     bookmark: "",
     inspectedOperationId: null,
     commitId: null,
+    evolutionCommitId: null,
     changeId: null,
     comparisonParentId: null,
     comparisonGroupId: null,
