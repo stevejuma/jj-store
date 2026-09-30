@@ -158,7 +158,7 @@ impl Coordinator {
                         .checked_add(1)
                         .ok_or(Error::Limit("publication sequence"))?,
                 ),
-                code_state_version: if before.manifest.format == 2 {
+                code_state_version: if before.manifest.format >= 2 {
                     intent
                         .expected
                         .code_state_version

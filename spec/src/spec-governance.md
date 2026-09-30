@@ -33,6 +33,7 @@ repository suites remain outside the default verification scope.
 | `^crates/jj-store-object/`                                                                                                                                                                                                                     | `object-store.md`    |
 | `^crates/jj-store-wal/`                                                                                                                                                                                                                        | `publication.md`     |
 | `^crates/jj-store-replication/`                                                                                                                                                                                                                | `replication.md`     |
+| `^crates/jj-work/`                                                                                                                                                                                                                             | `projects.md`        |
 | `^crates/jj-(?:agent\|review)/`                                                                                                                                                                                                                | `collaboration.md`   |
 | `^crates/jj-store-jj/`                                                                                                                                                                                                                         | `jj-integration.md`  |
 | `^crates/jj-store-service/`                                                                                                                                                                                                                    | `mutations.md`       |
@@ -383,3 +384,10 @@ static catalog browser, production controller tests and an owned LocalTrusted
 reset distinct in the evidence ledger. The live reset must record that seeded
 hook capture currently lacks an exact code-association publication path; catalog
 association coverage cannot be presented as live Agent Context evidence.
+
+## Native WorkStore
+
+M11 owns native projects and tasks under projects.md. The boundary checker
+registers jj-work as a neutral model-only layer, with WAL allowed to depend on
+it. WorkStore persistence changes also require publication.md; native copy and
+fail-closed replication require explicit regression evidence.

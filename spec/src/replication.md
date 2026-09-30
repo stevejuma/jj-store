@@ -239,3 +239,10 @@ SSE and search integration. Bidirectional mode stays disabled for repositories
 containing collaboration data until the domain reducers and migration gates
 pass. Expanded pressure, browser and cold real-RustFS qualification follows as a
 separately deferred hardening milestone.
+
+## Native WorkStore
+
+WorkStore format-3 homes cannot seed or accept M10 replication; WorkStore
+mutations on homes with a replication root fail explicitly. The current origin
+schema has no WorkStore reducer. Native copy includes WorkStore and does not
+imply replication support.

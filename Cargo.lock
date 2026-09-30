@@ -4111,12 +4111,24 @@ dependencies = [
  "jj-review",
  "jj-store-model",
  "jj-store-object",
+ "jj-work",
  "schemars",
  "serde",
  "serde_json",
  "sha2 0.10.9",
  "thiserror 2.0.21",
  "tokio",
+]
+
+[[package]]
+name = "jj-work"
+version = "0.1.0"
+dependencies = [
+ "hex",
+ "jj-store-model",
+ "schemars",
+ "serde",
+ "thiserror 2.0.21",
 ]
 
 [[package]]

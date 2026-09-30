@@ -36,6 +36,8 @@ mod review_command_update;
 mod review_commands;
 mod review_reads;
 mod review_resolver;
+mod work;
+mod work_commands;
 pub use agent_catalog::AgentStoreSnapshot;
 pub use agent_delta::AgentDeltaRequest;
 pub use agent_reads::{AgentCatalogPage, AgentRelationCursor, AgentRelationRange, TranscriptRange};
@@ -68,6 +70,10 @@ pub use jj_review::{
     ReviewThreadSnapshotV1, SensitivityV1, ThreadSnapshotId, ThreadStatusV1, decode_command_result,
     encode_command_result,
 };
+pub use jj_work::{
+    ProjectId, ProjectV1, TaskId, TaskStateV1, TaskV1, WorkCommandResultV1, WorkCommandV1,
+    WorkCommentId, WorkCommentV1, WorkStateV1,
+};
 pub use native_copy::NativeCopyOutcome;
 pub use reader::SelectedRecord;
 pub use replication::{
@@ -92,6 +98,8 @@ pub use replication_transfer::{
 pub use review_catalog::ReviewStoreSnapshot;
 pub use review_commands::{ReviewCommandError, ReviewCommandRequest};
 pub use review_reads::ReviewCatalogPage;
+pub use work::{WorkRootV1, WorkStoreSnapshot};
+pub use work_commands::{WorkCommandError, WorkCommandRequest};
 
 use crate::{
     Error, Result,
@@ -153,6 +161,10 @@ pub struct Manifest {
     pub domain_history_start: u64,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub replication_root: Option<RecordRef>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub work_root: Option<RecordRef>,
+    #[serde(default, skip_serializing_if = "is_zero")]
+    pub work_state_version: u64,
 }
 impl Manifest {
     pub fn snapshot(&self) -> Snapshot {
@@ -167,6 +179,7 @@ impl Manifest {
         let (root, version) = match domain {
             Domain::Agent => (self.agent_root, self.agent_state_version),
             Domain::Review => (self.review_root, self.review_state_version),
+            Domain::Work => (self.work_root, self.work_state_version),
         };
         root.map(|root| DomainState { root, version })
     }
@@ -174,10 +187,11 @@ impl Manifest {
         Some(RepositoryDomains {
             agent: self.domain_state(Domain::Agent)?,
             review: self.domain_state(Domain::Review)?,
+            work: self.domain_state(Domain::Work),
         })
     }
     fn validate(&self, repository: RepositoryId) -> Result<()> {
-        if !matches!(self.format, 1 | 2)
+        if !matches!(self.format, 1..=3)
             || self.repository != repository
             || self.heads.is_empty()
             || self.heads.len() > MAX_HEADS
@@ -198,22 +212,35 @@ impl Manifest {
             {
                 return Err(Error::Corrupt("legacy manifest domains"));
             }
-            2 if self.domains().is_none()
-                || self
-                    .agent_root
-                    .is_some_and(|r| r.kind != RecordKind::AgentRoot || r.attempt.is_some())
-                || self
-                    .review_root
-                    .is_some_and(|r| r.kind != RecordKind::ReviewRoot || r.attempt.is_some())
-                || self.domain_history_start == 0
-                || self.domain_history_start > self.published.0.saturating_add(1)
-                || self.code_state_version > self.published.0
-                || self.agent_state_version > self.published.0
-                || self.review_state_version > self.published.0 =>
+            2 | 3
+                if self.domains().is_none()
+                    || self.agent_root.is_some_and(|r| {
+                        r.kind != RecordKind::AgentRoot || r.attempt.is_some()
+                    })
+                    || self.review_root.is_some_and(|r| {
+                        r.kind != RecordKind::ReviewRoot || r.attempt.is_some()
+                    })
+                    || self.domain_history_start == 0
+                    || self.domain_history_start > self.published.0.saturating_add(1)
+                    || self.code_state_version > self.published.0
+                    || self.agent_state_version > self.published.0
+                    || self.review_state_version > self.published.0 =>
             {
                 return Err(Error::Corrupt("manifest domain state"));
             }
             _ => {}
+        }
+        if (self.format < 3 && (self.work_root.is_some() || self.work_state_version != 0))
+            || (self.format == 3
+                && (self.work_root.is_none()
+                    || self.work_state_version == 0
+                    || self.replication_root.is_some()))
+            || self.work_state_version > self.published.0
+            || self
+                .work_root
+                .is_some_and(|r| r.kind != RecordKind::WorkRoot || r.attempt.is_some())
+        {
+            return Err(Error::Corrupt("work manifest state"));
         }
         if self.replication_root.is_some_and(|reference| {
             reference.kind != RecordKind::ReplicationRoot || reference.attempt.is_some()
@@ -334,6 +361,7 @@ pub enum SemanticKind {
     CollaborationEnabled,
     AgentStateChanged,
     ReviewStateChanged,
+    WorkStateChanged,
     ReplicationImported,
     ReplicationSeeded,
 }
@@ -644,6 +672,8 @@ impl Coordinator {
                 review_state_version: 0,
                 domain_history_start: 1,
                 replication_root,
+                work_root: None,
+                work_state_version: 0,
             };
             let bytes = records::encode(&manifest, MAX_MANIFEST)?;
             let upload = StagedUpload::from_bytes(&bytes, MAX_MANIFEST).await?;
@@ -717,7 +747,7 @@ impl Coordinator {
             if heads.is_empty() || heads.len() > MAX_HEADS {
                 return Err(Error::Limit("operation heads"));
             }
-            let code_state_version = if request.transition.is_some() && base.manifest.format == 2 {
+            let code_state_version = if request.transition.is_some() && base.manifest.format >= 2 {
                 base.manifest
                     .code_state_version
                     .checked_add(1)
@@ -1261,6 +1291,9 @@ impl Coordinator {
                         .await?,
                 );
             }
+            if let Some(root) = manifest.work_root {
+                self.work_store(root).await?;
+            }
             let inventory = self.inventory(&snapshot, max_entries).await?;
             let inventory_keys: BTreeSet<_> = inventory.iter().map(|node| node.key).collect();
             if !domain_native.is_subset(&inventory_keys) {
@@ -1346,6 +1379,9 @@ impl Coordinator {
                         return Err(Error::Corrupt("manifest folded state"));
                     }
                     for domains in [tx.before_domains, tx.after_domains].into_iter().flatten() {
+                        if let Some(work) = domains.work {
+                            self.work_store(work.root).await?;
+                        }
                         let mut native = self
                             .read_domain_root(Domain::Agent, domains.agent.root)
                             .await?;
@@ -1416,6 +1452,7 @@ impl Coordinator {
                     if checkpoint.captured.snapshot() != tx.after
                         || checkpoint.captured.inventory != tx.inventory
                         || checkpoint.captured.settings != tx.settings
+                        || checkpoint.captured.domains() != tx.after_domains
                     {
                         return Err(Error::Corrupt("checkpoint folded state"));
                     }

@@ -6,18 +6,21 @@ use super::*;
 pub enum Domain {
     Agent,
     Review,
+    Work,
 }
 impl Domain {
     fn record_kind(self) -> RecordKind {
         match self {
             Self::Agent => RecordKind::AgentRoot,
             Self::Review => RecordKind::ReviewRoot,
+            Self::Work => RecordKind::WorkRoot,
         }
     }
     fn semantic_kind(self) -> SemanticKind {
         match self {
             Self::Agent => SemanticKind::AgentStateChanged,
             Self::Review => SemanticKind::ReviewStateChanged,
+            Self::Work => SemanticKind::WorkStateChanged,
         }
     }
 }
@@ -34,6 +37,8 @@ pub struct DomainState {
 pub struct RepositoryDomains {
     pub agent: DomainState,
     pub review: DomainState,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub work: Option<DomainState>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -108,6 +113,7 @@ impl DomainRequest {
             || self.facts.as_ref().is_some_and(|facts| match self.domain {
                 Domain::Agent => facts.agent.is_none() || facts.review.is_some(),
                 Domain::Review => facts.agent.is_some() || facts.review.is_none(),
+                Domain::Work => true,
             })
         {
             return Err(Error::Corrupt("domain publication request"));
@@ -162,7 +168,17 @@ impl Coordinator {
             {
                 return Ok(receipt);
             }
-            if base.manifest.domain_state(request.domain) != Some(request.expected) {
+            if request.domain == Domain::Work && base.manifest.replication_root.is_some() {
+                return Err(Error::Corrupt("WorkStore replication unsupported"));
+            }
+            let mut current = base.manifest.domain_state(request.domain);
+            if request.domain == Domain::Work && current.is_none() {
+                current = Some(DomainState {
+                    root: self.empty_work_store().await?.reference(),
+                    version: 0,
+                });
+            }
+            if current != Some(request.expected) {
                 return Err(Error::Stale);
             }
             let inventory = if native_roots.is_empty() {
@@ -227,10 +243,12 @@ impl Coordinator {
             match request.domain {
                 Domain::Agent => after_domains.agent = selected,
                 Domain::Review => after_domains.review = selected,
+                Domain::Work => after_domains.work = Some(selected),
             }
             let changed_domain = match request.domain {
                 Domain::Agent => OriginDomainV1::Agent,
                 Domain::Review => OriginDomainV1::Review,
+                Domain::Work => OriginDomainV1::Repository,
             };
             let origin = self
                 .author_origin(
@@ -284,6 +302,13 @@ impl Coordinator {
                 )
                 .await?;
             let manifest = Manifest {
+                format: if after_domains.work.is_some() {
+                    3
+                } else {
+                    base.manifest.format
+                },
+                work_root: after_domains.work.map(|s| s.root),
+                work_state_version: after_domains.work.map_or(0, |s| s.version),
                 revision: base
                     .manifest
                     .revision
@@ -330,6 +355,10 @@ impl Coordinator {
         root: RecordRef,
     ) -> Result<BTreeSet<ObjectKey>> {
         match domain {
+            Domain::Work => {
+                self.work_store(root).await?;
+                Ok(BTreeSet::new())
+            }
             Domain::Agent => {
                 let (_, native) = self.read_agent_root_dependencies(root).await?;
                 Ok(native)

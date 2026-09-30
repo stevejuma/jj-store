@@ -377,3 +377,11 @@ maximum matched `occurred_at_millis` only when they are available within the
 4,096-event read bound; missing, mismatched or over-bound evidence reports no
 timing. The derived fields are service presentation data and add no AgentStore
 object, manifest, WAL or receipt encoding.
+
+## Native WorkStore
+
+WorkStore format 3 adds an independent work root/version and optional work
+domain in WAL before/after selections. The first task command publishes
+enablement and its typed records atomically, preserving existing authority.
+Recovery and native copy audit every historical WorkStore catalog. See
+[native projects](projects.md).

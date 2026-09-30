@@ -81,6 +81,10 @@ adds evidence here in its enclosing Jujutsu change.
 | M10.6       | Done        | M10.5       | JST-REPL-004,JST-REPL-010,JST-REPL-011                                                                                                                                   | Complete snapshot-plus-tail bootstrap, format-2 seed upgrade and non-destructive existing-workspace migration         | Retain bootstrap, migration and zero-upstream regressions                   | E-M10-008,E-M10-010,E-M10-013                                                                                                                                                                                                                                                                                                                                  |
 | M10.7       | Done        | M10.6       | JST-REPL-001,JST-REPL-006,JST-REPL-011,JST-REPL-012                                                                                                                      | Server-owned worker, one upstream, local outage readiness, controls, finite waits and SSE/search integration          | Retain active profile; expanded hardening stays deferred to M10.8.          | E-M10-009,E-M10-010,E-M10-013,E-M10-014                                                                                                                                                                                                                                                                                                                        |
 | M10.8       | Deferred    | M10.7       | JST-REPL-011,JST-REPL-012                                                                                                                                                | Expanded pressure/fault soak, browser UI, cold two-instance RustFS, archive/export and topology qualification         | Future replication hardening                                                | -                                                                                                                                                                                                                                                                                                                                                              |
+| M11         | In progress | M9.6        | JST-WORK-001,JST-WORK-002,JST-WORK-003,JST-WORK-004,JST-WORK-005,JST-WORK-006,JST-WORK-007,JST-WORK-008                                                                  | Native project home, linked repositories, tasks and discussion                                                        | Implement and qualify isolated WorkStore                                    | E-M11-001                                                                                                                                                                                                                                                                                                                                                      |
+| M11.1       | Done        | M9.6        | JST-WORK-001,JST-WORK-002,JST-WORK-003,JST-WORK-004,JST-WORK-005,JST-WORK-007                                                                                            | Native model, publication, receipts, recovery and copy                                                                | Retain native gates; proceed with owned service and transport               | E-M11-001                                                                                                                                                                                                                                                                                                                                                      |
+| M11.2       | Planned     | M11.1       | JST-WORK-005,JST-WORK-006,JST-WORK-008                                                                                                                                   | Authorized service, API, RPC and CLI                                                                                  | Executed transport and CLI acceptance                                       | -                                                                                                                                                                                                                                                                                                                                                              |
+| M11.3       | Planned     | M11.2       | JST-WORK-008                                                                                                                                                             | Browser projects/tasks/comments and explicit refresh                                                                  | Cold interaction and accessibility acceptance                               | -                                                                                                                                                                                                                                                                                                                                                              |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -20492,6 +20496,208 @@ and named tests are checked by the progress gate.
     "versions": "jj 0.45.1; pnpm 10.32.1; Svelte 5.57.1; Vitest 4.1.11; Storybook 10.5.7; Vite 8.3.1; existing released Design Core dependencies unchanged.",
     "formats": "Presentation only. Tab order is Overview (files), Branches (branches), Commits (log), Op Log (oplog), Agents (agents), Reviews (reviews). Right rail retains JJ Log label. Legacy hash routes, controller actions, pinned operation and workspace identities remain unchanged. No HTTP, native format, manifest, WAL, receipt or catalog-state authority changes. The right rail now contains only its page heading/create control above Details navigation. Generic summaries, selected metadata and secondary action panels are removed. Comparison-parent choices and request failures remain in the body; other mutation commands remain in Repository actions. Workspace section-header block margins are zero, with horizontal margins retained.",
     "next": "Retain the focused navigation, workspace, settings, file/read/mutation and error-notice regressions; human visual review and baseline approval remain separate."
+  },
+  {
+    "id": "E-M11-001",
+    "tasks": [
+      "M11",
+      "M11.1"
+    ],
+    "date": "2026-09-30",
+    "kind": "native-workstore",
+    "revision": "enclosing Jujutsu change",
+    "versions": "Rust 1.98.1; jj-cli/jj-lib 0.45.1; pnpm 10.32.1",
+    "formats": "Manifest 3 with optional WorkStore selections in WAL domains; typed repository-bound WorkRootV1 and WorkObjectV1 envelopes; existing format-1/2 canonical bytes preserved.",
+    "files": [
+      "Cargo.lock",
+      "Cargo.toml",
+      "crates/jj-store-wal/Cargo.toml",
+      "crates/jj-store-wal/src/publication/application.rs",
+      "crates/jj-store-wal/src/publication/collaboration.rs",
+      "crates/jj-store-wal/src/publication/domains.rs",
+      "crates/jj-store-wal/src/publication/native_copy.rs",
+      "crates/jj-store-wal/src/publication/reader.rs",
+      "crates/jj-store-wal/src/publication/replication_seed.rs",
+      "crates/jj-store-wal/src/publication/work.rs",
+      "crates/jj-store-wal/src/publication/work_commands.rs",
+      "crates/jj-store-wal/src/publication.rs",
+      "crates/jj-store-wal/src/records.rs",
+      "crates/jj-store-wal/tests/work_store.rs",
+      "crates/jj-work/Cargo.toml",
+      "crates/jj-work/src/apply.rs",
+      "crates/jj-work/src/commands.rs",
+      "crates/jj-work/src/ids.rs",
+      "crates/jj-work/src/lib.rs",
+      "crates/jj-work/src/state.rs",
+      "crates/jj-work/src/validation.rs",
+      "crates/jj-work/tests/commands.rs",
+      "scripts/check-boundaries.mjs",
+      "spec/src/SUMMARY.md",
+      "spec/src/architecture.md",
+      "spec/src/milestones.md",
+      "spec/src/projects.md",
+      "spec/src/publication.md",
+      "spec/src/replication.md",
+      "spec/src/spec-governance.md",
+      "spec/src/verification.md",
+      "spec-validator.config.mjs"
+    ],
+    "tests": [
+      "crates/jj-store-wal/tests/work_store.rs#workstore_receipt_survives_checkpoint_and_reconstruction",
+      "crates/jj-store-wal/tests/work_store.rs#linked_tasks_comments_pins_and_native_copy",
+      "crates/jj-store-wal/tests/work_store.rs#workstore_and_origin_replication_are_mutually_excluded",
+      "crates/jj-store-wal/tests/work_store.rs#uncertain_manifest_keeps_staged_work_invisible_and_retry_identity_stable",
+      "crates/jj-work/tests/commands.rs#rejects_cross_project_hierarchy_cross_task_replies_and_invalid_admission"
+    ],
+    "runs": [
+      {
+        "command": "jj git init --colocate .",
+        "result": "fail",
+        "failures": 1,
+        "note": "App-managed Git worktrees cannot host colocated JJ. Archived the empty managed worktree and used native jj workspace add."
+      },
+      {
+        "command": "jj workspace add /Users/stevejuma/code/lapismd/jj-store-native-project-tasks --name native-project-tasks -r uqvnuppm",
+        "result": "pass",
+        "failures": 0,
+        "note": "Clean native workspace from integrated base 4a224b91; original active work preserved."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --test work_store --locked workstore_receipt_survives_checkpoint_and_reconstruction -- --exact",
+        "result": "fail",
+        "failures": 3,
+        "note": "Before state: missing WorkStore imports/publication method; acceptance cannot compile."
+      },
+      {
+        "command": "cargo check -p jj-work",
+        "result": "pass",
+        "failures": 0,
+        "note": "Neutral domain package compiles; updates workspace lock with local crate."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --test work_store workstore_receipt_survives_checkpoint_and_reconstruction -- --exact",
+        "result": "fail",
+        "failures": 36,
+        "note": "Intermediate ambiguous glob imports; replaced them with explicit owned type exports."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --test work_store --locked workstore_receipt_survives_checkpoint_and_reconstruction -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "One exact durable receipt/cold reconstruction acceptance passes."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --test work_store --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "Intermediate test used private WriterEpoch tuple constructor; corrected to fixed-width native new()."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --test work_store --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Five focused native WorkStore tests pass."
+      },
+      {
+        "command": "cargo test -p jj-work --test commands --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "One model acceptance passes, covering cross-project/cross-task rejection and admission/actors."
+      },
+      {
+        "command": "cargo fmt -p jj-work -p jj-store-wal",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected Rust crates formatted."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "57 actual tests pass, zero failures. Escalation: shared manifest/history/copy format affects native, AgentStore and ReviewStore authority."
+      },
+      {
+        "command": "pnpm install --frozen-lockfile --lockfile=false --ignore-scripts",
+        "result": "fail",
+        "failures": 1,
+        "note": "Existing pnpmfile checksum makes frozen local validation incompatible; no tracked lockfile changed."
+      },
+      {
+        "command": "pnpm install --lockfile=false --ignore-scripts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Private local validation dependencies installed with ignored generated node_modules; registry manifest/lock retained."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/projects.md spec/src/SUMMARY.md spec/src/verification.md spec/src/publication.md spec/src/architecture.md spec/src/replication.md spec/src/spec-governance.md spec-validator.config.mjs scripts/check-boundaries.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed canonical documents and governance formatted."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "fail",
+        "failures": 8,
+        "note": "New verification rows were outside the existing Markdown table; moved into that table."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "24 protected files map to six changed owning chapters."
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "15 packages preserve neutral domain and owned JJ dependency boundaries."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/verification.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "New verification and milestone rows moved inside their existing Markdown tables and formatted."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "19 chapters and 115 requirements validate."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "77 tasks and same-change native evidence validate."
+      },
+      {
+        "command": "cargo clippy -p jj-work -p jj-store-wal --all-targets --locked -- -D warnings",
+        "result": "fail",
+        "failures": 1,
+        "note": "Intermediate collapsible reply validation; fixed without suppressing lint."
+      },
+      {
+        "command": "cargo clippy -p jj-work -p jj-store-wal --all-targets --locked -- -D warnings",
+        "result": "fail",
+        "failures": 1,
+        "note": "Intermediate manual range pattern; used the accepted 1..=3 manifest format range."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final affected authority suite passes 58 tests, zero failures, including six WorkStore regressions and the strengthened checkpoint domain check."
+      },
+      {
+        "command": "cargo clippy -p jj-work -p jj-store-wal --all-targets --locked -- -D warnings",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected native packages and targets pass with warnings denied."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "Native model and fake-store publication/recovery/copy only; M11.2/M11.3 and real RustFS WorkStore acceptance remain separate. Root aggregate and unrelated UI lanes are out of scope."
   }
 ]
 ```

@@ -72,6 +72,10 @@ export default defineConfig(tableRequirements(), {
           chapters: ["spec/src/replication.md"],
         },
         {
+          pattern: "^crates/jj-work/",
+          chapters: ["spec/src/projects.md"],
+        },
+        {
           pattern: "^crates/jj-(?:agent|review)/",
           chapters: ["spec/src/collaboration.md"],
         },
