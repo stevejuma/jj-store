@@ -9,6 +9,7 @@ use jj_store_jj::{
     objects::NativeObjects,
     operation_stores::{AuthorityResult, OperationAuthority},
     policy::{NativePolicy, PolicyLimits, Protection},
+    replication::NativeOperationHeadReducer,
 };
 use jj_store_model as m;
 use jj_store_object::ObjectStore;
@@ -127,11 +128,13 @@ impl NativeSession {
             inventory_nodes: limits.inventory_nodes,
         });
         let guard = Arc::new(AuthenticatedGuard::new(access.clone(), semantic));
-        let coordinator = Coordinator::new(
+        let operation_heads = Arc::new(NativeOperationHeadReducer::new(objects.clone()));
+        let coordinator = Coordinator::new_with_head_reducer(
             store.clone(),
             repository,
             objects,
             guard,
+            operation_heads,
             limits.publication,
         )?;
         Ok(Self {

@@ -66,6 +66,31 @@ or replaying the same origin keys. A feed horizon gap requires a compatible
 checkpoint plus tail; a replica with pending local work merges that knowledge
 through normal import rather than replacing its roots.
 
+## Verified receiver boundary
+
+The replication package exchanges manifest-bound origin feeds, authenticated
+origin offers and bounded immutable closures. Closure transfer conditionally
+installs only digest-verified native objects and control records. It never
+installs a manifest, WAL candidate or receipt; `apply_origins` remains the sole
+destination publication boundary.
+
+`apply_origins` validates the complete native and control closure before its CAS
+loop. Within that loop it authorizes the request, resolves a stable import
+receipt before reducing new data, rejects origin-key digest reuse and orders
+unseen origins only when every stream predecessor and sparse causal dependency
+is present. One destination WAL candidate then selects the reduced content,
+accepted-origin catalog, stream prefixes and one destination receipt per
+original origin. A repeated batch returns those receipts without advancing the
+WAL or a domain state version; an unknown manifest result is recovered through
+the same request identity.
+
+Code reduction adds only the operation heads explicitly named by accepted
+origins. Production native sessions pass those candidates through the pinned
+`jj-lib` operation-parent walk, removing delayed ancestors while retaining
+concurrent siblings. Import and reads do not create a reconciliation operation.
+AgentStore and ReviewStore imports remain disabled until their accepted-fact
+reducers are selected by the same atomic receiver path.
+
 ## Delivery sequence
 
 M10 implements this chapter after the completed LocalTrusted M9 foundation:

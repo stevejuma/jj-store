@@ -13,6 +13,8 @@ mod domains;
 mod native_copy;
 mod reader;
 mod replication;
+mod replication_import;
+mod replication_transfer;
 mod review;
 mod review_audit;
 mod review_audit_events;
@@ -59,6 +61,12 @@ pub use reader::SelectedRecord;
 pub use replication::{
     LocalDeliveryV1, OriginDomainV1, OriginKeyV1, OriginPrefixV1, OriginPublicationV1,
     OriginReceiptV1, OriginStreamV1, ReplicationRootV1,
+};
+pub use replication_import::{
+    ApplyOriginsOutcomeV1, ApplyOriginsRequestV1, ApplyOriginsResultV1, OriginEnvelopeV1,
+};
+pub use replication_transfer::{
+    OriginClosureV1, OriginFeedItemV1, OriginFeedPageV1, OriginOfferResultV1, OriginOfferV1,
 };
 pub use review_catalog::ReviewStoreSnapshot;
 pub use review_commands::{ReviewCommandError, ReviewCommandRequest};
@@ -305,6 +313,7 @@ pub enum SemanticKind {
     CollaborationEnabled,
     AgentStateChanged,
     ReviewStateChanged,
+    ReplicationImported,
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -436,6 +445,15 @@ pub trait PublicationGuard: Send + Sync {
     ) -> Result<()> {
         Err(Error::Denied)
     }
+    /// Inbound replication is a restricted authenticated capability. Ordinary
+    /// publication authorization does not grant it implicitly.
+    async fn authorize_replication(
+        &self,
+        _base: &ManifestSnapshot,
+        _request: &ApplyOriginsRequestV1,
+    ) -> Result<()> {
+        Err(Error::Denied)
+    }
     async fn validate_transition(
         &self,
         base: &ManifestSnapshot,
@@ -443,12 +461,37 @@ pub trait PublicationGuard: Send + Sync {
         after: &Snapshot,
     ) -> Result<()>;
 }
+
+/// Native operation ancestry belongs to the pinned JJ integration. The WAL
+/// invokes this policy only after every candidate operation has a verified
+/// local closure; it never infers operation ancestry from commit graphs.
+#[async_trait::async_trait]
+pub trait OperationHeadReducer: Send + Sync {
+    async fn maximal_heads(
+        &self,
+        candidates: BTreeSet<OperationId>,
+    ) -> Result<BTreeSet<OperationId>>;
+}
+
+struct PreserveOperationHeads;
+
+#[async_trait::async_trait]
+impl OperationHeadReducer for PreserveOperationHeads {
+    async fn maximal_heads(
+        &self,
+        candidates: BTreeSet<OperationId>,
+    ) -> Result<BTreeSet<OperationId>> {
+        Ok(candidates)
+    }
+}
+
 #[derive(Clone)]
 pub struct Coordinator {
     records: Records,
     catalog: Catalog,
     source: Arc<dyn DependencySource>,
     guard: Arc<dyn PublicationGuard>,
+    operation_heads: Arc<dyn OperationHeadReducer>,
     limits: Limits,
 }
 impl Coordinator {
@@ -457,6 +500,24 @@ impl Coordinator {
         repository: RepositoryId,
         source: Arc<dyn DependencySource>,
         guard: Arc<dyn PublicationGuard>,
+        limits: Limits,
+    ) -> Result<Self> {
+        Self::new_with_head_reducer(
+            store,
+            repository,
+            source,
+            guard,
+            Arc::new(PreserveOperationHeads),
+            limits,
+        )
+    }
+
+    pub fn new_with_head_reducer(
+        store: Arc<dyn ObjectStore>,
+        repository: RepositoryId,
+        source: Arc<dyn DependencySource>,
+        guard: Arc<dyn PublicationGuard>,
+        operation_heads: Arc<dyn OperationHeadReducer>,
         limits: Limits,
     ) -> Result<Self> {
         if source.scope().repository() != repository {
@@ -472,6 +533,7 @@ impl Coordinator {
             catalog,
             source,
             guard,
+            operation_heads,
             limits,
         })
     }

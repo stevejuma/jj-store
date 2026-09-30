@@ -84,11 +84,12 @@ impl Coordinator {
                 .checked_add(manifest_bytes.len() as u64)
                 .ok_or(Error::Limit("native copy bytes"))?;
 
-            let restored = Coordinator::new(
+            let restored = Coordinator::new_with_head_reducer(
                 destination,
                 self.records.repository,
                 destination_source,
                 self.guard.clone(),
+                self.operation_heads.clone(),
                 self.limits,
             )?;
             let snapshot = restored.recover(max_entries).await?;

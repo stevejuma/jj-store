@@ -55,7 +55,7 @@ pub struct OriginPublicationV1 {
 }
 
 impl OriginPublicationV1 {
-    fn validate(&self, repository: RepositoryId) -> Result<()> {
+    pub(super) fn validate(&self, repository: RepositoryId) -> Result<()> {
         if self.schema_version != 1
             || self.semantic_format_version != 1
             || self.origin_key.stream.repository != repository
@@ -389,6 +389,18 @@ impl Coordinator {
                 || stream.keys().next_back().copied() != Some(prefix.sequence)
             {
                 return Err(Error::Corrupt("origin prefix terminal"));
+            }
+        }
+        for (stream, entries) in &observed {
+            let prefix = root
+                .prefixes
+                .iter()
+                .find(|prefix| prefix.stream == *stream)
+                .ok_or(Error::Corrupt("origin stream prefix missing"))?;
+            if entries.len() as u64 != prefix.sequence
+                || entries.keys().copied().ne(1..=prefix.sequence)
+            {
+                return Err(Error::Corrupt("origin stream continuity"));
             }
         }
         let local = observed.get(&root.local_stream);

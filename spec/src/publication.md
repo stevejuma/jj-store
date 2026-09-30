@@ -93,6 +93,18 @@ does not replace the native inventory or any content root. Its local delivery
 position is destination-owned bookkeeping; the logical origin key and digest
 remain portable.
 
+Receiver publication is a distinct authorized path over the same coordinator.
+Object transfer may stage a digest-verified immutable closure but cannot select
+it. The receiver verifies that closure and every origin dependency, resolves a
+matching stable import receipt before mutation, topologically orders contiguous
+origin streams, reduces only unseen origins and selects their content effects,
+accepted-origin receipts, causal prefixes and one local WAL candidate in a
+single destination manifest CAS. A pure import preserves the original origin
+keys and digests and creates no authored origin. A duplicate-only batch returns
+the selected destination receipts without another WAL entry or state-version
+advance. Code heads use the configured pinned JJ operation-ancestry reducer;
+collaboration origins are rejected until their accepted-fact reducers exist.
+
 Agent and review roots are typed `AgentRootV1` and `ReviewRootV1` records rather
 than caller-supplied opaque payloads. Their catalog and selected object edges
 use repository-bound immutable record envelopes. Staging validates canonical
@@ -237,10 +249,10 @@ The destination may be empty or already contain byte-identical immutable
 objects. Different bytes under any selected key fail closed. A lost manifest
 write acknowledgement resolves only by reading back the exact bytes. After the
 manifest is visible, a coordinator backed by the destination's native dependency
-source performs cold recovery and must reproduce the source manifest digest and
-all three roots. History, object and byte budgets plus the coordinator timeout
-bound the operation. This primitive introduces no list, delete, remap,
-promotion, backup or migration authority.
+source and the same operation-head reducer performs cold recovery and must
+reproduce the source manifest digest and all three roots. History, object and
+byte budgets plus the coordinator timeout bound the operation. This primitive
+introduces no list, delete, remap, promotion, backup or migration authority.
 
 Selected settings are readable from a checked ManifestSnapshot using an owned
 storage accessor, so request-scoped guards can verify policy without

@@ -1,0 +1,19 @@
+[package]
+name = "jj-store-replication"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+jj-store-model.workspace = true
+jj-store-object.workspace = true
+jj-store-wal.workspace = true
+serde = { version = "1", features = ["derive"] }
+sha2 = "0.10"
+thiserror = "2"
+
+[dev-dependencies]
+async-trait = "0.1"
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }

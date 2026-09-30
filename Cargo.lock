@@ -3964,6 +3964,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "jj-store-replication"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "jj-store-model",
+ "jj-store-object",
+ "jj-store-wal",
+ "serde",
+ "sha2 0.10.9",
+ "thiserror 2.0.21",
+ "tokio",
+]
+
+[[package]]
 name = "jj-store-rpc"
 version = "0.1.0"
 dependencies = [
