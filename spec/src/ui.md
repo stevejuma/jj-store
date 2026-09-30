@@ -474,7 +474,10 @@ commit time and bookmark/workspace chips. Create change, Create bookmark and
 Move bookmark use the same row as a searchable Design Core Command View selector
 over loaded revisions; search covers message, author, email, Git/JJ identities,
 bookmarks and workspaces, and the selected full commit ID remains the typed
-mutation value.
+mutation value. Commit-selector avatars and row bodies align vertically with the
+trigger chevron, including descriptionless commits. Non-interactive GIT/JJ
+labels use the compact indicator-size oval chips in both the selected button and
+searchable options. Repository navigation sections have no top margin.
 
 ## Workspace browsing context
 

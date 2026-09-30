@@ -643,14 +643,17 @@ Git/JJ identities and relative time rather than an editable or disabled raw ID
 input. The same presentation includes bookmark and workspace chips; selectable
 Create change, Create bookmark and Move bookmark targets open a searchable
 Design Core Command View over loaded revisions and retain the selected full
-native commit ID in the typed request. Collaboration presentation uses the
-Community message/thread/composer models and Design Core tool/diff primitives.
-Agent session cards show the integration's agent avatar and name, state,
-captured start time and compact captured duration when evidence supplies both
-endpoints. SHA-shaped agent, review and anchor identities use copy controls;
-tool details can embed an exact loaded patch or sanitized old/new edit input.
-Revision and path selections open route-addressable Agent context and Review
-discussion columns, and an agent header links back to its associated change.
+native commit ID in the typed request. The selector aligns avatar and content
+vertically for descriptionless commits and uses compact oval GIT/JJ labels in
+its selected button and options. This styling leaves the bound identities and
+mutation commands unchanged. Collaboration presentation uses the Community
+message/thread/composer models and Design Core tool/diff primitives. Agent
+session cards show the integration's agent avatar and name, state, captured
+start time and compact captured duration when evidence supplies both endpoints.
+SHA-shaped agent, review and anchor identities use copy controls; tool details
+can embed an exact loaded patch or sanitized old/new edit input. Revision and
+path selections open route-addressable Agent context and Review discussion
+columns, and an agent header links back to its associated change.
 
 The browser derives integration avatars from bundled, reviewed agent artwork;
 agent identities keep Community's rounded-square shape while people and device

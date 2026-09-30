@@ -34,6 +34,10 @@
         name: "Repository navigation sidebar",
       }),
     );
+    const section = canvasElement.querySelector(
+      ".lc-community-navigation__section",
+    )!;
+    await expect(getComputedStyle(section).marginBlockStart).toBe("0px");
     for (const label of ["Branches", "JJ Log", "Op Log", "Agents", "Reviews"])
       await expect(left.queryByRole("button", { name: label })).toBeNull();
     await userEvent.click(

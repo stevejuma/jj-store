@@ -64,8 +64,8 @@
         >
           {#if target}<span title={`Git commit SHA ${target}`}>
               <CommunityChip
-                size="inline"
-                shape="square"
+                size="indicator"
+                shape="pill"
                 variant="muted"
                 ariaHidden>GIT</CommunityChip
               ><code>{target.slice(0, 5)}</code>
@@ -74,8 +74,8 @@
               title={`JJ Change ID ${revision.changeId}`}
             >
               <CommunityChip
-                size="inline"
-                shape="square"
+                size="indicator"
+                shape="pill"
                 variant="muted"
                 ariaHidden>JJ</CommunityChip
               ><code>{revision.changeId.slice(0, 5)}</code>
@@ -110,7 +110,7 @@
     width: 100%;
     min-width: 0;
     grid-template-columns: auto minmax(0, 1fr);
-    align-items: start;
+    align-items: center;
     gap: 0.5rem;
     box-sizing: border-box;
     color: inherit;
