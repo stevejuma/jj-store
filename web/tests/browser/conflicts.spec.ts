@@ -106,10 +106,40 @@ test("native conflict editor stages and previews one complete atomic selection",
   await page.getByRole("button", { name: "Repository actions" }).click();
   await page.getByRole("menuitem", { name: "Resolve conflicts" }).click();
   const dialog = page.getByRole("region", { name: "Resolve native conflicts" });
-  await expect(page.locator('[data-ui-part="main"]')).toHaveAttribute(
-    "inert",
-    "",
-  );
+  const header = dialog.locator('[data-ui-part="surface-layer-header"]');
+  const body = dialog.locator('[data-ui-part="surface-layer-body"]');
+  const browser = dialog.getByRole("complementary", {
+    name: "Conflict file browser",
+  });
+  await expect(
+    browser.locator('[data-ui-component="file-listing"]'),
+  ).toBeVisible();
+  await expect(dialog.locator(".store-conflict-editor__footer")).toHaveCount(0);
+  await expect(dialog.getByRole("button", { name: "Cancel" })).toHaveCount(0);
+  for (const name of ["Delete path", "Stage merged file", "Preview 0/2"]) {
+    await expect(header.getByRole("button", { name })).toBeVisible();
+  }
+  const bodyBox = (await body.boundingBox())!;
+  const browserBox = (await browser.boundingBox())!;
+  expect(Math.abs(browserBox.height - bodyBox.height)).toBeLessThan(1);
+  expect(
+    await browser.evaluate(
+      (element) => getComputedStyle(element).borderRightWidth,
+    ),
+  ).toBe("1px");
+  await header
+    .getByRole("button", { name: "Hide conflict file browser" })
+    .click();
+  await expect(browser).toBeHidden();
+  await header
+    .getByRole("button", { name: "Show conflict file browser" })
+    .click();
+  await expect(browser).toBeVisible();
+  await expect(
+    page.locator(
+      '[data-ui-part="main"]:not(.store-conflict-editor [data-ui-part="main"])',
+    ),
+  ).toHaveAttribute("inert", "");
   await expect(dialog.getByTitle(conflicts[0]!.fingerprint)).toHaveCount(0);
   await dialog
     .getByRole("button", { name: "Accept All Incoming Changes from Left" })
@@ -173,12 +203,13 @@ test("native conflict editor stages and previews one complete atomic selection",
   await expect(
     dialog.getByRole("button", { name: "Preview 1/2" }),
   ).toBeVisible();
-  await dialog.getByRole("button", { name: "Cancel" }).click();
+  await dialog.getByRole("button", { name: "Close conflict editor" }).click();
   await expect(dialog).toHaveCount(0);
-  await expect(page.locator('[data-ui-part="main"]')).not.toHaveAttribute(
-    "inert",
-    "",
-  );
+  await expect(
+    page.locator(
+      '[data-ui-part="main"]:not(.store-conflict-editor [data-ui-part="main"])',
+    ),
+  ).not.toHaveAttribute("inert", "");
   await expect(
     page.getByRole("button", { name: "Repository actions" }),
   ).toBeFocused();
@@ -248,6 +279,22 @@ for (const [side, term] of [
       await expect(
         sheet.getByRole("button", { name: "Stage merged file" }),
       ).toBeVisible();
+      const browser = sheet.getByRole("complementary", {
+        name: "Conflict file browser",
+      });
+      await expect(browser).toBeHidden();
+      await sheet
+        .getByRole("button", { name: "Show conflict file browser" })
+        .click();
+      await expect(browser).toBeVisible();
+      await expect(
+        sheet.getByRole("textbox", { name: "Edit Resolved" }),
+      ).toBeHidden();
+      await browser.getByRole("button", { name: "src/lib.rs" }).click();
+      await expect(browser).toBeHidden();
+      await expect(
+        sheet.getByRole("textbox", { name: "Edit Resolved" }),
+      ).toBeVisible();
     }
     await expect(
       sheet.getByRole("textbox", { name: "Edit Resolved" }),
@@ -264,9 +311,10 @@ for (const [side, term] of [
     await sheet.getByRole("button", { name: "Back", exact: true }).click();
     await page.keyboard.press("Escape");
     await expect(sheet).toHaveCount(0);
-    await expect(page.locator('[data-ui-part="main"]')).not.toHaveAttribute(
-      "inert",
-      "",
-    );
+    await expect(
+      page.locator(
+        '[data-ui-part="main"]:not(.store-conflict-editor [data-ui-part="main"])',
+      ),
+    ).not.toHaveAttribute("inert", "");
   });
 }

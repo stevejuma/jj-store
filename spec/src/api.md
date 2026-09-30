@@ -763,6 +763,15 @@ term IDs and fingerprints remain in the typed request even though metadata cards
 are omitted from the editor. Uploads capture the selected descriptor so path
 switching cannot rebind staged bytes to another conflict.
 
+The conflict sheet reuses the repository file tree in an independently scrolling
+left body sidebar. Its leading header toggle retains per-path drafts while
+showing or hiding the browser; narrow layouts return to the editor after file
+selection. Delete and staged-file actions target the exact active descriptor
+from the header, alongside atomic Preview and prepared/recovery actions. The
+sheet has no footer or Cancel action. Close retains the existing pending-upload
+and mutation guards, and path navigation stays locked while an upload or
+prepared mutation binds its captured descriptors.
+
 EditFile is advertised as `edit_file` and carries the exact local bookmark name
 and expected single target, canonical source and destination paths, bounded
 UTF-8 replacement contents and the new child change description. The same

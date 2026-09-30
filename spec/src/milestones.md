@@ -51,6 +51,7 @@ adds evidence here in its enclosing Jujutsu change.
 | M4.23       | Done        | M4.22       | JST-UI-008,JST-UI-014,JST-API-005                                                                                                                                        | Centered commit-selector content, oval ID chips and zero section margin; focused interaction/accessibility acceptance          | Retain picker/navigation regressions; visual review stays separate            | E-UI-036                                                                                                                                                                                                                                                                                                                                                       |
 | M4.24       | Done        | M4.23,M4.17 | JST-UI-002,JST-UI-009,JST-API-005                                                                                                                                        | Conflict sheet, highlighted editor and accept-all controls; focused and cold browser evidence                                  | Retain merge and shell regressions; visual review remains separate            | E-UI-037                                                                                                                                                                                                                                                                                                                                                       |
 | M4.25       | Done        | M4.23       | JST-UI-008,JST-API-005                                                                                                                                                   | Aligned selector ID columns, smaller labels and bottom-right time; focused interaction/accessibility acceptance                | Retain picker regressions; visual review stays separate                       | E-UI-038                                                                                                                                                                                                                                                                                                                                                       |
+| M4.26       | Done        | M4.24       | JST-UI-002,JST-UI-009,JST-API-005                                                                                                                                        | Full-height conflict file browser and header actions; focused and cold browser acceptance                                      | Retain conflict layout/draft regressions; visual review stays separate        | E-UI-039                                                                                                                                                                                                                                                                                                                                                       |
 | M5          | Done        | M4.1        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                                                                                                                      | Authenticated typed commands and shared RPC policy                                                                             | Retain mutation conformance; proceed to M6                                    | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-M5-005,E-M5-006,E-M5-007,E-M5-008,E-UI-028                                                                                                                                                                                                                                                                   |
 | M5.1        | Done        | M4.1        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                                                                                                                      | Basic changes/refs/reconcile; preview receipt and semantic policy                                                              | Retain basic mutation acceptance                                              | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-UI-028                                                                                                                                                                                                                                                                                                       |
 | M5.2        | Done        | M5.1        | JST-MUT-003                                                                                                                                                              | Full abandon descendant bookmark workspace/evolution parity                                                                    | Retain abandon acceptance                                                     | E-M5-005                                                                                                                                                                                                                                                                                                                                                       |
@@ -21333,6 +21334,179 @@ and named tests are checked by the progress gate.
     "versions": "jj 0.45.1; Node 24.10.0; pnpm 10.32.1; Svelte 5.57.1; Storybook 10.5.7; Vitest 4.1.11; Vite 8.3.1. Existing released dependency resolution unchanged.",
     "formats": "Presentation only. Noncopyable GIT/JJ labels use existing Community secondary-font token at 0.625rem (10px), one pixel above the existing 9px split-copy control. Fixed Git/JJ columns reserve missing identities and align options independently of title length. Secondary bookmark/workspace metadata keeps relative time at bottom right. Full bound native IDs, search, copy controls, typed mutations, HTTP/native object/manifest/WAL/receipt formats unchanged.",
     "next": "Retain focused picker and mutation-form acceptance; human visual baseline approval remains separate."
+  },
+  {
+    "id": "E-UI-039",
+    "tasks": [
+      "M4.26"
+    ],
+    "date": "2026-10-01",
+    "kind": "conflict-sheet-file-browser-header-actions",
+    "revision": "Enclosing Jujutsu change pksrltsu.",
+    "before": "Clean working change. Conflict sheet used a custom path-button column, bottom Delete/Stage controls and a footer with Cancel/Preview. New Header actions and file browser story failed to find the named file-browser sidebar; five existing conflict stories passed.",
+    "files": [
+      "web/src/lib/ui/store-conflicts/StoreConflictEditor.svelte",
+      "web/src/lib/ui/store-conflicts/StoreConflictPath.svelte",
+      "web/src/lib/ui/store-conflicts/StoreConflictBody.svelte",
+      "web/src/lib/ui/store-conflicts/StoreConflictHeaderActions.svelte",
+      "web/src/lib/ui/store-conflicts/store-conflicts.css",
+      "catalog/components/store-mutations/StoreConflictEditor.stories.svelte",
+      "web/tests/browser/conflicts.spec.ts",
+      "spec/src/api.md",
+      "spec/src/ui.md",
+      "spec/src/verification.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-mutations/StoreConflictEditor.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before: 1 failed, 5 passed; missing Conflict file browser complementary landmark. Log .scratch/conflict-browser-before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-mutations/StoreConflictEditor.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "First after run failed during Vite virtual CSS imports for unchanged Design Core Field/Checkbox; no tests executed. Fresh retry loaded those components and exposed the implementation error recorded next. Log .scratch/conflict-browser-after.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-mutations/StoreConflictEditor.stories.svelte",
+        "result": "fail",
+        "failures": 6,
+        "note": "Fresh retry: 6 failed plus 6 matching unhandled Svelte errors. Undefined per-path merged bindings were invalid with the child fallback. Function bindings now return initial descriptor bytes and retain drafts in the sheet owner; redundant child initialization was removed. Log .scratch/conflict-browser-after-retry.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-mutations/StoreConflictEditor.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "After draft fix: 1 failed, 5 passed. The new test queried any footer and matched the MergeEditor internal status footer. Scope corrected to the sheet-owned footer, retaining the no-Cancel and header-button assertions. Log .scratch/conflict-browser-final-story.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-mutations/StoreConflictEditor.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final: all 6 Chromium interaction/accessibility stories pass. Verifies exact shared file listing, continuous 1px border and body height, header icon actions, no sheet footer/Cancel, hide/show, mode selection, per-path draft retention, active-path actions, atomic apply, unknown recovery, stale rejection, syntax tokens and shell focus/inert restoration. Log .scratch/conflict-browser-story-pass.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-mutations/StoreConflictEditor.stories.svelte catalog/components/store-mutations/StoreRepositoryActions.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte catalog/components/store-application/RepositoryApplication.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "31 directly affected conflict, repository action and application/shell stories pass. No unrelated suite escalation. Log .scratch/conflict-browser-consumers.log."
+      },
+      {
+        "command": "pnpm exec tsx --test web/tests/store-conflict-model.test.ts web/tests/production-store-conflicts.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "5 exact command/upload tests pass: native fingerprints/terms, complete atomic paths, scoped handles, bytes and bounds."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial and final checks pass with zero errors/warnings; final log .scratch/conflict-browser-web-check-final.log."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial and final checks pass with zero errors/warnings and 75-module catalog boundary audit; final log .scratch/conflict-browser-catalog-check-final.log."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial and final 291-module boundary and size audits pass. Header actions and body layout are separate small owners."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Fresh production UI build passes. Existing nonfatal Design Core CSS minification and bundle-size warnings remain. No Rust rebuild. Log .scratch/conflict-browser-build.log."
+      },
+      {
+        "command": "pnpm exec playwright test --config .scratch/workspace-browser.config.mts web/tests/browser/conflicts.spec.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "First cold built-UI run: 1 failed, 2 passed. Nested body shell made the background main locator ambiguous. The test now excludes the sheet-owned main and retains the same background inert/focus assertions. Log .scratch/conflict-browser-cold.log."
+      },
+      {
+        "command": "pnpm exec playwright test --config .scratch/workspace-browser.config.mts web/tests/browser/conflicts.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final cold built-UI run: 3 passed. Header stage uploads exact active-path draft bytes; atomic preview retains full native binding; preview/back and file switching preserve draft, subsequent edits invalidate staged selection, both accept-all terms remain exact, 390px mobile browser opens over the body and file selection returns to the editor, close/Escape restores background/focus. Fresh isolated Vite preview on 7471 shuts down after run. Log .scratch/conflict-browser-cold-final.log."
+      },
+      {
+        "command": "node .scratch/restart-workspace-ui.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Owned demo ready at 127.0.0.1:7460, PID 41996, with existing explicit development binaries and repository data preserved. No reseed/reset or unrelated restart."
+      },
+      {
+        "command": "CUA live built-UI verification",
+        "result": "pass",
+        "failures": 0,
+        "note": "Temporary hidden tab 8 verifies header toggle and real conflict file listing. Sidebar and body both 610px high with 1px right border; merge editor 594px of 664px sheet; header owns toggle/Delete/Stage/Preview/Close, with no sheet footer. Screenshot .scratch/conflict-file-browser.png saved and tab closed; user tabs preserved. No live upload, preview or apply."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/ui/store-conflicts/StoreConflictEditor.svelte web/src/lib/ui/store-conflicts/StoreConflictPath.svelte web/src/lib/ui/store-conflicts/StoreConflictBody.svelte web/src/lib/ui/store-conflicts/StoreConflictHeaderActions.svelte catalog/components/store-mutations/StoreConflictEditor.stories.svelte spec/src/ui.md spec/src/api.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Production owners, focused story and canonical chapters formatted; exact two-file draft-binding subset also formatted after fix."
+      },
+      {
+        "command": "pnpm exec prettier --write web/tests/browser/conflicts.spec.ts web/src/lib/ui/store-conflicts/store-conflicts.css",
+        "result": "pass",
+        "failures": 0,
+        "note": "Focused cold browser scenarios and consumer styles formatted; browser assertions formatted again after explicit background-main selector."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/ui/store-conflicts/StoreConflictEditor.svelte web/src/lib/ui/store-conflicts/StoreConflictPath.svelte web/src/lib/ui/store-conflicts/StoreConflictBody.svelte web/src/lib/ui/store-conflicts/StoreConflictHeaderActions.svelte web/src/lib/ui/store-conflicts/store-conflicts.css catalog/components/store-mutations/StoreConflictEditor.stories.svelte web/tests/browser/conflicts.spec.ts spec/src/api.md spec/src/ui.md spec/src/verification.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 11 changed files formatted."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "4 validators, 18 chapters and 107 canonical requirements pass."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "7 protected files and 3 canonical chapters pass same-change gate."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "79 tasks pass evidence bookkeeping audit."
+      },
+      {
+        "command": "pnpm spec:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Canonical mdBook HTML builds."
+      },
+      {
+        "command": "pnpm exec prettier --check web/src/lib/ui/store-conflicts/StoreConflictEditor.svelte web/src/lib/ui/store-conflicts/StoreConflictPath.svelte web/src/lib/ui/store-conflicts/StoreConflictBody.svelte web/src/lib/ui/store-conflicts/StoreConflictHeaderActions.svelte web/src/lib/ui/store-conflicts/store-conflicts.css catalog/components/store-mutations/StoreConflictEditor.stories.svelte web/tests/browser/conflicts.spec.ts spec/src/api.md spec/src/ui.md spec/src/verification.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 11 changed files pass formatting."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "deferred": [
+      "Changed stories remain visual-pending; human visual baseline approval is separate.",
+      "Root aggregate pnpm spec:check, pnpm check, pnpm test and pnpm build; unrelated UI suites; Rust/native contract generation and real-RustFS qualification are out of scope under targeted UI-only policy."
+    ],
+    "versions": "jj 0.45.1; Node 24.10.0; pnpm 10.32.1; Svelte 5.57.1; Storybook 10.5.7; Vitest 4.1.11; Vite 8.3.1. Existing dependency resolution unchanged; no sibling or package manifest edits.",
+    "formats": "Consumer presentation only. Embedded bounded AppShell owns local body-sidebar registration so mobile tree navigation cannot teleport into the inert underlying application. Repository file tree and view-mode controls are reused unchanged. Compact header icons own exact active-path delete/stage, complete atomic Preview and prepared/recovery actions. Close is the sole dismissal button; per-path drafts stay bound above hidden editor instances through browser toggles and preview/back. Pending upload/mutation and prepared-result locks remain. No native identity, object, HTTP, manifest, WAL, upload, receipt or credential format changes.",
+    "next": "Retain focused conflict, per-path draft, header action and mobile/body-layout acceptance; visual baseline approval remains separate."
   }
 ]
 ```

@@ -61,16 +61,81 @@
       within(confirmation).getByRole("button", { name: "Apply resolution" }),
     );
     await expect(view.getByText("Conflicts resolved")).toBeVisible();
-    const footer = dialog.querySelector<HTMLElement>(
-      ".store-conflict-editor__footer",
-    )!;
     await userEvent.click(
-      within(footer).getByRole("button", { name: "Close" }),
+      view.getByRole("button", { name: "Close conflict editor" }),
     );
     await waitFor(() => expect(dialog).not.toBeInTheDocument());
     await expect(
       getComputedStyle(canvasElement.ownerDocument.body).pointerEvents,
     ).not.toBe("none");
+  }}
+>
+  {#snippet template()}<StoreConflictEditorFixture />{/snippet}
+</Story>
+
+<Story
+  name="Header actions and file browser"
+  play={async ({ canvasElement }) => {
+    const { dialog, view } = await sheetFor(canvasElement);
+    const sidebar = view.getByRole("complementary", {
+      name: "Conflict file browser",
+    });
+    const header = dialog.querySelector<HTMLElement>(
+      '[data-ui-part="surface-layer-header"]',
+    )!;
+    const body = dialog.querySelector<HTMLElement>(
+      '[data-ui-part="surface-layer-body"]',
+    )!;
+    await expect(sidebar).toBeVisible();
+    await expect(
+      sidebar.querySelector('[data-ui-component="file-listing"]'),
+    ).toBeInTheDocument();
+    await expect(getComputedStyle(sidebar).borderRightWidth).toBe("1px");
+    await expect(
+      Math.abs(
+        sidebar.getBoundingClientRect().height -
+          body.getBoundingClientRect().height,
+      ),
+    ).toBeLessThan(1);
+    await expect(
+      view.queryByRole("button", { name: "Cancel" }),
+    ).not.toBeInTheDocument();
+    await expect(
+      dialog.querySelector(".store-conflict-editor__footer"),
+    ).not.toBeInTheDocument();
+    for (const name of ["Delete path", "Stage merged file", "Preview 0/2"]) {
+      const button = within(header).getByRole("button", { name });
+      await expect(button).toBeVisible();
+      await expect(button.querySelector("svg")).toBeInTheDocument();
+    }
+    await userEvent.click(
+      view.getByRole("button", { name: "Hide conflict file browser" }),
+    );
+    await expect(sidebar).not.toBeVisible();
+    const editor = view.getByRole("textbox", { name: "Edit Resolved" });
+    await userEvent.clear(editor);
+    await userEvent.type(editor, "// retained merge draft\n");
+    await userEvent.click(
+      view.getByRole("button", { name: "Show conflict file browser" }),
+    );
+    await expect(sidebar).toBeVisible();
+    await expect(editor).toHaveValue("// retained merge draft\n");
+    await userEvent.click(
+      within(sidebar).getByRole("radio", { name: "Show files as list" }),
+    );
+    await userEvent.click(
+      within(sidebar).getByRole("button", { name: "assets/logo.bin" }),
+    );
+    await expect(
+      view.queryByRole("button", { name: "Stage merged file" }),
+    ).not.toBeInTheDocument();
+    await expect(
+      within(header).getByRole("button", { name: "Delete path" }),
+    ).toBeVisible();
+    await userEvent.click(
+      within(sidebar).getByRole("button", { name: "src/lib.rs" }),
+    );
+    await expect(editor).toHaveValue("// retained merge draft\n");
   }}
 >
   {#snippet template()}<StoreConflictEditorFixture />{/snippet}

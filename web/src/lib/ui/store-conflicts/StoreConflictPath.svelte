@@ -5,7 +5,6 @@
   } from "@lapismd/design-core/diff";
   import * as Alert from "@lapismd/design-core/shadcn/alert";
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import { Spinner } from "@lapismd/design-core/shadcn/spinner";
   import FileWarningIcon from "@lucide/svelte/icons/file-warning";
   import type { Model } from "../../api/client.js";
   import type { StoreConflictResolution } from "./model.js";
@@ -17,26 +16,18 @@
     actions,
     uploading = false,
     uploadError = "",
+    merged = $bindable(""),
     onSelect,
-    onStage,
   }: {
     conflict: Model<"ConflictDescriptor">;
     resolution?: StoreConflictResolution;
     actions: readonly string[];
     uploading?: boolean;
     uploadError?: string;
+    merged?: string;
     onSelect: (resolution?: StoreConflictResolution) => void;
-    onStage: (contents: string) => void | Promise<void>;
   } = $props();
 
-  let merged = $state("");
-  let initializedPath = "";
-  $effect(() => {
-    if (initializedPath === conflict.path || conflict.editor.status !== "text")
-      return;
-    initializedPath = conflict.path;
-    merged = conflict.editor.contents[1];
-  });
   function resolved(value: MergeResolvedChange) {
     merged = value.content;
   }
@@ -117,30 +108,4 @@
   {#if uploadError}<p class="store-conflict-path__error" role="alert">
       {uploadError}
     </p>{/if}
-  <div class="store-conflict-path__controls">
-    {#if actions.includes("delete")}
-      <Button
-        type="button"
-        size="sm"
-        disabled={uploading}
-        variant={resolution?.type === "delete" ? "destructive" : "outline"}
-        aria-pressed={resolution?.type === "delete"}
-        onclick={() => onSelect({ type: "delete" })}>Delete path</Button
-      >
-    {/if}
-    {#if resolution?.type === "uploaded_file"}<span role="status"
-        >Merged file staged</span
-      >{/if}
-    {#if conflict.editor.status === "text" && actions.includes("uploaded_file")}
-      <Button
-        type="button"
-        size="sm"
-        class="store-conflict-path__stage"
-        disabled={uploading}
-        onclick={() => onStage(merged)}
-        >{#if uploading}<Spinner data-icon="inline-start" />{/if}Stage merged
-        file</Button
-      >
-    {/if}
-  </div>
 </section>

@@ -421,16 +421,25 @@ M4.17 owns native conflict editing. M4.24 presents resolution in the AppShell
 structural sheet covering main and the right rail, retaining shell-owned focus,
 Escape dismissal and underlying-surface restoration. Background navigation,
 header mutations and snapshot refresh stay unavailable while the sheet is open,
-keeping the draft bound to its selection. A compact path list and footer frame
-the syntax-highlighted three-way editor; extra native metadata and term cards
-are omitted. Built-in accept-all controls select an exact left/right term when
-the resolved bytes match it; custom center edits invalidate any prior selection
-until explicitly staged. The complete descriptors, ordered terms and
-fingerprints stay bound to the request. Unsupported editor shapes retain their
-native reason and only server-advertised term, delete or bounded uploaded-file
-actions are offered. The complete multi-path selection is previewed and applied
-atomically through the same durable request workflow; stale fingerprints never
-trigger an implicit reread or partial publication.
+keeping the draft bound to its selection. A full-height left body sidebar reuses
+the repository file tree and its list/folder/package controls, with a continuous
+right border. The leading header toggle shows or hides this browser without
+discarding per-path drafts. On narrow screens the browser replaces the editor
+body while open and selecting a file returns to the editor. Delete path, Stage
+merged file and Preview, plus prepared/recovery actions, use compact icon
+buttons in the sheet header. There is no footer or Cancel action; the close
+control owns dismissal. The syntax-highlighted three-way editor fills the
+remaining body; extra native metadata and term cards are omitted. Built-in
+accept-all controls select an exact left/right term when the resolved bytes
+match it; custom center edits invalidate any prior selection until explicitly
+staged. The complete descriptors, ordered terms and fingerprints stay bound to
+the request. Unsupported editor shapes retain their native reason and only
+server-advertised term, delete or bounded uploaded-file actions are offered.
+Path navigation, delete and stage actions remain unavailable during
+upload/preview/apply and while a prepared result is displayed. The complete
+multi-path selection is previewed and applied atomically through the same
+durable request workflow; stale fingerprints never trigger an implicit reread or
+partial publication.
 
 M9.5 collaboration cards use the same bordered row structure and metadata/action
 placement as Branches and Op Log. Agent cards show the integration avatar, name,
