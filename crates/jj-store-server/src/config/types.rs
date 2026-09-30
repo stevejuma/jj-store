@@ -25,6 +25,55 @@ pub struct Config {
     pub protection: Protected,
     #[serde(default)]
     pub search: Vec<crate::search::Repository>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub replication: Vec<Replication>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Replication {
+    pub repository: m::RepositoryId,
+    pub upstream: String,
+    #[serde(default)]
+    pub insecure_loopback: bool,
+    pub token_environment: String,
+    pub ca_certificate: Option<PathBuf>,
+    #[serde(default)]
+    pub limits: ReplicationLimits,
+}
+
+#[derive(Clone, Copy, Debug, Serialize, Deserialize)]
+#[serde(default, deny_unknown_fields)]
+pub struct ReplicationLimits {
+    pub max_batch_origins: usize,
+    pub max_closure_entries: usize,
+    pub max_objects_per_step: usize,
+    pub max_bytes_per_step: u64,
+    pub max_native_object_bytes: u64,
+    pub poll_millis: u64,
+    pub retry_initial_millis: u64,
+    pub retry_max_seconds: u64,
+    pub circuit_failures: u32,
+    pub circuit_cooldown_seconds: u64,
+    pub timeout_seconds: u64,
+}
+
+impl Default for ReplicationLimits {
+    fn default() -> Self {
+        Self {
+            max_batch_origins: 128,
+            max_closure_entries: 100_000,
+            max_objects_per_step: 100_000,
+            max_bytes_per_step: 1024 * 1024 * 1024,
+            max_native_object_bytes: 64 * 1024 * 1024,
+            poll_millis: 5_000,
+            retry_initial_millis: 500,
+            retry_max_seconds: 60,
+            circuit_failures: 8,
+            circuit_cooldown_seconds: 60,
+            timeout_seconds: 30,
+        }
+    }
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]

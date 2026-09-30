@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { execFileSync } from "node:child_process";
 
 export const ledgerPath = "spec/src/milestones.md";
+const jjOutputLimit = 16 * 1024 * 1024;
 const statuses = new Set([
   "Planned",
   "In progress",
@@ -21,7 +22,7 @@ const list = (s) => (s === "-" ? [] : s.split(",").map((v) => v.trim()));
 export function parseLedger(source) {
   const tasks = source
     .split("\n")
-    .filter((line) => /^\| (?:Bootstrap|M\d)/.test(line))
+    .filter((line) => /^\| (?:Bootstrap|M\d+)/.test(line))
     .map((line) => {
       const cells = line
         .trim()
@@ -150,7 +151,7 @@ export function validateLedger({
       errors.push(`${entry.id}: pass requires successful runs and no gaps`);
   }
   for (const task of tasks) {
-    if (!/^(?:Bootstrap|M(?:[0-9]|8[ab]))(?:\.\d+)?$/.test(task.id))
+    if (!/^(?:Bootstrap|M(?:\d+|8[ab]))(?:\.\d+)?$/.test(task.id))
       errors.push(`invalid task ID ${task.id}`);
     if (!statuses.has(task.status)) errors.push(`${task.id}: invalid status`);
     if (!task.gate || !task.next || !task.requirements.length)
@@ -217,7 +218,7 @@ export function run(root) {
     execFileSync("jj", ["--no-pager", "--color=never", ...args], {
       cwd: root,
       encoding: "utf8",
-      maxBuffer: 16 * 1024 * 1024,
+      maxBuffer: jjOutputLimit,
       stdio: ["ignore", "pipe", "pipe"],
     });
   const rev = process.env.JJ_STORE_CHECK_REVISION ?? "@";

@@ -12,10 +12,20 @@ mod collaboration;
 mod domains;
 mod native_copy;
 mod reader;
+mod replication;
+mod replication_agent;
+mod replication_domains;
+mod replication_import;
+mod replication_protocol;
+mod replication_review;
+mod replication_review_graph;
+mod replication_seed;
+mod replication_transfer;
 mod review;
 mod review_audit;
 mod review_audit_events;
 mod review_audit_relations;
+mod review_audit_replication;
 mod review_catalog;
 mod review_command_apply;
 mod review_command_commit;
@@ -31,30 +41,54 @@ pub use agent_delta::AgentDeltaRequest;
 pub use agent_reads::{AgentCatalogPage, AgentRelationCursor, AgentRelationRange, TranscriptRange};
 pub use application::ApplicationIntent;
 pub use collaboration::{CollaborationOutcome, CollaborationRequest};
-pub use domains::{Domain, DomainRequest, DomainState, RepositoryDomains};
+pub use domains::{Domain, DomainFactsV1, DomainRequest, DomainState, RepositoryDomains};
 pub use jj_agent::{
-    AgentCatalogEditV1, AgentCatalogKey, AgentCatalogKind, AgentCheckpointId,
-    AgentCheckpointVersionV1, AgentContentV1, AgentDeltaV1, AgentEventBatchV1, AgentEventId,
-    AgentEventV1, AgentObjectId, AgentObjectKind, AgentObjectRef, AgentObjectV1,
-    AgentRelationPageV1, AgentRelationSubjectV1, AgentRootV1, AgentSessionId,
-    AgentSessionSnapshotV1, AssociationGranularity, AssociationId, AssociationRelation,
-    CaptureBatchId, CaptureStatusV1, CodeAnchorV1, CodeAssociationV1, CodeRelation, CompletenessV1,
-    CoverageV1, EvidenceMethod, ExecutionOutcomeV1, IntegrationId, MessageId, MessageRole,
-    NormalizerProfileV1, ObservationId, PermissionState, ProvenanceScopeId, SanitizedMediaType,
-    SanitizedObservationBatchV1, SanitizedObservationV1, SanitizedPayloadV1,
-    SanitizedRepresentation, SessionState, SourceInstanceId, SourceKind, SourceTrust, ToolCallId,
-    ToolInvocationSnapshotV1, ToolKind, ToolState, TranscriptChunkV1, TranscriptManifestV1,
-    TranscriptPageV1, TranscriptStreamV1, TurnId, normalized_event_id,
+    AgentAliasV1, AgentCatalogConflictV1, AgentCatalogEditV1, AgentCatalogKey, AgentCatalogKind,
+    AgentCheckpointId, AgentCheckpointVersionV1, AgentContentV1, AgentDeltaV1, AgentEntityRefV1,
+    AgentEventBatchV1, AgentEventId, AgentEventV1, AgentObjectId, AgentObjectKind, AgentObjectRef,
+    AgentObjectV1, AgentProjectionCatalogV1, AgentRelationPageV1, AgentRelationSubjectV1,
+    AgentRootV1, AgentSessionId, AgentSessionSnapshotV1, AssociationGranularity, AssociationId,
+    AssociationRelation, CaptureBatchId, CaptureSourceReceiptV1, CaptureSourceStateV1,
+    CaptureStatusV1, CodeAnchorV1, CodeAssociationV1, CodeRelation, CompletenessV1, CoverageV1,
+    EvidenceMethod, ExecutionAttemptId, ExecutionOutcomeV1, IntegrationId, MessageId, MessageRole,
+    NativeEntityKind, NormalizerProfileV1, ObservationId, PermissionState, ProvenanceScopeId,
+    SanitizedMediaType, SanitizedObservationBatchV1, SanitizedObservationV1, SanitizedPayloadV1,
+    SanitizedRepresentation, SessionState, SourceInstanceId, SourceKind, SourcePositionV1,
+    SourceTrust, ToolCallId, ToolInvocationSnapshotV1, ToolKind, ToolState, TranscriptChunkV1,
+    TranscriptManifestV1, TranscriptPageV1, TranscriptStreamV1, TurnId, normalized_event_id,
 };
 pub use jj_review::{
-    ArtifactAnchorV1, CommentId, CommentRevisionContentV1, CommentSelectionV1, ReviewActionId,
-    ReviewBodyFormatV1, ReviewCatalogKey, ReviewCommandResultV1, ReviewCommandV1, ReviewDeltaV1,
-    ReviewObjectId, ReviewObjectRef, ReviewObjectV1, ReviewRootV1, ReviewThreadEventKindV1,
-    ReviewThreadId, ReviewThreadSnapshotV1, ThreadStatusV1, decode_command_result,
+    ArtifactAnchorV1, ArtifactTargetV1, CommentId, CommentRevisionContentV1, CommentRevisionId,
+    CommentSelectionV1, CreatedContextV1, ReviewActionId, ReviewBodyFormatV1, ReviewCatalogEditV1,
+    ReviewCatalogKey, ReviewCatalogKind, ReviewCommandResultV1, ReviewCommandV1,
+    ReviewCommentBodyV1, ReviewCommentConflictV1, ReviewCommentRevisionV1, ReviewDeltaV1,
+    ReviewEventGraphV1, ReviewEventNodeV1, ReviewObjectId, ReviewObjectRef, ReviewObjectV1,
+    ReviewRelationPageV1, ReviewRelationSubjectV1, ReviewRootV1, ReviewStatusPageV1,
+    ReviewThreadEventKindV1, ReviewThreadId, ReviewThreadMergeV1, ReviewThreadRelationV1,
+    ReviewThreadSnapshotV1, SensitivityV1, ThreadSnapshotId, ThreadStatusV1, decode_command_result,
     encode_command_result,
 };
 pub use native_copy::NativeCopyOutcome;
 pub use reader::SelectedRecord;
+pub use replication::{
+    LocalDeliveryV1, OriginDomainV1, OriginKeyV1, OriginPrefixV1, OriginPublicationV1,
+    OriginReceiptV1, OriginStreamV1, ReplicationRootV1,
+};
+pub use replication_import::{
+    ApplyOriginsOutcomeV1, ApplyOriginsRequestV1, ApplyOriginsResultV1, OriginEnvelopeV1,
+};
+pub use replication_protocol::{
+    ApplyOriginsTransportRequestV1, ApplyOriginsTransportResponseV1, BootstrapCheckpointV1,
+    FeedRequestV1, FeedResponseV1, NATIVE_PROFILE, NegotiateReplicaV1, ORIGIN_SCHEMA,
+    OfferOriginsRequestV1, OfferOriginsResponseV1, OriginClosureRequestV1, OriginClosureResponseV1,
+    ReplicaCapabilitiesV1, ReplicaNegotiationV1, SEMANTIC_REDUCER,
+};
+pub use replication_seed::{
+    SeedReplicationOutcomeV1, SeedReplicationRequestV1, SeedReplicationResultV1,
+};
+pub use replication_transfer::{
+    OriginClosureV1, OriginFeedItemV1, OriginFeedPageV1, OriginOfferResultV1, OriginOfferV1,
+};
 pub use review_catalog::ReviewStoreSnapshot;
 pub use review_commands::{ReviewCommandError, ReviewCommandRequest};
 pub use review_reads::ReviewCatalogPage;
@@ -66,8 +100,8 @@ use crate::{
     records::{self, RecordKind, RecordRef, Records},
 };
 use jj_store_model::{
-    AttemptId, EpochId, IntentDigest, ObjectKey, OperationId, PrincipalId, PublicationId,
-    RecordDigest, RepositoryId, RequestId, WalPosition,
+    AttemptId, EpochId, IntentDigest, ObjectKey, OperationId, OriginDigest, PrincipalId,
+    PublicationId, RecordDigest, ReplicaId, RepositoryId, RequestId, WalPosition, WriterEpoch,
 };
 use jj_store_object::{Condition, Key, ObjectStore, StagedUpload, VersionToken, WriteOutcome};
 use serde::{Deserialize, Serialize};
@@ -117,6 +151,8 @@ pub struct Manifest {
     pub review_state_version: u64,
     #[serde(default, skip_serializing_if = "is_zero")]
     pub domain_history_start: u64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub replication_root: Option<RecordRef>,
 }
 impl Manifest {
     pub fn snapshot(&self) -> Snapshot {
@@ -157,7 +193,8 @@ impl Manifest {
                 || self.agent_state_version != 0
                 || self.review_root.is_some()
                 || self.review_state_version != 0
-                || self.domain_history_start != 0 =>
+                || self.domain_history_start != 0
+                || self.replication_root.is_some() =>
             {
                 return Err(Error::Corrupt("legacy manifest domains"));
             }
@@ -177,6 +214,11 @@ impl Manifest {
                 return Err(Error::Corrupt("manifest domain state"));
             }
             _ => {}
+        }
+        if self.replication_root.is_some_and(|reference| {
+            reference.kind != RecordKind::ReplicationRoot || reference.attempt.is_some()
+        }) {
+            return Err(Error::Corrupt("replication root reference"));
         }
         if self.published.0 > self.revision
             || (self.published.0 == 0) != self.tail.is_none()
@@ -292,6 +334,8 @@ pub enum SemanticKind {
     CollaborationEnabled,
     AgentStateChanged,
     ReviewStateChanged,
+    ReplicationImported,
+    ReplicationSeeded,
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -365,6 +409,8 @@ pub struct PublishedTransaction {
     pub before_domains: Option<RepositoryDomains>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub after_domains: Option<RepositoryDomains>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub origins: Vec<RecordRef>,
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum PublishOutcome {
@@ -421,6 +467,24 @@ pub trait PublicationGuard: Send + Sync {
     ) -> Result<()> {
         Err(Error::Denied)
     }
+    /// Inbound replication is a restricted authenticated capability. Ordinary
+    /// publication authorization does not grant it implicitly.
+    async fn authorize_replication(
+        &self,
+        _base: &ManifestSnapshot,
+        _request: &ApplyOriginsRequestV1,
+    ) -> Result<()> {
+        Err(Error::Denied)
+    }
+    /// Enabling replication on an existing repository is an administrative
+    /// migration. It is deliberately separate from ordinary inbound import.
+    async fn authorize_replication_seed(
+        &self,
+        _base: &ManifestSnapshot,
+        _request: &SeedReplicationRequestV1,
+    ) -> Result<()> {
+        Err(Error::Denied)
+    }
     async fn validate_transition(
         &self,
         base: &ManifestSnapshot,
@@ -428,12 +492,37 @@ pub trait PublicationGuard: Send + Sync {
         after: &Snapshot,
     ) -> Result<()>;
 }
+
+/// Native operation ancestry belongs to the pinned JJ integration. The WAL
+/// invokes this policy only after every candidate operation has a verified
+/// local closure; it never infers operation ancestry from commit graphs.
+#[async_trait::async_trait]
+pub trait OperationHeadReducer: Send + Sync {
+    async fn maximal_heads(
+        &self,
+        candidates: BTreeSet<OperationId>,
+    ) -> Result<BTreeSet<OperationId>>;
+}
+
+struct PreserveOperationHeads;
+
+#[async_trait::async_trait]
+impl OperationHeadReducer for PreserveOperationHeads {
+    async fn maximal_heads(
+        &self,
+        candidates: BTreeSet<OperationId>,
+    ) -> Result<BTreeSet<OperationId>> {
+        Ok(candidates)
+    }
+}
+
 #[derive(Clone)]
 pub struct Coordinator {
     records: Records,
     catalog: Catalog,
     source: Arc<dyn DependencySource>,
     guard: Arc<dyn PublicationGuard>,
+    operation_heads: Arc<dyn OperationHeadReducer>,
     limits: Limits,
 }
 impl Coordinator {
@@ -442,6 +531,24 @@ impl Coordinator {
         repository: RepositoryId,
         source: Arc<dyn DependencySource>,
         guard: Arc<dyn PublicationGuard>,
+        limits: Limits,
+    ) -> Result<Self> {
+        Self::new_with_head_reducer(
+            store,
+            repository,
+            source,
+            guard,
+            Arc::new(PreserveOperationHeads),
+            limits,
+        )
+    }
+
+    pub fn new_with_head_reducer(
+        store: Arc<dyn ObjectStore>,
+        repository: RepositoryId,
+        source: Arc<dyn DependencySource>,
+        guard: Arc<dyn PublicationGuard>,
+        operation_heads: Arc<dyn OperationHeadReducer>,
         limits: Limits,
     ) -> Result<Self> {
         if source.scope().repository() != repository {
@@ -457,6 +564,7 @@ impl Coordinator {
             catalog,
             source,
             guard,
+            operation_heads,
             limits,
         })
     }
@@ -469,6 +577,26 @@ impl Coordinator {
     }
 
     pub async fn initialize(&self, epoch: EpochId, settings: Vec<u8>) -> Result<ManifestSnapshot> {
+        self.initialize_inner(epoch, settings, None).await
+    }
+
+    pub async fn initialize_replica(
+        &self,
+        epoch: EpochId,
+        settings: Vec<u8>,
+        replica: ReplicaId,
+        writer_epoch: WriterEpoch,
+    ) -> Result<ManifestSnapshot> {
+        self.initialize_inner(epoch, settings, Some((replica, writer_epoch)))
+            .await
+    }
+
+    async fn initialize_inner(
+        &self,
+        epoch: EpochId,
+        settings: Vec<u8>,
+        replica: Option<(ReplicaId, WriterEpoch)>,
+    ) -> Result<ManifestSnapshot> {
         if settings.len() > 64 * 1024 {
             return Err(Error::Limit("settings"));
         }
@@ -484,6 +612,17 @@ impl Coordinator {
                 .await?;
             let agent_root = self.stage_agent_root(&AgentRootV1::empty()).await?;
             let review_root = self.stage_review_root(&ReviewRootV1::empty()).await?;
+            let replication_root = match replica {
+                Some((replica, writer_epoch)) => Some(
+                    self.stage_replication_root(&ReplicationRootV1::empty(
+                        self.records.repository,
+                        replica,
+                        writer_epoch,
+                    ))
+                    .await?,
+                ),
+                None => None,
+            };
             let manifest = Manifest {
                 format: 2,
                 repository: self.records.repository,
@@ -504,6 +643,7 @@ impl Coordinator {
                 review_root: Some(review_root),
                 review_state_version: 0,
                 domain_history_start: 1,
+                replication_root,
             };
             let bytes = records::encode(&manifest, MAX_MANIFEST)?;
             let upload = StagedUpload::from_bytes(&bytes, MAX_MANIFEST).await?;
@@ -653,6 +793,41 @@ impl Coordinator {
                     BTreeMap::from([(receipt_keys.0, receipt_ref), (receipt_keys.1, receipt_ref)]),
                 )
                 .await?;
+            let origin_operations = match &request.transition {
+                Some(Transition::Native { add, .. }) => BTreeSet::from([*add]),
+                Some(Transition::Strict { heads, .. }) => {
+                    heads.difference(&base.manifest.heads).copied().collect()
+                }
+                None => BTreeSet::new(),
+            };
+            let changed_domains = BTreeSet::from([if request.transition.is_some() {
+                OriginDomainV1::Code
+            } else {
+                OriginDomainV1::Repository
+            }]);
+            let origin = self
+                .author_origin(
+                    &base,
+                    position,
+                    request.principal,
+                    request.request_id,
+                    request.publication_id,
+                    intent,
+                    origin_operations,
+                    base.manifest.domains(),
+                    inventory,
+                    changed_domains,
+                    None,
+                )
+                .await?;
+            let replication_root = origin
+                .as_ref()
+                .map(|authored| authored.root)
+                .or(base.manifest.replication_root);
+            let origins = origin
+                .into_iter()
+                .map(|authored| authored.receipt)
+                .collect();
             let attempt = records::new_attempt()?;
             let transaction = PublishedTransaction {
                 attempt,
@@ -674,6 +849,7 @@ impl Coordinator {
                     .collect(),
                 before_domains: base.manifest.domains(),
                 after_domains: base.manifest.domains(),
+                origins,
             };
             let tail = self
                 .records
@@ -700,6 +876,7 @@ impl Coordinator {
                 history,
                 settings,
                 code_state_version,
+                replication_root,
                 ..base.manifest
             };
             let bytes = records::encode(&manifest, MAX_MANIFEST)?;
@@ -1114,6 +1291,7 @@ impl Coordinator {
             if history_entries.len() as u64 != manifest.published.0 {
                 return Err(Error::Corrupt("history catalog cardinality"));
             }
+            self.audit_replication(manifest, max_entries).await?;
             let inventory_entries = self
                 .catalog
                 .entries(manifest.inventory, max_entries)

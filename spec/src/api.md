@@ -692,7 +692,10 @@ Preview cannot publish and does not authorize later apply.
 
 Generated OpenAPI and TypeScript contracts include these routes and owned DTOs.
 The generated client declaration remains an API artifact; M4.16 separately
-qualifies the shared browser controls and real native mutation workflow.
+qualifies the shared browser controls and real native mutation workflow. The
+review-command contract enumerates all eight owned command tags, including
+`resolve_comment_conflict` with its required observed revision IDs; its contract
+test checks the exact set rather than a variant count.
 
 The typed capability registry also advertises reconcile_operations. This command
 requires `base` as a full current operation ID and an exact expected head set

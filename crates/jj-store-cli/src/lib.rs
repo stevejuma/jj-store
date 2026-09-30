@@ -17,12 +17,15 @@ pub mod binding;
 pub mod commands;
 pub mod credentials;
 pub mod initialization;
+pub mod migration;
 pub mod presentation;
 pub mod remote;
+mod replication_endpoint;
 pub mod review_commands;
 mod review_presentation;
 pub mod server_commands;
 mod store_commands;
+pub mod sync_commands;
 
 pub mod token_commands;
 mod token_journal;

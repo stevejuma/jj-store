@@ -85,18 +85,13 @@ impl Coordinator {
         &self,
         store: &ReviewStoreSnapshot,
         edits: Vec<ReviewCatalogEditV1>,
-    ) -> std::result::Result<RecordRef, ReviewCommandError> {
-        match self
-            .stage_review_delta(
-                store,
-                &ReviewDeltaV1 {
-                    schema_version: 1,
-                    edits,
-                },
-            )
-            .await
-        {
-            Ok(root) => Ok(root),
+    ) -> std::result::Result<(RecordRef, ReviewDeltaV1), ReviewCommandError> {
+        let delta = ReviewDeltaV1 {
+            schema_version: 1,
+            edits,
+        };
+        match self.stage_review_delta(store, &delta).await {
+            Ok(root) => Ok((root, delta)),
             Err(Error::Stale) => Err(ReviewCommandError::Stale),
             Err(error) => Err(error.into()),
         }

@@ -31,6 +31,7 @@ evidence.
 | `^crates/jj-store-model/`                                                                                                                                                                                                                      | `identity.md`        |
 | `^crates/jj-store-object/`                                                                                                                                                                                                                     | `object-store.md`    |
 | `^crates/jj-store-wal/`                                                                                                                                                                                                                        | `publication.md`     |
+| `^crates/jj-store-replication/`                                                                                                                                                                                                                | `replication.md`     |
 | `^crates/jj-(?:agent\|review)/`                                                                                                                                                                                                                | `collaboration.md`   |
 | `^crates/jj-store-jj/`                                                                                                                                                                                                                         | `jj-integration.md`  |
 | `^crates/jj-store-service/`                                                                                                                                                                                                                    | `mutations.md`       |
@@ -64,6 +65,13 @@ be recorded here and in the M9 evidence ledger so generation cannot widen
 runtime acceptance without same-change governance review. Upstream Community and
 Design Core changes remain separate source-owned changes with consumer
 acceptance in this repository.
+
+M10 owns local-first writable replication. Its origin ledger and imported
+publication path are jointly governed by `replication.md` and the existing
+publication requirements. Native head integration is also governed by
+`jj-integration.md`; agent and review fact reducers remain governed by
+`collaboration.md`. Backup and passive promotion retain their independent
+adapter requirements.
 
 The checkout-owned development harness stores its interactive fixture only in
 the ignored `.local/dev-demo` subtree. Restart and stop preserve that fixture;
@@ -141,7 +149,9 @@ identity or a fixed omission state.
 Evidence entries can explicitly identify removed files and retired named tests.
 The progress checker accepts historical references only when a later entry
 records the exact removal, verifies removed files are absent and keeps every
-other historical evidence path and named regression live.
+other historical evidence path and named regression live. Its Jujutsu reads use
+a fixed 16 MiB output ceiling so the single growing ledger can be validated
+without an unbounded child-process buffer.
 
 Server composition has an explicit layer in the boundary checker. Regression
 coverage rejects dependencies on CLI presentation and direct upstream JJ types,

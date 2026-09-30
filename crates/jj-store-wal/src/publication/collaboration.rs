@@ -170,6 +170,7 @@ impl Coordinator {
                 published_operations: BTreeSet::new(),
                 before_domains: None,
                 after_domains: Some(domains),
+                origins: Vec::new(),
             };
             let tail = self
                 .records
@@ -199,6 +200,7 @@ impl Coordinator {
                 review_root: Some(domains.review.root),
                 review_state_version: 0,
                 domain_history_start: position.0,
+                replication_root: base.manifest.replication_root,
                 ..base.manifest.clone()
             };
             match self.write_manifest(&base, manifest).await {

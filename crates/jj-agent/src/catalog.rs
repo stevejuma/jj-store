@@ -4,6 +4,34 @@ use std::collections::{BTreeMap, BTreeSet};
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
+pub struct AgentCatalogConflictV1 {
+    pub schema_version: u32,
+    pub catalog: crate::AgentCatalogKind,
+    pub key: AgentCatalogKey,
+    pub alternatives: Vec<AgentObjectRef>,
+}
+impl AgentCatalogConflictV1 {
+    pub fn validate(&self) -> Result<()> {
+        if self.schema_version != 1
+            || self.alternatives.len() < 2
+            || self.alternatives.len() > 64
+            || self.alternatives.windows(2).any(|pair| pair[0] >= pair[1])
+            || self.alternatives.iter().any(|value| {
+                value.kind == AgentObjectKind::CatalogConflict || !self.catalog.accepts(*value)
+            })
+        {
+            return Err(Error::Invalid("agent catalog conflict"));
+        }
+        Ok(())
+    }
+    pub fn dependencies(&self) -> Result<Vec<AgentObjectRef>> {
+        self.validate()?;
+        Ok(self.alternatives.clone())
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
+#[serde(deny_unknown_fields)]
 pub struct AgentRootV1 {
     pub schema_version: u32,
     #[serde(default, skip_serializing_if = "Option::is_none")]

@@ -39,6 +39,42 @@ impl AgentStoreSnapshot {
         }
         self.coordinator.read_agent_object(reference).await
     }
+
+    pub(super) async fn catalog_entries(
+        &self,
+        catalog: AgentCatalogKind,
+        limit: usize,
+    ) -> Result<BTreeMap<AgentCatalogKey, AgentObjectRef>> {
+        let mut pending = catalog_root(&self.root, catalog)
+            .into_iter()
+            .collect::<Vec<_>>();
+        let mut seen = BTreeSet::new();
+        let mut entries = BTreeMap::new();
+        while let Some(reference) = pending.pop() {
+            if !seen.insert(reference) {
+                continue;
+            }
+            if seen.len().saturating_add(entries.len()) > limit {
+                return Err(Error::Limit("agent baseline catalog"));
+            }
+            match self.coordinator.read_agent_page(reference).await? {
+                AgentIndexPageV1::Leaf { entries: leaf, .. } => {
+                    for (key, value) in leaf {
+                        if entries.insert(key, value).is_some() {
+                            return Err(Error::Corrupt("agent baseline duplicate"));
+                        }
+                    }
+                }
+                AgentIndexPageV1::Branch { children, .. } => {
+                    pending.extend(children.into_values());
+                }
+            }
+        }
+        if seen.len().saturating_add(entries.len()) > limit {
+            return Err(Error::Limit("agent baseline catalog"));
+        }
+        Ok(entries)
+    }
 }
 
 impl Coordinator {

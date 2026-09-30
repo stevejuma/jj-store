@@ -4021,7 +4021,8 @@
                                                   "alias",
                                                   "relation_page",
                                                   "source_state",
-                                                  "projection_catalog"
+                                                  "projection_catalog",
+                                                  "catalog_conflict"
                                                 ]
                                               },
                                               "id": {
@@ -4068,7 +4069,8 @@
                                                           "alias",
                                                           "relation_page",
                                                           "source_state",
-                                                          "projection_catalog"
+                                                          "projection_catalog",
+                                                          "catalog_conflict"
                                                         ]
                                                       },
                                                       "id": {
@@ -4132,7 +4134,8 @@
                                                           "alias",
                                                           "relation_page",
                                                           "source_state",
-                                                          "projection_catalog"
+                                                          "projection_catalog",
+                                                          "catalog_conflict"
                                                         ]
                                                       },
                                                       "id": {
@@ -4189,7 +4192,8 @@
                                                           "alias",
                                                           "relation_page",
                                                           "source_state",
-                                                          "projection_catalog"
+                                                          "projection_catalog",
+                                                          "catalog_conflict"
                                                         ]
                                                       },
                                                       "id": {
@@ -4245,7 +4249,8 @@
                                                   "alias",
                                                   "relation_page",
                                                   "source_state",
-                                                  "projection_catalog"
+                                                  "projection_catalog",
+                                                  "catalog_conflict"
                                                 ]
                                               },
                                               "id": {
@@ -4291,7 +4296,8 @@
                                                   "alias",
                                                   "relation_page",
                                                   "source_state",
-                                                  "projection_catalog"
+                                                  "projection_catalog",
+                                                  "catalog_conflict"
                                                 ]
                                               },
                                               "id": {
@@ -4412,7 +4418,8 @@
                                                   "alias",
                                                   "relation_page",
                                                   "source_state",
-                                                  "projection_catalog"
+                                                  "projection_catalog",
+                                                  "catalog_conflict"
                                                 ]
                                               },
                                               "id": {
@@ -4459,7 +4466,8 @@
                                                           "alias",
                                                           "relation_page",
                                                           "source_state",
-                                                          "projection_catalog"
+                                                          "projection_catalog",
+                                                          "catalog_conflict"
                                                         ]
                                                       },
                                                       "id": {
@@ -4523,7 +4531,8 @@
                                                           "alias",
                                                           "relation_page",
                                                           "source_state",
-                                                          "projection_catalog"
+                                                          "projection_catalog",
+                                                          "catalog_conflict"
                                                         ]
                                                       },
                                                       "id": {
@@ -4580,7 +4589,8 @@
                                                           "alias",
                                                           "relation_page",
                                                           "source_state",
-                                                          "projection_catalog"
+                                                          "projection_catalog",
+                                                          "catalog_conflict"
                                                         ]
                                                       },
                                                       "id": {
@@ -4860,6 +4870,60 @@
                           "command",
                           "comment_id",
                           "expected_revision_id",
+                          "replacement_body"
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "comment_id": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{32}$",
+                            "minLength": 32,
+                            "maxLength": 32
+                          },
+                          "expected_revision_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{64}$",
+                              "minLength": 64,
+                              "maxLength": 64
+                            }
+                          },
+                          "replacement_body": {
+                            "type": "object",
+                            "properties": {
+                              "schema_version": {
+                                "type": "integer",
+                                "format": "uint32",
+                                "minimum": 0
+                              },
+                              "format": {
+                                "type": "string",
+                                "enum": ["plain_text", "safe_markdown"]
+                              },
+                              "text": { "type": "string" },
+                              "sanitizer_version": { "type": "string" }
+                            },
+                            "additionalProperties": false,
+                            "required": [
+                              "schema_version",
+                              "format",
+                              "text",
+                              "sanitizer_version"
+                            ]
+                          },
+                          "command": {
+                            "type": "string",
+                            "const": "resolve_comment_conflict"
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                          "command",
+                          "comment_id",
+                          "expected_revision_ids",
                           "replacement_body"
                         ]
                       },
@@ -13637,6 +13701,10 @@
               { "type": "null" }
             ]
           },
+          "selected_workflow_actions": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ReviewActionId" }
+          },
           "thread_version": {
             "type": "integer",
             "format": "uint64",
@@ -13657,6 +13725,11 @@
             "format": "uint",
             "minimum": 0
           },
+          "comment_conflict_count": {
+            "type": "integer",
+            "format": "uint",
+            "minimum": 0
+          },
           "last_event_sequence": {
             "type": "integer",
             "format": "uint64",
@@ -13671,10 +13744,12 @@
           "event_page_root_id",
           "status",
           "selected_workflow_action",
+          "selected_workflow_actions",
           "thread_version",
           "content_version",
           "workflow_version",
           "comment_count",
+          "comment_conflict_count",
           "last_event_sequence"
         ]
       },
@@ -14064,7 +14139,8 @@
           "alias",
           "relation_page",
           "source_state",
-          "projection_catalog"
+          "projection_catalog",
+          "catalog_conflict"
         ]
       },
       "AgentContentOwnerV1": {
@@ -14177,6 +14253,10 @@
             "type": "array",
             "items": { "$ref": "#/components/schemas/ReviewComment" }
           },
+          "comment_conflicts": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ReviewCommentConflict" }
+          },
           "events": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/ReviewEvent" }
@@ -14188,6 +14268,7 @@
           "thread",
           "anchor",
           "comments",
+          "comment_conflicts",
           "events"
         ]
       },
@@ -14219,6 +14300,10 @@
               { "type": "null" }
             ]
           },
+          "superseded_revision_ids": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ReviewObjectId" }
+          },
           "content": { "$ref": "#/components/schemas/ReviewCommentContent" }
         },
         "required": [
@@ -14229,6 +14314,7 @@
           "actor",
           "created_at_millis",
           "previous_revision_id",
+          "superseded_revision_ids",
           "content"
         ]
       },
@@ -14285,10 +14371,60 @@
         "type": "string",
         "enum": ["plain_text", "safe_markdown"]
       },
+      "ReviewCommentConflict": {
+        "type": "object",
+        "properties": {
+          "comment_id": { "$ref": "#/components/schemas/CommentId" },
+          "parent_comment_id": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/CommentId" },
+              { "type": "null" }
+            ]
+          },
+          "alternatives": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ReviewCommentVersion" }
+          }
+        },
+        "required": ["comment_id", "parent_comment_id", "alternatives"]
+      },
+      "ReviewCommentVersion": {
+        "type": "object",
+        "properties": {
+          "revision_id": { "$ref": "#/components/schemas/ReviewObjectId" },
+          "author": { "$ref": "#/components/schemas/PrincipalId" },
+          "actor": { "$ref": "#/components/schemas/PrincipalId" },
+          "created_at_millis": { "type": "integer", "format": "int64" },
+          "previous_revision_id": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/ReviewObjectId" },
+              { "type": "null" }
+            ]
+          },
+          "superseded_revision_ids": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ReviewObjectId" }
+          },
+          "content": { "$ref": "#/components/schemas/ReviewCommentContent" }
+        },
+        "required": [
+          "revision_id",
+          "author",
+          "actor",
+          "created_at_millis",
+          "previous_revision_id",
+          "superseded_revision_ids",
+          "content"
+        ]
+      },
       "ReviewEvent": {
         "type": "object",
         "properties": {
           "event_id": { "$ref": "#/components/schemas/ReviewObjectId" },
+          "causal_parent_ids": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ReviewObjectId" }
+          },
           "sequence": { "type": "integer", "format": "uint64", "minimum": 0 },
           "actor": { "$ref": "#/components/schemas/PrincipalId" },
           "accepted_at_millis": { "type": "integer", "format": "int64" },
@@ -14296,6 +14432,7 @@
         },
         "required": [
           "event_id",
+          "causal_parent_ids",
           "sequence",
           "actor",
           "accepted_at_millis",
@@ -14357,6 +14494,27 @@
               "action",
               "comment_id",
               "previous_revision_id",
+              "revision_id"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "comment_id": { "$ref": "#/components/schemas/CommentId" },
+              "superseded_revision_ids": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/ReviewObjectId" }
+              },
+              "revision_id": { "$ref": "#/components/schemas/ReviewObjectId" },
+              "action": {
+                "type": "string",
+                "const": "comment_conflict_resolved"
+              }
+            },
+            "required": [
+              "action",
+              "comment_id",
+              "superseded_revision_ids",
               "revision_id"
             ]
           },

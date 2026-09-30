@@ -84,11 +84,12 @@ impl Coordinator {
                 .checked_add(manifest_bytes.len() as u64)
                 .ok_or(Error::Limit("native copy bytes"))?;
 
-            let restored = Coordinator::new(
+            let restored = Coordinator::new_with_head_reducer(
                 destination,
                 self.records.repository,
                 destination_source,
                 self.guard.clone(),
+                self.operation_heads.clone(),
                 self.limits,
             )?;
             let snapshot = restored.recover(max_entries).await?;
@@ -130,12 +131,20 @@ impl Coordinator {
             .await?;
         self.include_domains(manifest.domains(), &mut control)
             .await?;
+        self.include_replication(manifest.replication_root, max_entries, &mut control)
+            .await?;
 
         let mut after = WalPosition(0);
         while after < manifest.published {
             for transaction in self.committed(&snapshot, after, 1024).await? {
                 control.insert(transaction.receipt);
                 control.insert(transaction.settings);
+                for origin in transaction.origins {
+                    control.insert(origin);
+                    let receipt: OriginReceiptV1 =
+                        self.records.get(origin, RecordKind::OriginReceipt).await?;
+                    control.insert(receipt.envelope);
+                }
                 control.extend(transaction.previous);
                 self.include_catalog(transaction.inventory, max_entries, &mut control)
                     .await?;
@@ -170,6 +179,8 @@ impl Coordinator {
             self.include_catalog(value.captured.history, max_entries, &mut control)
                 .await?;
             self.include_domains(value.captured.domains(), &mut control)
+                .await?;
+            self.include_replication(value.captured.replication_root, max_entries, &mut control)
                 .await?;
             checkpoint = value.captured.checkpoint;
         }
@@ -210,6 +221,31 @@ impl Coordinator {
         );
         Ok(())
     }
+
+    async fn include_replication(
+        &self,
+        root: Option<RecordRef>,
+        limit: usize,
+        records: &mut BTreeSet<RecordRef>,
+    ) -> Result<()> {
+        let Some(root_ref) = root else {
+            return Ok(());
+        };
+        records.insert(root_ref);
+        let root = self.read_replication_root(root_ref).await?;
+        let CatalogClosure { pages, entries } =
+            self.catalog.closure(root.accepted_origins, limit).await?;
+        records.extend(pages);
+        for reference in entries.into_values() {
+            records.insert(reference);
+            let receipt: OriginReceiptV1 = self
+                .records
+                .get(reference, RecordKind::OriginReceipt)
+                .await?;
+            records.insert(receipt.envelope);
+        }
+        Ok(())
+    }
 }
 
 fn include_manifest_records(manifest: &Manifest, records: &mut BTreeSet<RecordRef>) {
@@ -222,6 +258,7 @@ fn include_manifest_records(manifest: &Manifest, records: &mut BTreeSet<RecordRe
     records.extend(manifest.checkpoint);
     records.extend(manifest.agent_root);
     records.extend(manifest.review_root);
+    records.extend(manifest.replication_root);
 }
 
 async fn copy_exact(

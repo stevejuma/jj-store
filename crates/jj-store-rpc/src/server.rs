@@ -1,6 +1,6 @@
 use crate::{
-    CHUNK_BYTES, MAX_IDS, REQUEST_BYTES, RESPONSE_BYTES, administration as admin, agent, object,
-    review, service_error,
+    CHUNK_BYTES, MAX_IDS, REQUEST_BYTES, RESPONSE_BYTES, administration as admin, agent,
+    application, object, record, review, service_error,
     wire::{
         self,
         native_store_server::{NativeStore, NativeStoreServer},
@@ -9,12 +9,15 @@ use crate::{
 use futures::{Stream, StreamExt as _};
 use jj_store_model as m;
 use jj_store_object::{StagedUpload, WriteOutcome};
+use jj_store_service::transport as replication;
 use jj_store_service::{
     administration::RepositoryHost,
     auth::{BearerToken, Permission, SystemClock},
     collaboration::ReviewThreadPager,
+    mutations::CommandService,
     pagination,
     registry::{self, RepositoryRegistry},
+    replication_control as control,
     transport::{NativeEndpoint, NativeRequest},
 };
 use std::{
@@ -30,6 +33,74 @@ use tokio::{
     time::Instant,
 };
 use tonic::{Request, Response, Status, metadata::MetadataMap};
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ReplicationControlError {
+    NotConfigured,
+    Invalid,
+    Unavailable,
+    Timeout,
+}
+
+#[tonic::async_trait]
+pub trait ReplicationControls: Send + Sync {
+    async fn status(
+        &self,
+        repository: m::RepositoryId,
+    ) -> Result<control::StatusV1, ReplicationControlError>;
+    async fn wake(
+        &self,
+        repository: m::RepositoryId,
+    ) -> Result<control::StatusV1, ReplicationControlError>;
+    async fn set_paused(
+        &self,
+        repository: m::RepositoryId,
+        paused: bool,
+    ) -> Result<control::StatusV1, ReplicationControlError>;
+    async fn capture_barrier(
+        &self,
+        repository: m::RepositoryId,
+    ) -> Result<control::BarrierV1, ReplicationControlError>;
+    async fn wait(
+        &self,
+        repository: m::RepositoryId,
+        request: &control::WaitRequestV1,
+    ) -> Result<control::WaitOutcomeV1, ReplicationControlError>;
+}
+
+fn replication_control_error(error: ReplicationControlError) -> Status {
+    match error {
+        ReplicationControlError::NotConfigured => {
+            Status::failed_precondition("replication is not configured for this repository")
+        }
+        ReplicationControlError::Invalid => {
+            Status::invalid_argument("invalid replication control request")
+        }
+        ReplicationControlError::Unavailable => {
+            Status::unavailable("replication worker is unavailable")
+        }
+        ReplicationControlError::Timeout => {
+            Status::deadline_exceeded("replication barrier deadline exceeded")
+        }
+    }
+}
+
+fn replication_request<T: serde::de::DeserializeOwned>(bytes: &[u8]) -> Result<T, Status> {
+    if bytes.len() > REQUEST_BYTES {
+        return Err(Status::resource_exhausted("replication request limit"));
+    }
+    serde_json::from_slice(bytes)
+        .map_err(|_| Status::invalid_argument("invalid replication request"))
+}
+
+fn replication_reply<T: serde::Serialize>(value: &T) -> Result<wire::JsonReply, Status> {
+    let json = serde_json::to_vec(value)
+        .map_err(|_| Status::internal("replication response encoding failed"))?;
+    if json.len() > RESPONSE_BYTES {
+        return Err(Status::resource_exhausted("replication response limit"));
+    }
+    Ok(wire::JsonReply { json })
+}
 
 #[derive(Clone, Copy, Debug)]
 pub struct Limits {
@@ -55,6 +126,8 @@ pub struct NativeRpc {
     access: RpcAccess,
     registry: Option<Arc<dyn RepositoryRegistry>>,
     review_threads: Arc<ReviewThreadPager>,
+    commands: CommandService,
+    replication_controls: Option<Arc<dyn ReplicationControls>>,
 }
 #[derive(Clone)]
 enum RpcAccess {
@@ -89,6 +162,11 @@ impl NativeRpc {
                 return Err(Status::invalid_argument("duplicate repository"));
             }
         }
+        let executor = jj_store_service::commands::Executor::new(
+            jj_store_service::commands::Limits::default(),
+            limits.concurrent,
+        )
+        .map_err(|_| Status::invalid_argument("native command limits"))?;
         Ok(Self {
             repositories: Arc::new(registry),
             host: None,
@@ -100,6 +178,8 @@ impl NativeRpc {
                 ReviewThreadPager::new(pagination::Limits::default(), Arc::new(SystemClock))
                     .map_err(review::read_error)?,
             ),
+            commands: CommandService::new(executor),
+            replication_controls: None,
         })
     }
     pub fn hosted(host: RepositoryHost, limits: Limits) -> Result<Self, Status> {
@@ -109,6 +189,10 @@ impl NativeRpc {
     }
     pub fn with_registry(mut self, registry: Arc<dyn RepositoryRegistry>) -> Self {
         self.registry = Some(registry);
+        self
+    }
+    pub fn with_replication_controls(mut self, controls: Arc<dyn ReplicationControls>) -> Self {
+        self.replication_controls = Some(controls);
         self
     }
     pub fn hosted_local_trusted(
@@ -250,6 +334,35 @@ impl NativeRpc {
                 )
             })?
             .map(Response::new)
+    }
+
+    fn controls(&self) -> Result<&Arc<dyn ReplicationControls>, Status> {
+        self.replication_controls
+            .as_ref()
+            .ok_or_else(|| Status::failed_precondition("replication controls are not configured"))
+    }
+
+    async fn replication_action(
+        &self,
+        request: Request<wire::Repository>,
+        paused: Option<bool>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        let access = self.request_access(&request)?;
+        let body = request.into_inner();
+        let repository = m::RepositoryId::from_slice(&body.repository)
+            .map_err(|_| Status::invalid_argument("repository ID length"))?;
+        let session = self.bind(&body.repository, access)?;
+        let controls = self.controls()?.clone();
+        self.bounded(async move {
+            session.authorize(true).await.map_err(service_error)?;
+            let status = match paused {
+                Some(paused) => controls.set_paused(repository, paused).await,
+                None => controls.wake(repository).await,
+            }
+            .map_err(replication_control_error)?;
+            replication_reply(&status)
+        })
+        .await
     }
 }
 #[tonic::async_trait]
@@ -414,6 +527,27 @@ impl NativeStore for NativeRpc {
         })
         .await
     }
+    async fn current_snapshot(
+        &self,
+        request: Request<wire::Repository>,
+    ) -> Result<Response<wire::Snapshot>, Status> {
+        let session = self
+            .bind(
+                &request.get_ref().repository,
+                self.request_access(&request)?,
+            )?
+            .into_session();
+        self.bounded(async move {
+            let snapshot = session
+                .snapshot()
+                .await
+                .map_err(|error| service_error(error.into()))?
+                .manifest()
+                .snapshot();
+            Ok(admin::wire_snapshot(snapshot))
+        })
+        .await
+    }
     async fn inventory(
         &self,
         request: Request<wire::InventoryRequest>,
@@ -464,6 +598,43 @@ impl NativeStore for NativeRpc {
         self.bounded(async {
             session.publish(old, new).await.map_err(service_error)?;
             Ok(wire::Empty {})
+        })
+        .await
+    }
+    async fn apply_mutation(
+        &self,
+        request: Request<wire::MutationRequest>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        let access = self.request_access(&request)?;
+        let body = request.into_inner();
+        let command = application::request(&body.request_json)?;
+        let session = self.bind(&body.repository, access)?.into_session();
+        let commands = self.commands.clone();
+        self.bounded(async move {
+            let outcome = commands
+                .apply(session, &command)
+                .await
+                .map_err(application::error)?;
+            application::reply(&outcome)
+        })
+        .await
+    }
+    async fn mutation_status(
+        &self,
+        request: Request<wire::MutationStatusRequest>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        let access = self.request_access(&request)?;
+        let body = request.into_inner();
+        let request_id = m::RequestId::from_slice(&body.request_id)
+            .map_err(|_| Status::invalid_argument("application request ID"))?;
+        let session = self.bind(&body.repository, access)?.into_session();
+        let commands = self.commands.clone();
+        self.bounded(async move {
+            let status = commands
+                .status(session, request_id)
+                .await
+                .map_err(application::error)?;
+            application::reply(&status)
         })
         .await
     }
@@ -580,6 +751,312 @@ impl NativeStore for NativeRpc {
                 .await
                 .map_err(review::command_error)?;
             review::reply(&status)
+        })
+        .await
+    }
+    async fn negotiate_replica(
+        &self,
+        request: Request<wire::ReplicationRequest>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        let access = self.request_access(&request)?;
+        let body = request.into_inner();
+        let session = self.bind(&body.repository, access)?;
+        let request: replication::NegotiateReplicaV1 = replication_request(&body.request_json)?;
+        self.bounded(async {
+            replication_reply(
+                &session
+                    .negotiate_replica(&request)
+                    .await
+                    .map_err(service_error)?,
+            )
+        })
+        .await
+    }
+    async fn get_committed_feed(
+        &self,
+        request: Request<wire::ReplicationRequest>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        let access = self.request_access(&request)?;
+        let body = request.into_inner();
+        let session = self.bind(&body.repository, access)?;
+        let request: replication::FeedRequestV1 = replication_request(&body.request_json)?;
+        self.bounded(async {
+            replication_reply(
+                &session
+                    .replication_feed(&request)
+                    .await
+                    .map_err(service_error)?,
+            )
+        })
+        .await
+    }
+    async fn offer_origins(
+        &self,
+        request: Request<wire::ReplicationRequest>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        let access = self.request_access(&request)?;
+        let body = request.into_inner();
+        let session = self.bind(&body.repository, access)?;
+        let request: replication::OfferOriginsRequestV1 = replication_request(&body.request_json)?;
+        self.bounded(async {
+            replication_reply(
+                &session
+                    .offer_origins(&request)
+                    .await
+                    .map_err(service_error)?,
+            )
+        })
+        .await
+    }
+    async fn get_origin_closure(
+        &self,
+        request: Request<wire::ReplicationRequest>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        let access = self.request_access(&request)?;
+        let body = request.into_inner();
+        let session = self.bind(&body.repository, access)?;
+        let request: replication::OriginClosureRequestV1 = replication_request(&body.request_json)?;
+        self.bounded(async {
+            replication_reply(
+                &session
+                    .origin_closure(&request)
+                    .await
+                    .map_err(service_error)?,
+            )
+        })
+        .await
+    }
+    async fn apply_origins(
+        &self,
+        request: Request<wire::ReplicationRequest>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        let access = self.request_access(&request)?;
+        let body = request.into_inner();
+        let session = self.bind(&body.repository, access)?;
+        let request: replication::ApplyOriginsTransportRequestV1 =
+            replication_request(&body.request_json)?;
+        self.bounded(async {
+            replication_reply(
+                &session
+                    .apply_origins(&request)
+                    .await
+                    .map_err(service_error)?,
+            )
+        })
+        .await
+    }
+    async fn replication_status(
+        &self,
+        request: Request<wire::Repository>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        let access = self.request_access(&request)?;
+        let body = request.into_inner();
+        let repository = m::RepositoryId::from_slice(&body.repository)
+            .map_err(|_| Status::invalid_argument("repository ID length"))?;
+        let session = self.bind(&body.repository, access)?;
+        let controls = self.controls()?.clone();
+        self.bounded(async move {
+            session.authorize(false).await.map_err(service_error)?;
+            replication_reply(
+                &controls
+                    .status(repository)
+                    .await
+                    .map_err(replication_control_error)?,
+            )
+        })
+        .await
+    }
+    async fn replication_now(
+        &self,
+        request: Request<wire::Repository>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        self.replication_action(request, None).await
+    }
+    async fn replication_pause(
+        &self,
+        request: Request<wire::Repository>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        self.replication_action(request, Some(true)).await
+    }
+    async fn replication_resume(
+        &self,
+        request: Request<wire::Repository>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        self.replication_action(request, Some(false)).await
+    }
+    async fn replication_capture_barrier(
+        &self,
+        request: Request<wire::Repository>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        let access = self.request_access(&request)?;
+        let body = request.into_inner();
+        let repository = m::RepositoryId::from_slice(&body.repository)
+            .map_err(|_| Status::invalid_argument("repository ID length"))?;
+        let session = self.bind(&body.repository, access)?;
+        let controls = self.controls()?.clone();
+        self.bounded(async move {
+            session.authorize(true).await.map_err(service_error)?;
+            replication_reply(
+                &controls
+                    .capture_barrier(repository)
+                    .await
+                    .map_err(replication_control_error)?,
+            )
+        })
+        .await
+    }
+    async fn replication_wait(
+        &self,
+        request: Request<wire::ReplicationControlRequest>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        let access = self.request_access(&request)?;
+        let body = request.into_inner();
+        let repository = m::RepositoryId::from_slice(&body.repository)
+            .map_err(|_| Status::invalid_argument("repository ID length"))?;
+        let session = self.bind(&body.repository, access)?;
+        let request: control::WaitRequestV1 = replication_request(&body.request_json)?;
+        let controls = self.controls()?.clone();
+        self.bounded(async move {
+            session.authorize(true).await.map_err(service_error)?;
+            replication_reply(
+                &controls
+                    .wait(repository, &request)
+                    .await
+                    .map_err(replication_control_error)?,
+            )
+        })
+        .await
+    }
+    async fn replica_inspect(
+        &self,
+        request: Request<wire::Repository>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        self.replication_status(request).await
+    }
+    type ReadControlRecordStream =
+        Pin<Box<dyn Stream<Item = Result<wire::ObjectChunk, Status>> + Send>>;
+    async fn read_control_record(
+        &self,
+        request: Request<wire::ControlRecordRequest>,
+    ) -> Result<Response<Self::ReadControlRecordStream>, Status> {
+        let permit = self.permit()?;
+        let deadline = Instant::now() + self.limits.timeout;
+        let session = self.bind(
+            &request.get_ref().repository,
+            self.request_access(&request)?,
+        )?;
+        let reference = record(request.into_inner().record)?;
+        let bytes = tokio::time::timeout_at(deadline, session.read_replication_record(reference))
+            .await
+            .map_err(|_| Status::deadline_exceeded("control record download deadline"))?
+            .map_err(service_error)?;
+        if bytes.len() as u64 > replication::MAX_RECORD_BYTES
+            || bytes.len() as u64 > self.limits.object_bytes
+        {
+            return Err(Status::resource_exhausted("control record byte limit"));
+        }
+        let (tx, mut rx) = tokio::sync::mpsc::channel(1);
+        let (finished_tx, finished_rx) = tokio::sync::oneshot::channel();
+        tokio::spawn(async move {
+            let _permit = permit;
+            let produce = async {
+                tx.send(Ok(wire::ObjectChunk {
+                    part: Some(wire::object_chunk::Part::Metadata(wire::ObjectMetadata {
+                        length: bytes.len() as u64,
+                        version: reference.digest.to_string(),
+                    })),
+                }))
+                .await
+                .map_err(|_| Status::cancelled("control record download canceled"))?;
+                for chunk in bytes.chunks(CHUNK_BYTES) {
+                    session.authorize(true).await.map_err(service_error)?;
+                    tx.send(Ok(wire::ObjectChunk {
+                        part: Some(wire::object_chunk::Part::Data(chunk.to_vec())),
+                    }))
+                    .await
+                    .map_err(|_| Status::cancelled("control record download canceled"))?;
+                }
+                Ok(())
+            };
+            let result = tokio::select! {
+                _ = tx.closed() => return,
+                result = tokio::time::timeout_at(deadline, produce) => result.unwrap_or_else(|_| Err(Status::deadline_exceeded("control record download deadline"))),
+            };
+            let _ = finished_tx.send(result);
+        });
+        let stream = async_stream::stream! {
+            while let Some(part) = rx.recv().await { yield part; }
+            match finished_rx.await {
+                Ok(Ok(())) => {},
+                Ok(Err(error)) => yield Err(error),
+                Err(_) => yield Err(Status::unavailable("control record download interrupted")),
+            }
+        };
+        Ok(Response::new(Box::pin(stream)))
+    }
+    async fn write_control_record(
+        &self,
+        request: Request<tonic::Streaming<wire::ControlUploadChunk>>,
+    ) -> Result<Response<wire::UploadResult>, Status> {
+        let access = self.request_access(&request)?;
+        let mut stream = request.into_inner();
+        self.bounded(async {
+            let first = stream
+                .message()
+                .await?
+                .ok_or_else(|| Status::invalid_argument("control upload header required"))?;
+            let Some(wire::control_upload_chunk::Part::Start(start)) = first.part else {
+                return Err(Status::invalid_argument("control upload header required"));
+            };
+            let session = self.bind(&start.repository, access)?;
+            session.authorize(true).await.map_err(service_error)?;
+            let reference = record(start.record)?;
+            if start.length == 0
+                || start.length > replication::MAX_RECORD_BYTES
+                || start.length > self.limits.object_bytes
+            {
+                return Err(Status::resource_exhausted("control upload byte limit"));
+            }
+            let chunks = stream.map(|part| match part {
+                Ok(wire::ControlUploadChunk {
+                    part: Some(wire::control_upload_chunk::Part::Data(bytes)),
+                }) if !bytes.is_empty() && bytes.len() <= CHUNK_BYTES => {
+                    Ok(bytes::Bytes::from(bytes))
+                }
+                _ => Err(std::io::Error::other("invalid control upload stream")),
+            });
+            let upload =
+                StagedUpload::from_reader(tokio_util::io::StreamReader::new(chunks), start.length)
+                    .await
+                    .map_err(|_| Status::invalid_argument("invalid control upload stream"))?;
+            if upload.len() != start.length {
+                return Err(Status::invalid_argument("control upload length mismatch"));
+            }
+            let mut bytes = Vec::with_capacity(start.length as usize);
+            upload
+                .reader()
+                .map_err(|_| Status::internal("control upload spool unavailable"))?
+                .read_to_end(&mut bytes)
+                .await
+                .map_err(|_| Status::unavailable("control upload spool read failed"))?;
+            let outcome = session
+                .write_replication_record(reference, &bytes)
+                .await
+                .map_err(service_error)?;
+            let (outcome, version) = match outcome {
+                WriteOutcome::Applied(version) => (
+                    wire::upload_result::Outcome::Stored,
+                    version.as_str().to_owned(),
+                ),
+                WriteOutcome::PreconditionFailed => {
+                    (wire::upload_result::Outcome::AlreadyPresent, String::new())
+                }
+                WriteOutcome::Unknown => (wire::upload_result::Outcome::Unknown, String::new()),
+            };
+            Ok(wire::UploadResult {
+                outcome: outcome as i32,
+                version,
+            })
         })
         .await
     }

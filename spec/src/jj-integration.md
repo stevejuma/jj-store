@@ -173,6 +173,15 @@ committed receipt or the original unknown identity. The client cannot select an
 AgentStore root or actor, and operation IDs never cross this domain boundary as
 commit or capture identities.
 
+Writable replication adds versioned service-owned status, frontier, finite
+barrier, wait and search-freshness DTOs plus corresponding `NativeClient`
+methods. Authenticated native RPC exposes status, now, pause, resume, barrier
+capture, bounded wait and replica inspection without importing upstream JJ
+types. Status and inspection read local runtime and durable checkpoint state
+only; they do not contact the upstream, advance a frontier or reconcile native
+heads. Reconciliation remains an explicit application mutation using the same
+guarded command service and durable receipt policy.
+
 The executable installs lazy native factory closures: a native cache's bounded
 connection record selects the endpoint and repository, while credentials are
 resolved independently. The shared factory instance within one invocation keeps

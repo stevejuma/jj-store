@@ -3855,6 +3855,7 @@ dependencies = [
  "jj-store-jj",
  "jj-store-model",
  "jj-store-object",
+ "jj-store-replication",
  "jj-store-rpc",
  "jj-store-server",
  "jj-store-service",
@@ -3964,6 +3965,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "jj-store-replication"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "jj-agent",
+ "jj-review",
+ "jj-store-model",
+ "jj-store-object",
+ "jj-store-wal",
+ "serde",
+ "serde_json",
+ "sha2 0.10.9",
+ "thiserror 2.0.21",
+ "tokio",
+]
+
+[[package]]
 name = "jj-store-rpc"
 version = "0.1.0"
 dependencies = [
@@ -3974,9 +3992,11 @@ dependencies = [
  "hyper-util",
  "jj-agent",
  "jj-review",
+ "jj-store-adapters",
  "jj-store-jj",
  "jj-store-model",
  "jj-store-object",
+ "jj-store-replication",
  "jj-store-service",
  "jj-store-wal",
  "prost",
@@ -3984,6 +4004,7 @@ dependencies = [
  "protoc-bin-vendored",
  "serde",
  "serde_json",
+ "sha2 0.10.9",
  "tempfile",
  "tokio",
  "tokio-stream",
@@ -4010,6 +4031,7 @@ dependencies = [
  "jj-store-jj",
  "jj-store-model",
  "jj-store-object",
+ "jj-store-replication",
  "jj-store-rpc",
  "jj-store-service",
  "jj-store-tantivy",

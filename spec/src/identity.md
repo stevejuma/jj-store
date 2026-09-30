@@ -53,6 +53,16 @@ epochs, principals and attempt IDs are distinct 128-bit types. Their
 serialization does not alter the frozen native envelope/profile. Typed object
 keys are encoded with an explicit kind tag in control records.
 
+Writable replicas add three further owned identities without changing native
+object identity. `ReplicaId` is the durable identity of one installation,
+`WriterEpoch` identifies one deliberate origin-stream lifetime, and
+`OriginDigest` is the SHA-256 digest of one canonical original publication
+envelope. An origin key combines repository, replica, writer epoch and accepted
+sequence. These values remain distinct from `EpochId`, `WalPosition`, native
+operation and object IDs, record digests, request IDs and publication IDs. A
+logical origin is forwarded unchanged, while each accepting replica records a
+new local delivery position under its own replica and log epoch.
+
 Token IDs are distinct 128-bit identifiers, independent of principal IDs and
 publication/request identities. Bearer secrets and verifiers are service-owned
 credential types and never native object identities.

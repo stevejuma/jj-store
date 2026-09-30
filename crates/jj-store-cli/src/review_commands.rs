@@ -67,6 +67,16 @@ pub enum ReviewCommand {
         #[command(flatten)]
         body: BodyArgs,
     },
+    /// Resolve concurrent comment edits using every exact conflicting revision
+    ResolveCommentConflict {
+        #[arg(long)]
+        request_id: RequestId,
+        comment_id: CommentId,
+        #[arg(long = "expected-revision-id", num_args = 2..=64)]
+        expected_revision_ids: Vec<CommentRevisionId>,
+        #[command(flatten)]
+        body: BodyArgs,
+    },
     /// Replace a comment with a visible tombstone
     Tombstone {
         #[arg(long)]
@@ -229,6 +239,22 @@ fn request(
                 replacement_body: body.value(),
             },
         ),
+        ReviewCommand::ResolveCommentConflict {
+            request_id,
+            comment_id,
+            mut expected_revision_ids,
+            body,
+        } => {
+            expected_revision_ids.sort();
+            (
+                request_id,
+                ReviewCommandV1::ResolveCommentConflict {
+                    comment_id,
+                    expected_revision_ids,
+                    replacement_body: body.value(),
+                },
+            )
+        }
         ReviewCommand::Tombstone {
             request_id,
             comment_id,

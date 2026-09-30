@@ -211,6 +211,131 @@ async fn fixture() -> (Arc<FaultStore>, Coordinator) {
     (store, c)
 }
 
+async fn replication_fixture() -> (Arc<FaultStore>, Coordinator) {
+    let store = Arc::new(FaultStore::default());
+    let c = coordinator(store.clone());
+    c.initialize_replica(
+        EpochId::new([2; 16]),
+        b"initial".to_vec(),
+        ReplicaId::new([7; 16]),
+        WriterEpoch::new([8; 16]),
+    )
+    .await
+    .unwrap();
+    (store, c)
+}
+
+#[tokio::test]
+async fn authored_publications_atomically_advance_one_origin_stream() {
+    let (_, c) = replication_fixture().await;
+    let first = request(40, &[0], 1);
+    let first_receipt = committed(c.publish(&first).await.unwrap());
+    let first_snapshot = c.read().await.unwrap();
+    let first_root = c
+        .read_replication_root(first_snapshot.manifest().replication_root.unwrap())
+        .await
+        .unwrap();
+    assert_eq!(first_root.local_sequence, 1);
+    let first_key = OriginKeyV1 {
+        stream: first_root.local_stream,
+        sequence: 1,
+    };
+    let first_origin_receipt = c
+        .origin_receipt(&first_snapshot, first_key)
+        .await
+        .unwrap()
+        .unwrap();
+    assert_eq!(
+        first_origin_receipt.accepted.position,
+        first_receipt.accepted.position
+    );
+    let first_origin = c.origin_publication(first_origin_receipt).await.unwrap();
+    assert_eq!(first_origin.origin_key, first_key);
+    assert_eq!(first_origin.previous_origin_digest, None);
+    assert!(first_origin.causal_frontier.is_empty());
+    assert_eq!(first_origin.published_operations, BTreeSet::from([op(1)]));
+    assert_eq!(
+        first_origin.changed_domains,
+        BTreeSet::from([OriginDomainV1::Code])
+    );
+
+    assert_eq!(committed(c.publish(&first).await.unwrap()), first_receipt);
+    assert_eq!(c.read().await.unwrap().manifest().published, WalPosition(1));
+
+    let second = request(41, &[1], 2);
+    committed(c.publish(&second).await.unwrap());
+    let second_snapshot = c.recover(100).await.unwrap();
+    let second_root = c
+        .read_replication_root(second_snapshot.manifest().replication_root.unwrap())
+        .await
+        .unwrap();
+    assert_eq!(second_root.local_sequence, 2);
+    let second_origin = c
+        .origin_publication(
+            c.origin_receipt(
+                &second_snapshot,
+                OriginKeyV1 {
+                    stream: second_root.local_stream,
+                    sequence: 2,
+                },
+            )
+            .await
+            .unwrap()
+            .unwrap(),
+        )
+        .await
+        .unwrap();
+    assert_eq!(
+        second_origin.previous_origin_digest,
+        first_root.local_terminal_digest
+    );
+    assert_eq!(
+        second_origin.causal_frontier,
+        vec![OriginPrefixV1 {
+            stream: first_root.local_stream,
+            sequence: 1,
+            terminal_digest: first_root.local_terminal_digest.unwrap(),
+        }]
+    );
+}
+
+#[tokio::test]
+async fn failed_manifest_candidate_does_not_consume_origin_sequence() {
+    let (store, c) = replication_fixture().await;
+    store.arm("manifest.json", Fault::Before);
+    assert!(matches!(
+        c.publish(&request(42, &[0], 1)).await.unwrap(),
+        PublishOutcome::OutcomeUnknown { .. }
+    ));
+    let unchanged = c.read().await.unwrap();
+    let root = c
+        .read_replication_root(unchanged.manifest().replication_root.unwrap())
+        .await
+        .unwrap();
+    assert_eq!(root.local_sequence, 0);
+    assert!(root.accepted_origins.is_none());
+
+    committed(c.publish(&request(43, &[0], 2)).await.unwrap());
+    let accepted = c.read().await.unwrap();
+    let root = c
+        .read_replication_root(accepted.manifest().replication_root.unwrap())
+        .await
+        .unwrap();
+    assert_eq!(root.local_sequence, 1);
+    assert!(
+        c.origin_receipt(
+            &accepted,
+            OriginKeyV1 {
+                stream: root.local_stream,
+                sequence: 1,
+            },
+        )
+        .await
+        .unwrap()
+        .is_some()
+    );
+}
+
 #[derive(serde::Serialize)]
 struct LegacyManifest {
     format: u32,

@@ -257,6 +257,9 @@ test("multiple_heads_require_choice_and_events_preserve_the_selected_view", asyn
   await expect(
     page.getByRole("complementary", { name: "Repository details" }),
   ).toBeVisible();
+  await expect(
+    page.getByRole("region", { name: "Repository context" }),
+  ).toContainText("Local acceptance");
   expect(new URL(page.url()).hash).toContain(`at_op=${operation}`);
 });
 test("disconnect_discards_inflight_history_and_revocation_clears_data", async ({

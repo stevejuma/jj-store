@@ -1,8 +1,9 @@
 use super::review_cursors::ReviewPin;
+use super::review_replication::{count_comment_conflicts, load_graph_events, load_merged_comments};
 use super::*;
 use jj_store_wal::publication::{
-    CommentRevisionContentV1, CommentSelectionV1, Domain, ReviewCatalogKey, ReviewObjectRef,
-    ReviewObjectV1, ReviewThreadId,
+    ArtifactAnchorV1, CommentRevisionContentV1, CommentSelectionV1, Domain, ReviewCatalogKey,
+    ReviewObjectRef, ReviewObjectV1, ReviewThreadId,
 };
 use std::collections::BTreeSet;
 
@@ -107,28 +108,50 @@ impl ReviewThreadPager {
             .await
             .map_err(map_wal)?
             .ok_or(Error::NotFound)?;
-        let ReviewObjectV1::ThreadSnapshot(value) =
-            pin.store.read_object(reference).await.map_err(map_wal)?
-        else {
-            return Err(Error::Corrupt);
-        };
-        if value.thread_id != thread_id {
-            return Err(Error::Corrupt);
-        }
-        let anchor = load_anchor(&pin, value.original_anchor).await?;
-        let thread = review_models::summary(reference, &value, anchor.value.clone());
-        let comments = load_comments(&pin, thread_id, &value.comments).await?;
-        let events = load_events(&pin, thread_id, value.event_page_root).await?;
-        if events.len() as u64 != value.last_event_sequence {
-            return Err(Error::Corrupt);
-        }
+        let (thread, anchor, comments, comment_conflicts, events, version) =
+            match pin.store.read_object(reference).await.map_err(map_wal)? {
+                ReviewObjectV1::ThreadSnapshot(value) => {
+                    if value.thread_id != thread_id {
+                        return Err(Error::Corrupt);
+                    }
+                    let anchor = load_anchor(&pin, value.original_anchor).await?;
+                    let thread = review_models::summary(reference, &value, anchor.value.clone());
+                    let comments = load_comments(&pin, thread_id, &value.comments).await?;
+                    let events = load_events(&pin, thread_id, value.event_page_root).await?;
+                    if events.len() as u64 != value.last_event_sequence {
+                        return Err(Error::Corrupt);
+                    }
+                    (thread, anchor, comments, Vec::new(), events, 1)
+                }
+                ReviewObjectV1::ThreadMerge(value) => {
+                    if value.thread_id != thread_id {
+                        return Err(Error::Corrupt);
+                    }
+                    let anchor = load_anchor(&pin, value.original_anchor).await?;
+                    let (comments, conflicts) =
+                        load_merged_comments(&pin, thread_id, &value.comments).await?;
+                    let thread = review_models::merged_summary(
+                        reference,
+                        &value,
+                        anchor.value.clone(),
+                        conflicts.len(),
+                    );
+                    let events = load_graph_events(&pin, thread_id, value.event_graph_root).await?;
+                    if events.len() as u64 != value.thread_version {
+                        return Err(Error::Corrupt);
+                    }
+                    (thread, anchor, comments, conflicts, events, 2)
+                }
+                _ => return Err(Error::Corrupt),
+            };
         authorize_epoch(&session, pin.snapshot.epoch).await?;
         Ok(ReviewThreadDetail {
-            version: 1,
+            version,
             snapshot: pin.snapshot,
             thread,
             anchor,
             comments,
+            comment_conflicts,
             events,
         })
     }
@@ -167,27 +190,25 @@ async fn resolve_threads(
 ) -> Result<Vec<ReviewThreadSummary>> {
     let mut rows = Vec::with_capacity(selections.len());
     for (key, reference) in selections {
-        let ReviewObjectV1::ThreadSnapshot(value) =
-            store.read_object(reference).await.map_err(map_wal)?
-        else {
-            return Err(Error::Corrupt);
-        };
-        let expected = ReviewCatalogKey::derive("thread", value.thread_id.as_bytes())
-            .map_err(|_| Error::Corrupt)?;
-        if key != expected {
-            return Err(Error::Corrupt);
+        match store.read_object(reference).await.map_err(map_wal)? {
+            ReviewObjectV1::ThreadSnapshot(value) => {
+                verify_thread_key(key, value.thread_id)?;
+                let anchor = load_store_anchor(store, value.original_anchor, repository).await?;
+                rows.push(review_models::summary(reference, &value, anchor));
+            }
+            ReviewObjectV1::ThreadMerge(value) => {
+                verify_thread_key(key, value.thread_id)?;
+                let anchor = load_store_anchor(store, value.original_anchor, repository).await?;
+                let conflict_count = count_comment_conflicts(store, &value.comments).await?;
+                rows.push(review_models::merged_summary(
+                    reference,
+                    &value,
+                    anchor,
+                    conflict_count,
+                ));
+            }
+            _ => return Err(Error::Corrupt),
         }
-        let ReviewObjectV1::Anchor(anchor) = store
-            .read_object(value.original_anchor)
-            .await
-            .map_err(map_wal)?
-        else {
-            return Err(Error::Corrupt);
-        };
-        if anchor.repository_id != repository {
-            return Err(Error::Corrupt);
-        }
-        rows.push(review_models::summary(reference, &value, *anchor));
     }
     Ok(rows)
 }
@@ -256,6 +277,11 @@ async fn load_comments(
             actor: value.actor,
             created_at_millis: value.created_at_millis,
             previous_revision_id: value.previous_revision.map(|item| item.id),
+            superseded_revision_ids: value
+                .superseded_revisions
+                .into_iter()
+                .map(|reference| reference.id)
+                .collect(),
             content,
         });
     }
@@ -270,6 +296,7 @@ async fn load_events(
     let mut events = Vec::new();
     let mut page = Some(root);
     let mut pages = BTreeSet::new();
+    let mut prior = None;
     while let Some(reference) = page {
         if !pages.insert(reference) {
             return Err(Error::Corrupt);
@@ -296,11 +323,16 @@ async fn load_events(
             }
             events.push(ReviewEvent {
                 event_id: selection.event.id,
+                causal_parent_ids: prior
+                    .into_iter()
+                    .map(|value: ReviewObjectRef| value.id)
+                    .collect(),
                 sequence: event.sequence,
                 actor: event.actor,
                 accepted_at_millis: event.accepted_at_millis,
                 event: review_models::event_kind(event.event),
             });
+            prior = Some(selection.event);
             if events.len() > MAX_THREAD_EVENTS {
                 return Err(Error::Limit);
             }
@@ -315,4 +347,29 @@ async fn load_events(
         return Err(Error::Corrupt);
     }
     Ok(events)
+}
+
+fn verify_thread_key(key: ReviewCatalogKey, thread_id: ReviewThreadId) -> Result<()> {
+    let expected =
+        ReviewCatalogKey::derive("thread", thread_id.as_bytes()).map_err(|_| Error::Corrupt)?;
+    if key == expected {
+        Ok(())
+    } else {
+        Err(Error::Corrupt)
+    }
+}
+
+async fn load_store_anchor(
+    store: &wal::publication::ReviewStoreSnapshot,
+    reference: ReviewObjectRef,
+    repository: m::RepositoryId,
+) -> Result<ArtifactAnchorV1> {
+    let ReviewObjectV1::Anchor(anchor) = store.read_object(reference).await.map_err(map_wal)?
+    else {
+        return Err(Error::Corrupt);
+    };
+    if anchor.repository_id != repository {
+        return Err(Error::Corrupt);
+    }
+    Ok(*anchor)
 }

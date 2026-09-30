@@ -2,7 +2,17 @@
 
 - `jj store init`: create a new repository and its first physical workspace.
 - `jj store attach`: create a physical workspace for an existing repository.
+- `jj store migrate-local`: hydrate and switch the current remote-backed
+  workspace to LocalTrusted storage.
 - `jj store status`: inspect authoritative operation heads.
+- `jj sync status`: inspect local readiness, worker state, lag and search
+  freshness without contacting the upstream.
+- `jj sync now`, `pause`, and `resume`: wake or control background transfer.
+- `jj sync wait --timeout 30s`: wait for the finite local and upstream frontiers
+  captured by the command.
+- `jj sync reconcile`: explicitly merge the exact current operation heads.
+- `jj replica inspect`: inspect issuer-bound local, peer and checkpoint
+  frontiers.
 - `jj store doctor`: check binding and current access without publishing.
 - `jj store login` and `logout`: manage one OS credential account.
 - `jj store capabilities`: inspect verified and unqualified capabilities.

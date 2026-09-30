@@ -25,6 +25,11 @@ pub enum ReviewThreadEventKindV1 {
         previous_revision: ReviewObjectRef,
         revision: ReviewObjectRef,
     },
+    CommentConflictResolved {
+        comment_id: CommentId,
+        superseded_revisions: Vec<ReviewObjectRef>,
+        revision: ReviewObjectRef,
+    },
     Resolved {
         action_id: ReviewActionId,
         reason: Option<String>,
@@ -79,6 +84,25 @@ impl ReviewThreadEventV1 {
                 expect_kind(*previous_revision, ReviewObjectKind::CommentRevision)?;
                 expect_kind(*revision, ReviewObjectKind::CommentRevision)?;
             }
+            ReviewThreadEventKindV1::CommentConflictResolved {
+                superseded_revisions,
+                revision,
+                ..
+            } => {
+                if self.sequence == 1
+                    || superseded_revisions.len() < 2
+                    || superseded_revisions.len() > 64
+                    || superseded_revisions
+                        .windows(2)
+                        .any(|pair| pair[0] >= pair[1])
+                {
+                    return Err(Error::Invalid("review comment conflict resolution"));
+                }
+                for reference in superseded_revisions {
+                    expect_kind(*reference, ReviewObjectKind::CommentRevision)?;
+                }
+                expect_kind(*revision, ReviewObjectKind::CommentRevision)?;
+            }
             ReviewThreadEventKindV1::Resolved { reason, .. }
             | ReviewThreadEventKindV1::Reopened { reason, .. } => {
                 if self.sequence == 1
@@ -108,6 +132,15 @@ impl ReviewThreadEventV1 {
                 revision,
                 ..
             } => [previous_revision, revision].into_iter().collect(),
+            ReviewThreadEventKindV1::CommentConflictResolved {
+                ref superseded_revisions,
+                revision,
+                ..
+            } => superseded_revisions
+                .iter()
+                .copied()
+                .chain([revision])
+                .collect(),
             ReviewThreadEventKindV1::Resolved { .. } | ReviewThreadEventKindV1::Reopened { .. } => {
                 BTreeSet::new()
             }
@@ -121,7 +154,9 @@ impl ReviewThreadEventV1 {
     }
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
+#[derive(
+    Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize, schemars::JsonSchema,
+)]
 #[serde(deny_unknown_fields)]
 pub struct ReviewEventSelectionV1 {
     pub sequence: u64,
@@ -169,7 +204,9 @@ impl ReviewEventPageV1 {
     }
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
+#[derive(
+    Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize, schemars::JsonSchema,
+)]
 #[serde(rename_all = "snake_case")]
 pub enum ThreadStatusV1 {
     Open,

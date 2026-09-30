@@ -9,15 +9,32 @@ service NativeStore {
   rpc ChangeToken(TokenRequest) returns (TokenReply);
   rpc TokenStatus(TokenRequest) returns (TokenReply);
   rpc Authorize(AccessRequest) returns (Empty);
+  rpc CurrentSnapshot(Repository) returns (Snapshot);
   rpc Heads(Repository) returns (Ids);
   rpc Inventory(InventoryRequest) returns (Ids);
   rpc Publish(PublishRequest) returns (Empty);
+  rpc ApplyMutation(MutationRequest) returns (JsonReply);
+  rpc MutationStatus(MutationStatusRequest) returns (JsonReply);
   rpc PrepareAgentCapture(AgentCapturePrepareRequest) returns (AgentCapturePrepared);
   rpc PublishAgentDelta(AgentDeltaPublishRequest) returns (AgentPublicationReply);
   rpc ReviewThreads(ReviewThreadsRequest) returns (JsonReply);
   rpc ReviewThread(ReviewThreadRequest) returns (JsonReply);
   rpc ApplyReviewCommand(ReviewCommandRequest) returns (JsonReply);
   rpc ReviewCommandStatus(ReviewCommandStatusRequest) returns (JsonReply);
+  rpc NegotiateReplica(ReplicationRequest) returns (JsonReply);
+  rpc GetCommittedFeed(ReplicationRequest) returns (JsonReply);
+  rpc OfferOrigins(ReplicationRequest) returns (JsonReply);
+  rpc GetOriginClosure(ReplicationRequest) returns (JsonReply);
+  rpc ApplyOrigins(ReplicationRequest) returns (JsonReply);
+  rpc ReplicationStatus(Repository) returns (JsonReply);
+  rpc ReplicationNow(Repository) returns (JsonReply);
+  rpc ReplicationPause(Repository) returns (JsonReply);
+  rpc ReplicationResume(Repository) returns (JsonReply);
+  rpc ReplicationCaptureBarrier(Repository) returns (JsonReply);
+  rpc ReplicationWait(ReplicationControlRequest) returns (JsonReply);
+  rpc ReplicaInspect(Repository) returns (JsonReply);
+  rpc ReadControlRecord(ControlRecordRequest) returns (stream ObjectChunk);
+  rpc WriteControlRecord(stream ControlUploadChunk) returns (UploadResult);
   rpc HeadObject(ObjectRequest) returns (ObjectMetadata);
   rpc ReadObject(ObjectRequest) returns (stream ObjectChunk);
   rpc WriteObject(stream UploadChunk) returns (UploadResult);
@@ -57,6 +74,10 @@ message AccessRequest { bytes repository = 1; bool write = 2; }
 message InventoryRequest { bytes repository = 1; bool copies = 2; uint32 limit = 3; }
 message Ids { repeated bytes ids = 1; }
 message PublishRequest { bytes repository = 1; repeated bytes removed = 2; bytes added = 3; }
+// Application mutations use bounded canonical JSON owned by jj-store-service.
+// The server derives the principal and publication identity from the session.
+message MutationRequest { bytes repository = 1; bytes request_json = 2; }
+message MutationStatusRequest { bytes repository = 1; bytes request_id = 2; }
 // Agent models use bounded canonical JSON so their native identities remain
 // byte-equivalent to the durable device spool and WAL request.
 message AgentCapturePrepareRequest {
@@ -88,6 +109,16 @@ message ReviewThreadRequest { bytes repository = 1; bytes thread_id = 2; }
 message ReviewCommandRequest { bytes repository = 1; bytes request_json = 2; }
 message ReviewCommandStatusRequest { bytes repository = 1; bytes request_id = 2; }
 message JsonReply { bytes json = 1; }
+// Replication DTOs use bounded canonical JSON and never carry a principal. The
+// server derives the publication actor from the authenticated request.
+message ReplicationRequest { bytes repository = 1; bytes request_json = 2; }
+message ReplicationControlRequest { bytes repository = 1; bytes request_json = 2; }
+message ControlRecordId { uint32 kind = 1; bytes digest = 2; }
+message ControlRecordRequest { bytes repository = 1; ControlRecordId record = 2; }
+message ControlUploadStart { bytes repository = 1; ControlRecordId record = 2; uint64 length = 3; }
+message ControlUploadChunk {
+  oneof part { ControlUploadStart start = 1; bytes data = 2; }
+}
 message ObjectId { uint32 kind = 1; bytes id = 2; }
 message ObjectRequest { bytes repository = 1; ObjectId object = 2; }
 message ObjectMetadata { uint64 length = 1; string version = 2; }

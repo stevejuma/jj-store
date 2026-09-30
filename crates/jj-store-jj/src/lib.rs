@@ -11,6 +11,7 @@ pub mod objects;
 pub mod operation_stores;
 pub mod policy;
 pub mod query;
+pub mod replication;
 pub mod roots;
 
 mod runtime;

@@ -54,6 +54,21 @@ impl Coordinator {
                 )
                 .await
             }
+            ReviewCommandV1::ResolveCommentConflict {
+                comment_id,
+                expected_revision_ids,
+                replacement_body,
+            } => {
+                self.resolve_review_comment_conflict(
+                    store,
+                    request,
+                    *comment_id,
+                    expected_revision_ids,
+                    replacement_body,
+                    accepted_at_millis,
+                )
+                .await
+            }
             ReviewCommandV1::TombstoneComment {
                 comment_id,
                 expected_revision_id,
@@ -153,6 +168,7 @@ impl Coordinator {
                 actor: request.principal,
                 created_at_millis: accepted_at_millis,
                 previous_revision: None,
+                superseded_revisions: Vec::new(),
                 content: CommentRevisionContentV1::Visible { body },
             })
             .await?;
@@ -214,9 +230,10 @@ impl Coordinator {
             self.stage_new_thread_indexes(store, anchor, thread_id, thread_snapshot)
                 .await?,
         );
-        let root = self.stage_review_command_delta(store, edits).await?;
+        let (root, delta) = self.stage_review_command_delta(store, edits).await?;
         Ok(AppliedReviewCommand {
             root,
+            delta,
             result: command_result(
                 thread_id,
                 Some(comment_id),

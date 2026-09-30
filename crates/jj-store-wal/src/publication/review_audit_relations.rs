@@ -143,24 +143,31 @@ impl Coordinator {
         closure: &BTreeSet<ReviewObjectRef>,
     ) -> Result<()> {
         super::review_audit::require_selected(closure, entry.snapshot)?;
-        let ReviewObjectV1::ThreadSnapshot(snapshot) =
-            self.read_review_object(entry.snapshot).await?
-        else {
-            return Err(Error::Corrupt("review relation snapshot kind"));
-        };
+        let (thread_id, snapshot_status, original_anchor) =
+            match self.read_review_object(entry.snapshot).await? {
+                ReviewObjectV1::ThreadSnapshot(snapshot) => (
+                    snapshot.thread_id,
+                    snapshot.status,
+                    snapshot.original_anchor,
+                ),
+                ReviewObjectV1::ThreadMerge(snapshot) => (
+                    snapshot.thread_id,
+                    snapshot.status,
+                    snapshot.original_anchor,
+                ),
+                _ => return Err(Error::Corrupt("review relation snapshot kind")),
+            };
         if threads.get(&entry.thread_id) != Some(&entry.snapshot)
-            || snapshot.thread_id != entry.thread_id
-            || status.is_some_and(|value| snapshot.status != value)
+            || thread_id != entry.thread_id
+            || status.is_some_and(|value| snapshot_status != value)
         {
             return Err(Error::Corrupt("review relation snapshot identity"));
         }
         let Some(subject) = subject else {
             return Ok(());
         };
-        super::review_audit::require_selected(closure, snapshot.original_anchor)?;
-        let ReviewObjectV1::Anchor(anchor) =
-            self.read_review_object(snapshot.original_anchor).await?
-        else {
+        super::review_audit::require_selected(closure, original_anchor)?;
+        let ReviewObjectV1::Anchor(anchor) = self.read_review_object(original_anchor).await? else {
             return Err(Error::Corrupt("review relation anchor kind"));
         };
         let matches = match subject {
@@ -208,12 +215,12 @@ impl Coordinator {
     ) -> Result<BTreeMap<jj_review::ReviewThreadId, ReviewObjectRef>> {
         let mut threads = BTreeMap::new();
         for (_, reference) in self.review_index_selections(root).await? {
-            let ReviewObjectV1::ThreadSnapshot(snapshot) =
-                self.read_review_object(reference).await?
-            else {
-                return Err(Error::Corrupt("review relation thread catalog kind"));
+            let thread_id = match self.read_review_object(reference).await? {
+                ReviewObjectV1::ThreadSnapshot(snapshot) => snapshot.thread_id,
+                ReviewObjectV1::ThreadMerge(snapshot) => snapshot.thread_id,
+                _ => return Err(Error::Corrupt("review relation thread catalog kind")),
             };
-            if threads.insert(snapshot.thread_id, reference).is_some() {
+            if threads.insert(thread_id, reference).is_some() {
                 return Err(Error::Corrupt("duplicate review thread selection"));
             }
         }

@@ -12,6 +12,7 @@ pub(super) struct LoadedReviewThread {
     pub reference: ReviewObjectRef,
     pub snapshot: ReviewThreadSnapshotV1,
     pub events: Vec<ReviewObjectRef>,
+    pub graph: Option<ReviewEventGraphV1>,
 }
 
 impl ReviewStoreSnapshot {
@@ -34,17 +35,46 @@ impl Coordinator {
             .lookup_thread(thread_id)
             .await?
             .ok_or(ReviewCommandError::NotFound("thread"))?;
-        let ReviewObjectV1::ThreadSnapshot(snapshot) = store.read_object(reference).await? else {
-            return Err(Error::Corrupt("review thread command selection").into());
-        };
-        let events = self
-            .load_review_events(store, snapshot.event_page_root)
-            .await?;
-        Ok(LoadedReviewThread {
-            reference,
-            snapshot: *snapshot,
-            events,
-        })
+        match store.read_object(reference).await? {
+            ReviewObjectV1::ThreadSnapshot(snapshot) => {
+                let events = self
+                    .load_review_events(store, snapshot.event_page_root)
+                    .await?;
+                Ok(LoadedReviewThread {
+                    reference,
+                    snapshot: *snapshot,
+                    events,
+                    graph: None,
+                })
+            }
+            ReviewObjectV1::ThreadMerge(snapshot) => {
+                let graph = self
+                    .load_review_event_graph(snapshot.event_graph_root)
+                    .await?;
+                Ok(LoadedReviewThread {
+                    reference,
+                    snapshot: ReviewThreadSnapshotV1 {
+                        schema_version: 1,
+                        thread_id: snapshot.thread_id,
+                        original_anchor: snapshot.original_anchor,
+                        comments: snapshot.comments,
+                        event_page_root: snapshot.event_graph_root,
+                        last_event_sequence: snapshot.thread_version,
+                        status: snapshot.status,
+                        selected_workflow_action: snapshot
+                            .selected_workflow_actions
+                            .first()
+                            .copied(),
+                        thread_version: snapshot.thread_version,
+                        content_version: snapshot.content_version,
+                        workflow_version: snapshot.workflow_version,
+                    },
+                    events: Vec::new(),
+                    graph: Some(graph),
+                })
+            }
+            _ => Err(Error::Corrupt("review thread command selection").into()),
+        }
     }
 
     pub(super) async fn load_review_comment(

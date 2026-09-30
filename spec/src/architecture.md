@@ -155,8 +155,13 @@ sentinel verification, shutdown and the lifetime filesystem lock while returning
 the existing owned `S3Store` contract. Older formats are rejected. Explicit
 LocalTrusted search entries start rebuildable background indexing through an
 installation-derived read-only principal. Authenticated shared serving, external
-authority, backup/restore and replication are deferred and are not first-release
-acceptance gates.
+authority and backup/restore remain deferred. A repository may explicitly
+configure one upstream for writable replication; server composition owns its
+bounded bidirectional worker and lifetime. The worker resolves its named
+credential into process memory, persists only issuer-bound peer checkpoints and
+never enters a foreground local read or mutation. Expanded pressure, browser,
+cold two-instance RustFS and deployment-topology qualification remain deferred
+under M10.8.
 
 The access policy is independent of transport. Authenticated HTTP and RPC keep
 repository bearer validation, while LocalTrusted HTTP and Unix RPC derive stable

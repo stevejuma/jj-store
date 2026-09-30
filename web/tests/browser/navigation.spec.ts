@@ -58,6 +58,7 @@ test("hash route restores snapshot and file through controls reload and browser 
   await expect(page.getByLabel("Access token", { exact: true })).toHaveValue(
     "",
   );
+  expect(new URL(page.url()).hash).toBe(deepHash);
   await page.getByLabel("Access token", { exact: true }).fill(token);
   await page.getByRole("button", { name: "Continue" }).click();
   await expect(

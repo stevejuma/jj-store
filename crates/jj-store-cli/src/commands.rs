@@ -23,6 +23,11 @@ pub enum Extension {
     /// Manage authenticated native JJ repositories
     #[command(long_about = include_str!("../../../docs/cli/store.md"), after_long_help = "Use 'jj store help -k commands' for the native command guide.")]
     Store(StoreArgs),
+    /// Synchronize and explicitly reconcile a local native repository
+    #[command(long_about = include_str!("../../../docs/cli/sync.md"))]
+    Sync(crate::sync_commands::SyncArgs),
+    /// Inspect configured writable-replica state
+    Replica(crate::sync_commands::ReplicaArgs),
 }
 #[derive(Clone, Debug, Args)]
 #[command(disable_help_subcommand = true)]
@@ -82,6 +87,10 @@ pub async fn run(
     let args = match command {
         Extension::Agent(args) => return crate::agent_commands::run(ui, helper, args).await,
         Extension::Review(args) => return crate::review_commands::run(ui, helper, args).await,
+        Extension::Sync(args) => return crate::sync_commands::run(ui, helper, args).await,
+        Extension::Replica(args) => {
+            return crate::sync_commands::run_replica(ui, helper, args).await;
+        }
         Extension::Store(args) => args,
     };
     let Some(command) = args.command else {
@@ -158,6 +167,45 @@ pub async fn run(
                 .map_err(error)?
             };
             complete_attachment(ui, helper, args.format, &mut attachment).await
+        }
+        StoreCommand::MigrateLocal {
+            unix_socket,
+            cache,
+            state_dir,
+        } => {
+            let loader = helper.workspace_loader()?;
+            let source = Connection::read(loader.repo_path()).map_err(error)?;
+            let socket = helper
+                .cwd()
+                .join(unix_socket)
+                .canonicalize()
+                .map_err(error)?;
+            let local = Connection::new_local(socket, source.repository).map_err(error)?;
+            let settings = helper.settings().clone();
+            let mut migration = crate::migration::Migration::open(
+                &settings,
+                loader.workspace_root().to_owned(),
+                loader.repo_path().to_owned(),
+                local,
+                cache.map(|path| helper.cwd().join(path)),
+                state_dir.map(|path| helper.cwd().join(path)),
+            )
+            .await
+            .map_err(error)?;
+            let result = migration.run(&settings).await.map_err(error)?;
+            presentation::result(
+                ui,
+                helper,
+                args.format,
+                &serde_json::to_value(&result).map_err(error)?,
+                &format!(
+                    "Migrated native repository {} at {} to LocalTrusted storage.\nWorkspace: {}\nRemote descriptor backup: {}\n",
+                    result.repository,
+                    result.path.display(),
+                    result.workspace,
+                    result.backup.display()
+                ),
+            )
         }
 
         StoreCommand::Status | StoreCommand::Doctor => {

@@ -5,6 +5,7 @@
 - [Identity and native codecs](identity.md)
 - [Object storage](object-store.md)
 - [Publication and recovery](publication.md)
+- [Local-first writable replication](replication.md)
 - [Agent activity and repository reviews](collaboration.md)
 - [Native JJ integration](jj-integration.md)
 - [CLI and server commands](cli.md)

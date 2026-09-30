@@ -21,6 +21,7 @@ jj-store-rpc.workspace = true
 jj-store-jj.workspace = true
 jj-store-model.workspace = true
 jj-store-object.workspace = true
+jj-store-replication.workspace = true
 jj-store-service.workspace = true
 jj-store-server.workspace = true
 jj-store-wal.workspace = true
@@ -36,6 +37,7 @@ tempfile = "3"
 dirs = "6"
 shlex = "1.3"
 tokio = { version = "1", features = ["rt-multi-thread", "time", "sync"] }
+tonic = { version = "0.14", features = ["transport"] }
 kingfisher-core = { git = "https://github.com/mongodb/kingfisher", rev = "63dccba231b6b01990c84319d25f92f49428a431" }
 kingfisher-rules = { git = "https://github.com/mongodb/kingfisher", rev = "63dccba231b6b01990c84319d25f92f49428a431" }
 kingfisher-scanner = { git = "https://github.com/mongodb/kingfisher", rev = "63dccba231b6b01990c84319d25f92f49428a431", default-features = false }

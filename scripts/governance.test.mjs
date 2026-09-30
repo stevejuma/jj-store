@@ -47,6 +47,16 @@ test("accepts_m9_delivery_tasks", () =>
     ),
     [],
   ));
+test("accepts_multi_digit_milestone_tasks", () =>
+  assert.deepEqual(
+    validateLedger(
+      fixture(
+        "| M10 | Planned | - | JST-GOV-001 | replication | continue | - |",
+        [],
+      ),
+    ),
+    [],
+  ));
 test("rejects_missing_evidence", () =>
   assert.match(
     validateLedger(fixture(undefined, [])).join(),

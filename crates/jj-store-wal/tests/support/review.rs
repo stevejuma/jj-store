@@ -136,6 +136,7 @@ pub async fn stage_thread(
                 actor: PrincipalId::new([4; 16]),
                 created_at_millis: 10,
                 previous_revision: None,
+                superseded_revisions: Vec::new(),
                 content: CommentRevisionContentV1::Visible { body },
             },
         )))

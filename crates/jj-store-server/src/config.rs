@@ -44,6 +44,12 @@ impl Config {
             tls.private_key = policy::outside_checkout(&base.join(&tls.private_key))?;
         }
         self.web_root = self.web_root.take().map(|root| base.join(root));
+        for replication in &mut self.replication {
+            replication.ca_certificate = replication
+                .ca_certificate
+                .take()
+                .map(|certificate| base.join(certificate));
+        }
         match &mut self.access {
             Access::Authenticated {
                 installation,
@@ -148,6 +154,7 @@ impl Config {
         if names.len() != self.backup.len() || self.backup.len() > 16 {
             return Err(Error::Config("backup target bounds or duplicate name"));
         }
+        validate_replication(&self.replication)?;
         Ok(())
     }
 
@@ -373,6 +380,65 @@ fn validate_credentials(reference: &CredentialReference) -> Result<()> {
             if !bounded_name(service) || !bounded_name(account) {
                 return Err(Error::Config("OS credential reference"));
             }
+        }
+    }
+    Ok(())
+}
+
+fn validate_replication(entries: &[Replication]) -> Result<()> {
+    if entries.len() > 8 {
+        return Err(Error::Config("replication repository limit"));
+    }
+    let mut repositories = std::collections::BTreeSet::new();
+    let mut credential_names = std::collections::BTreeSet::new();
+    for entry in entries {
+        let parsed = url::Url::parse(&entry.upstream)
+            .map_err(|_| Error::Config("replication upstream URL"))?;
+        let loopback = match parsed.host() {
+            Some(url::Host::Ipv4(ip)) => ip.is_loopback(),
+            Some(url::Host::Ipv6(ip)) => ip.is_loopback(),
+            _ => false,
+        };
+        let suffix = entry
+            .token_environment
+            .strip_prefix("JJ_STORE_REPLICATION_TOKEN_");
+        let credential = credential_names.insert(&entry.token_environment)
+            && entry.token_environment.len() <= 128
+            && suffix.is_some_and(|suffix| {
+                !suffix.is_empty()
+                    && suffix.bytes().all(|byte| {
+                        byte.is_ascii_uppercase() || byte.is_ascii_digit() || byte == b'_'
+                    })
+            });
+        let limits = entry.limits;
+        if !repositories.insert(entry.repository)
+            || !credential
+            || !parsed.username().is_empty()
+            || parsed.password().is_some()
+            || parsed.query().is_some()
+            || parsed.fragment().is_some()
+            || parsed.path() != "/"
+            || !(parsed.scheme() == "https"
+                || (parsed.scheme() == "http" && entry.insecure_loopback && loopback))
+            || !(1..=128).contains(&limits.max_batch_origins)
+            || !(1..=1_000_000).contains(&limits.max_closure_entries)
+            || !(1..=1_000_000).contains(&limits.max_objects_per_step)
+            || limits.max_bytes_per_step == 0
+            || limits.max_bytes_per_step > 2 * 1024 * 1024 * 1024
+            || limits.max_native_object_bytes < m::envelope::HEADER_LEN as u64
+            || limits.max_native_object_bytes > jj_store_object::staging::MAX_SINGLE_PUT
+            || !(10..=60_000).contains(&limits.poll_millis)
+            || !(1..=60_000).contains(&limits.retry_initial_millis)
+            || !(1..=3600).contains(&limits.retry_max_seconds)
+            || Duration::from_millis(limits.retry_initial_millis)
+                > Duration::from_secs(limits.retry_max_seconds)
+            || !(1..=1024).contains(&limits.circuit_failures)
+            || !(1..=3600).contains(&limits.circuit_cooldown_seconds)
+            || !(1..=300).contains(&limits.timeout_seconds)
+        {
+            return Err(Error::Config(
+                "replication repository, credential, transport or worker limits",
+            ));
         }
     }
     Ok(())

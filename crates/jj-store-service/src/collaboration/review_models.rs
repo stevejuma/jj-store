@@ -1,8 +1,8 @@
 use jj_store_model as m;
 use jj_store_wal::publication::{
     ArtifactAnchorV1, CommentId, ReviewActionId, ReviewBodyFormatV1, ReviewObjectId,
-    ReviewObjectRef, ReviewThreadEventKindV1, ReviewThreadId, ReviewThreadSnapshotV1,
-    ThreadStatusV1,
+    ReviewObjectRef, ReviewThreadEventKindV1, ReviewThreadId, ReviewThreadMergeV1,
+    ReviewThreadSnapshotV1, ThreadStatusV1,
 };
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -28,10 +28,12 @@ pub struct ReviewThreadSummary {
     pub event_page_root_id: ReviewObjectId,
     pub status: ThreadStatusV1,
     pub selected_workflow_action: Option<ReviewActionId>,
+    pub selected_workflow_actions: Vec<ReviewActionId>,
     pub thread_version: u64,
     pub content_version: u64,
     pub workflow_version: u64,
     pub comment_count: usize,
+    pub comment_conflict_count: usize,
     pub last_event_sequence: u64,
 }
 
@@ -75,7 +77,26 @@ pub struct ReviewComment {
     pub actor: m::PrincipalId,
     pub created_at_millis: i64,
     pub previous_revision_id: Option<ReviewObjectId>,
+    pub superseded_revision_ids: Vec<ReviewObjectId>,
     pub content: ReviewCommentContent,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+pub struct ReviewCommentVersion {
+    pub revision_id: ReviewObjectId,
+    pub author: m::PrincipalId,
+    pub actor: m::PrincipalId,
+    pub created_at_millis: i64,
+    pub previous_revision_id: Option<ReviewObjectId>,
+    pub superseded_revision_ids: Vec<ReviewObjectId>,
+    pub content: ReviewCommentContent,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+pub struct ReviewCommentConflict {
+    pub comment_id: CommentId,
+    pub parent_comment_id: Option<CommentId>,
+    pub alternatives: Vec<ReviewCommentVersion>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
@@ -96,6 +117,11 @@ pub enum ReviewEventKind {
         previous_revision_id: ReviewObjectId,
         revision_id: ReviewObjectId,
     },
+    CommentConflictResolved {
+        comment_id: CommentId,
+        superseded_revision_ids: Vec<ReviewObjectId>,
+        revision_id: ReviewObjectId,
+    },
     Resolved {
         action_id: ReviewActionId,
         reason: Option<String>,
@@ -109,6 +135,7 @@ pub enum ReviewEventKind {
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 pub struct ReviewEvent {
     pub event_id: ReviewObjectId,
+    pub causal_parent_ids: Vec<ReviewObjectId>,
     pub sequence: u64,
     pub actor: m::PrincipalId,
     pub accepted_at_millis: i64,
@@ -122,6 +149,7 @@ pub struct ReviewThreadDetail {
     pub thread: ReviewThreadSummary,
     pub anchor: ReviewAnchor,
     pub comments: Vec<ReviewComment>,
+    pub comment_conflicts: Vec<ReviewCommentConflict>,
     pub events: Vec<ReviewEvent>,
 }
 
@@ -138,11 +166,37 @@ pub(super) fn summary(
         event_page_root_id: value.event_page_root.id,
         status: value.status,
         selected_workflow_action: value.selected_workflow_action,
+        selected_workflow_actions: value.selected_workflow_action.into_iter().collect(),
         thread_version: value.thread_version,
         content_version: value.content_version,
         workflow_version: value.workflow_version,
         comment_count: value.comments.len(),
+        comment_conflict_count: 0,
         last_event_sequence: value.last_event_sequence,
+    }
+}
+
+pub(super) fn merged_summary(
+    reference: ReviewObjectRef,
+    value: &ReviewThreadMergeV1,
+    anchor: ArtifactAnchorV1,
+    comment_conflict_count: usize,
+) -> ReviewThreadSummary {
+    ReviewThreadSummary {
+        thread_id: value.thread_id,
+        snapshot_id: reference.id,
+        original_anchor_id: value.original_anchor.id,
+        anchor,
+        event_page_root_id: value.event_graph_root.id,
+        status: value.status,
+        selected_workflow_action: value.selected_workflow_actions.first().copied(),
+        selected_workflow_actions: value.selected_workflow_actions.clone(),
+        thread_version: value.thread_version,
+        content_version: value.content_version,
+        workflow_version: value.workflow_version,
+        comment_count: value.comments.len(),
+        comment_conflict_count,
+        last_event_sequence: value.thread_version,
     }
 }
 
@@ -173,6 +227,18 @@ pub(super) fn event_kind(value: ReviewThreadEventKindV1) -> ReviewEventKind {
         } => ReviewEventKind::CommentRevised {
             comment_id,
             previous_revision_id: previous_revision.id,
+            revision_id: revision.id,
+        },
+        ReviewThreadEventKindV1::CommentConflictResolved {
+            comment_id,
+            superseded_revisions,
+            revision,
+        } => ReviewEventKind::CommentConflictResolved {
+            comment_id,
+            superseded_revision_ids: superseded_revisions
+                .into_iter()
+                .map(|reference| reference.id)
+                .collect(),
             revision_id: revision.id,
         },
         ReviewThreadEventKindV1::Resolved { action_id, reason } => {

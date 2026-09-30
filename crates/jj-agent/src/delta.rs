@@ -16,7 +16,7 @@ pub enum AgentCatalogKind {
     Projections,
 }
 impl AgentCatalogKind {
-    fn accepts(self, value: AgentObjectRef) -> bool {
+    pub(crate) fn accepts(self, value: AgentObjectRef) -> bool {
         matches!(
             (self, value.kind),
             (Self::Sessions, AgentObjectKind::SessionSnapshot)
@@ -26,6 +26,7 @@ impl AgentCatalogKind {
                 | (Self::Relations, AgentObjectKind::RelationPage)
                 | (Self::Sources, AgentObjectKind::SourceState)
                 | (Self::Projections, AgentObjectKind::ProjectionCatalog)
+                | (_, AgentObjectKind::CatalogConflict)
         )
     }
 }

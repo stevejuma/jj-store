@@ -8,8 +8,8 @@ use jj_agent::{
 };
 use jj_review::{ReviewCatalogKey, ReviewCatalogKind, ReviewDeltaV1};
 use jj_store_model::{
-    EnvelopeDigest, EpochId, ObjectKey, OperationId, PrincipalId, PublicationId, RepositoryId,
-    RequestId,
+    EnvelopeDigest, EpochId, ObjectKey, OperationId, PrincipalId, PublicationId, ReplicaId,
+    RepositoryId, RequestId, WriterEpoch,
 };
 use jj_store_object::{
     ByteRange, Condition, Download, Key, Metadata, ObjectStore, StagedUpload, WriteOutcome,
@@ -239,7 +239,12 @@ async fn three_root_fixture() -> (
     put_native(&source_store, &native).await;
     let coordinator = coordinator(source_store, nodes.clone());
     coordinator
-        .initialize(EpochId::new([2; 16]), b"native-copy".to_vec())
+        .initialize_replica(
+            EpochId::new([2; 16]),
+            b"native-copy".to_vec(),
+            ReplicaId::new([7; 16]),
+            WriterEpoch::new([8; 16]),
+        )
         .await
         .unwrap();
     committed(
@@ -409,6 +414,11 @@ async fn native_copy_restores_code_agent_review_and_installs_manifest_last() {
     .unwrap();
     let snapshot = restored.recover(64).await.unwrap();
     assert_eq!(snapshot.manifest().published.0, 3);
+    let replication = restored
+        .read_replication_root(snapshot.manifest().replication_root.unwrap())
+        .await
+        .unwrap();
+    assert_eq!(replication.local_sequence, 3);
     let agent_root = snapshot
         .manifest()
         .domain_state(Domain::Agent)

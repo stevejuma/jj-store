@@ -293,17 +293,19 @@ export async function api(
       },
     });
   });
-  await page.route("**/v1/repositories?**", async (route) => {
-    const request = route.request();
-    expect(request.headers()["x-jj-store-protocol"]).toBe("1");
+  await page.route("**/v1/repositories?*", async (route) => {
+    const headers = route.request().headers();
+    expect(headers["x-jj-store-protocol"]).toBe("1");
     if (options.access === "local_trusted")
-      expect(request.headers()["authorization"]).toBeUndefined();
-    else expect(request.headers()["authorization"]).toBe(`Bearer ${token}`);
+      expect(headers["authorization"]).toBeUndefined();
+    else expect(headers["authorization"]).toBe(`Bearer ${token}`);
     await route.fulfill({
       json: {
         version: 1,
         generation: 1,
-        repositories: [{ id: repo, name: repo, permission: "admin" }],
+        repositories: [
+          { id: repo, name: "Local acceptance", permission: "admin" },
+        ],
         next_cursor: null,
       },
     });

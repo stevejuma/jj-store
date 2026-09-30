@@ -75,6 +75,41 @@ extend the selected native inventory only with complete verified closures that
 its typed artifacts strongly reference. Cold recovery verifies selected current
 and historical roots without Tantivy, Nostr or a second manifest.
 
+A format 2 manifest may also select a versioned replication root. Repositories
+without that optional root retain their existing publication behavior until the
+explicit seed upgrade. A replication-enabled repository records its local origin
+stream, accepted origin receipts and sparse causal prefixes in immutable COW
+records selected by the same manifest. Every authored native, AgentStore or
+ReviewStore publication stages one canonical origin envelope from the successful
+CAS base and selects its receipt and next stream prefix in the same manifest CAS
+as the content roots and WAL candidate. Receipt replay returns the already
+selected publication, and a failed candidate does not advance the accepted
+origin sequence.
+
+Cold recovery follows the selected replication root and verifies every receipt,
+origin key and digest, local delivery identity, predecessor chain, causal prefix
+and contiguous local stream before returning authority. The replication catalog
+does not replace the native inventory or any content root. Its local delivery
+position is destination-owned bookkeeping; the logical origin key and digest
+remain portable.
+
+Receiver publication is a distinct authorized path over the same coordinator.
+Object transfer may stage a digest-verified immutable closure but cannot select
+it. The receiver verifies that closure and every origin dependency, resolves a
+matching stable import receipt before mutation, topologically orders contiguous
+origin streams, reduces only unseen origins and selects their content effects,
+accepted-origin receipts, causal prefixes and one local WAL candidate in a
+single destination manifest CAS. A pure import preserves the original origin
+keys and digests and creates no authored origin. A duplicate-only batch returns
+the selected destination receipts without another WAL entry or state-version
+advance. Code heads use the configured pinned JJ operation-ancestry reducer;
+AgentStore and ReviewStore roots use their typed accepted-fact reducers. Each
+reducer derives only immutable objects and catalog selections from the imported
+delta and authored root. It does not invoke a normalizer, review command,
+controller, hook or external adapter. All changed collaboration roots and their
+derived relation/status catalogs remain part of the same destination manifest
+CAS as the accepted-origin receipts.
+
 Agent and review roots are typed `AgentRootV1` and `ReviewRootV1` records rather
 than caller-supplied opaque payloads. Their catalog and selected object edges
 use repository-bound immutable record envelopes. Staging validates canonical
@@ -210,18 +245,19 @@ exact bounded closure from selected catalogs rather than storage listing. It
 includes every retained native inventory entry, catalog page/value, WAL record,
 receipt, settings record, checkpoint and current or historical AgentStore and
 ReviewStore root/object dependency. Review-owned AgentStore references remain
-part of the copied closure. Stored native objects and immutable control records
-are conditionally created before the canonical selected manifest is installed as
-the final object.
+part of the copied closure. When present, the selected replication root, its
+accepted-origin catalog pages, origin receipts and original envelopes are also
+retained. Stored native objects and immutable control records are conditionally
+created before the canonical selected manifest is installed as the final object.
 
 The destination may be empty or already contain byte-identical immutable
 objects. Different bytes under any selected key fail closed. A lost manifest
 write acknowledgement resolves only by reading back the exact bytes. After the
 manifest is visible, a coordinator backed by the destination's native dependency
-source performs cold recovery and must reproduce the source manifest digest and
-all three roots. History, object and byte budgets plus the coordinator timeout
-bound the operation. This primitive introduces no list, delete, remap,
-promotion, backup or migration authority.
+source and the same operation-head reducer performs cold recovery and must
+reproduce the source manifest digest and all three roots. History, object and
+byte budgets plus the coordinator timeout bound the operation. This primitive
+introduces no list, delete, remap, promotion, backup or migration authority.
 
 Selected settings are readable from a checked ManifestSnapshot using an owned
 storage accessor, so request-scoped guards can verify policy without

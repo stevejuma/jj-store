@@ -31,6 +31,7 @@ pub struct PreparedServer {
     concurrent: usize,
     timeout: Duration,
     search: crate::search::PreparedSearch,
+    replication: crate::replication::PreparedReplication,
     storage: AuthoritativeStorage,
     _state_lock: Option<File>,
 }
@@ -96,11 +97,39 @@ impl PreparedServer {
             object_bytes: config.limits.max_blob_bytes
                 + jj_store_model::envelope::HEADER_LEN as u64,
         };
+        let timeout = Duration::from_secs(config.limits.request_seconds);
+        let search_access = match &config.access {
+            Access::Authenticated { .. } => crate::search::SearchAccess::Authenticated,
+            Access::LocalTrusted { installation, .. } => crate::search::SearchAccess::LocalTrusted(
+                Identity::load(installation)?.principal(b"search-index"),
+            ),
+        };
+        let (search, indexes) = crate::search::PreparedSearch::new(
+            &host,
+            &state,
+            &config.search,
+            &config.limits,
+            search_access,
+            crate::search::environment,
+        )?;
+        let search_health = indexes
+            .iter()
+            .map(|(repository, index)| (*repository, index.health.clone()))
+            .collect();
+        let replication_principal = Identity::load(installation)?.principal(b"replication-worker");
+        let replication = crate::replication::PreparedReplication::new(
+            &host,
+            storage.store(),
+            &config.replication,
+            replication_principal,
+            search_health,
+        )?;
         let rpc = match &config.access {
             Access::Authenticated { .. } => PreparedRpc::Shared(
                 NativeRpc::hosted(host.clone(), rpc_limits)
                     .map_err(|_| Error::Config("RPC limits"))?
-                    .with_registry(registry.clone()),
+                    .with_registry(registry.clone())
+                    .with_replication_controls(replication.controls()),
             ),
             Access::LocalTrusted {
                 installation,
@@ -133,7 +162,8 @@ impl PreparedServer {
                             owner_uid,
                         )
                         .map_err(|_| Error::Config("local RPC access"))?
-                        .with_registry(registry.clone()),
+                        .with_registry(registry.clone())
+                        .with_replication_controls(replication.controls()),
                         listener,
                         socket: SocketGuard(rpc_socket.clone()),
                     })
@@ -142,21 +172,6 @@ impl PreparedServer {
                 return Err(Error::Config("local trusted RPC requires Unix"));
             }
         };
-        let timeout = Duration::from_secs(config.limits.request_seconds);
-        let search_access = match &config.access {
-            Access::Authenticated { .. } => crate::search::SearchAccess::Authenticated,
-            Access::LocalTrusted { installation, .. } => crate::search::SearchAccess::LocalTrusted(
-                Identity::load(installation)?.principal(b"search-index"),
-            ),
-        };
-        let (search, indexes) = crate::search::PreparedSearch::new(
-            &host,
-            &state,
-            &config.search,
-            &config.limits,
-            search_access,
-            crate::search::environment,
-        )?;
         let http_access = match &config.access {
             Access::Authenticated { .. } => HttpAccess::Authenticated,
             Access::LocalTrusted {
@@ -239,6 +254,7 @@ impl PreparedServer {
             concurrent: config.limits.concurrent_requests,
             timeout,
             search,
+            replication,
             storage,
             _state_lock: state_lock,
         })
@@ -248,6 +264,7 @@ impl PreparedServer {
     }
     pub async fn run(self, shutdown: impl Future<Output = ()> + Send + 'static) -> Result<()> {
         let search = self.search.start();
+        let replication = self.replication.start();
         let (tx, rx) = tokio::sync::oneshot::channel();
         let (mut router, local_rpc) = match self.rpc {
             PreparedRpc::Shared(rpc) => (
@@ -289,9 +306,10 @@ impl PreparedServer {
                 }
             }
         };
+        let replication = replication.shutdown().await;
         let stopped = search.shutdown().await;
         let storage = self.storage.shutdown().await;
-        result.and(stopped).and(storage)
+        result.and(replication).and(stopped).and(storage)
     }
 }
 
