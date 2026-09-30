@@ -6,7 +6,6 @@
   import CommunityProjectsRepositoryFiles from "../community-projects/CommunityProjectsRepositoryFiles.svelte";
   import StoreAgentSessions from "../store-collaboration/StoreAgentSessions.svelte";
   import StoreReviewThreads from "../store-collaboration/StoreReviewThreads.svelte";
-  import StoreRepositoryDetails from "./StoreRepositoryDetails.svelte";
   import * as Alert from "@lapismd/design-core/shadcn/alert";
   import { Button } from "@lapismd/design-core/shadcn/button";
   let {
@@ -119,60 +118,6 @@
         onLoadMoreFiles={() => controller.actions.loadMore("detail")}
       />{/if}
   {/snippet}
-  {#snippet details(page)}
-    <StoreRepositoryDetails
-      {controller}
-      title={page === "files"
-        ? "Files"
-        : page === "log"
-          ? "JJ Log"
-          : page === "oplog"
-            ? "Op Log"
-            : page[0]!.toUpperCase() + page.slice(1)}
-    />
-    {#if !selectedId && (state.backups.length || state.conflictCount !== null)}
-      <dl class="store-repository-application__details">
-        <dt>Snapshot</dt>
-        <dd>
-          {state.route.snapshotOperationId?.slice(0, 12) ?? "Choose a head"}
-        </dd>
-        {#each state.backups as backup (backup.target)}
-          <dt>Backup · {backup.target}</dt>
-          <dd>
-            Transfer: {backup.transfer.state} · {backup.transfer
-              .completed_objects}
-            objects<br />
-            Last verified restore point:
-            {backup.last_verified_restore_point
-              ? `${backup.last_verified_restore_point.operation.slice(0, 12)} at position ${backup.last_verified_restore_point.position}`
-              : "none"}
-          </dd>
-        {/each}
-        {#if state.conflictCount !== null}<dt>Conflicts</dt>
-          <dd>{state.conflictCount}</dd>{/if}
-      </dl>
-    {/if}
-    {#if state.comparisonParents.length}<Alert.Root>
-        <Alert.Title>Choose comparison parent</Alert.Title>
-        <Alert.Description
-          >This merge operation has multiple recorded predecessors.</Alert.Description
-        >
-        {#each state.comparisonParents as parent}<Button
-            variant="outline"
-            onclick={() => controller.actions.selectComparisonParent(parent)}
-            >{parent.slice(0, 12)}</Button
-          >{/each}
-      </Alert.Root>{/if}
-    {#if state.status.error}<Alert.Root variant="destructive">
-        <Alert.Title>Repository request failed</Alert.Title>
-        <Alert.Description>{state.status.error}</Alert.Description>
-        {#if state.status.error.includes("index rebuild required")}<Button
-            variant="outline"
-            onclick={() => controller.actions.prepareIndex()}
-            >Prepare index</Button
-          >{/if}
-      </Alert.Root>{/if}
-  {/snippet}
 </StoreApplication>
 
 <style>
@@ -184,14 +129,5 @@
     flex-wrap: wrap;
     gap: 0.5rem;
     padding-block-start: 0.75rem;
-  }
-  .store-repository-application__details {
-    padding: 0.75rem;
-    font-size: var(--community-text-body);
-  }
-  .store-repository-application__details dd {
-    margin: 0 0 1rem;
-    color: var(--muted-foreground);
-    overflow-wrap: anywhere;
   }
 </style>

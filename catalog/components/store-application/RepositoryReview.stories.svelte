@@ -119,7 +119,7 @@
       );
       await expect(getComputedStyle(header).borderBottomWidth).toBe("1px");
     }
-    await userEvent.click(canvas.getByRole("button", { name: "Op Log" }));
+    await userEvent.click(canvas.getByRole("tab", { name: "Op Log" }));
     const status = canvas.getByRole("status");
     await expect(getComputedStyle(status).borderBottomWidth).toBe("1px");
     await expect(getComputedStyle(status).backgroundColor).not.toBe(
@@ -459,7 +459,11 @@
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     for (const label of ["Branches", "JJ Log", "Op Log"]) {
-      await userEvent.click(canvas.getByRole("button", { name: label }));
+      await userEvent.click(
+        canvas.getByRole("tab", {
+          name: label === "JJ Log" ? "Commits" : label,
+        }),
+      );
       await expectColumnCanvasFillsBody(canvasElement);
       await expect(
         canvasElement.querySelector('[data-ui-part="toolbar"]'),

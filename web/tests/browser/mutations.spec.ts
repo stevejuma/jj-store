@@ -95,7 +95,7 @@ test("repository command preview and apply retain the captured head and request"
       })),
     )
     .toEqual({ overflow: "", pointerEvents: "" });
-  await page.getByRole("button", { name: "JJ Log", exact: true }).click();
+  await page.getByRole("tab", { name: "Commits", exact: true }).click();
   await expect(
     page.getByRole("list", { name: "Revision graph" }),
   ).toBeVisible();
@@ -146,7 +146,7 @@ test("text file edit previews one request then routes to the renamed committed f
       bodies.push(request.postDataJSON());
   });
   await connect(page);
-  await page.getByRole("tab", { name: "Files" }).click();
+  await page.getByRole("tab", { name: "Overview" }).click();
   await page.getByRole("button", { name: "Open file bin" }).click();
   await page.getByRole("button", { name: "Edit", exact: true }).click();
   const editor = page.getByRole("region", { name: "Edit bin" });

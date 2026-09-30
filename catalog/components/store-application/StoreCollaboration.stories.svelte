@@ -182,9 +182,10 @@
     const details = canvas.getByRole("complementary", {
       name: "Repository details",
     });
-    await expect(within(details).getByText("Selected change")).toBeVisible();
+    await expect(within(details).queryByText("Selected change")).toBeNull();
+    await expect(within(details).getByText("JJ Log/Changes")).toBeVisible();
     await expect(
-      within(details).getByRole("button", { name: "Create bookmark" }),
+      within(details).getByRole("button", { name: "Add change" }),
     ).toBeVisible();
     await userEvent.click(canvas.getByRole("button", { name: "src/lib.rs" }));
     await expect(

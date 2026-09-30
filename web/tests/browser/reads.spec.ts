@@ -84,7 +84,7 @@ test("changed-file collections consume commit, group and path cursors", async ({
 
   phase = "operation";
   pathCursors.length = 0;
-  await page.getByRole("button", { name: "Op Log", exact: true }).click();
+  await page.getByRole("tab", { name: "Op Log", exact: true }).click();
   await page
     .getByRole("button", { name: "content fixture", exact: true })
     .click();
@@ -125,7 +125,7 @@ test("native_graphs_files_and_source_rendering_are_accessible", async ({
   ).toBeVisible();
   await page.getByRole("button", { name: "bin", exact: true }).click();
   await expect(page.getByText("window.sourceExecuted=true")).toBeVisible();
-  await page.getByRole("tab", { name: "Files" }).click();
+  await page.getByRole("tab", { name: "Overview" }).click();
   await expect(
     page.getByRole("table", { name: "Repository files" }),
   ).toBeVisible();
@@ -136,7 +136,7 @@ test("native_graphs_files_and_source_rendering_are_accessible", async ({
   expect(
     await page.evaluate(() => Reflect.get(window, "sourceExecuted")),
   ).toBeUndefined();
-  await page.getByRole("button", { name: "Op Log", exact: true }).click();
+  await page.getByRole("tab", { name: "Op Log", exact: true }).click();
   await page
     .getByRole("button", { name: "content fixture", exact: true })
     .click();
@@ -219,7 +219,7 @@ test("branch targets scope native history and expose repository decorations", as
   await expect.poll(() => revsets.at(-1)).toBe(`::${commit}`);
   expect(new URL(page.url()).hash).toContain(`commit=${commit}`);
 
-  await page.getByRole("button", { name: "Op Log", exact: true }).click();
+  await page.getByRole("tab", { name: "Op Log", exact: true }).click();
   const operationGraph = page.getByRole("list", { name: "Operation graph" });
   await expect(
     operationGraph.locator('[data-chip-tone="success"]', {
@@ -257,9 +257,11 @@ test("multiple_heads_require_choice_and_events_preserve_the_selected_view", asyn
   await expect(
     page.getByRole("complementary", { name: "Repository details" }),
   ).toBeVisible();
+  const rail = page.getByRole("complementary", { name: "Repository details" });
+  await expect(rail.getByText("Branches/Bookmarks")).toBeVisible();
   await expect(
-    page.getByRole("region", { name: "Repository context" }),
-  ).toContainText("Local acceptance");
+    rail.getByRole("region", { name: "Repository context" }),
+  ).toHaveCount(0);
   expect(new URL(page.url()).hash).toContain(`at_op=${operation}`);
 });
 test("disconnect_discards_inflight_history_and_revocation_clears_data", async ({
@@ -363,7 +365,7 @@ test("graph_and_directory_pages_retain_exact_snapshots_and_query_context", async
     }
     await route.fulfill({ json: result });
   });
-  await page.getByRole("tab", { name: "Files" }).click();
+  await page.getByRole("tab", { name: "Overview" }).click();
   await expect(
     page.getByRole("table", { name: "Repository files" }),
   ).toBeVisible();
@@ -415,7 +417,7 @@ test("repository directories load lazily and flat views request recursive paths"
   });
 
   await connect(page);
-  await page.getByRole("tab", { name: "Files" }).click();
+  await page.getByRole("tab", { name: "Overview" }).click();
   await expect(
     page.getByRole("button", { name: "src", exact: true }),
   ).toHaveAttribute("aria-expanded", "false");
@@ -563,7 +565,7 @@ test("new_file_selection_discards_an_older_inflight_preview", async ({
     });
   });
   await connect(page);
-  await page.getByRole("tab", { name: "Files" }).click();
+  await page.getByRole("tab", { name: "Overview" }).click();
   await page.getByRole("button", { name: "Open file file-0" }).click();
   await started;
   await page.getByRole("button", { name: "file-1", exact: true }).click();

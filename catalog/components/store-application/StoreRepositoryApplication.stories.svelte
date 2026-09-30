@@ -46,13 +46,13 @@
     await userEvent.click(
       canvas.getByRole("button", { name: "Collapse Branches column" }),
     );
-    for (const name of ["Activity", "Workspaces", "Review", "Commits"]) {
+    for (const name of ["Branches", "Commits", "Op Log", "Agents", "Reviews"]) {
       await userEvent.click(canvas.getByRole("tab", { name }));
       await expect(
         canvas.queryByRole("list", { name: "Repository breadcrumb" }),
       ).not.toBeInTheDocument();
     }
-    await userEvent.click(canvas.getByRole("tab", { name: "Files" }));
+    await userEvent.click(canvas.getByRole("tab", { name: "Overview" }));
     const breadcrumb = canvas.getByRole("list", {
       name: "Repository breadcrumb",
     });
@@ -111,15 +111,15 @@
       ),
     ).toBe(persistedTreeWidth);
 
-    await userEvent.click(canvas.getByRole("button", { name: "Branches" }));
+    await userEvent.click(canvas.getByRole("tab", { name: "Branches" }));
     await expect(
       canvas.getByRole("button", { name: "Expand Branches column" }),
     ).toBeVisible();
-    await userEvent.click(canvas.getByRole("button", { name: "JJ Log" }));
+    await userEvent.click(canvas.getByRole("tab", { name: "Commits" }));
     await expect(
       canvas.getByRole("button", { name: "Collapse JJ Log column" }),
     ).toBeVisible();
-    await userEvent.click(canvas.getByRole("button", { name: "Branches" }));
+    await userEvent.click(canvas.getByRole("tab", { name: "Branches" }));
     await expect(
       canvas.getByRole("button", { name: "Expand Branches column" }),
     ).toBeVisible();
@@ -357,7 +357,7 @@
       canvasElement.querySelectorAll(".community-bookmark-card").length,
     ).toBeLessThan(40);
 
-    await userEvent.click(canvas.getByRole("button", { name: "JJ Log" }));
+    await userEvent.click(canvas.getByRole("tab", { name: "Commits" }));
     await waitFor(() =>
       expect(
         canvasElement.querySelectorAll("[data-revision-id]").length,

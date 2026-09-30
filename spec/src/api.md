@@ -828,3 +828,9 @@ bookmark inspection and is passed to native log queries. Complete workspace
 discovery follows pinned reference continuations; it never publishes, reconciles
 heads or reads client working-copy files. No HTTP or generated DTO changes are
 required for this presentation.
+
+Repository tab labels and right-rail navigation are presentation-only. Overview
+retains the existing `files` route, Commits retains `log`, and all six
+destinations preserve their operation and workspace context through existing
+controller actions. Responsive overflow neither changes the route grammar nor
+publishes native state.

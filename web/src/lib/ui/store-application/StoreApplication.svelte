@@ -6,8 +6,9 @@
     createLocalStorageAppShellLayoutPersistence,
     type AppShellDisplayMode,
   } from "@lapismd/design-core/shell";
-  import { ScrollArea } from "@lapismd/design-core/shadcn/scroll-area";
-  import * as Tabs from "@lapismd/design-core/shadcn/tabs";
+  import StoreRepositoryTabs from "./StoreRepositoryTabs.svelte";
+  import StoreRepositoryNavigation from "./StoreRepositoryNavigation.svelte";
+  import { repositorySections } from "./repository-sections.js";
   import { onDestroy, setContext, untrack, type Snippet } from "svelte";
   import "./store-application.css";
   import { workspaceNavigationKey } from "./workspace-navigation.js";
@@ -24,6 +25,7 @@
   import type { StoreController } from "../../controller/contracts.js";
   import CommunityProfileMenu from "../community-profile-menu/CommunityProfileMenu.svelte";
   import StoreRepositoryDetails from "./StoreRepositoryDetails.svelte";
+  import StoreRepositoryNotices from "./StoreRepositoryNotices.svelte";
   import StoreSearchOverlay from "../store-search/StoreSearchOverlay.svelte";
   import StoreSettings from "../store-settings/StoreSettings.svelte";
   import StoreSettingsNavigation from "../store-settings/StoreSettingsNavigation.svelte";
@@ -40,14 +42,12 @@
     displayMode = "auto",
     layoutStorage,
     children,
-    details,
   }: {
     controller: StoreController;
     initiallyCollapsed?: boolean;
     displayMode?: AppShellDisplayMode;
     layoutStorage?: Storage;
     children?: Snippet<[StorePage, string]>;
-    details?: Snippet<[StorePage, string]>;
   } = $props();
   const storage = untrack(() => resolveLayoutStorage(layoutStorage));
   const initialLayout = untrack(() => loadRepositoryShellLayout(storage));
@@ -92,25 +92,8 @@
       shell.left.collapsed &&
       !shell.left.previewed,
   );
-  const pages: CommunityNavigationItemModel[] = [
-    { id: "branches", label: "Branches", kind: "branches" },
-    { id: "log", label: "JJ Log", kind: "log" },
-    { id: "oplog", label: "Op Log", kind: "oplog" },
-    { id: "agents", label: "Agents", kind: "agents" },
-    { id: "reviews", label: "Reviews", kind: "reviews" },
-  ];
-  const bodyTabs: readonly {
-    page: StorePage;
-    label: string;
-  }[] = [
-    { page: "agents", label: "Activity" },
-    { page: "files", label: "Files" },
-    { page: "branches", label: "Workspaces" },
-    { page: "reviews", label: "Review" },
-    { page: "log", label: "Commits" },
-  ];
   const navigation: CommunityNavigationModel = $derived({
-    primaryItems: pages,
+    primaryItems: [],
     sections: [
       {
         id: "repositories",
@@ -124,16 +107,13 @@
     ],
   });
   const title = $derived(
-    current.page === "files"
-      ? "Files"
-      : (pages.find((p) => p.id === current.page)?.label ?? "Repository"),
+    repositorySections.find((section) => section.page === current.page)
+      ?.label ?? "Repository",
   );
-  const bodyTitle = $derived(
-    bodyTabs.find((tab) => tab.page === current.page)?.label ?? title,
-  );
-  const activeBodyTab = $derived(
-    bodyTabs.some((tab) => tab.page === current.page) ? current.page : "",
-  );
+  function selectPage(page: StorePage) {
+    controller.actions.selectPage(page);
+    if (shell.mobile.resolvedMode === "mobile") shell.mobile.showMain();
+  }
   function select(item: CommunityNavigationItemModel) {
     if (item.kind === "repository") controller.actions.openRepository(item.id);
     else controller.actions.selectPage(item.kind);
@@ -175,7 +155,7 @@
   <AppShell.Sidebar
     side="left"
     label={settingsOpen ? "Settings sidebar" : "Repository navigation sidebar"}
-    mobileLabel={settingsOpen ? "Settings" : "Repositories and history"}
+    mobileLabel={settingsOpen ? "Settings" : "Repositories"}
     resizeLabel="Resize repository navigation sidebar"
     closeable
     revealOnEdgeHover
@@ -188,9 +168,7 @@
         onClose={closeSettings}
       />{:else}<CommunityNavigation
         model={navigation}
-        activeItemId={current.page === "files"
-          ? current.repository
-          : current.page}
+        activeItemId={current.repository}
         {compact}
         onSelect={select}
         onSearch={() => (searchOpen = true)}
@@ -237,29 +215,7 @@
           : undefined}
       >
         <div class="store-application__body-frame">
-          <div class="store-application__tabs">
-            <ScrollArea
-              type="hover"
-              orientation="horizontal"
-              class="store-application__tabs-scroll-area"
-            >
-              <Tabs.Root value={activeBodyTab}>
-                <Tabs.List
-                  class="store-application__tab-list"
-                  aria-label="Repository sections"
-                >
-                  {#each bodyTabs as tab (tab.page)}
-                    <Tabs.Trigger
-                      class="store-application__tab-trigger"
-                      value={tab.page}
-                      onclick={() => controller.actions.selectPage(tab.page)}
-                      >{tab.label}</Tabs.Trigger
-                    >
-                  {/each}
-                </Tabs.List>
-              </Tabs.Root>
-            </ScrollArea>
-          </div>
+          <StoreRepositoryTabs page={current.page} onSelect={selectPage} />
           <header
             class="store-application__section-header"
             aria-label="Workspace section header"
@@ -270,13 +226,14 @@
             </div>
             <StoreWorkspacePicker {controller} disabled={workspaceBlocked} />
           </header>
+          <StoreRepositoryNotices {controller} />
           <div class="store-application__body-regions">
             {#key current.repository + current.page}
               {#if children}{@render children(
                   current.page,
                   current.repository,
                 )}{:else}<p class="store-application__placeholder">
-                  {current.repository} · {bodyTitle}
+                  {current.repository} · {title}
                 </p>{/if}
             {/key}
           </div>
@@ -292,15 +249,10 @@
       resizeLabel="Resize repository details"
       closeable
     >
-      <AppShell.Sidebar.Body
-        >{#if details}{@render details(
-            current.page,
-            current.repository,
-          )}{:else}<StoreRepositoryDetails
-            {controller}
-            {title}
-          />{/if}</AppShell.Sidebar.Body
-      >
+      <AppShell.Sidebar.Body>
+        <StoreRepositoryDetails {controller} />
+        <StoreRepositoryNavigation page={current.page} onSelect={selectPage} />
+      </AppShell.Sidebar.Body>
     </AppShell.Sidebar>{/if}
 </CommunityAppShell>
 {#if !settingsOpen}<StoreSearchOverlay

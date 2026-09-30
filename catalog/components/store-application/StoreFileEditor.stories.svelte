@@ -26,7 +26,7 @@
         "true",
       ),
     );
-    await userEvent.click(canvas.getByRole("tab", { name: "Files" }));
+    await userEvent.click(canvas.getByRole("tab", { name: "Overview" }));
     await userEvent.click(canvas.getByRole("button", { name: "README.md" }));
     const metadata = canvas.getByRole("region", {
       name: "Selected file metadata",

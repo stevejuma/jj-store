@@ -12,7 +12,7 @@ supply interchangeable sources. Deterministic fixtures remain catalog-only.
 | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | JST-UI-001 | The catalog MUST build and run independently using registry dependencies, deterministic fixtures, isolated story state, runtime diagnostics and blocking interaction/accessibility checks.                                                                                                                                                                                                                                                                                                                                                 |
 | JST-UI-002 | The shell MUST directly adapt Community shell/navigation composition and preserve desktop/mobile, sidebar, header, focus and navigation mechanics using public Design Core exports.                                                                                                                                                                                                                                                                                                                                                        |
-| JST-UI-003 | Branches, JJ Log and Op Log MUST reuse Community graph/row/file/diff compositions, preserve native identities and conflicting targets, support fixture-only drill-down without transport or mutation capabilities, and expose selection-specific Community-styled right-rail context and actions.                                                                                                                                                                                                                                          |
+| JST-UI-003 | Branches, JJ Log and Op Log MUST reuse Community graph/row/file/diff compositions, preserve native identities and conflicting targets, support fixture-only drill-down without transport or mutation capabilities, and expose a Community-styled page heading and create action in the right rail while selected native detail remains in the body.                                                                                                                                                                                        |
 | JST-UI-004 | The complete catalog application MUST expose a typed state/actions controller with independent in-memory navigation, repository snapshots, file contents and profile actions, using copied Community file-browser and footer compositions without backend access.                                                                                                                                                                                                                                                                          |
 | JST-UI-005 | The served browser MUST use the reviewed shell and repository components through an authenticated asynchronous controller with cursor paging, representative page and detail loading skeletons, explicit snapshot refresh and typed hash restoration.                                                                                                                                                                                                                                                                                      |
 | JST-UI-006 | Large repository collections MUST use bounded virtual rows, all resizable shell/canvas regions MUST persist versioned layout state, and catalog stories MUST exercise the production components.                                                                                                                                                                                                                                                                                                                                           |
@@ -23,6 +23,7 @@ supply interchangeable sources. Deterministic fixtures remain catalog-only.
 | JST-UI-011 | Authenticated connection MUST request one manual token, keep it only in memory, discover all currently authorized repositories, restore an ID-based deep link or show a chooser, and cancel requests, SSE and protected caches when the token is replaced, revoked or disconnected.                                                                                                                                                                                                                                                        |
 | JST-UI-012 | The profile menu MUST open a transient Settings destination with Local service, Repository and Search sections; replace repository navigation/content/actions/details while open; preserve the unchanged repository route and snapshot on return; keep its destination and selected section out of URL, browser history and storage; render accessible icon-only settings navigation when the desktop sidebar is collapsed; refresh advertised search health explicitly; and prepare only a lag-reported or explicitly selected operation. |
 | JST-UI-013 | Repository pages MUST expose a Community-style section header after the body tabs with a searchable workspace Command View; workspace context MUST use the exact native name, survive URL/history restoration at a pinned operation, preserve shared commit identities and keep operation/collaboration history repository-wide.                                                                                                                                                                                                           |
+| JST-UI-014 | Repository view navigation MUST live in the Community-styled right rail beneath its page heading and create action, with no additional metadata or action panels; body tabs MUST present Overview first, followed by Branches, Commits, Op Log, Agents and Reviews, retain their pill styling, and move trailing tabs into an accessible dropdown when width is limited without changing route or workspace context.                                                                                                                       |
 
 The production controller completes bootstrap before rendering connection
 choices. One ready LocalTrusted catalog entry opens without a token, several
@@ -93,10 +94,10 @@ strings render as data; file/diff controls retain public Design Core semantics.
 
 Community's repository file tree, branch picker, source viewer and profile
 footer are production-owned under `web/src/lib` and imported by Storybook.
-Choosing a repository opens its Files view. Bookmarks and native changes resolve
-to explicit snapshots; divergent changes and conflicted bookmarks require a
-target choice. Back/Forward restores repository, page, snapshot and file
-selection. Catalog account actions only change fixture identity. Production
+Choosing a repository opens its Overview view. Bookmarks and native changes
+resolve to explicit snapshots; divergent changes and conflicted bookmarks
+require a target choice. Back/Forward restores repository, page, snapshot and
+file selection. Catalog account actions only change fixture identity. Production
 connection state replaces the fixture account when the HTTP controller is used.
 The file preview presents the selected path in its labelled content header and
 keeps the source Code Block scoped to file bytes and language highlighting;
@@ -201,20 +202,23 @@ Op Log omit the redundant body title bar; their Column Canvas headers identify
 the views. Their shell body is a fixed, non-scrolling region; only each Column
 Canvas body scrolls vertically. Mobile retains navigation/history/sidebar
 controls without duplicating the page title. The right details rail inherits the
-shell background with no visible border. It omits a redundant Details header and
+shell background with no visible border. It omits a redundant shell header and
 close icon because the application toolbar already owns the sidebar toggle. Its
-body begins with Community's compact context heading, such as
-`Branches/Bookmarks`, plus the available create action at the end.
+body begins with Community's compact page heading, such as `Branches/Bookmarks`,
+plus the available create action at the end. The Details navigation menu follows
+it; repository/source/snapshot summaries, selected metadata and secondary action
+panels are absent from the rail. Selected native content remains in the body and
+other commands remain in Repository actions. Comparison-parent choices and
+request errors appear in the main body.
 
-Repository pages place Community-styled `Activity`, `Files`, `Workspaces`,
-`Review` and `Commits` tabs at the top of the body. They route to the existing
-agent-session, file, branch/workspace, review-thread and JJ-log views. Op Log
-remains available from repository navigation. The repository/page/file
-breadcrumb is removed from the application header and rendered in the body below
-these tabs only while Files is active, immediately above Files content. The
-breadcrumb has no bottom border, is rooted at the current repository and retains
-directory and selected-file navigation. Activity, Workspaces, Review, Commits
-and Op Log do not render it.
+Repository pages place Community-styled `Overview`, `Branches`, `Commits`,
+`Op Log`, `Agents` and `Reviews` tabs at the top of the body. They route to the
+existing Files, Branches, JJ Log, Op Log, Agents and Reviews destinations,
+respectively. Trailing tabs move into More when width is limited. The repository
+breadcrumb is rendered in the body below these tabs only while Overview is
+active, immediately above its file content. The breadcrumb has no bottom border,
+is rooted at the current repository and retains directory and selected-file
+navigation. Branches, Commits, Op Log, Agents and Reviews do not render it.
 
 The repository file tree is a shell body-left sidebar with a full-height
 divider, small inner padding, keyboard-resizable width and the shared file
@@ -478,3 +482,22 @@ visual-pending.
 The picker is disabled while a text-file draft is being edited or a mutation is
 previewing, prepared, applying or awaiting an unknown outcome, preserving the
 draft and stable request identity until that flow is finished.
+
+## Repository destinations and tab overflow
+
+The left sidebar retains repository discovery and search. Branches, JJ Log, Op
+Log, Agents and Reviews move into a Details menu below the right-rail page
+heading and create action, using Community repository-rail icon rows and
+current-page semantics. Settings replaces that rail as before. Selecting a view
+on mobile returns to the main content stage.
+
+The Workspace section header has no top or bottom margin and retains its
+horizontal inset.
+
+Body tabs use the labels Overview, Branches, Commits, Op Log, Agents and Reviews
+in that order. Overview is the existing Files destination; its native file
+browser and legacy `files` hash remain intact. Width measurement follows the
+repository-document tabs: keep a visible leading prefix, move trailing tabs to
+More, preserve the selected hidden destination, and restore tabs when width
+returns. Pill colors, shape and typography stay unchanged; keyboard selection
+and dropdown focus remain available.

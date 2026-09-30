@@ -81,7 +81,7 @@ test("workspace names sharing a commit survive cold reload, tabs, history and ex
   const queries = await workspaceApi(page);
   await page.goto("/");
   await choose(page, "default");
-  await page.getByRole("tab", { name: "Files", exact: true }).click();
+  await page.getByRole("tab", { name: "Overview", exact: true }).click();
   await expect(
     page.getByRole("table", { name: "Repository files" }),
   ).toBeVisible();
@@ -132,7 +132,7 @@ test("workspace names sharing a commit survive cold reload, tabs, history and ex
       ),
     )
     .toBe(true);
-  await page.getByRole("tab", { name: "Files", exact: true }).click();
+  await page.getByRole("tab", { name: "Overview", exact: true }).click();
   await expect(
     page.getByRole("table", { name: "Repository files" }),
   ).toBeVisible();

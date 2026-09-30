@@ -19,7 +19,7 @@ test("hash route restores snapshot and file through controls reload and browser 
     `#/repos/${repo}/branches?at_op=${operation}`,
   );
 
-  await page.getByRole("tab", { name: "Files" }).click();
+  await page.getByRole("tab", { name: "Overview" }).click();
   await expect(
     page.getByRole("table", { name: "Repository files" }),
   ).toBeVisible();

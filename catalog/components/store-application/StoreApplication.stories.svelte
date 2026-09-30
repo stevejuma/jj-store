@@ -39,16 +39,16 @@
       mainBody.querySelector(".ui-minimal-app-shell__body-scroll-area"),
     ).toBeNull();
     await expect(
-      canvas.getByText("jj-store · Workspaces", { exact: true }),
+      canvas.getByText("jj-store · Branches", { exact: true }),
     ).toBeVisible();
     await expect(
       canvas.getByRole("button", { name: "Expand left sidebar" }),
     ).toBeVisible();
-    await userEvent.click(canvas.getByRole("button", { name: "JJ Log" }));
+    await userEvent.click(canvas.getByRole("tab", { name: "Commits" }));
     await expect(
       canvas.getByText("jj-store · Commits", { exact: true }),
     ).toBeVisible();
-    await userEvent.click(canvas.getByRole("button", { name: "Op Log" }));
+    await userEvent.click(canvas.getByRole("tab", { name: "Op Log" }));
     await expect(
       canvas.getByText("jj-store · Op Log", { exact: true }),
     ).toBeVisible();
@@ -96,7 +96,7 @@
       canvas.getByRole("button", { name: "Back to jj-store" }),
     );
     await expect(
-      canvas.getByText("jj-store · Workspaces", { exact: true }),
+      canvas.getByText("jj-store · Branches", { exact: true }),
     ).toBeVisible();
     await expect(canvasElement.ownerDocument.defaultView?.location.hash).toBe(
       beforeHash,
@@ -223,7 +223,7 @@
     );
     await userEvent.click(canvas.getByRole("button", { name: "Repositories" }));
     await userEvent.click(canvas.getByRole("button", { name: "native-demo" }));
-    await expect(canvas.getByText("native-demo · Files")).toBeVisible();
+    await expect(canvas.getByText("native-demo · Overview")).toBeVisible();
     await userEvent.click(
       canvas.getByRole("button", { name: "Toggle details" }),
     );
@@ -277,20 +277,20 @@
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(
-      canvas.getByText("jj-store · Workspaces", { exact: true }),
+      canvas.getByText("jj-store · Branches", { exact: true }),
     ).toBeVisible();
     await userEvent.click(
-      canvas.getByRole("button", { name: "Open navigation sidebar" }),
+      canvas.getByRole("button", { name: "Open details sidebar" }),
     );
     await expect(
-      canvas.getByRole("navigation", { name: "Repository navigation" }),
+      canvas.getByRole("navigation", { name: "Repository views" }),
     ).toBeVisible();
     await userEvent.click(canvas.getByRole("button", { name: "JJ Log" }));
     await expect(
       canvas.getByText("jj-store · Commits", { exact: true }),
     ).toBeVisible();
     await expect(
-      canvas.queryByRole("navigation", { name: "Repository navigation" }),
+      canvas.queryByRole("navigation", { name: "Repository views" }),
     ).not.toBeInTheDocument();
   }}
 />
@@ -329,7 +329,7 @@
       canvas.getByRole("button", { name: "Back to jj-store" }),
     );
     await expect(
-      canvas.getByText("jj-store · Workspaces", { exact: true }),
+      canvas.getByText("jj-store · Branches", { exact: true }),
     ).toBeVisible();
   }}
 />
@@ -348,7 +348,7 @@
     ).toBeVisible();
     await userEvent.unhover(edge);
     await userEvent.hover(
-      canvas.getByText("jj-store · Workspaces", { exact: true }),
+      canvas.getByText("jj-store · Branches", { exact: true }),
     );
     await waitFor(() => expect(edge).toHaveAttribute("aria-expanded", "false"));
   }}
