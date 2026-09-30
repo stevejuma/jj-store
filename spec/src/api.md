@@ -842,3 +842,11 @@ apply/status under /v1/repos/{repo}/work. Continuations retain one selected
 WorkStore root, repeat the query and page size, reauthorize each page, and reset
 after expiry or serving restart. The browser keeps code pins separate and
 refreshes task metadata explicitly.
+
+WorkStore browser reads use an independent pinned root per paged collection. The
+Projects destination does not require a selected code operation. Stable
+project/task route selections reload on explicit refresh. A saved receipt marks
+freshness; ambiguous outcomes keep the complete request, including exact version
+preconditions and entity IDs. Status and retry share that identity, even after
+refresh. Linked repository navigation uses the normal target session and token
+checks, never the home metadata grant.

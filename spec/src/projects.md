@@ -69,3 +69,10 @@ registry bounds snapshots, memory, concurrency and five-minute lifetime. Every
 resumed page reauthorizes; restart, expiry and resource rejection are explicit.
 GET never stages empty roots. Linked-code access uses a fresh target repository
 session.
+
+Browser tasks and discussion order loaded parent/reply branches and cap visual
+indentation. Missing parents from another page retain their exact identity and a
+visible fragment rather than inventing another relationship. Cold RustFS
+qualification covers separate source/destination stores, historical WorkStore
+closures after checkpointing, retained origin ledger, local readiness and
+durable service receipts after both stores restart.

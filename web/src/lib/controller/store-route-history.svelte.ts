@@ -153,6 +153,8 @@ export function createStoreRouteHistory(
         directory: "",
         agentSessionId: null,
         reviewThreadId: null,
+        projectId: null,
+        taskId: null,
       });
     },
     page(page: StorePage) {
@@ -169,6 +171,8 @@ export function createStoreRouteHistory(
         directory: "",
         agentSessionId: null,
         reviewThreadId: null,
+        projectId: null,
+        taskId: null,
       });
     },
     navigate(delta: -1 | 1) {

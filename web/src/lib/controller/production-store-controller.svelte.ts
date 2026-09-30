@@ -1,21 +1,22 @@
+import { connectionDeniedMessage, storeErrorMessage } from "./store-error.js";
+import {
+  createWorkReader,
+  hasBrowseContext,
+} from "./production-work-integration.js";
 import { ApiError } from "../api/client.js";
 import { repositories as loadRepositories } from "../api/repositories.js";
 import type { StoreController } from "./contracts.js";
-import {
-  HttpStoreDataSource,
-  storeErrorMessage,
-} from "./http-store-data-source.js";
+import { HttpStoreDataSource } from "./http-store-data-source.js";
 import type { StoreDataSource } from "./native-data-source.js";
 import { followProductionStoreEvents } from "./production-store-events.js";
 import { createProductionStoreReader } from "./production-store-reader.svelte.js";
 import {
   clearProductionStoreView,
   createProductionStoreState,
-  initialStatus,
 } from "./production-store-state.svelte.js";
 import { createStoreQueryClient } from "./store-query-client.js";
 import { createStoreRouteHistory } from "./store-route-history.svelte.js";
-import { productionStoreView } from "./production-store-view.js";
+import { productionControllerView } from "./production-store-view.js";
 import { createProductionStoreSearch } from "./production-store-search-controller.js";
 import { createProductionStoreMutations } from "./production-store-mutations.js";
 import { createProductionStoreConflicts } from "./production-store-conflicts.js";
@@ -23,6 +24,7 @@ import { createProductionStoreSettings } from "./production-store-index.js";
 import {
   createProductionRevisionSelector,
   reportProductionStoreError,
+  resetConnectionView,
   startProductionStoreLifecycle,
 } from "./production-store-lifecycle.svelte.js";
 import { createProductionBranchActions } from "./production-branch-actions.js";
@@ -59,11 +61,17 @@ export function createProductionStoreController(
   if (history.error)
     Object.assign(data.status, { navigation: "failed", error: history.error });
 
+  const { work, restorePage } = createWorkReader(
+    activeSource,
+    history,
+    data,
+    reader.restorePage,
+  );
   async function restoreRoute() {
-    if (!source || !history.route.snapshotOperationId) return;
+    if (!source || !hasBrowseContext(history.route)) return;
     version += 1;
     clearProductionStoreView(data);
-    await reader.restorePage();
+    await restorePage();
   }
 
   const search = createProductionStoreSearch({
@@ -87,21 +95,14 @@ export function createProductionStoreController(
     version += 1;
     feed.abort();
     discovery.abort();
+    work.reset();
     source?.close();
     source = null;
-    Object.assign(data, { heads: [], head: null });
     settings.clear();
     mutations.configure([]);
     mutations.reset();
-    data.conflictResolutionActions = [];
-    data.conflictUploadBytes = 0;
-    data.searchAvailable = false;
     search.clear();
-    clearProductionStoreView(data);
-    Object.assign(data.status, initialStatus(), {
-      connection: denied ? "denied" : "disconnected",
-      error: message,
-    });
+    resetConnectionView(data, message, denied);
     if (preserveSession) data.status.repositories = repositoryStatus;
     else if (data.accessMode === "authenticated") {
       sessionToken = null;
@@ -124,12 +125,7 @@ export function createProductionStoreController(
       `session-${++session}`,
       () => {
         if (source === active)
-          disconnect(
-            data.accessMode === "local_trusted"
-              ? "Trusted local access was rejected. Check the server and repository catalog."
-              : "Access expired or was revoked. Connect with a current token.",
-            true,
-          );
+          disconnect(connectionDeniedMessage(data.accessMode), true);
       },
       options.fetcher,
     );
@@ -157,7 +153,11 @@ export function createProductionStoreController(
         data,
         feed.signal,
       );
-      if (history.route.snapshotOperationId) await reader.restorePage();
+      if (
+        history.route.snapshotOperationId ||
+        history.route.page === "projects"
+      )
+        await restorePage();
     } catch (cause) {
       if (!current(ticket, active)) return;
       const message = storeErrorMessage(cause);
@@ -217,7 +217,7 @@ export function createProductionStoreController(
       data,
       feed.signal,
     );
-    if (selected) await reader.restorePage();
+    if (selected || history.route.page === "projects") await restorePage();
   }
   const mutations = createProductionStoreMutations({
     state: data.mutation,
@@ -238,7 +238,7 @@ export function createProductionStoreController(
     clearProductionStoreView(data);
     search.clear();
     history.selectSnapshot(id);
-    await reader.restorePage();
+    await restorePage();
   }
   const selectRevision = createProductionRevisionSelector(
     data,
@@ -293,14 +293,14 @@ export function createProductionStoreController(
   });
 
   return {
+    work,
     get state() {
-      return productionStoreView(data, history.route, {
-        connected: source !== null,
-        repository: source?.repository ?? history.route.repository,
-        canBack: history.canBack,
-        canForward: history.canForward,
-        now: options.now?.() ?? Math.floor(Date.now() / 1000),
-      });
+      return productionControllerView(
+        data,
+        history,
+        source,
+        options.now?.() ?? Math.floor(Date.now() / 1000),
+      );
     },
     actions,
   };

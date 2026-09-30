@@ -1,5 +1,5 @@
 export type StorePage =
-  "branches" | "log" | "oplog" | "files" | "agents" | "reviews";
+  "branches" | "log" | "oplog" | "files" | "agents" | "reviews" | "projects";
 export interface CommunityNavigationItemModel {
   id: string;
   label: string;

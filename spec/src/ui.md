@@ -501,3 +501,30 @@ repository-document tabs: keep a visible leading prefix, move trailing tabs to
 More, preserve the selected hidden destination, and restore tabs when width
 returns. Pill colors, shape and typography stay unchanged; keyboard selection
 and dropdown focus remain available.
+
+## Native projects and tasks
+
+Projects is a repository-wide destination backed by WorkStore, independent of
+the selected code operation. Project/task IDs use validated `project` and `task`
+hash fields. A task route requires its project. Projects exposes linked
+repositories, retired membership, versioned tasks with state and parent, and
+threaded comments including edits and tombstones. Home permission governs the
+forms. A linked repository opens through ordinary independently authorized
+repository connection; absent target access remains visible as a metadata link.
+Community task presentation informs the composition; Design Core provides the
+form controls. Production imports no catalog data.
+
+Each paged list retains its own immutable WorkStore snapshot and validates
+continuation identity. SSE changes the refresh hint. Save receipts and unknown
+outcomes do not silently replace displayed lists. Explicit Refresh projects
+reloads the selected project/task and preserves pending request bytes. Status
+`not_known` does not prove rejection; retry uses the same request ID and intent.
+Session replacement discards late reads/receipts. Narrow screens stack the
+project list, task list and discussion; controls remain keyboard reachable.
+Story interactions and accessibility are separate from visual baseline approval.
+
+The shared cold native browser scenarios use the current repository tabs and the
+Markdown editor textbox in mutation forms. External-publication assertions
+capture the complete route after the initial seeded review association loads;
+the unchanged route must then survive the freshness event until explicit
+refresh.

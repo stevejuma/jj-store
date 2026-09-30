@@ -8,6 +8,7 @@ export const repositorySections: readonly { page: StorePage; label: string }[] =
     { page: "oplog", label: "Op Log" },
     { page: "agents", label: "Agents" },
     { page: "reviews", label: "Reviews" },
+    { page: "projects", label: "Projects" },
   ];
 
 export const repositoryRailSections = repositorySections

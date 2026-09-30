@@ -99,8 +99,11 @@ async function refreshServerConfiguration(origin) {
 
 async function initializeFixture(origin, logHandle) {
   const rustfsRuntime = resolve(
-    repositoryRoot,
-    "runtime/embedded-rustfs/target/debug/jj-store-rustfs",
+    process.env.JJ_STORE_DEV_RUSTFS_RUNTIME ??
+      join(
+        repositoryRoot,
+        "runtime/embedded-rustfs/target/debug/jj-store-rustfs",
+      ),
   );
   await run(resolve(repositoryRoot, "target/debug/jj-store"), [
     "init",
@@ -158,7 +161,8 @@ async function restart({ reset = false } = {}) {
   if (reset) await rm(layout.runtimeRoot, { recursive: true, force: true });
   await assertPortAvailable();
   await run("pnpm", ["web:build"]);
-  await run("pnpm", ["build:embedded-rustfs"]);
+  if (!process.env.JJ_STORE_DEV_RUSTFS_RUNTIME)
+    await run("pnpm", ["build:embedded-rustfs"]);
   await run("cargo", ["build", "-p", "jj-store-cli", "--bins", "--locked"]);
   const origin = `http://127.0.0.1:${serverPort}/`;
   let fixture = await loadFixture(layout);
@@ -172,10 +176,13 @@ async function restart({ reset = false } = {}) {
     references = initialized.references;
   }
   const started = performance.now();
-  const server = startServer(layout.serverConfig, logHandle);
+  let server = startServer(layout.serverConfig, logHandle);
+  let restartStartupMillis;
+  let fixturePreparationMillis = 0;
   try {
     await waitForServer(origin);
     await waitForSearch(origin, fixture.repositoryId);
+    restartStartupMillis = Math.round(performance.now() - started);
     if (references) {
       await seedAgentActivity({
         repositoryRoot,
@@ -194,12 +201,18 @@ async function restart({ reset = false } = {}) {
         fixture.repositoryId,
         await repositoryPosition(origin, fixture.repositoryId),
       );
+      fixturePreparationMillis = Math.round(performance.now() - started);
+      await stopServer(server);
+      const restartStarted = performance.now();
+      server = startServer(layout.serverConfig, logHandle);
+      await waitForServer(origin);
+      await waitForSearch(origin, fixture.repositoryId);
+      restartStartupMillis = Math.round(performance.now() - restartStarted);
     }
   } catch (error) {
     await stopServer(server);
     throw error;
   }
-  const restartStartupMillis = Math.round(performance.now() - started);
   if (references) fixture = await writeFixture(layout, fixture);
   const processes = await processTreeMetrics(server.pid);
   const runtime = {
@@ -214,6 +227,7 @@ async function restart({ reset = false } = {}) {
     resources: {
       firstStartupMillis: fixture.firstStartupMillis,
       restartStartupMillis,
+      fixturePreparationMillis,
       ...processes,
     },
   };

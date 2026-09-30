@@ -57,7 +57,9 @@ try {
     metadata.resources.restartStartupMillis > 30_000 ||
     metadata.resources.totalRssKiB > 512 * 1024
   )
-    throw new Error("local release startup or resident-memory budget exceeded");
+    throw new Error(
+      `local release startup or resident-memory budget exceeded: ${JSON.stringify(metadata.resources)}`,
+    );
   if (
     process.env.JJ_STORE_LOCAL_RELEASE_QUALIFY === "1" &&
     (platform() !== "darwin" || arch() !== "arm64")
@@ -67,9 +69,21 @@ try {
   console.log(
     `Local resources: cold ${metadata.resources.firstStartupMillis} ms, restart ${metadata.resources.restartStartupMillis} ms, ${metadata.resources.totalRssKiB} KiB resident.`,
   );
+  console.log(
+    `Full fixture preparation: ${metadata.resources.fixturePreparationMillis} ms.`,
+  );
   execute(
     "pnpm",
-    ["exec", "playwright", "test", "--config", "web/playwright.real.config.ts"],
+    [
+      "exec",
+      "playwright",
+      "test",
+      "--config",
+      "web/playwright.real.config.ts",
+      ...(process.env.JJ_STORE_REAL_TEST
+        ? [process.env.JJ_STORE_REAL_TEST]
+        : []),
+    ],
     {
       env: {
         JJ_STORE_REAL_BASE_URL: baseURL,

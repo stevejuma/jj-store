@@ -1,3 +1,7 @@
+import {
+  clearProductionStoreView,
+  initialStatus,
+} from "./production-store-state.svelte.js";
 import { bootstrap as loadBootstrap } from "../api/bootstrap.js";
 import { repositories as loadRepositories } from "../api/repositories.js";
 import { ApiError } from "../api/client.js";
@@ -146,4 +150,23 @@ export function startProductionStoreLifecycle(options: {
 }) {
   followProductionExternalRoutes(options);
   void initializeProductionStore(options);
+}
+
+export function resetConnectionView(
+  data: ProductionStoreState,
+  message: string,
+  denied: boolean,
+) {
+  Object.assign(data, {
+    heads: [],
+    head: null,
+    conflictResolutionActions: [],
+    conflictUploadBytes: 0,
+    searchAvailable: false,
+  });
+  clearProductionStoreView(data);
+  Object.assign(data.status, initialStatus(), {
+    connection: denied ? "denied" : "disconnected",
+    error: message,
+  });
 }

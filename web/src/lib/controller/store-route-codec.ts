@@ -12,6 +12,7 @@ const pages = new Set<StorePage>([
   "files",
   "agents",
   "reviews",
+  "projects",
 ]);
 const queryKeys = new Set([
   "at_op",
@@ -26,6 +27,8 @@ const queryKeys = new Set([
   "directory",
   "session",
   "thread",
+  "project",
+  "task",
 ]);
 
 export type StoreRouteHashResult =
@@ -78,6 +81,8 @@ export function storeRouteToHash(route: StoreRoute): string | null {
   if (route.directory) query.set("directory", route.directory);
   if (route.agentSessionId) query.set("session", route.agentSessionId);
   if (route.reviewThreadId) query.set("thread", route.reviewThreadId);
+  if (route.projectId) query.set("project", route.projectId);
+  if (route.taskId) query.set("task", route.taskId);
   const suffix = query.toString();
   return `#/repos/${route.repository}/${route.page}${suffix ? `?${suffix}` : ""}`;
 }
@@ -115,7 +120,11 @@ export function storeRouteFromHash(hash: string): StoreRouteHashResult {
   const directory = one(query, "directory");
   const agentSessionId = one(query, "session");
   const reviewThreadId = one(query, "thread");
+  const projectId = one(query, "project");
+  const taskId = one(query, "task");
   const valid =
+    validOptional(projectId, stableId) &&
+    validOptional(taskId, stableId) &&
     validOptional(snapshotOperationId, objectId) &&
     validOptional(commitId, objectId) &&
     validOptional(change, changeId) &&
@@ -134,6 +143,10 @@ export function storeRouteFromHash(hash: string): StoreRouteHashResult {
     validOptional(reviewThreadId, stableId);
   if (!valid)
     return { kind: "invalid", message: "Invalid repository route value." };
+  if ((projectId || taskId) && page !== "projects")
+    return { kind: "invalid", message: "Task selections require Projects." };
+  if (taskId && !projectId)
+    return { kind: "invalid", message: "Task selections require a project." };
   const hasSnapshotSelection = Boolean(
     workspace ||
     bookmark ||
@@ -194,7 +207,7 @@ export function storeRouteFromHash(hash: string): StoreRouteHashResult {
       message: "Review thread selections require the Reviews page.",
     };
   if (
-    (page === "agents" || page === "reviews") &&
+    (page === "agents" || page === "reviews" || page === "projects") &&
     (bookmark ||
       commitId ||
       change ||
@@ -225,6 +238,7 @@ export function storeRouteFromHash(hash: string): StoreRouteHashResult {
       directory: directory ?? "",
       agentSessionId,
       reviewThreadId,
+      ...(page === "projects" ? { projectId, taskId } : {}),
     },
   };
 }

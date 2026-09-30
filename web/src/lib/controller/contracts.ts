@@ -74,6 +74,8 @@ export interface StoreRoute {
   directory: string;
   agentSessionId: string | null;
   reviewThreadId: string | null;
+  projectId?: string | null;
+  taskId?: string | null;
 }
 export type StoreLoadStatus =
   | "idle"
@@ -174,6 +176,7 @@ export interface StoreControllerState {
 }
 /** Community's state/actions contract shape, scoped to local JJ presentation. */
 export interface StoreController {
+  readonly work?: import("./work-types.js").WorkController;
   readonly state: StoreControllerState;
   readonly actions: {
     connect(connection: StoreConnection): Promise<void>;
