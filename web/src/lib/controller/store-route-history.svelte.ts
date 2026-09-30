@@ -18,6 +18,7 @@ export const initialStoreRoute = (): StoreRoute => ({
   page: "branches",
   repository: "",
   bookmark: "",
+  workspace: null,
   snapshotOperationId: null,
   inspectedOperationId: null,
   commitId: null,
@@ -123,10 +124,13 @@ export function createStoreRouteHistory(
               repository,
               snapshotOperationId: operation,
             };
-      entries = [next];
-      index = 0;
+      if (route.repository && route.repository !== repository)
+        push({ ...next, page: "files" });
+      else {
+        entries[index] = next;
+        sync(next, "replace");
+      }
       error = "";
-      sync(next, "replace");
       return next;
     },
     refresh(operation: string | null) {

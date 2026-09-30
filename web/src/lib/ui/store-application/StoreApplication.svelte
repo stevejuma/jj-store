@@ -8,8 +8,11 @@
   } from "@lapismd/design-core/shell";
   import { ScrollArea } from "@lapismd/design-core/shadcn/scroll-area";
   import * as Tabs from "@lapismd/design-core/shadcn/tabs";
-  import { onDestroy, untrack, type Snippet } from "svelte";
+  import { onDestroy, setContext, untrack, type Snippet } from "svelte";
   import "./store-application.css";
+  import { workspaceNavigationKey } from "./workspace-navigation.js";
+  import StoreWorkspacePicker from "./StoreWorkspacePicker.svelte";
+  import PanelsTopLeftIcon from "@lucide/svelte/icons/panels-top-left";
   import CommunityAppShell from "../community-app-shell/CommunityAppShell.svelte";
   import CommunityNavigation from "../community-navigation/CommunityNavigation.svelte";
   import CommunityApplicationMobileNavigation from "../community-application/CommunityApplicationMobileNavigation.svelte";
@@ -70,6 +73,14 @@
       : {}),
   });
   onDestroy(() => void shell.dispose());
+  const workspaceGuard = $state({ editing: false });
+  setContext(workspaceNavigationKey, workspaceGuard);
+  const workspaceBlocked = $derived(
+    workspaceGuard.editing ||
+      ["previewing", "prepared", "applying", "unknown"].includes(
+        controller.state.mutation.status,
+      ),
+  );
   const current = $derived(controller.state.route);
   let searchOpen = $state(false);
   let settingsOpen = $state(false);
@@ -249,7 +260,16 @@
               </Tabs.Root>
             </ScrollArea>
           </div>
-          <h1 class="store-application__title">{bodyTitle}</h1>
+          <header
+            class="store-application__section-header"
+            aria-label="Workspace section header"
+          >
+            <div>
+              <PanelsTopLeftIcon aria-hidden="true" />
+              <h1 class="store-application__title">Workspace</h1>
+            </div>
+            <StoreWorkspacePicker {controller} disabled={workspaceBlocked} />
+          </header>
           <div class="store-application__body-regions">
             {#key current.repository + current.page}
               {#if children}{@render children(

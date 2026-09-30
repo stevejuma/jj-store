@@ -20,6 +20,7 @@
     initiallyCollapsed = true,
     displayMode = "auto",
     large = false,
+    workingCopies,
     loading = false,
     detailLoading = false,
     collaborationState = "ready",
@@ -29,6 +30,7 @@
     initiallyCollapsed?: boolean;
     displayMode?: AppShellDisplayMode;
     large?: boolean;
+    workingCopies?: readonly import("../../web/src/lib/projects/repository-log.js").RepositoryWorkingCopy[];
     loading?: boolean;
     detailLoading?: boolean;
     collaborationState?: CatalogCollaborationState;
@@ -38,6 +40,7 @@
   const controller = untrack(() => {
     const fixture = createInMemoryStoreController(initialPage, {
       large,
+      workingCopies,
       reviewOutcome,
     });
     if (collaborationState !== "ready")

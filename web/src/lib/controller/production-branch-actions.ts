@@ -40,9 +40,11 @@ export function createProductionBranchActions(context: {
       resetBranchGraph(data);
       await reader.loadGraph();
     },
-    async selectWorkingCopy(commit: string) {
-      const workingCopy = data.workingCopies.find(
-        (candidate) => candidate.commitId === commit,
+    async selectWorkingCopy(commit: string, workspace?: string) {
+      const workingCopy = data.workingCopies.find((candidate) =>
+        workspace
+          ? candidate.workspace === workspace
+          : candidate.commitId === commit,
       );
       if (!workingCopy || history.route.page !== "branches") return;
       context.invalidate();
@@ -50,6 +52,7 @@ export function createProductionBranchActions(context: {
       history.push({
         ...history.route,
         bookmark: "",
+        workspace: workingCopy.workspace,
         commitId: workingCopy.commitId,
         changeId: workingCopy.changeId,
         path: null,

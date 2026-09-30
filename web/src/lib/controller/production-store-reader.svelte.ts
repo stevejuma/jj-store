@@ -1,3 +1,4 @@
+import { readWorkingCopies } from "./store-workspaces.js";
 import { fullId } from "../api/client.js";
 import type { StoreDataSource } from "./native-data-source.js";
 import { createProductionFileReader } from "./production-file-reader.svelte.js";
@@ -44,21 +45,15 @@ export function createProductionStoreReader(context: ReaderContext) {
         more ? (data.refsCursor ?? undefined) : undefined,
         more ? (data.refsPageSnapshot ?? undefined) : undefined,
       );
+      const workingCopies = more
+        ? data.workingCopies
+        : await readWorkingCopies(source, operation, value);
       if (!context.current(ticket, source)) return;
       data.bookmarks = more
         ? [...data.bookmarks, ...value.bookmarks]
         : value.bookmarks;
       data.choices = more ? [...data.choices, ...value.choices] : value.choices;
-      data.workingCopies = more
-        ? [
-            ...new Map(
-              [...data.workingCopies, ...value.workingCopies].map((item) => [
-                item.workspace,
-                item,
-              ]),
-            ).values(),
-          ]
-        : value.workingCopies;
+      data.workingCopies = workingCopies;
       data.refsCursor = value.cursor;
       data.refsPageSnapshot = value.snapshot;
       data.status.bookmarks = data.bookmarks.length ? "ready" : "empty";
@@ -73,16 +68,22 @@ export function createProductionStoreReader(context: ReaderContext) {
       operation = fullId(context.operation() ?? ""),
       ticket = context.version();
     const kind = history.route.page === "oplog" ? "operations" : "log";
+    const workspace = data.workingCopies.find(
+      (copy) => copy.workspace === history.route.workspace,
+    );
     const branchTargets =
-      history.route.page !== "branches"
+      kind !== "log"
         ? undefined
-        : history.route.bookmark
+        : history.route.bookmark && history.route.page === "branches"
           ? data.targets
-          : data.workingCopies.some(
-                (copy) => copy.commitId === history.route.commitId,
-              )
-            ? [history.route.commitId!]
-            : undefined;
+          : workspace && !history.route.bookmark
+            ? [workspace.commitId]
+            : history.route.page === "branches" &&
+                data.workingCopies.some(
+                  (copy) => copy.commitId === history.route.commitId,
+                )
+              ? [history.route.commitId!]
+              : undefined;
     data.status.graph = more ? "refreshing" : "loading";
     try {
       data.graphAtTimeMillis ??= Date.now();
@@ -95,6 +96,7 @@ export function createProductionStoreReader(context: ReaderContext) {
         more ? (data.graphCursor ?? undefined) : undefined,
         more ? (data.graphPageSnapshot ?? undefined) : undefined,
         branchTargets,
+        history.route.workspace ?? undefined,
       );
       if (!context.current(ticket, source)) return;
       data.graph = more

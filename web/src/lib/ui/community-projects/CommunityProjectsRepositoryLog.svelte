@@ -70,7 +70,7 @@
     now: number;
     layoutStorage?: Storage;
     onSelectBranch: (name: string) => void;
-    onSelectWorkingCopy?: (commit: string) => void;
+    onSelectWorkingCopy?: (commit: string, workspace?: string) => void;
     onSelectRevision: (id: string | null) => void;
     onSelectPath: (path: string | null) => void;
     onLoadMoreBookmarks?: () => void | Promise<void>;
@@ -156,6 +156,7 @@
               {now}
               selected={selectedBranch}
               selectedCommit={selectedBranch ? null : selectedId}
+              selectedWorkspace={controller?.state.route.workspace}
               hasMore={hasMoreBookmarks}
               {loading}
               onSelect={onSelectBranch}

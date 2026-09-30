@@ -1,3 +1,4 @@
+import { workspaceSelectedRoute } from "./store-workspaces.js";
 import type { StoreController } from "./contracts.js";
 import type { createProductionBranchActions } from "./production-branch-actions.js";
 import type { createProductionStoreConflicts } from "./production-store-conflicts.js";
@@ -51,6 +52,24 @@ export function createProductionStoreActions(options: {
         options.history.route.inspectedOperationId,
         id,
       );
+    },
+    async selectWorkspace(workspace) {
+      if (
+        ["previewing", "prepared", "applying", "unknown"].includes(
+          options.data.mutation.status,
+        )
+      )
+        return;
+      if (
+        workspace &&
+        !options.data.workingCopies.some((copy) => copy.workspace === workspace)
+      )
+        return;
+      options.mutations.reset();
+      options.history.push(
+        workspaceSelectedRoute(options.history.route, workspace),
+      );
+      await options.restoreRoute();
     },
     refreshSettings: options.settings.refresh,
     prepareIndex: options.settings.prepareIndex,

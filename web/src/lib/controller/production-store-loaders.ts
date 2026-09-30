@@ -73,6 +73,7 @@ export async function readGraph(
   cursor?: string,
   expected?: Snapshot,
   targets?: readonly string[],
+  workspace?: string,
 ): Promise<{
   graph: RepositoryLogGraph;
   cursor: string | null;
@@ -82,6 +83,7 @@ export async function readGraph(
     operation: fullId(operation),
     cursor,
     atTimeMillis,
+    workspace: kind === "log" ? workspace : undefined,
     revset:
       kind === "log" && targets
         ? targets.length

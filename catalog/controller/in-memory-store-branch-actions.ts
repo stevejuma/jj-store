@@ -24,14 +24,17 @@ export function createInMemoryStoreBranchActions(context: {
         directory: "",
       });
     },
-    selectWorkingCopy(commit: string) {
-      const workingCopy = context.workingCopies.find(
-        (candidate) => candidate.commitId === commit,
+    selectWorkingCopy(commit: string, workspace?: string) {
+      const workingCopy = context.workingCopies.find((candidate) =>
+        workspace
+          ? candidate.workspace === workspace
+          : candidate.commitId === commit,
       );
       if (!workingCopy) throw new Error("Unknown fixture working copy");
       context.push({
         ...context.route(),
         bookmark: "",
+        workspace: workingCopy.workspace,
         inspectedOperationId: null,
         commitId: workingCopy.commitId,
         changeId: workingCopy.changeId,

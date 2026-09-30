@@ -1,3 +1,4 @@
+import { createInMemoryStoreNavigation } from "./in-memory-store-navigation.js";
 import type { FileListingViewMode } from "@lapismd/design-core/diff";
 import * as fixture from "../fixtures/repository.js";
 import { repositories } from "../fixtures/snapshots.js";
@@ -23,6 +24,7 @@ export function createInMemoryStoreController(
   initialPage: StorePage = "branches",
   options: InMemoryStoreControllerOptions = {},
 ): StoreContract.StoreController {
+  const workingCopies = options.workingCopies ?? fixture.workingCopies;
   const repositoryData = createInMemoryStoreRepository(options.large);
   let history = $state<StoreContract.StoreRoute[]>([
     storeRoute.initialStoreRoute(initialPage),
@@ -36,7 +38,16 @@ export function createInMemoryStoreController(
       ? [route.commitId]
       : (repositoryData.bookmarks.find(
           (bookmark) => bookmark.name === route.bookmark,
-        )?.targets ?? (route.page === "files" ? [fixture.IDS.current] : [])),
+        )?.targets ??
+          (route.workspace
+            ? [
+                workingCopies.find(
+                  (copy) => copy.workspace === route.workspace,
+                )!.commitId,
+              ]
+            : route.page === "files"
+              ? [fixture.IDS.current]
+              : [])),
   );
   const snapshot = $derived(
     targets.length === 1 &&
@@ -71,7 +82,7 @@ export function createInMemoryStoreController(
   });
   const branchActions = createInMemoryStoreBranchActions({
     bookmarks: () => repositoryData.bookmarks,
-    workingCopies: fixture.workingCopies,
+    workingCopies,
     route: () => route,
     push,
   });
@@ -110,41 +121,11 @@ export function createInMemoryStoreController(
       else next.add(path);
       collapsedDirectoryPaths = next;
     },
-    openRepository(id) {
-      if (!repositories.some((repo) => repo.id === id))
-        throw new Error("Unknown fixture repository");
-      push({
-        page: "files",
-        repository: id,
-        bookmark: "main",
-        snapshotOperationId: fixture.IDS.opLeft,
-        inspectedOperationId: null,
-        commitId: null,
-        changeId: null,
-        comparisonParentId: null,
-        comparisonGroupId: null,
-        path: null,
-        directory: "",
-        agentSessionId: null,
-        reviewThreadId: null,
-      });
-    },
-    selectPage(page) {
-      push({
-        ...route,
-        page,
-        bookmark: page === "files" ? "main" : "",
-        inspectedOperationId: null,
-        commitId: null,
-        changeId: null,
-        comparisonParentId: null,
-        comparisonGroupId: null,
-        path: null,
-        directory: "",
-        agentSessionId: null,
-        reviewThreadId: null,
-      });
-    },
+    ...createInMemoryStoreNavigation({
+      route: () => route,
+      push,
+      workingCopies,
+    }),
     navigate(delta) {
       index = Math.max(0, Math.min(history.length - 1, index + delta));
     },
@@ -247,7 +228,7 @@ export function createInMemoryStoreController(
         collapsedDirectoryPaths,
         bookmarks: repositoryData.bookmarks,
         choices: repositoryData.choices,
-        workingCopies: fixture.workingCopies,
+        workingCopies,
         targets,
         snapshot,
         blob: snapshot?.files.find((file) => file.path === route.path),
@@ -266,7 +247,11 @@ export function createInMemoryStoreController(
                     : undefined,
                   repositoryData.bookmarks,
                   repositoryData.revisions,
-                  route.commitId ? [route.commitId] : undefined,
+                  route.commitId
+                    ? [route.commitId]
+                    : route.workspace
+                      ? targets
+                      : undefined,
                 ),
         now: fixture.NOW,
         detail: inMemoryStoreDetail(

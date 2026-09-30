@@ -1,4 +1,5 @@
 export interface InMemoryStoreControllerOptions {
+  workingCopies?: readonly import("../../web/src/lib/projects/repository-log.js").RepositoryWorkingCopy[];
   large?: boolean;
   mutationOutcome?: "committed" | "unknown";
   mutationFailure?: string;

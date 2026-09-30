@@ -1,7 +1,7 @@
 <script lang="ts">
   import * as CommandView from "@lapismd/design-core/shadcn/command-view";
   import GitBranchIcon from "@lucide/svelte/icons/git-branch";
-  import GitCommitIcon from "@lucide/svelte/icons/git-commit-horizontal";
+  import CommunityWorkingCopyCard from "./CommunityWorkingCopyCard.svelte";
   import CommunityChip from "../community-chip/CommunityChip.svelte";
   import CommunityProjectsGitAuthorAvatar from "../community-projects/CommunityProjectsGitAuthorAvatar.svelte";
   import CommunityProjectsVirtualRows from "../community-projects/CommunityProjectsVirtualRows.svelte";
@@ -14,6 +14,7 @@
     workingCopies = [],
     selected = "",
     selectedCommit = null,
+    selectedWorkspace = null,
     now,
     hasMore = false,
     loading = false,
@@ -25,11 +26,12 @@
     workingCopies?: readonly RepositoryWorkingCopy[];
     selected?: string;
     selectedCommit?: string | null;
+    selectedWorkspace?: string | null;
     now?: number;
     hasMore?: boolean;
     loading?: boolean;
     onSelect: (name: string) => void;
-    onSelectWorkingCopy?: (commit: string) => void;
+    onSelectWorkingCopy?: (commit: string, workspace?: string) => void;
     onLoadMore?: () => void;
   } = $props();
   let query = $state(""),
@@ -105,37 +107,13 @@
   shouldFilter={false}
 >
   {#each workingCopies as workingCopy (workingCopy.workspace)}
-    <button
-      type="button"
-      class="community-working-copy-card"
-      data-current={workingCopy.commitId === selectedCommit || undefined}
-      aria-label={`Working copy · ${workingCopy.workspace}`}
-      onclick={() => onSelectWorkingCopy(workingCopy.commitId)}
-    >
-      <span class="community-bookmark-card__heading">
-        <GitCommitIcon aria-hidden="true" />
-        <strong>Working copy</strong>
-        <CommunityChip size="compact" tone="success"
-          >{workingCopy.workspace}</CommunityChip
-        >
-      </span>
-      <span class="community-working-copy-card__description"
-        >{workingCopy.message}</span
-      >
-      <span class="community-bookmark-card__footer">
-        <CommunityProjectsGitAuthorAvatar
-          name={workingCopy.author}
-          email={workingCopy.authorEmail}
-          size="xsmall"
-        />
-        <span>workspace</span><span class="community-bookmark-card__author"
-          ><CommunityRelativeTime
-            timestamp={workingCopy.createdAt}
-            {now}
-          />{" by "}{workingCopy.author}</span
-        >
-      </span>
-    </button>
+    <CommunityWorkingCopyCard
+      copy={workingCopy}
+      {selectedCommit}
+      {selectedWorkspace}
+      {now}
+      onSelect={onSelectWorkingCopy}
+    />
   {/each}
   <CommandView.Filters
     bind:value={filter}
@@ -195,43 +173,6 @@
     padding: 0.5rem 0.9rem;
     background: var(--jj-store-row-background);
     border-bottom: 1px solid var(--border);
-  }
-  .community-working-copy-card {
-    position: relative;
-    display: flex;
-    width: 100%;
-    flex-direction: column;
-    gap: 0.5rem;
-    padding: 0.9rem;
-    border: 0;
-    border-bottom: 1px solid var(--border);
-    border-radius: 0;
-    color: var(--foreground);
-    background: var(--background);
-    font: inherit;
-    text-align: start;
-    cursor: pointer;
-  }
-  .community-working-copy-card:hover,
-  .community-working-copy-card:focus-visible {
-    background: color-mix(in srgb, var(--foreground) 7%, var(--background));
-  }
-  .community-working-copy-card[data-current="true"],
-  .community-working-copy-card[data-current="true"]:hover,
-  .community-working-copy-card[data-current="true"]:focus-visible {
-    background: var(--accent);
-  }
-  .community-working-copy-card:focus-visible {
-    outline: 2px solid var(--ring);
-    outline-offset: -2px;
-  }
-  .community-working-copy-card__description {
-    color: var(--muted-foreground);
-    font-size: var(--community-text-body);
-  }
-  .community-working-copy-card .community-bookmark-card__heading > strong {
-    font-size: var(--community-text-body);
-    font-weight: 650;
   }
   :global(.community-bookmark-card[data-ui-part="item"]) {
     position: relative;

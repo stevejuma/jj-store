@@ -22,6 +22,7 @@ supply interchangeable sources. Deterministic fixtures remain catalog-only.
 | JST-UI-010 | The application MUST bootstrap before repository UI, auto-open the sole LocalTrusted repository or show its installation catalog chooser, and label unverified loopback identity as Local; operational backup/restore status UI remains deferred.                                                                                                                                                                                                                                                                                          |
 | JST-UI-011 | Authenticated connection MUST request one manual token, keep it only in memory, discover all currently authorized repositories, restore an ID-based deep link or show a chooser, and cancel requests, SSE and protected caches when the token is replaced, revoked or disconnected.                                                                                                                                                                                                                                                        |
 | JST-UI-012 | The profile menu MUST open a transient Settings destination with Local service, Repository and Search sections; replace repository navigation/content/actions/details while open; preserve the unchanged repository route and snapshot on return; keep its destination and selected section out of URL, browser history and storage; render accessible icon-only settings navigation when the desktop sidebar is collapsed; refresh advertised search health explicitly; and prepare only a lag-reported or explicitly selected operation. |
+| JST-UI-013 | Repository pages MUST expose a Community-style section header after the body tabs with a searchable workspace Command View; workspace context MUST use the exact native name, survive URL/history restoration at a pinned operation, preserve shared commit identities and keep operation/collaboration history repository-wide.                                                                                                                                                                                                           |
 
 The production controller completes bootstrap before rendering connection
 choices. One ready LocalTrusted catalog entry opens without a token, several
@@ -453,3 +454,27 @@ Move bookmark use the same row as a searchable Design Core Command View selector
 over loaded revisions; search covers message, author, email, Git/JJ identities,
 bookmarks and workspaces, and the selected full commit ID remains the typed
 mutation value.
+
+## Workspace browsing context
+
+The body section header follows Community Files: a workspace icon and
+`Workspace` title at the left and a compact outlined searchable workspace
+Command View at the right, after the tabs. Repository overview clears workspace
+context; selecting a workspace resolves its recorded working-copy commit at the
+displayed operation. Files and default JJ Log use that commit while explicit
+bookmarks/revisions remain independently inspectable. Operation Log, AgentStore
+and ReviewStore remain repository-wide. Workspace selection is read-only and
+never changes physical checkout files.
+
+The exact workspace name is encoded as `workspace` in every page hash, with an
+explicit `at_op`. Shared working-copy commits do not merge workspace identities.
+Missing workspace routes show an unavailable state rather than selecting another
+workspace. Explicit Refresh retains workspace context, following its new working
+copy when browsing that working copy. The workspace picker discovers names
+through authorized pinned reference pages. Section headers, collapsed-sidebar
+and mobile layouts exercise production components; changed stories remain
+visual-pending.
+
+The picker is disabled while a text-file draft is being edited or a mutation is
+previewing, prepared, applying or awaiting an unknown outcome, preserving the
+draft and stable request identity until that flow is finished.

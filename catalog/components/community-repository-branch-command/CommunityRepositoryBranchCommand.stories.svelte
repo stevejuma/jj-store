@@ -71,6 +71,7 @@
     await userEvent.click(workingCopy);
     await expect(args.onSelectWorkingCopy).toHaveBeenLastCalledWith(
       workingCopies[0]!.commitId,
+      workingCopies[0]!.workspace,
     );
     const expectSeparators = async () => {
       const cards = canvas.getAllByRole("option");

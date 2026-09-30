@@ -8,6 +8,7 @@ export function initialStoreRoute(page: StorePage): StoreRoute {
     page,
     repository: "jj-store",
     bookmark: page === "files" ? "main" : "",
+    workspace: null,
     snapshotOperationId: IDS.opLeft,
     inspectedOperationId: null,
     commitId: null,

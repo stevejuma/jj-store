@@ -20,6 +20,7 @@ const route: StoreRoute = {
   page: "oplog",
   repository,
   bookmark: "review/native objects",
+  workspace: null,
   snapshotOperationId: operation,
   inspectedOperationId: inspected,
   commitId: null,
@@ -125,5 +126,29 @@ test("malformed, duplicate, foreign and unsafe route data fails closed", () => {
     "#/repos/%zz/files",
   ]) {
     assert.equal(storeRouteFromHash(hash).kind, "invalid", hash);
+  }
+});
+
+test("workspace names round-trip independently of shared commit identities", () => {
+  for (const workspace of ["default", "feature/日本 語 & review"]) {
+    const selected = { ...route, workspace };
+    assert.deepEqual(storeRouteFromHash(storeRouteToHash(selected)!), {
+      kind: "route",
+      route: selected,
+    });
+  }
+  for (const suffix of [
+    "workspace=",
+    "workspace=a&workspace=b",
+    "workspace=%00",
+    "workspace=default",
+  ]) {
+    const snapshot =
+      suffix === "workspace=default" ? "" : `at_op=${operation}&`;
+    assert.equal(
+      storeRouteFromHash(`#/repos/${repository}/files?${snapshot}${suffix}`)
+        .kind,
+      "invalid",
+    );
   }
 });

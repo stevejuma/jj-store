@@ -16,6 +16,7 @@ const pages = new Set<StorePage>([
 const queryKeys = new Set([
   "at_op",
   "bookmark",
+  "workspace",
   "commit",
   "change",
   "operation",
@@ -65,6 +66,7 @@ export function storeRouteToHash(route: StoreRoute): string | null {
     return null;
   const query = new URLSearchParams();
   if (route.snapshotOperationId) query.set("at_op", route.snapshotOperationId);
+  if (route.workspace) query.set("workspace", route.workspace);
   if (route.bookmark) query.set("bookmark", route.bookmark);
   if (route.commitId) query.set("commit", route.commitId);
   if (route.changeId) query.set("change", route.changeId);
@@ -103,6 +105,7 @@ export function storeRouteFromHash(hash: string): StoreRouteHashResult {
 
   const snapshotOperationId = one(query, "at_op");
   const bookmark = one(query, "bookmark");
+  const workspace = one(query, "workspace");
   const commitId = one(query, "commit");
   const change = one(query, "change");
   const inspectedOperationId = one(query, "operation");
@@ -119,6 +122,8 @@ export function storeRouteFromHash(hash: string): StoreRouteHashResult {
     validOptional(inspectedOperationId, objectId) &&
     validOptional(comparisonParentId, objectId) &&
     validOptional(comparisonGroupId, changeId) &&
+    workspace !== undefined &&
+    (workspace === null || safeLabel(workspace, 1024)) &&
     bookmark !== undefined &&
     (bookmark === null || safeLabel(bookmark, 1024)) &&
     path !== undefined &&
@@ -130,6 +135,7 @@ export function storeRouteFromHash(hash: string): StoreRouteHashResult {
   if (!valid)
     return { kind: "invalid", message: "Invalid repository route value." };
   const hasSnapshotSelection = Boolean(
+    workspace ||
     bookmark ||
     commitId ||
     change ||
@@ -208,6 +214,7 @@ export function storeRouteFromHash(hash: string): StoreRouteHashResult {
       page,
       repository,
       bookmark: bookmark ?? "",
+      workspace,
       snapshotOperationId,
       inspectedOperationId,
       commitId,

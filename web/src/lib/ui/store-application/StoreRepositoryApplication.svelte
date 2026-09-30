@@ -56,6 +56,18 @@
           </div>
         </Alert.Root>
       </section>
+    {:else if state.route.workspace && state.status.navigation === "failed"}
+      <section class="store-repository-application__state">
+        <Alert.Root variant="destructive">
+          <Alert.Title>Repository view unavailable</Alert.Title>
+          <Alert.Description>{state.status.error}</Alert.Description>
+          <Button
+            variant="outline"
+            onclick={() => controller.actions.selectWorkspace(null)}
+            >Browse repository</Button
+          >
+        </Alert.Root>
+      </section>
     {:else if page === "agents"}<StoreAgentSessions
         {controller}
         {layoutStorage}

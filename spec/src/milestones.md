@@ -44,6 +44,7 @@ adds evidence here in its enclosing Jujutsu change.
 | M4.16       | Done        | M4.9,M5.3   | JST-UI-008                                                                                                                                                               | Preview/apply/status repository actions use durable typed mutations and committed snapshot refresh                  | Retain mutation acceptance; implement M4.17 conflicts              | E-UI-018,E-UI-026,E-UI-028                                                                                                                                                                                                                                                                                                                                     |
 | M4.17       | Done        | M4.16,M5.3  | JST-UI-009                                                                                                                                                               | Native conflict descriptors, uploads and atomic multi-path resolution are editable without flattening               | Retain conflict-editor and real-repository acceptance              | E-UI-019                                                                                                                                                                                                                                                                                                                                                       |
 | M4.18       | Done        | M4.15,M8a.4 | JST-UI-012                                                                                                                                                               | Transient Community-styled settings reports existing local, repository and search state and prepares an exact index | Retain regression coverage; visual review remains separate         | E-UI-030,E-UI-031                                                                                                                                                                                                                                                                                                                                              |
+| M4.19       | Done        | M4.9,M4.10  | JST-UI-013,JST-API-002,JST-UI-005                                                                                                                                        | Exact workspace identities, pinned routes, focused interaction/a11y and cold browser acceptance                     | Retain workspace regressions; visual review remains separate       | E-UI-032                                                                                                                                                                                                                                                                                                                                                       |
 | M5          | Done        | M4.1        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                                                                                                                      | Authenticated typed commands and shared RPC policy                                                                  | Retain mutation conformance; proceed to M6                         | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-M5-005,E-M5-006,E-M5-007,E-M5-008,E-UI-028                                                                                                                                                                                                                                                                   |
 | M5.1        | Done        | M4.1        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                                                                                                                      | Basic changes/refs/reconcile; preview receipt and semantic policy                                                   | Retain basic mutation acceptance                                   | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-UI-028                                                                                                                                                                                                                                                                                                       |
 | M5.2        | Done        | M5.1        | JST-MUT-003                                                                                                                                                              | Full abandon descendant bookmark workspace/evolution parity                                                         | Retain abandon acceptance                                          | E-M5-005                                                                                                                                                                                                                                                                                                                                                       |
@@ -19928,6 +19929,228 @@ and named tests are checked by the progress gate.
     "remaining": [],
     "versions": "jj 0.45.1; pnpm 10.32.1; spec-validator current workspace dependency.",
     "formats": "Documentation and agent-guidance change only. No product code, API, schema, generated contract, persistence, wire format, test implementation or runtime behavior changes. Root aggregate product gates are out of scope under JST-GOV-007."
+  },
+  {
+    "id": "E-UI-032",
+    "tasks": [
+      "M4.19"
+    ],
+    "date": "2026-09-30",
+    "kind": "repository-workspace-picker-and-pinned-route-context",
+    "revision": "Enclosing Jujutsu change oxqznotm.",
+    "before": "The repository body had no workspace picker and owned hashes could not retain a native workspace name. The exact new workspace round-trip regression first produced four passing route tests and one failure. A same-commit working-copy callback could select the first workspace rather than the requested name.",
+    "files": [
+      "catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte",
+      "catalog/components/store-application/StoreApplication.stories.svelte",
+      "catalog/components/store-application/StoreWorkspaces.stories.svelte",
+      "catalog/controller/in-memory-store-branch-actions.ts",
+      "catalog/controller/in-memory-store-controller.svelte.ts",
+      "catalog/controller/in-memory-store-navigation.ts",
+      "catalog/controller/in-memory-store-options.ts",
+      "catalog/controller/in-memory-store-route.ts",
+      "catalog/fixtures/StoreRepositoryApplicationFixture.svelte",
+      "spec/src/api.md",
+      "spec/src/milestones.md",
+      "spec/src/ui.md",
+      "spec/src/verification.md",
+      "web/src/lib/controller/contracts.ts",
+      "web/src/lib/controller/production-branch-actions.ts",
+      "web/src/lib/controller/production-route-restorer.ts",
+      "web/src/lib/controller/production-store-actions.ts",
+      "web/src/lib/controller/production-store-loaders.ts",
+      "web/src/lib/controller/production-store-reader.svelte.ts",
+      "web/src/lib/controller/store-route-codec.ts",
+      "web/src/lib/controller/store-route-history.svelte.ts",
+      "web/src/lib/controller/store-workspaces.ts",
+      "web/src/lib/ui/community-projects/CommunityProjectsRepositoryFiles.svelte",
+      "web/src/lib/ui/community-projects/CommunityProjectsRepositoryLog.svelte",
+      "web/src/lib/ui/community-projects/workspace-snapshots.ts",
+      "web/src/lib/ui/community-repository-branch-command/CommunityRepositoryBranchCommand.svelte",
+      "web/src/lib/ui/community-repository-branch-command/CommunityWorkingCopyCard.svelte",
+      "web/src/lib/ui/store-application/StoreApplication.svelte",
+      "web/src/lib/ui/store-application/StoreRepositoryApplication.svelte",
+      "web/src/lib/ui/store-application/StoreWorkspacePicker.svelte",
+      "web/src/lib/ui/store-application/store-application.css",
+      "web/src/lib/ui/store-application/workspace-editing.svelte.ts",
+      "web/src/lib/ui/store-application/workspace-navigation.ts",
+      "web/tests/browser/workspaces.spec.ts",
+      "web/tests/store-route-codec.test.ts",
+      "web/tests/vite/store-route-history.test.ts",
+      "web/tests/vite/store-workspaces.test.ts"
+    ],
+    "tests": [
+      "web/tests/store-route-codec.test.ts#workspace names round-trip independently of shared commit identities",
+      "web/tests/vite/store-workspaces.test.ts#workspace context resolves the working copy and survives tab, history and reload",
+      "web/tests/vite/store-workspaces.test.ts#a missing workspace fails without silently loading a different working copy",
+      "web/tests/vite/store-workspaces.test.ts#workspace context permits independent explicit revision inspection",
+      "web/tests/vite/store-workspaces.test.ts#working-copy cards distinguish two workspace names sharing the same commit",
+      "web/tests/vite/store-workspaces.test.ts#workspace discovery follows every pinned reference page and preserves shared targets",
+      "web/tests/vite/store-workspaces.test.ts#explicit Refresh follows the workspace's new working copy at the captured operation",
+      "web/tests/vite/store-workspaces.test.ts#workspace discovery continues the displayed first page without recapturing its snapshot",
+      "web/tests/browser/workspaces.spec.ts#workspace names sharing a commit survive cold reload, tabs, history and explicit Refresh",
+      "web/tests/browser/workspaces.spec.ts#missing workspace stays explicit and can recover to repository overview"
+    ],
+    "runs": [
+      {
+        "command": "pnpm exec tsx --test web/tests/store-route-codec.test.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before implementation: four existing tests passed and the workspace round-trip regression failed because workspace context was lost."
+      },
+      {
+        "command": "pnpm exec tsx --test web/tests/store-route-codec.test.ts web/tests/production-store-loaders.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 15 route and native-loader tests pass after implementation."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/store-workspaces.test.ts web/tests/vite/store-route-history.test.ts catalog/controller/store-controller.test.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "After adding first-page continuation coverage, 17 tests passed; one new assertion expected a prose error rather than the existing pagination snapshot mismatch error. The assertion was corrected to preserve the actual failure contract."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/store-workspaces.test.ts web/tests/vite/store-route-history.test.ts catalog/controller/store-controller.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initially 17 passed; final 18 pass, including seven workspace regressions, first-page snapshot continuity, shared commit identities, history, missing workspace, explicit revision inspection and working-copy Refresh."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-store-bootstrap.test.ts web/tests/vite/production-store-collaboration.test.ts web/tests/vite/production-store-settings.test.ts web/tests/vite/production-store-events.test.ts web/tests/vite/production-file-reader.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 22 directly affected controller tests pass, repeated after the final reference-reader adjustment. Output captured in ignored .scratch/workspace-controller-tests.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreWorkspaces.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Five production-component stories pass interaction and accessibility: picker/tab history, keyboard search and overview, collapsed sidebar, mobile header and file-edit guard. Repeated after the final Workspace title, icon and smaller picker changes; output in ignored .scratch/workspace-final-picker-stories.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "64 directly affected stories passed; BookmarkCards expected only the commit callback argument. Its assertion now also requires the exact workspace name instead of dropping the identity."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte catalog/components/store-application/StoreWorkspaces.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "All eight stories pass, including the repaired BookmarkCards identity assertion and five picker stories."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/StoreWorkspaces.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "After the final presentation tweak, all 11 shell stories passed; the picker file failed import because the Tailwind/Vite style transform reported Invalid declaration: createVirtualizer in unchanged Design Core FileListingVirtualRows. A fresh isolated picker run then passed all five stories without source, assertion or dependency changes."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final production Svelte/TypeScript diagnostics: zero errors and warnings."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final catalog Svelte diagnostics: zero errors and warnings; 71 module boundaries pass."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 278 production module boundaries and size budgets pass. The working-copy card, snapshot helpers and catalog navigation were extracted to retain existing module budgets."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Repeated after the final reader and visual changes; production build and web manifest pass. Existing Design Core global-selector minification warnings and large-chunk warning remain non-fatal. Final output in ignored .scratch/workspace-web-build.log."
+      },
+      {
+        "command": "pnpm exec playwright test --config .scratch/workspace-browser.config.mts workspaces.spec.ts navigation.spec.ts",
+        "result": "fail",
+        "failures": 2,
+        "note": "First cold attempt: two navigation tests passed; both new tests timed out because their locator expected textbox Search workspaces. The Command View input is a combobox labelled Select workspace."
+      },
+      {
+        "command": "pnpm exec playwright test --config .scratch/workspace-browser.config.mts workspaces.spec.ts navigation.spec.ts",
+        "result": "fail",
+        "failures": 2,
+        "note": "Second cold attempt: two navigation tests passed; both new tests still timed out because the native accessible name uses the Command View root label rather than the explicit input aria-label. The test now selects the observed combobox name Select workspace."
+      },
+      {
+        "command": "pnpm exec playwright test --config .scratch/workspace-browser.config.mts workspaces.spec.ts navigation.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "All four cold built-bundle tests pass, repeated after the final Workspace header/padding change. Two native workspace names share one commit across two reference pages; selection survives tabs, reload, Back/Forward and explicit Refresh, passes exact native log context, and recovers explicitly from an unavailable workspace. The ignored config uses a fresh UI preview on port 7471 and pre-existing captured native responses; no Cargo fixture regeneration or server build. Repeated after making the error heading describe the repository view, so an unavailable explicit reference is not mislabelled as a missing workspace."
+      },
+      {
+        "command": "node .scratch/restart-workspace-ui.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "The owned LocalTrusted demo was restarted using existing explicit development binaries and the rebuilt UI only. Repository 1bdb89c409c1b891ac7f180c01a265d5 and embedded RustFS state persist. Final server PID 90121; origin http://127.0.0.1:7460/. No reset, reseed, installation or unrelated service restart."
+      },
+      {
+        "command": "CUA live browser acceptance at http://127.0.0.1:7460/",
+        "result": "pass",
+        "failures": 0,
+        "note": "The native demo workspace selects its recorded working copy and writes workspace=demo alongside at_op. Reload restores that context; the section reads Workspace with a workspace icon. The button measures 32px high with 8px inline padding; screenshot saved in ignored .scratch/workspace-picker.png. Sidebar repository items retain their existing structure. The original browser tab could not be controlled after a focus-emulation timeout; a fresh in-app verification tab was used and retained."
+      },
+      {
+        "command": "pnpm exec prettier --write 'catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte' 'catalog/components/store-application/StoreApplication.stories.svelte' 'catalog/components/store-application/StoreWorkspaces.stories.svelte' 'catalog/controller/in-memory-store-branch-actions.ts' 'catalog/controller/in-memory-store-controller.svelte.ts' 'catalog/controller/in-memory-store-navigation.ts' 'catalog/controller/in-memory-store-options.ts' 'catalog/controller/in-memory-store-route.ts' 'catalog/fixtures/StoreRepositoryApplicationFixture.svelte' 'spec/src/api.md' 'spec/src/milestones.md' 'spec/src/ui.md' 'spec/src/verification.md' 'web/src/lib/controller/contracts.ts' 'web/src/lib/controller/production-branch-actions.ts' 'web/src/lib/controller/production-route-restorer.ts' 'web/src/lib/controller/production-store-actions.ts' 'web/src/lib/controller/production-store-loaders.ts' 'web/src/lib/controller/production-store-reader.svelte.ts' 'web/src/lib/controller/store-route-codec.ts' 'web/src/lib/controller/store-route-history.svelte.ts' 'web/src/lib/controller/store-workspaces.ts' 'web/src/lib/ui/community-projects/CommunityProjectsRepositoryFiles.svelte' 'web/src/lib/ui/community-projects/CommunityProjectsRepositoryLog.svelte' 'web/src/lib/ui/community-projects/workspace-snapshots.ts' 'web/src/lib/ui/community-repository-branch-command/CommunityRepositoryBranchCommand.svelte' 'web/src/lib/ui/community-repository-branch-command/CommunityWorkingCopyCard.svelte' 'web/src/lib/ui/store-application/StoreApplication.svelte' 'web/src/lib/ui/store-application/StoreRepositoryApplication.svelte' 'web/src/lib/ui/store-application/StoreWorkspacePicker.svelte' 'web/src/lib/ui/store-application/store-application.css' 'web/src/lib/ui/store-application/workspace-editing.svelte.ts' 'web/src/lib/ui/store-application/workspace-navigation.ts' 'web/tests/browser/workspaces.spec.ts' 'web/tests/store-route-codec.test.ts' 'web/tests/vite/store-route-history.test.ts' 'web/tests/vite/store-workspaces.test.ts'",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 37 changed implementation, test, story and canonical files were formatted; no functional changes from formatting."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 106 canonical requirements in 18 chapters validate."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 33 protected files map to the three updated canonical chapters."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "The 72-task ledger and E-UI-032 evidence validate; this is bookkeeping evidence, separate from the focused product tests."
+      },
+      {
+        "command": "pnpm spec:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "The canonical mdBook builds successfully; generated spec/book remains ignored."
+      },
+      {
+        "command": "pnpm exec prettier --check 'catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte' 'catalog/components/store-application/StoreApplication.stories.svelte' 'catalog/components/store-application/StoreWorkspaces.stories.svelte' 'catalog/controller/in-memory-store-branch-actions.ts' 'catalog/controller/in-memory-store-controller.svelte.ts' 'catalog/controller/in-memory-store-navigation.ts' 'catalog/controller/in-memory-store-options.ts' 'catalog/controller/in-memory-store-route.ts' 'catalog/fixtures/StoreRepositoryApplicationFixture.svelte' 'spec/src/api.md' 'spec/src/milestones.md' 'spec/src/ui.md' 'spec/src/verification.md' 'web/src/lib/controller/contracts.ts' 'web/src/lib/controller/production-branch-actions.ts' 'web/src/lib/controller/production-route-restorer.ts' 'web/src/lib/controller/production-store-actions.ts' 'web/src/lib/controller/production-store-loaders.ts' 'web/src/lib/controller/production-store-reader.svelte.ts' 'web/src/lib/controller/store-route-codec.ts' 'web/src/lib/controller/store-route-history.svelte.ts' 'web/src/lib/controller/store-workspaces.ts' 'web/src/lib/ui/community-projects/CommunityProjectsRepositoryFiles.svelte' 'web/src/lib/ui/community-projects/CommunityProjectsRepositoryLog.svelte' 'web/src/lib/ui/community-projects/workspace-snapshots.ts' 'web/src/lib/ui/community-repository-branch-command/CommunityRepositoryBranchCommand.svelte' 'web/src/lib/ui/community-repository-branch-command/CommunityWorkingCopyCard.svelte' 'web/src/lib/ui/store-application/StoreApplication.svelte' 'web/src/lib/ui/store-application/StoreRepositoryApplication.svelte' 'web/src/lib/ui/store-application/StoreWorkspacePicker.svelte' 'web/src/lib/ui/store-application/store-application.css' 'web/src/lib/ui/store-application/workspace-editing.svelte.ts' 'web/src/lib/ui/store-application/workspace-navigation.ts' 'web/tests/browser/workspaces.spec.ts' 'web/tests/store-route-codec.test.ts' 'web/tests/vite/store-route-history.test.ts' 'web/tests/vite/store-workspaces.test.ts'",
+        "result": "pass",
+        "failures": 0,
+        "note": "All changed production, catalog, test and canonical files pass the final targeted formatting check."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md web/src/lib/ui/store-application/StoreRepositoryApplication.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final canonical evidence and unavailable-view copy are formatted."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "deferred": [
+      "Human visual review and baseline approval; all changed stories remain visual-pending.",
+      "Root aggregate pnpm spec:check, pnpm check, pnpm test and pnpm build, full Storybook/browser suites, contract regeneration and Rust lanes are out of scope under the UI-only targeted verification policy. No independent server layer or wire contract changed."
+    ],
+    "versions": "jj 0.45.1; pnpm 10.32.1; Svelte 5.57.1; Vitest 4.1.11; Storybook 10.5.7; Vite 8.3.1; existing Design Core public exports and dependency resolution unchanged.",
+    "formats": "Owned browser hashes add exact encoded workspace names with required at_op. Existing hashes remain valid. No HTTP, generated DTO, native identity, manifest, WAL, receipt or persistence-format changes. Workspace selection is read-only; logical names are distinct from client filesystem checkout state. Mutations and text drafts disable the picker until their active flow is finished. The sidebar adds no workspace children.",
+    "next": "Retain the focused workspace/route/story/browser regressions; visual review remains separate."
   }
 ]
 ```

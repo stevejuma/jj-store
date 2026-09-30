@@ -1,4 +1,9 @@
 <script lang="ts">
+  import {
+    workspaceSnapshotChoices,
+    selectedWorkspaceSnapshot,
+  } from "./workspace-snapshots.js";
+  import { guardWorkspaceEditing } from "../store-application/workspace-editing.svelte.js";
   import { AppShell } from "@lapismd/design-core/shell";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import type { StoreController } from "../../controller/contracts.js";
@@ -37,6 +42,7 @@
   let fileTreeOpen = $state(initialFileTreeLayout.open);
   let fileTreeWidth = $state(initialFileTreeLayout.width);
   let editing = $state(false);
+  guardWorkspaceEditing(() => editing);
   let editFilename = $state("");
   let selectedFilePath = $state("");
   let requestedEditPath = $state("");
@@ -75,19 +81,8 @@
     Object.fromEntries(entries.map((entry) => [entry.path, latestCommit])),
   );
 
-  const selectedSnapshot = $derived.by(() => {
-    if (view.route.bookmark) return `bookmark:${view.route.bookmark}`;
-    if (!view.route.changeId) return "";
-    return (
-      view.choices.find(
-        (choice) =>
-          choice.kind === "change" &&
-          (choice.value === `change:${view.route.changeId}` ||
-            (view.route.commitId !== null &&
-              choice.targets.includes(view.route.commitId))),
-      )?.value ?? `change:${view.route.changeId}`
-    );
-  });
+  const snapshotChoices = $derived(workspaceSnapshotChoices(view));
+  const selectedSnapshot = $derived(selectedWorkspaceSnapshot(view));
   const previewDocuments = $derived(
     (view.snapshot?.files ?? []).filter(
       (file) =>
@@ -116,7 +111,9 @@
     return "";
   });
   function selectSnapshot(value: string | undefined) {
-    if (value) controller.actions.selectRef(value);
+    if (value?.startsWith("working-copy:"))
+      controller.actions.selectWorkspace(value.slice("working-copy:".length));
+    else if (value) controller.actions.selectRef(value);
   }
   $effect(() =>
     saveRepositoryFileTreeLayout(storage, {
@@ -268,7 +265,7 @@
           {previewDocuments}
           {editUnavailable}
           branch={selectedSnapshot}
-          branches={view.choices}
+          branches={snapshotChoices}
           {now}
           onOpenDirectory={controller.actions.selectDirectory}
           onOpenFile={controller.actions.selectFile}

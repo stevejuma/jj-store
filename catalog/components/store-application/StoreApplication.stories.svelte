@@ -26,8 +26,10 @@
     const bodyTitle = canvasElement.querySelector<HTMLElement>(
       ".store-application__title",
     )!;
-    await expect(getComputedStyle(bodyTitle).position).toBe("absolute");
-    await expect(bodyTitle.getBoundingClientRect().width).toBe(1);
+    await expect(bodyTitle).toBeVisible();
+    await expect(
+      canvas.getByRole("combobox", { name: "Repository workspace" }),
+    ).toBeVisible();
     const mainBody = canvasElement.querySelector<HTMLElement>(
       '[data-ui-component="app-shell"][data-ui-part="body"]',
     )!;

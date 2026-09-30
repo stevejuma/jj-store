@@ -34,7 +34,9 @@ async function restoreFiles(
   history: ReturnType<typeof createStoreRouteHistory>,
   reads: RouteReads,
 ) {
-  await reads.loadReferences();
+  const workingCopy = data.workingCopies.find(
+    (copy) => copy.workspace === desired.workspace,
+  );
   const choice = desired.bookmark
     ? data.choices.find(
         (candidate) =>
@@ -53,9 +55,9 @@ async function restoreFiles(
     );
     return;
   }
-  const fallback = data.choices.find(
-    (candidate) => candidate.targets.length === 1,
-  );
+  const fallback = desired.workspace
+    ? undefined
+    : data.choices.find((candidate) => candidate.targets.length === 1);
   const selected = choice ?? (desired.commitId ? undefined : fallback);
   data.targets = selected
     ? [...selected.targets]
@@ -76,11 +78,13 @@ async function restoreFiles(
   }
   const commit =
     desired.commitId ??
+    (!choice ? workingCopy?.commitId : null) ??
     (selected?.targets.length === 1 ? selected.targets[0]! : null);
   if (!commit) {
     data.status.files = data.targets.length > 1 ? "unavailable" : "empty";
     return;
   }
+  data.targets = [commit];
   const next = {
     ...desired,
     bookmark: selected?.kind === "bookmark" ? selected.label : desired.bookmark,
@@ -88,7 +92,7 @@ async function restoreFiles(
       selected?.kind === "change"
         ? selected.value.slice("change:".length)
         : desired.changeId,
-    commitId: commit,
+    commitId: desired.workspace && !choice && !desired.commitId ? null : commit,
   };
   history.replace(next);
   await reads.loadFiles(commit);
@@ -113,6 +117,23 @@ export async function restoreProductionStoreRoute(
 ) {
   data.status.error = "";
   data.status.navigation = "loading";
+  await reads.loadReferences();
+  if (data.status.bookmarks === "failed") {
+    data.status.navigation = "failed";
+    return;
+  }
+  if (
+    desired.workspace &&
+    !data.workingCopies.some((copy) => copy.workspace === desired.workspace)
+  ) {
+    unavailable(
+      data,
+      "detail",
+      "The requested workspace is unavailable at this operation snapshot.",
+    );
+    data.status.navigation = "failed";
+    return;
+  }
   if (desired.page === "agents") {
     await Promise.all([reads.loadAgents(), reads.loadReviews()]);
     if (desired.agentSessionId) await reads.loadAgent(desired.agentSessionId);
@@ -123,7 +144,6 @@ export async function restoreProductionStoreRoute(
   } else if (desired.page === "files")
     await restoreFiles(desired, data, history, reads);
   else {
-    await reads.loadReferences();
     if (desired.bookmark) {
       const bookmark = data.bookmarks.find(
         (candidate) => candidate.name === desired.bookmark,

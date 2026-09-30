@@ -128,3 +128,27 @@ test("collaboration selections survive reload and browser Back and Forward", () 
   reloaded.destroy();
   history.destroy();
 });
+
+test("workspace names survive browser Back, Forward, reload and repository switches", () => {
+  const initial = `#/repos/${repository}/files?at_op=${operation}&workspace=default`;
+  const navigation = fakeBrowser(initial),
+    history = createStoreRouteHistory(navigation.browser);
+  history.push({ ...history.route, workspace: "agent/review" });
+  const other = storeRouteToHash(history.route)!;
+  history.page("agents");
+  expect(history.route.workspace).toBe("agent/review");
+  navigation.visit(initial);
+  expect(history.route.workspace).toBe("default");
+  navigation.visit(other);
+  expect(history.route.workspace).toBe("agent/review");
+  const reload = createStoreRouteHistory(fakeBrowser(other).browser);
+  expect(reload.route.workspace).toBe("agent/review");
+  history.connect("ef".repeat(16), operation);
+  expect(history.route.workspace).toBeNull();
+  expect(history.canBack).toBe(true);
+  navigation.visit(other);
+  history.connect(repository, operation);
+  expect(history.route.workspace).toBe("agent/review");
+  reload.destroy();
+  history.destroy();
+});
