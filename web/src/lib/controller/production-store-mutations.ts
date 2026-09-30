@@ -7,6 +7,7 @@ import {
   mutationResult,
   type StoreMutationCommand,
   type StoreMutationKind,
+  type StoreMutationReceipt,
   type MutableStoreMutationState,
   type StoreMutationRequest,
 } from "./store-mutation-types.js";
@@ -16,7 +17,10 @@ export function createProductionStoreMutations(options: {
   source: () => StoreDataSource;
   head: () => Head | null;
   current: (source: StoreDataSource) => boolean;
-  committed: () => Promise<void>;
+  committed: (
+    receipt: StoreMutationReceipt,
+    command: StoreMutationCommand,
+  ) => Promise<void>;
 }) {
   let request: StoreMutationRequest | null = null;
   const state = options.state;
@@ -54,7 +58,7 @@ export function createProductionStoreMutations(options: {
       state.result = mutationResult(value);
       const receipt = mutationReceipt(value);
       state.status = receipt ? "committed" : "prepared";
-      if (receipt) await options.committed();
+      if (receipt) await options.committed(receipt, request.command);
     } catch (cause) {
       if (!options.current(source)) return;
       state.status = "failed";
@@ -73,7 +77,7 @@ export function createProductionStoreMutations(options: {
       state.result = mutationResult(value) ?? state.result;
       const receipt = mutationReceipt(value);
       state.status = receipt ? "committed" : "unknown";
-      if (receipt) await options.committed();
+      if (receipt) await options.committed(receipt, request.command);
     } catch (cause) {
       if (!options.current(source)) return;
       state.status = "failed";
@@ -92,7 +96,7 @@ export function createProductionStoreMutations(options: {
       state.result = mutationResult(value) ?? state.result;
       const receipt = mutationReceipt(value);
       state.status = receipt ? "committed" : "unknown";
-      if (receipt) await options.committed();
+      if (receipt) await options.committed(receipt, request.command);
     } catch (cause) {
       if (!options.current(source)) return;
       state.status = "failed";
@@ -124,6 +128,7 @@ const mutationKinds = new Set<StoreMutationKind>([
   "reconcile_operations",
   "abandon",
   "resolve_conflicts",
+  "edit_file",
 ]);
 
 function isMutationKind(value: string): value is StoreMutationKind {

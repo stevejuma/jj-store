@@ -69,14 +69,26 @@ export async function seedRepository(options) {
   return { repositoryId, references: { operationId, commitId, changeId } };
 }
 
-async function seedLinearHistory(repository, jj) {
+export async function seedLinearHistory(repository, jj) {
   await mkdir(join(repository, "src"), { recursive: true });
   await mkdir(join(repository, "assets"), { recursive: true });
   await writeFile(
     join(repository, "README.md"),
     "# jj-store demo\n\nThis native repository is recreated by `pnpm dev:reset` and preserved by `pnpm dev:restart`.\n",
   );
+  await writeFile(
+    join(repository, "CODE_OF_CONDUCT.md"),
+    "# Code of conduct\n\nTreat every contributor with respect and report harmful conduct to the project maintainers.\n",
+  );
+  await writeFile(
+    join(repository, "CONTRIBUTING.md"),
+    "# Contributing\n\nCreate a focused change, run the required checks, and describe the verification evidence.\n",
+  );
   await writeFile(join(repository, "LICENSE"), "Apache-2.0\n");
+  await writeFile(
+    join(repository, "SECURITY.md"),
+    "# Security\n\nReport suspected vulnerabilities privately to the project maintainers.\n",
+  );
   await writeFile(
     join(repository, "Cargo.toml"),
     '[package]\nname = "jj-store-demo"\nversion = "0.1.0"\nedition = "2024"\n',

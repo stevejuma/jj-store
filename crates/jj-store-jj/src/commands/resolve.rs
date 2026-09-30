@@ -15,7 +15,7 @@ use std::collections::BTreeSet;
 fn unavailable(_: impl std::fmt::Debug) -> Error {
     query::Error::Unavailable.into()
 }
-fn path(value: &str) -> Result<RepoPathBuf> {
+pub(super) fn path(value: &str) -> Result<RepoPathBuf> {
     if value.is_empty()
         || value.len() > 4096
         || value.contains('\0')

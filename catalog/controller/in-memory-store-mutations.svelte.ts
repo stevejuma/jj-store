@@ -13,6 +13,7 @@ const available = [
   "reconcile_operations",
   "abandon",
   "resolve_conflicts",
+  "edit_file",
 ] as const;
 
 export function createInMemoryStoreMutations(options: {
@@ -97,7 +98,8 @@ function prepared(command: StoreMutationCommand): StoreMutationPrepared {
   const result: StoreMutationPrepared = {
     version: 1,
     operation: "ef".repeat(64),
-    created: command.type === "new" ? [target] : [],
+    created:
+      command.type === "new" || command.type === "edit_file" ? [target] : [],
     rewrites:
       command.type === "describe" ||
       command.type === "abandon" ||
@@ -152,5 +154,12 @@ function bookmarkChanges(command: StoreMutationCommand) {
     };
   if (command.type === "bookmark_delete")
     return { [command.name]: { before: [...command.expected], after: [] } };
+  if (command.type === "edit_file")
+    return {
+      [command.bookmark]: {
+        before: [...command.expected],
+        after: ["cd".repeat(64)],
+      },
+    };
   return {};
 }

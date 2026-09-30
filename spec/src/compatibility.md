@@ -377,6 +377,14 @@ fixtures merge real registered-handler read and mutation responses, while the
 separate pinned RustFS lane proves one mutation through the built application
 and native repository.
 
+EditFile additively extends the existing tagged V1 command union and advertised
+capability list. Existing command encodings, intent digests, prepared results,
+stored receipts, WAL records, manifests and native object codecs are unchanged.
+New requests retain canonical bookmark targets, paths, UTF-8 contents and change
+descriptions inside the existing mutation request and receipt workflow. Native
+lifecycle, generated-contract and captured-browser fixtures qualify the new
+variant; visual review remains a separate presentation gate.
+
 Manifest format 2 adds selected AgentStore/ReviewStore roots and independent
 state versions. Zero-valued extension fields and absent domain history remain
 canonically omitted, so retained format-1 manifests, WAL records, receipts and

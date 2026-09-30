@@ -340,6 +340,14 @@ LocalTrusted browser mutations reuse the same transport without bearer
 credentials. Authenticated/shared browser finalization remains deferred under
 M4.3.
 
+The same lifecycle fixture covers EditFile preparation through the native
+command boundary: one child change replaces or renames bounded text, retains
+file mode and copy identity, moves the exact bookmark and leaves the selected
+manifest unchanged until strict publication. It also rejects ambiguous targets,
+invalid paths, oversized text and a replay against a bookmark that has already
+moved. This remains application/HTTP command evidence and adds no custom CLI
+spelling or physical checkout editor.
+
 Typed reconciliation acceptance compares native descendant rebases and recursive
 operation-ancestor merges to pinned upstream behavior, including three current
 heads and conflicted bookmarks. The application mutation is explicit and strict;

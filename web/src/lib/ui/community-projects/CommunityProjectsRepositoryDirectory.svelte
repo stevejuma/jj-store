@@ -94,9 +94,20 @@
           )
           .sort(
             (left, right) =>
-              Number(left.label !== "README") -
-                Number(right.label !== "README") ||
-              left.path.localeCompare(right.path),
+              [
+                "README",
+                "CODE_OF_CONDUCT",
+                "CONTRIBUTING",
+                "LICENSE",
+                "SECURITY",
+              ].indexOf(left.label) -
+                [
+                  "README",
+                  "CODE_OF_CONDUCT",
+                  "CONTRIBUTING",
+                  "LICENSE",
+                  "SECURITY",
+                ].indexOf(right.label) || left.path.localeCompare(right.path),
           ),
   );
   let selectedLandingDocument = $state("");

@@ -385,6 +385,15 @@ validation is shared with canonical intent construction before serialization.
 Native execution still runs anew for a noncommitted apply and stages only
 immutable objects until guarded publication.
 
+EditFile loads the exact ordinary source-file term from one visible commit named
+by a single-target local bookmark. It preserves the native executable bit and
+copy identity, rejects a rename over an existing destination, writes the
+replacement tree, creates one child commit and moves only that bookmark in the
+same unpublished transaction. It does not rewrite descendants, update a physical
+working copy or publish the staged operation. Current authorization is rechecked
+around immutable object writes, and the guarded mutation layer remains the only
+publication boundary.
+
 Explicit typed reconciliation uses RepoLoader::merge_operations on the exact
 current heads, with the requested base first and the other heads sorted by full
 ID. Native common-ancestor discovery, recursive ancestor merges and descendant

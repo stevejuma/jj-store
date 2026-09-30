@@ -1,6 +1,7 @@
 //! Typed native transaction preparation. This executor cannot publish heads.
 mod abandon;
 mod access;
+mod edit;
 mod execute;
 mod reconcile;
 mod report;
@@ -39,6 +40,14 @@ pub type Result<T> = std::result::Result<T, Error>;
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(tag = "type", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Command {
+    EditFile {
+        bookmark: String,
+        expected: crate::native_dto::RefTarget,
+        source: String,
+        destination: String,
+        contents: String,
+        description: String,
+    },
     ResolveConflicts {
         commit: m::CommitId,
         paths: Vec<ConflictResolution>,

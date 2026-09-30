@@ -10950,6 +10950,36 @@
                       {
                         "type": "object",
                         "properties": {
+                          "bookmark": { "type": "string" },
+                          "expected": {
+                            "type": "array",
+                            "items": {
+                              "type": ["string", "null"],
+                              "pattern": "^[0-9a-f]{128}$",
+                              "minLength": 128,
+                              "maxLength": 128
+                            }
+                          },
+                          "source": { "type": "string" },
+                          "destination": { "type": "string" },
+                          "contents": { "type": "string" },
+                          "description": { "type": "string" },
+                          "type": { "type": "string", "const": "edit_file" }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                          "type",
+                          "bookmark",
+                          "expected",
+                          "source",
+                          "destination",
+                          "contents",
+                          "description"
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
                           "commit": {
                             "type": "string",
                             "pattern": "^[0-9a-f]{128}$",
@@ -11367,6 +11397,36 @@
                   },
                   "command": {
                     "oneOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "bookmark": { "type": "string" },
+                          "expected": {
+                            "type": "array",
+                            "items": {
+                              "type": ["string", "null"],
+                              "pattern": "^[0-9a-f]{128}$",
+                              "minLength": 128,
+                              "maxLength": 128
+                            }
+                          },
+                          "source": { "type": "string" },
+                          "destination": { "type": "string" },
+                          "contents": { "type": "string" },
+                          "description": { "type": "string" },
+                          "type": { "type": "string", "const": "edit_file" }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                          "type",
+                          "bookmark",
+                          "expected",
+                          "source",
+                          "destination",
+                          "contents",
+                          "description"
+                        ]
+                      },
                       {
                         "type": "object",
                         "properties": {

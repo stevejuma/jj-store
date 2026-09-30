@@ -37,6 +37,9 @@ const commitNode = graph.data.data.nodes.find((n: any) =>
 ).commit;
 export const commit = commitNode.id;
 export const parent = commitNode.parents[0];
+export const editedCommit = "de".repeat(64);
+export const editedOperation = "ef".repeat(64);
+const editedFile = "cd".repeat(64);
 const tree = sample("commits/{commit}/tree");
 const stats = graph.data.stats;
 const textChange = {
@@ -63,24 +66,36 @@ const windowPage = (data: unknown, next_cursor: string | null = null) => ({
   previous_cursor: null,
   next_cursor,
 });
-function referencesPage(next_cursor: string | null = null) {
-  return windowPage(
+function referencesPage(
+  next_cursor: string | null = null,
+  state: { commit?: string; operation?: string; description?: string } = {},
+) {
+  const selectedCommit = state.commit ?? commit;
+  const selectedOperation = state.operation ?? operation;
+  const snapshot = structuredClone(graph.snapshot);
+  snapshot.heads = [selectedOperation];
+  snapshot.operation_id = selectedOperation;
+  if (state.operation) {
+    snapshot.published_seq += 1;
+    snapshot.manifest_revision += 1;
+  }
+  const value = windowPage(
     {
       version: 1,
-      operation,
+      operation: selectedOperation,
       references: [
         {
           kind: "bookmark",
           name: "main",
-          terms: [commit],
+          terms: [selectedCommit],
           conflicted: false,
           workspaces: [...commitNode.workspaces],
           targets: [
             {
-              commit,
-              change: commitNode.change_id,
-              parents: [...commitNode.parents],
-              description: commitNode.description,
+              commit: selectedCommit,
+              change: state.commit ? "ed".repeat(16) : commitNode.change_id,
+              parents: state.commit ? [commit] : [...commitNode.parents],
+              description: state.description ?? commitNode.description,
               author: structuredClone(commitNode.author),
               committer: structuredClone(commitNode.committer),
               conflicted: commitNode.conflicted,
@@ -95,6 +110,8 @@ function referencesPage(next_cursor: string | null = null) {
     },
     next_cursor,
   );
+  value.snapshot = snapshot;
+  return value;
 }
 export function pathsPage(
   next_cursor: string | null = null,
@@ -102,12 +119,14 @@ export function pathsPage(
     path?: string;
     recursive?: boolean;
     entries?: any[];
+    commit?: string;
+    operation?: string;
   } = {},
 ) {
-  return windowPage(
+  const value = windowPage(
     {
       version: 1,
-      commit,
+      commit: options.commit ?? commit,
       path: options.path ?? "",
       recursive: options.recursive ?? false,
       entries: (options.entries ?? tree.data.entries).map((entry: any) => ({
@@ -116,9 +135,11 @@ export function pathsPage(
         conflicted: entry.conflicted,
         last_change: {
           status: "available",
-          commit,
-          change: commitNode.change_id,
-          description: commitNode.description,
+          commit: options.commit ?? commit,
+          change: options.commit ? "ed".repeat(16) : commitNode.change_id,
+          description: options.commit
+            ? "Edit repository file"
+            : commitNode.description,
           author: structuredClone(commitNode.author),
           committer: structuredClone(commitNode.committer),
         },
@@ -129,6 +150,13 @@ export function pathsPage(
     },
     next_cursor,
   );
+  if (options.operation) {
+    value.snapshot.heads = [options.operation];
+    value.snapshot.operation_id = options.operation;
+    value.snapshot.published_seq += 1;
+    value.snapshot.manifest_revision += 1;
+  }
+  return value;
 }
 export function operationChangesPage(
   groups = [
@@ -244,9 +272,12 @@ export async function api(
     changed?: boolean;
     delayLog?: boolean;
     access?: "authenticated" | "local_trusted";
+    editFile?: boolean;
   } = {},
 ) {
   const requests: string[] = [];
+  let edited = false;
+  let editCommand: any = null;
   await page.route("**/v1/bootstrap", async (route) => {
     const request = route.request();
     expect(request.headers()["x-jj-store-protocol"]).toBe("1");
@@ -254,11 +285,26 @@ export async function api(
     await route.fulfill({
       json: {
         version: 1,
-        access_mode: "authenticated",
+        access_mode: options.access ?? "authenticated",
         capabilities: sample("capabilities"),
         storage: { ready: true },
         repositories: [],
         backups: [],
+      },
+    });
+  });
+  await page.route("**/v1/repositories?**", async (route) => {
+    const request = route.request();
+    expect(request.headers()["x-jj-store-protocol"]).toBe("1");
+    if (options.access === "local_trusted")
+      expect(request.headers()["authorization"]).toBeUndefined();
+    else expect(request.headers()["authorization"]).toBe(`Bearer ${token}`);
+    await route.fulfill({
+      json: {
+        version: 1,
+        generation: 1,
+        repositories: [{ id: repo, name: repo, permission: "admin" }],
+        next_cursor: null,
       },
     });
   });
@@ -273,6 +319,12 @@ export async function api(
     else expect(request.headers()["authorization"]).toBe(`Bearer ${token}`);
     if (path === "events") {
       const ready = sample("events");
+      if (edited) {
+        ready.snapshot.heads = [editedOperation];
+        ready.snapshot.published_seq += 1;
+        ready.snapshot.manifest_revision += 1;
+        ready.cursor.position += 1;
+      }
       if (options.multi) ready.snapshot.heads.push("ab".repeat(64));
       const initial = `v1:${repo}:${ready.cursor.epoch}:${ready.cursor.position}`;
       const changed = {
@@ -288,6 +340,11 @@ export async function api(
     }
     if (path === "snapshot") {
       const value = sample("snapshot");
+      if (edited) {
+        value.heads = [editedOperation];
+        value.published_seq += 1;
+        value.manifest_revision += 1;
+      }
       if (options.multi) value.heads.push("ab".repeat(64));
       await route.fulfill({ json: value });
       return;
@@ -295,6 +352,8 @@ export async function api(
     if (path === "capabilities") {
       const value = sample("capabilities");
       value.search = true;
+      if (options.editFile && !value.typed_mutations.includes("edit_file"))
+        value.typed_mutations.push("edit_file");
       await route.fulfill({ json: value });
       return;
     }
@@ -305,16 +364,65 @@ export async function api(
       return;
     }
     if (path === "references") {
-      await route.fulfill({ json: referencesPage() });
+      await route.fulfill({
+        json: referencesPage(
+          null,
+          edited
+            ? {
+                commit: editedCommit,
+                operation: editedOperation,
+                description: editCommand?.description,
+              }
+            : {},
+        ),
+      });
       return;
     }
     if (path?.startsWith("commits/") && path.endsWith("/paths")) {
+      const editedEntries = editCommand
+        ? [
+            {
+              name: editCommand.destination,
+              terms: [
+                {
+                  type: "file",
+                  id: editedFile,
+                  executable: false,
+                  copy: structuredClone(tree.data.entries[0].terms[0].copy),
+                },
+              ],
+              conflicted: false,
+            },
+            ...tree.data.entries.slice(1),
+          ]
+        : undefined;
       await route.fulfill({
         json: pathsPage(null, {
           path: url.searchParams.get("path") ?? "",
           recursive: url.searchParams.get("recursive") === "true",
+          ...(edited
+            ? {
+                commit: editedCommit,
+                operation: editedOperation,
+                entries: editedEntries,
+              }
+            : {}),
         }),
       });
+      return;
+    }
+    if (edited && path === `commits/${editedCommit}`) {
+      const value = sample("commits/{commit}");
+      value.snapshot.heads = [editedOperation];
+      value.snapshot.operation_id = editedOperation;
+      value.snapshot.published_seq += 1;
+      value.snapshot.manifest_revision += 1;
+      value.data.commit.id = editedCommit;
+      value.data.commit.change_id = "ed".repeat(16);
+      value.data.commit.parents = [commit];
+      value.data.commit.description = editCommand.description;
+      value.data.commit.tree_terms = [tree.data.entries[0].terms[0].id];
+      await route.fulfill({ json: value });
       return;
     }
     if (path?.startsWith("operations/") && path.endsWith("/changes")) {
@@ -329,19 +437,89 @@ export async function api(
       await route.fulfill({ json: diffPage() });
       return;
     }
+    if (path === "log" && edited) {
+      const value = structuredClone(graph);
+      value.snapshot.heads = [editedOperation];
+      value.snapshot.operation_id = editedOperation;
+      value.snapshot.published_seq += 1;
+      value.snapshot.manifest_revision += 1;
+      value.data.operation = editedOperation;
+      const node = structuredClone(value.data.data.nodes[0]);
+      node.commit.id = editedCommit;
+      node.commit.change_id = "ed".repeat(16);
+      node.commit.parents = [commit];
+      node.commit.description = editCommand.description;
+      node.edges = [{ target: commit, kind: "direct" }];
+      value.data.data.nodes.unshift(node);
+      await route.fulfill({ json: value });
+      return;
+    }
     if (path === "log" && options.delayLog)
       await new Promise((resolve) => setTimeout(resolve, 250));
     if (path?.startsWith("files/")) {
+      const contents = edited
+        ? editCommand.contents
+        : "<script>window.sourceExecuted=true</script>";
+      const byteLength = new TextEncoder().encode(contents).length;
       await route.fulfill({
         status: 206,
         headers: {
           "content-type": "application/octet-stream",
-          "x-jj-store-operation": operation,
+          "x-jj-store-operation": edited ? editedOperation : operation,
           "x-jj-store-repository": repo,
-          "content-range": "bytes 0-37/38",
+          "content-range": `bytes 0-${byteLength - 1}/${byteLength}`,
         },
-        body: "<script>window.sourceExecuted=true</script>",
+        body: contents,
       });
+      return;
+    }
+    if (
+      options.editFile &&
+      path === "mutations/preview" &&
+      request.method() === "POST" &&
+      request.postDataJSON().command.type === "edit_file"
+    ) {
+      const body = request.postDataJSON();
+      editCommand = body.command;
+      const value = mutationSample("mutations/preview", "prepared");
+      value.preview.request_id = body.request_id;
+      value.preview.expected = body.expected;
+      value.preview.result.operation = editedOperation;
+      value.preview.result.created = [editedCommit];
+      value.preview.result.bookmarks = {
+        [editCommand.bookmark]: {
+          before: [...editCommand.expected],
+          after: [editedCommit],
+        },
+      };
+      await route.fulfill({ json: value });
+      return;
+    }
+    if (
+      options.editFile &&
+      path === "mutations" &&
+      request.method() === "POST" &&
+      request.postDataJSON().command.type === "edit_file"
+    ) {
+      const body = request.postDataJSON();
+      editCommand = body.command;
+      edited = true;
+      const value = mutationSample("mutations", "committed");
+      value.receipt.request_id = body.request_id;
+      value.receipt.accepted = {
+        ...body.expected,
+        position: body.expected.position + 1,
+        heads: [editedOperation],
+      };
+      value.receipt.result.operation = editedOperation;
+      value.receipt.result.created = [editedCommit];
+      value.receipt.result.bookmarks = {
+        [editCommand.bookmark]: {
+          before: [...editCommand.expected],
+          after: [editedCommit],
+        },
+      };
+      await route.fulfill({ json: value });
       return;
     }
     const template = path
@@ -367,7 +545,6 @@ export async function api(
 }
 export async function connect(page: Page) {
   await page.goto("/");
-  await page.getByLabel("Repository ID", { exact: true }).fill(repo);
-  await page.getByLabel("Repository token", { exact: true }).fill(token);
-  await page.getByRole("button", { name: "Open repository" }).click();
+  await page.getByLabel("Access token", { exact: true }).fill(token);
+  await page.getByRole("button", { name: "Continue" }).click();
 }

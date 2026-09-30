@@ -135,7 +135,8 @@ async fn http_mutations_preview_apply_status_replay_and_contract_capture() {
             "bookmark_delete",
             "reconcile_operations",
             "abandon",
-            "resolve_conflicts"
+            "resolve_conflicts",
+            "edit_file"
         ])
     );
     record("capabilities", "get", status, &caps);

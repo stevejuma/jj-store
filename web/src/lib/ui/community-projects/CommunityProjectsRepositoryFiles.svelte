@@ -5,6 +5,7 @@
   import CommunityProjectsRepositoryFileTree from "./CommunityProjectsRepositoryFileTree.svelte";
   import CommunityProjectsColumnAlert from "./CommunityProjectsColumnAlert.svelte";
   import CommunityProjectsRepositoryFilePanel from "./CommunityProjectsRepositoryFilePanel.svelte";
+  import CommunityProjectsRepositoryBreadcrumb from "./CommunityProjectsRepositoryBreadcrumb.svelte";
   import CommunityProjectsRepositoryDirectory from "./CommunityProjectsRepositoryDirectory.svelte";
   import CommunityProjectsRepositorySkeleton from "./CommunityProjectsRepositorySkeleton.svelte";
   import {
@@ -35,6 +36,9 @@
   );
   let fileTreeOpen = $state(initialFileTreeLayout.open);
   let fileTreeWidth = $state(initialFileTreeLayout.width);
+  let editing = $state(false);
+  let editFilename = $state("");
+  let selectedFilePath = $state("");
   let resizePointerId = $state<number | null>(null);
   let resizeStartX = 0;
   let resizeStartWidth = 0;
@@ -101,6 +105,13 @@
       width: fileTreeWidth,
     }),
   );
+  $effect(() => {
+    const path = view.route.path ?? "";
+    if (path === selectedFilePath) return;
+    selectedFilePath = path;
+    editFilename = path;
+    editing = false;
+  });
   function beginFileTreeResize(event: PointerEvent) {
     if (!fileTreeOpen) return;
     event.preventDefault();
@@ -193,6 +204,11 @@
     class="community-projects__files-surface"
     aria-label="Repository files"
   >
+    <CommunityProjectsRepositoryBreadcrumb
+      {controller}
+      {editing}
+      bind:filename={editFilename}
+    />
     {#if initialLoading}<CommunityProjectsRepositorySkeleton
         layout="directory"
         label="Loading repository files"
@@ -208,10 +224,15 @@
             >{/each}</CommunityProjectsColumnAlert
         >{/if}
       {#if view.route.path}<CommunityProjectsRepositoryFilePanel
+          {controller}
+          bind:editing
+          bind:filename={editFilename}
           blob={view.blob}
           selectedPath={view.route.path ?? ""}
           {latestCommit}
           {now}
+          {fileTreeOpen}
+          onToggleFileTree={() => (fileTreeOpen = !fileTreeOpen)}
           loading={view.status.detail === "loading"}
           isMarkdown={isMarkdownRepositoryPath(view.route.path ?? "")}
         />{:else}<CommunityProjectsRepositoryDirectory

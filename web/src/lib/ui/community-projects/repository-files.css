@@ -3,12 +3,18 @@
 
   width: 100%;
   min-width: 0;
-  min-height: 100%;
+  min-height: 0;
   box-sizing: border-box;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
   padding: 0;
 }
 
 .community-projects__files-content {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
   background: var(--background);
 }
 
@@ -92,7 +98,8 @@
 .community-projects__file-panel {
   width: 100%;
   min-width: 0;
-  min-height: 100%;
+  min-height: 0;
+  flex: 1 1 auto;
   overflow: hidden;
   background: var(--background);
 }
@@ -301,6 +308,18 @@
   font-weight: 500;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.community-projects__file-panel-tree-toggle[data-ui-component="button"] {
+  flex: none;
+}
+
+.community-projects__file-panel-info-actions {
+  display: flex;
+  min-width: 0;
+  flex: none;
+  align-items: center;
+  gap: 0.55rem;
 }
 
 .community-projects__file-panel-stats {

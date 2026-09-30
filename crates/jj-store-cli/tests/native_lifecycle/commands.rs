@@ -250,6 +250,134 @@ impl Branches {
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn typed_edit_file_creates_child_renames_text_and_moves_exact_bookmark() {
+    tokio::task::LocalSet::new()
+        .run_until(async {
+            use jj_lib::{merge::Merge, repo_path::RepoPathBuf};
+            use jj_store_jj::native_dto::RefTarget;
+
+            let seed = Branches::new().await;
+            let conflicted = seed.current().await;
+            let normalized = seed
+                .prepare(Command::BookmarkMove {
+                    name: "topic".into(),
+                    expected: RefTarget(vec![Some(seed.left), None, Some(seed.right)]),
+                    target: seed.left,
+                })
+                .await
+                .unwrap();
+            seed.publish(conflicted, &normalized, 86).await;
+            let expected = seed.current().await;
+            let command = Command::EditFile {
+                bookmark: "topic".into(),
+                expected: RefTarget(vec![Some(seed.left)]),
+                source: "file".into(),
+                destination: "README.md".into(),
+                contents: "# Edited\n".into(),
+                description: "Edit repository documentation".into(),
+            };
+            let prepared = seed.prepare(command.clone()).await.unwrap();
+            assert_eq!(seed.current().await, expected);
+            assert_eq!(prepared.created.len(), 1);
+            assert!(prepared.rewrites.is_empty());
+            assert_eq!(
+                prepared.bookmarks["topic"].before,
+                RefTarget(vec![Some(seed.left)])
+            );
+            assert_eq!(
+                prepared.bookmarks["topic"].after,
+                RefTarget(vec![Some(prepared.created[0])])
+            );
+            let candidate = seed
+                .f
+                .stores
+                .load_at(seed.repo.loader(), prepared.operation)
+                .await
+                .unwrap();
+            let created = candidate
+                .store()
+                .get_commit_async(&b::CommitId::from_bytes(prepared.created[0].as_bytes()))
+                .await
+                .unwrap();
+            assert_eq!(
+                created.parent_ids(),
+                &[b::CommitId::from_bytes(seed.left.as_bytes())]
+            );
+            assert_eq!(created.description(), "Edit repository documentation");
+            assert_eq!(
+                created
+                    .tree()
+                    .path_value(&RepoPathBuf::from_internal_string("file").unwrap())
+                    .await
+                    .unwrap(),
+                Merge::resolved(None)
+            );
+            let edited = created
+                .tree()
+                .path_value(&RepoPathBuf::from_internal_string("README.md").unwrap())
+                .await
+                .unwrap();
+            let Some(b::TreeValue::File {
+                id,
+                executable,
+                copy_id,
+            }) = edited.as_resolved().unwrap()
+            else {
+                panic!("edited path is not a file")
+            };
+            assert!(!executable);
+            assert_eq!(copy_id, &b::CopyId::placeholder());
+            let mut reader = candidate
+                .store()
+                .read_file(&RepoPathBuf::from_internal_string("README.md").unwrap(), id)
+                .await
+                .unwrap();
+            let mut contents = String::new();
+            reader.read_to_string(&mut contents).await.unwrap();
+            assert_eq!(contents, "# Edited\n");
+            seed.publish(expected, &prepared, 87).await;
+            assert_eq!(
+                seed.current().await.heads,
+                BTreeSet::from([prepared.operation])
+            );
+
+            let stale = seed.prepare(command).await.unwrap_err();
+            assert_eq!(stale, Error::StaleBookmark);
+        })
+        .await;
+}
+
+#[test]
+fn typed_edit_file_rejects_ambiguous_targets_invalid_paths_and_oversized_text() {
+    use jj_store_jj::native_dto::RefTarget;
+    let base = Command::EditFile {
+        bookmark: "main".into(),
+        expected: RefTarget(vec![Some(m::CommitId::new([8; 64]))]),
+        source: "README.md".into(),
+        destination: "README.md".into(),
+        contents: "text".into(),
+        description: "Edit README".into(),
+    };
+    assert!(base.validate().is_ok());
+    let mut ambiguous = base.clone();
+    if let Command::EditFile { expected, .. } = &mut ambiguous {
+        expected.0.push(None);
+        expected.0.push(Some(m::CommitId::new([9; 64])));
+    }
+    assert_eq!(ambiguous.validate().unwrap_err(), Error::Invalid);
+    let mut invalid_path = base.clone();
+    if let Command::EditFile { destination, .. } = &mut invalid_path {
+        *destination = "../README.md".into();
+    }
+    assert_eq!(invalid_path.validate().unwrap_err(), Error::Invalid);
+    let mut oversized = base;
+    if let Command::EditFile { contents, .. } = &mut oversized {
+        *contents = "x".repeat(256 * 1024 + 1);
+    }
+    assert_eq!(oversized.validate().unwrap_err(), Error::Invalid);
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn typed_new_merges_ordered_parents_and_moves_only_logical_workspace() {
     tokio::task::LocalSet::new()
         .run_until(async {

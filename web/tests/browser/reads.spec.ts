@@ -125,7 +125,7 @@ test("native_graphs_files_and_source_rendering_are_accessible", async ({
   ).toBeVisible();
   await page.getByRole("button", { name: "bin", exact: true }).click();
   await expect(page.getByText("window.sourceExecuted=true")).toBeVisible();
-  await page.getByRole("link", { name: repo, exact: true }).click();
+  await page.getByRole("tab", { name: "Files" }).click();
   await expect(
     page.getByRole("table", { name: "Repository files" }),
   ).toBeVisible();
@@ -180,9 +180,9 @@ test("native_graphs_files_and_source_rendering_are_accessible", async ({
   await expect(
     page.getByRole("heading", { name: "Explore native history." }),
   ).toBeVisible();
-  await expect(
-    page.getByLabel("Repository token", { exact: true }),
-  ).toHaveValue("");
+  await expect(page.getByLabel("Access token", { exact: true })).toHaveValue(
+    "",
+  );
 });
 test("branch targets scope native history and expose repository decorations", async ({
   page,
@@ -254,7 +254,10 @@ test("multiple_heads_require_choice_and_events_preserve_the_selected_view", asyn
     }),
   ).toBeVisible();
   await page.getByRole("button", { name: "Toggle details" }).click();
-  await expect(page.getByText(operation.slice(0, 12))).toBeVisible();
+  await expect(
+    page.getByRole("complementary", { name: "Repository details" }),
+  ).toBeVisible();
+  expect(new URL(page.url()).hash).toContain(`at_op=${operation}`);
 });
 test("disconnect_discards_inflight_history_and_revocation_clears_data", async ({
   page,
@@ -270,9 +273,8 @@ test("disconnect_discards_inflight_history_and_revocation_clears_data", async ({
   await expect(
     page.getByRole("region", { name: "Repository log" }),
   ).toHaveCount(0);
-  await page.getByLabel("Repository ID", { exact: true }).fill(repo);
-  await page.getByLabel("Repository token", { exact: true }).fill(token);
-  await page.getByRole("button", { name: "Open repository" }).click();
+  await page.getByLabel("Access token", { exact: true }).fill(token);
+  await page.getByRole("button", { name: "Continue" }).click();
   await expect(
     page.getByRole("option", { name: "main", exact: true }),
   ).toBeVisible();
@@ -286,9 +288,9 @@ test("disconnect_discards_inflight_history_and_revocation_clears_data", async ({
   await expect(
     page.getByRole("region", { name: "Repository log" }),
   ).toHaveCount(0);
-  await expect(
-    page.getByLabel("Repository token", { exact: true }),
-  ).toHaveValue("");
+  await expect(page.getByLabel("Access token", { exact: true })).toHaveValue(
+    "",
+  );
 });
 test("mobile_connect_and_history_have_no_horizontal_overflow", async ({
   page,
@@ -358,7 +360,7 @@ test("graph_and_directory_pages_retain_exact_snapshots_and_query_context", async
     }
     await route.fulfill({ json: result });
   });
-  await page.getByRole("link", { name: repo, exact: true }).click();
+  await page.getByRole("tab", { name: "Files" }).click();
   await expect(
     page.getByRole("table", { name: "Repository files" }),
   ).toBeVisible();
@@ -410,7 +412,7 @@ test("repository directories load lazily and flat views request recursive paths"
   });
 
   await connect(page);
-  await page.getByRole("link", { name: repo, exact: true }).click();
+  await page.getByRole("tab", { name: "Files" }).click();
   await expect(
     page.getByRole("button", { name: "src", exact: true }),
   ).toHaveAttribute("aria-expanded", "false");
@@ -558,7 +560,7 @@ test("new_file_selection_discards_an_older_inflight_preview", async ({
     });
   });
   await connect(page);
-  await page.getByRole("link", { name: repo, exact: true }).click();
+  await page.getByRole("tab", { name: "Files" }).click();
   await page.getByRole("button", { name: "Open file file-0" }).click();
   await started;
   await page.getByRole("button", { name: "file-1", exact: true }).click();

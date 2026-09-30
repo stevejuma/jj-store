@@ -268,6 +268,12 @@ entry without credentials, publishes through a separate Unix-RPC CLI process and
 removes only that isolated stack. Both paths refuse unowned listeners and
 process identities and record bounded startup/RSS measurements.
 
+The deterministic reseed writes one representative root document for every
+landing-document category owned by the browser: README, CODE_OF_CONDUCT,
+CONTRIBUTING, LICENSE and SECURITY. A governance test invokes the exported seed
+boundary in a temporary directory and verifies that complete set without
+starting or changing the interactive demo stack.
+
 The user deferred shared-deployment browser release qualification on 28
 September 2026. Manual-token authenticated discovery and repository selection
 are now implemented without OIDC or accounts; provider qualification and M4.14

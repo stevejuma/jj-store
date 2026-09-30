@@ -19,7 +19,7 @@ fn unavailable(_: impl std::fmt::Debug) -> Error {
 fn cid(id: &b::CommitId) -> m::CommitId {
     m::CommitId::from_slice(id.as_bytes()).expect("native commit width")
 }
-fn reference(value: &o::RefTarget) -> crate::native_dto::RefTarget {
+pub(super) fn reference(value: &o::RefTarget) -> crate::native_dto::RefTarget {
     crate::native_dto::RefTarget(
         value
             .as_merge()
@@ -48,6 +48,22 @@ pub(super) fn validate(command: &Command) -> Result<()> {
                 && workspace.as_ref().is_none_or(|value| name(value, 256))
         }
         Command::Describe { description, .. } => description.len() <= 65536,
+        Command::EditFile {
+            bookmark,
+            expected,
+            source,
+            destination,
+            contents,
+            description,
+        } => {
+            name(bookmark, 1024)
+                && expected.0.len() == 1
+                && expected.0[0].is_some()
+                && super::resolve::path(source).is_ok()
+                && super::resolve::path(destination).is_ok()
+                && contents.len() <= 256 * 1024
+                && description.len() <= 65536
+        }
         Command::ReconcileOperations { .. } => true,
         Command::ResolveConflicts { paths, .. } => super::resolve::validate(paths).is_ok(),
         Command::Abandon { commits, .. } => {
@@ -184,6 +200,29 @@ pub(super) async fn run(
     let mut abandoned = vec![];
     let mut skipped_hidden = vec![];
     let (staged, mut created) = match command {
+        Command::EditFile {
+            bookmark,
+            expected,
+            source,
+            destination,
+            contents,
+            description,
+        } => {
+            let result = super::edit::stage(
+                &repo,
+                access.as_ref(),
+                bookmark,
+                expected,
+                source,
+                destination,
+                contents,
+                description,
+                principal,
+                &budget,
+            )
+            .await?;
+            (result.repo, vec![result.created])
+        }
         Command::ResolveConflicts { commit, paths } => (
             super::resolve::stage(
                 &repo,
@@ -328,7 +367,8 @@ async fn transact(
     let description = match command {
         Command::ReconcileOperations { .. }
         | Command::Abandon { .. }
-        | Command::ResolveConflicts { .. } => {
+        | Command::ResolveConflicts { .. }
+        | Command::EditFile { .. } => {
             return Err(Error::Invalid);
         }
         Command::New {

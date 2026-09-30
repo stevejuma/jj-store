@@ -17,7 +17,16 @@
       branch: "main",
       branches: [],
       previewDocuments: [
-        { path: "LICENSE", contents: "# License\n\nApache-2.0" },
+        { path: "SECURITY.md", contents: "# Security\n\nReport privately" },
+        { path: "LICENCE", contents: "# License\n\nApache-2.0" },
+        {
+          path: "CONTRIBUTING.md",
+          contents: "# Contributing\n\nOpen a change",
+        },
+        {
+          path: "CODE_OF_CONDUCT.md",
+          contents: "# Code of conduct\n\nBe considerate",
+        },
         { path: "README.md", contents: "# Repository\n\nNative history" },
       ],
       onOpenDirectory: fn(),
@@ -34,10 +43,14 @@
     const tabs = canvas.getAllByRole("tab");
     await expect(tabs.map((tab) => tab.textContent?.trim())).toEqual([
       "README",
+      "CODE_OF_CONDUCT",
+      "CONTRIBUTING",
       "LICENSE",
+      "SECURITY",
     ]);
     const readme = canvas.getByRole("tab", { name: "README" });
     const license = canvas.getByRole("tab", { name: "LICENSE" });
+    const security = canvas.getByRole("tab", { name: "SECURITY" });
     await expect(readme).toHaveAttribute("aria-selected", "true");
     await expect(getComputedStyle(readme).backgroundColor).not.toBe(
       "rgba(0, 0, 0, 0)",
@@ -60,5 +73,9 @@
     await expect(
       canvas.getByRole("region", { name: "LICENSE preview" }),
     ).toHaveTextContent("Apache-2.0");
+    await userEvent.click(security);
+    await expect(
+      canvas.getByRole("region", { name: "SECURITY preview" }),
+    ).toHaveTextContent("Report privately");
   }}
 />

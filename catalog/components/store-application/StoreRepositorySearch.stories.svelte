@@ -39,8 +39,12 @@
       ).not.toBeInTheDocument(),
     );
     await expect(
-      canvas.getByRole("list", { name: "Repository breadcrumb" }),
-    ).toHaveTextContent(/jj-store.*JJ Log/u);
+      canvas.queryByRole("list", { name: "Repository breadcrumb" }),
+    ).not.toBeInTheDocument();
+    await expect(canvas.getByRole("tab", { name: "Commits" })).toHaveAttribute(
+      "data-state",
+      "active",
+    );
     await expect(
       canvas.getByRole("button", { name: "Close Diff column" }),
     ).toBeVisible();

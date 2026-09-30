@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onDestroy } from "svelte";
   import type { StoreController } from "../../controller/contracts.js";
+  import type { StoreSearchResult } from "../../controller/contracts.js";
   import StoreSearchCommand from "./StoreSearchCommand.svelte";
 
   let {
@@ -9,11 +10,18 @@
   }: { controller: StoreController; open?: boolean } = $props();
   let query = $state("");
   let timer: ReturnType<typeof setTimeout> | undefined;
+  let selectionFrame: ReturnType<typeof requestAnimationFrame> | undefined;
   let previouslyOpen = $state(open);
+  let pendingResult: StoreSearchResult | null = null;
 
   function cancelTimer() {
     if (timer !== undefined) clearTimeout(timer);
     timer = undefined;
+  }
+
+  function cancelSelectionFrame() {
+    if (selectionFrame !== undefined) cancelAnimationFrame(selectionFrame);
+    selectionFrame = undefined;
   }
 
   function updateQuery(value: string) {
@@ -39,7 +47,10 @@
     if (previouslyOpen && !open) reset();
     previouslyOpen = open;
   });
-  onDestroy(cancelTimer);
+  onDestroy(() => {
+    cancelTimer();
+    cancelSelectionFrame();
+  });
 </script>
 
 <StoreSearchCommand
@@ -50,8 +61,22 @@
   onQueryChange={updateQuery}
   onSelect={(result) => {
     cancelTimer();
+    cancelSelectionFrame();
+    pendingResult = result;
     open = false;
-    void controller.actions.selectSearchResult(result);
+  }}
+  onOpenChangeComplete={(completedOpen) => {
+    if (completedOpen) {
+      cancelSelectionFrame();
+      return;
+    }
+    if (!pendingResult) return;
+    const result = pendingResult;
+    pendingResult = null;
+    selectionFrame = requestAnimationFrame(() => {
+      selectionFrame = undefined;
+      void controller.actions.selectSearchResult(result);
+    });
   }}
   onLoadMore={() => controller.actions.loadMore("search")}
 />

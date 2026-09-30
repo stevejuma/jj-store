@@ -28,7 +28,14 @@ export function mutationCommittedRoute(
   if (change.replacementCommit)
     return { ...route, commitId: change.replacementCommit, path: null };
   if (change.createdCommit)
-    return { ...route, commitId: change.createdCommit, path: null };
+    return {
+      ...route,
+      commitId: change.createdCommit,
+      path: change.createdPath,
+      directory: change.createdPath
+        ? change.createdPath.split("/").slice(0, -1).join("/")
+        : "",
+    };
   if (change.deletedBookmark === route.bookmark)
     return { ...route, bookmark: "", path: null };
   return null;

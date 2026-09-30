@@ -37,9 +37,10 @@ files are not server state. Credentials never belong in a repository checkout.
    results, failures, files, versions/formats, gaps, and next action. Add an
    evidence entry even when milestone status has not changed. Documentation-only
    work updates the ledger when it changes scope, gates, status, or evidence.
-7. Run `pnpm spec:check`, `pnpm check`, `pnpm test`, and `pnpm build` for
-   executable changes. Documentation-only changes run formatting and consuming
-   checkers.
+7. Follow the targeted verification policy below. Do not run the root aggregate
+   `pnpm spec:check`, `pnpm check`, `pnpm test`, or `pnpm build` lanes by
+   default. Documentation-only changes run formatting and the checkers that
+   consume the changed documents.
 8. Commit each verified slice with Jujutsu, using an explicit message. Use the
    enclosing change as the ledger's revision, not its own future commit hash.
 
@@ -48,6 +49,29 @@ Keep unresolved failures and incomplete gates explicit. A failed M0 storage or
 identity proof blocks dependent implementation; do not weaken the contract. Real
 RustFS evidence is distinct from fake-store evidence. Cold runs are required for
 browser/lifecycle changes. Visual baselines require explicit approval.
+
+## Targeted verification policy
+
+Optimize for fast feedback by testing the smallest complete impact surface.
+Start with the exact regression, then run only the checks and tests for the
+changed layer and its direct consumers.
+
+- UI-only changes run the relevant `web` or `catalog` type check and the exact
+  unit, Storybook, accessibility, or browser tests for the affected surface.
+  They do not run Rust builds or tests. Use a cold UI run only when startup,
+  lifecycle, generated assets, or built bundle behavior changed.
+- Rust-only changes run the affected package check and exact crate, module, test
+  binary, or named test. They do not run unrelated UI lanes or the full Rust
+  workspace.
+- Cross-layer changes run focused checks on each affected UI and Rust boundary.
+  Public contract generation is checked when the contract changed.
+- Run the full relevant test suite only when the changed code is shared with or
+  consumed by other crates, packages, surfaces, hosts, shared fixtures, or test
+  infrastructure; when release qualification requires it; or when the user
+  explicitly requests it. Record why the wider run is required.
+- Record every command actually run and mark wider lanes not run under this
+  policy as out of scope. A focused passing result must not be described as a
+  full-suite pass.
 
 ## Non-negotiable correctness
 

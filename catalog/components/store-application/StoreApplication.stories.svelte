@@ -37,14 +37,14 @@
       mainBody.querySelector(".ui-minimal-app-shell__body-scroll-area"),
     ).toBeNull();
     await expect(
-      canvas.getByText("jj-store · Branches", { exact: true }),
+      canvas.getByText("jj-store · Workspaces", { exact: true }),
     ).toBeVisible();
     await expect(
       canvas.getByRole("button", { name: "Expand left sidebar" }),
     ).toBeVisible();
     await userEvent.click(canvas.getByRole("button", { name: "JJ Log" }));
     await expect(
-      canvas.getByText("jj-store · JJ Log", { exact: true }),
+      canvas.getByText("jj-store · Commits", { exact: true }),
     ).toBeVisible();
     await userEvent.click(canvas.getByRole("button", { name: "Op Log" }));
     await expect(
@@ -52,7 +52,7 @@
     ).toBeVisible();
     await userEvent.click(canvas.getByRole("button", { name: "Back" }));
     await expect(
-      canvas.getByText("jj-store · JJ Log", { exact: true }),
+      canvas.getByText("jj-store · Commits", { exact: true }),
     ).toBeVisible();
     await userEvent.click(canvas.getByRole("button", { name: "Forward" }));
     await expect(
@@ -127,7 +127,7 @@
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(
-      canvas.getByText("jj-store · Branches", { exact: true }),
+      canvas.getByText("jj-store · Workspaces", { exact: true }),
     ).toBeVisible();
     await userEvent.click(
       canvas.getByRole("button", { name: "Open navigation sidebar" }),
@@ -137,7 +137,7 @@
     ).toBeVisible();
     await userEvent.click(canvas.getByRole("button", { name: "JJ Log" }));
     await expect(
-      canvas.getByText("jj-store · JJ Log", { exact: true }),
+      canvas.getByText("jj-store · Commits", { exact: true }),
     ).toBeVisible();
     await expect(
       canvas.queryByRole("navigation", { name: "Repository navigation" }),
@@ -159,7 +159,7 @@
     ).toBeVisible();
     await userEvent.unhover(edge);
     await userEvent.hover(
-      canvas.getByText("jj-store · Branches", { exact: true }),
+      canvas.getByText("jj-store · Workspaces", { exact: true }),
     );
     await waitFor(() => expect(edge).toHaveAttribute("aria-expanded", "false"));
   }}

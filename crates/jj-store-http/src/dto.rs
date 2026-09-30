@@ -125,6 +125,7 @@ impl From<&Config> for Capabilities {
                 "reconcile_operations",
                 "abandon",
                 "resolve_conflicts",
+                "edit_file",
             ]
             .map(str::to_owned)
             .to_vec(),

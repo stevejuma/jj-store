@@ -46,7 +46,20 @@
     await userEvent.click(
       canvas.getByRole("button", { name: "Collapse Branches column" }),
     );
-    await userEvent.click(canvas.getByRole("button", { name: "jj-store" }));
+    for (const name of ["Activity", "Workspaces", "Review", "Commits"]) {
+      await userEvent.click(canvas.getByRole("tab", { name }));
+      await expect(
+        canvas.queryByRole("list", { name: "Repository breadcrumb" }),
+      ).not.toBeInTheDocument();
+    }
+    await userEvent.click(canvas.getByRole("tab", { name: "Files" }));
+    const breadcrumb = canvas.getByRole("list", {
+      name: "Repository breadcrumb",
+    });
+    await expect(breadcrumb).toBeVisible();
+    await expect(
+      getComputedStyle(breadcrumb.closest("nav")!).borderBottomWidth,
+    ).toBe("0px");
     const treeResize = canvas.getByRole("button", {
       name: "Resize repository file tree",
     });
@@ -137,7 +150,7 @@
     ).toBeVisible();
     await expect(fileSummary.getByText(/seconds ago|just now/u)).toBeVisible();
     await expect(
-      canvas.getByRole("list", { name: "Files breadcrumb" }),
+      canvas.getByRole("list", { name: "Repository breadcrumb" }),
     ).toBeVisible();
     const landingPreview = canvas.getByRole("region", {
       name: "Repository document preview",

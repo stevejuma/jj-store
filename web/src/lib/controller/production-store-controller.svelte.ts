@@ -27,20 +27,20 @@ import {
 } from "./production-store-lifecycle.svelte.js";
 import { createProductionBranchActions } from "./production-branch-actions.js";
 import { createProductionStoreActions } from "./production-store-actions.js";
+import { createProductionMutationCommitter } from "./production-mutation-commit.js";
 
 export function createProductionStoreController(
   options: { fetcher?: typeof fetch; now?: () => number } = {},
 ): StoreController {
   const history = createStoreRouteHistory();
   const data = createProductionStoreState();
-  let source: StoreDataSource | null = null;
-  let sessionToken: string | null = null;
+  let source: StoreDataSource | null = null,
+    sessionToken: string | null = null;
   let session = 0;
   let version = 0,
     feed = new AbortController(),
     discovery = new AbortController(),
     lifecycle = new AbortController();
-  const operation = () => history.route.snapshotOperationId;
   const activeSource = () => {
     if (!source) throw new ApiError("not_connected");
     return source;
@@ -51,7 +51,7 @@ export function createProductionStoreController(
     data,
     history,
     source: activeSource,
-    operation,
+    operation: () => history.route.snapshotOperationId,
     version: () => version,
     current,
     report: (cause) => reportProductionStoreError(data, cause),
@@ -60,7 +60,7 @@ export function createProductionStoreController(
     Object.assign(data.status, { navigation: "failed", error: history.error });
 
   async function restoreRoute() {
-    if (!source || !operation()) return;
+    if (!source || !history.route.snapshotOperationId) return;
     version += 1;
     clearProductionStoreView(data);
     await reader.restorePage();
@@ -217,7 +217,7 @@ export function createProductionStoreController(
     source: activeSource,
     head: () => data.head,
     current: (active) => active === source,
-    committed: refresh,
+    committed: createProductionMutationCommitter(history, refresh),
   });
   const conflictUploads = createProductionStoreConflicts({
     source: activeSource,

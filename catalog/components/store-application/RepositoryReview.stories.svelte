@@ -2,10 +2,7 @@
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import StoreRepositoryApplication from "../../fixtures/StoreRepositoryApplicationFixture.svelte";
-  import {
-    expectColumnCanvasFillsBody,
-    expectRepositoryBreadcrumbLayout,
-  } from "./column-canvas-story-assertions.js";
+  import { expectColumnCanvasFillsBody } from "./column-canvas-story-assertions.js";
   const { Story } = defineMeta({
     title: "JJ Store/Review refinements",
     component: StoreRepositoryApplication,
@@ -250,15 +247,9 @@
     await expect(getComputedStyle(operationHeaders[0]!).borderBottomWidth).toBe(
       "1px",
     );
-    const breadcrumb = canvas.getByRole("list", {
-      name: "Repository breadcrumb",
-    });
-    await expectRepositoryBreadcrumbLayout(breadcrumb);
     await expect(
-      getComputedStyle(
-        breadcrumb.querySelector('[data-ui-part="breadcrumb-page"]')!,
-      ).color,
-    ).toBe(getComputedStyle(status).color);
+      canvas.queryByRole("list", { name: "Repository breadcrumb" }),
+    ).not.toBeInTheDocument();
   }}
 />
 
@@ -268,17 +259,16 @@
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
-    const filesToolbar = canvasElement.querySelector<HTMLElement>(
-      ".store-application__files-toolbar",
+    const bodyBreadcrumb = canvasElement.querySelector<HTMLElement>(
+      ".store-application__body-breadcrumb",
     )!;
     const branchSelector = canvas.getByRole("combobox", {
       name: "Repository bookmark or change",
     });
-    await expect(filesToolbar).not.toContainElement(branchSelector);
-    const pageNav = filesToolbar.closest<HTMLElement>(
-      '[data-ui-part="toolbar"]',
-    )!;
-    await expect(getComputedStyle(pageNav).borderBottomWidth).toBe("1px");
+    await expect(bodyBreadcrumb).not.toContainElement(branchSelector);
+    await expect(getComputedStyle(bodyBreadcrumb).borderBottomWidth).toBe(
+      "0px",
+    );
     const fileTree = canvas.getByRole("complementary", {
       name: "Repository file tree",
     });
@@ -291,15 +281,19 @@
       ".community-projects__file-tree-actions",
     )!;
     await expect(within(fileTreeActions).getByText("Files")).toBeVisible();
-    const pageFilesLabel = filesToolbar.querySelector<HTMLElement>(
-      '[data-slot="breadcrumb-page"]',
+    const repositoryLabel = bodyBreadcrumb.querySelector<HTMLElement>(
+      '[data-slot="breadcrumb-link"]',
     )!;
     const fileTreeTitle = fileTreeActions.querySelector<HTMLElement>(
       ".community-projects__file-tree-title",
     )!;
     await expect(fileTreeTitle.getBoundingClientRect().left).toBeCloseTo(
-      pageFilesLabel.getBoundingClientRect().left,
+      fileTree.getBoundingClientRect().left +
+        Number.parseFloat(getComputedStyle(fileTreeActions).paddingLeft),
       0,
+    );
+    await expect(repositoryLabel.getBoundingClientRect().left).toBeGreaterThan(
+      fileTreeTitle.getBoundingClientRect().left,
     );
     await expect(
       within(fileTreeActions).getByRole("radio", {
@@ -322,9 +316,6 @@
       }),
     ).toBeChecked();
     await expect(getComputedStyle(fileTree).borderRightWidth).toBe("1px");
-    await expect(getComputedStyle(pageNav).borderBottomColor).toBe(
-      getComputedStyle(fileTree).borderRightColor,
-    );
     const fileTreeInner = fileTree.querySelector<HTMLElement>(
       ".community-projects__file-tree",
     )!;
@@ -332,7 +323,7 @@
       Number.parseFloat(getComputedStyle(fileTreeInner).paddingLeft),
     ).toBeGreaterThan(0);
     const filesBody = canvasElement.querySelector(
-      '[data-ui-part="body"][data-layout="regions"]',
+      ".store-application__body-regions",
     )!;
     await expect(fileTree.getBoundingClientRect().height).toBeCloseTo(
       filesBody.getBoundingClientRect().height,
@@ -417,7 +408,7 @@
     await userEvent.click(
       canvas.getByRole("button", { name: "Open directory src" }),
     );
-    const path = canvas.getByRole("list", { name: "Files breadcrumb" });
+    const path = canvas.getByRole("list", { name: "Repository breadcrumb" });
     await expect(
       within(path).getByRole("link", { name: "Files" }),
     ).toBeVisible();

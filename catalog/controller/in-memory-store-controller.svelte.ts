@@ -1,16 +1,12 @@
 import type { FileListingViewMode } from "@lapismd/design-core/diff";
 import * as fixture from "../fixtures/repository.js";
-import { repositories, repositorySnapshot } from "../fixtures/snapshots.js";
+import { repositories } from "../fixtures/snapshots.js";
 import type * as StoreContract from "../../web/src/lib/controller/contracts.js";
 import type { StorePage } from "../../web/src/lib/ui/community-navigation/model.js";
 import * as large from "../fixtures/large-repository.js";
 import { createInMemoryStoreSearch } from "./in-memory-store-search.svelte.js";
 import { createInMemoryStoreMutations } from "./in-memory-store-mutations.svelte.js";
-import {
-  initialStoreRoute,
-  mutationCommittedRoute,
-  revisionSelectedRoute,
-} from "./in-memory-store-route.js";
+import * as storeRoute from "./in-memory-store-route.js";
 import { createInMemoryStoreRepository } from "./in-memory-store-repository.svelte.js";
 import { inMemoryStoreMember } from "./in-memory-store-member.js";
 import { createInMemoryStoreConflicts } from "./in-memory-store-conflicts.js";
@@ -27,7 +23,7 @@ export function createInMemoryStoreController(
 ): StoreContract.StoreController {
   const repositoryData = createInMemoryStoreRepository(options.large);
   let history = $state<StoreContract.StoreRoute[]>([
-    initialStoreRoute(initialPage),
+    storeRoute.initialStoreRoute(initialPage),
   ]);
   let index = $state(0);
   let authenticated = $state(true);
@@ -48,7 +44,7 @@ export function createInMemoryStoreController(
       )
       ? options.large
         ? large.largeRepositorySnapshot(route.repository, targets[0]!)
-        : repositorySnapshot(route.repository, targets[0]!)
+        : repositoryData.snapshot(route.repository, targets[0]!)
       : undefined,
   );
   const conflictController = createInMemoryStoreConflicts(() => route);
@@ -60,8 +56,13 @@ export function createInMemoryStoreController(
   const search = createInMemoryStoreSearch(() => route, push);
   const mutations = createInMemoryStoreMutations({
     onCommitted(command, result) {
-      const change = repositoryData.commit(command, result, route.commitId);
-      const next = mutationCommittedRoute(route, change);
+      const change = repositoryData.commit(
+        command,
+        result,
+        route.repository,
+        route.commitId,
+      );
+      const next = storeRoute.mutationCommittedRoute(route, change);
       if (next) push(next);
     },
     firstApply: options.mutationOutcome,
@@ -157,7 +158,7 @@ export function createInMemoryStoreController(
         : { agentSessionId: null, reviewThreadId: null };
       const changeId =
         route.page === "oplog" ? null : (revision?.changeId ?? null);
-      push(revisionSelectedRoute(route, id, changeId, context));
+      push(storeRoute.revisionSelectedRoute(route, id, changeId, context));
     },
     selectFile(path) {
       if (

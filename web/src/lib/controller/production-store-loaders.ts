@@ -2,11 +2,7 @@ import { fullId, type Model, type Snapshot } from "../api/client.js";
 import type { RepositoryLogGraph } from "../projects/repository-log.js";
 import type { RepositoryWorkingCopy } from "../projects/repository-log.js";
 import type { Bookmark, RevisionDetail } from "../projects/presentation.js";
-import type {
-  RepositoryBlob,
-  RepositoryChoice,
-  RepositorySnapshot,
-} from "./contracts.js";
+import type { RepositoryBlob, RepositoryChoice } from "./contracts.js";
 import type { StoreDataSource } from "./native-data-source.js";
 import {
   startOperationInspection,
@@ -20,6 +16,7 @@ import {
   presentPatch,
   presentReferences,
 } from "./native-presentation.js";
+export { readLandingDocuments } from "./production-landing-documents.js";
 
 export async function readRevision(
   source: StoreDataSource,
@@ -127,32 +124,6 @@ export async function readPaths(
     recursive: value.data.recursive,
     cursor: value.next_cursor,
     readSnapshot: value.snapshot,
-  };
-}
-
-export async function readLandingDocuments(
-  source: StoreDataSource,
-  operation: string,
-  snapshot: RepositorySnapshot,
-  files: ReadonlyMap<string, string>,
-): Promise<RepositorySnapshot> {
-  const documents = [...files]
-    .filter(([path]) => /(^|\/)(readme|license)(\.[^/]*)?$/iu.test(path))
-    .slice(0, 4);
-  const loaded = await Promise.all(
-    documents.map(
-      async ([path, id]) => [path, await source.file(id, operation)] as const,
-    ),
-  );
-  const contents = new Map(loaded);
-  return {
-    ...snapshot,
-    files: snapshot.files.map((file) => {
-      const value = contents.get(file.path);
-      return value
-        ? { ...file, contents: value.text, binary: value.text === undefined }
-        : file;
-    }),
   };
 }
 

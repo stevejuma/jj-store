@@ -491,7 +491,7 @@ fn mutation_contracts_require_typed_intent_and_write_permission() {
                 .as_array()
                 .unwrap()
                 .len(),
-            8
+            9
         );
     }
     let status = &doc["paths"]["/v1/repos/{repo}/mutations/{request_id}"]["get"];

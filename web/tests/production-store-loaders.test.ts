@@ -21,9 +21,11 @@ import {
 } from "../src/lib/controller/native-presentation.js";
 import {
   readGraph,
+  readLandingDocuments,
   readOperationInspection,
   readReferences,
 } from "../src/lib/controller/production-store-loaders.js";
+import { repositoryLandingDocumentLabel } from "../src/lib/ui/community-projects/repository-browser.js";
 import { assertSameSnapshot } from "../src/lib/controller/production-snapshot.js";
 import {
   nextPathPage,
@@ -177,6 +179,53 @@ test("empty working copies use the native no-description label", () => {
     references.workingCopies[0]?.message,
     "(empty) (no description set)",
   );
+});
+
+test("repository landing documents include community files in stable tab order", async () => {
+  const requested: string[] = [];
+  const ids = new Map([
+    ["SECURITY.md", "01".repeat(64)],
+    ["LICENCE", "02".repeat(64)],
+    ["LICENSE.md", "07".repeat(64)],
+    ["CONTRIBUTING.md", "03".repeat(64)],
+    ["CODE_OF_CONDUCT.md", "04".repeat(64)],
+    ["README.markdown", "05".repeat(64)],
+    ["docs/README.md", "06".repeat(64)],
+  ]);
+  const dataSource = source({
+    file: async (id) => {
+      requested.push(id);
+      return { text: `contents:${id}` };
+    },
+  });
+  const loaded = await readLandingDocuments(
+    dataSource,
+    operation,
+    {
+      id: after,
+      files: [...ids].map(([path]) => ({ path })),
+    },
+    ids,
+  );
+  assert.deepEqual(requested, [
+    ids.get("README.markdown"),
+    ids.get("CODE_OF_CONDUCT.md"),
+    ids.get("CONTRIBUTING.md"),
+    ids.get("LICENCE"),
+    ids.get("SECURITY.md"),
+  ]);
+  assert.deepEqual(
+    loaded.files
+      .filter((candidate) => candidate.contents)
+      .map((candidate) => repositoryLandingDocumentLabel(candidate.path)),
+    ["SECURITY", "LICENSE", "CONTRIBUTING", "CODE_OF_CONDUCT", "README"],
+  );
+  assert.equal(repositoryLandingDocumentLabel("LICENSE.txt"), "LICENSE");
+  assert.equal(
+    repositoryLandingDocumentLabel("CODE_OF_CONDUCT"),
+    "CODE_OF_CONDUCT",
+  );
+  assert.equal(repositoryLandingDocumentLabel("docs/SECURITY.md"), null);
 });
 
 test("path pages isolate lazy directories from recursive listing views", () => {

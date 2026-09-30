@@ -6,11 +6,10 @@
     createLocalStorageAppShellLayoutPersistence,
     type AppShellDisplayMode,
   } from "@lapismd/design-core/shell";
-  import * as Breadcrumb from "@lapismd/design-core/shadcn/breadcrumb";
+  import { ScrollArea } from "@lapismd/design-core/shadcn/scroll-area";
+  import * as Tabs from "@lapismd/design-core/shadcn/tabs";
   import { onDestroy, untrack, type Snippet } from "svelte";
-  import "./repository-breadcrumb.css";
   import "./store-application.css";
-  import { repositoryBreadcrumbSegments } from "../community-projects/repository-browser.js";
   import CommunityAppShell from "../community-app-shell/CommunityAppShell.svelte";
   import CommunityNavigation from "../community-navigation/CommunityNavigation.svelte";
   import CommunityApplicationMobileNavigation from "../community-application/CommunityApplicationMobileNavigation.svelte";
@@ -72,10 +71,6 @@
   let searchOpen = $state(false);
   const canNavigateBack = $derived(controller.state.canNavigateBack);
   const canNavigateForward = $derived(controller.state.canNavigateForward);
-  const filesBreadcrumbPath = $derived(current.path ?? current.directory);
-  const filesBreadcrumbSegments = $derived(
-    repositoryBreadcrumbSegments(filesBreadcrumbPath),
-  );
   const compact = $derived(
     shell.mobile.resolvedMode === "desktop" &&
       shell.left.collapsed &&
@@ -87,6 +82,16 @@
     { id: "oplog", label: "Op Log", kind: "oplog" },
     { id: "agents", label: "Agents", kind: "agents" },
     { id: "reviews", label: "Reviews", kind: "reviews" },
+  ];
+  const bodyTabs: readonly {
+    page: StorePage;
+    label: string;
+  }[] = [
+    { page: "agents", label: "Activity" },
+    { page: "files", label: "Files" },
+    { page: "branches", label: "Workspaces" },
+    { page: "reviews", label: "Review" },
+    { page: "log", label: "Commits" },
   ];
   const navigation: CommunityNavigationModel = $derived({
     primaryItems: pages,
@@ -107,6 +112,12 @@
       ? "Files"
       : (pages.find((p) => p.id === current.page)?.label ?? "Repository"),
   );
+  const bodyTitle = $derived(
+    bodyTabs.find((tab) => tab.page === current.page)?.label ?? title,
+  );
+  const activeBodyTab = $derived(
+    bodyTabs.some((tab) => tab.page === current.page) ? current.page : "",
+  );
   function select(item: CommunityNavigationItemModel) {
     if (item.kind === "repository") controller.actions.openRepository(item.id);
     else controller.actions.selectPage(item.kind);
@@ -125,28 +136,6 @@
   onNavigateBack={() => navigate(-1)}
   onNavigateForward={() => navigate(1)}
 >
-  {#snippet headerCenter()}
-    <div class="community-application__project-breadcrumb">
-      <Breadcrumb.Root>
-        <Breadcrumb.List aria-label="Repository breadcrumb">
-          <Breadcrumb.Item
-            ><Breadcrumb.Link
-              href="#"
-              onclick={(event) => {
-                event.preventDefault();
-                controller.actions.openRepository(current.repository);
-              }}><span>{current.repository}</span></Breadcrumb.Link
-            ></Breadcrumb.Item
-          >
-          <Breadcrumb.Separator />
-          <Breadcrumb.Item
-            ><Breadcrumb.Page><span>{title}</span></Breadcrumb.Page
-            ></Breadcrumb.Item
-          >
-        </Breadcrumb.List>
-      </Breadcrumb.Root>
-    </div>
-  {/snippet}
   {#snippet headerEnd()}<StoreApplicationHeaderActions
       {controller}
       detailsOpen={!shell.right.closed}
@@ -183,52 +172,11 @@
     </CommunityNavigation>
   </AppShell.Sidebar>
   <AppShell.Main>
-    {#if current.page === "files" || shell.mobile.resolvedMode === "mobile"}
-      <AppShell.Toolbar
-        class={current.page === "files"
-          ? "store-application__page-nav"
-          : undefined}
-      >
+    {#if shell.mobile.resolvedMode === "mobile"}
+      <AppShell.Toolbar>
         {#if shell.mobile.resolvedMode === "mobile"}<CommunityApplicationMobileNavigation
             model={{ canNavigateBack, canNavigateForward, navigate }}
           />{/if}
-        {#if current.page === "files"}<div
-            class="store-application__files-toolbar"
-          >
-            <Breadcrumb.List aria-label="Files breadcrumb">
-              <Breadcrumb.Item>
-                {#if filesBreadcrumbSegments.length === 0}
-                  <Breadcrumb.Page><span>Files</span></Breadcrumb.Page>
-                {:else}
-                  <Breadcrumb.Link
-                    href="#"
-                    onclick={(event) => {
-                      event.preventDefault();
-                      controller.actions.selectDirectory("");
-                    }}><span>Files</span></Breadcrumb.Link
-                  >
-                {/if}
-              </Breadcrumb.Item>
-              {#each filesBreadcrumbSegments as segment, index (segment.path)}
-                <Breadcrumb.Separator />
-                <Breadcrumb.Item>
-                  {#if index === filesBreadcrumbSegments.length - 1}
-                    <Breadcrumb.Page
-                      ><span>{segment.name}</span></Breadcrumb.Page
-                    >
-                  {:else}
-                    <Breadcrumb.Link
-                      href="#"
-                      onclick={(event) => {
-                        event.preventDefault();
-                        controller.actions.selectDirectory(segment.path);
-                      }}><span>{segment.name}</span></Breadcrumb.Link
-                    >
-                  {/if}
-                </Breadcrumb.Item>
-              {/each}
-            </Breadcrumb.List>
-          </div>{/if}
         {#if shell.mobile.resolvedMode === "mobile"}<AppShell.Sidebar.Toggle
             side="right"
             sidebarName="details"
@@ -244,15 +192,42 @@
         ? "store-application__files-body"
         : undefined}
     >
-      <h1 class="store-application__title">{title}</h1>
-      {#key current.repository + current.page}
-        {#if children}{@render children(
-            current.page,
-            current.repository,
-          )}{:else}<p class="store-application__placeholder">
-            {current.repository} · {title}
-          </p>{/if}
-      {/key}
+      <div class="store-application__body-frame">
+        <div class="store-application__tabs">
+          <ScrollArea
+            type="hover"
+            orientation="horizontal"
+            class="store-application__tabs-scroll-area"
+          >
+            <Tabs.Root value={activeBodyTab}>
+              <Tabs.List
+                class="store-application__tab-list"
+                aria-label="Repository sections"
+              >
+                {#each bodyTabs as tab (tab.page)}
+                  <Tabs.Trigger
+                    class="store-application__tab-trigger"
+                    value={tab.page}
+                    onclick={() => controller.actions.selectPage(tab.page)}
+                    >{tab.label}</Tabs.Trigger
+                  >
+                {/each}
+              </Tabs.List>
+            </Tabs.Root>
+          </ScrollArea>
+        </div>
+        <h1 class="store-application__title">{bodyTitle}</h1>
+        <div class="store-application__body-regions">
+          {#key current.repository + current.page}
+            {#if children}{@render children(
+                current.page,
+                current.repository,
+              )}{:else}<p class="store-application__placeholder">
+                {current.repository} · {bodyTitle}
+              </p>{/if}
+          {/key}
+        </div>
+      </div>
     </AppShell.Body>
   </AppShell.Main>
   <AppShell.Sidebar

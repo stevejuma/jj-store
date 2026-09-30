@@ -42,6 +42,29 @@ export function commitInMemoryMutation(
       divergent: false,
     });
   }
+  if (command.type === "edit_file" && result.created[0]) {
+    const original = revisions.find(
+      (revision) => revision.eventId === command.expected[0],
+    );
+    revisions.unshift({
+      ...(original ?? revisions[0]!),
+      eventId: result.created[0],
+      commitId: result.created[0],
+      changeId: result.created[0].slice(0, 32),
+      parents: command.expected[0] ? [command.expected[0]] : [],
+      message: command.description,
+      createdAt: nextTimestamp(revisions),
+      bookmarks: [
+        {
+          name: command.bookmark,
+          remote: undefined,
+          added: true,
+          removed: false,
+          conflicted: false,
+        },
+      ],
+    });
+  }
   if (command.type === "describe") {
     const original = revisions.find(
       (revision) => revision.eventId === command.commit,

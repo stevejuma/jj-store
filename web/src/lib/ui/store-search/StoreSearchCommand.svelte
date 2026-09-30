@@ -25,6 +25,7 @@
     onQueryChange,
     onSelect,
     onLoadMore,
+    onOpenChangeComplete,
   }: {
     open?: boolean;
     query: string;
@@ -33,6 +34,7 @@
     onQueryChange: (query: string) => void;
     onSelect: (result: StoreSearchResult) => void;
     onLoadMore: () => void;
+    onOpenChangeComplete?: (open: boolean) => void;
   } = $props();
 
   let selectedValue = $state("");
@@ -79,10 +81,11 @@
   </CommandView.Item>
 {/snippet}
 
-<Dialog.Root bind:open>
+<Dialog.Root bind:open {onOpenChangeComplete}>
   <Dialog.Content
     class="store-search-dialog"
     showCloseButton={false}
+    preventScroll={false}
     aria-describedby={undefined}
   >
     <Dialog.Title class="sr-only">Search repository</Dialog.Title>

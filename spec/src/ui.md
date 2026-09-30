@@ -8,19 +8,19 @@ supply interchangeable sources. Deterministic fixtures remain catalog-only.
 
 ## Requirements
 
-| ID         | Requirement                                                                                                                                                                                                                                                                                                                                                                           |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| JST-UI-001 | The catalog MUST build and run independently using registry dependencies, deterministic fixtures, isolated story state, runtime diagnostics and blocking interaction/accessibility checks.                                                                                                                                                                                            |
-| JST-UI-002 | The shell MUST directly adapt Community shell/navigation composition and preserve desktop/mobile, sidebar, header, focus and navigation mechanics using public Design Core exports.                                                                                                                                                                                                   |
-| JST-UI-003 | Branches, JJ Log and Op Log MUST reuse Community graph/row/file/diff compositions, preserve native identities and conflicting targets, support fixture-only drill-down without transport or mutation capabilities, and expose selection-specific Community-styled right-rail context and actions.                                                                                     |
-| JST-UI-004 | The complete catalog application MUST expose a typed state/actions controller with independent in-memory navigation, repository snapshots, file contents and profile actions, using copied Community file-browser and footer compositions without backend access.                                                                                                                     |
-| JST-UI-005 | The served browser MUST use the reviewed shell and repository components through an authenticated asynchronous controller with cursor paging, representative page and detail loading skeletons, explicit snapshot refresh and typed hash restoration.                                                                                                                                 |
-| JST-UI-006 | Large repository collections MUST use bounded virtual rows, all resizable shell/canvas regions MUST persist versioned layout state, and catalog stories MUST exercise the production components.                                                                                                                                                                                      |
-| JST-UI-007 | Repository search MUST use the released Design Core Command View in a Community-adapted overlay, query the selected authenticated operation snapshot, represent readiness and paging states, and navigate results with stable full identities.                                                                                                                                        |
-| JST-UI-008 | Authenticated repository commands MUST use Community-adapted action menus, composer-backed prose fields, shared commit/change identity rows, searchable Design Core commit selectors and form/confirmation dialogs, preview the exact typed request before apply, preserve its request ID through unknown outcomes, and advance the displayed snapshot only from a committed receipt. |
-| JST-UI-009 | Conflict editing MUST present the native path, terms, fingerprints and supported resolution actions without flattening conflicts, stage bounded uploads separately, preview the atomic selection, and retain unsupported or stale states explicitly.                                                                                                                                  |
-| JST-UI-010 | The application MUST bootstrap before repository UI, auto-open the sole LocalTrusted repository or show its installation catalog chooser, and label unverified loopback identity as Local; operational backup/restore status UI remains deferred.                                                                                                                                     |
-| JST-UI-011 | Authenticated connection MUST request one manual token, keep it only in memory, discover all currently authorized repositories, restore an ID-based deep link or show a chooser, and cancel requests, SSE and protected caches when the token is replaced, revoked or disconnected.                                                                                                   |
+| ID         | Requirement                                                                                                                                                                                                                                                                                                                                                                                           |
+| ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| JST-UI-001 | The catalog MUST build and run independently using registry dependencies, deterministic fixtures, isolated story state, runtime diagnostics and blocking interaction/accessibility checks.                                                                                                                                                                                                            |
+| JST-UI-002 | The shell MUST directly adapt Community shell/navigation composition and preserve desktop/mobile, sidebar, header, focus and navigation mechanics using public Design Core exports.                                                                                                                                                                                                                   |
+| JST-UI-003 | Branches, JJ Log and Op Log MUST reuse Community graph/row/file/diff compositions, preserve native identities and conflicting targets, support fixture-only drill-down without transport or mutation capabilities, and expose selection-specific Community-styled right-rail context and actions.                                                                                                     |
+| JST-UI-004 | The complete catalog application MUST expose a typed state/actions controller with independent in-memory navigation, repository snapshots, file contents and profile actions, using copied Community file-browser and footer compositions without backend access.                                                                                                                                     |
+| JST-UI-005 | The served browser MUST use the reviewed shell and repository components through an authenticated asynchronous controller with cursor paging, representative page and detail loading skeletons, explicit snapshot refresh and typed hash restoration.                                                                                                                                                 |
+| JST-UI-006 | Large repository collections MUST use bounded virtual rows, all resizable shell/canvas regions MUST persist versioned layout state, and catalog stories MUST exercise the production components.                                                                                                                                                                                                      |
+| JST-UI-007 | Repository search MUST use the released Design Core Command View in a Community-adapted overlay, query the selected authenticated operation snapshot, represent readiness and paging states, and navigate results with stable full identities.                                                                                                                                                        |
+| JST-UI-008 | Authenticated repository commands and text-file edits MUST use Community-adapted actions, composer-backed prose fields, shared commit/change identity rows, searchable Design Core commit selectors and form/confirmation controls, preview the exact typed request before apply, preserve its request ID through unknown outcomes, and advance the displayed snapshot only from a committed receipt. |
+| JST-UI-009 | Conflict editing MUST present the native path, terms, fingerprints and supported resolution actions without flattening conflicts, stage bounded uploads separately, preview the atomic selection, and retain unsupported or stale states explicitly.                                                                                                                                                  |
+| JST-UI-010 | The application MUST bootstrap before repository UI, auto-open the sole LocalTrusted repository or show its installation catalog chooser, and label unverified loopback identity as Local; operational backup/restore status UI remains deferred.                                                                                                                                                     |
+| JST-UI-011 | Authenticated connection MUST request one manual token, keep it only in memory, discover all currently authorized repositories, restore an ID-based deep link or show a chooser, and cancel requests, SSE and protected caches when the token is replaced, revoked or disconnected.                                                                                                                   |
 
 The production controller completes bootstrap before rendering connection
 choices. One ready LocalTrusted catalog entry opens without a token, several
@@ -170,26 +170,52 @@ close icon because the application toolbar already owns the sidebar toggle. Its
 body begins with Community's compact context heading, such as
 `Branches/Bookmarks`, plus the available create action at the end.
 
-Files places its directory breadcrumb in the body page navigation, rooted at
-`Files`. The repository file tree is a shell body-left sidebar with a
-full-height divider, small inner padding, keyboard-resizable width and the
-shared file listing view-mode toggle. The copied directory table is a bordered,
-radiused card with a commit/action summary as the first row; the file-tree
-toggle remains beside the author avatar and the snapshot selector is aligned on
-the right side of the same row. Its resting label tracks the selected bookmark
-or change after that reference resolves to a commit; the resolved commit must
-not replace the selected reference identity. The table column-header row uses a
-neighboring theme grey distinct from the summary row. Root directory views show
-a GitHub-style README/LICENSE preview card only when those files exist in the
-selected fixture snapshot. README is ordered first regardless of API order; its
-tabs are left aligned with document icons, use a rounded theme-grey hover and
-selected treatment, and keep a visible active underline. Selecting a file
-renders a stacked source preview: copied commit metadata, deterministic file
-statistics, then the selected content. Markdown files open in safe preview mode
+Repository pages place Community-styled `Activity`, `Files`, `Workspaces`,
+`Review` and `Commits` tabs at the top of the body. They route to the existing
+agent-session, file, branch/workspace, review-thread and JJ-log views. Op Log
+remains available from repository navigation. The repository/page/file
+breadcrumb is removed from the application header and rendered in the body below
+these tabs only while Files is active, immediately above Files content. The
+breadcrumb has no bottom border, is rooted at the current repository and retains
+directory and selected-file navigation. Activity, Workspaces, Review, Commits
+and Op Log do not render it.
+
+The repository file tree is a shell body-left sidebar with a full-height
+divider, small inner padding, keyboard-resizable width and the shared file
+listing view-mode toggle. The copied directory table is a bordered, radiused
+card with a commit/action summary as the first row; the file-tree toggle remains
+beside the author avatar and the snapshot selector is aligned on the right side
+of the same row. Its resting label tracks the selected bookmark or change after
+that reference resolves to a commit; the resolved commit must not replace the
+selected reference identity. The table column-header row uses a neighboring
+theme grey distinct from the summary row. Root directory views show a
+GitHub-style README, CODE_OF_CONDUCT, CONTRIBUTING, LICENSE/LICENCE and SECURITY
+preview card only when those files exist in the selected fixture snapshot.
+README is ordered first regardless of API order; its tabs are left aligned with
+document icons, use a rounded theme-grey hover and selected treatment, and keep
+a visible active underline. Selecting a file renders a stacked source preview:
+copied commit metadata, deterministic file statistics, then the selected
+content. The metadata header keeps the file-tree toggle as its far-left control
+and exposes Edit file as an icon-only action. Edit mode replaces the selected
+filename breadcrumb segment with the filename input; it does not add an editor
+action row or a second filename field. Markdown files open in safe preview mode
 with a Preview/Source toggle; source mode uses the public Design Core CodeBlock
 with the filename/source body on the theme background. Rust source previews use
 CodeBlock's public custom-tokenizer extension point so `.rs` files highlight in
 the catalog while retaining the shared code component.
+
+An authenticated single-target bookmark exposes Edit file for an existing
+bounded UTF-8 ordinary file. The editor keeps filename and content independently
+editable, previews Markdown safely, captures a new-change description and uses
+EditFile preview/apply/status. Binary, oversized, conflicted, historical and
+ambiguous selections remain read-only with explicit guidance. Rename collisions,
+stale targets and protected bookmarks fail without changing the displayed
+snapshot; commitment follows the new bookmark target and destination path.
+
+The deterministic LocalTrusted demo seed includes representative README,
+CODE_OF_CONDUCT, CONTRIBUTING, LICENSE and SECURITY root documents so the live
+repository exercises every supported landing-document tab after
+`pnpm dev:reset`.
 
 M4.10 completes the bounded authenticated data contracts required by the shared
 repository presentation: reference lookup, recursive path windows, exact

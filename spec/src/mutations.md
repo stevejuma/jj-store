@@ -13,13 +13,14 @@ rebase/squash/undo are deferred; client capability evidence is separate.
 
 ## Requirements
 
-| ID          | Requirement                                                                                                                                                                                  |
-| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| JST-MUT-001 | Typed preview, apply, and status endpoints MUST share canonical intent, exact snapshot preconditions, authorization, and durable receipt semantics.                                          |
-| JST-MUT-002 | First release MUST implement New, Describe, bookmark create/move/delete, Abandon, ResolveConflicts, and ReconcileOperations through native transactions.                                     |
-| JST-MUT-003 | Abandon MUST enforce protected/root policy, transform descendants, update bookmarks/workspaces, preserve history and evolution, and publish once without deleting objects.                   |
-| JST-MUT-004 | Conflict resolution MUST preserve ordered native terms, check fingerprints and authorized uploads, validate all selected paths atomically, rewrite descendants, and retain unresolved paths. |
-| JST-MUT-005 | Client-computed RPC publications MUST pass the same semantic protected-history checks as application mutations; no arbitrary shell or CLI argument endpoint MAY be exposed.                  |
+| ID          | Requirement                                                                                                                                                                                                                                                        |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| JST-MUT-001 | Typed preview, apply, and status endpoints MUST share canonical intent, exact snapshot preconditions, authorization, and durable receipt semantics.                                                                                                                |
+| JST-MUT-002 | First release MUST implement New, Describe, bookmark create/move/delete, Abandon, ResolveConflicts, and ReconcileOperations through native transactions.                                                                                                           |
+| JST-MUT-003 | Abandon MUST enforce protected/root policy, transform descendants, update bookmarks/workspaces, preserve history and evolution, and publish once without deleting objects.                                                                                         |
+| JST-MUT-004 | Conflict resolution MUST preserve ordered native terms, check fingerprints and authorized uploads, validate all selected paths atomically, rewrite descendants, and retain unresolved paths.                                                                       |
+| JST-MUT-005 | Client-computed RPC publications MUST pass the same semantic protected-history checks as application mutations; no arbitrary shell or CLI argument endpoint MAY be exposed.                                                                                        |
+| JST-MUT-006 | EditFile MUST create one child change from the exact single-target bookmark, replace or rename one existing bounded UTF-8 file, preserve native file mode/copy identity, move that bookmark atomically, and retain durable preview/apply/status receipt semantics. |
 
 The service's publication guard binds the authenticated token principal to the
 WAL request actor, validates replacement settings and delegates native
@@ -344,8 +345,25 @@ an ordinary file; selecting symlink/submodule/directory terms remains separate.
 A new request with a stale binding publishes nothing. Identical selected
 mutation receipt replay precedes upload lookup, so checkpointing and later
 staging loss do not invalidate an acknowledged mutation. Native report and prior
-command receipt encodings remain unchanged. UI editors remain deferred under
-M4.3.
+command receipt encodings remain unchanged. General purpose and binary editors
+remain deferred under M4.3.
+
+## Repository text file edits
+
+EditFile names an exact local bookmark target, existing source path, destination
+path, UTF-8 replacement text and new-change description. The bookmark MUST be a
+single resolved target matching the command expectation. Source and destination
+paths use the canonical repository-path rules, the source MUST resolve to an
+ordinary non-conflicted file, and a rename MUST NOT replace an existing entry.
+The replacement text is capped at the native text-read limit.
+
+The command preserves the source executable bit and copy identity, writes a new
+file object, creates one child change and moves the selected bookmark to that
+child in the same unpublished transaction. It does not rewrite the selected
+commit or its descendants and never touches a physical working copy. Preview,
+apply, unknown-outcome recovery and replay use the existing stable request and
+durable receipt contract. A protected bookmark or stale target fails before
+publication.
 
 ## Conflict resolution reports
 

@@ -11625,6 +11625,16 @@ export interface operations {
           };
           command:
             | {
+                bookmark: string;
+                expected: (string | null)[];
+                source: string;
+                destination: string;
+                contents: string;
+                description: string;
+                /** @constant */
+                type: "edit_file";
+              }
+            | {
                 commit: string;
                 paths: {
                   path: string;
@@ -11846,6 +11856,16 @@ export interface operations {
             heads: string[];
           };
           command:
+            | {
+                bookmark: string;
+                expected: (string | null)[];
+                source: string;
+                destination: string;
+                contents: string;
+                description: string;
+                /** @constant */
+                type: "edit_file";
+              }
             | {
                 commit: string;
                 paths: {

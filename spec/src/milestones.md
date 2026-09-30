@@ -27,24 +27,24 @@ adds evidence here in its enclosing Jujutsu change.
 | M3.3        | Done     | M3.2        | JST-CLI-001,JST-CLI-002,JST-CLI-003,JST-CLI-004                                                          | Custom command presentation and capability parity                                                                   | Retain native slice acceptance                          | E-M3-006,E-M3-009,E-M3-010,E-M3-011,E-M3-012,E-M3-013,E-M3-014,E-M3-015                                                                                                                                                                                                                                                                                        |
 | M4          | Deferred | M3          | JST-API-001,JST-API-005                                                                                  | Registry-only/shared-deployment browser finalization beyond the functional local application                        | Future shared/package release                           | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010,E-M4-011,E-M4-012,E-M4-013,E-M4-014,E-M4-015,E-M4-016,E-M4-017,E-M4-018,E-SCOPE-001,E-UI-007,E-UI-008,E-UI-016,E-UI-017,E-UI-018                                                                                                                                     |
 | M4.1        | Done     | M3          | JST-API-001,JST-API-002,JST-JJ-003                                                                       | Pinned three-graph reads with zero GET publications                                                                 | Retain pinned read conformance                          | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010,E-M4-011,E-M4-012,E-M4-013,E-M4-014                                                                                                                                                                                                                                  |
-| M4.2        | Done     | M4.1        | JST-API-003,JST-API-006                                                                                  | Committed SSE and generated API contract deployment qualification                                                   | Retain real RustFS/TLS SSE conformance                  | E-M4-015,E-M4-016,E-M4-017,E-SCOPE-001                                                                                                                                                                                                                                                                                                                         |
+| M4.2        | Done     | M4.1        | JST-API-003,JST-API-006                                                                                  | Committed SSE and generated API contract deployment qualification                                                   | Retain real RustFS/TLS SSE conformance                  | E-M4-015,E-M4-016,E-M4-017,E-SCOPE-001,E-UI-028                                                                                                                                                                                                                                                                                                                |
 | M4.3        | Deferred | M4.1,M5,M6  | JST-API-004,JST-API-005                                                                                  | Shared/authenticated browser and separately packaged dependency finalization                                        | Future shared/package release                           | E-SCOPE-001,E-UI-007,E-UI-008,E-M4-018,E-UI-016,E-UI-017,E-UI-018                                                                                                                                                                                                                                                                                              |
 | M4.4        | Done     | Bootstrap   | JST-UI-001                                                                                               | Isolated catalog types, interaction/a11y and static build                                                           | Implement shell stories                                 | E-UI-001                                                                                                                                                                                                                                                                                                                                                       |
 | M4.5        | Done     | M4.4        | JST-UI-002                                                                                               | Community shell mechanics and navigation acceptance                                                                 | Implement repository fixture views                      | E-UI-002                                                                                                                                                                                                                                                                                                                                                       |
 | M4.6        | Done     | M4.5        | JST-UI-003                                                                                               | Native fixture graph/file/diff drill-down and accessibility                                                         | Visual review; live UI remains deferred                 | E-UI-003                                                                                                                                                                                                                                                                                                                                                       |
 | M4.7        | Done     | M4.6        | JST-UI-004                                                                                               | Complete in-memory application, snapshot file browser and profile footer                                            | Retain fixture acceptance; live UI remains deferred     | E-UI-004                                                                                                                                                                                                                                                                                                                                                       |
-| M4.8        | Done     | M4.7        | JST-UI-002,JST-UI-003,JST-UI-004                                                                         | Reviewed shell/card/header styling and directory navigation pass interaction, accessibility and cold catalog checks | Visual review pending; live UI remains deferred         | E-UI-005,E-UI-006,E-UI-009,E-UI-010,E-UI-022,E-UI-025,E-UI-026                                                                                                                                                                                                                                                                                                 |
+| M4.8        | Done     | M4.7        | JST-UI-002,JST-UI-003,JST-UI-004                                                                         | Reviewed shell/card/header styling and directory navigation pass interaction, accessibility and cold catalog checks | Visual review pending; live UI remains deferred         | E-UI-005,E-UI-006,E-UI-009,E-UI-010,E-UI-022,E-UI-025,E-UI-026,E-UI-028                                                                                                                                                                                                                                                                                        |
 | M4.9        | Done     | M4.8        | JST-ARCH-004,JST-UI-005                                                                                  | Shared production components/controller and no-growth architecture checks                                           | Retain source ownership and proceed to bounded APIs     | E-UI-007,E-UI-008                                                                                                                                                                                                                                                                                                                                              |
 | M4.10       | Done     | M4.9        | JST-API-001,JST-API-002,JST-API-006                                                                      | Bounded bookmark, directory metadata and operation-change contracts                                                 | Implement M4.11 authenticated browser data/controller   | E-M4-018                                                                                                                                                                                                                                                                                                                                                       |
 | M4.11       | Deferred | M4.10       | JST-API-004,JST-API-005,JST-UI-005                                                                       | Shared authenticated connection and final registry-only browser acceptance                                          | Future shared/package release                           | E-UI-011                                                                                                                                                                                                                                                                                                                                                       |
 | M4.12       | Deferred | M4.11       | JST-API-002,JST-API-003,JST-UI-005                                                                       | Shared-deployment route/SSE finalization against registry-only dependencies                                         | Future shared/package release                           | E-UI-012                                                                                                                                                                                                                                                                                                                                                       |
 | M4.13       | Deferred | M4.11       | JST-API-002,JST-UI-006                                                                                   | Cross-consumer release of virtual/lazy listing and persisted-layout extensions                                      | Future Design Core release                              | E-UI-013,E-UI-014,E-UI-015                                                                                                                                                                                                                                                                                                                                     |
 | M4.14       | Deferred | M4.12,M4.13 | JST-API-003,JST-API-004,JST-API-005                                                                      | Registry-resolved shared deployment browser acceptance                                                              | Future shared/package release                           | E-UI-016                                                                                                                                                                                                                                                                                                                                                       |
-| M4.15       | Done     | M4.9,M6.1   | JST-UI-007                                                                                               | Community-adapted command search queries real snapshot-bound Tantivy results and restores stable routes             | Retain LocalTrusted and authenticated search acceptance | E-UI-017,E-UI-024                                                                                                                                                                                                                                                                                                                                              |
-| M4.16       | Done     | M4.9,M5.3   | JST-UI-008                                                                                               | Preview/apply/status repository actions use durable typed mutations and committed snapshot refresh                  | Retain mutation acceptance; implement M4.17 conflicts   | E-UI-018,E-UI-026                                                                                                                                                                                                                                                                                                                                              |
+| M4.15       | Done     | M4.9,M6.1   | JST-UI-007                                                                                               | Community-adapted command search queries real snapshot-bound Tantivy results and restores stable routes             | Retain LocalTrusted and authenticated search acceptance | E-UI-017,E-UI-024,E-UI-028                                                                                                                                                                                                                                                                                                                                     |
+| M4.16       | Done     | M4.9,M5.3   | JST-UI-008                                                                                               | Preview/apply/status repository actions use durable typed mutations and committed snapshot refresh                  | Retain mutation acceptance; implement M4.17 conflicts   | E-UI-018,E-UI-026,E-UI-028                                                                                                                                                                                                                                                                                                                                     |
 | M4.17       | Done     | M4.16,M5.3  | JST-UI-009                                                                                               | Native conflict descriptors, uploads and atomic multi-path resolution are editable without flattening               | Retain conflict-editor and real-repository acceptance   | E-UI-019                                                                                                                                                                                                                                                                                                                                                       |
-| M5          | Done     | M4.1        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                                                      | Authenticated typed commands and shared RPC policy                                                                  | Retain mutation conformance; proceed to M6              | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-M5-005,E-M5-006,E-M5-007,E-M5-008                                                                                                                                                                                                                                                                            |
-| M5.1        | Done     | M4.1        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                                                      | Basic changes/refs/reconcile; preview receipt and semantic policy                                                   | Retain basic mutation acceptance                        | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004                                                                                                                                                                                                                                                                                                                |
+| M5          | Done     | M4.1        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                                                      | Authenticated typed commands and shared RPC policy                                                                  | Retain mutation conformance; proceed to M6              | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-M5-005,E-M5-006,E-M5-007,E-M5-008,E-UI-028                                                                                                                                                                                                                                                                   |
+| M5.1        | Done     | M4.1        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                                                      | Basic changes/refs/reconcile; preview receipt and semantic policy                                                   | Retain basic mutation acceptance                        | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-UI-028                                                                                                                                                                                                                                                                                                       |
 | M5.2        | Done     | M5.1        | JST-MUT-003                                                                                              | Full abandon descendant bookmark workspace/evolution parity                                                         | Retain abandon acceptance                               | E-M5-005                                                                                                                                                                                                                                                                                                                                                       |
 | M5.3        | Done     | M5.1        | JST-MUT-004                                                                                              | Atomic stale-safe resolution with native conflict variants                                                          | Retain mutation conformance; proceed to M6              | E-M5-006,E-M5-007,E-M5-008                                                                                                                                                                                                                                                                                                                                     |
 | M6          | Done     | M5          | JST-ADAPT-001,JST-ADAPT-002,JST-ADAPT-003,JST-ADAPT-004                                                  | Replay-equivalent searchable projection with freshness                                                              | Retain snapshot, search and deployment conformance      | E-M6-001,E-M6-002,E-M6-003,E-M6-004,E-M6-005,E-M6-006,E-M6-007,E-M6-008,E-M6-009,E-M6-010                                                                                                                                                                                                                                                                      |
@@ -16677,6 +16677,342 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Node.js 24.10.0; pnpm 10.32.1; Svelte 5.57.1; Design Core ^0.2.0; Community ^0.1.0.",
     "formats": "No native object, manifest, WAL, receipt, HTTP, OpenAPI or route format changes. Presentation introduces a shared commit row and a Design Core Command View selector whose bound value remains the complete native commit ID."
+  },
+  {
+    "id": "E-UI-028",
+    "tasks": ["M4.2", "M4.8", "M4.15", "M4.16", "M5", "M5.1"],
+    "date": "2026-09-30",
+    "kind": "repository-tabs-file-edit-and-search-lifecycle",
+    "files": [
+      "AGENTS.md",
+      "catalog/components/community-projects/CommunityProjectsRepositoryDirectory.stories.svelte",
+      "catalog/components/store-application/RepositoryReview.stories.svelte",
+      "catalog/components/store-application/StoreApplication.stories.svelte",
+      "catalog/components/store-application/StoreFileEditor.stories.svelte",
+      "catalog/components/store-application/StoreRepositoryApplication.stories.svelte",
+      "catalog/components/store-application/StoreRepositorySearch.stories.svelte",
+      "catalog/components/store-application/column-canvas-story-assertions.ts",
+      "catalog/controller/in-memory-store-controller.svelte.ts",
+      "catalog/controller/in-memory-store-mutation-commit.ts",
+      "catalog/controller/in-memory-store-mutations.svelte.ts",
+      "catalog/controller/in-memory-store-repository.svelte.ts",
+      "catalog/controller/in-memory-store-route.ts",
+      "crates/jj-store-cli/tests/native_lifecycle/commands.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/http_mutations.rs",
+      "crates/jj-store-http/src/contract/tests.rs",
+      "crates/jj-store-http/src/dto.rs",
+      "crates/jj-store-jj/src/commands/edit.rs",
+      "crates/jj-store-jj/src/commands/execute.rs",
+      "crates/jj-store-jj/src/commands/mod.rs",
+      "crates/jj-store-jj/src/commands/resolve.rs",
+      "package.json",
+      "schemas/openapi.json",
+      "scripts/dev-demo-repository.mjs",
+      "scripts/dev-demo-repository.test.mjs",
+      "spec/src/architecture.md",
+      "spec/src/api.md",
+      "spec/src/cli.md",
+      "spec/src/compatibility.md",
+      "spec/src/jj-integration.md",
+      "spec/src/milestones.md",
+      "spec/src/mutations.md",
+      "spec/src/spec-governance.md",
+      "spec/src/ui.md",
+      "spec/src/verification.md",
+      "web/src/lib/api/generated.ts",
+      "web/src/lib/controller/production-landing-documents.ts",
+      "web/src/lib/controller/production-mutation-commit.ts",
+      "web/src/lib/controller/production-store-controller.svelte.ts",
+      "web/src/lib/controller/production-store-loaders.ts",
+      "web/src/lib/controller/production-store-mutations.ts",
+      "web/src/lib/ui/community-projects/CommunityProjectsRepositoryBreadcrumb.svelte",
+      "web/src/lib/ui/community-projects/CommunityProjectsRepositoryDirectory.svelte",
+      "web/src/lib/ui/community-projects/CommunityProjectsRepositoryFilePanel.svelte",
+      "web/src/lib/ui/community-projects/CommunityProjectsRepositoryFilePanelHeader.svelte",
+      "web/src/lib/ui/community-projects/CommunityProjectsRepositoryFiles.svelte",
+      "web/src/lib/ui/community-projects/StoreFileEditor.svelte",
+      "web/src/lib/ui/community-projects/repository-browser.ts",
+      "web/src/lib/ui/community-projects/repository-files.css",
+      "web/src/lib/ui/community-projects/store-file-editor.css",
+      "web/src/lib/ui/store-application/StoreApplication.svelte",
+      "web/src/lib/ui/store-application/store-application.css",
+      "web/src/lib/ui/store-search/StoreSearchCommand.svelte",
+      "web/src/lib/ui/store-search/StoreSearchOverlay.svelte",
+      "web/tests/browser/mutations.spec.ts",
+      "web/tests/browser/native-browser-fixture.ts",
+      "web/tests/browser/navigation.spec.ts",
+      "web/tests/browser/reads.spec.ts",
+      "web/tests/browser/search.spec.ts",
+      "web/tests/production-store-loaders.test.ts"
+    ],
+    "removed_files": [
+      "web/src/lib/ui/store-application/repository-breadcrumb.css"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/native_lifecycle/commands.rs#typed_edit_file_creates_child_renames_text_and_moves_exact_bookmark",
+      "crates/jj-store-cli/tests/native_lifecycle/commands.rs#typed_edit_file_rejects_ambiguous_targets_invalid_paths_and_oversized_text",
+      "web/tests/production-store-loaders.test.ts#repository landing documents include community files in stable tab order",
+      "web/tests/browser/mutations.spec.ts#text file edit previews one request then routes to the renamed committed file",
+      "web/tests/browser/search.spec.ts#command search opens native results and routes through stable identities"
+    ],
+    "runs": [
+      {
+        "command": "source and fixture acceptance audit before implementation",
+        "result": "fail",
+        "failures": 4,
+        "note": "The repository landing preview supported only README/LICENSE, the application header owned the breadcrumb and exposed no body section tabs, existing text files had no rename/content editor or native EditFile command, and selecting a search result could route before dialog cleanup left the page interactive."
+      },
+      {
+        "command": "pnpm web:check && pnpm catalog:check && pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both Svelte projects and the production/catalog ownership and line-budget audit passed after splitting landing-document, mutation-commit, editor-style and editor-story modules."
+      },
+      {
+        "command": "pnpm web:test",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 55 web/controller tests passed, including stable five-category landing-document loading and production edit routing."
+      },
+      {
+        "command": "pnpm catalog:test",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 60 catalog controller and presentation unit tests passed."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-projects/CommunityProjectsRepositoryDirectory.stories.svelte catalog/components/store-application/RepositoryReview.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/StoreFileEditor.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte catalog/components/store-application/StoreRepositorySearch.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "After the first two stale expectations were corrected, RepositoryDirectoryNavigation still aligned the file-tree title with the Files breadcrumb segment instead of the new repository-root body edge."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-projects/CommunityProjectsRepositoryDirectory.stories.svelte catalog/components/store-application/RepositoryReview.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/StoreFileEditor.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte catalog/components/store-application/StoreRepositorySearch.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 17 focused Chromium interaction and automatic accessibility stories pass for the five landing document tabs, body tabs/breadcrumb, responsive shell, editor preview/apply/rename and search presentation. Stories remain visual-pending."
+      },
+      {
+        "command": "cargo check -p jj-store-jj --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "The native EditFile command and transaction staging compiled with the locked JJ dependency graph."
+      },
+      {
+        "command": "PATH=<scratch-cmake> CMAKE=<scratch-cmake> BOOST_ROOT=<scratch-boost> CC=<xcode-wrapper> CXX=<xcode-wrapper> cargo test -p jj-store-cli --test native_lifecycle commands --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "A generated vectorscan CMake cache reset BUILD_TOOLS and BUILD_UNIT after the compiler changed, then the unused hscollider target failed because pcre.h was unavailable. Removing only that generated cache let the crate build script retain both targets as OFF."
+      },
+      {
+        "command": "PATH=<scratch-cmake> CMAKE=<scratch-cmake> BOOST_ROOT=<scratch-boost> CC=<xcode-wrapper> CXX=<xcode-wrapper> cargo test -p jj-store-cli --test native_lifecycle commands --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "The repaired native environment passed all 3 filtered command and HTTP mutation capability cases."
+      },
+      {
+        "command": "PATH=<scratch-cmake> CMAKE=<scratch-cmake> BOOST_ROOT=<scratch-boost> CC=<xcode-wrapper> CXX=<xcode-wrapper> cargo test -p jj-store-cli --test native_lifecycle typed_edit_file --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both EditFile native regressions pass: exact child/rename/content/bookmark publication and ambiguous-target/path/size rejection."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "fail",
+        "failures": 3,
+        "note": "The first governance run identified missing owning updates in cli.md, compatibility.md and jj-integration.md. Those chapters now specify lifecycle coverage, additive format compatibility and native transaction behavior."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "The spec-first gate passes for 43 protected files and all 7 owning canonical chapters."
+      },
+      {
+        "command": "PATH=<scratch-cmake> CMAKE=<scratch-cmake> BOOST_ROOT=<scratch-boost> CC=<xcode-wrapper> CXX=<xcode-wrapper> pnpm web:test:browser",
+        "result": "fail",
+        "failures": 1,
+        "note": "The first cold lane reached native response capture and found its registered-handler capability assertion still expected the old eight-command list after edit_file became advertised."
+      },
+      {
+        "command": "PATH=<scratch-cmake> CMAKE=<scratch-cmake> BOOST_ROOT=<scratch-boost> CC=<xcode-wrapper> CXX=<xcode-wrapper> cargo test --quiet --locked -p jj-store-cli --test native_lifecycle http_mutation_acceptance::http_mutations_preview_apply_status_replay_and_contract_capture -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "The exact native HTTP response-capture regression passes with edit_file in the generated capability response."
+      },
+      {
+        "command": "PATH=<scratch-cmake> CMAKE=<scratch-cmake> BOOST_ROOT=<scratch-boost> CC=<xcode-wrapper> CXX=<xcode-wrapper> pnpm web:test:browser",
+        "result": "fail",
+        "failures": 1,
+        "note": "After the capability fixture was repaired, Playwright's 30 second web-server startup limit expired while the cold browser_preview example compiled. The example was prebuilt with the same native environment before continuing."
+      },
+      {
+        "command": "pnpm exec playwright test --config web/playwright.config.ts",
+        "result": "fail",
+        "failures": 4,
+        "note": "The prebuilt preview passed 17 of 21 cases. Remaining failures identified dialog scroll lock surviving search navigation, a stale create-change description selector, the edited fixture returning its old log snapshot and a multiple-head assertion that still expected the removed header breadcrumb operation text."
+      },
+      {
+        "command": "pnpm exec playwright test --config web/playwright.config.ts web/tests/browser/mutations.spec.ts web/tests/browser/reads.spec.ts web/tests/browser/search.spec.ts",
+        "result": "fail",
+        "failures": 2,
+        "note": "After repairing all four cases, 15 of 17 focused tests passed. The mutation assertion omitted code_state_version and the focused command was still serving the previous embedded web build, so it could not exercise the search lifecycle source fix."
+      },
+      {
+        "command": "pnpm exec playwright test --config web/playwright.config.ts web/tests/browser/mutations.spec.ts:45 web/tests/browser/search.spec.ts:10; pnpm exec playwright test --config web/playwright.config.ts web/tests/browser/search.spec.ts; pnpm exec playwright test --config web/playwright.config.ts web/tests/browser/mutations.spec.ts web/tests/browser/reads.spec.ts web/tests/browser/search.spec.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "The corrected mutation regression passed, while repeated focused runs retained only the search body-lock failure because these direct Playwright commands do not rebuild web/dist. The last stale-build run passed 16 of 17 cases."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "The production web bundle rebuilt with deferred search selection and the same preventScroll=false dialog policy used by the other application modal surfaces; only existing Lightning CSS :global and bundle-size warnings were emitted."
+      },
+      {
+        "command": "pnpm exec playwright test --config web/playwright.config.ts web/tests/browser/mutations.spec.ts web/tests/browser/reads.spec.ts web/tests/browser/search.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 17 focused browser cases pass against the rebuilt bundle, covering body unlock and working clicks after search selection, exact mutation capture, renamed-file refresh and commit history, and route-retained multiple-head details."
+      },
+      {
+        "command": "pnpm web:test:browser",
+        "result": "pass",
+        "failures": 0,
+        "note": "The complete cold lane rebuilt web/dist, recaptured native HTTP/SSE and mutation fixtures, and passed all 21 Chromium browser tests."
+      },
+      {
+        "command": "PATH=<scratch-cmake> CMAKE=<scratch-cmake> BOOST_ROOT=<scratch-boost> CC=<xcode-wrapper> CXX=<xcode-wrapper> pnpm spec:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "Specification validation, the cold catalog browser and the 181-test native lifecycle binary passed before the Rust aggregate contract lane found one stale mutation-union cardinality assertion: edit_file increased the advertised typed commands from 8 to 9."
+      },
+      {
+        "command": "PATH=<scratch-cmake> CMAKE=<scratch-cmake> BOOST_ROOT=<scratch-boost> CC=<xcode-wrapper> CXX=<xcode-wrapper> cargo test --locked -p jj-store-http contract::tests::mutation_contracts_require_typed_intent_and_write_permission -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "The exact OpenAPI regression passes with all 9 typed mutation command variants present."
+      },
+      {
+        "command": "PATH=<scratch-cmake> CMAKE=<scratch-cmake> BOOST_ROOT=<scratch-boost> CC=<xcode-wrapper> CXX=<xcode-wrapper> pnpm check",
+        "result": "fail",
+        "failures": 1,
+        "note": "All preceding gates passed before the architecture budget found RepositoryReview.stories.svelte at 514 counted lines against its established 513-line limit. Compacting one multiline story assignment restored the existing budget without changing behavior."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 250 production and catalog modules pass ownership, import and line-budget checks after the story compaction."
+      },
+      {
+        "command": "PATH=<scratch-cmake> CMAKE=<scratch-cmake> BOOST_ROOT=<scratch-boost> CC=<xcode-wrapper> CXX=<xcode-wrapper> pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "The complete required check lane passes specification validation, boundaries, architecture, progress, formatting, embedded RustFS clippy, 70 generated HTTP/SSE captures, both Svelte projects and workspace clippy."
+      },
+      {
+        "command": "PATH=<scratch-cmake> CMAKE=<scratch-cmake> BOOST_ROOT=<scratch-boost> CC=<xcode-wrapper> CXX=<xcode-wrapper> pnpm test",
+        "result": "fail",
+        "failures": 1,
+        "note": "The aggregate reached test:embedded-rustfs before rustfs-ecstore compilation failed with No space left on device (os error 28). Only this workspace's ignored embedded RustFS target and incremental cache were removed before retrying; the active original workspace was not changed."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "fail",
+        "failures": 2,
+        "note": "The Files container and selected-file preview exceeded the 300-line production budget after the requested breadcrumb and header controls were added. The breadcrumb and metadata header were extracted into focused production components."
+      },
+      {
+        "command": "pnpm web:check && pnpm catalog:check && pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both Svelte projects, catalog boundaries and all 255 production architecture modules pass after the breadcrumb and preview metadata header extractions."
+      },
+      {
+        "command": "node --test scripts/dev-demo-repository.test.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "The isolated deterministic seed regression creates nonempty README, CODE_OF_CONDUCT, CONTRIBUTING, LICENSE and SECURITY root documents."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-projects/CommunityProjectsRepositoryDirectory.stories.svelte catalog/components/store-application/RepositoryReview.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/StoreFileEditor.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte catalog/components/store-application/StoreRepositorySearch.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Sixteen of 17 focused interaction/accessibility stories passed. The remaining directory story still expected the file-tree heading to align with the breadcrumb that now begins beyond the left sidebar."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/RepositoryReview.stories.svelte --testNamePattern RepositoryDirectoryNavigation && pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-projects/CommunityProjectsRepositoryDirectory.stories.svelte catalog/components/store-application/RepositoryReview.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/StoreFileEditor.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte catalog/components/store-application/StoreRepositorySearch.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "The exact geometry regression and all 17 focused Chromium interaction/accessibility stories pass. Coverage includes the Files-only borderless breadcrumb, no breadcrumb on Activity, Workspaces, Review or Commits, the far-left tree toggle, icon-only edit control and breadcrumb filename input. Stories remain visual-pending."
+      },
+      {
+        "command": "pnpm web:build && pnpm exec playwright test --config web/playwright.config.ts web/tests/browser/mutations.spec.ts web/tests/browser/navigation.spec.ts web/tests/browser/reads.spec.ts web/tests/browser/search.spec.ts",
+        "result": "fail",
+        "failures": 6,
+        "note": "The bundle built and 13 of 19 browser cases passed. Six cases retained navigation through the removed application-header repository link and timed out before reaching their assertions."
+      },
+      {
+        "command": "pnpm exec playwright test --config web/playwright.config.ts web/tests/browser/mutations.spec.ts web/tests/browser/navigation.spec.ts web/tests/browser/reads.spec.ts web/tests/browser/search.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 19 focused production-browser cases pass after entering the file browser through the Files tab, including native edit/rename, route restoration, repository reads and search-result interactivity."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "fail",
+        "failures": 1,
+        "note": "The protected package script and production component extraction required the mapped architecture chapter to record the isolated seed-test and browser module boundaries."
+      },
+      {
+        "command": "pnpm spec:first && pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 50 protected files map to nine current canonical chapters, and the evidence ledger covers the complete change."
+      },
+      {
+        "command": "PATH=<scratch-cmake> CMAKE=<scratch-cmake> BOOST_ROOT=<scratch-boost> CC=<xcode-wrapper> CXX=<xcode-wrapper> pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 18 specification lanes pass after the mutation-union repair, including the cold catalog browser, generated HTTP/SSE fixtures, 181-test native lifecycle binary, complete Rust workspace, documentation and spec-first validation."
+      },
+      {
+        "command": "PATH=<scratch-cmake> CMAKE=<scratch-cmake> BOOST_ROOT=<scratch-boost> CC=<xcode-wrapper> CXX=<xcode-wrapper> pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "The required check lane passes specification validation, boundaries, architecture, progress, formatting, embedded RustFS, 70 generated HTTP/SSE captures, both Svelte projects and workspace clippy."
+      },
+      {
+        "command": "PATH=<scratch-cmake> CMAKE=<scratch-cmake> BOOST_ROOT=<scratch-boost> CC=<xcode-wrapper> CXX=<xcode-wrapper> pnpm test",
+        "result": "fail",
+        "failures": 1,
+        "note": "The superseded aggregate policy run was stopped with SIGINT at the user's request while rebuilding the cold RustFS executable. Its governance stage passed all 29 tests, including the five-document seed regression; no test had failed. The new targeted verification policy makes this redundant aggregate out of scope because exact native, contract, UI, cold browser and one prior full spec lane already cover the changed boundaries."
+      },
+      {
+        "command": "pnpm exec prettier --check AGENTS.md spec/src/milestones.md && pnpm spec:first && pnpm check:progress",
+        "result": "fail",
+        "failures": 1,
+        "note": "The targeted formatter found only that the expanded final evidence entry needed Prettier wrapping; the downstream governance checks did not run in this chained command."
+      },
+      {
+        "command": "pnpm exec prettier --write AGENTS.md spec/src/milestones.md && pnpm spec:first && pnpm check:progress",
+        "result": "fail",
+        "failures": 1,
+        "note": "Prettier and the spec-first map passed for 51 protected files and nine canonical chapters, then progress validation correctly rejected a pass result while the visual-baseline gap remains explicit."
+      },
+      {
+        "command": "pnpm exec prettier --write AGENTS.md spec/src/milestones.md && pnpm spec:first && pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "The requested repository guidance and final ledger are formatted; the spec-first map and progress evidence remain valid with visual approval explicitly pending under the targeted verification policy."
+      }
+    ],
+    "result": "pending",
+    "remaining": ["Visual baselines remain unapproved."],
+    "versions": "Rust 1.98.1; Node.js 26.9.0; pnpm 10.32.1; Svelte 5.57.1; Storybook 10.5.7; Design Core ^0.2.0; Community ^0.1.0.",
+    "formats": "The V1 typed mutation command union and capability list add edit_file with an exact bookmark target, canonical source/destination paths, bounded UTF-8 contents and description. Existing mutation request, prepared result, durable receipt, WAL, manifest and native object formats remain unchanged. Landing-document ordering, body tabs/breadcrumb, editor state and deferred search routing are browser presentation only; credentials remain memory-only. Changed stories remain visual-pending."
   }
 ]
 ```

@@ -710,6 +710,17 @@ replacement-file actions use the authorized endpoint specified below. M4.17
 connects these declarations to the shared conflict editor without changing the
 native resolution contract.
 
+EditFile is advertised as `edit_file` and carries the exact local bookmark name
+and expected single target, canonical source and destination paths, bounded
+UTF-8 replacement contents and the new child change description. The same
+complete command, snapshot expectation and request ID are sent to preview and
+apply; a lost result continues through the existing status route. The generated
+OpenAPI and TypeScript unions expose this command on both mutation endpoints.
+The browser offers it only for a current ordinary text file reached through an
+unambiguous single-target bookmark, then follows a committed receipt to the new
+bookmark target and destination path. Historical, conflicted, binary and
+oversized selections remain read-only.
+
 ## Conflict content uploads
 
 `POST /v1/repos/{repo}/conflict-uploads` takes application/octet-stream and
