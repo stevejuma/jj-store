@@ -73,12 +73,35 @@ fn collaboration_contract_exposes_receipt_backed_review_commands() {
         request["required"],
         serde_json::json!(["version", "request_id", "command"])
     );
+    let variants = request["properties"]["command"]["oneOf"]
+        .as_array()
+        .unwrap();
+    let commands = variants
+        .iter()
+        .map(|variant| variant["properties"]["command"]["const"].as_str().unwrap())
+        .collect::<std::collections::BTreeSet<_>>();
     assert_eq!(
-        request["properties"]["command"]["oneOf"]
+        commands,
+        std::collections::BTreeSet::from([
+            "create_thread",
+            "append_reply",
+            "edit_comment",
+            "resolve_comment_conflict",
+            "tombstone_comment",
+            "hide_comment",
+            "resolve_thread",
+            "reopen_thread",
+        ])
+    );
+    let resolution = variants
+        .iter()
+        .find(|variant| variant["properties"]["command"]["const"] == "resolve_comment_conflict")
+        .unwrap();
+    assert!(
+        resolution["required"]
             .as_array()
             .unwrap()
-            .len(),
-        7
+            .contains(&json!("expected_revision_ids"))
     );
 
     let status = &doc["paths"]["/v1/repos/{repo}/reviews/commands/{request_id}"]["get"];

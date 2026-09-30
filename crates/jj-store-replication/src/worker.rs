@@ -1,3 +1,4 @@
+use crate::transfer::verify_native_upload;
 use crate::{
     Error, FeedCursorV1, FeedRequestV1, OfferOriginsRequestV1, OriginClosureRequestV1,
     PeerCheckpointStore, ReplicaCapabilitiesV1, ReplicaNegotiationV1, Result, VersionedCheckpoint,
@@ -872,10 +873,7 @@ impl<L: ReplicationEndpoint, P: ReplicationEndpoint> ReplicationWorker<L, P> {
                     return Err(Error::Integrity("worker native object length"));
                 }
                 let upload = StagedUpload::from_reader(download.reader, bytes).await?;
-                if upload.len() != bytes || EnvelopeDigest::new(*upload.sha256()) != envelope_digest
-                {
-                    return Err(Error::Integrity("worker native object digest"));
-                }
+                verify_native_upload(node.key, &upload, envelope_digest, bytes).await?;
                 let outcome = destination.write_native(node.key, &upload).await?;
                 if !matches!(outcome, WriteOutcome::Applied(_)) {
                     verify_native(destination, node.key, envelope_digest, bytes).await?;
@@ -984,9 +982,7 @@ async fn verify_native<E: ReplicationEndpoint>(
         return Err(Error::Integrity("worker native object collision"));
     }
     let upload = StagedUpload::from_reader(download.reader, expected_bytes).await?;
-    if upload.len() != expected_bytes || EnvelopeDigest::new(*upload.sha256()) != expected_digest {
-        return Err(Error::Integrity("worker native object collision"));
-    }
+    verify_native_upload(key, &upload, expected_digest, expected_bytes).await?;
     Ok(())
 }
 

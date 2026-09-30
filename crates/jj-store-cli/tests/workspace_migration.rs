@@ -103,7 +103,8 @@ async fn nonempty_workspace_migrates_without_snapshot_and_mutates_with_upstream_
         .await
         .unwrap();
     let remote_listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
-    let remote_endpoint = format!("http://{}", remote_listener.local_addr().unwrap());
+    let remote_address = remote_listener.local_addr().unwrap();
+    let remote_endpoint = format!("http://{remote_address}");
     let remote_rpc = NativeRpc::hosted(remote_host, Limits::default()).unwrap();
     let remote_server = tokio::spawn(async move {
         remote_rpc
@@ -219,12 +220,40 @@ async fn nonempty_workspace_migrates_without_snapshot_and_mutates_with_upstream_
 
     remote_server.abort();
     let _ = remote_server.await;
+    // A connection attempt to the former upstream completes its TCP handshake
+    // but cannot provide a response. Count the queued accepts after the local
+    // commands so a probe-and-fallback implementation fails this regression.
+    let old_remote_probe = std::net::TcpListener::bind(remote_address).unwrap();
+    old_remote_probe.set_nonblocking(true).unwrap();
     success(command(
         &workspace,
         &config,
         &token,
         &["describe", "-m", "offline local mutation"],
     ));
+    for args in [
+        &["status"][..],
+        &["log"][..],
+        &["op", "log"][..],
+        &["evolog"][..],
+        &["store", "status"][..],
+        &["review", "list", "--format=json"][..],
+        &["new", "-m", "offline second operation"][..],
+    ] {
+        success(command(&workspace, &config, &token, args));
+    }
+    let mut upstream_connections = 0;
+    loop {
+        match old_remote_probe.accept() {
+            Ok((socket, _)) => {
+                upstream_connections += 1;
+                drop(socket);
+            }
+            Err(error) if error.kind() == std::io::ErrorKind::WouldBlock => break,
+            Err(error) => panic!("former upstream listener failed: {error}"),
+        }
+    }
+    assert_eq!(upstream_connections, 0, "foreground contacted upstream");
     assert_eq!(
         fs::read(workspace.join("unsnapshotted.txt")).unwrap(),
         b"must survive migration"

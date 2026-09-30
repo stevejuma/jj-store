@@ -132,6 +132,12 @@ installs only digest-verified native objects and control records. It never
 installs a manifest, WAL candidate or receipt; `apply_origins` remains the sole
 destination publication boundary.
 
+For native objects, the inventory's envelope digest is SHA-256 of the canonical
+envelope prefix and payload. It is not SHA-256 of the complete stored bytes,
+which also contain the digest field. Both transfer paths verify the header's
+object key, declared length, inventory digest and streamed payload before
+upload; a malformed envelope cannot be treated as a complete closure.
+
 The native authenticated RPC exposes negotiation, committed-feed, offer, closure
 and apply methods. Apply requests carry stable request/publication identities
 and origin envelopes but no principal; the server derives the actor from the

@@ -9,7 +9,6 @@ use jj_store_wal::{
     inventory::{DependencySource, InventoryError, Representation, SourceScope, VerifiedNode},
     publication::*,
 };
-use sha2::{Digest as _, Sha256};
 use std::{
     collections::{BTreeMap, BTreeSet},
     sync::{Arc, Mutex},
@@ -84,7 +83,13 @@ impl DependencySource for StoredSource {
         let actual = VerifiedNode {
             key,
             representation: Representation::Stored {
-                envelope_digest: EnvelopeDigest::new(Sha256::digest(&bytes).into()),
+                envelope_digest: envelope::Header::decode(
+                    &bytes[..envelope::HEADER_LEN],
+                    key,
+                    max_bytes,
+                )
+                .map_err(|error| InventoryError::Source(error.to_string()))?
+                .digest,
                 bytes: bytes.len() as u64,
             },
             dependencies: expected.dependencies.clone(),
@@ -154,8 +159,15 @@ fn native_fixture() -> NativeFixture {
     let root = ObjectKey::Operation(operation(0));
     let first = ObjectKey::Operation(operation(1));
     let second = ObjectKey::Operation(operation(2));
-    let first_bytes = b"replicated operation one".to_vec();
-    let second_bytes = b"replicated operation two".to_vec();
+    let first_bytes = envelope::encode(first, b"replicated operation one", 1024).unwrap();
+    let second_bytes = envelope::encode(second, b"replicated operation two", 1024).unwrap();
+    let first_digest = envelope::Header::decode(&first_bytes[..envelope::HEADER_LEN], first, 1024)
+        .unwrap()
+        .digest;
+    let second_digest =
+        envelope::Header::decode(&second_bytes[..envelope::HEADER_LEN], second, 1024)
+            .unwrap()
+            .digest;
     (
         Arc::new(BTreeMap::from([
             (
@@ -171,7 +183,7 @@ fn native_fixture() -> NativeFixture {
                 VerifiedNode {
                     key: first,
                     representation: Representation::Stored {
-                        envelope_digest: EnvelopeDigest::new(Sha256::digest(&first_bytes).into()),
+                        envelope_digest: first_digest,
                         bytes: first_bytes.len() as u64,
                     },
                     dependencies: BTreeSet::from([root]),
@@ -182,7 +194,7 @@ fn native_fixture() -> NativeFixture {
                 VerifiedNode {
                     key: second,
                     representation: Representation::Stored {
-                        envelope_digest: EnvelopeDigest::new(Sha256::digest(&second_bytes).into()),
+                        envelope_digest: second_digest,
                         bytes: second_bytes.len() as u64,
                     },
                     dependencies: BTreeSet::from([first]),

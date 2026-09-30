@@ -535,7 +535,8 @@ comment conflict, tombstone comment, moderated hide, resolve thread and reopen
 thread. A create stages its validated anchor, safe body, initial revision,
 creation event, bounded event pages and first snapshot atomically. No staged
 subset is visible until the shared manifest CAS selects the replacement review
-root.
+root. The generated HTTP contract enumerates all eight commands and requires the
+observed alternative revision IDs for conflict resolution.
 
 The authenticated principal is the author and actor for new comments and the
 actor for later revisions or workflow actions. The command has no client author

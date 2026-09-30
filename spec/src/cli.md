@@ -69,6 +69,12 @@ overrides stored credentials for automation and is never persisted. Custom text
 results and authored help follow jj-nostr paging, Markdown and color
 conventions; JSON results are plain, newline-terminated and never paged.
 
+After `store migrate-local` switches a physical workspace to its verified local
+connection, ordinary native and ReviewStore commands use that socket even when
+the former upstream endpoint accepts connections but does not respond. The
+`sync reconcile` committed and unknown outcomes use the same JSON presentation
+contract as other typed commands.
+
 A hosted-RPC acceptance fixture creates a repository through the operator API,
 then attaches and describes history with the actual custom jj executable. It
 reopens the host with no in-memory repository directory. This qualifies dynamic

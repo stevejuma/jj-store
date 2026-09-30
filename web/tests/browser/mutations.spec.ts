@@ -69,6 +69,7 @@ test("repository command preview and apply retain the captured head and request"
     epoch: graph.snapshot.epoch,
     position: graph.snapshot.published_seq,
     heads: graph.snapshot.heads,
+    code_state_version: graph.snapshot.code_state_version,
   });
   expect(bodies[0].command).toMatchObject({
     type: "new",

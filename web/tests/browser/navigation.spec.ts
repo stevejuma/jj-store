@@ -55,14 +55,12 @@ test("hash route restores snapshot and file through controls reload and browser 
   ).toBeVisible();
 
   await page.reload();
-  await expect(page.getByLabel("Repository ID", { exact: true })).toHaveValue(
-    repo,
+  await expect(page.getByLabel("Access token", { exact: true })).toHaveValue(
+    "",
   );
-  await expect(
-    page.getByLabel("Repository token", { exact: true }),
-  ).toHaveValue("");
-  await page.getByLabel("Repository token", { exact: true }).fill(token);
-  await page.getByRole("button", { name: "Open repository" }).click();
+  expect(new URL(page.url()).hash).toBe(deepHash);
+  await page.getByLabel("Access token", { exact: true }).fill(token);
+  await page.getByRole("button", { name: "Continue" }).click();
   await expect(
     page.getByRole("region", { name: "Source preview for bin" }),
   ).toContainText("window.sourceExecuted=true");
@@ -77,7 +75,7 @@ test("malformed owned route is explicit before authentication", async ({
   await expect(page.getByRole("alert")).toContainText(
     "Invalid repository route value.",
   );
-  await expect(page.getByLabel("Repository ID", { exact: true })).toHaveValue(
+  await expect(page.getByLabel("Access token", { exact: true })).toHaveValue(
     "",
   );
 });

@@ -254,11 +254,28 @@ export async function api(
     await route.fulfill({
       json: {
         version: 1,
-        access_mode: "authenticated",
+        access_mode: options.access ?? "authenticated",
         capabilities: sample("capabilities"),
         storage: { ready: true },
         repositories: [],
         backups: [],
+      },
+    });
+  });
+  await page.route("**/v1/repositories?*", async (route) => {
+    const headers = route.request().headers();
+    expect(headers["x-jj-store-protocol"]).toBe("1");
+    if (options.access === "local_trusted")
+      expect(headers["authorization"]).toBeUndefined();
+    else expect(headers["authorization"]).toBe(`Bearer ${token}`);
+    await route.fulfill({
+      json: {
+        version: 1,
+        generation: 1,
+        repositories: [
+          { id: repo, name: "Local acceptance", permission: "admin" },
+        ],
+        next_cursor: null,
       },
     });
   });
@@ -367,7 +384,6 @@ export async function api(
 }
 export async function connect(page: Page) {
   await page.goto("/");
-  await page.getByLabel("Repository ID", { exact: true }).fill(repo);
-  await page.getByLabel("Repository token", { exact: true }).fill(token);
-  await page.getByRole("button", { name: "Open repository" }).click();
+  await page.getByLabel("Access token", { exact: true }).fill(token);
+  await page.getByRole("button", { name: "Continue" }).click();
 }
