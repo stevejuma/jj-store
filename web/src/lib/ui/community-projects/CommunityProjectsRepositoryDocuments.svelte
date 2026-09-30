@@ -3,7 +3,6 @@
   import * as DropdownMenu from "@lapismd/design-core/shadcn/dropdown-menu";
   import * as Tabs from "@lapismd/design-core/shadcn/tabs";
   import BookOpenIcon from "@lucide/svelte/icons/book-open";
-  import CheckIcon from "@lucide/svelte/icons/check";
   import ChevronDownIcon from "@lucide/svelte/icons/chevron-down";
   import HeartHandshakeIcon from "@lucide/svelte/icons/heart-handshake";
   import PencilIcon from "@lucide/svelte/icons/pencil";
@@ -76,6 +75,9 @@
   );
   const overflowDocuments = $derived(
     landingDocuments.slice(visibleDocumentCount),
+  );
+  const overflowSelectionActive = $derived(
+    overflowDocuments.some((document) => document.path === selectedDocument),
   );
   const selectedDocumentModel = $derived(
     landingDocuments.find((document) => document.path === selectedDocument),
@@ -170,11 +172,15 @@
                   variant="ghost"
                   size="sm"
                   class="community-projects__repository-document-more"
+                  data-selected={overflowSelectionActive ? "" : undefined}
                   aria-label="More repository documents"
                   >More<ChevronDownIcon
                     data-icon="inline-end"
                     aria-hidden="true"
-                  /></Button
+                  /><span
+                    class="community-projects__repository-document-tab-indicator"
+                    aria-hidden="true"
+                  ></span></Button
                 >{/snippet}
             </DropdownMenu.Trigger>
             <DropdownMenu.Content
@@ -185,23 +191,13 @@
             >
               {#each overflowDocuments as document (document.path)}
                 <DropdownMenu.Item
+                  class="community-projects__repository-document-menu-item"
+                  data-selected={document.path === selectedDocument
+                    ? ""
+                    : undefined}
                   onSelect={() => (selectedDocument = document.path)}
                 >
-                  {#if document.label === "Code of conduct"}
-                    <HeartHandshakeIcon
-                      data-icon="inline-start"
-                      aria-hidden="true"
-                    />
-                  {:else if document.label === "Contributing"}
-                    <UsersIcon data-icon="inline-start" aria-hidden="true" />
-                  {:else}
-                    <ScaleIcon data-icon="inline-start" aria-hidden="true" />
-                  {/if}
                   {document.label}
-                  {#if document.path === selectedDocument}<CheckIcon
-                      data-icon="inline-end"
-                      aria-hidden="true"
-                    />{/if}
                 </DropdownMenu.Item>
               {/each}
             </DropdownMenu.Content>

@@ -114,20 +114,46 @@
 }
 
 .community-projects__repository-document-more[data-ui-component="button"] {
+  position: relative;
   height: 2rem;
   flex: none;
   gap: 0.2rem;
   margin-inline-start: 0.15rem;
   padding-inline: 0.65rem 0.45rem;
-  border-left: 1px solid var(--border);
-  border-radius: 0;
+  border-radius: var(--radius-sm);
   font-size: var(--community-text-secondary);
   font-weight: 550;
+}
+
+.community-projects__repository-document-more[data-ui-component="button"][data-selected] {
+  background: var(--accent);
+  color: var(--accent-foreground);
+  font-weight: 600;
+}
+
+.community-projects__repository-document-more[data-selected]
+  .community-projects__repository-document-tab-indicator {
+  opacity: 1;
 }
 
 .community-projects__repository-document-more[data-ui-component="button"] svg {
   width: 0.75rem;
   height: 0.75rem;
+}
+
+.community-projects__repository-document-menu-item[data-selected] {
+  position: relative;
+  font-weight: 600;
+}
+
+.community-projects__repository-document-menu-item[data-selected]::before {
+  position: absolute;
+  inset-block: 0.35rem;
+  inset-inline-start: 0;
+  width: 2px;
+  border-radius: 0 999px 999px 0;
+  background: var(--primary);
+  content: "";
 }
 
 .community-projects__markdown-preview {

@@ -197,10 +197,12 @@ with Book, HeartHandshake, Users and Scale icons. They are left aligned, use the
 smaller secondary type scale, retain a rounded theme-grey hover and selected
 treatment, and keep a visible active underline. The header measures its
 available width and moves trailing documents into a `More` dropdown when they do
-not fit; it does not expose a horizontal scrollbar. An icon-only edit action
-remains at the far end and opens the selected document. The production loader
-reads those landing documents sequentially so their preview does not exceed the
-bounded native read-admission budget.
+not fit; it does not expose a horizontal scrollbar. When the selected document
+is in that dropdown, `More` retains the rounded selected treatment and active
+underline, while the selected menu item uses bold text and a leading active bar.
+An icon-only edit action remains at the far end and opens the selected document.
+The production loader reads those landing documents sequentially so their
+preview does not exceed the bounded native read-admission budget.
 
 Selecting a file renders a stacked source preview: copied commit metadata,
 deterministic file statistics, then the selected content. The metadata header

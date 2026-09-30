@@ -97,6 +97,25 @@
     await expect(
       canvas.getByRole("region", { name: "Security preview" }),
     ).toBeVisible();
+    const more = canvas.getByRole("button", {
+      name: "More repository documents",
+    });
+    await expect(more).toHaveAttribute("data-selected");
+    await expect(getComputedStyle(more).backgroundColor).not.toBe(
+      "rgba(0, 0, 0, 0)",
+    );
+    const moreIndicator = more.querySelector<HTMLElement>(
+      ".community-projects__repository-document-tab-indicator",
+    )!;
+    await waitFor(() =>
+      expect(getComputedStyle(moreIndicator).opacity).toBe("1"),
+    );
+    await userEvent.click(more);
+    const selectedMenuItem = body.getByRole("menuitem", { name: "Security" });
+    await expect(selectedMenuItem).toHaveAttribute("data-selected");
+    await expect(getComputedStyle(selectedMenuItem).fontWeight).toBe("600");
+    await expect(selectedMenuItem.querySelector("svg")).toBeNull();
+    await userEvent.keyboard("{Escape}");
     canvasElement.style.width = "";
   }}
 />
