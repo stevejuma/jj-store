@@ -21,7 +21,7 @@ const list = (s) => (s === "-" ? [] : s.split(",").map((v) => v.trim()));
 export function parseLedger(source) {
   const tasks = source
     .split("\n")
-    .filter((line) => /^\| (?:Bootstrap|M\d)/.test(line))
+    .filter((line) => /^\| (?:Bootstrap|M\d+)/.test(line))
     .map((line) => {
       const cells = line
         .trim()
@@ -150,7 +150,7 @@ export function validateLedger({
       errors.push(`${entry.id}: pass requires successful runs and no gaps`);
   }
   for (const task of tasks) {
-    if (!/^(?:Bootstrap|M(?:[0-9]|8[ab]))(?:\.\d+)?$/.test(task.id))
+    if (!/^(?:Bootstrap|M(?:\d+|8[ab]))(?:\.\d+)?$/.test(task.id))
       errors.push(`invalid task ID ${task.id}`);
     if (!statuses.has(task.status)) errors.push(`${task.id}: invalid status`);
     if (!task.gate || !task.next || !task.requirements.length)

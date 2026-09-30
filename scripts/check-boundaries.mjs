@@ -17,6 +17,13 @@ export function dependencyErrors(packages) {
       "jj-store-model",
       "jj-store-object",
     ],
+    "jj-store-replication": [
+      "jj-agent",
+      "jj-review",
+      "jj-store-model",
+      "jj-store-object",
+      "jj-store-wal",
+    ],
     "jj-store-jj": ["jj-store-model", "jj-store-object", "jj-store-wal"],
     "jj-store-service": [
       "jj-store-adapters",
@@ -33,6 +40,7 @@ export function dependencyErrors(packages) {
       "jj-store-model",
       "jj-store-object",
       "jj-store-jj",
+      "jj-store-replication",
       "jj-store-service",
       "jj-store-rpc",
     ],

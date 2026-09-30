@@ -68,6 +68,10 @@ export default defineConfig(tableRequirements(), {
           chapters: ["spec/src/publication.md"],
         },
         {
+          pattern: "^crates/jj-store-replication/",
+          chapters: ["spec/src/replication.md"],
+        },
+        {
           pattern: "^crates/jj-(?:agent|review)/",
           chapters: ["spec/src/collaboration.md"],
         },
