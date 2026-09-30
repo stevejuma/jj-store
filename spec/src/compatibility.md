@@ -427,3 +427,13 @@ or beyond-bound evidence leaves both values absent. Cold Storybook, production
 bundle and LocalTrusted reset evidence use the pinned Codex 0.156.1, Cursor
 3.22.7 and OpenCode 1.18.30 fixtures without changing their native AgentStore
 encodings.
+
+M11 additively registers WorkStore collection, typed command and durable-status
+HTTP routes plus matching native RPC V1 methods and custom
+`jj project`/`jj task` commands. Generated WorkStore DTOs retain distinct stable
+IDs and exact native integer versions. The manifest-3 upgrade preserves
+format-1/2 decoding and their canonical bytes, retains the existing origin
+ledger, and freezes unsupported M10 origin transfer. WorkStore cursors are
+opaque process-registry tokens with a five-minute lifetime; restart and expiry
+require explicit refresh. Captured responses exercise actual registered routes,
+not fabricated contract examples.

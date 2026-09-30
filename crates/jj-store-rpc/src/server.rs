@@ -5,6 +5,7 @@ use crate::{
         self,
         native_store_server::{NativeStore, NativeStoreServer},
     },
+    work,
 };
 use futures::{Stream, StreamExt as _};
 use jj_store_model as m;
@@ -126,6 +127,7 @@ pub struct NativeRpc {
     access: RpcAccess,
     registry: Option<Arc<dyn RepositoryRegistry>>,
     review_threads: Arc<ReviewThreadPager>,
+    work: Arc<jj_store_service::work::WorkPager>,
     commands: CommandService,
     replication_controls: Option<Arc<dyn ReplicationControls>>,
 }
@@ -179,6 +181,9 @@ impl NativeRpc {
                     .map_err(review::read_error)?,
             ),
             commands: CommandService::new(executor),
+            work: Arc::new(jj_store_service::work::WorkPager::new(Arc::new(
+                SystemClock,
+            ))),
             replication_controls: None,
         })
     }
@@ -751,6 +756,57 @@ impl NativeStore for NativeRpc {
                 .await
                 .map_err(review::command_error)?;
             review::reply(&status)
+        })
+        .await
+    }
+    async fn work_page(
+        &self,
+        request: Request<wire::WorkRequest>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        let access = self.request_access(&request)?;
+        let body = request.into_inner();
+        let query = work::request(&body.request_json)?;
+        let session = self.bind(&body.repository, access)?.into_session();
+        let pager = self.work.clone();
+        self.bounded(
+            async move { work::reply(&pager.page(session, query).await.map_err(work::error)?) },
+        )
+        .await
+    }
+    async fn apply_work_command(
+        &self,
+        request: Request<wire::WorkRequest>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        let access = self.request_access(&request)?;
+        let body = request.into_inner();
+        let command = work::request(&body.request_json)?;
+        let session = self.bind(&body.repository, access)?.into_session();
+        self.bounded(async move {
+            work::reply(
+                &jj_store_service::work::WorkCommandService
+                    .apply(session, &command)
+                    .await
+                    .map_err(work::error)?,
+            )
+        })
+        .await
+    }
+    async fn work_command_status(
+        &self,
+        request: Request<wire::WorkCommandStatusRequest>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        let access = self.request_access(&request)?;
+        let body = request.into_inner();
+        let id = m::RequestId::from_slice(&body.request_id)
+            .map_err(|_| Status::invalid_argument("work request ID"))?;
+        let session = self.bind(&body.repository, access)?.into_session();
+        self.bounded(async move {
+            work::reply(
+                &jj_store_service::work::WorkCommandService
+                    .status(session, id)
+                    .await
+                    .map_err(work::error)?,
+            )
         })
         .await
     }

@@ -4,6 +4,7 @@ use crate::mutations::{
 };
 use crate::review_mutations::{apply as review_command_apply, status as review_command_status};
 use crate::search::{Query as SearchQuery, search, search_status};
+use crate::work::{apply as work_apply, page as work_page, status as work_status};
 use crate::{
     contract::{Document, Reply},
     dto::*,
@@ -266,6 +267,9 @@ macro_rules! endpoints {
             (get, "/repos/{repo}/reviews/threads/{thread}", review_thread, Empty, crate::collaboration::ReviewDetail, Reply::Json(200)),
             (post, "/repos/{repo}/reviews/commands", review_command_apply, Empty, jj_store_service::review_mutations::Outcome, Reply::Json(200)),
             (get, "/repos/{repo}/reviews/commands/{request_id}", review_command_status, Empty, jj_store_service::review_mutations::Status, Reply::Json(200)),
+            (get, "/repos/{repo}/work", work_page, jj_store_service::work::WorkQuery, jj_store_service::work::WorkPage, Reply::Json(200)),
+            (post, "/repos/{repo}/work/commands", work_apply, Empty, jj_store_service::work::Outcome, Reply::Json(200)),
+            (get, "/repos/{repo}/work/commands/{request_id}", work_status, Empty, jj_store_service::work::Status, Reply::Json(200)),
             (get, "/repos/{repo}/snapshot", snapshot, Empty, reads::HeadSnapshot, Reply::Json(200)),
             (get, "/repos/{repo}/events", events, Events, events::Event, Reply::Events),
             (get, "/repos/{repo}/objects/{kind}/{id}", object, Selection, Envelope<c::Object>, Reply::Json(200)),
@@ -310,6 +314,7 @@ pub(super) fn document(doc: &mut Document) {
     doc.body::<Prepare>("/v1/repos/{repo}/index/tasks", "post");
     doc.body::<mutation::Request>("/v1/repos/{repo}/mutations/preview", "post");
     doc.body::<mutation::Request>("/v1/repos/{repo}/mutations", "post");
+    doc.body::<jj_store_service::work::Request>("/v1/repos/{repo}/work/commands", "post");
     doc.body::<jj_store_service::review_mutations::Request>(
         "/v1/repos/{repo}/reviews/commands",
         "post",
@@ -321,6 +326,8 @@ pub(super) fn router() -> Router<Arc<State>> {
             Router::new()$(.route($path, $method($handler).layer(DefaultBodyLimit::max(
                 if $path.contains("/mutations") {
                     crate::mutations::MAX_REQUEST_BYTES
+                } else if $path.ends_with("/work/commands") {
+                    crate::work::MAX_REQUEST_BYTES
                 } else if $path.ends_with("/reviews/commands") {
                     crate::review_mutations::MAX_REQUEST_BYTES
                 } else {

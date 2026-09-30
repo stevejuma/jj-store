@@ -530,3 +530,10 @@ clock before normalization and publication. The hook keeps source timestamps
 optional, rejects disabled integrations before capture state exists and retains
 the existing secret-redaction and restart-ordering boundaries. This adds no
 installed service, controller dispatch or credential persistence.
+
+## WorkStore service and transports
+
+Native jj project and jj task commands read and mutate WorkStore through the
+local repository connection. Task/project commands require exact request IDs and
+entity/project versions; they are independent of optional upstream connectivity.
+No server-free or Git-ref fallback is introduced.

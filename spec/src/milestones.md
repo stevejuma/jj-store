@@ -81,9 +81,9 @@ adds evidence here in its enclosing Jujutsu change.
 | M10.6       | Done        | M10.5       | JST-REPL-004,JST-REPL-010,JST-REPL-011                                                                                                                                   | Complete snapshot-plus-tail bootstrap, format-2 seed upgrade and non-destructive existing-workspace migration         | Retain bootstrap, migration and zero-upstream regressions                   | E-M10-008,E-M10-010,E-M10-013                                                                                                                                                                                                                                                                                                                                  |
 | M10.7       | Done        | M10.6       | JST-REPL-001,JST-REPL-006,JST-REPL-011,JST-REPL-012                                                                                                                      | Server-owned worker, one upstream, local outage readiness, controls, finite waits and SSE/search integration          | Retain active profile; expanded hardening stays deferred to M10.8.          | E-M10-009,E-M10-010,E-M10-013,E-M10-014                                                                                                                                                                                                                                                                                                                        |
 | M10.8       | Deferred    | M10.7       | JST-REPL-011,JST-REPL-012                                                                                                                                                | Expanded pressure/fault soak, browser UI, cold two-instance RustFS, archive/export and topology qualification         | Future replication hardening                                                | -                                                                                                                                                                                                                                                                                                                                                              |
-| M11         | In progress | M9.6        | JST-WORK-001,JST-WORK-002,JST-WORK-003,JST-WORK-004,JST-WORK-005,JST-WORK-006,JST-WORK-007,JST-WORK-008                                                                  | Native project home, linked repositories, tasks and discussion                                                        | Implement and qualify isolated WorkStore                                    | E-M11-001                                                                                                                                                                                                                                                                                                                                                      |
+| M11         | In progress | M9.6        | JST-WORK-001,JST-WORK-002,JST-WORK-003,JST-WORK-004,JST-WORK-005,JST-WORK-006,JST-WORK-007,JST-WORK-008                                                                  | Native project home, linked repositories, tasks and discussion                                                        | Implement and qualify isolated WorkStore                                    | E-M11-001,E-M11-002                                                                                                                                                                                                                                                                                                                                            |
 | M11.1       | Done        | M9.6        | JST-WORK-001,JST-WORK-002,JST-WORK-003,JST-WORK-004,JST-WORK-005,JST-WORK-007                                                                                            | Native model, publication, receipts, recovery and copy                                                                | Retain native gates; proceed with owned service and transport               | E-M11-001                                                                                                                                                                                                                                                                                                                                                      |
-| M11.2       | Planned     | M11.1       | JST-WORK-005,JST-WORK-006,JST-WORK-008                                                                                                                                   | Authorized service, API, RPC and CLI                                                                                  | Executed transport and CLI acceptance                                       | -                                                                                                                                                                                                                                                                                                                                                              |
+| M11.2       | Done        | M11.1       | JST-WORK-005,JST-WORK-006,JST-WORK-008                                                                                                                                   | Authorized service, API, RPC and CLI                                                                                  | Retain local transport/CLI gates                                            | E-M11-002                                                                                                                                                                                                                                                                                                                                                      |
 | M11.3       | Planned     | M11.2       | JST-WORK-008                                                                                                                                                             | Browser projects/tasks/comments and explicit refresh                                                                  | Cold interaction and accessibility acceptance                               | -                                                                                                                                                                                                                                                                                                                                                              |
 
 The user reopened production browsing integration on 27 September 2026 after
@@ -20698,6 +20698,235 @@ and named tests are checked by the progress gate.
     "result": "pass",
     "remaining": [],
     "scope": "Native model and fake-store publication/recovery/copy only; M11.2/M11.3 and real RustFS WorkStore acceptance remain separate. Root aggregate and unrelated UI lanes are out of scope."
+  },
+  {
+    "id": "E-M11-002",
+    "tasks": [
+      "M11",
+      "M11.2"
+    ],
+    "date": "2026-09-30",
+    "kind": "workstore-transports-cli",
+    "revision": "enclosing Jujutsu change",
+    "versions": "Rust 1.98.1; jj-cli/jj-lib 0.45.1; pnpm 10.32.1",
+    "formats": "Work API/RPC V1; opaque random process-retained query/repository/epoch-bound five-minute page cursors; format-3 local WAL publications preserve and freeze M10 origin ledger. CLI remains native local-service backed, with no upstream required. No Git refs or filesystem mirror.",
+    "files": [
+      "crates/jj-store-cli/src/commands.rs",
+      "crates/jj-store-cli/src/lib.rs",
+      "crates/jj-store-cli/src/work_commands/output.rs",
+      "crates/jj-store-cli/src/work_commands/task.rs",
+      "crates/jj-store-cli/src/work_commands.rs",
+      "crates/jj-store-cli/tests/executable_native.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/http_work.rs",
+      "crates/jj-store-cli/tests/native_lifecycle.rs",
+      "crates/jj-store-http/src/contract.rs",
+      "crates/jj-store-http/src/error.rs",
+      "crates/jj-store-http/src/lib.rs",
+      "crates/jj-store-http/src/routes.rs",
+      "crates/jj-store-http/src/work.rs",
+      "crates/jj-store-rpc/proto/native.proto",
+      "crates/jj-store-rpc/src/client.rs",
+      "crates/jj-store-rpc/src/lib.rs",
+      "crates/jj-store-rpc/src/server.rs",
+      "crates/jj-store-rpc/src/work.rs",
+      "crates/jj-store-rpc/tests/work.rs",
+      "crates/jj-store-server/src/replication.rs",
+      "crates/jj-store-service/src/lib.rs",
+      "crates/jj-store-service/src/native.rs",
+      "crates/jj-store-service/src/transport.rs",
+      "crates/jj-store-service/src/work/commands.rs",
+      "crates/jj-store-service/src/work/cursors.rs",
+      "crates/jj-store-service/src/work/models.rs",
+      "crates/jj-store-service/src/work/reads.rs",
+      "crates/jj-store-service/src/work.rs",
+      "crates/jj-store-service/tests/work_store.rs",
+      "crates/jj-store-wal/src/lib.rs",
+      "crates/jj-store-wal/src/publication/domains.rs",
+      "crates/jj-store-wal/src/publication/replication.rs",
+      "crates/jj-store-wal/src/publication/replication_import.rs",
+      "crates/jj-store-wal/src/publication/replication_seed.rs",
+      "crates/jj-store-wal/src/publication/replication_transfer.rs",
+      "crates/jj-store-wal/src/publication/work_commands.rs",
+      "crates/jj-store-wal/src/publication.rs",
+      "crates/jj-store-wal/tests/work_store.rs",
+      "docs/cli/work.md",
+      "schemas/openapi.json",
+      "scripts/contracts.mjs",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/jj-integration.md",
+      "spec/src/mutations.md",
+      "spec/src/projects.md",
+      "spec/src/publication.md",
+      "spec/src/replication.md",
+      "spec/src/security.md",
+      "spec/src/spec-governance.md",
+      "web/src/lib/api/generated.ts",
+      "spec/src/compatibility.md"
+    ],
+    "tests": [
+      "crates/jj-store-service/tests/work_store.rs#linked_repository_metadata_does_not_grant_code_access_and_cursors_expire",
+      "crates/jj-store-rpc/tests/work.rs#current",
+      "crates/jj-store-cli/tests/executable_native.rs#executable_workstore_creates_tasks_comments_and_recovers_without_an_upstream",
+      "crates/jj-store-cli/tests/native_lifecycle/http_work.rs#http_workstore_pages_commands_permissions_and_contract_capture"
+    ],
+    "runs": [
+      {
+        "command": "cargo check -p jj-store-service --locked",
+        "result": "fail",
+        "failures": 3,
+        "note": "Incomplete scaffolding: missing Work modules; later compiled."
+      },
+      {
+        "command": "cargo test -p jj-store-service --test work_store --locked",
+        "result": "fail",
+        "failures": 2,
+        "note": "Native creation already owns an origin ledger, invalidating the initial rejection."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --test work_store --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Six Work tests pass after preserving and freezing the origin ledger."
+      },
+      {
+        "command": "cargo check -p jj-store-cli --locked",
+        "result": "fail",
+        "failures": 15,
+        "note": "Glob-imported service Result conflicted with CLI result; replaced with explicit imports."
+      },
+      {
+        "command": "cargo check -p jj-store-cli --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "Server replication match needed permanent Unsupported handling."
+      },
+      {
+        "command": "cargo check -p jj-store-service --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Owned service compiles."
+      },
+      {
+        "command": "cargo check -p jj-store-rpc -p jj-store-http --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected transport packages compile."
+      },
+      {
+        "command": "cargo test -p jj-store-rpc --test work --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "One real isolated local RPC transport acceptance passes; storage is fake."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test executable_native --locked executable_workstore_creates_tasks_comments_and_recovers_without_an_upstream -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "Compiled CLI creates project/task/comment, retries, rejects reader writes, restarts and recovers receipts with no upstream; one pass."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked http_work_acceptance::http_workstore_pages_commands_permissions_and_contract_capture -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "One executed HTTP paging/commands/permissions/status acceptance passes."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "New copy test incorrectly named a service-only descriptor method; removed the invalid call."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "58 authority tests pass. Escalation: format-3 origin freeze affects shared code, AgentStore, ReviewStore publications and native copy. Nonempty historical origin ledger survives Work upgrade, checkpoint, copy and cold recovery."
+      },
+      {
+        "command": "cargo test -p jj-store-service --test work_store --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Three acceptances pass: pinned paging, no GET publication, durable actor/receipt/event semantics, separate target-code authorization, cursor expiry and token expiry."
+      },
+      {
+        "command": "cargo test -p jj-store-replication --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "16 direct consumer tests pass across origin transfer/bootstrap/checkpoint and agent/review convergence."
+      },
+      {
+        "command": "cargo clippy -p jj-store-service -p jj-store-http -p jj-store-rpc -p jj-store-cli -p jj-store-server --all-targets --locked -- -D warnings",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected packages and direct consumers pass with warnings denied."
+      },
+      {
+        "command": "pnpm contracts:generate",
+        "result": "pass",
+        "failures": 0,
+        "note": "OpenAPI and exact-integer browser contract generated."
+      },
+      {
+        "command": "pnpm contracts:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "78 actual HTTP/SSE responses conform; six contract unit tests and contract TypeScript pass. Escalation: shared route inventory and public generated API affect all captured direct consumers."
+      },
+      {
+        "command": "cargo fmt -p jj-store-service -p jj-store-wal -p jj-store-http -p jj-store-rpc -p jj-store-cli -p jj-store-server",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected Rust packages formatted."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "19 chapters / 115 requirements pass."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "fail",
+        "failures": 1,
+        "note": "Generated schema required compatibility ownership; added M11 additive contract."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "fail",
+        "failures": 1,
+        "note": "Starting browser milestone needs its own evidence; retained Planned until browser slice."
+      },
+      {
+        "command": "pnpm exec prettier --write scripts/contracts.mjs spec/src/{projects,architecture,api,cli,jj-integration,mutations,publication,replication,security,spec-governance,milestones,compatibility}.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected canonical and governance files formatted; commands executed in two invocations."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "All backend protected files map to changed owning chapters."
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "15 package dependency boundaries pass."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "77 tasks and scoped backend evidence pass."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "M11.2 owned service/transports/CLI with fake backing storage. M11.3 browser and real RustFS WorkStore qualification remain separate. Root aggregate and unrelated UI lanes are out of scope.",
+    "next": "Complete browser projects/tasks discussion and cold real RustFS acceptance."
   }
 ]
 ```

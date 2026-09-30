@@ -28,6 +28,8 @@ use std::{collections::BTreeSet, sync::Arc};
 pub enum Error {
     #[error("request is not authorized")]
     Denied,
+    #[error("repository profile does not support origin replication")]
+    Unsupported,
     #[error("invalid native request")]
     Invalid,
     #[error("object not found")]
@@ -46,6 +48,7 @@ impl From<wal::Error> for Error {
     fn from(error: wal::Error) -> Self {
         match error {
             wal::Error::Denied => Self::Denied,
+            wal::Error::Unsupported(_) => Self::Unsupported,
             wal::Error::Limit(_) => Self::Limit,
             wal::Error::OutcomeUnknown => Self::Unknown,
             wal::Error::Stale

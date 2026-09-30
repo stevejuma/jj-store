@@ -98,6 +98,10 @@ if (mode === "--check") {
         "http_collaboration_review_acceptance::local_trusted_http_pages_root_pinned_review_threads_and_resolves_detail",
         "JJ_STORE_REVIEW_CONTRACT_CAPTURE",
       ],
+      [
+        "http_work_acceptance::http_workstore_pages_commands_permissions_and_contract_capture",
+        "JJ_STORE_WORK_CONTRACT_CAPTURE",
+      ],
     ]) {
       const capture = join(directory, `${variable}.json`);
       const { stdout } = await run(

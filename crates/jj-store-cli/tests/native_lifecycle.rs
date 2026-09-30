@@ -1132,3 +1132,6 @@ mod abandon_acceptance;
 
 #[path = "native_lifecycle/adapters.rs"]
 mod adapter_acceptance;
+
+#[path = "native_lifecycle/http_work.rs"]
+mod http_work_acceptance;

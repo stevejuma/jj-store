@@ -41,7 +41,7 @@ pub enum WorkCommandError {
     Publication(#[from] Error),
     #[error(transparent)]
     Model(#[from] jj_work::Error),
-    #[error("WorkStore requires a local home without origin replication")]
+    #[error("WorkStore origin replication is unsupported")]
     ReplicationUnsupported,
 }
 impl Coordinator {
@@ -109,9 +109,6 @@ impl Coordinator {
                 .await?
             {
                 return Ok(receipt);
-            }
-            if base.manifest.replication_root.is_some() {
-                return Err(WorkCommandError::ReplicationUnsupported);
             }
             if base.manifest.domains().is_none() {
                 return Err(Error::Corrupt("enable collaboration before WorkStore").into());

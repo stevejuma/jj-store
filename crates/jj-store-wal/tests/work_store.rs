@@ -400,11 +400,44 @@ async fn workstore_and_origin_replication_are_mutually_excluded() {
             body: "".into(),
         },
     );
+    let old = replicated.read().await.unwrap().manifest().replication_root;
     assert!(matches!(
-        replicated.publish_work_command(&r).await,
-        Err(wal::publication::WorkCommandError::ReplicationUnsupported)
+        replicated.publish_work_command(&r).await.unwrap(),
+        PublishOutcome::Committed(_)
     ));
-    assert_eq!(replicated.read().await.unwrap().digest(), before);
+    let current = replicated.read().await.unwrap();
+    assert_ne!(current.digest(), before);
+    assert_eq!(current.manifest().replication_root, old);
+    assert!(
+        replicated
+            .committed_origin_feed(&current, jj_store_model::WalPosition(0), 100)
+            .await
+            .is_err()
+    );
+    assert!(replicated.bootstrap_checkpoint(&current).await.is_err());
+    assert!(replicated.offer_origins(&current, &[]).await.is_err());
+    replicated.checkpoint().await.unwrap();
+    replicated.recover(100).await.unwrap();
+    let destination = Arc::new(MemoryStore::default());
+    replicated
+        .copy_native_to(
+            destination.clone(),
+            Arc::new(Source(SourceScope::new(REPOSITORY))),
+            100,
+        )
+        .await
+        .unwrap();
+    let cold = coordinator(destination);
+    let recovered = cold.recover(100).await.unwrap();
+    assert_eq!(recovered.manifest().replication_root, old);
+    assert!(
+        cold.work_store(recovered.manifest().work_root.unwrap())
+            .await
+            .unwrap()
+            .state()
+            .projects
+            .contains_key(&ProjectId::new([10; 16]))
+    );
 }
 
 #[tokio::test]

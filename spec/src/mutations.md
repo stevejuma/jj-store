@@ -490,3 +490,10 @@ evidence, with at most 4,096 candidate events inspected; it cannot stage an
 object or invoke manifest publication. Browser review replies, resolve and
 reopen continue to use the existing receipt-backed ReviewStore command path and
 retain outcome-unknown request identities.
+
+## WorkStore service and transports
+
+WorkStore typed commands derive authenticated actors and repository-bound
+publication IDs, validate entity/project versions and retain durable status
+semantics. Home writers control task/comment metadata. Shared service requests
+accept only version, request ID and the implemented command union.

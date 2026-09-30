@@ -14,7 +14,7 @@ home may contain several projects and may also contain ordinary code.
 | JST-WORK-004 | WorkStore MUST use typed repository-bound immutable records, bounded persistent radix catalogs, an independent manifest root/version, manifest CAS, WAL and durable request receipts. Unselected objects MUST remain invisible. |
 | JST-WORK-005 | Reads MUST pin the selected WorkStore root. Mutations MUST validate exact entity and project versions; identical retries and reconstructed-service status MUST return the original durable receipt.                             |
 | JST-WORK-006 | Home repository read/write permissions MUST govern metadata; linked-code reads MUST separately authorize the target repository. CLI, RPC and HTTP MUST share owned service semantics.                                           |
-| JST-WORK-007 | Cold recovery and manifest-last native copy MUST verify every selected and historical WorkStore closure. Unsupported replication MUST fail closed before any accepted WorkStore or replication publication.                     |
+| JST-WORK-007 | Cold recovery and manifest-last native copy MUST verify every selected and historical WorkStore closure. Unsupported origin replication MUST fail closed for a WorkStore home while retaining its existing origin ledger.       |
 | JST-WORK-008 | CLI and browser MUST expose project links, task state/hierarchy and comments. SSE announces freshness; explicit refresh changes displayed snapshots. Unknown command outcomes retain the request identity.                      |
 
 ## Initial profile
@@ -36,13 +36,15 @@ manifest-selected WAL, including prior bodies. A tombstone removes the current
 body from normal discussion presentation, without rewriting history.
 
 The initial WorkStore profile is local service backed. An upstream hub is
-optional for native repositories, but WorkStore and the M10 origin protocol are
-mutually excluded until a WorkStore reducer is implemented and qualified.
-Creating tasks on an enabled replicated home and seeding replication on a
-WorkStore home fail explicitly. Native copy includes WorkStore; copy is not
-origin replication. No Git refs, stock-JJ mirroring, server-free CLI storage,
-relay synchronization, custom roles, assignments or controller dispatch are
-introduced.
+optional for native repositories, but WorkStore format 3 freezes the M10 origin
+protocol until a WorkStore reducer is implemented and qualified. Native creation
+already initializes an origin ledger without an upstream; the format upgrade
+retains that ledger unchanged. New format-3 publications stay in the
+authoritative local WAL. Negotiation, feeds, offers, origin closure, imports and
+replication seeding fail explicitly for a WorkStore home. Native copy includes
+WorkStore; copy is not origin replication. No Git refs, stock-JJ mirroring,
+server-free CLI storage, relay synchronization, custom roles, assignments or
+controller dispatch are introduced.
 
 ## Acceptance
 
@@ -55,3 +57,15 @@ authorization, target-code authorization, executed HTTP contract capture, CLI
 publication over local RPC and unknown-outcome status. Browser gates cover
 project/task selection, state and hierarchy, comment interactions, explicit
 refresh, accessibility and a cold startup. Visual baselines remain pending.
+
+## Paged service reads
+
+A project collection page selects at most 256 projects. A project query returns
+that project plus a page of its tasks; a task query returns its project,
+selected task and a page of comments. Pages enforce a four MiB body budget as
+well as the record count. Opaque random continuations retain the selected root
+and bind the exact repository, epoch, filters and page size. The process
+registry bounds snapshots, memory, concurrency and five-minute lifetime. Every
+resumed page reauthorizes; restart, expiry and resource rejection are explicit.
+GET never stages empty roots. Linked-code access uses a fresh target repository
+session.

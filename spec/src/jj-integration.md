@@ -467,3 +467,10 @@ the RPC layer does not import the review model in production or expose WAL
 coordinators. LocalTrusted calls retain owner-peer verification and
 authenticated calls retain bearer policy. Cursor pins, command authorization,
 receipt replay and outcome classification remain service responsibilities.
+
+## WorkStore service and transports
+
+The native WorkStore RPC uses the same authorized service as HTTP, including
+pinned collection pages, explicit query-bound opaque continuations and durable
+apply/status. CLI project/task commands use the bound local native service and
+do not require an upstream hub.

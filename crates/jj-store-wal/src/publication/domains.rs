@@ -168,9 +168,6 @@ impl Coordinator {
             {
                 return Ok(receipt);
             }
-            if request.domain == Domain::Work && base.manifest.replication_root.is_some() {
-                return Err(Error::Corrupt("WorkStore replication unsupported"));
-            }
             let mut current = base.manifest.domain_state(request.domain);
             if request.domain == Domain::Work && current.is_none() {
                 current = Some(DomainState {

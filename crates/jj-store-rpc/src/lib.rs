@@ -6,6 +6,7 @@ mod application;
 pub mod client;
 pub mod review;
 pub mod server;
+mod work;
 pub mod wire {
     tonic::include_proto!("jj_store.native.v1");
 }
@@ -70,6 +71,9 @@ fn wire_record(reference: RecordRef) -> wire::ControlRecordId {
 fn service_error(error: jj_store_service::transport::Error) -> Status {
     use jj_store_service::transport::Error;
     match error {
+        Error::Unsupported => {
+            Status::failed_precondition("repository profile does not support origin replication")
+        }
         Error::Denied => Status::permission_denied("repository access denied"),
         Error::Invalid => Status::invalid_argument("invalid native request"),
         Error::NotFound => Status::not_found("native object not found"),

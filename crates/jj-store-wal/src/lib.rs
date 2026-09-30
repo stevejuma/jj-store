@@ -15,6 +15,8 @@ pub enum Error {
     Inventory(#[from] inventory::InventoryError),
     #[error("invalid publication record: {0}")]
     Corrupt(&'static str),
+    #[error("unsupported repository profile: {0}")]
+    Unsupported(&'static str),
     #[error("publication resource limit exceeded: {0}")]
     Limit(&'static str),
     #[error("publication outcome is unknown; retain the original request ID")]

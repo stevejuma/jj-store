@@ -70,6 +70,7 @@ pub use jj_review::{
     ReviewThreadSnapshotV1, SensitivityV1, ThreadSnapshotId, ThreadStatusV1, decode_command_result,
     encode_command_result,
 };
+pub use jj_work::Error as WorkModelError;
 pub use jj_work::{
     ProjectId, ProjectV1, TaskId, TaskStateV1, TaskV1, WorkCommandResultV1, WorkCommandV1,
     WorkCommentId, WorkCommentV1, WorkStateV1,
@@ -231,10 +232,7 @@ impl Manifest {
             _ => {}
         }
         if (self.format < 3 && (self.work_root.is_some() || self.work_state_version != 0))
-            || (self.format == 3
-                && (self.work_root.is_none()
-                    || self.work_state_version == 0
-                    || self.replication_root.is_some()))
+            || (self.format == 3 && (self.work_root.is_none() || self.work_state_version == 0))
             || self.work_state_version > self.published.0
             || self
                 .work_root

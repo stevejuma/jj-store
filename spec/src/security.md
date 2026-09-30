@@ -237,3 +237,10 @@ values; missing/invalid secrets produce fixed errors. Index files inherit
 private state directory access. A revoked runner credential degrades indexing
 without changing repository serving permission or bypassing fresh authorization
 for search users.
+
+## WorkStore service and transports
+
+A project link records only an opaque RepositoryId and grants no permission.
+Metadata reads/writes require current home access; opening linked code follows
+the existing independently authenticated target repository route. Receipt replay
+and every resumed WorkStore page recheck current authorization.

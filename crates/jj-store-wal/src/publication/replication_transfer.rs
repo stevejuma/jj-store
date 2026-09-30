@@ -45,6 +45,13 @@ pub struct OriginClosureV1 {
 }
 
 impl Coordinator {
+    pub async fn ensure_origin_replication(&self) -> Result<()> {
+        if self.read().await?.manifest.work_root.is_some() {
+            return Err(Error::Unsupported("WorkStore origin replication"));
+        }
+        Ok(())
+    }
+
     /// Return the immutable first-origin baseline selected by this source
     /// snapshot. Repositories created directly in replication mode may have no
     /// seed because their complete feed begins at position zero.
@@ -52,6 +59,7 @@ impl Coordinator {
         &self,
         snapshot: &ManifestSnapshot,
     ) -> Result<Option<BootstrapCheckpointV1>> {
+        self.ensure_origin_replication().await?;
         let Some(root_ref) = snapshot.manifest.replication_root else {
             return Ok(None);
         };
@@ -117,6 +125,7 @@ impl Coordinator {
         after: WalPosition,
         limit: usize,
     ) -> Result<OriginFeedPageV1> {
+        self.ensure_origin_replication().await?;
         if limit == 0 || limit > 1024 || after > snapshot.manifest.published {
             return Err(Error::Limit("origin feed"));
         }
@@ -175,6 +184,7 @@ impl Coordinator {
         upper_bound: WalPosition,
         limit: usize,
     ) -> Result<OriginFeedPageV1> {
+        self.ensure_origin_replication().await?;
         if limit == 0
             || limit > 1024
             || snapshot.manifest.epoch != log_epoch
@@ -238,6 +248,7 @@ impl Coordinator {
         snapshot: &ManifestSnapshot,
         offers: &[OriginOfferV1],
     ) -> Result<Vec<OriginOfferResultV1>> {
+        self.ensure_origin_replication().await?;
         if offers.len() > 1024 {
             return Err(Error::Limit("origin offers"));
         }
@@ -267,6 +278,7 @@ impl Coordinator {
         key: OriginKeyV1,
         max_entries: usize,
     ) -> Result<OriginClosureV1> {
+        self.ensure_origin_replication().await?;
         let receipt = self
             .origin_receipt(snapshot, key)
             .await?

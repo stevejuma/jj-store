@@ -834,3 +834,11 @@ retains the existing `files` route, Commits retains `log`, and all six
 destinations preserve their operation and workspace context through existing
 controller actions. Responsive overflow neither changes the route grammar nor
 publishes native state.
+
+## WorkStore service and transports
+
+WorkStore HTTP exposes bounded project/task/comment pages and typed command
+apply/status under /v1/repos/{repo}/work. Continuations retain one selected
+WorkStore root, repeat the query and page size, reauthorize each page, and reset
+after expiry or serving restart. The browser keeps code pins separate and
+refreshes task metadata explicitly.
