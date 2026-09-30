@@ -112,3 +112,112 @@
     );
   }}
 />
+
+<Story
+  name="Selected change actions"
+  args={{ initialPage: "log" }}
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Toggle details" }),
+    );
+    const rail = within(
+      canvas.getByRole("complementary", { name: "Repository details" }),
+    );
+    await expect(
+      rail.queryByRole("group", { name: "Selected repository actions" }),
+    ).toBeNull();
+    await userEvent.click(
+      canvas.getByRole("button", {
+        name: "Merge native storage and publication",
+      }),
+    );
+    const actions = await rail.findByRole("group", {
+      name: "Selected repository actions",
+    });
+    for (const name of [
+      "Edit description",
+      "Create bookmark",
+      "Abandon change",
+      "Create change",
+    ])
+      await expect(within(actions).getByRole("button", { name })).toBeEnabled();
+    await expect(
+      within(actions).queryByRole("button", { name: "Reconcile operations" }),
+    ).toBeNull();
+    await userEvent.click(
+      within(actions).getByRole("button", { name: "Edit description" }),
+    );
+    const dialog = await page.findByRole("dialog", {
+      name: "Edit description",
+    });
+    await expect(
+      within(dialog).getByRole("group", { name: "Selected commit" }),
+    ).toHaveTextContent("Merge native storage and publication");
+    await userEvent.click(
+      within(dialog).getByRole("button", { name: "Cancel" }),
+    );
+    await waitFor(() =>
+      expect(
+        page.queryByRole("dialog", { name: "Edit description" }),
+      ).toBeNull(),
+    );
+    await userEvent.click(rail.getByRole("button", { name: "Op Log" }));
+    await expect(
+      rail.queryByRole("group", { name: "Selected repository actions" }),
+    ).toBeNull();
+  }}
+/>
+
+<Story
+  name="Selected operation actions"
+  args={{ initialPage: "oplog" }}
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Toggle details" }),
+    );
+    const rail = within(
+      canvas.getByRole("complementary", { name: "Repository details" }),
+    );
+    await expect(
+      rail.queryByRole("group", { name: "Selected repository actions" }),
+    ).toBeNull();
+    await userEvent.click(
+      canvas.getByRole("button", { name: "describe: native object history" }),
+    );
+    const actions = await rail.findByRole("group", {
+      name: "Selected repository actions",
+    });
+    await expect(
+      within(actions).getByRole("button", { name: "Reconcile operations" }),
+    ).toBeEnabled();
+    await expect(
+      within(actions).getByRole("button", { name: "Create change" }),
+    ).toBeEnabled();
+    await expect(
+      within(actions).queryByRole("button", { name: "Edit description" }),
+    ).toBeNull();
+    await userEvent.click(
+      within(actions).getByRole("button", { name: "Reconcile operations" }),
+    );
+    const dialog = await page.findByRole("dialog", {
+      name: "Reconcile operations",
+    });
+    await expect(dialog).toBeVisible();
+    await userEvent.click(
+      within(dialog).getByRole("button", { name: "Cancel" }),
+    );
+    await waitFor(() =>
+      expect(
+        page.queryByRole("dialog", { name: "Reconcile operations" }),
+      ).toBeNull(),
+    );
+    await userEvent.click(rail.getByRole("button", { name: "JJ Log" }));
+    await expect(
+      rail.queryByRole("group", { name: "Selected repository actions" }),
+    ).toBeNull();
+  }}
+/>

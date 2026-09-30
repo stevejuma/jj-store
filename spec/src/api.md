@@ -619,14 +619,20 @@ and its unselected hover matches JJ Log's neutral row hover. Bookmark selection
 exposes exact metadata and branch-capable actions before a revision is selected;
 revision selection replaces that bookmark detail. The rail uses a page-specific
 Community heading and create action instead of a duplicate Details close header.
-It bootstraps the installation catalog and opens the sole repository without
-credentials. An explicitly configured LocalTrusted search entry starts the
-existing background Tantivy projection through a stable installation-derived
-read-only principal; repository capabilities expose the command only when that
-index is configured. M4 registry-only dependency finalization and shared browser
-release qualification are deferred. The authenticated browser supports one
-memory-only manual token and bounded repository discovery without adding an
-account or OIDC layer.
+A selected change, operation or bookmark exposes its existing capability-gated
+Actions section below Details navigation. The section follows the exact loaded
+selection and disappears when that context is cleared. Operation selection
+exposes reconciliation only for multiple heads and omits Edit description and
+Abandon change commands. This is presentation only; typed mutation previews,
+authorization and confirmation flows remain unchanged. It bootstraps the
+installation catalog and opens the sole repository without credentials. An
+explicitly configured LocalTrusted search entry starts the existing background
+Tantivy projection through a stable installation-derived read-only principal;
+repository capabilities expose the command only when that index is configured.
+M4 registry-only dependency finalization and shared browser release
+qualification are deferred. The authenticated browser supports one memory-only
+manual token and bounded repository discovery without adding an account or OIDC
+layer.
 
 The Files controller fetches the selected commit independently from graph
 history so the production header can show the last author avatar, commit

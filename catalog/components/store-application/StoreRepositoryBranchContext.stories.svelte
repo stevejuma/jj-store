@@ -31,7 +31,14 @@
     await expect(
       panel.getByRole("navigation", { name: "Repository views" }),
     ).toBeVisible();
-    await expect(details.querySelectorAll("section, dl")).toHaveLength(0);
+    const actions = panel.getByRole("group", {
+      name: "Selected repository actions",
+    });
+    await expect(actions).toBeVisible();
+    await expect(
+      within(actions).getByRole("button", { name: "Move bookmark" }),
+    ).toBeEnabled();
+    await expect(details.querySelectorAll("dl")).toHaveLength(0);
     await expect(
       panel.getByRole("button", { name: "Add bookmark" }),
     ).toBeVisible();
@@ -69,10 +76,7 @@
       ).not.toBeInTheDocument(),
     );
     await userEvent.click(
-      canvas.getByRole("button", { name: "Repository actions" }),
-    );
-    await userEvent.click(
-      await page.findByRole("menuitem", { name: "Move bookmark" }),
+      within(actions).getByRole("button", { name: "Move bookmark" }),
     );
     const dialog = await page.findByRole("dialog", { name: "Move bookmark" });
     await expect(within(dialog).getByLabelText("Bookmark")).toHaveValue(

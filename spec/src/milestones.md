@@ -47,6 +47,7 @@ adds evidence here in its enclosing Jujutsu change.
 | M4.19       | Done        | M4.9,M4.10  | JST-UI-013,JST-API-002,JST-UI-005                                                                                                                                        | Exact workspace identities, pinned routes, focused interaction/a11y and cold browser acceptance                                | Retain workspace regressions; visual review remains separate                  | E-UI-032                                                                                                                                                                                                                                                                                                                                                       |
 | M4.20       | Done        | M4.19       | JST-UI-014,JST-UI-002,JST-UI-003,JST-UI-005                                                                                                                              | Right-rail destinations, ordered pill tabs, responsive overflow, focused interaction/a11y and cold browser acceptance          | Retain navigation and workspace regressions; visual review remains separate   | E-UI-033                                                                                                                                                                                                                                                                                                                                                       |
 | M4.21       | Done        | M4.20       | JST-UI-003,JST-UI-005,JST-API-002                                                                                                                                        | Compact workspace-row comparison picker, native Op Log cards, independent copy and focused interaction/a11y/browser acceptance | Retain exact-parent and workspace regressions; visual review remains separate | E-UI-034                                                                                                                                                                                                                                                                                                                                                       |
+| M4.22       | Done        | M4.21       | JST-UI-014,JST-UI-003,JST-UI-008,JST-API-005                                                                                                                             | Restore selection-aware rail actions with focused interaction, accessibility and browser evidence                              | Retain selection and capability regressions; visual review remains separate   | E-UI-035                                                                                                                                                                                                                                                                                                                                                       |
 | M5          | Done        | M4.1        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                                                                                                                      | Authenticated typed commands and shared RPC policy                                                                             | Retain mutation conformance; proceed to M6                                    | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-M5-005,E-M5-006,E-M5-007,E-M5-008,E-UI-028                                                                                                                                                                                                                                                                   |
 | M5.1        | Done        | M4.1        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                                                                                                                      | Basic changes/refs/reconcile; preview receipt and semantic policy                                                              | Retain basic mutation acceptance                                              | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-UI-028                                                                                                                                                                                                                                                                                                       |
 | M5.2        | Done        | M5.1        | JST-MUT-003                                                                                                                                                              | Full abandon descendant bookmark workspace/evolution parity                                                                    | Retain abandon acceptance                                                     | E-M5-005                                                                                                                                                                                                                                                                                                                                                       |
@@ -20735,6 +20736,162 @@ and named tests are checked by the progress gate.
     "versions": "jj 0.45.1; pnpm 10.32.1; Node 24.10.0; Svelte 5.57.1; Vitest 4.1.11; Storybook 10.5.7; Vite 8.3.1; unchanged released Design Core dependency. Installed Design Core 0.1.2 public exports; dependency resolution unchanged.",
     "formats": "Read-only UI slice: native operation parents remain exact, distinct from commit/change IDs; missing graph metadata never gains invented dates or badges. Workspace header shows Compare parent immediately before the workspace selector with no explanatory notice. Rich rows reuse existing Op Log author/message/time/badge and full operation ID copy components, with 4px gaps and accessible grid cells. Clipboard failure remains visible; copying never selects a parent. No controller, HTTP, generated DTO, native object, manifest, WAL, receipt, credential or persistence format changes. Stories remain visual-pending.",
     "next": "Retain focused native-parent, workspace and route acceptance; visual baselines remain a separate approval. Root aggregate, unrelated Storybook/browser lanes, Rust checks/tests/builds and real-RustFS qualification are out of scope under the targeted UI policy."
+  },
+  {
+    "id": "E-UI-035",
+    "tasks": [
+      "M4.22"
+    ],
+    "date": "2026-09-30",
+    "kind": "selected-repository-rail-actions",
+    "revision": "Enclosing Jujutsu change mouksruo.",
+    "before": "The right rail rendered only its heading/create control and Details navigation. The existing capability-aware Actions panel was disconnected. New selected-change and selected-operation stories each failed to find it; the two existing navigation stories passed.",
+    "files": [
+      "web/src/lib/ui/store-application/StoreApplication.svelte",
+      "web/src/lib/ui/store-application/StoreRepositoryContextActions.svelte",
+      "catalog/components/store-application/StoreRepositoryNavigation.stories.svelte",
+      "catalog/components/store-application/StoreRepositoryBranchContext.stories.svelte",
+      "web/tests/browser/context-actions.spec.ts",
+      "spec/src/api.md",
+      "spec/src/ui.md",
+      "spec/src/milestones.md",
+      "spec/src/verification.md"
+    ],
+    "tests": [
+      "web/tests/browser/context-actions.spec.ts#selected JJ Log change restores rail commands and clears them on navigation",
+      "web/tests/browser/context-actions.spec.ts#selected change rail commands respect unavailable capabilities"
+    ],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreRepositoryNavigation.stories.svelte -t 'Selected (change|operation) actions'",
+        "result": "pass",
+        "failures": 0,
+        "note": "No acceptance evidence: all four tests were skipped because the generated Storybook names did not match this filter. Reran the exact story file without a name filter."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreRepositoryNavigation.stories.svelte",
+        "result": "fail",
+        "failures": 2,
+        "note": "Before implementation: two new selection stories failed on the missing Selected repository actions group; two existing navigation stories passed. Ignored .scratch/context-actions-before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreRepositoryNavigation.stories.svelte catalog/components/store-application/StoreRepositoryBranchContext.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial and corrected story-query runs both passed 5 interaction/accessibility tests. Includes typed Edit description and Reconcile operations dialogs, deselection through navigation and bookmark Move command target. Stories remain visual-pending."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero errors and warnings."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "fail",
+        "failures": 2,
+        "note": "New story queries incorrectly used Playwright-only exact properties with Testing Library. Removed those properties without weakening the name assertions."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Corrected version: zero errors/warnings; catalog ownership passes across 73 modules."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "286 production modules pass ownership/no-growth checks; integration modules remain below 300 lines."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Built assets pass. Existing nonfatal Design Core minification and chunk warnings remain. No Rust builds."
+      },
+      {
+        "command": "pnpm exec playwright test --config .scratch/workspace-browser.config.mts context-actions.spec.ts repository-navigation.spec.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "Six of seven focused cold built-UI checks passed. New reload fixture expected the closed details rail to remain visible; corrected to reopen it. No product persistence contract changed."
+      },
+      {
+        "command": "pnpm exec playwright test --config .scratch/workspace-browser.config.mts context-actions.spec.ts -g 'selected JJ Log change'",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact failed regression now passes: selected commit restored after reload, Edit description opens for its full native commit, and changing view clears the actions. Combined with the prior six passes, all seven focused cases have passing evidence."
+      },
+      {
+        "command": "node .scratch/restart-workspace-ui.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Owned development UI restarted using existing explicit binaries and persistent demo data; readiness confirmed at 127.0.0.1:7460, PID 9124. No reset/reseed, installation or unrelated daemon restart."
+      },
+      {
+        "command": "CUA live browser verification",
+        "result": "pass",
+        "failures": 0,
+        "note": "Selected live Op Log operation shows Actions beneath Details; one repository head correctly omits Reconcile operations. Saved ignored .scratch/oplog-context-actions.png. Preserved the user-opened Create change dialog when concurrent navigation was observed; no mutation applied."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/ui/store-application/StoreApplication.svelte web/src/lib/ui/store-application/StoreRepositoryContextActions.svelte catalog/components/store-application/StoreRepositoryNavigation.stories.svelte catalog/components/store-application/StoreRepositoryBranchContext.stories.svelte web/tests/browser/context-actions.spec.ts spec/src/api.md spec/src/ui.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed source, stories, browser test and canonical chapter formatting applied in focused subsets."
+      },
+      {
+        "command": "pnpm exec prettier --check web/src/lib/ui/store-application/StoreApplication.svelte web/src/lib/ui/store-application/StoreRepositoryContextActions.svelte catalog/components/store-application/StoreRepositoryNavigation.stories.svelte catalog/components/store-application/StoreRepositoryBranchContext.stories.svelte web/tests/browser/context-actions.spec.ts spec/src/api.md spec/src/ui.md",
+        "result": "fail",
+        "failures": 1,
+        "note": "Story formatting needed refresh after removing unsupported exact query properties; corrected."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Four validators, 18 chapters and 107 requirements pass."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "Five protected files and three canonical chapters pass the same-change gate."
+      },
+      {
+        "command": "pnpm spec:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Canonical mdBook HTML build passes."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "75 tasks pass evidence bookkeeping; does not substitute for product acceptance."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md spec/src/verification.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Evidence ledger and verification references formatted."
+      },
+      {
+        "command": "pnpm exec prettier --check web/src/lib/ui/store-application/StoreApplication.svelte web/src/lib/ui/store-application/StoreRepositoryContextActions.svelte catalog/components/store-application/StoreRepositoryNavigation.stories.svelte catalog/components/store-application/StoreRepositoryBranchContext.stories.svelte web/tests/browser/context-actions.spec.ts spec/src/ui.md spec/src/api.md spec/src/milestones.md spec/src/verification.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "All changed product, regression and canonical files pass after story formatting correction."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "deferred": [
+      "Changed stories remain visual-pending; baseline approval is separate.",
+      "Root aggregate pnpm spec:check, pnpm check, pnpm test and pnpm build; unrelated Storybook/browser lanes; Rust checks/tests/builds; HTTP generation and real-RustFS qualification are out of scope under the targeted UI policy."
+    ],
+    "versions": "jj 0.45.1; pnpm 10.32.1; Node 24.10.0; Svelte 5.57.1; Storybook 10.5.7; Vitest 4.1.11; Vite 8.3.1. Existing released dependency resolution unchanged.",
+    "formats": "Presentation only: loaded JJ Log revisions, Op Log operations and branch bookmarks reattach the existing panel below Details. Capability checks and existing mutation preview/confirmation flows are reused. Clearing/changing the selection hides or replaces the panel; keyed selection identity prevents stale panel dialogs. Generic metadata stays in the body. No new mutation, controller, HTTP, native object, manifest, WAL, receipt, credential or persistence format changes.",
+    "next": "Retain focused selection, capability and navigation regressions; visual baselines remain separately approved."
   }
 ]
 ```

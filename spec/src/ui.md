@@ -23,7 +23,7 @@ supply interchangeable sources. Deterministic fixtures remain catalog-only.
 | JST-UI-011 | Authenticated connection MUST request one manual token, keep it only in memory, discover all currently authorized repositories, restore an ID-based deep link or show a chooser, and cancel requests, SSE and protected caches when the token is replaced, revoked or disconnected.                                                                                                                                                                                                                                                        |
 | JST-UI-012 | The profile menu MUST open a transient Settings destination with Local service, Repository and Search sections; replace repository navigation/content/actions/details while open; preserve the unchanged repository route and snapshot on return; keep its destination and selected section out of URL, browser history and storage; render accessible icon-only settings navigation when the desktop sidebar is collapsed; refresh advertised search health explicitly; and prepare only a lag-reported or explicitly selected operation. |
 | JST-UI-013 | Repository pages MUST expose a Community-style section header after the body tabs with a searchable workspace Command View; workspace context MUST use the exact native name, survive URL/history restoration at a pinned operation, preserve shared commit identities and keep operation/collaboration history repository-wide.                                                                                                                                                                                                           |
-| JST-UI-014 | Repository view navigation MUST live in the Community-styled right rail beneath its page heading and create action, with no additional metadata or action panels; body tabs MUST present Overview first, followed by Branches, Commits, Op Log, Agents and Reviews, retain their pill styling, and move trailing tabs into an accessible dropdown when width is limited without changing route or workspace context.                                                                                                                       |
+| JST-UI-014 | Repository view navigation MUST live in the Community-styled right rail beneath its page heading and create action, with selection-aware, capability-gated commands beneath Details and no duplicate metadata panels; body tabs MUST present Overview first, followed by Branches, Commits, Op Log, Agents and Reviews, retain their pill styling, and move trailing tabs into an accessible dropdown when width is limited without changing route or workspace context.                                                                   |
 
 The production controller completes bootstrap before rendering connection
 choices. One ready LocalTrusted catalog entry opens without a token, several
@@ -206,10 +206,13 @@ shell background with no visible border. It omits a redundant shell header and
 close icon because the application toolbar already owns the sidebar toggle. Its
 body begins with Community's compact page heading, such as `Branches/Bookmarks`,
 plus the available create action at the end. The Details navigation menu follows
-it; repository/source/snapshot summaries, selected metadata and secondary action
-panels are absent from the rail. Selected native content remains in the body and
-other commands remain in Repository actions. Comparison-parent choices and
-request errors appear in the main body.
+it. Selecting a JJ Log change, Op Log operation or branch bookmark restores an
+Actions section beneath Details using the existing capability-gated commands.
+Changing or clearing the selection updates or removes that section; unavailable
+commands stay disabled, and operation selection omits change-editing commands.
+Repository/source/snapshot summaries and selected metadata remain in the body.
+The header Repository actions menu remains available. Comparison-parent choices
+and request errors appear in the main body.
 
 Repository pages place Community-styled `Overview`, `Branches`, `Commits`,
 `Op Log`, `Agents` and `Reviews` tabs at the top of the body. They route to the

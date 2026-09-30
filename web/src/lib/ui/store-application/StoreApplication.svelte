@@ -26,6 +26,7 @@
   import type { StoreController } from "../../controller/contracts.js";
   import CommunityProfileMenu from "../community-profile-menu/CommunityProfileMenu.svelte";
   import StoreRepositoryDetails from "./StoreRepositoryDetails.svelte";
+  import StoreRepositoryContextActions from "./StoreRepositoryContextActions.svelte";
   import StoreRepositoryNotices from "./StoreRepositoryNotices.svelte";
   import StoreSearchOverlay from "../store-search/StoreSearchOverlay.svelte";
   import StoreSettings from "../store-settings/StoreSettings.svelte";
@@ -266,6 +267,7 @@
       <AppShell.Sidebar.Body>
         <StoreRepositoryDetails {controller} />
         <StoreRepositoryNavigation page={current.page} onSelect={selectPage} />
+        <StoreRepositoryContextActions {controller} />
       </AppShell.Sidebar.Body>
     </AppShell.Sidebar>{/if}
 </CommunityAppShell>
