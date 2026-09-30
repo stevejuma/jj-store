@@ -12,8 +12,8 @@ use jj_store_wal::{
     inventory::Representation,
     publication::{
         ApplyOriginsOutcomeV1, ApplyOriginsTransportRequestV1, ApplyOriginsTransportResponseV1,
-        FeedResponseV1, NegotiateReplicaV1, OfferOriginsResponseV1, OriginClosureResponseV1,
-        OriginEnvelopeV1, OriginOfferResultV1, OriginOfferV1,
+        BootstrapCheckpointV1, FeedResponseV1, NegotiateReplicaV1, OfferOriginsResponseV1,
+        OriginClosureResponseV1, OriginEnvelopeV1, OriginOfferResultV1, OriginOfferV1,
     },
     records::{MAX_RECORD_BYTES, RecordRef},
 };
@@ -296,6 +296,14 @@ struct Circuit {
     last_fault: Option<FaultKind>,
 }
 
+#[derive(Clone, Copy, Debug, Default)]
+struct TransferStats {
+    offered: usize,
+    transferred: usize,
+    objects: usize,
+    bytes: u64,
+}
+
 impl Circuit {
     fn status(self) -> DirectionStatus {
         DirectionStatus {
@@ -568,6 +576,7 @@ impl<L: ReplicationEndpoint, P: ReplicationEndpoint> ReplicationWorker<L, P> {
         if response.schema_version != 1
             || response.repository != self.repository
             || response.replica != expected_replica
+            || response.feed_lower_bound > response.feed_upper_bound
             || !capabilities.compatible_with(&response.capabilities)
         {
             return Err(Error::Integrity("replication negotiation"));
@@ -586,12 +595,12 @@ impl<L: ReplicationEndpoint, P: ReplicationEndpoint> ReplicationWorker<L, P> {
         let negotiation = self
             .negotiate(source, destination_replica, source_replica)
             .await?;
-        let previous = self.checkpoints.load().await?;
+        let mut previous = self.checkpoints.load().await?;
         let cursor = previous.as_ref().and_then(|value| match direction {
             Direction::Pull => value.checkpoint.pulled,
             Direction::Push => value.checkpoint.pushed,
         });
-        let after = match cursor {
+        let mut after = match cursor {
             Some(cursor)
                 if cursor.issuer == source_replica && cursor.log_epoch == negotiation.log_epoch =>
             {
@@ -602,6 +611,75 @@ impl<L: ReplicationEndpoint, P: ReplicationEndpoint> ReplicationWorker<L, P> {
         };
         if after > negotiation.feed_upper_bound {
             return Err(Error::Integrity("replication feed moved backwards"));
+        }
+        let mut bootstrap_stats = TransferStats::default();
+        if after < negotiation.feed_lower_bound {
+            let checkpoint = negotiation
+                .bootstrap
+                .as_ref()
+                .ok_or(Error::Integrity("replication bootstrap unavailable"))?;
+            if checkpoint.schema_version != 1
+                || checkpoint.source_replica != source_replica
+                || checkpoint.log_epoch != negotiation.log_epoch
+                || checkpoint.source_manifest != negotiation.manifest_digest
+                || checkpoint.through < negotiation.feed_lower_bound
+                || checkpoint.through > negotiation.feed_upper_bound
+                || checkpoint.code_heads.is_empty()
+                || checkpoint.seed.origin_key.stream.repository != self.repository
+                || checkpoint.seed.origin_key.stream.replica != source_replica
+                || checkpoint.seed.origin_key.sequence != 1
+            {
+                return Err(Error::Integrity("replication bootstrap checkpoint"));
+            }
+            let seed_closure = source
+                .closure(&OriginClosureRequestV1 {
+                    schema_version: 1,
+                    origin_key: checkpoint.seed.origin_key,
+                    max_entries: self.limits.closure_entries,
+                })
+                .await?
+                .closure;
+            let seed = &seed_closure.envelope.publication;
+            if seed_closure.envelope.origin_digest != checkpoint.seed.origin_digest
+                || seed.digest()? != checkpoint.seed.origin_digest
+                || !seed.is_seed_baseline()
+                || seed.published_operations != checkpoint.code_heads
+                || seed.agent_root != Some(checkpoint.agent_root)
+                || seed.review_root != Some(checkpoint.review_root)
+            {
+                return Err(Error::Integrity("replication bootstrap closure"));
+            }
+            bootstrap_stats = self
+                .transfer_offers(
+                    direction,
+                    source,
+                    source_replica,
+                    destination,
+                    &[checkpoint.seed],
+                    negotiation.log_epoch,
+                    Some(checkpoint),
+                )
+                .await?;
+            let cursor = FeedCursorV1 {
+                issuer: source_replica,
+                log_epoch: negotiation.log_epoch,
+                through: checkpoint.through,
+                observed_upper_bound: negotiation.feed_upper_bound,
+            };
+            let mut next = previous.as_ref().map_or_else(
+                || self.checkpoints.empty(),
+                |value| value.checkpoint.clone(),
+            );
+            next.revision = next
+                .revision
+                .checked_add(1)
+                .ok_or(Error::Limit("peer checkpoint revision"))?;
+            match direction {
+                Direction::Pull => next.pulled = Some(cursor),
+                Direction::Push => next.pushed = Some(cursor),
+            }
+            previous = Some(self.checkpoints.save(previous.as_ref(), next).await?);
+            after = checkpoint.through;
         }
         let page = source
             .feed(&FeedRequestV1 {
@@ -640,10 +718,79 @@ impl<L: ReplicationEndpoint, P: ReplicationEndpoint> ReplicationWorker<L, P> {
                 origin_digest: item.envelope.origin_digest,
             })
             .collect::<Vec<_>>();
+        let transfer = self
+            .transfer_offers(
+                direction,
+                source,
+                source_replica,
+                destination,
+                &offers,
+                negotiation.log_epoch,
+                None,
+            )
+            .await?;
+        let cursor = FeedCursorV1 {
+            issuer: source_replica,
+            log_epoch: negotiation.log_epoch,
+            through: page.through,
+            observed_upper_bound: page.upper_bound,
+        };
+        if match direction {
+            Direction::Pull => previous.as_ref().and_then(|value| value.checkpoint.pulled),
+            Direction::Push => previous.as_ref().and_then(|value| value.checkpoint.pushed),
+        } == Some(cursor)
+        {
+            return Ok(StepOutcome {
+                direction,
+                observed_upper_bound: page.upper_bound,
+                through: page.through,
+                offered_origins: bootstrap_stats.offered + transfer.offered,
+                transferred_origins: bootstrap_stats.transferred + transfer.transferred,
+                transferred_objects: bootstrap_stats.objects + transfer.objects,
+                transferred_bytes: bootstrap_stats.bytes + transfer.bytes,
+                caught_up: page.through == page.upper_bound,
+            });
+        }
+        let mut next = previous.as_ref().map_or_else(
+            || self.checkpoints.empty(),
+            |value| value.checkpoint.clone(),
+        );
+        next.revision = next
+            .revision
+            .checked_add(1)
+            .ok_or(Error::Limit("peer checkpoint revision"))?;
+        match direction {
+            Direction::Pull => next.pulled = Some(cursor),
+            Direction::Push => next.pushed = Some(cursor),
+        }
+        self.checkpoints.save(previous.as_ref(), next).await?;
+        Ok(StepOutcome {
+            direction,
+            observed_upper_bound: page.upper_bound,
+            through: page.through,
+            offered_origins: bootstrap_stats.offered + transfer.offered,
+            transferred_origins: bootstrap_stats.transferred + transfer.transferred,
+            transferred_objects: bootstrap_stats.objects + transfer.objects,
+            transferred_bytes: bootstrap_stats.bytes + transfer.bytes,
+            caught_up: page.through == page.upper_bound,
+        })
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    async fn transfer_offers<S: ReplicationEndpoint, D: ReplicationEndpoint>(
+        &self,
+        direction: Direction,
+        source: &S,
+        source_replica: ReplicaId,
+        destination: &D,
+        offers: &[OriginOfferV1],
+        log_epoch: EpochId,
+        bootstrap: Option<&BootstrapCheckpointV1>,
+    ) -> Result<TransferStats> {
         let response = destination
             .offer(&OfferOriginsRequestV1 {
                 schema_version: 1,
-                offers: offers.clone(),
+                offers: offers.to_vec(),
             })
             .await?;
         if response.schema_version != 1 || response.results.len() != offers.len() {
@@ -677,6 +824,17 @@ impl<L: ReplicationEndpoint, P: ReplicationEndpoint> ReplicationWorker<L, P> {
                 || closure.envelope.publication.digest()? != closure.envelope.origin_digest
             {
                 return Err(Error::Integrity("replication origin closure"));
+            }
+            if let Some(checkpoint) = bootstrap {
+                let publication = &closure.envelope.publication;
+                if offers.len() != 1
+                    || !publication.is_seed_baseline()
+                    || publication.published_operations != checkpoint.code_heads
+                    || publication.agent_root != Some(checkpoint.agent_root)
+                    || publication.review_root != Some(checkpoint.review_root)
+                {
+                    return Err(Error::Integrity("replication bootstrap closure"));
+                }
             }
             for node in &closure.native {
                 let Representation::Stored {
@@ -753,7 +911,7 @@ impl<L: ReplicationEndpoint, P: ReplicationEndpoint> ReplicationWorker<L, P> {
                 self.repository,
                 direction,
                 source_replica,
-                negotiation.log_epoch,
+                log_epoch,
                 &envelopes,
             );
             let response = destination
@@ -796,50 +954,11 @@ impl<L: ReplicationEndpoint, P: ReplicationEndpoint> ReplicationWorker<L, P> {
                 }
             }
         }
-        let cursor = FeedCursorV1 {
-            issuer: source_replica,
-            log_epoch: negotiation.log_epoch,
-            through: page.through,
-            observed_upper_bound: page.upper_bound,
-        };
-        if match direction {
-            Direction::Pull => previous.as_ref().and_then(|value| value.checkpoint.pulled),
-            Direction::Push => previous.as_ref().and_then(|value| value.checkpoint.pushed),
-        } == Some(cursor)
-        {
-            return Ok(StepOutcome {
-                direction,
-                observed_upper_bound: page.upper_bound,
-                through: page.through,
-                offered_origins: offers.len(),
-                transferred_origins: missing.len(),
-                transferred_objects: transferred_native.len() + transferred_control.len(),
-                transferred_bytes,
-                caught_up: page.through == page.upper_bound,
-            });
-        }
-        let mut next = previous.as_ref().map_or_else(
-            || self.checkpoints.empty(),
-            |value| value.checkpoint.clone(),
-        );
-        next.revision = next
-            .revision
-            .checked_add(1)
-            .ok_or(Error::Limit("peer checkpoint revision"))?;
-        match direction {
-            Direction::Pull => next.pulled = Some(cursor),
-            Direction::Push => next.pushed = Some(cursor),
-        }
-        self.checkpoints.save(previous.as_ref(), next).await?;
-        Ok(StepOutcome {
-            direction,
-            observed_upper_bound: page.upper_bound,
-            through: page.through,
-            offered_origins: offers.len(),
-            transferred_origins: missing.len(),
-            transferred_objects: transferred_native.len() + transferred_control.len(),
-            transferred_bytes,
-            caught_up: page.through == page.upper_bound,
+        Ok(TransferStats {
+            offered: offers.len(),
+            transferred: missing.len(),
+            objects: transferred_native.len() + transferred_control.len(),
+            bytes: transferred_bytes,
         })
     }
 }

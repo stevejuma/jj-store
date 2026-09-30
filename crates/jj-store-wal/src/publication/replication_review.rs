@@ -3,6 +3,47 @@ use super::replication_review_graph::{event_parent_map, graph_is_ancestor};
 use super::*;
 
 impl Coordinator {
+    pub(super) async fn baseline_review_delta(
+        &self,
+        authored_root: RecordRef,
+    ) -> Result<Option<ReviewDeltaV1>> {
+        let authored = self.review_store(authored_root).await?;
+        let mut edits = Vec::new();
+        for catalog in [
+            ReviewCatalogKind::Threads,
+            ReviewCatalogKind::Comments,
+            ReviewCatalogKind::ThreadEvents,
+            ReviewCatalogKind::AnchorRelations,
+            ReviewCatalogKind::ArtifactRelations,
+            ReviewCatalogKind::Statuses,
+        ] {
+            edits.extend(
+                authored
+                    .catalog_entries(catalog, 4096)
+                    .await?
+                    .into_iter()
+                    .map(|(key, replacement)| ReviewCatalogEditV1 {
+                        catalog,
+                        key,
+                        expected: None,
+                        replacement: Some(replacement),
+                    }),
+            );
+        }
+        if edits.is_empty() {
+            Ok(None)
+        } else {
+            let delta = ReviewDeltaV1 {
+                schema_version: 1,
+                edits,
+            };
+            delta
+                .validate()
+                .map_err(|_| Error::Limit("review baseline facts"))?;
+            Ok(Some(delta))
+        }
+    }
+
     pub(super) async fn reduce_imported_review_facts(
         &self,
         current_root: RecordRef,

@@ -176,7 +176,11 @@ impl Records {
         {
             return Err(Error::Corrupt("replication control record"));
         }
-        let envelope: Envelope<serde_json::Value> = decode(bytes)?;
+        // This is a staging boundary. Typed reads during apply enforce exact
+        // canonical encoding for the concrete payload. Decoding the payload as
+        // `Value` here would reorder nested object fields and falsely reject a
+        // canonical typed record before it can be verified by its owner.
+        let envelope: Envelope<serde_json::Value> = serde_json::from_slice(bytes)?;
         if envelope.format != 1
             || envelope.repository != self.repository
             || envelope.kind != reference.kind

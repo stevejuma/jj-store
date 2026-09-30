@@ -45,6 +45,55 @@ pub struct OriginClosureV1 {
 }
 
 impl Coordinator {
+    /// Return the immutable first-origin baseline selected by this source
+    /// snapshot. Repositories created directly in replication mode may have no
+    /// seed because their complete feed begins at position zero.
+    pub async fn bootstrap_checkpoint(
+        &self,
+        snapshot: &ManifestSnapshot,
+    ) -> Result<Option<BootstrapCheckpointV1>> {
+        let Some(root_ref) = snapshot.manifest.replication_root else {
+            return Ok(None);
+        };
+        let root = self.read_replication_root(root_ref).await?;
+        if root.local_sequence == 0 {
+            return Ok(None);
+        }
+        let key = OriginKeyV1 {
+            stream: root.local_stream,
+            sequence: 1,
+        };
+        let Some(receipt) = self.origin_receipt(snapshot, key).await? else {
+            return Err(Error::Corrupt("bootstrap seed receipt"));
+        };
+        let publication = self.origin_publication(receipt).await?;
+        if !publication.is_seed_baseline()
+            || receipt.accepted.replica != root.local_stream.replica
+            || receipt.accepted.log_epoch != snapshot.manifest.epoch
+            || receipt.accepted.position > snapshot.manifest.published
+        {
+            return Ok(None);
+        }
+        Ok(Some(BootstrapCheckpointV1 {
+            schema_version: 1,
+            source_replica: root.local_stream.replica,
+            log_epoch: snapshot.manifest.epoch,
+            through: receipt.accepted.position,
+            source_manifest: snapshot.digest(),
+            seed: OriginOfferV1 {
+                origin_key: key,
+                origin_digest: receipt.origin_digest,
+            },
+            code_heads: publication.published_operations,
+            agent_root: publication
+                .agent_root
+                .ok_or(Error::Corrupt("bootstrap agent root"))?,
+            review_root: publication
+                .review_root
+                .ok_or(Error::Corrupt("bootstrap review root"))?,
+        }))
+    }
+
     pub async fn read_replication_record(&self, reference: RecordRef) -> Result<Vec<u8>> {
         if reference.attempt.is_some() || !reference.kind.replication_transferable() {
             return Err(Error::Corrupt("replication control record"));

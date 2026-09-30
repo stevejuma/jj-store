@@ -94,6 +94,12 @@ impl OriginPublicationV1 {
                     .map_err(|_| Error::Corrupt("origin review facts"))?;
             }
         }
+        if self.changed_domains.contains(&OriginDomainV1::Repository)
+            && self.changed_domains.len() > 1
+            && !self.is_seed_baseline()
+        {
+            return Err(Error::Corrupt("origin seed baseline"));
+        }
         let mut previous = None;
         for prefix in &self.causal_frontier {
             if prefix.stream.repository != repository
@@ -105,6 +111,25 @@ impl OriginPublicationV1 {
             previous = Some(prefix.stream);
         }
         Ok(())
+    }
+
+    /// A legacy baseline is recognizable without a mutable manifest flag or a
+    /// synthetic history. Only a first origin may cover all four domains.
+    pub fn is_seed_baseline(&self) -> bool {
+        self.origin_key.sequence == 1
+            && self.previous_origin_digest.is_none()
+            && self.causal_frontier.is_empty()
+            && !self.published_operations.is_empty()
+            && self.agent_root.is_some()
+            && self.review_root.is_some()
+            && self.domain_facts.is_none()
+            && self.changed_domains
+                == BTreeSet::from([
+                    OriginDomainV1::Repository,
+                    OriginDomainV1::Code,
+                    OriginDomainV1::Agent,
+                    OriginDomainV1::Review,
+                ])
     }
 
     pub fn digest(&self) -> Result<OriginDigest> {

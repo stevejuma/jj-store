@@ -39,6 +39,42 @@ impl ReviewStoreSnapshot {
         }
         self.coordinator.read_review_object(reference).await
     }
+
+    pub(super) async fn catalog_entries(
+        &self,
+        catalog: ReviewCatalogKind,
+        limit: usize,
+    ) -> Result<BTreeMap<ReviewCatalogKey, ReviewObjectRef>> {
+        let mut pending = catalog_root(&self.root, catalog)
+            .into_iter()
+            .collect::<Vec<_>>();
+        let mut seen = BTreeSet::new();
+        let mut entries = BTreeMap::new();
+        while let Some(reference) = pending.pop() {
+            if !seen.insert(reference) {
+                continue;
+            }
+            if seen.len().saturating_add(entries.len()) > limit {
+                return Err(Error::Limit("review baseline catalog"));
+            }
+            match self.coordinator.read_review_page(reference).await? {
+                ReviewIndexPageV1::Leaf { entries: leaf, .. } => {
+                    for (key, value) in leaf {
+                        if entries.insert(key, value).is_some() {
+                            return Err(Error::Corrupt("review baseline duplicate"));
+                        }
+                    }
+                }
+                ReviewIndexPageV1::Branch { children, .. } => {
+                    pending.extend(children.into_values());
+                }
+            }
+        }
+        if seen.len().saturating_add(entries.len()) > limit {
+            return Err(Error::Limit("review baseline catalog"));
+        }
+        Ok(entries)
+    }
 }
 
 impl Coordinator {

@@ -168,6 +168,35 @@ impl NativeSession {
         Ok(result)
     }
 
+    /// Explicit administrative upgrade for a format-2 repository created
+    /// before replication identity existed. The supplied IDs belong to this
+    /// durable installation and are never inferred from workspace metadata.
+    pub async fn seed_replication(
+        &self,
+        request_id: m::RequestId,
+        publication_id: m::PublicationId,
+        replica: m::ReplicaId,
+        writer_epoch: m::WriterEpoch,
+    ) -> wal::Result<SeedReplicationOutcomeV1> {
+        let principal = self.principal(Permission::Admin).await?;
+        let outcome = self
+            .coordinator
+            .seed_replication(&SeedReplicationRequestV1 {
+                schema_version: 1,
+                principal: principal.id(),
+                request_id,
+                publication_id,
+                replica,
+                writer_epoch,
+            })
+            .await?;
+        self.principal(Permission::Admin).await?;
+        if matches!(outcome, SeedReplicationOutcomeV1::Seeded(_)) {
+            self.events.published(self.repository);
+        }
+        Ok(outcome)
+    }
+
     pub async fn negotiate_replica(
         &self,
         request: &replication::NegotiateReplicaV1,
@@ -198,7 +227,10 @@ impl NativeSession {
             repository: self.repository,
             replica: root.local_stream.replica,
             log_epoch: snapshot.manifest().epoch,
+            manifest_digest: snapshot.digest(),
+            feed_lower_bound: jj_store_model::WalPosition(0),
             feed_upper_bound: snapshot.manifest().published,
+            bootstrap: self.coordinator.bootstrap_checkpoint(&snapshot).await?,
             capabilities: replication::ReplicaCapabilitiesV1::default(),
         })
     }
@@ -513,7 +545,18 @@ async fn initialize_repository(
         Arc::new(InitializationOnly),
         limits,
     )?;
-    coordinator.initialize(epoch, settings).await
+    let mut replica = [0; 16];
+    let mut writer_epoch = [0; 16];
+    getrandom::fill(&mut replica).map_err(|_| wal::Error::Entropy)?;
+    getrandom::fill(&mut writer_epoch).map_err(|_| wal::Error::Entropy)?;
+    coordinator
+        .initialize_replica(
+            epoch,
+            settings,
+            m::ReplicaId::new(replica),
+            m::WriterEpoch::new(writer_epoch),
+        )
+        .await
 }
 struct InitializationOnly;
 #[async_trait::async_trait]

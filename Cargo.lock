@@ -3968,6 +3968,8 @@ name = "jj-store-replication"
 version = "0.1.0"
 dependencies = [
  "async-trait",
+ "jj-agent",
+ "jj-review",
  "jj-store-model",
  "jj-store-object",
  "jj-store-wal",

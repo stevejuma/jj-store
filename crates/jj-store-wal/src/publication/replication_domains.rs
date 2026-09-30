@@ -2,6 +2,48 @@
 use super::*;
 
 impl Coordinator {
+    pub(super) async fn baseline_agent_delta(
+        &self,
+        authored_root: RecordRef,
+    ) -> Result<Option<AgentDeltaV1>> {
+        let authored = self.agent_store(authored_root).await?;
+        let mut edits = Vec::new();
+        for catalog in [
+            AgentCatalogKind::Sessions,
+            AgentCatalogKind::Aliases,
+            AgentCatalogKind::Checkpoints,
+            AgentCatalogKind::Associations,
+            AgentCatalogKind::Relations,
+            AgentCatalogKind::Sources,
+            AgentCatalogKind::Projections,
+        ] {
+            edits.extend(
+                authored
+                    .catalog_entries(catalog, 4096)
+                    .await?
+                    .into_iter()
+                    .map(|(key, replacement)| AgentCatalogEditV1 {
+                        catalog,
+                        key,
+                        expected: None,
+                        replacement: Some(replacement),
+                    }),
+            );
+        }
+        if edits.is_empty() {
+            Ok(None)
+        } else {
+            let delta = AgentDeltaV1 {
+                schema_version: 1,
+                edits,
+            };
+            delta
+                .validate()
+                .map_err(|_| Error::Limit("agent baseline facts"))?;
+            Ok(Some(delta))
+        }
+    }
+
     pub(super) async fn reduce_imported_agent_facts(
         &self,
         current_root: RecordRef,

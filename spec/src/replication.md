@@ -60,11 +60,32 @@ checkpoint that inventories their accepted code, agent and review state without
 inventing historical causality. A replica restored from old storage uses a new
 stream identity unless continuity is proved and fenced.
 
+The seed is the first origin of a newly allocated source stream and is selected
+by the same manifest CAS as its WAL transaction, receipt, accepted-origin
+catalog and causal prefix. It names every selected native operation head and the
+complete current AgentStore and ReviewStore roots. Receivers recognize only this
+exact four-domain first-origin shape as a baseline, verify its complete closure,
+and merge every selected catalog fact with any local state. Empty domain
+catalogs remain an explicit empty baseline. Retrying the same seed request
+returns its durable receipt; a repository that already has a different
+replication root cannot be reseeded in place.
+
 Normal local commands never wait for the worker. A receiver acknowledges only
 after its own manifest CAS is durable. Lost responses are resolved by querying
 or replaying the same origin keys. A feed horizon gap requires a compatible
 checkpoint plus tail; a replica with pending local work merges that knowledge
 through normal import rather than replacing its roots.
+
+Negotiation reports the oldest readable feed cursor and, when older positions
+have been compacted, a compatible complete seed checkpoint. The checkpoint is
+bound to the source replica, log epoch, source manifest digest, seed origin and
+captured WAL position. Bootstrap transfers and applies the seed through the
+ordinary receiver, advances peer progress only after the destination receipt is
+durable, and then scans the tail to the finite upper bound captured by the same
+negotiation. A mismatched descriptor, missing three-root closure, cursor newer
+than the source upper bound or unavailable compatible checkpoint fails closed.
+The destination manifest, replica stream and workspace metadata are never copied
+from the source.
 
 ## Verified receiver boundary
 

@@ -2,8 +2,13 @@ use super::{
     ApplyOriginsOutcomeV1, OriginClosureV1, OriginEnvelopeV1, OriginFeedPageV1, OriginKeyV1,
     OriginOfferResultV1, OriginOfferV1,
 };
-use jj_store_model::{EpochId, PublicationId, ReplicaId, RepositoryId, RequestId, WalPosition};
+use crate::records::RecordRef;
+use jj_store_model::{
+    EpochId, OperationId, PublicationId, RecordDigest, ReplicaId, RepositoryId, RequestId,
+    WalPosition,
+};
 use serde::{Deserialize, Serialize};
+use std::collections::BTreeSet;
 
 pub const NATIVE_PROFILE: &str = "jj-native-0.45.1-v1";
 pub const ORIGIN_SCHEMA: u32 = 1;
@@ -55,8 +60,26 @@ pub struct ReplicaNegotiationV1 {
     pub repository: RepositoryId,
     pub replica: ReplicaId,
     pub log_epoch: EpochId,
+    pub manifest_digest: RecordDigest,
+    pub feed_lower_bound: WalPosition,
     pub feed_upper_bound: WalPosition,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub bootstrap: Option<BootstrapCheckpointV1>,
     pub capabilities: ReplicaCapabilitiesV1,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct BootstrapCheckpointV1 {
+    pub schema_version: u32,
+    pub source_replica: ReplicaId,
+    pub log_epoch: EpochId,
+    pub through: WalPosition,
+    pub source_manifest: RecordDigest,
+    pub seed: OriginOfferV1,
+    pub code_heads: BTreeSet<OperationId>,
+    pub agent_root: RecordRef,
+    pub review_root: RecordRef,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]

@@ -69,13 +69,13 @@ adds evidence here in its enclosing Jujutsu change.
 | M9.4        | Done        | M9.2,M9.3   | JST-COLLAB-004                                                                                                                                                           | LocalTrusted bounded CLI/HTTP APIs, pagination, receipts and live collaboration hints                               | Implement M9.5 shared application presentation                              | E-M9-024,E-M9-025,E-M9-026,E-M9-027,E-M9-028,E-M9-029,E-M9-030,E-M9-031,E-M9-035                                                                                                                                                                                                                                                                               |
 | M9.5        | Done        | M9.4        | JST-COLLAB-005                                                                                                                                                           | Community-owned thread/agent widgets and Design Core exact diff selection integrated into the application           | Retain focused application and Storybook acceptance                         | E-M9-032,E-M9-034,E-M9-035,E-M9-036,E-M9-037,E-M9-038,E-M9-039                                                                                                                                                                                                                                                                                                 |
 | M9.6        | Done        | M9.5        | JST-COLLAB-002,JST-COLLAB-006,JST-COLLAB-007                                                                                                                             | Three harness qualification, cold recovery, three-root native copy and bounded fault/security/browser acceptance    | Retain exact-version and native-copy regression gates                       | E-M9-033                                                                                                                                                                                                                                                                                                                                                       |
-| M10         | In progress | M9.6        | JST-REPL-001,JST-REPL-002,JST-REPL-003,JST-REPL-004,JST-REPL-005,JST-REPL-006,JST-REPL-007,JST-REPL-008,JST-REPL-009,JST-REPL-010,JST-REPL-011,JST-REPL-012,JST-REPL-013 | Complete local-first writable replication and existing-workspace migration                                          | Complete collaboration permutations, bootstrap and production qualification | E-M10-001,E-M10-002,E-M10-003,E-M10-004,E-M10-005,E-M10-006,E-M10-007                                                                                                                                                                                                                                                                                          |
+| M10         | In progress | M9.6        | JST-REPL-001,JST-REPL-002,JST-REPL-003,JST-REPL-004,JST-REPL-005,JST-REPL-006,JST-REPL-007,JST-REPL-008,JST-REPL-009,JST-REPL-010,JST-REPL-011,JST-REPL-012,JST-REPL-013 | Complete local-first writable replication and existing-workspace migration                                          | Complete collaboration permutations, bootstrap and production qualification | E-M10-001,E-M10-002,E-M10-003,E-M10-004,E-M10-005,E-M10-006,E-M10-007,E-M10-008                                                                                                                                                                                                                                                                                |
 | M10.1       | In progress | M9.6        | JST-REPL-001,JST-REPL-002,JST-REPL-013                                                                                                                                   | Audit source pins and isolate every foreground storage path from upstream capability                                | Implement M10.2 origin authority                                            | E-M10-001                                                                                                                                                                                                                                                                                                                                                      |
 | M10.2       | In progress | M10.1       | JST-REPL-002,JST-REPL-003,JST-REPL-005                                                                                                                                   | Durable origin streams, causal catalogs and authored publication integration                                        | Implement verified receiver                                                 | E-M10-002                                                                                                                                                                                                                                                                                                                                                      |
 | M10.3       | In progress | M10.2       | JST-REPL-004,JST-REPL-005,JST-REPL-006                                                                                                                                   | Verified one-way transfer, atomic import, durable acknowledgements and lost-response recovery                       | Integrate worker lifecycle and outage qualification                         | E-M10-003,E-M10-005,E-M10-006                                                                                                                                                                                                                                                                                                                                  |
 | M10.4       | In progress | M10.3       | JST-REPL-007,JST-REPL-013                                                                                                                                                | Bidirectional native operation-head integration, distinct workspaces and explicit reconciliation                    | Retain explicit reconciliation RPC/CLI acceptance                           | E-M10-003,E-M10-007                                                                                                                                                                                                                                                                                                                                            |
 | M10.5       | In progress | M10.4       | JST-REPL-008,JST-REPL-009,JST-REPL-013                                                                                                                                   | AgentStore and ReviewStore accepted-fact convergence under reordered and duplicate delivery                         | Retain matrix and complete aggregate qualification                          | E-M10-004                                                                                                                                                                                                                                                                                                                                                      |
-| M10.6       | Planned     | M10.5       | JST-REPL-004,JST-REPL-010,JST-REPL-011                                                                                                                                   | Complete snapshot-plus-tail bootstrap, format-2 seed upgrade and non-destructive existing-workspace migration       | Implement controls and qualification                                        | -                                                                                                                                                                                                                                                                                                                                                              |
+| M10.6       | In progress | M10.5       | JST-REPL-004,JST-REPL-010,JST-REPL-011                                                                                                                                   | Complete snapshot-plus-tail bootstrap, format-2 seed upgrade and non-destructive existing-workspace migration       | Retain bootstrap acceptance and complete wider qualification                | E-M10-008                                                                                                                                                                                                                                                                                                                                                      |
 | M10.7       | Planned     | M10.6       | JST-REPL-001,JST-REPL-006,JST-REPL-011,JST-REPL-012                                                                                                                      | Bounded worker, status/barriers, fairness, SSE/search integration and cold real-RustFS outage qualification         | Retain replication acceptance                                               | -                                                                                                                                                                                                                                                                                                                                                              |
 
 The user reopened production browsing integration on 27 September 2026 after
@@ -17363,6 +17363,113 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Rust 1.98.1; jj 0.45.1; tonic/prost 0.14.6; application mutation schema v1; manifest format 2.",
     "formats": "Adds CurrentSnapshot, ApplyMutation and MutationStatus to native RPC using bounded service-owned JSON mutation DTOs. The CLI derives a stable reconciliation request ID from the exact snapshot. Native object, operation, manifest, WAL, receipt, origin and replication formats are unchanged."
+  },
+  {
+    "id": "E-M10-008",
+    "tasks": ["M10", "M10.6"],
+    "date": "2026-09-30",
+    "kind": "replication-seed-and-checkpoint-bootstrap",
+    "files": [
+      "Cargo.lock",
+      "crates/jj-store-replication/Cargo.toml",
+      "crates/jj-store-replication/src/worker.rs",
+      "crates/jj-store-replication/tests/bootstrap.rs",
+      "crates/jj-store-service/src/guard.rs",
+      "crates/jj-store-service/src/native.rs",
+      "crates/jj-store-wal/src/publication.rs",
+      "crates/jj-store-wal/src/publication/agent_catalog.rs",
+      "crates/jj-store-wal/src/publication/replication.rs",
+      "crates/jj-store-wal/src/publication/replication_domains.rs",
+      "crates/jj-store-wal/src/publication/replication_import.rs",
+      "crates/jj-store-wal/src/publication/replication_protocol.rs",
+      "crates/jj-store-wal/src/publication/replication_review.rs",
+      "crates/jj-store-wal/src/publication/replication_seed.rs",
+      "crates/jj-store-wal/src/publication/replication_transfer.rs",
+      "crates/jj-store-wal/src/publication/review_catalog.rs",
+      "crates/jj-store-wal/src/records.rs",
+      "spec/src/milestones.md",
+      "spec/src/replication.md"
+    ],
+    "tests": [
+      "crates/jj-store-replication/tests/bootstrap.rs#seed_checkpoint_plus_tail_merges_three_roots_without_replacing_local_authority",
+      "crates/jj-store-replication/tests/bootstrap.rs#worker_recovers_a_retained_feed_gap_from_seed_then_replays_the_pinned_tail"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-replication --test bootstrap --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "A format-2 repository without replication metadata publishes one retryable four-domain seed. A destination with its own pending origin imports that complete baseline plus a concurrently authored tail while retaining its local manifest, replica stream, pending AgentStore session and every source code, agent and review identity."
+      },
+      {
+        "command": "cargo test -p jj-store-wal -p jj-store-replication -p jj-store-service -p jj-store-rpc --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All WAL, replication, service and RPC unit, integration and documentation tests pass. This includes 16 replication cases, 31 WAL publication cases and the existing authenticated bidirectional RPC worker acceptance."
+      },
+      {
+        "command": "cargo clippy -p jj-store-wal -p jj-store-replication -p jj-store-service -p jj-store-rpc --all-targets --locked -- -D warnings",
+        "result": "pass",
+        "failures": 0,
+        "note": "The complete changed native package set passes warnings as errors."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 4 validators accept the 18 canonical chapters and 102 requirements."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "The 69-task implementation ledger is internally consistent with tracked tests and files."
+      },
+      {
+        "command": "pnpm format:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rustfmt and Prettier accept the complete change."
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 14 package boundaries remain valid."
+      },
+      {
+        "command": "pnpm spec:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "Specification validation, the cold catalog browser lane, Storybook build and web build passed. Browser interaction fixture compilation then stopped because the pinned Kingfisher Vectorscan build could not execute missing cmake (os error 2)."
+      },
+      {
+        "command": "pnpm check",
+        "result": "fail",
+        "failures": 1,
+        "note": "Specification, package-boundary, web-architecture, progress, Rust formatting and embedded-RustFS Clippy checks passed. Contract capture then stopped at the pinned Kingfisher Vectorscan build because cmake is unavailable."
+      },
+      {
+        "command": "pnpm test",
+        "result": "fail",
+        "failures": 1,
+        "note": "Governance, storage-harness self-tests and both embedded and managed real-RustFS restart tests passed. The LocalTrusted CLI executable lane then stopped at the pinned Kingfisher Vectorscan build because cmake is unavailable."
+      },
+      {
+        "command": "pnpm build",
+        "result": "fail",
+        "failures": 1,
+        "note": "Storybook, web and embedded-RustFS builds passed. The workspace Cargo build then stopped at the pinned Kingfisher Vectorscan build because cmake is unavailable."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Existing nonempty remote-connected workspace metadata still needs a recoverable endpoint switch that preserves unsnapshotted files and proves one offline local mutation.",
+      "M10.7 production lifecycle composition, honest status/search/SSE reporting, resource and disk-pressure qualification, outage proof and cold real RustFS acceptance remain outstanding.",
+      "The repository-wide contracts, check, test, build and specification lanes that compile Kingfisher Vectorscan require cmake on this host."
+    ],
+    "versions": "Rust 1.98.1; jj 0.45.1; manifest format 2; replication root, origin, seed, bootstrap negotiation and peer checkpoint schema v1.",
+    "formats": "A seed is the first origin in a newly allocated source stream and covers repository, code, AgentStore and ReviewStore state. Negotiation adds the exact manifest digest, feed lower bound and optional complete bootstrap checkpoint. New service-created repositories allocate independent random ReplicaId and WriterEpoch values."
   }
 ]
 ```

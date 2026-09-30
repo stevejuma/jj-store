@@ -19,6 +19,7 @@ mod replication_import;
 mod replication_protocol;
 mod replication_review;
 mod replication_review_graph;
+mod replication_seed;
 mod replication_transfer;
 mod review;
 mod review_audit;
@@ -77,10 +78,13 @@ pub use replication_import::{
     ApplyOriginsOutcomeV1, ApplyOriginsRequestV1, ApplyOriginsResultV1, OriginEnvelopeV1,
 };
 pub use replication_protocol::{
-    ApplyOriginsTransportRequestV1, ApplyOriginsTransportResponseV1, FeedRequestV1, FeedResponseV1,
-    NATIVE_PROFILE, NegotiateReplicaV1, ORIGIN_SCHEMA, OfferOriginsRequestV1,
-    OfferOriginsResponseV1, OriginClosureRequestV1, OriginClosureResponseV1, ReplicaCapabilitiesV1,
-    ReplicaNegotiationV1, SEMANTIC_REDUCER,
+    ApplyOriginsTransportRequestV1, ApplyOriginsTransportResponseV1, BootstrapCheckpointV1,
+    FeedRequestV1, FeedResponseV1, NATIVE_PROFILE, NegotiateReplicaV1, ORIGIN_SCHEMA,
+    OfferOriginsRequestV1, OfferOriginsResponseV1, OriginClosureRequestV1, OriginClosureResponseV1,
+    ReplicaCapabilitiesV1, ReplicaNegotiationV1, SEMANTIC_REDUCER,
+};
+pub use replication_seed::{
+    SeedReplicationOutcomeV1, SeedReplicationRequestV1, SeedReplicationResultV1,
 };
 pub use replication_transfer::{
     OriginClosureV1, OriginFeedItemV1, OriginFeedPageV1, OriginOfferResultV1, OriginOfferV1,
@@ -331,6 +335,7 @@ pub enum SemanticKind {
     AgentStateChanged,
     ReviewStateChanged,
     ReplicationImported,
+    ReplicationSeeded,
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -468,6 +473,15 @@ pub trait PublicationGuard: Send + Sync {
         &self,
         _base: &ManifestSnapshot,
         _request: &ApplyOriginsRequestV1,
+    ) -> Result<()> {
+        Err(Error::Denied)
+    }
+    /// Enabling replication on an existing repository is an administrative
+    /// migration. It is deliberately separate from ordinary inbound import.
+    async fn authorize_replication_seed(
+        &self,
+        _base: &ManifestSnapshot,
+        _request: &SeedReplicationRequestV1,
     ) -> Result<()> {
         Err(Error::Denied)
     }

@@ -203,12 +203,6 @@ impl Coordinator {
                     .changed_domains
                     .contains(&OriginDomainV1::Agent)
                 {
-                    let delta = envelope
-                        .publication
-                        .domain_facts
-                        .as_ref()
-                        .and_then(|facts| facts.agent.as_ref())
-                        .ok_or(Error::Corrupt("origin agent facts missing"))?;
                     let authored = envelope
                         .publication
                         .agent_root
@@ -216,9 +210,25 @@ impl Coordinator {
                     let domains = after_domains
                         .as_mut()
                         .ok_or(Error::Corrupt("agent domain unavailable"))?;
-                    let reduced = self
-                        .reduce_imported_agent_facts(domains.agent.root, authored, delta)
-                        .await?;
+                    let baseline;
+                    let delta = if envelope.publication.is_seed_baseline() {
+                        baseline = self.baseline_agent_delta(authored).await?;
+                        baseline.as_ref()
+                    } else {
+                        envelope
+                            .publication
+                            .domain_facts
+                            .as_ref()
+                            .and_then(|facts| facts.agent.as_ref())
+                    };
+                    let reduced = match delta {
+                        Some(delta) => {
+                            self.reduce_imported_agent_facts(domains.agent.root, authored, delta)
+                                .await?
+                        }
+                        None if envelope.publication.is_seed_baseline() => domains.agent.root,
+                        None => return Err(Error::Corrupt("origin agent facts missing")),
+                    };
                     agent_changed |= reduced != domains.agent.root;
                     domains.agent.root = reduced;
                 }
@@ -227,12 +237,6 @@ impl Coordinator {
                     .changed_domains
                     .contains(&OriginDomainV1::Review)
                 {
-                    let delta = envelope
-                        .publication
-                        .domain_facts
-                        .as_ref()
-                        .and_then(|facts| facts.review.as_ref())
-                        .ok_or(Error::Corrupt("origin review facts missing"))?;
                     let authored = envelope
                         .publication
                         .review_root
@@ -240,9 +244,25 @@ impl Coordinator {
                     let domains = after_domains
                         .as_mut()
                         .ok_or(Error::Corrupt("review domain unavailable"))?;
-                    let reduced = self
-                        .reduce_imported_review_facts(domains.review.root, authored, delta)
-                        .await?;
+                    let baseline;
+                    let delta = if envelope.publication.is_seed_baseline() {
+                        baseline = self.baseline_review_delta(authored).await?;
+                        baseline.as_ref()
+                    } else {
+                        envelope
+                            .publication
+                            .domain_facts
+                            .as_ref()
+                            .and_then(|facts| facts.review.as_ref())
+                    };
+                    let reduced = match delta {
+                        Some(delta) => {
+                            self.reduce_imported_review_facts(domains.review.root, authored, delta)
+                                .await?
+                        }
+                        None if envelope.publication.is_seed_baseline() => domains.review.root,
+                        None => return Err(Error::Corrupt("origin review facts missing")),
+                    };
                     review_changed |= reduced != domains.review.root;
                     domains.review.root = reduced;
                 }
