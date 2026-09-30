@@ -191,28 +191,40 @@ selected reference identity. The table column-header row uses a neighboring
 theme grey distinct from the summary row. Root directory views show a
 GitHub-style README, CODE_OF_CONDUCT, CONTRIBUTING, LICENSE/LICENCE and SECURITY
 preview card only when those files exist in the selected fixture snapshot.
-README is ordered first regardless of API order; its tabs are left aligned with
-document icons, use a rounded theme-grey hover and selected treatment, and keep
-a visible active underline. The production loader reads those landing documents
-sequentially so their preview does not exceed the bounded native read-admission
-budget. Selecting a file renders a stacked source preview: copied commit
-metadata, deterministic file statistics, then the selected content. The metadata
-header keeps the file-tree toggle as its far-left control and exposes Edit file
-as an icon-only action. Edit mode replaces the selected filename breadcrumb
-segment with the filename input; it does not add an editor action row or a
-second filename field. Markdown files open in safe preview mode with a
-Preview/Source toggle; source mode uses the public Design Core CodeBlock with
+README is ordered first regardless of API order. The tabs use the friendly
+labels `README`, `Code of conduct`, `Contributing`, `License` and `Security`
+with Book, HeartHandshake, Users and Scale icons. They are left aligned, use the
+smaller secondary type scale, retain a rounded theme-grey hover and selected
+treatment, and keep a visible active underline. The header measures its
+available width and moves trailing documents into a `More` dropdown when they do
+not fit; it does not expose a horizontal scrollbar. An icon-only edit action
+remains at the far end and opens the selected document. The production loader
+reads those landing documents sequentially so their preview does not exceed the
+bounded native read-admission budget.
+
+Selecting a file renders a stacked source preview: copied commit metadata,
+deterministic file statistics, then the selected content. The metadata header
+keeps the file-tree toggle as its far-left control. The content-card header
+keeps the `Preview`, `Source` and `Edit` display controls visible while an edit
+is in progress; non-Markdown text uses `Source` and `Edit`. Edit mode replaces
+only the content-card body and replaces the selected filename breadcrumb segment
+with the filename input. It does not add a second filename field. The editor
+footer offers `Save changes` and `Cancel`; saving opens a dialog that captures
+the change description before the existing preview, apply, retry and status
+flow. Markdown files open in safe preview mode, and draft preview/source modes
+retain unsaved content. Source mode uses the public Design Core CodeBlock with
 the filename/source body on the theme background. Rust source previews use
 CodeBlock's public custom-tokenizer extension point so `.rs` files highlight in
 the catalog while retaining the shared code component.
 
-An authenticated single-target bookmark exposes Edit file for an existing
-bounded UTF-8 ordinary file. The editor keeps filename and content independently
-editable, previews Markdown safely, captures a new-change description and uses
-EditFile preview/apply/status. Binary, oversized, conflicted, historical and
-ambiguous selections remain read-only with explicit guidance. Rename collisions,
-stale targets and protected bookmarks fail without changing the displayed
-snapshot; commitment follows the new bookmark target and destination path.
+An authenticated single-target bookmark exposes Edit for an existing bounded
+UTF-8 ordinary file. The editor keeps filename and content independently
+editable, previews Markdown safely, captures a new-change description in the
+save dialog and uses EditFile preview/apply/status. Binary, oversized,
+conflicted, historical and ambiguous selections remain read-only with explicit
+guidance. Rename collisions, stale targets and protected bookmarks fail without
+changing the displayed snapshot; commitment follows the new bookmark target and
+destination path.
 
 The deterministic LocalTrusted demo seed includes representative README,
 CODE_OF_CONDUCT, CONTRIBUTING, LICENSE and SECURITY root documents so the live

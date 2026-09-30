@@ -31,6 +31,7 @@
       ],
       onOpenDirectory: fn(),
       onOpenFile: fn(),
+      onEditFile: fn(),
       onSelectBranch: fn(),
     },
   });
@@ -38,19 +39,20 @@
 
 <Story
   name="Repository document tabs"
-  play={async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+  play={async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement),
+      body = within(canvasElement.ownerDocument.body);
     const tabs = canvas.getAllByRole("tab");
     await expect(tabs.map((tab) => tab.textContent?.trim())).toEqual([
       "README",
-      "CODE_OF_CONDUCT",
-      "CONTRIBUTING",
-      "LICENSE",
-      "SECURITY",
+      "Code of conduct",
+      "Contributing",
+      "License",
+      "Security",
     ]);
     const readme = canvas.getByRole("tab", { name: "README" });
-    const license = canvas.getByRole("tab", { name: "LICENSE" });
-    const security = canvas.getByRole("tab", { name: "SECURITY" });
+    const license = canvas.getByRole("tab", { name: "License" });
+    const security = canvas.getByRole("tab", { name: "Security" });
     await expect(readme).toHaveAttribute("aria-selected", "true");
     await expect(getComputedStyle(readme).backgroundColor).not.toBe(
       "rgba(0, 0, 0, 0)",
@@ -71,11 +73,30 @@
     await userEvent.click(license);
     await expect(license).toHaveAttribute("aria-selected", "true");
     await expect(
-      canvas.getByRole("region", { name: "LICENSE preview" }),
+      canvas.getByRole("region", { name: "License preview" }),
     ).toHaveTextContent("Apache-2.0");
+    const edit = canvas.getByRole("button", { name: "Edit License" });
+    await expect(edit).toHaveTextContent("");
+    await userEvent.click(edit);
+    await expect(args.onEditFile).toHaveBeenCalledWith("LICENCE");
     await userEvent.click(security);
     await expect(
-      canvas.getByRole("region", { name: "SECURITY preview" }),
+      canvas.getByRole("region", { name: "Security preview" }),
     ).toHaveTextContent("Report privately");
+
+    canvasElement.style.width = "31rem";
+    await waitFor(() =>
+      expect(
+        canvas.getByRole("button", { name: "More repository documents" }),
+      ).toBeVisible(),
+    );
+    await userEvent.click(
+      canvas.getByRole("button", { name: "More repository documents" }),
+    );
+    await userEvent.click(body.getByRole("menuitem", { name: "Security" }));
+    await expect(
+      canvas.getByRole("region", { name: "Security preview" }),
+    ).toBeVisible();
+    canvasElement.style.width = "";
   }}
 />

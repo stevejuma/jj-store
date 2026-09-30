@@ -16686,6 +16686,7 @@ and named tests are checked by the progress gate.
     "files": [
       "AGENTS.md",
       "catalog/components/community-projects/CommunityProjectsRepositoryDirectory.stories.svelte",
+      "catalog/components/community-projects/repository-browser.test.ts",
       "catalog/components/store-application/RepositoryReview.stories.svelte",
       "catalog/components/store-application/StoreApplication.stories.svelte",
       "catalog/components/store-application/StoreFileEditor.stories.svelte",
@@ -16727,11 +16728,14 @@ and named tests are checked by the progress gate.
       "web/src/lib/controller/production-store-mutations.ts",
       "web/src/lib/ui/community-projects/CommunityProjectsRepositoryBreadcrumb.svelte",
       "web/src/lib/ui/community-projects/CommunityProjectsRepositoryDirectory.svelte",
+      "web/src/lib/ui/community-projects/CommunityProjectsRepositoryDocuments.svelte",
       "web/src/lib/ui/community-projects/CommunityProjectsRepositoryFilePanel.svelte",
       "web/src/lib/ui/community-projects/CommunityProjectsRepositoryFilePanelHeader.svelte",
       "web/src/lib/ui/community-projects/CommunityProjectsRepositoryFiles.svelte",
       "web/src/lib/ui/community-projects/StoreFileEditor.svelte",
       "web/src/lib/ui/community-projects/repository-browser.ts",
+      "web/src/lib/ui/community-projects/repository-directory.css",
+      "web/src/lib/ui/community-projects/repository-documents.css",
       "web/src/lib/ui/community-projects/repository-files.css",
       "web/src/lib/ui/community-projects/store-file-editor.css",
       "web/src/lib/ui/store-application/StoreApplication.svelte",
@@ -17018,7 +17022,7 @@ and named tests are checked by the progress gate.
         "command": "pnpm exec tsx --test --test-name-pattern='repository landing documents include community files in stable tab order' web/tests/production-store-loaders.test.ts",
         "result": "pass",
         "failures": 0,
-        "note": "The focused loader regression proves stable five-tab selection and ordering while limiting landing-document content loading to one active native read."
+        "note": "The focused loader regression proves stable five-tab selection, friendly labels and ordering while limiting landing-document content loading to one active native read."
       },
       {
         "command": "pnpm web:check && pnpm web:build",
@@ -17043,12 +17047,114 @@ and named tests are checked by the progress gate.
         "result": "pass",
         "failures": 0,
         "note": "The focused source, regression and owning API/UI requirements are formatted; spec-first and progress validation pass for the live admission repair."
+      },
+      {
+        "command": "pnpm web:check && pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both affected Svelte projects and catalog boundary checks pass for the friendly landing-document tabs, responsive More menu and body-only file editor."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit catalog/components/community-projects/repository-browser.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 6 focused repository-browser unit tests pass, including the five filename-to-friendly-label mappings."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-projects/CommunityProjectsRepositoryDirectory.stories.svelte catalog/components/store-application/StoreFileEditor.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "The first focused Chromium run exposed an undefined tabs-list ref during measured overflow; null-initialized bound refs fixed the component, and Vite completed one-time optimization for the added Lucide icons."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreFileEditor.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "The editor interaction reached committed rename but retained Edit as the selected display mode; ending the edit session now restores Markdown Preview and source mode for other text files. Icon whitespace assertions were also normalized to visible button text."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-projects/CommunityProjectsRepositoryDirectory.stories.svelte catalog/components/store-application/StoreFileEditor.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both focused Chromium interaction/accessibility stories pass. Coverage includes friendly icon tabs, a constrained-width More dropdown, selected-document edit, persistent Preview/Source/Edit, retained drafts, breadcrumb rename, Save/Cancel, description dialog and preview/apply publication. Stories remain visual-pending."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "fail",
+        "failures": 1,
+        "note": "The focused presentation and loader expectation changes required the mapped API chapter to state that friendly labels, overflow and selected-document edit routing remain client presentation rules."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/api.md spec/src/ui.md spec/src/spec-governance.md spec/src/milestones.md && pnpm spec:first && pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "The API, UI, acceptance and progress chapters are formatted; all 14 protected files map to four current canonical chapters and the evidence ledger remains valid."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "fail",
+        "failures": 2,
+        "note": "The responsive tab measurement pushed the existing repository directory component to 374 counted lines and its stylesheet to 333, above the 300-line production module budget."
+      },
+      {
+        "command": "pnpm web:check && pnpm catalog:check && pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both Svelte projects, catalog boundaries and all 257 architecture modules pass after extracting the 232-line repository-document component and its 182-line stylesheet."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-projects/CommunityProjectsRepositoryDirectory.stories.svelte catalog/components/store-application/StoreFileEditor.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both focused Chromium interaction/accessibility stories still pass after the repository-document extraction; visual status remains pending."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "The production UI bundle and manifest rebuild pass; only the existing Lightning CSS :global and bundle-size warnings remain."
+      },
+      {
+        "command": "pnpm exec playwright test --config web/playwright.config.ts web/tests/browser/mutations.spec.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "The focused browser mutation lane did not start because another active jj-store workspace owned the fixed test port 7458; its process was preserved and no product assertion ran."
+      },
+      {
+        "command": "pnpm exec playwright test --config web/playwright.config.ts web/tests/browser/mutations.spec.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "After the independent workspace released port 7458, Playwright's default 30-second web-server limit expired before the quiet cargo-run preview command became ready; no browser assertion ran."
+      },
+      {
+        "command": "node scripts/browser-fixtures.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "The existing native fixture tools recaptured current HTTP/SSE and mutation browser fixtures without rebuilding Rust."
+      },
+      {
+        "command": "target/debug/examples/browser_preview; pnpm exec playwright test --config web/playwright.existing.config.ts web/tests/browser/mutations.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 5 focused production mutation browser cases pass against the rebuilt UI and already-built preview executable, including body unlock, request retention, unknown-outcome recovery and file edit/rename. The temporary no-webServer Playwright config was removed after the run."
+      },
+      {
+        "command": "pnpm dev:stop; restart the preserved demo with target/debug/jj-store; live browser verification at wide and 540px viewports",
+        "result": "pass",
+        "failures": 0,
+        "note": "The demo restarted with the rebuilt UI and existing native binaries, without a Rust build. Live main-bookmark verification shows all five friendly document tabs at wide width, README/Code of conduct/Contributing plus More at 540px, License and Security in the menu, selected-document Edit, breadcrumb rename, persistent Preview/Source/Edit, body-only editing and the Save changes description dialog. A live search-result selection restored empty body overflow and pointer state, and the Commits tab remained clickable without refresh."
+      },
+      {
+        "command": "pnpm exec prettier --write <20 changed UI, test and canonical files> && pnpm spec:first && pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "All changed UI, focused test and canonical files are formatted; 16 protected files map to the four owning chapters and the targeted evidence ledger passes validation."
       }
     ],
     "result": "pending",
     "remaining": ["Visual baselines remain unapproved."],
     "versions": "Rust 1.98.1; Node.js 26.9.0; pnpm 10.32.1; Svelte 5.57.1; Storybook 10.5.7; Design Core ^0.2.0; Community ^0.1.0.",
-    "formats": "The V1 typed mutation command union and capability list add edit_file with an exact bookmark target, canonical source/destination paths, bounded UTF-8 contents and description. Existing mutation request, prepared result, durable receipt, WAL, manifest and native object formats remain unchanged. Landing-document ordering, body tabs/breadcrumb, editor state and deferred search routing are browser presentation only; credentials remain memory-only. Changed stories remain visual-pending."
+    "formats": "The V1 typed mutation command union and capability list add edit_file with an exact bookmark target, canonical source/destination paths, bounded UTF-8 contents and description. Existing mutation request, prepared result, durable receipt, WAL, manifest and native object formats remain unchanged. Friendly landing-document labels/icons, measured More overflow, body tabs/breadcrumb, persistent file display controls, body-only editor state and deferred search routing are browser presentation only; credentials remain memory-only. Changed stories remain visual-pending."
   }
 ]
 ```

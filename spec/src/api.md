@@ -500,7 +500,8 @@ integer range; generated TypeScript number types alone do not guarantee this.
 Browser presentation preserves empty native descriptions rather than replacing
 them with an invented commit message. The working-copy view renders the explicit
 `(empty) (no description set)` label while retaining the full native commit and
-change identities. Repository landing-document ordering, bookmark-filter empty
+change identities. Repository landing-document ordering, friendly labels,
+responsive overflow and selected-document edit routing, bookmark-filter empty
 states and no-file diff states are client presentation rules and do not change
 the read DTOs or transport format.
 

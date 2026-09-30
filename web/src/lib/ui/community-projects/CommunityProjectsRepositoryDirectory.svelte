@@ -1,9 +1,6 @@
 <script lang="ts">
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as Table from "@lapismd/design-core/shadcn/table";
-  import * as Tabs from "@lapismd/design-core/shadcn/tabs";
-  import BookOpenIcon from "@lucide/svelte/icons/book-open";
-  import FileIcon from "@lucide/svelte/icons/file";
 
   import type {
     RepositoryBlob,
@@ -14,11 +11,10 @@
   import CommunityRelativeTime from "../community-relative-time/CommunityRelativeTime.svelte";
   import type { CommunityMemberModel } from "../community-workspace/model.js";
   import type { RepositoryBrowserEntry } from "./repository-browser.js";
-  import { repositoryLandingDocumentLabel } from "./repository-browser.js";
   import CommunityProjectsGitAuthorAvatar from "./CommunityProjectsGitAuthorAvatar.svelte";
-  import CommunityProjectsMarkdownPreview from "./CommunityProjectsMarkdownPreview.svelte";
   import CommunityProjectsRepositoryBranchSelector from "./CommunityProjectsRepositoryBranchSelector.svelte";
   import CommunityProjectsRepositoryDirectoryRows from "./CommunityProjectsRepositoryDirectoryRows.svelte";
+  import CommunityProjectsRepositoryDocuments from "./CommunityProjectsRepositoryDocuments.svelte";
   import CommunityProjectsRevisionGraphIds from "./CommunityProjectsRevisionGraphIds.svelte";
   import "./repository-directory.css";
 
@@ -36,6 +32,8 @@
     canLoadPathCommit = false,
     onOpenDirectory,
     onOpenFile,
+    onEditFile,
+    editUnavailable = "",
     onSelectCommit,
     onSelectBranch,
     hasMore = false,
@@ -58,6 +56,8 @@
     canLoadPathCommit?: boolean | undefined;
     onOpenDirectory: (path: string) => void;
     onOpenFile: (path: string) => void;
+    onEditFile?: ((path: string) => void) | undefined;
+    editUnavailable?: string | undefined;
     onSelectCommit?: ((commit: ProjectForgeCommit) => void) | undefined;
     onSelectBranch: (value: string | undefined) => void;
     hasMore?: boolean;
@@ -72,58 +72,6 @@
   const latestAuthorName = $derived(
     latestCommitAuthor?.name ?? latestCommit?.author ?? "",
   );
-  const landingDocuments = $derived(
-    currentPath
-      ? []
-      : previewDocuments
-          .map((document) => ({
-            ...document,
-            label: repositoryLandingDocumentLabel(document.path),
-          }))
-          .filter(
-            (
-              document,
-            ): document is RepositoryBlob & {
-              label: string;
-              contents: string;
-            } =>
-              Boolean(document.label) &&
-              !document.binary &&
-              !document.too_large &&
-              document.contents !== undefined,
-          )
-          .sort(
-            (left, right) =>
-              [
-                "README",
-                "CODE_OF_CONDUCT",
-                "CONTRIBUTING",
-                "LICENSE",
-                "SECURITY",
-              ].indexOf(left.label) -
-                [
-                  "README",
-                  "CODE_OF_CONDUCT",
-                  "CONTRIBUTING",
-                  "LICENSE",
-                  "SECURITY",
-                ].indexOf(right.label) || left.path.localeCompare(right.path),
-          ),
-  );
-  let selectedLandingDocument = $state("");
-  $effect(() => {
-    const first = landingDocuments[0]?.path ?? "";
-    if (
-      first &&
-      !landingDocuments.some(
-        (document) => document.path === selectedLandingDocument,
-      )
-    ) {
-      selectedLandingDocument = first;
-    } else if (!first) {
-      selectedLandingDocument = "";
-    }
-  });
 </script>
 
 <section class="community-projects__file-browser">
@@ -217,40 +165,10 @@
     </Table.Root>
   </div>
 
-  {#if landingDocuments.length > 0}
-    <section
-      class="community-projects__repository-document-card"
-      aria-label="Repository document preview"
-    >
-      <Tabs.Root
-        bind:value={selectedLandingDocument}
-        class="community-projects__repository-document-tabs"
-      >
-        <Tabs.List variant="line" aria-label="Repository documents">
-          {#each landingDocuments as document (document.path)}
-            <Tabs.Trigger value={document.path}>
-              {#if document.label === "README"}
-                <BookOpenIcon data-icon="inline-start" aria-hidden="true" />
-              {:else}
-                <FileIcon data-icon="inline-start" aria-hidden="true" />
-              {/if}
-              {document.label}
-              <span
-                class="community-projects__repository-document-tab-indicator"
-                aria-hidden="true"
-              ></span>
-            </Tabs.Trigger>
-          {/each}
-        </Tabs.List>
-        {#each landingDocuments as document (document.path)}
-          <Tabs.Content value={document.path}>
-            <CommunityProjectsMarkdownPreview
-              content={document.contents}
-              label={`${document.label} preview`}
-            />
-          </Tabs.Content>
-        {/each}
-      </Tabs.Root>
-    </section>
-  {/if}
+  <CommunityProjectsRepositoryDocuments
+    {currentPath}
+    {previewDocuments}
+    {onEditFile}
+    {editUnavailable}
+  />
 </section>

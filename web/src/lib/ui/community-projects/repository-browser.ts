@@ -120,10 +120,10 @@ export function repositoryLandingDocumentLabel(path: string): string | null {
   ).split("/");
   if (!name || rest.length > 0) return null;
   if (/^readme(?:\.|$)/iu.test(name)) return "README";
-  if (/^code_of_conduct(?:\.|$)/iu.test(name)) return "CODE_OF_CONDUCT";
-  if (/^contributing(?:\.|$)/iu.test(name)) return "CONTRIBUTING";
-  if (/^licen[cs]e(?:\.|$)/iu.test(name)) return "LICENSE";
-  if (/^security(?:\.|$)/iu.test(name)) return "SECURITY";
+  if (/^code_of_conduct(?:\.|$)/iu.test(name)) return "Code of conduct";
+  if (/^contributing(?:\.|$)/iu.test(name)) return "Contributing";
+  if (/^licen[cs]e(?:\.|$)/iu.test(name)) return "License";
+  if (/^security(?:\.|$)/iu.test(name)) return "Security";
   return null;
 }
 

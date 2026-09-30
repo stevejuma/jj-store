@@ -6,6 +6,7 @@ type ProjectForgeTreeEntry = Parameters<
 import {
   isMarkdownRepositoryPath,
   isOwnersDocumentPath,
+  repositoryLandingDocumentLabel,
   repositoryBreadcrumbSegments,
   repositoryBrowserEntries,
   repositoryParentPath,
@@ -69,5 +70,15 @@ describe("repository path helpers", () => {
     expect(isOwnersDocumentPath("OWNERS.md")).toBe(true);
     expect(isOwnersDocumentPath("./OWNERS.md")).toBe(true);
     expect(isOwnersDocumentPath("docs/OWNERS.md")).toBe(false);
+  });
+
+  it("presents landing document file names as friendly labels", () => {
+    expect(repositoryLandingDocumentLabel("README.md")).toBe("README");
+    expect(repositoryLandingDocumentLabel("CODE_OF_CONDUCT.md")).toBe(
+      "Code of conduct",
+    );
+    expect(repositoryLandingDocumentLabel("CONTRIBUTING")).toBe("Contributing");
+    expect(repositoryLandingDocumentLabel("LICENCE.txt")).toBe("License");
+    expect(repositoryLandingDocumentLabel("SECURITY.md")).toBe("Security");
   });
 });

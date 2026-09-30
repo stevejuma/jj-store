@@ -225,12 +225,12 @@ test("repository landing documents include community files in stable tab order",
     loaded.files
       .filter((candidate) => candidate.contents)
       .map((candidate) => repositoryLandingDocumentLabel(candidate.path)),
-    ["SECURITY", "LICENSE", "CONTRIBUTING", "CODE_OF_CONDUCT", "README"],
+    ["Security", "License", "Contributing", "Code of conduct", "README"],
   );
-  assert.equal(repositoryLandingDocumentLabel("LICENSE.txt"), "LICENSE");
+  assert.equal(repositoryLandingDocumentLabel("LICENSE.txt"), "License");
   assert.equal(
     repositoryLandingDocumentLabel("CODE_OF_CONDUCT"),
-    "CODE_OF_CONDUCT",
+    "Code of conduct",
   );
   assert.equal(repositoryLandingDocumentLabel("docs/SECURITY.md"), null);
 });

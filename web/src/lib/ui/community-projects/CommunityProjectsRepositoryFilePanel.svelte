@@ -9,6 +9,7 @@
   import CodeXmlIcon from "@lucide/svelte/icons/code-xml";
   import EyeIcon from "@lucide/svelte/icons/eye";
   import FileIcon from "@lucide/svelte/icons/file";
+  import PencilIcon from "@lucide/svelte/icons/pencil";
 
   import type {
     RepositoryBlob as ProjectForgeBlobResponse,
@@ -46,8 +47,10 @@
     onToggleFileTree: () => void;
   } = $props();
 
-  let markdownView = $state<"preview" | "source">("preview");
-  let markdownPath = $state("");
+  let fileView = $state<"preview" | "source" | "edit">("preview");
+  let displayedPath = $state("");
+  let editSessionPath = $state("");
+  let draftContents = $state("");
   const language = $derived(
     blob ? (resolveDiffLanguage(blob.path) ?? "plaintext") : "plaintext",
   );
@@ -77,22 +80,43 @@
   });
 
   $effect(() => {
-    const nextPath = isMarkdown ? selectedPath : "";
-    if (nextPath !== markdownPath) {
-      markdownPath = nextPath;
-      markdownView = "preview";
+    if (selectedPath !== displayedPath) {
+      displayedPath = selectedPath;
+      if (!editing) fileView = isMarkdown ? "preview" : "source";
+    }
+  });
+
+  $effect(() => {
+    if (!editing) {
+      if (editSessionPath) {
+        editSessionPath = "";
+        fileView = isMarkdown ? "preview" : "source";
+      }
+      return;
+    }
+    if (blob && editSessionPath !== blob.path) {
+      editSessionPath = blob.path;
+      filename = blob.path;
+      draftContents = blob.contents ?? "";
+      fileView = "edit";
     }
   });
 
   function beginEditing() {
-    if (!blob) return;
+    if (!blob || editUnavailable) return;
     filename = blob.path;
+    draftContents = blob.contents ?? "";
+    editSessionPath = blob.path;
     editing = true;
+    fileView = "edit";
   }
 
   function cancelEditing() {
     filename = blob?.path ?? selectedPath;
+    draftContents = blob?.contents ?? "";
+    editSessionPath = "";
     editing = false;
+    fileView = isMarkdown ? "preview" : "source";
   }
 
   function describeFileStats(blob: ProjectForgeBlobResponse): string {
@@ -152,13 +176,10 @@
           {blob}
           {latestCommit}
           {now}
-          {editing}
-          {editUnavailable}
           {fileTreeOpen}
           {onToggleFileTree}
-          onEdit={beginEditing}
         />
-        {#if fileStats && !editing}
+        {#if fileStats}
           <p
             class="community-projects__file-panel-stats"
             role="status"
@@ -167,19 +188,12 @@
             {fileStats}
           </p>
         {/if}
-        {#if editing && blob.contents !== undefined}<StoreFileEditor
-            {controller}
-            {blob}
-            {isMarkdown}
-            bind:filename
-            onCancel={cancelEditing}
-          />{:else}<section
-            class={isMarkdown
-              ? "community-projects__file-markdown-card"
-              : "community-projects__file-code-card"}
-            aria-label={`Source preview for ${blob.path}`}
-          >
-            {#if blob.binary}
+        <section
+          class="community-projects__file-content-card"
+          aria-label={`Source preview for ${blob.path}`}
+        >
+          {#if blob.binary}
+            <div class="community-projects__file-content-unavailable">
               <Empty.Root>
                 <Empty.Header>
                   <Empty.Media variant="icon"
@@ -191,74 +205,90 @@
                   >
                 </Empty.Header>
               </Empty.Root>
-            {:else if blob.too_large}
+            </div>
+          {:else if blob.too_large}
+            <div class="community-projects__file-content-unavailable">
               <p class="community-projects__status">
                 {blob.path} is too large to preview.
               </p>
-            {:else if isMarkdown}
-              <header class="community-projects__file-markdown-header">
-                <span>{blob.path}</span>
-                <ButtonGroup.Root
-                  class="community-projects__file-view-toggle"
-                  aria-label="Markdown display"
-                >
-                  <Button
+            </div>
+          {:else if blob.contents !== undefined}
+            <header class="community-projects__file-content-header">
+              <span>{blob.path}</span>
+              <ButtonGroup.Root
+                class="community-projects__file-view-toggle"
+                aria-label="File display"
+              >
+                {#if isMarkdown}<Button
                     type="button"
                     variant="outline"
                     size="sm"
-                    data-selected={markdownView === "preview"}
-                    aria-pressed={markdownView === "preview"}
-                    onclick={() => (markdownView = "preview")}
+                    data-selected={fileView === "preview"}
+                    aria-pressed={fileView === "preview"}
+                    onclick={() => (fileView = "preview")}
                   >
                     <EyeIcon data-icon="inline-start" aria-hidden="true" />
                     Preview
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    data-selected={markdownView === "source"}
-                    aria-pressed={markdownView === "source"}
-                    onclick={() => (markdownView = "source")}
-                  >
-                    <CodeXmlIcon data-icon="inline-start" aria-hidden="true" />
-                    Source
-                  </Button>
-                </ButtonGroup.Root>
-              </header>
-              {#if markdownView === "preview"}
-                <CommunityProjectsMarkdownPreview
-                  content={blob.contents ?? ""}
-                  label={`Markdown preview for ${blob.path}`}
-                />
-              {:else}
-                <CodeBlock
-                  code={blob.contents ?? ""}
-                  {language}
-                  hasLanguageLabel
-                  hasCopyButton={false}
-                  hasLineNumbers
-                  width="100%"
-                  container="section"
-                  tokenizer={tokenizeRepositorySource}
-                  highlightMode={language === "rust" ? "spans" : "auto"}
-                />
-              {/if}
+                  </Button>{/if}
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  data-selected={fileView === "source"}
+                  aria-pressed={fileView === "source"}
+                  onclick={() => (fileView = "source")}
+                >
+                  <CodeXmlIcon data-icon="inline-start" aria-hidden="true" />
+                  Source
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  data-selected={fileView === "edit"}
+                  aria-pressed={fileView === "edit"}
+                  title={editUnavailable || "Edit file"}
+                  disabled={Boolean(editUnavailable)}
+                  onclick={() => {
+                    if (editing) fileView = "edit";
+                    else beginEditing();
+                  }}
+                >
+                  <PencilIcon data-icon="inline-start" aria-hidden="true" />
+                  Edit
+                </Button>
+              </ButtonGroup.Root>
+            </header>
+            {#if editing}
+              <StoreFileEditor
+                {controller}
+                {blob}
+                {isMarkdown}
+                mode={fileView}
+                bind:filename
+                bind:contents={draftContents}
+                onCancel={cancelEditing}
+              />
+            {:else if fileView === "preview" && isMarkdown}
+              <CommunityProjectsMarkdownPreview
+                content={blob.contents ?? ""}
+                label={`Markdown preview for ${blob.path}`}
+              />
             {:else}
               <CodeBlock
                 code={blob.contents ?? ""}
                 {language}
-                title={blob.path}
                 hasLanguageLabel
                 hasCopyButton={false}
                 hasLineNumbers
                 width="100%"
-                container="card"
+                container="section"
                 tokenizer={tokenizeRepositorySource}
                 highlightMode={language === "rust" ? "spans" : "auto"}
               />
             {/if}
-          </section>{/if}
+          {/if}
+        </section>
       {:else}
         <p class="community-projects__status">Select a file to preview it.</p>
       {/if}

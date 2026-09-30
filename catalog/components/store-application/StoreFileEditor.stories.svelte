@@ -15,7 +15,8 @@
 <Story
   name="Edit and rename"
   play={async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+    const canvas = within(canvasElement),
+      body = within(canvasElement.ownerDocument.body);
     await userEvent.click(canvas.getByRole("button", { name: "README.md" }));
     const metadata = canvas.getByRole("region", {
       name: "Selected file metadata",
@@ -24,11 +25,15 @@
       name: "Hide repository file tree",
     });
     await expect(metadata.firstElementChild).toBe(treeToggle);
-    const edit = await within(metadata).findByRole("button", {
-      name: "Edit file",
-    });
-    await expect(edit).toHaveTextContent("");
-    await userEvent.click(edit);
+    const fileDisplay = canvas.getByRole("group", { name: "File display" });
+    await expect(
+      within(fileDisplay)
+        .getAllByRole("button")
+        .map((button) => button.textContent?.trim()),
+    ).toEqual(["Preview", "Source", "Edit"]);
+    await userEvent.click(
+      within(fileDisplay).getByRole("button", { name: "Edit" }),
+    );
     const editor = canvas.getByRole("region", { name: "Edit README.md" });
     const filename = canvas.getByLabelText("File name");
     await userEvent.clear(filename);
@@ -38,17 +43,32 @@
       within(editor).getByLabelText("Contents"),
       "# Edited notes\n\nSaved from the repository browser.",
     );
-    const description = within(editor).getByRole("textbox", {
+    await userEvent.click(
+      within(fileDisplay).getByRole("button", { name: "Preview" }),
+    );
+    await expect(
+      canvas.getByRole("region", {
+        name: "Edited Markdown preview for NOTES.md",
+      }),
+    ).toHaveTextContent("Saved from the repository browser.");
+    await userEvent.click(
+      within(fileDisplay).getByRole("button", { name: "Edit" }),
+    );
+    await userEvent.click(
+      within(editor).getByRole("button", { name: "Save changes" }),
+    );
+    const dialog = body.getByRole("dialog", { name: "Save changes" });
+    const description = within(dialog).getByRole("textbox", {
       name: "Markdown editor",
     });
     await userEvent.clear(description);
     await userEvent.type(description, "Rename README to project notes");
     await userEvent.click(
-      within(editor).getByRole("button", { name: "Preview changes" }),
+      within(dialog).getByRole("button", { name: "Preview changes" }),
     );
-    await expect(within(editor).getByText("Preview prepared")).toBeVisible();
+    await expect(within(dialog).getByText("Preview prepared")).toBeVisible();
     await userEvent.click(
-      within(editor).getByRole("button", { name: "Apply changes" }),
+      within(dialog).getByRole("button", { name: "Apply changes" }),
     );
     await expect(
       await canvas.findByRole("region", {

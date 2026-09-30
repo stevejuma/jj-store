@@ -1,6 +1,5 @@
 <script lang="ts">
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import PencilIcon from "@lucide/svelte/icons/pencil";
   import type { RepositoryBlob } from "../../controller/contracts.js";
   import type { RepositoryLogRevision } from "../../projects/repository-log.js";
   import CommunitySidebarToggleIcon from "../community-app-shell/CommunitySidebarToggleIcon.svelte";
@@ -12,20 +11,14 @@
     blob,
     latestCommit,
     now,
-    editing,
-    editUnavailable,
     fileTreeOpen,
     onToggleFileTree,
-    onEdit,
   }: {
     blob: RepositoryBlob;
     latestCommit?: RepositoryLogRevision;
     now?: number;
-    editing: boolean;
-    editUnavailable: string;
     fileTreeOpen: boolean;
     onToggleFileTree: () => void;
-    onEdit: () => void;
   } = $props();
 </script>
 
@@ -67,36 +60,10 @@
       {#if latestCommit.createdAt}
         <CommunityRelativeTime timestamp={latestCommit.createdAt} {now} />
       {/if}
-      {#if !editing}
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-sm"
-          aria-label="Edit file"
-          title={editUnavailable || "Edit file"}
-          disabled={Boolean(editUnavailable)}
-          onclick={onEdit}
-        >
-          <PencilIcon aria-hidden="true" />
-        </Button>
-      {/if}
     </div>
   {:else}
     <span class="community-projects__file-panel-info-message">
       {blob.path}
     </span>
-    {#if !editing}
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon-sm"
-        aria-label="Edit file"
-        title={editUnavailable || "Edit file"}
-        disabled={Boolean(editUnavailable)}
-        onclick={onEdit}
-      >
-        <PencilIcon aria-hidden="true" />
-      </Button>
-    {/if}
   {/if}
 </section>

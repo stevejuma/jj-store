@@ -331,20 +331,16 @@
   font-weight: 500;
 }
 
-.community-projects__file-code-card,
-.community-projects__file-markdown-card {
+.community-projects__file-content-card {
   min-width: 0;
   min-height: 0;
-}
-
-.community-projects__file-markdown-card {
   border: 1px solid var(--border);
   border-radius: var(--ui-column-canvas-radius, var(--radius));
   background: var(--background);
   overflow: hidden;
 }
 
-.community-projects__file-markdown-header {
+.community-projects__file-content-header {
   display: flex;
   min-height: 2.25rem;
   box-sizing: border-box;
@@ -359,7 +355,7 @@
   font-weight: 600;
 }
 
-.community-projects__file-markdown-header > span {
+.community-projects__file-content-header > span {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -382,31 +378,23 @@
   color: var(--accent-foreground);
 }
 
-.community-projects__file-markdown-card [data-ui-component="code-block"] {
+.community-projects__file-content-card [data-ui-component="code-block"] {
   --ui-code-syntax-background: var(--background);
   border: 0;
   border-radius: 0;
   background: var(--background);
 }
 
-.community-projects__file-code-card [data-ui-component="code-block"] {
-  --ui-code-syntax-background: var(--background);
-  min-height: 0;
-  border-color: var(--border);
-  border-radius: var(--ui-column-canvas-radius, var(--radius));
-  background: var(--background);
-}
-
-.community-projects__file-code-card [data-ui-part="code-block-header-row"] {
-  background: var(--jj-store-row-background);
-}
-
-.community-projects__file-code-card [data-ui-part="code-block-scroll"] {
+.community-projects__file-content-card [data-ui-part="code-block-scroll"] {
   min-height: 18rem;
 }
 
-.community-projects__file-code-card [data-ui-part="code-block-scroll"],
-.community-projects__file-code-card [data-ui-part="code-block-code-wrapper"],
-.community-projects__file-code-card [data-ui-part="code-block-code"] {
+.community-projects__file-content-card [data-ui-part="code-block-scroll"],
+.community-projects__file-content-card [data-ui-part="code-block-code-wrapper"],
+.community-projects__file-content-card [data-ui-part="code-block-code"] {
   background: var(--background);
+}
+
+.community-projects__file-content-unavailable {
+  min-height: 18rem;
 }

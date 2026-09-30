@@ -298,17 +298,21 @@ Chromium interactions and automatic accessibility checks are blocking.
 M4.8 review acceptance covers populated and filtered branch dividers, the
 absence of duplicate history-page titles, shared column header styling, and
 directory navigation history. It also covers the Files page navigation
-breadcrumb, body-left file-tree sidebar padding, full-height divider, file
-action row, bordered directory table card, commit/action summary row, in-card
-snapshot selector, distinct table-header grey and root README, CODE_OF_CONDUCT,
-CONTRIBUTING, LICENSE/LICENCE and SECURITY preview tabs. It also covers body
-repository tabs, the moved breadcrumb and authenticated UTF-8 file edit/rename
-preview and publication. Selected file acceptance covers copied metadata, file
-statistics, filename source headers, theme-background source bodies, markdown
-preview/source toggling and `.rs` source highlighting through the public
-CodeBlock tokenizer prop. Cold acceptance locates the persistent column controls
-after the redundant title bars are removed. Screenshots remain visual-pending
-and cannot substitute for interaction/accessibility checks.
+breadcrumb, body-left file-tree sidebar padding, full-height divider, bordered
+directory table card, commit/action summary row, in-card snapshot selector,
+distinct table-header grey and root README, CODE_OF_CONDUCT, CONTRIBUTING,
+LICENSE/LICENCE and SECURITY preview tabs. Landing-document acceptance covers
+friendly labels, document icons, compact type, the width-measured `More`
+dropdown and the selected-document edit action. It also covers body repository
+tabs, the moved breadcrumb and authenticated UTF-8 file edit/rename preview and
+publication. Selected file acceptance covers copied metadata, file statistics,
+filename source headers, the persistent Preview/Source/Edit header, body-only
+editing, Save/Cancel and the description dialog, theme-background source bodies,
+draft-preserving Markdown preview/source toggling and `.rs` source highlighting
+through the public CodeBlock tokenizer prop. Cold acceptance locates the
+persistent column controls after the redundant title bars are removed.
+Screenshots remain visual-pending and cannot substitute for
+interaction/accessibility checks.
 
 The cold catalog lane checks native pointer and touch split-copy behavior,
 constant-width geometry and reduced motion against freshly built assets.

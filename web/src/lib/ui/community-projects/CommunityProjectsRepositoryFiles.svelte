@@ -39,6 +39,7 @@
   let editing = $state(false);
   let editFilename = $state("");
   let selectedFilePath = $state("");
+  let requestedEditPath = $state("");
   let resizePointerId = $state<number | null>(null);
   let resizeStartX = 0;
   let resizeStartWidth = 0;
@@ -96,6 +97,24 @@
         file.contents !== undefined,
     ),
   );
+  const editUnavailable = $derived.by(() => {
+    if (!view.authenticated)
+      return "Connect with repository write access to edit this file.";
+    if (!view.mutation.available.includes("edit_file"))
+      return "This repository server does not support file editing.";
+    const bookmark = view.bookmarks.find(
+      (candidate) => candidate.name === view.route.bookmark,
+    );
+    if (!view.route.bookmark || !bookmark)
+      return "Choose a local bookmark to edit this file.";
+    if (
+      bookmark.targets.length !== 1 ||
+      view.targets.length !== 1 ||
+      bookmark.targets[0] !== view.targets[0]
+    )
+      return "Choose the bookmark's single current target to edit this file.";
+    return "";
+  });
   function selectSnapshot(value: string | undefined) {
     if (value) controller.actions.selectRef(value);
   }
@@ -110,8 +129,13 @@
     if (path === selectedFilePath) return;
     selectedFilePath = path;
     editFilename = path;
-    editing = false;
+    editing = requestedEditPath === path;
+    if (editing) requestedEditPath = "";
   });
+  function editLandingDocument(path: string) {
+    requestedEditPath = path;
+    controller.actions.selectFile(path);
+  }
   function beginFileTreeResize(event: PointerEvent) {
     if (!fileTreeOpen) return;
     event.preventDefault();
@@ -242,11 +266,13 @@
           {latestCommit}
           {pathCommits}
           {previewDocuments}
+          {editUnavailable}
           branch={selectedSnapshot}
           branches={view.choices}
           {now}
           onOpenDirectory={controller.actions.selectDirectory}
           onOpenFile={controller.actions.selectFile}
+          onEditFile={editLandingDocument}
           onSelectCommit={(revision) => {
             controller.actions.selectPage("log");
             controller.actions.selectRevision(revision.eventId);

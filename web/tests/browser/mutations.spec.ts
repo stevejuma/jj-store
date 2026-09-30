@@ -148,18 +148,20 @@ test("text file edit previews one request then routes to the renamed committed f
   await connect(page);
   await page.getByRole("tab", { name: "Files" }).click();
   await page.getByRole("button", { name: "Open file bin" }).click();
-  await page.getByRole("button", { name: "Edit file" }).click();
+  await page.getByRole("button", { name: "Edit", exact: true }).click();
   const editor = page.getByRole("region", { name: "Edit bin" });
   await page.getByLabel("File name").fill("NOTES.md");
   await editor
     .getByLabel("Contents")
     .fill("# Edited notes\n\nSaved through the native mutation route.\n");
-  await editor
+  await editor.getByRole("button", { name: "Save changes" }).click();
+  const dialog = page.getByRole("dialog", { name: "Save changes" });
+  await dialog
     .getByRole("textbox", { name: "Markdown editor" })
     .fill("Rename bin to repository notes");
-  await editor.getByRole("button", { name: "Preview changes" }).click();
-  await expect(editor.getByText("Preview prepared")).toBeVisible();
-  await editor.getByRole("button", { name: "Apply changes" }).click();
+  await dialog.getByRole("button", { name: "Preview changes" }).click();
+  await expect(dialog.getByText("Preview prepared")).toBeVisible();
+  await dialog.getByRole("button", { name: "Apply changes" }).click();
 
   await expect(
     page.getByRole("region", { name: "Markdown preview for NOTES.md" }),

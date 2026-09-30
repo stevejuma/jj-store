@@ -1,0 +1,182 @@
+.community-projects__repository-document-card {
+  min-width: 0;
+  margin-block-start: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--ui-column-canvas-radius, var(--radius));
+  background: var(--background);
+  overflow: hidden;
+}
+
+.community-projects__repository-document-tabs[data-ui-component="tabs"] {
+  min-width: 0;
+  flex-direction: column;
+  gap: 0;
+}
+
+.community-projects__repository-document-header {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  height: 2.75rem;
+  box-sizing: border-box;
+  align-items: center;
+  gap: 0.5rem;
+  padding-inline: 0.65rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--background);
+}
+
+.community-projects__repository-document-tabs [data-ui-part="tabs-list"] {
+  width: auto;
+  min-width: 0;
+  height: 100%;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.2rem;
+  overflow: hidden;
+  border-bottom: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 0;
+}
+
+.community-projects__repository-document-tabs [data-ui-part="tabs-trigger"] {
+  position: relative;
+  flex: 0 0 auto !important;
+  justify-content: flex-start !important;
+  gap: 0.45rem;
+  height: 2rem;
+  border: 0;
+  border-radius: var(--radius-sm);
+  padding-inline: 0.55rem;
+  background: transparent;
+  color: var(--foreground);
+  font-size: var(--community-text-secondary);
+  font-weight: 600;
+}
+
+.community-projects__repository-document-tabs
+  [data-ui-part="tabs-list"][data-variant="line"]
+  > [data-ui-part="tabs-trigger"]:hover,
+.community-projects__repository-document-tabs
+  [data-ui-part="tabs-list"][data-variant="line"]
+  > [data-ui-part="tabs-trigger"]:focus-visible,
+.community-projects__repository-document-tabs
+  [data-ui-part="tabs-list"][data-variant="line"]
+  > [data-ui-part="tabs-trigger"][data-state="active"] {
+  color: var(--accent-foreground);
+  background: var(--accent);
+}
+
+.community-projects__repository-document-tabs
+  [data-ui-part="tabs-trigger"]
+  svg {
+  width: 1rem;
+  height: 1rem;
+  color: var(--muted-foreground);
+}
+
+.community-projects__repository-document-tabs
+  [data-ui-part="tabs-trigger"]::after {
+  display: none;
+}
+
+.community-projects__repository-document-tab-indicator {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: calc(-0.375rem - 1px);
+  height: 2px;
+  border-radius: 999px 999px 0 0;
+  background: var(--primary);
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.community-projects__repository-document-tabs
+  [data-ui-part="tabs-trigger"][data-state="active"]
+  .community-projects__repository-document-tab-indicator {
+  opacity: 1;
+}
+
+.community-projects__repository-document-tabs
+  [data-ui-part="tabs-trigger"][data-state="active"]
+  svg {
+  color: currentColor;
+}
+
+.community-projects__repository-document-tabs [data-ui-part="tabs-content"] {
+  min-width: 0;
+}
+
+.community-projects__repository-document-edit[data-ui-component="button"] {
+  flex: none;
+}
+
+.community-projects__repository-document-more[data-ui-component="button"] {
+  height: 2rem;
+  flex: none;
+  gap: 0.2rem;
+  margin-inline-start: 0.15rem;
+  padding-inline: 0.65rem 0.45rem;
+  border-left: 1px solid var(--border);
+  border-radius: 0;
+  font-size: var(--community-text-secondary);
+  font-weight: 550;
+}
+
+.community-projects__repository-document-more[data-ui-component="button"] svg {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
+.community-projects__markdown-preview {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: 1rem;
+  color: var(--foreground);
+  font-size: var(--community-text-body);
+  line-height: 1.6;
+}
+
+.community-projects__markdown-preview h1,
+.community-projects__markdown-preview h2,
+.community-projects__markdown-preview h3,
+.community-projects__markdown-preview p,
+.community-projects__markdown-preview ul,
+.community-projects__markdown-preview pre {
+  margin: 0;
+}
+
+.community-projects__markdown-preview h1 {
+  padding-bottom: 0.45rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 1.35rem;
+  line-height: 1.25;
+}
+
+.community-projects__markdown-preview h2 {
+  font-size: 1.05rem;
+  line-height: 1.35;
+}
+
+.community-projects__markdown-preview h3 {
+  font-size: 0.95rem;
+  line-height: 1.35;
+}
+
+.community-projects__markdown-preview ul {
+  padding-inline-start: 1.25rem;
+}
+
+.community-projects__markdown-preview pre {
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem;
+  background: var(--muted);
+  font-family: var(--font-mono, var(--community-font-mono));
+  font-size: var(--community-text-secondary);
+}
