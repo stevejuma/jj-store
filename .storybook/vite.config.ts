@@ -6,12 +6,14 @@ export default defineConfig({
   // Process source-distributed Svelte rune modules through the normal compiler.
   optimizeDeps: {
     include: [
+      "@lucide/svelte/icons/arrow-left",
       "@lucide/svelte/icons/book-open",
       "@lucide/svelte/icons/check",
       "@lucide/svelte/icons/chevron-left",
       "@lucide/svelte/icons/chevron-right",
       "@lucide/svelte/icons/columns-2",
       "@lucide/svelte/icons/copy",
+      "@lucide/svelte/icons/database",
       "@lucide/svelte/icons/ellipsis",
       "@lucide/svelte/icons/folder-git-2",
       "@lucide/svelte/icons/git-branch",
@@ -40,6 +42,8 @@ export default defineConfig({
       "@lucide/svelte/icons/chevron-down",
       "@lucide/svelte/icons/loader-circle",
       "@lucide/svelte/icons/search",
+      "@lucide/svelte/icons/server",
+      "@lucide/svelte/icons/settings",
       "@tanstack/svelte-virtual",
       "@lapismd/design-core > @lapismd/mira",
       "@lapismd/mira/**",

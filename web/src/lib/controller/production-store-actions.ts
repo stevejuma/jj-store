@@ -1,7 +1,7 @@
 import type { StoreController } from "./contracts.js";
 import type { createProductionBranchActions } from "./production-branch-actions.js";
 import type { createProductionStoreConflicts } from "./production-store-conflicts.js";
-import type { createProductionStoreIndex } from "./production-store-index.js";
+import type { createProductionStoreSettings } from "./production-store-index.js";
 import type { createProductionStoreMutations } from "./production-store-mutations.js";
 import type { createProductionStoreReader } from "./production-store-reader.svelte.js";
 import type { createProductionStoreSearch } from "./production-store-search-controller.js";
@@ -20,7 +20,7 @@ export function createProductionStoreActions(options: {
   conflicts: ReturnType<typeof createProductionStoreConflicts>;
   branches: ReturnType<typeof createProductionBranchActions>;
   selectRevision: StoreController["actions"]["selectRevision"];
-  prepareIndex: ReturnType<typeof createProductionStoreIndex>;
+  settings: ReturnType<typeof createProductionStoreSettings>;
   connect: StoreController["actions"]["connect"];
   connectRepository: (
     repository: string,
@@ -52,7 +52,8 @@ export function createProductionStoreActions(options: {
         id,
       );
     },
-    prepareIndex: options.prepareIndex,
+    refreshSettings: options.settings.refresh,
+    prepareIndex: options.settings.prepareIndex,
     async loadMore(collection) {
       if (collection === "bookmarks" && options.data.refsCursor)
         await options.reader.loadReferences(true);

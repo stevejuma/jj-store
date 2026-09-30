@@ -27,6 +27,9 @@ export function productionStoreView(
       name:
         data.repositories.find((candidate) => candidate.id === repository)
           ?.name ?? repository,
+      permission:
+        data.repositories.find((candidate) => candidate.id === repository)
+          ?.permission ?? null,
     },
     operationHeads: data.heads,
     comparisonParents: data.comparisonParents,
@@ -66,6 +69,17 @@ export function productionStoreView(
       isStale: data.searchStale,
       degraded: data.searchDegraded,
       truncated: data.searchTruncated,
+    },
+    settings: {
+      capabilities: data.capabilities,
+      snapshot: data.head,
+      searchStatus: data.searchStatus,
+      searchStatusState: data.searchStatusState,
+      searchStatusError: data.searchStatusError,
+      indexPreparation: data.indexPreparation,
+      indexPreparationError: data.indexPreparationError,
+      indexOperation:
+        data.neededIndex?.operation_id ?? route.snapshotOperationId,
     },
     mutation: data.mutation,
     agentSessions: data.agentSessions,

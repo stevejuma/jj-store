@@ -22,6 +22,9 @@
   import CommunityProfileMenu from "../community-profile-menu/CommunityProfileMenu.svelte";
   import StoreRepositoryDetails from "./StoreRepositoryDetails.svelte";
   import StoreSearchOverlay from "../store-search/StoreSearchOverlay.svelte";
+  import StoreSettings from "../store-settings/StoreSettings.svelte";
+  import StoreSettingsNavigation from "../store-settings/StoreSettingsNavigation.svelte";
+  import type { StoreSettingsSection } from "../store-settings/model.js";
   import StoreApplicationHeaderActions from "./StoreApplicationHeaderActions.svelte";
   import {
     loadRepositoryShellLayout,
@@ -69,6 +72,8 @@
   onDestroy(() => void shell.dispose());
   const current = $derived(controller.state.route);
   let searchOpen = $state(false);
+  let settingsOpen = $state(false);
+  let settingsSection = $state<StoreSettingsSection>("service");
   const canNavigateBack = $derived(controller.state.canNavigateBack);
   const canNavigateForward = $derived(controller.state.canNavigateForward);
   const compact = $derived(
@@ -126,6 +131,20 @@
   function navigate(delta: -1 | 1) {
     controller.actions.navigate(delta);
   }
+  function openSettings() {
+    settingsOpen = true;
+    void controller.actions.refreshSettings();
+    if (shell.mobile.resolvedMode === "mobile") shell.mobile.showMain();
+  }
+  function selectSettings(section: StoreSettingsSection) {
+    settingsSection = section;
+    if (section === "search") void controller.actions.refreshSettings();
+    if (shell.mobile.resolvedMode === "mobile") shell.mobile.showMain();
+  }
+  function closeSettings() {
+    settingsOpen = false;
+    if (shell.mobile.resolvedMode === "mobile") shell.mobile.showMain();
+  }
 </script>
 
 <CommunityAppShell
@@ -136,117 +155,134 @@
   onNavigateBack={() => navigate(-1)}
   onNavigateForward={() => navigate(1)}
 >
-  {#snippet headerEnd()}<StoreApplicationHeaderActions
-      {controller}
-      detailsOpen={!shell.right.closed}
-      toggleDetails={() =>
-        shell.right.closed ? shell.right.open() : shell.right.close()}
-    />{/snippet}
+  {#snippet headerEnd()}{#if !settingsOpen}<StoreApplicationHeaderActions
+        {controller}
+        detailsOpen={!shell.right.closed}
+        toggleDetails={() =>
+          shell.right.closed ? shell.right.open() : shell.right.close()}
+      />{/if}{/snippet}
   <AppShell.Sidebar
     side="left"
-    label="Repository navigation sidebar"
-    mobileLabel="Repositories and history"
+    label={settingsOpen ? "Settings sidebar" : "Repository navigation sidebar"}
+    mobileLabel={settingsOpen ? "Settings" : "Repositories and history"}
     resizeLabel="Resize repository navigation sidebar"
     closeable
     revealOnEdgeHover
     edgeRevealLabel="Preview repository navigation sidebar"
   >
-    <CommunityNavigation
-      model={navigation}
-      activeItemId={current.page === "files"
-        ? current.repository
-        : current.page}
-      {compact}
-      onSelect={select}
-      onSearch={() => (searchOpen = true)}
-    >
-      {#snippet footer()}<CommunityProfileMenu
-          member={controller.state.member}
-          authenticated={controller.state.authenticated}
-          {compact}
-          onAction={(action) =>
-            action === "sign-in"
-              ? controller.actions.signIn()
-              : controller.actions.signOut()}
-        />{/snippet}
-    </CommunityNavigation>
+    {#if settingsOpen}<StoreSettingsNavigation
+        section={settingsSection}
+        onSelect={selectSettings}
+        onClose={closeSettings}
+      />{:else}<CommunityNavigation
+        model={navigation}
+        activeItemId={current.page === "files"
+          ? current.repository
+          : current.page}
+        {compact}
+        onSelect={select}
+        onSearch={() => (searchOpen = true)}
+      >
+        {#snippet footer()}<CommunityProfileMenu
+            member={controller.state.member}
+            authenticated={controller.state.authenticated}
+            {compact}
+            onAction={(action) => {
+              if (action === "settings") openSettings();
+              else if (action === "sign-in") controller.actions.signIn();
+              else controller.actions.signOut();
+            }}
+          />{/snippet}
+      </CommunityNavigation>{/if}
   </AppShell.Sidebar>
   <AppShell.Main>
-    {#if shell.mobile.resolvedMode === "mobile"}
-      <AppShell.Toolbar>
-        {#if shell.mobile.resolvedMode === "mobile"}<CommunityApplicationMobileNavigation
-            model={{ canNavigateBack, canNavigateForward, navigate }}
-          />{/if}
-        {#if shell.mobile.resolvedMode === "mobile"}<AppShell.Sidebar.Toggle
-            side="right"
-            sidebarName="details"
-          />{/if}
-      </AppShell.Toolbar>
+    {#if settingsOpen}
+      {#if shell.mobile.resolvedMode === "mobile"}
+        <AppShell.Toolbar>
+          <AppShell.Sidebar.Toggle side="left" sidebarName="settings" />
+        </AppShell.Toolbar>
+      {/if}
+      <StoreSettings {controller} section={settingsSection} />
+    {:else}
+      {#if shell.mobile.resolvedMode === "mobile"}
+        <AppShell.Toolbar>
+          {#if shell.mobile.resolvedMode === "mobile"}<CommunityApplicationMobileNavigation
+              model={{ canNavigateBack, canNavigateForward, navigate }}
+            />{/if}
+          {#if shell.mobile.resolvedMode === "mobile"}<AppShell.Sidebar.Toggle
+              side="right"
+              sidebarName="details"
+            />{/if}
+        </AppShell.Toolbar>
+      {/if}
+      <AppShell.Body
+        layout="regions"
+        label={current.page === "files"
+          ? "Repository files workspace"
+          : undefined}
+        class={current.page === "files"
+          ? "store-application__files-body"
+          : undefined}
+      >
+        <div class="store-application__body-frame">
+          <div class="store-application__tabs">
+            <ScrollArea
+              type="hover"
+              orientation="horizontal"
+              class="store-application__tabs-scroll-area"
+            >
+              <Tabs.Root value={activeBodyTab}>
+                <Tabs.List
+                  class="store-application__tab-list"
+                  aria-label="Repository sections"
+                >
+                  {#each bodyTabs as tab (tab.page)}
+                    <Tabs.Trigger
+                      class="store-application__tab-trigger"
+                      value={tab.page}
+                      onclick={() => controller.actions.selectPage(tab.page)}
+                      >{tab.label}</Tabs.Trigger
+                    >
+                  {/each}
+                </Tabs.List>
+              </Tabs.Root>
+            </ScrollArea>
+          </div>
+          <h1 class="store-application__title">{bodyTitle}</h1>
+          <div class="store-application__body-regions">
+            {#key current.repository + current.page}
+              {#if children}{@render children(
+                  current.page,
+                  current.repository,
+                )}{:else}<p class="store-application__placeholder">
+                  {current.repository} · {bodyTitle}
+                </p>{/if}
+            {/key}
+          </div>
+        </div>
+      </AppShell.Body>
     {/if}
-    <AppShell.Body
-      layout="regions"
-      label={current.page === "files"
-        ? "Repository files workspace"
-        : undefined}
-      class={current.page === "files"
-        ? "store-application__files-body"
-        : undefined}
-    >
-      <div class="store-application__body-frame">
-        <div class="store-application__tabs">
-          <ScrollArea
-            type="hover"
-            orientation="horizontal"
-            class="store-application__tabs-scroll-area"
-          >
-            <Tabs.Root value={activeBodyTab}>
-              <Tabs.List
-                class="store-application__tab-list"
-                aria-label="Repository sections"
-              >
-                {#each bodyTabs as tab (tab.page)}
-                  <Tabs.Trigger
-                    class="store-application__tab-trigger"
-                    value={tab.page}
-                    onclick={() => controller.actions.selectPage(tab.page)}
-                    >{tab.label}</Tabs.Trigger
-                  >
-                {/each}
-              </Tabs.List>
-            </Tabs.Root>
-          </ScrollArea>
-        </div>
-        <h1 class="store-application__title">{bodyTitle}</h1>
-        <div class="store-application__body-regions">
-          {#key current.repository + current.page}
-            {#if children}{@render children(
-                current.page,
-                current.repository,
-              )}{:else}<p class="store-application__placeholder">
-                {current.repository} · {bodyTitle}
-              </p>{/if}
-          {/key}
-        </div>
-      </div>
-    </AppShell.Body>
   </AppShell.Main>
-  <AppShell.Sidebar
-    side="right"
-    variant="rail"
-    class="community-application__project-overview-sidebar"
-    label="Repository details"
-    resizeLabel="Resize repository details"
-    closeable
-  >
-    <AppShell.Sidebar.Body
-      >{#if details}{@render details(
-          current.page,
-          current.repository,
-        )}{:else}<StoreRepositoryDetails
-          {controller}
-          {title}
-        />{/if}</AppShell.Sidebar.Body
+  {#if !settingsOpen}<AppShell.Sidebar
+      side="right"
+      variant="rail"
+      class="community-application__project-overview-sidebar"
+      label="Repository details"
+      resizeLabel="Resize repository details"
+      closeable
     >
-  </AppShell.Sidebar>
+      <AppShell.Sidebar.Body
+        >{#if details}{@render details(
+            current.page,
+            current.repository,
+          )}{:else}<StoreRepositoryDetails
+            {controller}
+            {title}
+          />{/if}</AppShell.Sidebar.Body
+      >
+    </AppShell.Sidebar>{/if}
 </CommunityAppShell>
-<StoreSearchOverlay {controller} bind:open={searchOpen} />
+{#if !settingsOpen}<StoreSearchOverlay
+    {controller}
+    bind:open={searchOpen}
+  />{/if}

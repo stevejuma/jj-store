@@ -19,7 +19,7 @@ import { productionStoreView } from "./production-store-view.js";
 import { createProductionStoreSearch } from "./production-store-search-controller.js";
 import { createProductionStoreMutations } from "./production-store-mutations.js";
 import { createProductionStoreConflicts } from "./production-store-conflicts.js";
-import { createProductionStoreIndex } from "./production-store-index.js";
+import { createProductionStoreSettings } from "./production-store-index.js";
 import {
   createProductionRevisionSelector,
   reportProductionStoreError,
@@ -73,6 +73,14 @@ export function createProductionStoreController(
     isCurrent: (active) => active === source,
     restoreRoute,
   });
+  const settings = createProductionStoreSettings({
+    data,
+    source: activeSource,
+    operation: () => history.route.snapshotOperationId,
+    version: () => version,
+    current,
+    restore: reader.restorePage,
+  });
 
   function disconnect(message = "", denied = false, preserveSession = false) {
     const repositoryStatus = data.status.repositories;
@@ -82,6 +90,7 @@ export function createProductionStoreController(
     source?.close();
     source = null;
     Object.assign(data, { heads: [], head: null });
+    settings.clear();
     mutations.configure([]);
     mutations.reset();
     data.conflictResolutionActions = [];
@@ -131,6 +140,7 @@ export function createProductionStoreController(
       if (!current(ticket, active)) return;
       data.heads = [...captured.heads];
       data.head = captured;
+      data.capabilities = capabilities;
       mutations.configure(capabilities.typed_mutations);
       data.conflictResolutionActions = capabilities.conflict_resolution_actions;
       data.conflictUploadBytes = capabilities.conflict_upload_bytes;
@@ -170,10 +180,7 @@ export function createProductionStoreController(
         discovery.signal,
       );
       if (ticket !== version) return;
-      data.repositories = repositories.map((candidate) => ({
-        id: candidate.id,
-        name: candidate.name,
-      }));
+      data.repositories = repositories.map((candidate) => ({ ...candidate }));
       data.status.repositories = data.repositories.length ? "ready" : "empty";
       sessionToken = token;
       const requested = data.repositories.find(
@@ -233,13 +240,6 @@ export function createProductionStoreController(
     history.selectSnapshot(id);
     await reader.restorePage();
   }
-  const prepareIndex = createProductionStoreIndex({
-    data,
-    source: activeSource,
-    version: () => version,
-    current,
-    restore: reader.restorePage,
-  });
   const selectRevision = createProductionRevisionSelector(
     data,
     history,
@@ -263,7 +263,7 @@ export function createProductionStoreController(
     conflicts: conflictUploads,
     branches: branchActions,
     selectRevision,
-    prepareIndex,
+    settings,
     connect: ({ repository, token }) => connect(repository, token),
     connectRepository,
     disconnect: () => disconnect(),

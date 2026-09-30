@@ -9,6 +9,7 @@ import type {
   RepositoryBlob,
   RepositoryChoice,
   RepositorySnapshot,
+  StoreRepositorySummary,
   StoreControllerStatus,
   StoreSearchResult,
 } from "./contracts.js";
@@ -29,7 +30,13 @@ export interface ProductionStoreState {
   storageReady: boolean;
   backups: Model<"BackupStatus">[];
   heads: string[];
-  repositories: { id: string; name: string }[];
+  repositories: StoreRepositorySummary[];
+  capabilities: Model<"Capabilities"> | null;
+  searchStatus: Model<"SearchStatus"> | null;
+  searchStatusState: import("./contracts.js").StoreLoadStatus;
+  searchStatusError: string;
+  indexPreparation: import("./contracts.js").StoreLoadStatus;
+  indexPreparationError: string;
   bookmarks: Bookmark[];
   choices: RepositoryChoice[];
   workingCopies: RepositoryWorkingCopy[];
@@ -115,6 +122,12 @@ export function createProductionStoreState(): ProductionStoreState {
     backups: [],
     heads: [],
     repositories: [],
+    capabilities: null,
+    searchStatus: null,
+    searchStatusState: "idle",
+    searchStatusError: "",
+    indexPreparation: "idle",
+    indexPreparationError: "",
     bookmarks: [],
     choices: [],
     workingCopies: [],

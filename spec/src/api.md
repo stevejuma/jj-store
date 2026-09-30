@@ -51,6 +51,18 @@ and repository requests require the same manual bearer credential; browser
 credentials remain memory-only. OpenAPI declares deployment-dependent access
 rather than promising an unauthenticated public listener.
 
+The transient Settings presentation composes only existing bootstrap, repository
+discovery, capabilities, snapshot, search-status and index-task contracts. The
+production controller retains each discovered repository's effective permission
+and exposes the already captured capabilities and snapshot authority to
+presentation. Search status is requested only when search is advertised, and its
+failure does not replace repository content or connection state. Index
+preparation submits the operation reported by an index-lag response when
+present, otherwise the explicitly selected snapshot operation; concurrent
+unselected heads cannot start a task. Repository switching, disconnection and
+revocation close the source session, abort outstanding requests and clear this
+settings projection. This UI adds no server route, schema or generated contract.
+
 ## Read-session foundation
 
 Application read sessions capture the checked manifest's repository, epoch,

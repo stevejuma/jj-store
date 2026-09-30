@@ -103,6 +103,7 @@ export interface StoreDataSource {
     bytes: Uint8Array,
   ): Promise<Model<"ConflictUpload">>;
   search(query: SearchQuery): Promise<Model<"SearchPage">>;
+  searchStatus(fresh?: boolean): Promise<Model<"SearchStatus">>;
   agentSessions(cursor?: string): Promise<Model<"AgentSessionPage">>;
   agentSession(id: string): Promise<Model<"AgentSessionDetail">>;
   agentRelations(

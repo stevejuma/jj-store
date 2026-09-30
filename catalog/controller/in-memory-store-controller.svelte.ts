@@ -15,6 +15,8 @@ import { createInMemoryStoreCollaboration } from "./in-memory-store-collaboratio
 import { inMemoryStoreStatus } from "./in-memory-store-status.js";
 import { inMemoryStoreDetail } from "./in-memory-store-history.js";
 import type { InMemoryStoreControllerOptions } from "./in-memory-store-options.js";
+import { createInMemoryStoreSettings } from "./in-memory-store-settings.svelte.js";
+import { createInMemoryStoreSession } from "./in-memory-store-session.svelte.js";
 
 /** Each story owns this instance. It has no persistence or transport effects. */
 export function createInMemoryStoreController(
@@ -26,7 +28,6 @@ export function createInMemoryStoreController(
     storeRoute.initialStoreRoute(initialPage),
   ]);
   let index = $state(0);
-  let authenticated = $state(true);
   let fileViewMode = $state<FileListingViewMode>("tree");
   let collapsedDirectoryPaths = $state(new Set<string>());
   const route = $derived(history[index]!);
@@ -80,18 +81,21 @@ export function createInMemoryStoreController(
     now: fixture.NOW,
     outcome: options.reviewOutcome,
   });
+  const session = createInMemoryStoreSession();
+  const settings = createInMemoryStoreSettings({
+    repository: () => route.repository,
+    heads: () => repositoryData.operationHeads,
+    operation: () => route.snapshotOperationId,
+    mode: options.settingsSearch,
+  });
   const actions: StoreContract.StoreController["actions"] = {
-    async connect() {
-      authenticated = true;
-    },
-    disconnect() {
-      authenticated = false;
-    },
+    ...session.actions,
     destroy() {},
     async refresh() {},
     async selectOperation() {},
     async selectComparisonParent() {},
-    async prepareIndex() {},
+    refreshSettings: settings.refresh,
+    prepareIndex: settings.prepareIndex,
     async loadMore() {},
     search: search.search,
     selectSearchResult: search.select,
@@ -216,12 +220,6 @@ export function createInMemoryStoreController(
         directory: "",
       });
     },
-    signIn() {
-      authenticated = true;
-    },
-    signOut() {
-      authenticated = false;
-    },
   };
   return {
     get state(): StoreContract.StoreControllerState {
@@ -254,6 +252,7 @@ export function createInMemoryStoreController(
         snapshot,
         blob: snapshot?.files.find((file) => file.path === route.path),
         search: search.state,
+        settings: settings.state,
         mutation: mutations.state,
         ...collaboration.view,
         graph:
@@ -280,10 +279,10 @@ export function createInMemoryStoreController(
               (revision) => revision.eventId === snapshot.id,
             )
           : undefined,
-        authenticated,
-        member: inMemoryStoreMember(authenticated),
+        authenticated: session.authenticated,
+        member: inMemoryStoreMember(session.authenticated),
         status: inMemoryStoreStatus({
-          authenticated,
+          authenticated: session.authenticated,
           hasBookmarks: repositoryData.bookmarks.length > 0,
           hasFiles: Boolean(snapshot?.files.length),
           hasDetail: Boolean(route.commitId || route.inspectedOperationId),

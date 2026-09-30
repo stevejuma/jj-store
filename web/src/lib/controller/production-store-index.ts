@@ -1,30 +1,93 @@
 import type { StoreDataSource } from "./native-data-source.js";
 import type { ProductionStoreState } from "./production-store-state.svelte.js";
+import { storeErrorMessage } from "./http-store-data-source.js";
 
-export function createProductionStoreIndex(options: {
+export function createProductionStoreSettings(options: {
   data: ProductionStoreState;
   source: () => StoreDataSource;
+  operation: () => string | null;
   version: () => number;
   current: (ticket: number, source: StoreDataSource) => boolean;
   restore: () => Promise<void>;
 }) {
-  return async function prepareIndex() {
-    const { data } = options;
-    if (!data.neededIndex) return;
+  const { data } = options;
+
+  function clear() {
+    data.capabilities = null;
+    data.neededIndex = null;
+    data.searchStatus = null;
+    data.searchStatusState = "idle";
+    data.searchStatusError = "";
+    data.indexPreparation = "idle";
+    data.indexPreparationError = "";
+  }
+
+  async function refresh() {
+    if (!data.capabilities?.search) {
+      data.searchStatus = null;
+      data.searchStatusState = "unavailable";
+      data.searchStatusError = "";
+      return;
+    }
     const source = options.source();
     const ticket = options.version();
-    let task = await source.prepareIndex(data.neededIndex.operation_id);
-    while (
-      options.current(ticket, source) &&
-      ["running", "canceling"].includes(task.status)
-    ) {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      task = await source.indexTask(task.id);
+    data.searchStatusState = data.searchStatus ? "refreshing" : "loading";
+    data.searchStatusError = "";
+    try {
+      const status = await source.searchStatus(true);
+      if (!options.current(ticket, source)) return;
+      data.searchStatus = status;
+      data.searchStatusState = "ready";
+    } catch (cause) {
+      if (!options.current(ticket, source)) return;
+      data.searchStatusState = "failed";
+      data.searchStatusError = storeErrorMessage(cause);
     }
-    if (options.current(ticket, source) && task.status === "ready") {
+  }
+
+  async function prepareIndex() {
+    const { data } = options;
+    const operation = data.neededIndex?.operation_id ?? options.operation();
+    if (
+      !operation ||
+      !data.capabilities?.search ||
+      !data.capabilities.index_tasks ||
+      data.indexPreparation === "loading"
+    )
+      return;
+    const source = options.source();
+    const ticket = options.version();
+    data.indexPreparation = "loading";
+    data.indexPreparationError = "";
+    try {
+      let task = await source.prepareIndex(operation);
+      while (
+        options.current(ticket, source) &&
+        ["running", "canceling"].includes(task.status)
+      ) {
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        task = await source.indexTask(task.id);
+      }
+      if (!options.current(ticket, source)) return;
+      if (task.status !== "ready") {
+        data.indexPreparation = "failed";
+        data.indexPreparationError =
+          task.status === "canceled"
+            ? "Index preparation was canceled."
+            : "Index preparation failed.";
+        return;
+      }
       data.neededIndex = null;
       data.status.error = "";
+      data.indexPreparation = "ready";
       await options.restore();
+      await refresh();
+    } catch (cause) {
+      if (!options.current(ticket, source)) return;
+      data.indexPreparation = "failed";
+      data.indexPreparationError = storeErrorMessage(cause);
     }
-  };
+  }
+
+  return { clear, refresh, prepareIndex };
 }

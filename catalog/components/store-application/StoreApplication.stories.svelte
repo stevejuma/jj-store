@@ -61,6 +61,114 @@
   }}
 />
 <Story
+  name="Settings"
+  args={{ initiallyCollapsed: false }}
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const beforeHash = canvasElement.ownerDocument.defaultView?.location.hash;
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Open profile menu for Maya Chen" }),
+    );
+    await userEvent.click(
+      await within(canvasElement.ownerDocument.body).findByRole("menuitem", {
+        name: "Settings",
+      }),
+    );
+    await expect(
+      await canvas.findByRole("heading", {
+        name: "Local service",
+        level: 1,
+      }),
+    ).toBeVisible();
+    await expect(canvas.getByText("Repository token")).toBeVisible();
+    await expect(
+      canvas.queryByRole("button", { name: "Toggle details" }),
+    ).not.toBeInTheDocument();
+    await userEvent.click(canvas.getByRole("button", { name: "Repository" }));
+    await expect(canvas.getByText("admin")).toBeVisible();
+    await expect(canvas.getByText("jj-store-native-v1")).toBeVisible();
+    await userEvent.click(canvas.getByRole("button", { name: "Search" }));
+    await expect(canvas.getByText("Fresh")).toBeVisible();
+    await expect(canvas.getAllByText("18", { exact: true })).toHaveLength(3);
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Back to jj-store" }),
+    );
+    await expect(
+      canvas.getByText("jj-store · Workspaces", { exact: true }),
+    ).toBeVisible();
+    await expect(canvasElement.ownerDocument.defaultView?.location.hash).toBe(
+      beforeHash,
+    );
+  }}
+/>
+<Story
+  name="Settings degraded search"
+  args={{ initiallyCollapsed: false, settingsSearch: "degraded" }}
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Open profile menu for Maya Chen" }),
+    );
+    await userEvent.click(
+      await within(canvasElement.ownerDocument.body).findByRole("menuitem", {
+        name: "Settings",
+      }),
+    );
+    await canvas.findByRole("heading", { name: "Local service", level: 1 });
+    await userEvent.click(canvas.getByRole("button", { name: "Search" }));
+    await expect(canvas.getByText("Degraded")).toBeVisible();
+    await expect(
+      canvas.getByRole("button", { name: "Prepare index" }),
+    ).toBeEnabled();
+  }}
+/>
+<Story
+  name="Settings unavailable search"
+  args={{ initiallyCollapsed: false, settingsSearch: "unavailable" }}
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Open profile menu for Maya Chen" }),
+    );
+    await userEvent.click(
+      await within(canvasElement.ownerDocument.body).findByRole("menuitem", {
+        name: "Settings",
+      }),
+    );
+    await canvas.findByRole("heading", { name: "Local service", level: 1 });
+    await userEvent.click(canvas.getByRole("button", { name: "Search" }));
+    await expect(
+      canvas.getByText("Search is not configured for this repository."),
+    ).toBeVisible();
+    await expect(
+      canvas.queryByRole("button", { name: "Prepare index" }),
+    ).not.toBeInTheDocument();
+  }}
+/>
+<Story
+  name="Settings status failure"
+  args={{ initiallyCollapsed: false, settingsSearch: "failed" }}
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Open profile menu for Maya Chen" }),
+    );
+    await userEvent.click(
+      await within(canvasElement.ownerDocument.body).findByRole("menuitem", {
+        name: "Settings",
+      }),
+    );
+    await canvas.findByRole("heading", { name: "Local service", level: 1 });
+    await userEvent.click(canvas.getByRole("button", { name: "Search" }));
+    await expect(
+      canvas.getByText("Search status could not be loaded."),
+    ).toBeVisible();
+    await expect(
+      canvas.getByRole("button", { name: "Refresh status" }),
+    ).toBeEnabled();
+  }}
+/>
+<Story
   name="Expanded"
   args={{ initiallyCollapsed: false }}
   play={async ({ canvasElement }) => {
@@ -142,6 +250,45 @@
     await expect(
       canvas.queryByRole("navigation", { name: "Repository navigation" }),
     ).not.toBeInTheDocument();
+  }}
+/>
+
+<Story
+  name="Settings mobile"
+  args={{ displayMode: "mobile" }}
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Open navigation sidebar" }),
+    );
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Open profile menu for Maya Chen" }),
+    );
+    await userEvent.click(
+      await within(canvasElement.ownerDocument.body).findByRole("menuitem", {
+        name: "Settings",
+      }),
+    );
+    await expect(
+      await canvas.findByRole("heading", { name: "Local service", level: 1 }),
+    ).toBeVisible();
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Open settings sidebar" }),
+    );
+    await userEvent.click(canvas.getByRole("button", { name: "Search" }));
+    await expect(
+      await canvas.findByRole("heading", { name: "Search", level: 1 }),
+    ).toBeVisible();
+    await expect(canvas.getByText("Fresh")).toBeVisible();
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Open settings sidebar" }),
+    );
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Back to jj-store" }),
+    );
+    await expect(
+      canvas.getByText("jj-store · Workspaces", { exact: true }),
+    ).toBeVisible();
   }}
 />
 

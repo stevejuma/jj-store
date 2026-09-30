@@ -1,6 +1,6 @@
 import type { FileListingViewMode } from "@lapismd/design-core/diff";
 import type { FileDiffLineContext } from "@lapismd/design-core/diff";
-import type { Model } from "../api/client.js";
+import type { Head, Model } from "../api/client.js";
 export type StoreConflictDescriptor = Model<"ConflictDescriptor">;
 export type StoreConflictUpload = Model<"ConflictUpload">;
 import type { CommunityMemberModel } from "../ui/community-workspace/model.js";
@@ -104,6 +104,21 @@ export interface StoreConnection {
   repository: string;
   token: string | null;
 }
+export interface StoreRepositorySummary {
+  readonly id: string;
+  readonly name: string;
+  readonly permission: Model<"EffectivePermission"> | null;
+}
+export interface StoreSettingsState {
+  readonly capabilities: Model<"Capabilities"> | null;
+  readonly snapshot: Head | null;
+  readonly searchStatus: Model<"SearchStatus"> | null;
+  readonly searchStatusState: StoreLoadStatus;
+  readonly searchStatusError: string;
+  readonly indexPreparation: StoreLoadStatus;
+  readonly indexPreparationError: string;
+  readonly indexOperation: string | null;
+}
 export interface StoreControllerState {
   readonly accessMode: "bootstrapping" | "authenticated" | "local_trusted";
   readonly storageReady: boolean;
@@ -111,8 +126,8 @@ export interface StoreControllerState {
   readonly route: StoreRoute;
   readonly canNavigateBack: boolean;
   readonly canNavigateForward: boolean;
-  readonly repositories: readonly { id: string; name: string }[];
-  readonly repository: { id: string; name: string };
+  readonly repositories: readonly StoreRepositorySummary[];
+  readonly repository: StoreRepositorySummary;
   readonly operationHeads: readonly string[];
   readonly comparisonParents: readonly string[];
   readonly conflictCount: number | null;
@@ -140,6 +155,7 @@ export interface StoreControllerState {
   readonly snapshot: RepositorySnapshot | undefined;
   readonly blob: RepositoryBlob | undefined;
   readonly search: StoreSearchState;
+  readonly settings: StoreSettingsState;
   readonly mutation: StoreMutationState;
   readonly agentSessions: readonly Model<"AgentSessionSummary">[];
   readonly agentSession: Model<"AgentSessionDetail"> | undefined;
@@ -165,6 +181,7 @@ export interface StoreController {
     refresh(): Promise<void>;
     selectOperation(id: string): Promise<void>;
     selectComparisonParent(id: string): Promise<void>;
+    refreshSettings(): Promise<void>;
     prepareIndex(): Promise<void>;
     loadMore(
       collection:

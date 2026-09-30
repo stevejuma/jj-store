@@ -4,6 +4,7 @@
   import * as Tooltip from "@lapismd/design-core/shadcn/tooltip";
   import LogInIcon from "@lucide/svelte/icons/log-in";
   import LogOutIcon from "@lucide/svelte/icons/log-out";
+  import SettingsIcon from "@lucide/svelte/icons/settings";
   import CommunityMemberAvatar from "../community-member-avatar/CommunityMemberAvatar.svelte";
   import type { CommunityMemberModel } from "../community-workspace/model.js";
   let {
@@ -17,12 +18,12 @@
     communityName?: string;
     compact?: boolean;
     authenticated?: boolean;
-    onAction: (action: "sign-in" | "sign-out") => void;
+    onAction: (action: "settings" | "sign-in" | "sign-out") => void;
   } = $props();
   let menuOpen = $state(false),
     tooltipOpen = $state(false);
-  let pendingAction: "sign-in" | "sign-out" | undefined;
-  function selectAction(action: "sign-in" | "sign-out") {
+  let pendingAction: "settings" | "sign-in" | "sign-out" | undefined;
+  function selectAction(action: "settings" | "sign-in" | "sign-out") {
     pendingAction = action;
   }
   function finishAction(open: boolean) {
@@ -103,6 +104,9 @@
         </DropdownMenu.Group>
 
         <DropdownMenu.Group>
+          <DropdownMenu.Item onSelect={() => selectAction("settings")}>
+            <SettingsIcon data-icon="inline-start" aria-hidden="true" />Settings
+          </DropdownMenu.Item>
           {#if authenticated}<DropdownMenu.Item
               onSelect={() => selectAction("sign-out")}
               ><LogOutIcon data-icon="inline-start" aria-hidden="true" />Sign

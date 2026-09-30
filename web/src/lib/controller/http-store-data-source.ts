@@ -20,7 +20,6 @@ import { HttpCollaborationDataSource } from "./http-collaboration-data-source.js
 import { HttpStoreWriteDataSource } from "./http-store-write-data-source.js";
 
 export class HttpStoreDataSource implements StoreDataSource {
-  readonly repository: string;
   readonly #client: Client;
   readonly #scope: StoreQueryScope;
   readonly #collaboration: HttpCollaborationDataSource;
@@ -28,7 +27,7 @@ export class HttpStoreDataSource implements StoreDataSource {
   #active = true;
 
   constructor(
-    repository: string,
+    readonly repository: string,
     token: string | null,
     readonly queryClient: QueryClient,
     session: string,
@@ -36,7 +35,6 @@ export class HttpStoreDataSource implements StoreDataSource {
     fetcher?: typeof fetch,
   ) {
     this.#client = new Client(repository, token, denied, fetcher);
-    this.repository = this.#client.repository;
     this.#scope = { repository, session };
     this.#writes = new HttpStoreWriteDataSource(this.#client);
     this.#collaboration = new HttpCollaborationDataSource(
@@ -232,6 +230,9 @@ export class HttpStoreDataSource implements StoreDataSource {
       query,
       (signal) => this.#client.request("search", query, { signal }),
     );
+  }
+  searchStatus(_fresh = false) {
+    return this.#client.request<Model<"SearchStatus">>("search/status");
   }
   agentSessions(cursor?: string) {
     return this.#collaboration.agentSessions(cursor);

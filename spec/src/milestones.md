@@ -43,6 +43,7 @@ adds evidence here in its enclosing Jujutsu change.
 | M4.15       | Done        | M4.9,M6.1   | JST-UI-007                                                                                                                                                               | Community-adapted command search queries real snapshot-bound Tantivy results and restores stable routes             | Retain LocalTrusted and authenticated search acceptance            | E-UI-017,E-UI-024,E-UI-028                                                                                                                                                                                                                                                                                                                                     |
 | M4.16       | Done        | M4.9,M5.3   | JST-UI-008                                                                                                                                                               | Preview/apply/status repository actions use durable typed mutations and committed snapshot refresh                  | Retain mutation acceptance; implement M4.17 conflicts              | E-UI-018,E-UI-026,E-UI-028                                                                                                                                                                                                                                                                                                                                     |
 | M4.17       | Done        | M4.16,M5.3  | JST-UI-009                                                                                                                                                               | Native conflict descriptors, uploads and atomic multi-path resolution are editable without flattening               | Retain conflict-editor and real-repository acceptance              | E-UI-019                                                                                                                                                                                                                                                                                                                                                       |
+| M4.18       | Done        | M4.15,M8a.4 | JST-UI-012                                                                                                                                                               | Transient Community-styled settings reports existing local, repository and search state and prepares an exact index | Retain regression coverage; visual review remains separate         | E-UI-030                                                                                                                                                                                                                                                                                                                                                       |
 | M5          | Done        | M4.1        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                                                                                                                      | Authenticated typed commands and shared RPC policy                                                                  | Retain mutation conformance; proceed to M6                         | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-M5-005,E-M5-006,E-M5-007,E-M5-008,E-UI-028                                                                                                                                                                                                                                                                   |
 | M5.1        | Done        | M4.1        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                                                                                                                      | Basic changes/refs/reconcile; preview receipt and semantic policy                                                   | Retain basic mutation acceptance                                   | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-UI-028                                                                                                                                                                                                                                                                                                       |
 | M5.2        | Done        | M5.1        | JST-MUT-003                                                                                                                                                              | Full abandon descendant bookmark workspace/evolution parity                                                         | Retain abandon acceptance                                          | E-M5-005                                                                                                                                                                                                                                                                                                                                                       |
@@ -19493,6 +19494,193 @@ and named tests are checked by the progress gate.
     "remaining": [],
     "versions": "pnpm 10.32.1; Storybook 10.5.7; Vitest browser 4.1.11.",
     "formats": "No product API, persistence, wire format or visual baseline change; this repairs the browser-story assertion for the existing file preview layout."
+  },
+  {
+    "id": "E-UI-030",
+    "tasks": [
+      "M4.18"
+    ],
+    "date": "2026-09-30",
+    "kind": "transient-store-settings",
+    "before": "The profile menu exposed only connection actions. Repository discovery permission was omitted from summaries, while connected capabilities and snapshot authority were not available through the public presentation state and search health had no data-source or settings presentation path.",
+    "files": [
+      ".storybook/vite.config.ts",
+      "catalog/components/store-application/StoreApplication.stories.svelte",
+      "catalog/controller/in-memory-store-controller.svelte.ts",
+      "catalog/controller/in-memory-store-options.ts",
+      "catalog/controller/in-memory-store-session.svelte.ts",
+      "catalog/controller/in-memory-store-settings.svelte.ts",
+      "catalog/fixtures/StoreApplicationFixture.svelte",
+      "catalog/fixtures/snapshots.ts",
+      "spec/src/api.md",
+      "spec/src/ui.md",
+      "spec/src/milestones.md",
+      "spec/src/verification.md",
+      "web/src/lib/controller/contracts.ts",
+      "web/src/lib/controller/http-store-data-source.ts",
+      "web/src/lib/controller/native-data-source.ts",
+      "web/src/lib/controller/production-store-actions.ts",
+      "web/src/lib/controller/production-store-controller.svelte.ts",
+      "web/src/lib/controller/production-store-index.ts",
+      "web/src/lib/controller/production-store-lifecycle.svelte.ts",
+      "web/src/lib/controller/production-store-state.svelte.ts",
+      "web/src/lib/controller/production-store-view.ts",
+      "web/src/lib/ui/community-profile-menu/CommunityProfileMenu.svelte",
+      "web/src/lib/ui/store-application/StoreApplication.svelte",
+      "web/src/lib/ui/store-settings/StoreRepositorySettings.svelte",
+      "web/src/lib/ui/store-settings/StoreSearchSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreServiceSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreSettings.css",
+      "web/src/lib/ui/store-settings/StoreSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreSettingsNavigation.css",
+      "web/src/lib/ui/store-settings/StoreSettingsNavigation.svelte",
+      "web/src/lib/ui/store-settings/model.ts",
+      "web/tests/browser/local-bootstrap.spec.ts",
+      "web/tests/vite/production-store-bootstrap.test.ts",
+      "web/tests/vite/production-store-data-source.test.ts",
+      "web/tests/vite/production-store-settings.test.ts"
+    ],
+    "tests": [
+      "web/tests/vite/production-store-bootstrap.test.ts#LocalTrusted bootstrap auto-opens the sole catalog repository without a token",
+      "web/tests/vite/production-store-data-source.test.ts#explicit search status refresh bypasses the protected query cache",
+      "web/tests/vite/production-store-settings.test.ts#settings refresh loads advertised search health and clears it on disconnect",
+      "web/tests/vite/production-store-settings.test.ts#settings skip unavailable search and prepare the selected operation",
+      "web/tests/vite/production-store-settings.test.ts#settings prefer the operation reported by an index-lag response",
+      "web/tests/vite/production-store-settings.test.ts#settings do not prepare an index without an exact operation",
+      "web/tests/browser/local-bootstrap.spec.ts#local trusted bootstrap auto-opens the sole repository without credentials"
+    ],
+    "runs": [
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "The initial production Svelte and TypeScript check passed after the controller and settings implementation."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "The initial catalog check passed after splitting fixture session/settings ownership and removing production API imports from fixtures."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Production settings sections and the extracted in-memory session remain within architecture and line-count boundaries."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreApplication.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "The first cold focused run stopped during Vite dependency optimization because the newly imported Lucide settings icons were absent from the Storybook optimizeDeps list."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreApplication.stories.svelte",
+        "result": "fail",
+        "failures": 4,
+        "note": "After adding the icon entries and clearing the ignored Storybook cache, five of nine stories passed; three interactions selected Search before the Settings transition completed and one assertion matched three position values."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreApplication.stories.svelte",
+        "result": "fail",
+        "failures": 5,
+        "note": "The ten-story rerun exposed the nested main landmark, the missing mobile settings-sidebar toggle and one transition wait."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/StoreApplication.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "All ten shell stories pass their desktop/mobile interactions and automatic accessibility checks; the new stories remain visual-pending."
+      },
+      {
+        "command": "pnpm exec vitest run --config web/vite.config.ts web/tests/vite/production-store-bootstrap.test.ts web/tests/vite/production-store-data-source.test.ts web/tests/vite/production-store-settings.test.ts catalog/controller/store-controller.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "The web config selected three focused production files and all 18 tests passed, including permission retention, advertised status reads, state clearing, exact-operation precedence and task polling."
+      },
+      {
+        "command": "pnpm web:build && node scripts/browser-fixtures.mjs && pnpm exec playwright test --config web/playwright.config.ts web/tests/browser/local-bootstrap.spec.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "The fresh production build and native fixture capture passed; the browser case reached Settings and then found the Repository locator also matched the repository sidebar preview label."
+      },
+      {
+        "command": "pnpm exec playwright test --config web/playwright.config.ts web/tests/browser/local-bootstrap.spec.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "The exact section locator completed the full behavior flow; the final whole-page axe scan caught a transient portaled tooltip opened under the pointer when the repository sidebar replaced Settings."
+      },
+      {
+        "command": "pnpm exec playwright test --config web/playwright.config.ts web/tests/browser/local-bootstrap.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "The built LocalTrusted browser case passes after moving the pointer clear and waiting for the transient overlay to close before axe. It verifies service, repository, capability and search values, unchanged hash/history/storage, exact selected-operation preparation, task polling and refreshed health."
+      },
+      {
+        "command": "pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 18 specification lanes pass with JST-UI-012, M4.18 and the settings implementation."
+      },
+      {
+        "command": "pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "The complete static, architecture, catalog and web check lane passes."
+      },
+      {
+        "command": "pnpm test",
+        "result": "pass",
+        "failures": 0,
+        "note": "The complete governance, storage, LocalTrusted, contract, web, catalog, Storybook, cold-browser and Rust workspace test lane passes; environment-dependent OS credential and separately managed RustFS cases remain explicitly ignored by their owning suites."
+      },
+      {
+        "command": "pnpm build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Storybook, the production web application, the embedded RustFS runtime and the locked Rust workspace build successfully. Existing Design Core lightningcss global-selector and bundle-size warnings remain non-fatal."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "The completed evidence entry is formatted before its consuming checkers run."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 71 task rows and the completed E-UI-030 evidence pass ledger validation."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Four validators accept all 18 chapters and 104 canonical requirements."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "The 31 protected implementation files map to the three updated canonical chapters."
+      },
+      {
+        "command": "pnpm format:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rust formatting and tracked-text Prettier checks pass."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "deferred": [
+      "Interface and layout reset controls.",
+      "URL-addressable Settings and browser-history integration.",
+      "Replication controls and status, upstream URLs, credentials, storage configuration, backup/restore operations, stock-JJ filesystem mirroring and Git/Nostr export.",
+      "Human visual review and baseline approval."
+    ],
+    "versions": "pnpm 10.32.1; Svelte 5.57.1; Storybook 10.5.7; Vitest browser 4.1.11; Playwright 1.63.0; Design Core ^0.2.0.",
+    "formats": "No server, OpenAPI, generated contract, persistence or wire-format change. The transient UI consumes existing bootstrap, repository, capability, snapshot, search-status and index-task contracts; stories remain visual-pending."
   },
   {
     "id": "E-M10-014",

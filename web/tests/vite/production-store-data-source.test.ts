@@ -235,6 +235,41 @@ test("search pages preserve the snapshot query and opaque cursor", async () => {
   source.close();
 });
 
+test("explicit search status refresh bypasses the protected query cache", async () => {
+  const queryClient = createStoreQueryClient();
+  const requests: URL[] = [];
+  const source = new HttpStoreDataSource(
+    repository,
+    "token-a",
+    queryClient,
+    "session-a",
+    () => {},
+    async (input) => {
+      requests.push(new URL(String(input), "http://jj-store.test"));
+      return json({
+        version: 1,
+        repository,
+        epoch: "ab".repeat(16),
+        repository_position: requests.length,
+        durable_position: requests.length,
+        indexed_position: requests.length,
+        index_generation: "cd".repeat(32),
+        is_stale: false,
+        degraded: false,
+      });
+    },
+  );
+
+  await source.searchStatus(true);
+  await source.searchStatus(true);
+
+  expect(requests.map(({ pathname }) => pathname)).toEqual([
+    `/v1/repos/${repository}/search/status`,
+    `/v1/repos/${repository}/search/status`,
+  ]);
+  source.close();
+});
+
 test("collaboration reads use bounded cursors and stable identities", async () => {
   const queryClient = createStoreQueryClient();
   const requests: URL[] = [];

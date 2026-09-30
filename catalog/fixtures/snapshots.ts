@@ -5,8 +5,8 @@ import type {
   RepositorySnapshot,
 } from "../../web/src/lib/controller/contracts.js";
 export const repositories = [
-  { id: "jj-store", name: "jj-store" },
-  { id: "native-demo", name: "native-demo" },
+  { id: "jj-store", name: "jj-store", permission: "admin" as const },
+  { id: "native-demo", name: "native-demo", permission: "write" as const },
 ];
 export function repositoryChoices(
   sourceBookmarks = bookmarks,

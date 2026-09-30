@@ -66,6 +66,7 @@ test("LocalTrusted bootstrap auto-opens the sole catalog repository without a to
   expect(controller.state.repository).toEqual({
     id: repository,
     name: "Demo repository",
+    permission: "admin",
   });
   expect(controller.state.member.name).toBe("Local");
   expect(controller.state.member.status).toContain("trusted local access");
@@ -170,6 +171,7 @@ test("authenticated bootstrap accepts one token and exposes every authorized rep
   expect(controller.state.repository).toEqual({
     id: second,
     name: "lapis/two",
+    permission: "write",
   });
   for (const request of seen.filter(({ path }) => path !== "/v1/bootstrap"))
     expect(request.headers.get("authorization")).toBe(`Bearer ${token}`);

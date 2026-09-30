@@ -113,10 +113,7 @@ export async function initializeProductionStore(options: {
     options.data.status.repositories = "loading";
     options.data.repositories = (
       await loadRepositories(null, options.fetcher, options.signal)
-    ).map((repository) => ({
-      id: repository.id,
-      name: repository.name,
-    }));
+    ).map((repository) => ({ ...repository }));
     options.data.status.repositories = options.data.repositories.length
       ? "ready"
       : "empty";
