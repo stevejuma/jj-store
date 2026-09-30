@@ -178,6 +178,12 @@ sole parent is the default; merge operations require explicit parent selection,
 and the virtual root reports that it has no parent. Another committed operation
 cannot be substituted for an immediate parent.
 
+The browser presents these recorded operation parents in a compact searchable
+picker beside the workspace selector. Choosing a description or identity sends
+the full native operation ID and preserves the pinned snapshot and logical
+workspace in the hash; the selector does not widen the set of permitted
+comparison parents.
+
 The response distinguishes head changes from visible commit changes. Visibility
 is the native commit-parent closure of each view's heads; predecessor-only
 objects remain historical dependencies rather than visible commits. Complete

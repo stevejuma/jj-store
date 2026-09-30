@@ -13,6 +13,7 @@
   import "./store-application.css";
   import { workspaceNavigationKey } from "./workspace-navigation.js";
   import StoreWorkspacePicker from "./StoreWorkspacePicker.svelte";
+  import StoreComparisonParentPicker from "./StoreComparisonParentPicker.svelte";
   import PanelsTopLeftIcon from "@lucide/svelte/icons/panels-top-left";
   import CommunityAppShell from "../community-app-shell/CommunityAppShell.svelte";
   import CommunityNavigation from "../community-navigation/CommunityNavigation.svelte";
@@ -224,7 +225,20 @@
               <PanelsTopLeftIcon aria-hidden="true" />
               <h1 class="store-application__title">Workspace</h1>
             </div>
-            <StoreWorkspacePicker {controller} disabled={workspaceBlocked} />
+            <div class="store-application__section-controls">
+              {#if controller.state.comparisonParents.length}
+                <StoreComparisonParentPicker
+                  parents={controller.state.comparisonParents}
+                  revisions={controller.state.graph.revisions}
+                  devices={controller.state.graph.devices}
+                  now={controller.state.now}
+                  disabled={workspaceBlocked}
+                  onSelect={(id) =>
+                    void controller.actions.selectComparisonParent(id)}
+                />
+              {/if}
+              <StoreWorkspacePicker {controller} disabled={workspaceBlocked} />
+            </div>
           </header>
           <StoreRepositoryNotices {controller} />
           <div class="store-application__body-regions">

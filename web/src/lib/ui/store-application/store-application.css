@@ -38,6 +38,11 @@
   font-weight: 550;
   line-height: 1.25;
 }
+.store-application__section-header > .store-application__section-controls {
+  flex: 1;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
 
 .store-application__body-frame {
   display: flex;

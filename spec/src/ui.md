@@ -360,7 +360,21 @@ changed-path cursor and captured snapshot. Operation comparisons retain the
 affected-change cursor plus each exact comparison's changed-path cursor, fetch
 one exact group at a time, and keep ambiguous groups explicit. Empty exact pages
 and metadata-only groups advance without presenting invented files; every
-visible path remains bound to its precise native comparison.
+visible path remains bound to its precise native comparison. When an operation
+has multiple recorded comparison parents, its workspace header MUST show a
+compact searchable popover immediately before the workspace selector, without an
+explanatory notice or description. It lists only those exact native operation
+identities with their available descriptions and authors. Each option reuses the
+Op Log card's Community author avatar, description, timestamp, native badges and
+copy button for the full operation ID. Cards have small gaps between them. The
+rich results use accessible grid rows with separate content and copy cells.
+Pointer and keyboard copy actions provide clipboard feedback, keep the picker
+open and never select a comparison parent. A parent absent from the loaded graph
+remains selectable by its identity. Description, author and full-ID search MUST
+retain every candidate; selection passes the full operation ID to the existing
+comparison action and retains the pinned snapshot, workspace and parent hash
+across reload. It never substitutes a commit/change ID or invents operation
+metadata.
 
 M9.5 adds Agent activity and Reviews to the same application shell and typed
 hash history. Agent and review pages encode only a full stable session or thread

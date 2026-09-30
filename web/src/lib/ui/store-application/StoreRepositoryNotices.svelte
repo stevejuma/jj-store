@@ -12,19 +12,8 @@
   );
 </script>
 
-{#if state.comparisonParents.length || error}
+{#if error}
   <section class="store-repository-notices" aria-label="Repository notices">
-    {#if state.comparisonParents.length}<Alert.Root>
-        <Alert.Title>Choose comparison parent</Alert.Title>
-        <Alert.Description
-          >This merge operation has multiple recorded predecessors.</Alert.Description
-        >
-        {#each state.comparisonParents as parent}<Button
-            variant="outline"
-            onclick={() => controller.actions.selectComparisonParent(parent)}
-            >{parent.slice(0, 12)}</Button
-          >{/each}
-      </Alert.Root>{/if}
     {#if error}<Alert.Root>
         <TriangleAlertIcon aria-hidden="true" />
         <Alert.Title>Repository request failed</Alert.Title>
