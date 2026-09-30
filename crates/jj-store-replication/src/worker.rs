@@ -394,11 +394,21 @@ impl<L: ReplicationEndpoint, P: ReplicationEndpoint> ReplicationWorker<L, P> {
     }
 
     pub async fn step(&mut self) -> Result<StepOutcome> {
+        let direction = self.select_direction()?;
+        self.step_direction(direction).await
+    }
+
+    /// Run one explicitly selected direction. Bootstrap and migration use this
+    /// to hydrate a destination without publishing its new local seed back to
+    /// the source before the workspace handoff is complete.
+    pub async fn step_direction(&mut self, direction: Direction) -> Result<StepOutcome> {
         if *self.paused.borrow() {
             self.publish_status(None, self.checkpoints.load().await?.as_ref());
-            return Err(Error::CircuitOpen(self.next));
+            return Err(Error::CircuitOpen(direction));
         }
-        let direction = self.select_direction()?;
+        if self.circuit_is_open(direction) {
+            return Err(Error::CircuitOpen(direction));
+        }
         self.next = opposite(direction);
         self.publish_status(Some(direction), self.checkpoints.load().await?.as_ref());
         let result = match direction {

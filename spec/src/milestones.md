@@ -17368,9 +17368,16 @@ and named tests are checked by the progress gate.
     "id": "E-M10-008",
     "tasks": ["M10", "M10.6"],
     "date": "2026-09-30",
-    "kind": "replication-seed-and-checkpoint-bootstrap",
+    "kind": "replication-seed-checkpoint-bootstrap-and-workspace-migration",
     "files": [
       "Cargo.lock",
+      "crates/jj-store-cli/Cargo.toml",
+      "crates/jj-store-cli/src/commands.rs",
+      "crates/jj-store-cli/src/lib.rs",
+      "crates/jj-store-cli/src/migration.rs",
+      "crates/jj-store-cli/src/replication_endpoint.rs",
+      "crates/jj-store-cli/src/store_commands.rs",
+      "crates/jj-store-cli/tests/workspace_migration.rs",
       "crates/jj-store-replication/Cargo.toml",
       "crates/jj-store-replication/src/worker.rs",
       "crates/jj-store-replication/tests/bootstrap.rs",
@@ -17387,12 +17394,16 @@ and named tests are checked by the progress gate.
       "crates/jj-store-wal/src/publication/replication_transfer.rs",
       "crates/jj-store-wal/src/publication/review_catalog.rs",
       "crates/jj-store-wal/src/records.rs",
+      "docs/cli/commands.md",
+      "docs/cli/migrate-local.md",
+      "docs/cli/store.md",
       "spec/src/milestones.md",
       "spec/src/replication.md"
     ],
     "tests": [
       "crates/jj-store-replication/tests/bootstrap.rs#seed_checkpoint_plus_tail_merges_three_roots_without_replacing_local_authority",
-      "crates/jj-store-replication/tests/bootstrap.rs#worker_recovers_a_retained_feed_gap_from_seed_then_replays_the_pinned_tail"
+      "crates/jj-store-replication/tests/bootstrap.rs#worker_recovers_a_retained_feed_gap_from_seed_then_replays_the_pinned_tail",
+      "crates/jj-store-cli/tests/workspace_migration.rs#nonempty_workspace_migrates_without_snapshot_and_mutates_with_upstream_offline"
     ],
     "runs": [
       {
@@ -17460,16 +17471,40 @@ and named tests are checked by the progress gate.
         "result": "fail",
         "failures": 1,
         "note": "Storybook, web and embedded-RustFS builds passed. The workspace Cargo build then stopped at the pinned Kingfisher Vectorscan build because cmake is unavailable."
+      },
+      {
+        "command": "cargo test -p jj-store-replication --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 15 replication integration cases pass after exposing an explicit one-direction migration step; ordinary worker fairness behavior remains unchanged."
+      },
+      {
+        "command": "cargo clippy -p jj-store-replication --all-targets --locked -- -D warnings",
+        "result": "pass",
+        "failures": 0,
+        "note": "The migration-specific directional worker API passes warnings as errors."
+      },
+      {
+        "command": "cargo +1.98.1 check --offline (temporary focused harness over the production attachment, binding, remote and migration modules)",
+        "result": "pass",
+        "failures": 0,
+        "note": "The production migration module and every directly used client module type-check together without the unrelated Kingfisher CLI dependency. This is compile evidence, not a substitute for the executable acceptance."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test workspace_migration --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "The authored nonempty-workspace, exact working-copy preservation and offline-local-mutation acceptance could not compile because the pinned Kingfisher Vectorscan build could not execute missing cmake (os error 2)."
       }
     ],
     "result": "pending",
     "remaining": [
-      "Existing nonempty remote-connected workspace metadata still needs a recoverable endpoint switch that preserves unsnapshotted files and proves one offline local mutation.",
+      "The recoverable endpoint switch and its nonempty-workspace/offline-mutation acceptance are implemented, but the focused executable acceptance remains unexecuted because the pinned Kingfisher Vectorscan build requires missing cmake on this host.",
       "M10.7 production lifecycle composition, honest status/search/SSE reporting, resource and disk-pressure qualification, outage proof and cold real RustFS acceptance remain outstanding.",
       "The repository-wide contracts, check, test, build and specification lanes that compile Kingfisher Vectorscan require cmake on this host."
     ],
     "versions": "Rust 1.98.1; jj 0.45.1; manifest format 2; replication root, origin, seed, bootstrap negotiation and peer checkpoint schema v1.",
-    "formats": "A seed is the first origin in a newly allocated source stream and covers repository, code, AgentStore and ReviewStore state. Negotiation adds the exact manifest digest, feed lower bound and optional complete bootstrap checkpoint. New service-created repositories allocate independent random ReplicaId and WriterEpoch values."
+    "formats": "A seed is the first origin in a newly allocated source stream and covers repository, code, AgentStore and ReviewStore state. Negotiation adds the exact manifest digest, feed lower bound and optional complete bootstrap checkpoint. New service-created repositories allocate independent random ReplicaId and WriterEpoch values. Workspace migration adds a secret-free format-1 client journal and an exact recoverable backup of the prior .jj/repo descriptor; repository formats remain unchanged."
   }
 ]
 ```

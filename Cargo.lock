@@ -3855,6 +3855,7 @@ dependencies = [
  "jj-store-jj",
  "jj-store-model",
  "jj-store-object",
+ "jj-store-replication",
  "jj-store-rpc",
  "jj-store-server",
  "jj-store-service",

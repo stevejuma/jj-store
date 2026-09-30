@@ -87,6 +87,19 @@ than the source upper bound or unavailable compatible checkpoint fails closed.
 The destination manifest, replica stream and workspace metadata are never copied
 from the source.
 
+An existing physical workspace migrates through a durable, secret-free client
+journal outside the checkout. The journal binds the original cache and remote
+connection, the destination LocalTrusted connection and cache, the adopted
+workspace identity, and stable local-repository creation identity. Migration
+creates or verifies the independent local repository, pulls a complete seed and
+tail through the ordinary receiver, initializes a new client cache, and verifies
+that the existing working-copy operation loads from local storage. Only then may
+it preserve the exact old `.jj/repo` descriptor as a recoverable backup and
+atomically replace that descriptor with the local cache path. It MUST NOT run a
+checkout, snapshot, working-copy update, reconciliation, hook, or external
+adapter during this handoff. Retries reuse the journal and accepted origins;
+unsnapshotted files and `.jj/working_copy` bytes remain untouched.
+
 ## Verified receiver boundary
 
 The replication package exchanges manifest-bound origin feeds, authenticated

@@ -163,6 +163,45 @@ pub async fn run(
             };
             complete_attachment(ui, helper, args.format, &mut attachment).await
         }
+        StoreCommand::MigrateLocal {
+            unix_socket,
+            cache,
+            state_dir,
+        } => {
+            let loader = helper.workspace_loader()?;
+            let source = Connection::read(loader.repo_path()).map_err(error)?;
+            let socket = helper
+                .cwd()
+                .join(unix_socket)
+                .canonicalize()
+                .map_err(error)?;
+            let local = Connection::new_local(socket, source.repository).map_err(error)?;
+            let settings = helper.settings().clone();
+            let mut migration = crate::migration::Migration::open(
+                &settings,
+                loader.workspace_root().to_owned(),
+                loader.repo_path().to_owned(),
+                local,
+                cache.map(|path| helper.cwd().join(path)),
+                state_dir.map(|path| helper.cwd().join(path)),
+            )
+            .await
+            .map_err(error)?;
+            let result = migration.run(&settings).await.map_err(error)?;
+            presentation::result(
+                ui,
+                helper,
+                args.format,
+                &serde_json::to_value(&result).map_err(error)?,
+                &format!(
+                    "Migrated native repository {} at {} to LocalTrusted storage.\nWorkspace: {}\nRemote descriptor backup: {}\n",
+                    result.repository,
+                    result.path.display(),
+                    result.workspace,
+                    result.backup.display()
+                ),
+            )
+        }
 
         StoreCommand::Status | StoreCommand::Doctor => {
             let path = helper.workspace_loader()?.repo_path();

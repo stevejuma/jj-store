@@ -2,6 +2,8 @@
 
 - `jj store init`: create a new repository and its first physical workspace.
 - `jj store attach`: create a physical workspace for an existing repository.
+- `jj store migrate-local`: hydrate and switch the current remote-backed
+  workspace to LocalTrusted storage.
 - `jj store status`: inspect authoritative operation heads.
 - `jj sync reconcile`: explicitly merge the exact current operation heads.
 - `jj store doctor`: check binding and current access without publishing.

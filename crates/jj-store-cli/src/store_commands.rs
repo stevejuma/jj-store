@@ -103,6 +103,19 @@ pub(crate) enum StoreCommand {
         #[arg(long)]
         state_dir: Option<PathBuf>,
     },
+    /// Hydrate locally and switch an existing remote-backed workspace
+    #[command(long_about = include_str!("../../../docs/cli/migrate-local.md"))]
+    MigrateLocal {
+        /// User-restricted LocalTrusted native RPC socket
+        #[arg(long)]
+        unix_socket: PathBuf,
+        /// New client cache bound to the local repository
+        #[arg(long)]
+        cache: Option<PathBuf>,
+        /// Durable migration journal outside the checkout
+        #[arg(long)]
+        state_dir: Option<PathBuf>,
+    },
     /// Inspect remote heads without snapshotting or reconciling
     #[command(long_about = include_str!("../../../docs/cli/status.md"))]
     Status,
