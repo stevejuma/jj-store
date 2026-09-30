@@ -50,6 +50,7 @@ adds evidence here in its enclosing Jujutsu change.
 | M4.22       | Done        | M4.21       | JST-UI-014,JST-UI-003,JST-UI-008,JST-API-005                                                                                                                             | Restore selection-aware rail actions with focused interaction, accessibility and browser evidence                              | Retain selection and capability regressions; visual review remains separate   | E-UI-035                                                                                                                                                                                                                                                                                                                                                       |
 | M4.23       | Done        | M4.22       | JST-UI-008,JST-UI-014,JST-API-005                                                                                                                                        | Centered commit-selector content, oval ID chips and zero section margin; focused interaction/accessibility acceptance          | Retain picker/navigation regressions; visual review stays separate            | E-UI-036                                                                                                                                                                                                                                                                                                                                                       |
 | M4.24       | Done        | M4.23,M4.17 | JST-UI-002,JST-UI-009,JST-API-005                                                                                                                                        | Conflict sheet, highlighted editor and accept-all controls; focused and cold browser evidence                                  | Retain merge and shell regressions; visual review remains separate            | E-UI-037                                                                                                                                                                                                                                                                                                                                                       |
+| M4.25       | Done        | M4.23       | JST-UI-008,JST-API-005                                                                                                                                                   | Aligned selector ID columns, smaller labels and bottom-right time; focused interaction/accessibility acceptance                | Retain picker regressions; visual review stays separate                       | E-UI-038                                                                                                                                                                                                                                                                                                                                                       |
 | M5          | Done        | M4.1        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                                                                                                                      | Authenticated typed commands and shared RPC policy                                                                             | Retain mutation conformance; proceed to M6                                    | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-M5-005,E-M5-006,E-M5-007,E-M5-008,E-UI-028                                                                                                                                                                                                                                                                   |
 | M5.1        | Done        | M4.1        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                                                                                                                      | Basic changes/refs/reconcile; preview receipt and semantic policy                                                              | Retain basic mutation acceptance                                              | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-UI-028                                                                                                                                                                                                                                                                                                       |
 | M5.2        | Done        | M5.1        | JST-MUT-003                                                                                                                                                              | Full abandon descendant bookmark workspace/evolution parity                                                                    | Retain abandon acceptance                                                     | E-M5-005                                                                                                                                                                                                                                                                                                                                                       |
@@ -21205,6 +21206,133 @@ and named tests are checked by the progress gate.
     "versions": "jj 0.45.1; Node 24.10.0; pnpm 10.32.1; Svelte 5.57.1; Storybook 10.5.7; Vitest 4.1.11; Vite 8.3.1. Existing dependency resolution unchanged; public Design Core AppShell.SurfaceLayer and MergeEditor APIs used. No sibling package or dependency edits.",
     "formats": "Presentation and consumer integration only. One shell-root conflict sheet covers main and right, preserves native descriptors in bound state, keeps per-path merge drafts, and omits extra metadata. Built-in accept-all updates the exact native term when center bytes match; custom edits clear a previous term/upload selection until explicitly staged. Stage captures the descriptor and pending upload prevents path switching/dismissal. The complete preview/apply/unknown/stale workflow and request identities remain unchanged. No native object, manifest, WAL, receipt, credential or HTTP format changes. Background repository navigation is inert while the sheet is open, and header mutations/refresh are disabled, so draft resolution stays attached to the captured selection.",
     "next": "Retain focused native-term, staged-edit, atomic recovery and shell lifecycle regressions; human visual baseline approval remains separate."
+  },
+  {
+    "id": "E-UI-038",
+    "tasks": [
+      "M4.25"
+    ],
+    "date": "2026-09-30",
+    "kind": "commit-selector-metadata-layout",
+    "revision": "Enclosing Jujutsu change zlmvwkxm.",
+    "before": "Clean working change after conflict-sheet slice. Added varied title lengths, descriptionless and missing-change-ID choices plus real copy-control font reference. New geometry story fails because relative time remains on the primary row (top 33px versus primary bottom 51px); existing center/oval-chip story passes.",
+    "files": [
+      "web/src/lib/ui/store-mutations/StoreMutationCommitTarget.svelte",
+      "catalog/fixtures/StoreMutationCommitPickerFixture.svelte",
+      "catalog/components/store-mutations/StoreMutationCommitPicker.stories.svelte",
+      "spec/src/api.md",
+      "spec/src/ui.md",
+      "spec/src/verification.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-mutations/StoreMutationCommitPicker.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before: 1 failed, 1 passed. New bottom-time geometry assertion reproduces requested layout change. Log .scratch/commit-picker-columns-before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-mutations/StoreMutationCommitPicker.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "After: both Chromium interaction/accessibility stories pass. Checks trigger/avatar/chevron centering, oval indicator height, font relative to actual copy control, Git/JJ left edges across varied titles/missing change ID, bottom-right time and selection update. Log .scratch/commit-picker-columns-after.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-mutations/StoreMutationCommitPicker.stories.svelte catalog/components/store-mutations/StoreRepositoryActions.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "6 directly affected picker and mutation-form interaction/accessibility stories pass. Shared fixed targets and searchable choices retain request/selection flows. Log .scratch/commit-picker-actions.log."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero errors/warnings."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero errors/warnings; 75-module catalog boundary audit passes."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "289-module production/catalog/script boundary and size audit passes."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Fresh built UI passes with existing nonfatal Design Core CSS minification and bundle-size warnings. No Rust rebuild. Log .scratch/commit-picker-build.log."
+      },
+      {
+        "command": "node .scratch/restart-workspace-ui.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Owned development demo ready at 127.0.0.1:7460 with existing explicit binaries and preserved data; PID 36675. No reset/reseed or unrelated daemon restart."
+      },
+      {
+        "command": "CUA live built-UI verification",
+        "result": "pass",
+        "failures": 0,
+        "note": "Temporary hidden tab 7 checks 12 real loaded commit options: labels compute to 10px; every Git chip starts at 834.40625px and JJ at 912px; time is below the primary row with zero right-edge gap. Create-change trigger shares the same row. Screenshot .scratch/commit-picker-columns.png saved and tab closed; user tabs preserved. No mutation preview/apply."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/ui/store-mutations/StoreMutationCommitTarget.svelte spec/src/ui.md spec/src/api.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Production row and canonical chapters formatted."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/ui/store-mutations/StoreMutationCommitTarget.svelte catalog/fixtures/StoreMutationCommitPickerFixture.svelte catalog/components/store-mutations/StoreMutationCommitPicker.stories.svelte spec/src/api.md spec/src/ui.md spec/src/verification.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "All seven changed files formatted."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "4 validators, 18 chapters and 107 requirements pass."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "Same-change canonical gate passes for 3 protected files and 3 chapters."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "78 tasks pass same-change evidence bookkeeping audit."
+      },
+      {
+        "command": "pnpm spec:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Canonical mdBook HTML builds."
+      },
+      {
+        "command": "pnpm exec prettier --check web/src/lib/ui/store-mutations/StoreMutationCommitTarget.svelte catalog/fixtures/StoreMutationCommitPickerFixture.svelte catalog/components/store-mutations/StoreMutationCommitPicker.stories.svelte spec/src/api.md spec/src/ui.md spec/src/verification.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "All seven changed files pass formatting."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "deferred": [
+      "Changed stories remain visual-pending; baseline approval is separate.",
+      "Root aggregate pnpm spec:check, pnpm check, pnpm test and pnpm build; unrelated UI suites; Rust, native contracts and real-RustFS qualification are out of scope under targeted UI-only policy."
+    ],
+    "versions": "jj 0.45.1; Node 24.10.0; pnpm 10.32.1; Svelte 5.57.1; Storybook 10.5.7; Vitest 4.1.11; Vite 8.3.1. Existing released dependency resolution unchanged.",
+    "formats": "Presentation only. Noncopyable GIT/JJ labels use existing Community secondary-font token at 0.625rem (10px), one pixel above the existing 9px split-copy control. Fixed Git/JJ columns reserve missing identities and align options independently of title length. Secondary bookmark/workspace metadata keeps relative time at bottom right. Full bound native IDs, search, copy controls, typed mutations, HTTP/native object/manifest/WAL/receipt formats unchanged.",
+    "next": "Retain focused picker and mutation-form acceptance; human visual baseline approval remains separate."
   }
 ]
 ```
