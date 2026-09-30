@@ -6,7 +6,10 @@ use jj_store_wal::{
     inventory::{DependencySource, InventoryError, SourceScope, VerifiedNode},
     publication::*,
 };
-use std::{collections::BTreeMap, sync::Arc};
+use std::{
+    collections::{BTreeMap, BTreeSet},
+    sync::Arc,
+};
 
 const REPOSITORY: RepositoryId = RepositoryId::new([151; 16]);
 const SESSION: AgentSessionId = AgentSessionId::new([152; 16]);
@@ -269,6 +272,260 @@ async fn selected_session(replica: &Replica) -> AgentObjectV1 {
         .unwrap()
 }
 
+fn coverage(gaps: u32) -> CoverageV1 {
+    CoverageV1 {
+        completeness: CompletenessV1::Partial,
+        gaps,
+        redacted_fields: 0,
+        truncated: false,
+    }
+}
+
+async fn publish_catalog_matrix(
+    replica: &Replica,
+    seed: u8,
+) -> BTreeMap<AgentCatalogKind, AgentCatalogKey> {
+    let session = AgentSessionSnapshotV1 {
+        schema_version: 1,
+        session_id: SESSION,
+        integration: IntegrationId::Codex,
+        state: SessionState::Active,
+        parent_session_id: None,
+        evidence: Vec::new(),
+        event_batches: Vec::new(),
+        transcripts: Vec::new(),
+        tools: BTreeMap::new(),
+        coverage: coverage(u32::from(seed)),
+    };
+    let session_key = session.catalog_key().unwrap();
+    let session_ref = replica
+        .coordinator
+        .stage_agent_object(&AgentObjectV1::SessionSnapshot(session))
+        .await
+        .unwrap();
+
+    let alias = AgentAliasV1 {
+        schema_version: 1,
+        integration: IntegrationId::Codex,
+        source_instance_id: SourceInstanceId::new([170; 16]),
+        native_kind: NativeEntityKind::Session,
+        native_id: "shared-native-session".into(),
+        target: AgentEntityRefV1::Session {
+            session_id: AgentSessionId::new([seed; 16]),
+        },
+    };
+    let alias_key = alias.catalog_key().unwrap();
+    let alias_ref = replica
+        .coordinator
+        .stage_agent_object(&AgentObjectV1::Alias(alias))
+        .await
+        .unwrap();
+
+    let transcript_ref = replica
+        .coordinator
+        .stage_agent_object(&AgentObjectV1::TranscriptManifest(TranscriptManifestV1 {
+            schema_version: 1,
+            session_id: SESSION,
+            streams: Vec::new(),
+            coverage: coverage(u32::from(seed)),
+        }))
+        .await
+        .unwrap();
+    let checkpoint_id = AgentCheckpointId::new([171; 16]);
+    let checkpoint_ref = replica
+        .coordinator
+        .stage_agent_object(&AgentObjectV1::CheckpointVersion(
+            AgentCheckpointVersionV1 {
+                schema_version: 1,
+                checkpoint_id,
+                session_id: SESSION,
+                turn_id: None,
+                scope_id: None,
+                session_snapshot: session_ref,
+                transcript_manifest: transcript_ref,
+                event_batches: Vec::new(),
+                tools: BTreeMap::new(),
+                before: CodeAnchorV1 {
+                    operations: BTreeSet::from([OperationId::new([0; 64])]),
+                    commits: BTreeSet::new(),
+                },
+                after: CodeAnchorV1::default(),
+                code_relation: CodeRelation::NotObserved,
+                associations: Vec::new(),
+                evidence_method: EvidenceMethod::HookBoundary,
+                source_trust: SourceTrust::LocalUserHook,
+                exclusive_write_scope: false,
+                coverage: coverage(u32::from(seed)),
+                capture_status: CaptureStatusV1::Partial,
+                execution_outcome: if seed.is_multiple_of(2) {
+                    ExecutionOutcomeV1::Succeeded
+                } else {
+                    ExecutionOutcomeV1::Failed
+                },
+                supersedes: None,
+            },
+        ))
+        .await
+        .unwrap();
+    let checkpoint_key = AgentCatalogKey::derive("checkpoint", checkpoint_id.as_bytes()).unwrap();
+
+    let association_id = AssociationId::new([172; 16]);
+    let association_ref = replica
+        .coordinator
+        .stage_agent_object(&AgentObjectV1::Association(CodeAssociationV1 {
+            schema_version: 1,
+            association_id,
+            checkpoint_id: None,
+            session_id: SESSION,
+            turn_id: None,
+            tool_call_ids: BTreeSet::new(),
+            scope_id: None,
+            relation: AssociationRelation::ObservedDuringInterval,
+            before: CodeAnchorV1 {
+                operations: BTreeSet::from([OperationId::new([0; 64])]),
+                commits: BTreeSet::new(),
+            },
+            after: CodeAnchorV1::default(),
+            changes: BTreeSet::new(),
+            paths: Vec::new(),
+            granularity: AssociationGranularity::Operation,
+            evidence_method: EvidenceMethod::HookBoundary,
+            source_trust: SourceTrust::LocalUserHook,
+            exclusive_write_scope: false,
+            evidence: Vec::new(),
+            coverage: coverage(u32::from(seed)),
+            created_at_millis: i64::from(seed),
+            supersedes: None,
+            correction_reason: None,
+        }))
+        .await
+        .unwrap();
+    let association_key =
+        AgentCatalogKey::derive("association", association_id.as_bytes()).unwrap();
+
+    let relation_subject = AgentRelationSubjectV1::Session {
+        session_id: SESSION,
+    };
+    let relation_key = relation_subject.catalog_key().unwrap();
+    let relation_ref = replica
+        .coordinator
+        .stage_agent_object(&AgentObjectV1::RelationPage(AgentRelationPageV1 {
+            schema_version: 1,
+            subject: relation_subject,
+            selections: vec![association_ref],
+            next: None,
+        }))
+        .await
+        .unwrap();
+
+    let source = CaptureSourceStateV1 {
+        schema_version: 1,
+        integration: IntegrationId::Codex,
+        source_instance_id: SourceInstanceId::new([173; 16]),
+        generation: 1,
+        parser_version: "matrix-v1".into(),
+        native_session_key: Some("shared-native-session".into()),
+        position: SourcePositionV1::NativeSequence {
+            sequence: u64::from(seed),
+        },
+        receipts: vec![CaptureSourceReceiptV1 {
+            batch_id: CaptureBatchId::new([seed; 16]),
+            first_sequence: u64::from(seed),
+            last_sequence: u64::from(seed),
+        }],
+        coverage: coverage(u32::from(seed)),
+    };
+    let source_key = source.catalog_key().unwrap();
+    let source_ref = replica
+        .coordinator
+        .stage_agent_object(&AgentObjectV1::SourceState(source))
+        .await
+        .unwrap();
+
+    let projection = AgentProjectionCatalogV1 {
+        schema_version: 1,
+        normalizer_version: "matrix-v1".into(),
+        activated_at_millis: i64::from(seed),
+        sessions: vec![session_ref],
+        event_batches: Vec::new(),
+        source_states: vec![source_ref],
+    };
+    let projection_key = projection.catalog_key().unwrap();
+    let projection_ref = replica
+        .coordinator
+        .stage_agent_object(&AgentObjectV1::ProjectionCatalog(projection))
+        .await
+        .unwrap();
+
+    let edits = [
+        (AgentCatalogKind::Sessions, session_key, session_ref),
+        (AgentCatalogKind::Aliases, alias_key, alias_ref),
+        (
+            AgentCatalogKind::Checkpoints,
+            checkpoint_key,
+            checkpoint_ref,
+        ),
+        (
+            AgentCatalogKind::Associations,
+            association_key,
+            association_ref,
+        ),
+        (AgentCatalogKind::Relations, relation_key, relation_ref),
+        (AgentCatalogKind::Sources, source_key, source_ref),
+        (
+            AgentCatalogKind::Projections,
+            projection_key,
+            projection_ref,
+        ),
+    ];
+    let request = AgentDeltaRequest::new(
+        PrincipalId::new([160; 16]),
+        RequestId::new([seed; 16]),
+        PublicationId::new([seed; 16]),
+        AgentDeltaV1 {
+            schema_version: 1,
+            edits: edits
+                .iter()
+                .map(|(catalog, key, replacement)| AgentCatalogEditV1 {
+                    catalog: *catalog,
+                    key: *key,
+                    expected: None,
+                    replacement: Some(*replacement),
+                })
+                .collect(),
+        },
+        vec![seed],
+    )
+    .unwrap();
+    assert!(matches!(
+        replica
+            .coordinator
+            .publish_agent_delta(&request)
+            .await
+            .unwrap(),
+        PublishOutcome::Committed(_)
+    ));
+    edits
+        .into_iter()
+        .map(|(catalog, key, _)| (catalog, key))
+        .collect()
+}
+
+async fn selected_agent_object(
+    replica: &Replica,
+    catalog: AgentCatalogKind,
+    key: AgentCatalogKey,
+) -> AgentObjectV1 {
+    let snapshot = replica.coordinator.read().await.unwrap();
+    let store = replica
+        .coordinator
+        .agent_store(snapshot.manifest().domains().unwrap().agent.root)
+        .await
+        .unwrap();
+    let reference = store.lookup(catalog, key).await.unwrap().unwrap();
+    store.read_object(reference).await.unwrap()
+}
+
 #[tokio::test]
 async fn session_facts_union_and_terminal_conflicts_remain_explicit() {
     let first = Replica::new(1).await;
@@ -319,4 +576,110 @@ async fn session_facts_union_and_terminal_conflicts_remain_explicit() {
         panic!("cold copy should retain the explicit terminal conflict")
     };
     assert_eq!(cold_conflict, conflict);
+}
+
+#[tokio::test]
+async fn every_mutable_catalog_converges_under_reverse_and_duplicate_delivery() {
+    let first = Replica::new(111).await;
+    let second = Replica::new(121).await;
+    let keys = publish_catalog_matrix(&first, 131).await;
+    assert_eq!(keys, publish_catalog_matrix(&second, 132).await);
+
+    let forward = merge(&first, &second, 141, false).await;
+    let reverse = merge(&first, &second, 151, true).await;
+    let forward_before = forward.coordinator.read().await.unwrap();
+    let reverse_snapshot = reverse.coordinator.read().await.unwrap();
+    assert_eq!(
+        forward_before.manifest().domains().unwrap().agent.root,
+        reverse_snapshot.manifest().domains().unwrap().agent.root
+    );
+
+    let AgentObjectV1::SessionSnapshot(session) = selected_agent_object(
+        &forward,
+        AgentCatalogKind::Sessions,
+        keys[&AgentCatalogKind::Sessions],
+    )
+    .await
+    else {
+        panic!("session facts should reduce to one snapshot")
+    };
+    assert_eq!(session.coverage.gaps, 132);
+
+    for catalog in [
+        AgentCatalogKind::Aliases,
+        AgentCatalogKind::Checkpoints,
+        AgentCatalogKind::Associations,
+        AgentCatalogKind::Sources,
+    ] {
+        let AgentObjectV1::CatalogConflict(conflict) =
+            selected_agent_object(&forward, catalog, keys[&catalog]).await
+        else {
+            panic!("{catalog:?} should retain incomparable alternatives")
+        };
+        assert_eq!(conflict.catalog, catalog);
+        assert_eq!(conflict.alternatives.len(), 2);
+    }
+
+    let AgentObjectV1::RelationPage(relations) = selected_agent_object(
+        &forward,
+        AgentCatalogKind::Relations,
+        keys[&AgentCatalogKind::Relations],
+    )
+    .await
+    else {
+        panic!("relation facts should reduce to a canonical page")
+    };
+    assert_eq!(relations.selections.len(), 2);
+    assert_eq!(relations.next, None);
+
+    let AgentObjectV1::ProjectionCatalog(projection) = selected_agent_object(
+        &forward,
+        AgentCatalogKind::Projections,
+        keys[&AgentCatalogKind::Projections],
+    )
+    .await
+    else {
+        panic!("projection facts should reduce to one catalog")
+    };
+    assert_eq!(projection.sessions.len(), 2);
+    assert_eq!(projection.source_states.len(), 2);
+    assert_eq!(projection.activated_at_millis, 131);
+
+    let mut duplicate = first
+        .feed()
+        .await
+        .into_iter()
+        .chain(second.feed().await)
+        .map(|origin| (origin.publication.origin_key, origin))
+        .collect::<BTreeMap<_, _>>()
+        .into_values()
+        .collect::<Vec<_>>();
+    duplicate.reverse();
+    let ApplyOriginsOutcomeV1::Applied(replayed) = forward
+        .coordinator
+        .apply_origins(&ApplyOriginsRequestV1 {
+            schema_version: 1,
+            principal: PrincipalId::new([161; 16]),
+            request_id: RequestId::new([162; 16]),
+            publication_id: PublicationId::new([163; 16]),
+            origins: duplicate,
+        })
+        .await
+        .unwrap()
+    else {
+        panic!("duplicate origin lookup should complete")
+    };
+    assert_eq!(replayed.publication_position, None);
+    assert_eq!(
+        forward_before.manifest().domains().unwrap().agent,
+        forward
+            .coordinator
+            .read()
+            .await
+            .unwrap()
+            .manifest()
+            .domains()
+            .unwrap()
+            .agent
+    );
 }

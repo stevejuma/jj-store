@@ -142,7 +142,10 @@ and association ancestors; source-state descendants require receipt prefix
 continuity. Terminal tool observations dominate nonterminal ones, while
 incomparable terminal outcomes and legacy alias collisions select explicit
 catalog-conflict objects containing every maximal alternative. A normal authored
-delta cannot directly create those internal conflict selections.
+delta cannot directly create those internal conflict selections. Acceptance MUST
+exercise sessions, aliases, checkpoints, associations, relations, sources and
+projections under forward, reverse and duplicate delivery and MUST derive the
+same AgentStore root for the same accepted origin set.
 
 ReviewStore reduction combines immutable thread events as a bounded causal
 graph. It retains independent replies, reduces workflow state only from causal
@@ -151,7 +154,9 @@ revisions. A resolution is a new revision that names the complete sorted set of
 superseded alternatives; a stale or incomplete set cannot commit. Relation and
 status catalogs are rebuilt from the reduced core selections in the same
 destination CAS. Destination WAL order and accepted timestamps never select a
-winner.
+winner. Acceptance MUST cover concurrent tombstone/edit and reply/reply delivery
+in both orders, prove every maximal revision or reply remains reachable and
+prove replay does not publish another ReviewStore state.
 
 Both collaboration reducers operate only inside the restricted replication
 capability. Import cannot enter ordinary publication authorization, authored

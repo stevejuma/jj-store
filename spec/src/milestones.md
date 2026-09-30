@@ -74,7 +74,7 @@ adds evidence here in its enclosing Jujutsu change.
 | M10.2       | In progress | M10.1       | JST-REPL-002,JST-REPL-003,JST-REPL-005                                                                                                                                   | Durable origin streams, causal catalogs and authored publication integration                                        | Implement verified receiver                                                 | E-M10-002                                                                                                                                                                                                                                                                                                                                                      |
 | M10.3       | In progress | M10.2       | JST-REPL-004,JST-REPL-005,JST-REPL-006                                                                                                                                   | Verified one-way transfer, atomic import, durable acknowledgements and lost-response recovery                       | Integrate worker lifecycle and outage qualification                         | E-M10-003,E-M10-005,E-M10-006                                                                                                                                                                                                                                                                                                                                  |
 | M10.4       | In progress | M10.3       | JST-REPL-007,JST-REPL-013                                                                                                                                                | Bidirectional native operation-head integration, distinct workspaces and explicit reconciliation                    | Retain explicit reconciliation RPC/CLI acceptance                           | E-M10-003,E-M10-007                                                                                                                                                                                                                                                                                                                                            |
-| M10.5       | In progress | M10.4       | JST-REPL-008,JST-REPL-009,JST-REPL-013                                                                                                                                   | AgentStore and ReviewStore accepted-fact convergence under reordered and duplicate delivery                         | Complete permutation and aggregate qualification                            | E-M10-004                                                                                                                                                                                                                                                                                                                                                      |
+| M10.5       | In progress | M10.4       | JST-REPL-008,JST-REPL-009,JST-REPL-013                                                                                                                                   | AgentStore and ReviewStore accepted-fact convergence under reordered and duplicate delivery                         | Retain matrix and complete aggregate qualification                          | E-M10-004                                                                                                                                                                                                                                                                                                                                                      |
 | M10.6       | Planned     | M10.5       | JST-REPL-004,JST-REPL-010,JST-REPL-011                                                                                                                                   | Complete snapshot-plus-tail bootstrap, format-2 seed upgrade and non-destructive existing-workspace migration       | Implement controls and qualification                                        | -                                                                                                                                                                                                                                                                                                                                                              |
 | M10.7       | Planned     | M10.6       | JST-REPL-001,JST-REPL-006,JST-REPL-011,JST-REPL-012                                                                                                                      | Bounded worker, status/barriers, fairness, SSE/search integration and cold real-RustFS outage qualification         | Retain replication acceptance                                               | -                                                                                                                                                                                                                                                                                                                                                              |
 
@@ -12588,6 +12588,7 @@ and named tests are checked by the progress gate.
       "crates/jj-store-wal/src/publication/agent_catalog.rs",
       "crates/jj-store-wal/src/publication/agent_delta.rs",
       "crates/jj-store-wal/src/publication/domains.rs",
+      "crates/jj-store-wal/src/publication.rs",
       "crates/jj-store-wal/tests/agent_catalog.rs",
       "crates/jj-store-wal/tests/publication.rs",
       "spec/src/collaboration.md",
@@ -16758,19 +16759,24 @@ and named tests are checked by the progress gate.
       "crates/jj-store-wal/src/publication/replication_review_graph.rs",
       "crates/jj-store-wal/src/publication/review_audit_replication.rs",
       "crates/jj-store-wal/src/publication/review_command_update.rs",
+      "scripts/check-progress.mjs",
       "schemas/openapi.json",
       "spec/src/collaboration.md",
       "spec/src/milestones.md",
       "spec/src/publication.md",
       "spec/src/replication.md",
+      "spec/src/spec-governance.md",
       "web/src/lib/api/generated.ts"
     ],
     "tests": [
       "crates/jj-store-replication/tests/collaboration.rs#imported_agent_and_review_facts_reduce_without_replaying_commands",
       "crates/jj-store-replication/tests/agent_convergence.rs#session_facts_union_and_terminal_conflicts_remain_explicit",
+      "crates/jj-store-replication/tests/agent_convergence.rs#every_mutable_catalog_converges_under_reverse_and_duplicate_delivery",
       "crates/jj-store-replication/tests/review_convergence.rs#concurrent_comment_edits_retain_all_maximal_revisions_and_converge",
       "crates/jj-store-replication/tests/review_convergence.rs#explicit_comment_resolution_covers_the_exact_conflict_and_replicates",
-      "crates/jj-store-replication/tests/review_convergence.rs#unseen_reply_and_concurrent_reopen_keep_workflow_open"
+      "crates/jj-store-replication/tests/review_convergence.rs#unseen_reply_and_concurrent_reopen_keep_workflow_open",
+      "crates/jj-store-replication/tests/review_convergence.rs#concurrent_tombstone_and_edit_preserve_both_maximal_revisions",
+      "crates/jj-store-replication/tests/review_convergence.rs#concurrent_replies_preserve_both_children_and_converge"
     ],
     "runs": [
       {
@@ -16934,12 +16940,72 @@ and named tests are checked by the progress gate.
         "result": "pass",
         "failures": 0,
         "note": "The final 69-task progress ledger validates before commit."
+      },
+      {
+        "command": "cargo fmt --all && cargo test -p jj-store-replication --test agent_convergence --test review_convergence --locked",
+        "result": "fail",
+        "failures": 5,
+        "note": "The first expanded matrix compile found four AgentStore fixture types missing from the WAL publication facade and one reply-parent assertion aimed at the body revision instead of the thread selection. The owned facade now exports the existing types and the assertion follows the canonical thread model."
+      },
+      {
+        "command": "cargo fmt --all && cargo test -p jj-store-replication --test agent_convergence --test review_convergence --locked",
+        "result": "fail",
+        "failures": 2,
+        "note": "Both AgentStore cases and the three established ReviewStore cases passed; the two new duplicate checks reused their destination's original apply request identity with reversed origin order and correctly received IntentConflict. The replay checks now use fresh request identities while preserving every origin identity and digest."
+      },
+      {
+        "command": "cargo fmt --all && cargo test -p jj-store-replication --test agent_convergence --test review_convergence --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both AgentStore cases and all five ReviewStore cases pass. Every mutable agent catalog converges to the same root under forward and reverse delivery, duplicate replay publishes nothing, tombstone/edit retains both maximal revisions and reply/reply retains both child identities and parent links."
+      },
+      {
+        "command": "cargo test -p jj-store-replication --locked && cargo clippy -p jj-store-wal -p jj-store-replication --all-targets --locked -- -D warnings",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 13 replication integration cases and every WAL/replication warnings-as-errors target pass together after the complete convergence matrix."
+      },
+      {
+        "command": "cargo fmt --all && pnpm exec prettier --write spec/src/milestones.md spec/src/replication.md && pnpm format:check && pnpm spec:validate && pnpm check:progress && pnpm check:boundaries",
+        "result": "fail",
+        "failures": 1,
+        "note": "Formatting and all 102 requirements validated, then the progress checker exceeded Node's default child-process buffer while reading the now larger parent ledger from Jujutsu. Its Jujutsu reads now use a bounded 16 MiB buffer without weakening any ledger validation."
+      },
+      {
+        "command": "pnpm exec prettier --write scripts/check-progress.mjs spec/src/milestones.md spec/src/replication.md spec/src/spec-governance.md && pnpm test:governance && pnpm format:check && pnpm spec:validate && pnpm check:progress && pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 29 governance tests, Rust and tracked-text formatting, 102 canonical requirements, the 69-task ledger and all 14 package boundaries pass with the bounded progress-checker buffer."
+      },
+      {
+        "command": "pnpm spec:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "Validation, cold catalog browser, catalog check/unit/interaction/build and browser check/unit lanes pass; browser-interaction stops when its native lifecycle fixture cannot execute the unavailable cmake program for Kingfisher Vectorscan."
+      },
+      {
+        "command": "pnpm check",
+        "result": "fail",
+        "failures": 1,
+        "note": "Specification, package boundary, architecture, progress, formatting and cached embedded RustFS clippy lanes pass; contracts:check stops at the same Kingfisher Vectorscan cmake prerequisite."
+      },
+      {
+        "command": "pnpm test",
+        "result": "fail",
+        "failures": 1,
+        "note": "All 29 governance tests, storage harness, embedded RustFS restart and managed local storage acceptance pass; the LocalTrusted executable test then stops at the unavailable cmake prerequisite."
+      },
+      {
+        "command": "pnpm build",
+        "result": "fail",
+        "failures": 1,
+        "note": "Storybook, web and cached embedded RustFS builds pass; the final Cargo workspace build stops at the unavailable cmake prerequisite for Kingfisher Vectorscan."
       }
     ],
     "result": "pending",
     "remaining": [
-      "M10.4 distinct hydrated workspace and explicit reconciliation acceptance remains a dependency before M10.5 can be complete.",
-      "Add broader delivery-permutation coverage for every mutable AgentStore catalog and ReviewStore tombstone/edit and reply/reply races.",
+      "M10.4 source acceptance is implemented; its repository-wide cmake-blocked lanes remain a dependency before M10.5 can be complete.",
+      "Retain the complete forward, reverse and duplicate delivery matrix for all mutable AgentStore catalogs and ReviewStore tombstone/edit and reply/reply races.",
       "The repository-wide contracts, check, test and build lanes that compile Kingfisher Vectorscan require cmake on this host.",
       "M10.6 bootstrap and migration and M10.7 worker, outage and real RustFS qualification remain outstanding."
     ],

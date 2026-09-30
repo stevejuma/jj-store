@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { execFileSync } from "node:child_process";
 
 export const ledgerPath = "spec/src/milestones.md";
+const jjOutputLimit = 16 * 1024 * 1024;
 const statuses = new Set([
   "Planned",
   "In progress",
@@ -217,6 +218,7 @@ export function run(root) {
     execFileSync("jj", ["--no-pager", "--color=never", ...args], {
       cwd: root,
       encoding: "utf8",
+      maxBuffer: jjOutputLimit,
       stdio: ["ignore", "pipe", "pipe"],
     });
   const rev = process.env.JJ_STORE_CHECK_REVISION ?? "@";

@@ -144,7 +144,9 @@ identity or a fixed omission state.
 Evidence entries can explicitly identify removed files and retired named tests.
 The progress checker accepts historical references only when a later entry
 records the exact removal, verifies removed files are absent and keeps every
-other historical evidence path and named regression live.
+other historical evidence path and named regression live. Its Jujutsu reads use
+a fixed 16 MiB output ceiling so the single growing ledger can be validated
+without an unbounded child-process buffer.
 
 Server composition has an explicit layer in the boundary checker. Regression
 coverage rejects dependencies on CLI presentation and direct upstream JJ types,

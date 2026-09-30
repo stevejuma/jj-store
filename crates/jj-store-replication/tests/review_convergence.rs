@@ -262,6 +262,39 @@ async fn merge_branches(first: &Replica, second: &Replica, seed: u8, reverse: bo
     destination
 }
 
+async fn assert_duplicate_replay(
+    destination: &Replica,
+    first: &Replica,
+    second: &Replica,
+    seed: u8,
+) {
+    let before = destination.coordinator.read().await.unwrap();
+    let mut origins = unique_origins(
+        first
+            .origins()
+            .await
+            .into_iter()
+            .chain(second.origins().await),
+    );
+    origins.reverse();
+    let ApplyOriginsOutcomeV1::Applied(replayed) = destination.apply(seed, origins).await else {
+        panic!("duplicate origin lookup should complete")
+    };
+    assert_eq!(replayed.publication_position, None);
+    assert_eq!(
+        before.manifest().domains().unwrap().review,
+        destination
+            .coordinator
+            .read()
+            .await
+            .unwrap()
+            .manifest()
+            .domains()
+            .unwrap()
+            .review
+    );
+}
+
 #[tokio::test]
 async fn concurrent_comment_edits_retain_all_maximal_revisions_and_converge() {
     let (source, created) = baseline().await;
@@ -604,4 +637,179 @@ async fn unseen_reply_and_concurrent_reopen_keep_workflow_open() {
     };
     assert_eq!(thread.status, ThreadStatusV1::Open);
     assert!(thread.selected_workflow_actions.is_empty());
+}
+
+#[tokio::test]
+async fn concurrent_tombstone_and_edit_preserve_both_maximal_revisions() {
+    let (source, created) = baseline().await;
+    let tombstone_branch = branch_from(&source, 160).await;
+    let edit_branch = branch_from(&source, 170).await;
+    let initial_revision =
+        CommentRevisionId::from_slice(created.comment_revision.unwrap().id.as_bytes()).unwrap();
+    publish(
+        &tombstone_branch,
+        181,
+        ReviewCommandV1::TombstoneComment {
+            comment_id: created.comment_id.unwrap(),
+            expected_revision_id: initial_revision,
+            reason: Some("removed locally".into()),
+        },
+    )
+    .await;
+    publish(
+        &edit_branch,
+        182,
+        ReviewCommandV1::EditComment {
+            comment_id: created.comment_id.unwrap(),
+            expected_revision_id: initial_revision,
+            replacement_body: body("edited concurrently"),
+        },
+    )
+    .await;
+
+    let forward = merge_branches(&tombstone_branch, &edit_branch, 190, false).await;
+    let reverse = merge_branches(&tombstone_branch, &edit_branch, 200, true).await;
+    assert_eq!(
+        forward
+            .coordinator
+            .read()
+            .await
+            .unwrap()
+            .manifest()
+            .domains()
+            .unwrap()
+            .review
+            .root,
+        reverse
+            .coordinator
+            .read()
+            .await
+            .unwrap()
+            .manifest()
+            .domains()
+            .unwrap()
+            .review
+            .root
+    );
+
+    let store = forward.review_store().await;
+    let selected = store
+        .lookup_thread(created.thread_id)
+        .await
+        .unwrap()
+        .unwrap();
+    let ReviewObjectV1::ThreadMerge(thread) = store.read_object(selected).await.unwrap() else {
+        panic!("tombstone/edit race should select an explicit thread merge")
+    };
+    let selected_revision = thread
+        .comments
+        .iter()
+        .find(|selection| selection.comment_id == created.comment_id.unwrap())
+        .unwrap()
+        .revision;
+    let ReviewObjectV1::CommentConflict(conflict) =
+        store.read_object(selected_revision).await.unwrap()
+    else {
+        panic!("tombstone/edit race should select an explicit comment conflict")
+    };
+    assert_eq!(conflict.alternatives.len(), 2);
+    let mut visible = 0;
+    let mut tombstoned = 0;
+    for alternative in conflict.alternatives {
+        let ReviewObjectV1::CommentRevision(revision) =
+            store.read_object(alternative).await.unwrap()
+        else {
+            panic!("comment conflict alternative should be a revision")
+        };
+        match revision.content {
+            CommentRevisionContentV1::Visible { .. } => visible += 1,
+            CommentRevisionContentV1::Tombstoned { .. } => tombstoned += 1,
+            CommentRevisionContentV1::Hidden { .. } => {}
+        }
+    }
+    assert_eq!((visible, tombstoned), (1, 1));
+    assert_duplicate_replay(&forward, &tombstone_branch, &edit_branch, 30).await;
+}
+
+#[tokio::test]
+async fn concurrent_replies_preserve_both_children_and_converge() {
+    let (source, created) = baseline().await;
+    let first_branch = branch_from(&source, 220).await;
+    let second_branch = branch_from(&source, 230).await;
+    let first_reply = publish(
+        &first_branch,
+        241,
+        ReviewCommandV1::AppendReply {
+            thread_id: created.thread_id,
+            expected_workflow_version: 1,
+            parent_comment_id: created.comment_id,
+            body: body("first concurrent reply"),
+        },
+    )
+    .await;
+    let second_reply = publish(
+        &second_branch,
+        242,
+        ReviewCommandV1::AppendReply {
+            thread_id: created.thread_id,
+            expected_workflow_version: 1,
+            parent_comment_id: created.comment_id,
+            body: body("second concurrent reply"),
+        },
+    )
+    .await;
+
+    let forward = merge_branches(&first_branch, &second_branch, 250, false).await;
+    let reverse = merge_branches(&first_branch, &second_branch, 4, true).await;
+    assert_eq!(
+        forward
+            .coordinator
+            .read()
+            .await
+            .unwrap()
+            .manifest()
+            .domains()
+            .unwrap()
+            .review
+            .root,
+        reverse
+            .coordinator
+            .read()
+            .await
+            .unwrap()
+            .manifest()
+            .domains()
+            .unwrap()
+            .review
+            .root
+    );
+
+    let store = forward.review_store().await;
+    let selected = store
+        .lookup_thread(created.thread_id)
+        .await
+        .unwrap()
+        .unwrap();
+    let ReviewObjectV1::ThreadMerge(thread) = store.read_object(selected).await.unwrap() else {
+        panic!("concurrent replies should select an explicit thread merge")
+    };
+    assert_eq!(thread.comments.len(), 3);
+    let first_id = first_reply.comment_id.unwrap();
+    let second_id = second_reply.comment_id.unwrap();
+    assert_ne!(first_id, second_id);
+    for reply_id in [first_id, second_id] {
+        let selection = thread
+            .comments
+            .iter()
+            .find(|selection| selection.comment_id == reply_id)
+            .unwrap();
+        let ReviewObjectV1::CommentRevision(revision) =
+            store.read_object(selection.revision).await.unwrap()
+        else {
+            panic!("reply selection should remain a comment revision")
+        };
+        assert_eq!(selection.parent_comment_id, created.comment_id);
+        assert_eq!(revision.comment_id, reply_id);
+    }
+    assert_duplicate_replay(&forward, &first_branch, &second_branch, 40).await;
 }
