@@ -5,10 +5,11 @@ use jj_agent::{
 };
 use jj_store_jj::{objects::NativeObjects, policy::Protection};
 use jj_store_model as m;
-use jj_store_object::{ObjectStore, WriteOutcome, memory::MemoryStore};
+use jj_store_object::{Download, ObjectStore, StagedUpload, WriteOutcome, memory::MemoryStore};
 use jj_store_replication::{
-    ApplyOriginsTransportRequestV1, FeedCursorV1, FeedRequestV1, NegotiateReplicaV1,
-    OfferOriginsRequestV1, OriginClosureRequestV1, PeerCheckpointStore, ReplicaCapabilitiesV1,
+    ApplyOriginsTransportRequestV1, EndpointFailure, EndpointResult, FeedCursorV1, FeedRequestV1,
+    NegotiateReplicaV1, OfferOriginsRequestV1, OriginClosureRequestV1, PeerCheckpointStore,
+    ReplicaCapabilitiesV1, ReplicationEndpoint, ReplicationWorker, WorkerLimits,
 };
 use jj_store_rpc::{
     client::{NativeClient, Options},
@@ -27,7 +28,13 @@ use jj_store_wal::{
         Snapshot,
     },
 };
-use std::{sync::Arc, time::Duration};
+use std::{
+    sync::{
+        Arc, Mutex,
+        atomic::{AtomicBool, Ordering},
+    },
+    time::Duration,
+};
 
 const REPOSITORY: m::RepositoryId = m::RepositoryId::new([41; 16]);
 
@@ -157,6 +164,152 @@ fn batch() -> SanitizedObservationBatchV1 {
             )
             .unwrap(),
         }],
+    }
+}
+
+#[derive(Clone)]
+struct RpcEndpoint {
+    client: NativeClient,
+    fail_apply_once: Arc<AtomicBool>,
+    apply_ids: Arc<Mutex<Vec<(m::RequestId, m::PublicationId)>>>,
+}
+
+impl RpcEndpoint {
+    fn new(client: NativeClient) -> Self {
+        Self {
+            client,
+            fail_apply_once: Arc::new(AtomicBool::new(false)),
+            apply_ids: Arc::new(Mutex::new(Vec::new())),
+        }
+    }
+
+    fn fail_next_apply_before_send(&self) {
+        self.fail_apply_once.store(true, Ordering::SeqCst);
+    }
+
+    fn apply_ids(&self) -> Vec<(m::RequestId, m::PublicationId)> {
+        self.apply_ids.lock().unwrap().clone()
+    }
+}
+
+fn endpoint_error(operation: &'static str, status: tonic::Status) -> EndpointFailure {
+    use tonic::Code;
+    if matches!(
+        status.code(),
+        Code::Cancelled
+            | Code::Unknown
+            | Code::DeadlineExceeded
+            | Code::ResourceExhausted
+            | Code::Aborted
+            | Code::Internal
+            | Code::Unavailable
+    ) {
+        EndpointFailure::transient(operation)
+    } else {
+        EndpointFailure::permanent(operation)
+    }
+}
+
+#[async_trait::async_trait]
+impl ReplicationEndpoint for RpcEndpoint {
+    fn repository(&self) -> m::RepositoryId {
+        self.client.repository()
+    }
+
+    async fn negotiate(
+        &self,
+        request: &jj_store_replication::NegotiateReplicaV1,
+    ) -> EndpointResult<jj_store_replication::ReplicaNegotiationV1> {
+        self.client
+            .negotiate_replica(request)
+            .await
+            .map_err(|status| endpoint_error("negotiate", status))
+    }
+
+    async fn feed(
+        &self,
+        request: &jj_store_replication::FeedRequestV1,
+    ) -> EndpointResult<jj_store_replication::FeedResponseV1> {
+        self.client
+            .committed_feed(request)
+            .await
+            .map_err(|status| endpoint_error("feed", status))
+    }
+
+    async fn offer(
+        &self,
+        request: &jj_store_replication::OfferOriginsRequestV1,
+    ) -> EndpointResult<jj_store_replication::OfferOriginsResponseV1> {
+        self.client
+            .offer_origins(request)
+            .await
+            .map_err(|status| endpoint_error("offer", status))
+    }
+
+    async fn closure(
+        &self,
+        request: &jj_store_replication::OriginClosureRequestV1,
+    ) -> EndpointResult<jj_store_replication::OriginClosureResponseV1> {
+        self.client
+            .origin_closure(request)
+            .await
+            .map_err(|status| endpoint_error("closure", status))
+    }
+
+    async fn read_native(&self, key: m::ObjectKey) -> EndpointResult<Download> {
+        self.client
+            .read(key)
+            .await
+            .map_err(|status| endpoint_error("read native", status))
+    }
+
+    async fn write_native(
+        &self,
+        key: m::ObjectKey,
+        upload: &StagedUpload,
+    ) -> EndpointResult<WriteOutcome> {
+        self.client
+            .upload(key, upload)
+            .await
+            .map_err(|status| endpoint_error("write native", status))
+    }
+
+    async fn read_control(
+        &self,
+        reference: jj_store_wal::records::RecordRef,
+    ) -> EndpointResult<Vec<u8>> {
+        self.client
+            .read_control_record(reference)
+            .await
+            .map_err(|status| endpoint_error("read control", status))
+    }
+
+    async fn write_control(
+        &self,
+        reference: jj_store_wal::records::RecordRef,
+        bytes: Vec<u8>,
+    ) -> EndpointResult<WriteOutcome> {
+        self.client
+            .write_control_record(reference, bytes)
+            .await
+            .map_err(|status| endpoint_error("write control", status))
+    }
+
+    async fn apply(
+        &self,
+        request: &jj_store_replication::ApplyOriginsTransportRequestV1,
+    ) -> EndpointResult<jj_store_replication::ApplyOriginsTransportResponseV1> {
+        self.apply_ids
+            .lock()
+            .unwrap()
+            .push((request.request_id, request.publication_id));
+        if self.fail_apply_once.swap(false, Ordering::SeqCst) {
+            return Err(EndpointFailure::transient("apply before send"));
+        }
+        self.client
+            .apply_origins(request)
+            .await
+            .map_err(|status| endpoint_error("apply", status))
     }
 }
 
@@ -345,4 +498,189 @@ async fn authenticated_rpc_applies_a_closure_and_checkpoints_only_after_ack() {
 
     source.stop().await;
     restarted.stop().await;
+}
+
+#[tokio::test]
+async fn bounded_worker_retries_with_stable_identity_and_converges_both_directions() {
+    let local_store: Arc<dyn ObjectStore> = Arc::new(MemoryStore::default());
+    let peer_store: Arc<dyn ObjectStore> = Arc::new(MemoryStore::default());
+    let local_replica = m::ReplicaId::new([61; 16]);
+    let peer_replica = m::ReplicaId::new([62; 16]);
+    let principal = m::PrincipalId::new([63; 16]);
+    let (local_token, local_objects) = initialize(
+        local_store.clone(),
+        m::EpochId::new([64; 16]),
+        local_replica,
+        m::WriterEpoch::new([65; 16]),
+        principal,
+    )
+    .await;
+    let (peer_token, peer_objects) = initialize(
+        peer_store.clone(),
+        m::EpochId::new([66; 16]),
+        peer_replica,
+        m::WriterEpoch::new([67; 16]),
+        principal,
+    )
+    .await;
+    let local = start(local_store.clone(), local_objects, local_token).await;
+    let peer = start(peer_store, peer_objects, peer_token).await;
+
+    let local_prepared = local
+        .client
+        .prepare_agent_capture(
+            m::RequestId::new([68; 16]),
+            m::PublicationId::new([69; 16]),
+            &NormalizerProfileV1::codex_0_156_1(),
+            &batch(),
+            b"local capture".to_vec(),
+        )
+        .await
+        .unwrap();
+    local
+        .client
+        .publish_agent_delta(&local_prepared)
+        .await
+        .unwrap();
+    let mut peer_batch = batch();
+    peer_batch.batch_id = CaptureBatchId::new([70; 16]);
+    peer_batch.source_instance_id = SourceInstanceId::new([71; 16]);
+    peer_batch.observations[0].observation_id = ObservationId::new([72; 16]);
+    let peer_prepared = peer
+        .client
+        .prepare_agent_capture(
+            m::RequestId::new([73; 16]),
+            m::PublicationId::new([74; 16]),
+            &NormalizerProfileV1::codex_0_156_1(),
+            &peer_batch,
+            b"peer capture".to_vec(),
+        )
+        .await
+        .unwrap();
+    peer.client
+        .publish_agent_delta(&peer_prepared)
+        .await
+        .unwrap();
+
+    let local_negotiation = local
+        .client
+        .negotiate_replica(&NegotiateReplicaV1 {
+            schema_version: 1,
+            repository: REPOSITORY,
+            peer: peer_replica,
+            capabilities: ReplicaCapabilitiesV1::default(),
+        })
+        .await
+        .unwrap();
+    let local_origin = local
+        .client
+        .committed_feed(&FeedRequestV1 {
+            schema_version: 1,
+            source_replica: local_replica,
+            log_epoch: local_negotiation.log_epoch,
+            after: m::WalPosition(0),
+            upper_bound: local_negotiation.feed_upper_bound,
+            limit: 16,
+        })
+        .await
+        .unwrap()
+        .page
+        .origins[0]
+        .envelope
+        .clone();
+    let peer_negotiation = peer
+        .client
+        .negotiate_replica(&NegotiateReplicaV1 {
+            schema_version: 1,
+            repository: REPOSITORY,
+            peer: local_replica,
+            capabilities: ReplicaCapabilitiesV1::default(),
+        })
+        .await
+        .unwrap();
+    let peer_origin = peer
+        .client
+        .committed_feed(&FeedRequestV1 {
+            schema_version: 1,
+            source_replica: peer_replica,
+            log_epoch: peer_negotiation.log_epoch,
+            after: m::WalPosition(0),
+            upper_bound: peer_negotiation.feed_upper_bound,
+            limit: 16,
+        })
+        .await
+        .unwrap()
+        .page
+        .origins[0]
+        .envelope
+        .clone();
+
+    let local_endpoint = RpcEndpoint::new(local.client.clone());
+    let peer_endpoint = RpcEndpoint::new(peer.client.clone());
+    local_endpoint.fail_next_apply_before_send();
+    let checkpoints =
+        PeerCheckpointStore::new(local_store, REPOSITORY, local_replica, peer_replica).unwrap();
+    let mut worker = ReplicationWorker::new(
+        REPOSITORY,
+        local_replica,
+        peer_replica,
+        local_endpoint.clone(),
+        peer_endpoint,
+        checkpoints.clone(),
+        WorkerLimits {
+            poll_interval: Duration::from_millis(10),
+            ..WorkerLimits::default()
+        },
+    )
+    .unwrap();
+    let barrier = worker.capture_barrier().await.unwrap();
+
+    assert!(worker.step().await.is_err());
+    assert!(checkpoints.load().await.unwrap().is_none());
+    let pushed = worker.step().await.unwrap();
+    assert_eq!(pushed.direction, jj_store_replication::Direction::Push);
+    assert_eq!(pushed.transferred_origins, 1);
+    let pulled = worker.step().await.unwrap();
+    assert_eq!(pulled.direction, jj_store_replication::Direction::Pull);
+    assert_eq!(pulled.transferred_origins, 1);
+    let ids = local_endpoint.apply_ids();
+    assert_eq!(ids.len(), 2);
+    assert_eq!(ids[0], ids[1]);
+    let status = worker.handle().status();
+    assert!(barrier.satisfied_by(&status));
+    assert_eq!(status.checkpoint_revision, 2);
+
+    let local_offer = local
+        .client
+        .offer_origins(&OfferOriginsRequestV1 {
+            schema_version: 1,
+            offers: vec![wal::publication::OriginOfferV1 {
+                origin_key: peer_origin.publication.origin_key,
+                origin_digest: peer_origin.origin_digest,
+            }],
+        })
+        .await
+        .unwrap();
+    assert!(matches!(
+        local_offer.results.as_slice(),
+        [wal::publication::OriginOfferResultV1::Known { .. }]
+    ));
+    let peer_offer = peer
+        .client
+        .offer_origins(&OfferOriginsRequestV1 {
+            schema_version: 1,
+            offers: vec![wal::publication::OriginOfferV1 {
+                origin_key: local_origin.publication.origin_key,
+                origin_digest: local_origin.origin_digest,
+            }],
+        })
+        .await
+        .unwrap();
+    assert!(matches!(
+        peer_offer.results.as_slice(),
+        [wal::publication::OriginOfferResultV1::Known { .. }]
+    ));
+
+    local.stop().await;
+    peer.stop().await;
 }

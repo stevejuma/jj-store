@@ -7,6 +7,7 @@ license.workspace = true
 publish = false
 
 [dependencies]
+async-trait = "0.1"
 jj-store-model.workspace = true
 jj-store-object.workspace = true
 jj-store-wal.workspace = true
@@ -14,7 +15,7 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 sha2 = "0.10"
 thiserror = "2"
-tokio = { version = "1", features = ["io-util"] }
+tokio = { version = "1", features = ["io-util", "sync", "time"] }
 
 [dev-dependencies]
 async-trait = "0.1"

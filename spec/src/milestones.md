@@ -72,7 +72,7 @@ adds evidence here in its enclosing Jujutsu change.
 | M10         | In progress | M9.6        | JST-REPL-001,JST-REPL-002,JST-REPL-003,JST-REPL-004,JST-REPL-005,JST-REPL-006,JST-REPL-007,JST-REPL-008,JST-REPL-009,JST-REPL-010,JST-REPL-011,JST-REPL-012,JST-REPL-013 | Complete local-first writable replication and existing-workspace migration                                          | Complete worker orchestration, reconciliation and migration | E-M10-001,E-M10-002,E-M10-003,E-M10-004,E-M10-005                                                                                                                                                                                                                                                                                                              |
 | M10.1       | In progress | M9.6        | JST-REPL-001,JST-REPL-002,JST-REPL-013                                                                                                                                   | Audit source pins and isolate every foreground storage path from upstream capability                                | Implement M10.2 origin authority                            | E-M10-001                                                                                                                                                                                                                                                                                                                                                      |
 | M10.2       | In progress | M10.1       | JST-REPL-002,JST-REPL-003,JST-REPL-005                                                                                                                                   | Durable origin streams, causal catalogs and authored publication integration                                        | Implement verified receiver                                 | E-M10-002                                                                                                                                                                                                                                                                                                                                                      |
-| M10.3       | In progress | M10.2       | JST-REPL-004,JST-REPL-005,JST-REPL-006                                                                                                                                   | Verified one-way transfer, atomic import, durable acknowledgements and lost-response recovery                       | Implement bounded push/pull orchestration                   | E-M10-003,E-M10-005                                                                                                                                                                                                                                                                                                                                            |
+| M10.3       | In progress | M10.2       | JST-REPL-004,JST-REPL-005,JST-REPL-006                                                                                                                                   | Verified one-way transfer, atomic import, durable acknowledgements and lost-response recovery                       | Integrate worker lifecycle and outage qualification         | E-M10-003,E-M10-005,E-M10-006                                                                                                                                                                                                                                                                                                                                  |
 | M10.4       | In progress | M10.3       | JST-REPL-007,JST-REPL-013                                                                                                                                                | Bidirectional native operation-head integration, distinct workspaces and explicit reconciliation                    | Add distinct workspace and reconciliation acceptance        | E-M10-003                                                                                                                                                                                                                                                                                                                                                      |
 | M10.5       | In progress | M10.4       | JST-REPL-008,JST-REPL-009,JST-REPL-013                                                                                                                                   | AgentStore and ReviewStore accepted-fact convergence under reordered and duplicate delivery                         | Complete permutation and aggregate qualification            | E-M10-004                                                                                                                                                                                                                                                                                                                                                      |
 | M10.6       | Planned     | M10.5       | JST-REPL-004,JST-REPL-010,JST-REPL-011                                                                                                                                   | Complete snapshot-plus-tail bootstrap, format-2 seed upgrade and non-destructive existing-workspace migration       | Implement controls and qualification                        | -                                                                                                                                                                                                                                                                                                                                                              |
@@ -17098,6 +17098,111 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Rust 1.98.1; jj 0.45.1; tonic/prost 0.14.6; manifest format 2; replication protocol, peer checkpoint, origin and apply-origins schema v1.",
     "formats": "Adds authenticated native RPC methods for negotiation, fixed-bound feeds, offers, closures and apply; streamed immutable control-record IDs; server-derived import principals; and a repository/local-replica/peer-replica scoped CAS checkpoint. Manifests, WAL candidates, settings, receipts and replication authority records remain excluded from control transfer."
+  },
+  {
+    "id": "E-M10-006",
+    "tasks": [
+      "M10",
+      "M10.3",
+      "M10.7"
+    ],
+    "date": "2026-09-30",
+    "kind": "bounded-bidirectional-replication-worker",
+    "files": [
+      "crates/jj-store-replication/Cargo.toml",
+      "crates/jj-store-replication/src/lib.rs",
+      "crates/jj-store-replication/src/worker.rs",
+      "crates/jj-store-rpc/tests/replication.rs",
+      "spec/src/milestones.md",
+      "spec/src/replication.md"
+    ],
+    "tests": [
+      "crates/jj-store-rpc/tests/replication.rs#bounded_worker_retries_with_stable_identity_and_converges_both_directions"
+    ],
+    "runs": [
+      {
+        "command": "cargo check -p jj-store-replication --all-targets --locked",
+        "result": "fail",
+        "failures": 12,
+        "note": "The first compile found the new endpoint failure lacked the intended Error conversion and one unsupported thiserror field expression. The error boundary was corrected without weakening endpoint classification."
+      },
+      {
+        "command": "cargo check -p jj-store-replication --all-targets --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "The bounded worker, independent direction circuits, durable barrier status and endpoint interface compile for every replication target."
+      },
+      {
+        "command": "cargo test -p jj-store-replication -p jj-store-rpc --test replication --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "The first worker acceptance rejected a correctly forwarded origin because it incorrectly equated original author identity with the feed delivery replica. Validation now binds the cursor to the delivery issuer while preserving the original origin key."
+      },
+      {
+        "command": "cargo test -p jj-store-replication -p jj-store-rpc --test replication --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both authenticated RPC cases pass, including two independent writers, bounded alternating push and pull, forwarded origins, a failed pre-send apply, stable retry identities, durable cursors and a captured finite barrier."
+      },
+      {
+        "command": "cargo test -p jj-store-replication -p jj-store-rpc --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All eleven replication integration cases and all seven RPC unit/integration cases pass together."
+      },
+      {
+        "command": "cargo clippy -p jj-store-replication -p jj-store-rpc --all-targets --locked -- -D warnings",
+        "result": "fail",
+        "failures": 1,
+        "note": "Warnings-as-errors requested a derived Default implementation for the private circuit state; the mechanical correction was applied."
+      },
+      {
+        "command": "cargo clippy -p jj-store-replication -p jj-store-rpc --all-targets --locked -- -D warnings && pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "The worker and RPC targets pass warnings-as-errors and all 14 package boundaries remain valid."
+      },
+      {
+        "command": "pnpm spec:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "Specification validation and cold catalog browser acceptance passed; the later browser fixture capture stopped in the existing Kingfisher Vectorscan build because cmake is unavailable."
+      },
+      {
+        "command": "pnpm check",
+        "result": "fail",
+        "failures": 1,
+        "note": "Specification, boundary, architecture, progress, Rust formatting and embedded RustFS clippy lanes passed; contracts:check stopped in Kingfisher Vectorscan because cmake is unavailable."
+      },
+      {
+        "command": "pnpm test",
+        "result": "fail",
+        "failures": 1,
+        "note": "All 29 governance tests, storage harness self-tests and embedded/managed RustFS restart cases passed; LocalTrusted compilation stopped in Kingfisher Vectorscan because cmake is unavailable."
+      },
+      {
+        "command": "pnpm build",
+        "result": "fail",
+        "failures": 1,
+        "note": "Storybook, web and embedded RustFS builds passed; the workspace Rust build stopped in Kingfisher Vectorscan because cmake is unavailable."
+      },
+      {
+        "command": "cargo fmt --all && pnpm exec prettier --write spec/src/milestones.md spec/src/replication.md && cargo test -p jj-store-replication -p jj-store-rpc --locked && cargo clippy -p jj-store-replication -p jj-store-rpc --all-targets --locked -- -D warnings && pnpm format:check && pnpm spec:validate && pnpm check:progress && pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "All eleven replication integration cases, seven RPC cases, warnings-as-errors targets, formatting, specification validation, progress validation and 14 package boundaries pass together after the worker and ledger updates."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "M10.4 distinct hydrated workspace and explicit native reconciliation acceptance remain outstanding.",
+      "M10.5 still requires broader AgentStore and ReviewStore delivery permutations.",
+      "M10.6 seed, snapshot-plus-tail bootstrap and non-destructive migration remain outstanding.",
+      "M10.7 still requires production lifecycle composition, foreground outage proof, SSE/search status integration, disk-pressure qualification and cold real RustFS evidence.",
+      "The repository-wide contracts, check, test and build lanes that compile Kingfisher Vectorscan require cmake on this host."
+    ],
+    "versions": "Rust 1.98.1; jj 0.45.1; tonic/prost 0.14.6; manifest format 2; replication protocol, peer checkpoint, origin and apply-origins schema v1.",
+    "formats": "Adds a transport-neutral bidirectional worker with fixed-bound pages, stable derived apply identities, bounded disk-spooled native transfer, exact control transfer, independent push/pull retry circuits, deterministic jitter, pause/wake status and finite-frontier barriers."
   }
 ]
 ```

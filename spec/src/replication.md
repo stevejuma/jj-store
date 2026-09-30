@@ -98,6 +98,19 @@ prior progress. An unknown storage response is successful only when a readback
 returns the exact proposed checkpoint. This pointer is not selected by the
 repository manifest and never produces an origin or content WAL event.
 
+The bidirectional worker alternates bounded pull and push pages. Each direction
+negotiates an issuer, epoch and finite upper bound, offers every delivered
+origin, transfers only missing digest-verified closure objects through bounded
+disk spools and advances its checkpoint only after durable apply receipts or
+exact already-known receipts. Delivery replicas may forward origins authored by
+another replica; the feed cursor remains bound to the delivery issuer while the
+origin key and digest remain unchanged. Apply request and publication IDs are
+derived from the exact missing origin batch and therefore remain stable when a
+request fails before acknowledgement. Push and pull have independent retry and
+circuit state, deterministic bounded jitter, alternating fairness, pause and
+wake controls, observable status and waits against explicitly captured finite
+frontiers.
+
 `apply_origins` validates the complete native and control closure before its CAS
 loop. Within that loop it authorizes the request, resolves a stable import
 receipt before reducing new data, rejects origin-key digest reuse and orders
