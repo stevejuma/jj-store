@@ -494,11 +494,12 @@ bookmarks and workspaces, and the selected full commit ID remains the typed
 mutation value. Commit-selector avatars and row bodies align vertically with the
 trigger chevron, including descriptionless commits. Non-interactive GIT/JJ
 labels use the compact indicator-size oval chips in both the selected button and
-searchable options, with 10px labels one pixel larger than the revision-ID copy
-buttons. Fixed Git and JJ columns align the chips across options regardless of
-message length or a missing change ID. Relative commit time sits at the bottom
-right alongside bookmark/workspace metadata. Repository navigation sections have
-no top margin.
+searchable options, with equal badge widths and 10px labels one pixel larger
+than the revision-ID copy buttons. A fixed identifier column stacks Git above JJ
+and aligns the chips across options regardless of message length, reserving the
+JJ row when its change ID is absent. Relative commit time sits directly beneath
+the title at the same left edge, with bookmark/workspace chips alongside it on
+that row. Repository navigation sections have no top margin.
 
 ## Workspace browsing context
 

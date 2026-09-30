@@ -52,6 +52,7 @@ adds evidence here in its enclosing Jujutsu change.
 | M4.24       | Done        | M4.23,M4.17 | JST-UI-002,JST-UI-009,JST-API-005                                                                                                                                        | Conflict sheet, highlighted editor and accept-all controls; focused and cold browser evidence                                  | Retain merge and shell regressions; visual review remains separate            | E-UI-037                                                                                                                                                                                                                                                                                                                                                       |
 | M4.25       | Done        | M4.23       | JST-UI-008,JST-API-005                                                                                                                                                   | Aligned selector ID columns, smaller labels and bottom-right time; focused interaction/accessibility acceptance                | Retain picker regressions; visual review stays separate                       | E-UI-038                                                                                                                                                                                                                                                                                                                                                       |
 | M4.26       | Done        | M4.24       | JST-UI-002,JST-UI-009,JST-API-005                                                                                                                                        | Full-height conflict file browser and header actions; focused and cold browser acceptance                                      | Retain conflict layout/draft regressions; visual review stays separate        | E-UI-039                                                                                                                                                                                                                                                                                                                                                       |
+| M4.27       | Done        | M4.25       | JST-UI-008,JST-API-005                                                                                                                                                   | Commit selector time/chips beneath title and stacked Git/JJ column; focused interaction/accessibility acceptance               | Retain picker regressions; visual review stays separate                       | E-UI-040                                                                                                                                                                                                                                                                                                                                                       |
 | M5          | Done        | M4.1        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                                                                                                                      | Authenticated typed commands and shared RPC policy                                                                             | Retain mutation conformance; proceed to M6                                    | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-M5-005,E-M5-006,E-M5-007,E-M5-008,E-UI-028                                                                                                                                                                                                                                                                   |
 | M5.1        | Done        | M4.1        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                                                                                                                      | Basic changes/refs/reconcile; preview receipt and semantic policy                                                              | Retain basic mutation acceptance                                              | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-UI-028                                                                                                                                                                                                                                                                                                       |
 | M5.2        | Done        | M5.1        | JST-MUT-003                                                                                                                                                              | Full abandon descendant bookmark workspace/evolution parity                                                                    | Retain abandon acceptance                                                     | E-M5-005                                                                                                                                                                                                                                                                                                                                                       |
@@ -21507,6 +21508,318 @@ and named tests are checked by the progress gate.
     "versions": "jj 0.45.1; Node 24.10.0; pnpm 10.32.1; Svelte 5.57.1; Storybook 10.5.7; Vitest 4.1.11; Vite 8.3.1. Existing dependency resolution unchanged; no sibling or package manifest edits.",
     "formats": "Consumer presentation only. Embedded bounded AppShell owns local body-sidebar registration so mobile tree navigation cannot teleport into the inert underlying application. Repository file tree and view-mode controls are reused unchanged. Compact header icons own exact active-path delete/stage, complete atomic Preview and prepared/recovery actions. Close is the sole dismissal button; per-path drafts stay bound above hidden editor instances through browser toggles and preview/back. Pending upload/mutation and prepared-result locks remain. No native identity, object, HTTP, manifest, WAL, upload, receipt or credential format changes.",
     "next": "Retain focused conflict, per-path draft, header action and mobile/body-layout acceptance; visual baseline approval remains separate."
+  },
+  {
+    "id": "E-UI-040",
+    "tasks": [
+      "M4.27"
+    ],
+    "date": "2026-10-01",
+    "kind": "commit-selector-stacked-identifiers",
+    "revision": "Enclosing Jujutsu change oxtsvwrl.",
+    "before": "Clean working change. Selector used side-by-side Git/JJ columns and bottom-right relative time. Updated geometry regression fails on time/title left-edge difference of 545.609375px; existing avatar/oval-chip alignment story passes. User refinement keeps bookmark/workspace chips alongside time. Expanded same-row assertion fails with 25.390625px vertical center difference before that adjustment; other picker story passes. User refinement gives GIT/JJ badges equal widths; expanded regression fails with a 5.578125px width difference before that styling adjustment.",
+    "files": [
+      "web/src/lib/ui/store-mutations/StoreMutationCommitTarget.svelte",
+      "catalog/components/store-mutations/StoreMutationCommitPicker.stories.svelte",
+      "spec/src/ui.md",
+      "spec/src/api.md",
+      "spec/src/verification.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-mutations/StoreMutationCommitPicker.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before: 1 failed, 1 passed; requested time-under-title alignment fails."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-mutations/StoreMutationCommitPicker.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "After: both Chromium interaction/accessibility stories pass; checks time below title at same left edge, one Git/JJ column with Git above JJ, missing-JJ row reservation, cross-row alignment, 10px oval chips, avatar/chevron centering and selection. Log .scratch/commit-picker-stacked-after.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-mutations/StoreMutationCommitPicker.stories.svelte catalog/components/store-mutations/StoreRepositoryActions.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "6 directly affected picker and mutation-form interaction/accessibility stories pass. Log .scratch/commit-picker-stacked-actions.log."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero errors/warnings. Log .scratch/commit-picker-stacked-web-check.log."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero errors/warnings; 75-module catalog boundary audit passes. Log .scratch/commit-picker-stacked-catalog-check.log."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "291-module production boundary and size audit passes."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Fresh UI build passes with existing nonfatal Design Core CSS minification and bundle-size warnings. No Rust build. Log .scratch/commit-picker-stacked-build.log."
+      },
+      {
+        "command": "node .scratch/restart-workspace-ui.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Owned demo ready at 127.0.0.1:7460; PID 47252. Existing explicit binaries and repository data preserved."
+      },
+      {
+        "command": "CUA live built-UI verification",
+        "result": "pass",
+        "failures": 0,
+        "note": "Hidden temporary tab 9 shows 12 loaded commit options. Every time is below its title with zero left-edge gap; Git/JJ both start at 904px with JJ below Git; labels remain 10px. Selected trigger shares the layout. Screenshot .scratch/commit-picker-stacked.png saved; temporary tab closed and user tabs preserved. No mutation preview/apply."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/ui/store-mutations/StoreMutationCommitTarget.svelte catalog/components/store-mutations/StoreMutationCommitPicker.stories.svelte spec/src/ui.md spec/src/api.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Production row, regression story and canonical chapters formatted."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/verification.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Evidence matrix and ledger formatted."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "4 validators, 18 chapters and 107 requirements pass."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "2 protected files and 3 canonical chapters pass same-change gate."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "80 tasks pass evidence bookkeeping audit."
+      },
+      {
+        "command": "pnpm spec:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Canonical mdBook HTML builds."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-mutations/StoreMutationCommitPicker.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Refinement before: 1 failed, 1 passed; bookmark/time centers differ by 25.390625px. Log .scratch/commit-picker-time-chips-before.log."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/ui/store-mutations/StoreMutationCommitTarget.svelte catalog/components/store-mutations/StoreMutationCommitPicker.stories.svelte spec/src/ui.md spec/src/api.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Refined presentation, story and canonical chapters formatted."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-mutations/StoreMutationCommitPicker.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Refinement after: both interaction/accessibility stories pass. Chips share the time row under title; Git/JJ stacked-column, empty/missing-JJ and font/shape alignment still pass. Log .scratch/commit-picker-time-chips-after.log."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Refined layout: zero errors/warnings. Log .scratch/commit-picker-time-chips-web-check.log."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Refined layout: zero errors/warnings; 75-module boundary audit passes. Log .scratch/commit-picker-time-chips-catalog-check.log."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Refined layout: 291-module architecture audit passes."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Refined UI build passes with existing nonfatal minification/bundle-size warnings. Log .scratch/commit-picker-time-chips-build.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-mutations/StoreMutationCommitPicker.stories.svelte catalog/components/store-mutations/StoreRepositoryActions.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final refined layout: 6 directly affected interaction/accessibility stories pass. Log .scratch/commit-picker-time-chips-actions.log."
+      },
+      {
+        "command": "node .scratch/restart-workspace-ui.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final built demo ready at 127.0.0.1:7460; PID 48341. Existing explicit binaries and data preserved."
+      },
+      {
+        "command": "CUA live built-UI verification",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final hidden tab 10 checks 12 loaded options; all five bookmark/workspace chips have zero vertical center gap from time. Git/JJ remain stacked in their aligned column, with time and chips under title in both picker and trigger. Screenshot .scratch/commit-picker-time-chips.png saved. Temporary tab closed; user tabs preserved. No mutation preview/apply."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Evidence ledger formatted."
+      },
+      {
+        "command": "pnpm exec prettier --check web/src/lib/ui/store-mutations/StoreMutationCommitTarget.svelte catalog/components/store-mutations/StoreMutationCommitPicker.stories.svelte spec/src/ui.md spec/src/api.md spec/src/verification.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "All six changed files pass formatting after inline-chip refinement."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Inline-chip refinement: 4 validators, 18 chapters and 107 requirements pass."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "Inline-chip refinement: 2 protected files and 3 canonical chapters pass."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Inline-chip refinement: 80 tasks pass evidence bookkeeping audit."
+      },
+      {
+        "command": "pnpm spec:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Inline-chip refinement: canonical mdBook HTML builds."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-mutations/StoreMutationCommitPicker.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Badge-width refinement before: 1 failed, 1 passed; width mismatch 5.578125px. Log .scratch/commit-picker-badge-width-before.log."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/ui/store-mutations/StoreMutationCommitTarget.svelte catalog/components/store-mutations/StoreMutationCommitPicker.stories.svelte spec/src/ui.md spec/src/api.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Equal badge width refinement formatted."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-mutations/StoreMutationCommitPicker.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Badge-width refinement after: both interaction/accessibility stories pass. Badge widths and code left edges match; time/chips share one row beneath title and stacked identifiers remain aligned. Log .scratch/commit-picker-badge-width-after.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-mutations/StoreMutationCommitPicker.stories.svelte catalog/components/store-mutations/StoreRepositoryActions.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final badge-width refinement: 6 directly affected interaction/accessibility stories pass. Log .scratch/commit-picker-badge-width-actions.log."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final badge-width refinement: zero errors/warnings. Log .scratch/commit-picker-badge-width-web-check.log."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final badge-width refinement: zero errors/warnings and 75-module boundary audit passes. Log .scratch/commit-picker-badge-width-catalog-check.log."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final badge-width refinement: 291-module architecture audit passes."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final badge-width refinement: fresh build passes with existing nonfatal minification/bundle-size warnings. Log .scratch/commit-picker-badge-width-build.log."
+      },
+      {
+        "command": "node .scratch/restart-workspace-ui.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final built demo ready at 127.0.0.1:7460; PID 49017; existing explicit binaries and data preserved."
+      },
+      {
+        "command": "CUA live built-UI verification",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final hidden tab 11: all 12 loaded options have 24px GIT and JJ badges and zero identifier-code left-edge difference. Title/time/chips and stacked Git/JJ remain visible in menu and button. Screenshot .scratch/commit-picker-final.png saved; tab closed and user tabs preserved. No mutation preview/apply."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final ledger formatted."
+      },
+      {
+        "command": "pnpm exec prettier --check web/src/lib/ui/store-mutations/StoreMutationCommitTarget.svelte catalog/components/store-mutations/StoreMutationCommitPicker.stories.svelte spec/src/ui.md spec/src/api.md spec/src/verification.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "All six final changed files pass formatting."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final layout: 4 validators, 18 chapters and 107 requirements pass."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final layout: 2 protected files and 3 canonical chapters pass same-change gate."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final layout: 80 tasks pass evidence bookkeeping audit."
+      },
+      {
+        "command": "pnpm spec:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final canonical mdBook HTML builds."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "deferred": [
+      "Changed stories remain visual-pending; human baseline approval is separate.",
+      "Root aggregate pnpm spec:check, pnpm check, pnpm test and pnpm build; unrelated UI suites; Rust, contract generation and real-RustFS qualification are out of scope under targeted UI-only policy."
+    ],
+    "versions": "jj 0.45.1; Node 24.10.0; pnpm 10.32.1; Svelte 5.57.1; Storybook 10.5.7; Vitest 4.1.11; Vite 8.3.1. Existing dependency resolution unchanged; no sibling or package manifest edits.",
+    "formats": "Presentation only. Selectable commit rows put relative time and bookmark/workspace chips together directly below title and stack Git above JJ in a fixed-width column, reserving a missing JJ row. GIT/JJ badges share a 1.5rem width to align identifier text; existing 10px Community chip token and oval indicator shape retained. Fixed copyable targets retain their metadata placement. Full bound native IDs, search, copy controls, mutation commands, HTTP/native object/manifest/WAL/receipt formats unchanged.",
+    "next": "Retain focused picker and direct mutation-form acceptance; visual baseline approval remains separate."
   }
 ]
 ```

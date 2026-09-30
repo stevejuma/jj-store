@@ -53,7 +53,7 @@
 />
 
 <Story
-  name="Aligned identifiers and bottom time"
+  name="Stacked identifiers and time below title"
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const page = within(canvasElement.ownerDocument.body);
@@ -63,19 +63,57 @@
     const referenceSize = parseFloat(getComputedStyle(reference).fontSize);
     const trigger = canvas.getByRole("combobox", { name: "Parent commit" });
     async function inspectMetadata(row: Element) {
-      const primary = row.querySelector(
-        ".store-mutation-commit-target__primary",
+      const title = row.querySelector(
+        ".store-mutation-commit-target__message",
       )!;
       const time = row.querySelector("time")!;
       await expect(time.getBoundingClientRect().top).toBeGreaterThanOrEqual(
-        primary.getBoundingClientRect().bottom,
+        title.getBoundingClientRect().bottom,
       );
       await expect(
         Math.abs(
-          time.getBoundingClientRect().right -
-            row.getBoundingClientRect().right,
+          time.getBoundingClientRect().left -
+            title.getBoundingClientRect().left,
         ),
       ).toBeLessThan(1);
+      for (const chip of row.querySelectorAll(
+        ".store-mutation-commit-target__bookmarks .community-chip",
+      )) {
+        await expect(Math.abs(center(chip) - center(time))).toBeLessThan(1);
+        await expect(chip.getBoundingClientRect().left).toBeGreaterThan(
+          time.getBoundingClientRect().right,
+        );
+      }
+      const ids = row.querySelector(".store-mutation-commit-target__ids")!;
+      const git = ids.querySelector('[data-id-kind="git"]')!;
+      const jj = ids.querySelector('[data-id-kind="jj"]');
+      await expect(ids.getBoundingClientRect().height).toBeGreaterThanOrEqual(
+        git.getBoundingClientRect().height * 2,
+      );
+      if (jj) {
+        await expect(
+          Math.abs(
+            git.querySelector(".community-chip")!.getBoundingClientRect()
+              .width -
+              jj.querySelector(".community-chip")!.getBoundingClientRect()
+                .width,
+          ),
+        ).toBeLessThan(1);
+        await expect(
+          Math.abs(
+            git.querySelector("code")!.getBoundingClientRect().left -
+              jj.querySelector("code")!.getBoundingClientRect().left,
+          ),
+        ).toBeLessThan(1);
+        await expect(
+          Math.abs(
+            git.getBoundingClientRect().left - jj.getBoundingClientRect().left,
+          ),
+        ).toBeLessThan(1);
+        await expect(jj.getBoundingClientRect().top).toBeGreaterThan(
+          git.getBoundingClientRect().bottom,
+        );
+      }
       for (const chip of row.querySelectorAll(
         ".store-mutation-commit-target__ids .community-chip",
       )) {
@@ -104,6 +142,9 @@
       }
     }
     await expect(positions.size).toBe(2);
+    await expect(
+      Math.abs(positions.get("GIT")! - positions.get("JJ")!),
+    ).toBeLessThan(1);
     await userEvent.click(options[1]!);
     await expect(trigger).toHaveTextContent("A much longer title");
     await inspectMetadata(

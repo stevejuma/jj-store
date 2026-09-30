@@ -34,6 +34,21 @@
   }
 </script>
 
+{#snippet bookmarkChips()}
+  {#if bookmarks.length || revision?.workspaces.length}
+    <span class="store-mutation-commit-target__bookmarks">
+      {#each bookmarks as bookmark (`${bookmark.name}:${bookmark.remote ?? "local"}`)}
+        <CommunityChip size="compact" variant="muted"
+          >{bookmarkLabel(bookmark)}</CommunityChip
+        >
+      {/each}
+      {#each revision?.workspaces ?? [] as workspace (workspace)}
+        <CommunityChip size="compact" tone="success">{workspace}</CommunityChip>
+      {/each}
+    </span>
+  {/if}
+{/snippet}
+
 <div
   class="store-mutation-commit-target"
   data-framed={framed || undefined}
@@ -47,10 +62,19 @@
   />
   <span class="store-mutation-commit-target__body">
     <span class="store-mutation-commit-target__primary">
-      <span
-        class="store-mutation-commit-target__message"
-        title={revision?.message}>{revision?.message ?? "Selected commit"}</span
-      >
+      <span class="store-mutation-commit-target__summary">
+        <span
+          class="store-mutation-commit-target__message"
+          title={revision?.message}
+          >{revision?.message ?? "Selected commit"}</span
+        >
+        {#if revision && !copyableIds}
+          <span class="store-mutation-commit-target__metadata">
+            <CommunityRelativeTime timestamp={revision.createdAt} {now} />
+            {@render bookmarkChips()}
+          </span>
+        {/if}
+      </span>
       {#if copyableIds}
         <CommunityProjectsRevisionGraphIds
           changeId={revision?.changeId}
@@ -87,22 +111,9 @@
         </span>
       {/if}
     </span>
-    {#if revision}
+    {#if revision && copyableIds}
       <span class="store-mutation-commit-target__secondary">
-        {#if bookmarks.length || revision.workspaces.length}
-          <span class="store-mutation-commit-target__bookmarks">
-            {#each bookmarks as bookmark (`${bookmark.name}:${bookmark.remote ?? "local"}`)}
-              <CommunityChip size="compact" variant="muted"
-                >{bookmarkLabel(bookmark)}</CommunityChip
-              >
-            {/each}
-            {#each revision.workspaces as workspace (workspace)}
-              <CommunityChip size="compact" tone="success"
-                >{workspace}</CommunityChip
-              >
-            {/each}
-          </span>
-        {/if}
+        {@render bookmarkChips()}
         <CommunityRelativeTime timestamp={revision.createdAt} {now} />
       </span>
     {/if}
@@ -152,6 +163,19 @@
     white-space: nowrap;
   }
 
+  .store-mutation-commit-target__summary {
+    display: grid;
+    min-width: 0;
+    gap: 0.15rem;
+  }
+
+  .store-mutation-commit-target__metadata {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
   .store-mutation-commit-target__ids > span,
   .store-mutation-commit-target__bookmarks {
     display: flex;
@@ -161,21 +185,24 @@
 
   .store-mutation-commit-target__ids {
     display: grid;
-    grid-template-columns: 4.5rem 4rem;
+    grid-template-columns: 4.5rem;
+    grid-template-rows: repeat(2, minmax(1rem, auto));
     align-items: center;
     gap: 0.35rem;
   }
 
   .store-mutation-commit-target__ids > [data-id-kind="git"] {
-    grid-column: 1;
+    grid-row: 1;
   }
 
   .store-mutation-commit-target__ids > [data-id-kind="jj"] {
-    grid-column: 2;
+    grid-row: 2;
   }
 
   .store-mutation-commit-target__ids :global(.community-chip) {
     --community-text-secondary: 0.625rem;
+    width: 1.5rem;
+    flex-shrink: 0;
   }
 
   .store-mutation-commit-target__ids > span {
@@ -203,11 +230,15 @@
     min-width: 0;
   }
 
+  .store-mutation-commit-target__summary :global(time),
   .store-mutation-commit-target__secondary :global(time) {
-    grid-column: 2;
-    justify-self: end;
     color: var(--muted-foreground);
     font-size: var(--community-text-secondary);
     white-space: nowrap;
+  }
+
+  .store-mutation-commit-target__secondary :global(time) {
+    grid-column: 2;
+    justify-self: end;
   }
 </style>
