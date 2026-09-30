@@ -17,6 +17,16 @@
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement),
       body = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Open commit details" }),
+    );
+    await waitFor(() =>
+      expect(canvas.getByRole("tab", { name: "Commits" })).toHaveAttribute(
+        "aria-selected",
+        "true",
+      ),
+    );
+    await userEvent.click(canvas.getByRole("tab", { name: "Files" }));
     await userEvent.click(canvas.getByRole("button", { name: "README.md" }));
     const metadata = canvas.getByRole("region", {
       name: "Selected file metadata",
@@ -45,6 +55,7 @@
       "Markdown",
     );
     const editorShell = editor.querySelector<HTMLElement>(".mira-code-editor")!;
+    const codeMirror = editor.querySelector<HTMLElement>(".cm-editor")!;
     const scroller = editor.querySelector<HTMLElement>(".cm-scroller")!;
     const gutters = editor.querySelector<HTMLElement>(".cm-gutters")!;
     const activeLine = editor.querySelector<HTMLElement>(".cm-activeLine")!;
@@ -72,11 +83,26 @@
       "rgba(0, 0, 0, 0)",
     );
     await expect(getComputedStyle(editorShell).borderWidth).toBe("0px");
+    const filenameItem = filename.closest<HTMLElement>(
+      ".store-application__breadcrumb-filename",
+    )!;
+    await expect(getComputedStyle(filenameItem).flexGrow).toBe("0");
+    await expect(filename.getBoundingClientRect().width).toBeLessThan(160);
+    await expect(
+      Number.parseFloat(getComputedStyle(filename).paddingInlineStart),
+    ).toBeGreaterThan(0);
+    await expect(
+      getComputedStyle(filename).getPropertyValue("field-sizing"),
+    ).toBe("content");
     await userEvent.clear(filename);
     await userEvent.type(filename, "NOTES.md");
     const contents = within(editor).getByRole("textbox", {
       name: "Editing NOTES.md file contents",
     });
+    await userEvent.click(contents);
+    await waitFor(() => expect(codeMirror).toHaveClass("cm-focused"));
+    await expect(getComputedStyle(codeMirror).outlineStyle).toBe("none");
+    await expect(getComputedStyle(codeMirror).boxShadow).toBe("none");
     await userEvent.clear(contents);
     await userEvent.type(
       contents,

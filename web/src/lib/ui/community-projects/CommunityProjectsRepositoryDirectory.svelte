@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as Table from "@lapismd/design-core/shadcn/table";
+  import EllipsisIcon from "@lucide/svelte/icons/ellipsis";
 
   import type {
     RepositoryBlob,
@@ -99,18 +100,32 @@
             name={latestAuthorName}
             size="xsmall"
           />
-          <span class="community-projects__file-browser-summary-message">
-            <strong>{latestAuthorName}</strong> committed
-            <button
-              type="button"
-              class="community-projects__file-browser-commit-link"
-              title={`View commit ${latestCommit.message}`}
-              aria-label={`View commit ${latestCommit.message}`}
-              onclick={() => onSelectCommit?.(latestCommit)}
-            >
-              {latestCommit.message}
-            </button>
-          </span>
+          <strong class="community-projects__file-browser-summary-author"
+            >{latestAuthorName}</strong
+          >
+          <span class="community-projects__file-browser-summary-verb"
+            >committed</span
+          >
+          <button
+            type="button"
+            class="community-projects__file-browser-commit-link"
+            title={`View commit ${latestCommit.message}`}
+            aria-label={`View commit ${latestCommit.message}`}
+            onclick={() => onSelectCommit?.(latestCommit)}
+          >
+            {latestCommit.message}
+          </button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            class="community-projects__file-browser-commit-details"
+            title="Open commit details"
+            aria-label="Open commit details"
+            onclick={() => onSelectCommit?.(latestCommit)}
+          >
+            <EllipsisIcon aria-hidden="true" />
+          </Button>
         {:else}
           <span class="community-projects__file-browser-summary-message">
             Select a repository snapshot

@@ -504,8 +504,11 @@ change identities. Repository landing-document ordering, friendly labels,
 responsive overflow, hidden-document selected treatment and selected-document
 edit routing, bookmark-filter empty states and no-file diff states are client
 presentation rules and do not change the read DTOs or transport format. The
-line-numbered Mira MDE edit body and filename-selected source language are also
-client presentation and do not add file-content fields.
+responsive commit-details action and progressive commit-metadata hiding are also
+client presentation; the action selects the Commits page before the same
+complete commit identity. The content-sized breadcrumb filename field,
+line-numbered Mira MDE edit body, focus treatment and filename-selected source
+language do not add file-content fields.
 
 ## Browser read client
 

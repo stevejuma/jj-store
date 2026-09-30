@@ -217,6 +217,7 @@ export function run(root) {
     execFileSync("jj", ["--no-pager", "--color=never", ...args], {
       cwd: root,
       encoding: "utf8",
+      maxBuffer: 16 * 1024 * 1024,
       stdio: ["ignore", "pipe", "pipe"],
     });
   const rev = process.env.JJ_STORE_CHECK_REVISION ?? "@";

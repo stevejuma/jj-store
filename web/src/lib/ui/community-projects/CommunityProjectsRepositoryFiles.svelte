@@ -273,9 +273,9 @@
           onOpenDirectory={controller.actions.selectDirectory}
           onOpenFile={controller.actions.selectFile}
           onEditFile={editLandingDocument}
-          onSelectCommit={(revision) => {
-            controller.actions.selectPage("log");
-            controller.actions.selectRevision(revision.eventId);
+          onSelectCommit={async (revision) => {
+            await controller.actions.selectPage("log");
+            await controller.actions.selectRevision(revision.eventId);
           }}
           onSelectBranch={selectSnapshot}
           hasMore={view.canLoadMoreFiles}

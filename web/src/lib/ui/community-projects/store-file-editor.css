@@ -43,6 +43,11 @@
   box-shadow: none;
 }
 
+.store-file-editor__contents .cm-editor.cm-focused {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 .store-file-editor__contents .cm-gutters {
   display: flex;
   align-self: stretch;

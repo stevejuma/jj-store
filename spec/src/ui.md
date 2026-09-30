@@ -187,22 +187,28 @@ card with a commit/action summary as the first row; the file-tree toggle remains
 beside the author avatar and the snapshot selector is aligned on the right side
 of the same row. Its resting label tracks the selected bookmark or change after
 that reference resolves to a commit; the resolved commit must not replace the
-selected reference identity. The table column-header row uses a neighboring
-theme grey distinct from the summary row. Root directory views show a
-GitHub-style README, CODE_OF_CONDUCT, CONTRIBUTING, LICENSE/LICENCE and SECURITY
-preview card only when those files exist in the selected fixture snapshot.
-README is ordered first regardless of API order. The tabs use the friendly
-labels `README`, `Code of conduct`, `Contributing`, `License` and `Security`
-with Book, HeartHandshake, Users and Scale icons. They are left aligned, use the
-smaller secondary type scale, retain a rounded theme-grey hover and selected
-treatment, and keep a visible active underline. The header measures its
-available width and moves trailing documents into a `More` dropdown when they do
-not fit; it does not expose a horizontal scrollbar. When the selected document
-is in that dropdown, `More` retains the rounded selected treatment and active
-underline, while the selected menu item uses bold text and a leading active bar.
-An icon-only edit action remains at the far end and opens the selected document.
-The production loader reads those landing documents sequentially so their
-preview does not exceed the bounded native read-admission budget.
+selected reference identity. The summary includes an icon-only
+`Open commit details` action that switches to Commits before opening the
+selected commit. At medium widths the commit message truncates without
+overlapping the revision, time or snapshot controls. At phone widths the
+message, verb and revision ID are hidden; author, relative time, commit details
+and snapshot selection remain available in wrapping rows. The table
+column-header row uses a neighboring theme grey distinct from the summary row.
+Root directory views show a GitHub-style README, CODE_OF_CONDUCT, CONTRIBUTING,
+LICENSE/LICENCE and SECURITY preview card only when those files exist in the
+selected fixture snapshot. README is ordered first regardless of API order. The
+tabs use the friendly labels `README`, `Code of conduct`, `Contributing`,
+`License` and `Security` with Book, HeartHandshake, Users and Scale icons. They
+are left aligned, use the smaller secondary type scale, retain a rounded
+theme-grey hover and selected treatment, and keep a visible active underline.
+The header measures its available width and moves trailing documents into a
+`More` dropdown when they do not fit; it does not expose a horizontal scrollbar.
+When the selected document is in that dropdown, `More` retains the rounded
+selected treatment and active underline, while the selected menu item uses bold
+text and a leading active bar. An icon-only edit action remains at the far end
+and opens the selected document. The production loader reads those landing
+documents sequentially so their preview does not exceed the bounded native
+read-admission budget.
 
 Selecting a file renders a stacked source preview: copied commit metadata,
 deterministic file statistics, then the selected content. The metadata header
@@ -210,19 +216,21 @@ keeps the file-tree toggle as its far-left control. The content-card header
 keeps the `Preview`, `Source` and `Edit` display controls visible while an edit
 is in progress; non-Markdown text uses `Source` and `Edit`. Edit mode replaces
 only the content-card body and replaces the selected filename breadcrumb segment
-with the filename input. It does not add a second filename field. The editor
-footer offers `Save changes` and `Cancel`; saving opens a dialog that captures
-the change description before the existing preview, apply, retry and status
-flow. Edit mode uses the public Design Core Mira MDE code editor with line
-numbers and filename-matched CodeMirror language support. It renders flush with
-the content body without a field label, nested border or focus frame. Its
-right-aligned line-number gutter stays beside and vertically aligned with the
-content, and the editor, gutter and active line retain the content-card theme
-background. Markdown files open in safe preview mode, and draft preview/source
-modes retain unsaved content. Source mode uses the public Design Core CodeBlock
-with the filename/source body on the theme background. Rust source previews use
-CodeBlock's public custom-tokenizer extension point so `.rs` files highlight in
-the catalog while retaining the shared code component.
+with a content-sized filename input with horizontal padding and a bounded
+maximum width. It does not add a second filename field. The editor footer offers
+`Save changes` and `Cancel`; saving opens a dialog that captures the change
+description before the existing preview, apply, retry and status flow. Edit mode
+uses the public Design Core Mira MDE code editor with line numbers and
+filename-matched CodeMirror language support. It renders flush with the content
+body without a field label, nested border or focus frame; a focused CodeMirror
+surface exposes no outline or box shadow. Its right-aligned line-number gutter
+stays beside and vertically aligned with the content, and the editor, gutter and
+active line retain the content-card theme background. Markdown files open in
+safe preview mode, and draft preview/source modes retain unsaved content. Source
+mode uses the public Design Core CodeBlock with the filename/source body on the
+theme background. Rust source previews use CodeBlock's public custom-tokenizer
+extension point so `.rs` files highlight in the catalog while retaining the
+shared code component.
 
 An authenticated single-target bookmark exposes Edit for an existing bounded
 UTF-8 ordinary file. The editor keeps filename and content independently

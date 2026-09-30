@@ -43,6 +43,11 @@ evidence.
 | `^(?:scripts/\|AGENTS\.md$\|spec-validator\.config\.mjs$\|spec/book\.toml$\|\.gitignore$\|\.pnpmfile\.cjs$\|\.prettier)`                                                                                                                       | `spec-governance.md` |
 | `^(?:Cargo\.(?:toml\|lock)$\|rust-toolchain\.toml$\|package\.json$\|pnpm-lock\.yaml$\|README\.md$\|LICENSE\.md$\|docs/implementation-plan\.md$\|docs/reference/)`                                                                              | `architecture.md`    |
 
+Governance commands that read tracked specification state through child
+processes use an explicit bounded output allowance large enough for the current
+ledger. Growth beyond that allowance fails closed instead of truncating parent
+evidence used by same-change validation.
+
 The M0 contract harness is validated in both normal tests and spec checks. Real
 storage qualification remains an explicit lane and cannot be inferred from the
 harness self-tests or a source audit.

@@ -14,6 +14,24 @@
         { type: "blob", name: "README.md", path: "README.md", size: 42 },
       ],
       pathCommits: {},
+      latestCommit: {
+        eventId:
+          "912c8df13998f422355759647d11b9143ed1fdfd1a9bd8aa3059d69f1f170cd6",
+        changeId: "5d0e9e4c650e8afe31009778e5f85040",
+        parents: [],
+        message:
+          "Describe the repository landing page with a deliberately long summary",
+        reason: "checkpoint" as const,
+        createdAt: 1_700_000_000_000,
+        root: "root",
+        author: "Maya Chen",
+        authorEmail: "maya@example.invalid",
+        empty: false,
+        bookmarks: [],
+        workspaces: [],
+        conflicted: false,
+        divergent: false,
+      },
       branch: "main",
       branches: [],
       previewDocuments: [
@@ -32,6 +50,7 @@
       onOpenDirectory: fn(),
       onOpenFile: fn(),
       onEditFile: fn(),
+      onSelectCommit: fn(),
       onSelectBranch: fn(),
     },
   });
@@ -42,6 +61,18 @@
   play={async ({ canvasElement, args }) => {
     const canvas = within(canvasElement),
       body = within(canvasElement.ownerDocument.body);
+    const commitDetails = canvas.getByRole("button", {
+      name: "Open commit details",
+    });
+    const commitMessage = canvas.getByRole("button", {
+      name: /View commit Describe the repository landing page/,
+    });
+    const revisionId = canvas.getByRole("button", {
+      name: /Copy full Git revision/,
+    });
+    await expect(commitDetails).toBeVisible();
+    await userEvent.click(commitDetails);
+    await expect(args.onSelectCommit).toHaveBeenCalledWith(args.latestCommit);
     const tabs = canvas.getAllByRole("tab");
     await expect(tabs.map((tab) => tab.textContent?.trim())).toEqual([
       "README",
@@ -85,6 +116,13 @@
     ).toHaveTextContent("Report privately");
 
     canvasElement.style.width = "31rem";
+    await waitFor(() => expect(commitMessage).not.toBeVisible());
+    await expect(revisionId).not.toBeVisible();
+    await expect(commitDetails).toBeVisible();
+    const summary = canvasElement.querySelector<HTMLElement>(
+      ".community-projects__file-browser-summary",
+    )!;
+    await expect(summary.scrollWidth).toBeLessThanOrEqual(summary.clientWidth);
     await waitFor(() =>
       expect(
         canvas.getByRole("button", { name: "More repository documents" }),

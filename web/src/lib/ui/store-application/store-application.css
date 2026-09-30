@@ -132,13 +132,18 @@
 }
 
 .store-application__breadcrumb-filename {
-  min-width: min(20rem, 42vw);
-  flex: 1 1 20rem;
+  min-width: 0;
+  max-width: min(24rem, 50vw);
+  flex: 0 1 auto;
 }
 
 .store-application__breadcrumb-filename input {
-  width: 100%;
+  width: fit-content;
+  min-width: 8ch;
+  max-width: 100%;
   height: 1.9rem;
+  padding-inline: 0.65rem;
+  field-sizing: content;
   font-family: var(--font-mono, ui-monospace, monospace);
   font-size: var(--community-text-secondary);
 }
