@@ -177,6 +177,7 @@
     --ui-command-view-list-max-height: max(12rem, calc(100dvh - 16rem));
     --ui-command-view-list-padding: 0;
     --ui-command-view-item-radius: 0px;
+    --ui-command-view-radius: 0px;
   }
   :global(.community-bookmark-cards [data-ui-part="command-group"]) {
     padding: 0;

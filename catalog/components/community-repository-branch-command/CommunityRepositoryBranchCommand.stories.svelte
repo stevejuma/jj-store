@@ -38,6 +38,8 @@
         .getPropertyValue("--ui-command-view-item-radius")
         .trim(),
     ).toBe("0px");
+    await expect(getComputedStyle(root).borderBottomLeftRadius).toBe("0px");
+    await expect(getComputedStyle(root).borderBottomRightRadius).toBe("0px");
     const workingCopyTitle = workingCopy.querySelector("strong")!;
     const branchTitle = canvas
       .getByRole("option", { name: "main" })

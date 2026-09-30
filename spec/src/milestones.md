@@ -33,7 +33,7 @@ adds evidence here in its enclosing Jujutsu change.
 | M4.5        | Done     | M4.4        | JST-UI-002                                                                                               | Community shell mechanics and navigation acceptance                                                                 | Implement repository fixture views                      | E-UI-002                                                                                                                                                                                                                                                                                                                                                       |
 | M4.6        | Done     | M4.5        | JST-UI-003                                                                                               | Native fixture graph/file/diff drill-down and accessibility                                                         | Visual review; live UI remains deferred                 | E-UI-003                                                                                                                                                                                                                                                                                                                                                       |
 | M4.7        | Done     | M4.6        | JST-UI-004                                                                                               | Complete in-memory application, snapshot file browser and profile footer                                            | Retain fixture acceptance; live UI remains deferred     | E-UI-004                                                                                                                                                                                                                                                                                                                                                       |
-| M4.8        | Done     | M4.7        | JST-UI-002,JST-UI-003,JST-UI-004                                                                         | Reviewed shell/card/header styling and directory navigation pass interaction, accessibility and cold catalog checks | Visual review pending; live UI remains deferred         | E-UI-005,E-UI-006,E-UI-009,E-UI-010,E-UI-022                                                                                                                                                                                                                                                                                                                   |
+| M4.8        | Done     | M4.7        | JST-UI-002,JST-UI-003,JST-UI-004                                                                         | Reviewed shell/card/header styling and directory navigation pass interaction, accessibility and cold catalog checks | Visual review pending; live UI remains deferred         | E-UI-005,E-UI-006,E-UI-009,E-UI-010,E-UI-022,E-UI-025                                                                                                                                                                                                                                                                                                          |
 | M4.9        | Done     | M4.8        | JST-ARCH-004,JST-UI-005                                                                                  | Shared production components/controller and no-growth architecture checks                                           | Retain source ownership and proceed to bounded APIs     | E-UI-007,E-UI-008                                                                                                                                                                                                                                                                                                                                              |
 | M4.10       | Done     | M4.9        | JST-API-001,JST-API-002,JST-API-006                                                                      | Bounded bookmark, directory metadata and operation-change contracts                                                 | Implement M4.11 authenticated browser data/controller   | E-M4-018                                                                                                                                                                                                                                                                                                                                                       |
 | M4.11       | Deferred | M4.10       | JST-API-004,JST-API-005,JST-UI-005                                                                       | Shared authenticated connection and final registry-only browser acceptance                                          | Future shared/package release                           | E-UI-011                                                                                                                                                                                                                                                                                                                                                       |
@@ -16433,6 +16433,56 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Rust 1.98.1; Node.js 24.10.0; pnpm 10.32.1; Svelte 5.57.1; Community ^0.1.0; emoji-mart 5.6.0.",
     "formats": "No native object, manifest, WAL, receipt, AgentStore or ReviewStore encoding changes. FileDiffHunk before_start and after_start remain native byte offsets on the transport. Presentation alone converts ordered hunk contents to unified one-based source coordinates. The browser CSP adds one exact SHA-256 style hash and does not admit arbitrary inline style or script."
+  },
+  {
+    "id": "E-UI-025",
+    "tasks": ["M4.8"],
+    "date": "2026-09-30",
+    "kind": "implementation",
+    "files": [
+      "catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte",
+      "spec/src/api.md",
+      "spec/src/milestones.md",
+      "spec/src/ui.md",
+      "web/src/lib/ui/community-repository-branch-command/CommunityRepositoryBranchCommand.svelte"
+    ],
+    "tests": [],
+    "runs": [
+      {
+        "command": "live computed style inspection of the final branch card at http://127.0.0.1:7460/",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before the change, every bookmark card had a 0px radius, while the branch command view container used an 8px radius with hidden overflow and ended on the final card, clipping release/0.1 into rounded lower corners."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte --reporter=dot",
+        "result": "pass",
+        "failures": 0,
+        "note": "All three branch-card stories pass. The command view container and every card, including the final visible card, keep square lower corners and a 1px bottom divider. Visual baselines were skipped."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "The production browser bundle builds with the existing Design Core global-selector and large-chunk warnings. The rebuilt stylesheet sets the branch command view radius to 0px."
+      },
+      {
+        "command": "live in-app browser verification at http://127.0.0.1:7460/",
+        "result": "pass",
+        "failures": 0,
+        "note": "After reloading the rebuilt assets, the final release/0.1 card matches the other rows: 0px radius, 1px bottom divider, and a square command view container, including while that card is selected."
+      },
+      {
+        "command": "pnpm web:check && pnpm spec:first && pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Svelte diagnostics report no warnings. The spec-first gate maps the production and catalog changes to the API, UI and progress chapters, and the milestone ledger stays valid."
+      }
+    ],
+    "result": "pending",
+    "remaining": ["Visual baselines remain unapproved."],
+    "versions": "Node.js 24.10.0; pnpm 10.32.1; Svelte 5.57.1; Design Core ^0.2.0.",
+    "formats": "No native object, manifest, WAL, receipt or API changes. Branch presentation keeps square card corners by setting the command view container radius to 0px."
   }
 ]
 ```

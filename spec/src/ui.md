@@ -157,12 +157,13 @@ is selected; directory, file and snapshot navigation participate in the
 in-memory Back/Forward history.
 
 Branch cards retain themed bottom dividers, including the final visible card in
-filtered lists, and keep square lower corners. Branches, JJ Log and Op Log omit
-the redundant body title bar; their Column Canvas headers identify the views.
-Their shell body is a fixed, non-scrolling region; only each Column Canvas body
-scrolls vertically. Mobile retains navigation/history/sidebar controls without
-duplicating the page title. The right details rail inherits the shell background
-with no visible border.
+filtered lists, and keep square lower corners. The branch command view container
+is square, so its overflow does not round the final card. Branches, JJ Log and
+Op Log omit the redundant body title bar; their Column Canvas headers identify
+the views. Their shell body is a fixed, non-scrolling region; only each Column
+Canvas body scrolls vertically. Mobile retains navigation/history/sidebar
+controls without duplicating the page title. The right details rail inherits the
+shell background with no visible border.
 
 Files places its directory breadcrumb in the body page navigation, rooted at
 `Files`. The repository file tree is a shell body-left sidebar with a

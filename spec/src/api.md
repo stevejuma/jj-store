@@ -583,14 +583,16 @@ column clears only that route identity.
 
 The LocalTrusted application reuses the reviewed Storybook shell for Files,
 Branches, JJ Log, Op Log, evolution, existing read details, typed mutations and
-native conflict editing. It bootstraps the installation catalog and opens the
-sole repository without credentials. An explicitly configured LocalTrusted
-search entry starts the existing background Tantivy projection through a stable
-installation-derived read-only principal; repository capabilities expose the
-command only when that index is configured. M4 registry-only dependency
-finalization and shared browser release qualification are deferred. The
-authenticated browser supports one memory-only manual token and bounded
-repository discovery without adding an account or OIDC layer.
+native conflict editing. Branch bookmark cards stay square through the final
+visible row; the branch command view container does not round that row. It
+bootstraps the installation catalog and opens the sole repository without
+credentials. An explicitly configured LocalTrusted search entry starts the
+existing background Tantivy projection through a stable installation-derived
+read-only principal; repository capabilities expose the command only when that
+index is configured. M4 registry-only dependency finalization and shared browser
+release qualification are deferred. The authenticated browser supports one
+memory-only manual token and bounded repository discovery without adding an
+account or OIDC layer.
 
 The Files controller fetches the selected commit independently from graph
 history so the production header can show the last author avatar, commit
