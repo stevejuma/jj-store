@@ -70,6 +70,9 @@ to explicit snapshots; divergent changes and conflicted bookmarks require a
 target choice. Back/Forward restores repository, page, snapshot and file
 selection. Catalog account actions only change fixture identity. Production
 connection state replaces the fixture account when the HTTP controller is used.
+The file preview presents the selected path in its labelled content header and
+keeps the source Code Block scoped to file bytes and language highlighting;
+catalog interactions verify those surfaces separately.
 
 Community's Tailwind Vite plugin compiles the public Design Core stylesheet. The
 catalog uses its bundled DM Sans and Source Code Pro fonts, shared icon sizing

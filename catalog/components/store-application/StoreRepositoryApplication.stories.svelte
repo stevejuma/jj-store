@@ -222,7 +222,9 @@
     )!;
     await expect(rustSourceBlock).toHaveAttribute("data-language", "rust");
     await expect(
-      within(rustSourceBlock).getByText("src/lib.rs — rust"),
+      within(
+        canvas.getByRole("region", { name: "Source preview for src/lib.rs" }),
+      ).getByText("src/lib.rs", { exact: true }),
     ).toBeVisible();
     await expect(
       rustSourceBlock.querySelector(".ui-code-token-keyword"),

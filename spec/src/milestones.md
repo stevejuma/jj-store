@@ -32,7 +32,7 @@ adds evidence here in its enclosing Jujutsu change.
 | M4.4        | Done        | Bootstrap   | JST-UI-001                                                                                                                                                               | Isolated catalog types, interaction/a11y and static build                                                           | Implement shell stories                                            | E-UI-001                                                                                                                                                                                                                                                                                                                                                       |
 | M4.5        | Done        | M4.4        | JST-UI-002                                                                                                                                                               | Community shell mechanics and navigation acceptance                                                                 | Implement repository fixture views                                 | E-UI-002                                                                                                                                                                                                                                                                                                                                                       |
 | M4.6        | Done        | M4.5        | JST-UI-003                                                                                                                                                               | Native fixture graph/file/diff drill-down and accessibility                                                         | Visual review; live UI remains deferred                            | E-UI-003                                                                                                                                                                                                                                                                                                                                                       |
-| M4.7        | Done        | M4.6        | JST-UI-004                                                                                                                                                               | Complete in-memory application, snapshot file browser and profile footer                                            | Retain fixture acceptance; live UI remains deferred                | E-UI-004                                                                                                                                                                                                                                                                                                                                                       |
+| M4.7        | Done        | M4.6        | JST-UI-004                                                                                                                                                               | Complete in-memory application, snapshot file browser and profile footer                                            | Retain fixture acceptance; live UI remains deferred                | E-UI-004,E-UI-029                                                                                                                                                                                                                                                                                                                                              |
 | M4.8        | Done        | M4.7        | JST-UI-002,JST-UI-003,JST-UI-004                                                                                                                                         | Reviewed shell/card/header styling and directory navigation pass interaction, accessibility and cold catalog checks | Visual review pending; live UI remains deferred                    | E-UI-005,E-UI-006,E-UI-009,E-UI-010,E-UI-022,E-UI-025,E-UI-026,E-UI-028                                                                                                                                                                                                                                                                                        |
 | M4.9        | Done        | M4.8        | JST-ARCH-004,JST-UI-005                                                                                                                                                  | Shared production components/controller and no-growth architecture checks                                           | Retain source ownership and proceed to bounded APIs                | E-UI-007,E-UI-008                                                                                                                                                                                                                                                                                                                                              |
 | M4.10       | Done        | M4.9        | JST-API-001,JST-API-002,JST-API-006                                                                                                                                      | Bounded bookmark, directory metadata and operation-change contracts                                                 | Implement M4.11 authenticated browser data/controller              | E-M4-018                                                                                                                                                                                                                                                                                                                                                       |
@@ -130,7 +130,10 @@ and named tests are checked by the progress gate.
 [
   {
     "id": "E-BOOT-001",
-    "tasks": ["Bootstrap", "Bootstrap.1"],
+    "tasks": [
+      "Bootstrap",
+      "Bootstrap.1"
+    ],
     "date": "2026-09-26",
     "kind": "governance",
     "files": [
@@ -16939,7 +16942,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-026",
-    "tasks": ["M4.8", "M4.16"],
+    "tasks": [
+      "M4.8",
+      "M4.16"
+    ],
     "date": "2026-09-30",
     "kind": "contextual-branch-rail-and-mutation-composer",
     "files": [
@@ -17026,7 +17032,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-027",
-    "tasks": ["M4.8", "M4.16"],
+    "tasks": [
+      "M4.8",
+      "M4.16"
+    ],
     "date": "2026-09-30",
     "kind": "bookmark-context-and-commit-selector",
     "files": [
@@ -17133,7 +17142,14 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-028",
-    "tasks": ["M4.2", "M4.8", "M4.15", "M4.16", "M5", "M5.1"],
+    "tasks": [
+      "M4.2",
+      "M4.8",
+      "M4.15",
+      "M4.16",
+      "M5",
+      "M5.1"
+    ],
     "date": "2026-09-30",
     "kind": "repository-tabs-file-edit-and-search-lifecycle",
     "files": [
@@ -17840,7 +17856,9 @@ and named tests are checked by the progress gate.
       }
     ],
     "result": "pending",
-    "remaining": ["Visual baselines remain unapproved."],
+    "remaining": [
+      "Visual baselines remain unapproved."
+    ],
     "versions": "Rust 1.98.1; Node.js 26.9.0; pnpm 10.32.1; Svelte 5.57.1; Storybook 10.5.7; Design Core ^0.2.0; Community ^0.1.0.",
     "formats": "The V1 typed mutation command union and capability list add edit_file with an exact bookmark target, canonical source/destination paths, bounded UTF-8 contents and description. Existing mutation request, prepared result, durable receipt, WAL, manifest and native object formats remain unchanged. Friendly landing-document labels/icons, measured More overflow, responsive commit details, body tabs/breadcrumb, persistent file display controls, the content-sized filename field, focus-ring-free line-numbered filename-highlighted Mira edit body and deferred search routing are browser presentation only; credentials remain memory-only. Changed stories remain visual-pending."
   },
@@ -19132,7 +19150,9 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M10-011",
-    "tasks": ["M10"],
+    "tasks": [
+      "M10"
+    ],
     "date": "2026-09-30",
     "kind": "browser-acceptance-token-discovery-fixture-repair",
     "files": [
@@ -19212,7 +19232,9 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M10-012",
-    "tasks": ["M10"],
+    "tasks": [
+      "M10"
+    ],
     "date": "2026-09-30",
     "kind": "review-command-contract-regression-gate",
     "files": [
@@ -19304,14 +19326,166 @@ and named tests are checked by the progress gate.
         "result": "pass",
         "failures": 0,
         "note": "A two-parent integration change was created; five shared-file conflicts were resolved in the parent workspace."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 103 canonical requirements validate after combining the parent UI and M10 chapters."
+      },
+      {
+        "command": "pnpm format:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rust and tracked-text formatting pass after resolving the five conflicts."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before committing the two-parent merge, the checker could not resolve @- to a unique revision; the same check passed from the single-parent child in pnpm check."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before committing the two-parent merge, the VCS diff could not resolve @- to a unique revision; validation resumes from the single-parent child."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "The merged production web code has zero diagnostics or warnings."
+      },
+      {
+        "command": "pnpm web:test",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 55 web unit tests pass."
+      },
+      {
+        "command": "pnpm web:test:browser",
+        "result": "pass",
+        "failures": 0,
+        "note": "A cold preview process passes all 21 browser interaction cases, including the parent text-file edit scenario."
+      },
+      {
+        "command": "cargo test -p jj-store-replication --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "The native envelope unit test and all 15 replication integration cases pass in the parent checkout."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test workspace_migration --locked nonempty_workspace_migrates_without_snapshot_and_mutates_with_upstream_offline -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "The migrated workspace preserves local commands with zero upstream connections."
+      },
+      {
+        "command": "pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "The complete specification, boundary, progress, RustFS, contract, web, catalog and Clippy check lanes pass after the merge commit."
+      },
+      {
+        "command": "pnpm test",
+        "result": "fail",
+        "failures": 1,
+        "note": "The first parent aggregate run passed storage and RustFS stages but stopped at one stale RepositoryFiles Storybook assertion (87 of 88 Storybook cases passed). The exact case was repaired under E-UI-029."
+      },
+      {
+        "command": "pnpm test",
+        "result": "pass",
+        "failures": 0,
+        "note": "All governance, storage, RustFS, LocalTrusted, contract, web, catalog, cold browser and Rust workspace test lanes pass in the merged parent checkout."
+      },
+      {
+        "command": "pnpm build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Storybook, web, embedded RustFS and Rust workspace builds pass in the merged parent checkout."
+      },
+      {
+        "command": "pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 18 specification lanes pass, including Storybook interactions, cold browser acceptance, Rust workspace tests, mdbook and spec-first."
       }
     ],
-    "result": "pending",
-    "remaining": [
-      "Run focused browser and replication regressions plus the required repository gates after conflict resolution."
-    ],
+    "result": "pass",
+    "remaining": [],
     "versions": "jj 0.45.1; Rust 1.98.1; pnpm 10.32.1; manifest format 2.",
     "formats": "No new persistence or wire format; the integration combines the existing M10 replication profile with the parent repository UI history."
+  },
+  {
+    "id": "E-UI-029",
+    "tasks": [
+      "M4.7"
+    ],
+    "date": "2026-09-30",
+    "kind": "merged-file-preview-story-assertion-repair",
+    "files": [
+      "catalog/components/store-application/StoreRepositoryApplication.stories.svelte",
+      "spec/src/ui.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "web/tests/browser/reads.spec.ts#native_graphs_files_and_source_rendering_are_accessible"
+    ],
+    "runs": [
+      {
+        "command": "pnpm test",
+        "result": "fail",
+        "failures": 1,
+        "note": "The first merged aggregate run passed 87 of 88 Storybook interactions; RepositoryFiles still expected the file path inside the source Code Block."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreRepositoryApplication.stories.svelte -t RepositoryFiles",
+        "result": "fail",
+        "failures": 1,
+        "note": "The exact case reproduced the stale Code Block text assertion."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreRepositoryApplication.stories.svelte -t RepositoryFiles",
+        "result": "pass",
+        "failures": 0,
+        "note": "The story now verifies the selected path in the labelled preview header while retaining native Rust language and source-token checks."
+      },
+      {
+        "command": "pnpm test:storybook",
+        "result": "fail",
+        "failures": 1,
+        "note": "A first full rerun passed RepositoryFiles but observed an unrelated transient CommandSearchNavigation active-tab timing failure; its isolated retry passed without code changes."
+      },
+      {
+        "command": "pnpm test:storybook",
+        "result": "pass",
+        "failures": 0,
+        "note": "The unchanged search story and repaired file story pass with all 88 interactions across 22 Storybook files."
+      },
+      {
+        "command": "pnpm test",
+        "result": "pass",
+        "failures": 0,
+        "note": "The complete repository test lane passes after the story repair, including cold catalog browser and Rust workspace acceptance."
+      },
+      {
+        "command": "pnpm build",
+        "result": "pass",
+        "failures": 0,
+        "note": "The complete repository build lane passes with the repaired story."
+      },
+      {
+        "command": "pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 18 specification lanes pass with the repaired file story and its canonical UI chapter."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "versions": "pnpm 10.32.1; Storybook 10.5.7; Vitest browser 4.1.11.",
+    "formats": "No product API, persistence, wire format or visual baseline change; this repairs the browser-story assertion for the existing file preview layout."
   }
 ]
 ```
