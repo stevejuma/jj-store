@@ -16570,6 +16570,113 @@ and named tests are checked by the progress gate.
     ],
     "versions": "Node.js 24.10.0; pnpm 10.32.1; Svelte 5.57.1; Design Core ^0.2.0; Community ^0.1.0.",
     "formats": "No native object, manifest, WAL, receipt, HTTP, OpenAPI or route format changes. Presentation adds bookmark selection context, page-specific rail headings, existing typed mutation triggers, Community composer prose and a compact commit/change identity row."
+  },
+  {
+    "id": "E-UI-027",
+    "tasks": ["M4.8", "M4.16"],
+    "date": "2026-09-30",
+    "kind": "bookmark-context-and-commit-selector",
+    "files": [
+      "catalog/components/store-application/StoreRepositoryBranchContext.stories.svelte",
+      "catalog/components/store-mutations/StoreRepositoryActions.stories.svelte",
+      "spec/src/api.md",
+      "spec/src/milestones.md",
+      "spec/src/ui.md",
+      "web/src/lib/ui/store-application/StoreRepositoryBookmarkDetails.svelte",
+      "web/src/lib/ui/store-application/StoreRepositoryDetails.svelte",
+      "web/src/lib/ui/store-mutations/StoreMutationCommitPicker.svelte",
+      "web/src/lib/ui/store-mutations/StoreMutationCommitTarget.svelte",
+      "web/src/lib/ui/store-mutations/StoreMutationDialog.svelte",
+      "web/src/lib/ui/store-mutations/StoreMutationFields.svelte"
+    ],
+    "tests": [],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreRepositoryBranchContext.stories.svelte catalog/components/store-mutations/StoreRepositoryActions.stories.svelte --reporter=dot",
+        "result": "fail",
+        "failures": 2,
+        "note": "Before implementation, the branch rail still exposed Selected bookmark and stacked metadata, while Create change and Create bookmark still rendered raw commit text inputs instead of the shared searchable target presentation."
+      },
+      {
+        "command": "pnpm check:architecture && pnpm web:check && pnpm catalog:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "The first structural pass caught StoreRepositoryDetails at 358 counted lines over the 300-line production limit; bookmark metadata was extracted into its own production component before retrying."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte catalog/components/store-application/StoreRepositoryBranchContext.stories.svelte catalog/components/store-mutations/StoreRepositoryActions.stories.svelte --reporter=dot",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 16 focused Storybook interaction and automatic accessibility stories pass. They cover the compact bookmark header and revision summary, one-row status and target counts, multiple conflicted target SHA controls, fixed-row bookmark/workspace chips and searchable commit selection for Create change, Create bookmark and Move bookmark."
+      },
+      {
+        "command": "pnpm check:architecture && pnpm web:check && pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "The extracted source stays within production budgets, both Svelte projects report zero diagnostics and the catalog boundary accepts all 65 modules."
+      },
+      {
+        "command": "source audit for raw commit target inputs under web/src/lib",
+        "result": "pass",
+        "failures": 0,
+        "note": "Create change, Create bookmark and Move bookmark all use StoreMutationCommitPicker; Edit description and Abandon use StoreMutationCommitTarget. Only the semantically distinct reconciliation operation ID remains a raw fixed-width input."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm check",
+        "result": "fail",
+        "failures": 1,
+        "note": "The first aggregate run stopped at check:progress because the executable slice had not yet added this required same-change evidence entry; earlier specification, package-boundary and architecture stages passed."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm check",
+        "result": "pass",
+        "failures": 0,
+        "note": "The complete repository check lane passes, including formatting, specifications, architecture, Svelte diagnostics, catalog boundaries, Clippy and Rust formatting."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm test",
+        "result": "pass",
+        "failures": 0,
+        "note": "The complete test lane passes, including governance, storage harnesses, LocalTrusted and contract checks, 54 web tests, 60 catalog unit tests, 87 Storybook interaction/accessibility stories, the cold catalog browser contract and the full Rust workspace suites."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Storybook, the production web bundle, embedded RustFS and the locked Rust workspace build successfully. Existing Lightning CSS :global(svg) and large-chunk warnings remain informational."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm dev:restart and live in-app browser verification at http://127.0.0.1:7460/",
+        "result": "pass",
+        "failures": 0,
+        "note": "The checkout-owned LocalTrusted application restarted against the persisted sample repository. The selected conflict/demo bookmark renders as the bold rail heading with avatar, one-line message, author/time metadata, a status chip, aligned target-count chip, Git SHA controls and branch actions. Create bookmark renders the shared revision row, opens a searchable Command View of avatar/message/Git/JJ/time/bookmark metadata, and updates the closed row to the selected complete native commit ID without submitting a mutation."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm spec:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "Specification validation and the cold catalog browser pass, but the production browser lane first timed out after 30000ms while starting its disposable Playwright web server; no production browser test ran in this invocation."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm exec playwright test --config web/playwright.config.ts --timeout=5000",
+        "result": "fail",
+        "failures": 20,
+        "note": "A warm-server diagnostic confirms all 20 inherited production browser tests still fail before this presentation slice is reached. Nineteen wait for native-browser-fixture.ts to fill the removed Repository ID/token controls; the LocalTrusted bootstrap test waits for stale profile and branch expectations."
+      },
+      {
+        "command": "pnpm format:check && pnpm spec:first && pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rust and Prettier formatting pass, all eight protected implementation files map to the API, UI and progress chapters, and the same-change evidence ledger remains valid."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Migrate the inherited production browser fixture from removed Repository ID/token controls to LocalTrusted bootstrap and clear its 20 failures.",
+      "Visual baselines remain unapproved."
+    ],
+    "versions": "Node.js 24.10.0; pnpm 10.32.1; Svelte 5.57.1; Design Core ^0.2.0; Community ^0.1.0.",
+    "formats": "No native object, manifest, WAL, receipt, HTTP, OpenAPI or route format changes. Presentation introduces a shared commit row and a Design Core Command View selector whose bound value remains the complete native commit ID."
   }
 ]
 ```

@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { RepositoryLogRevision } from "../../projects/repository-log.js";
+  import CommunityChip from "../community-chip/CommunityChip.svelte";
   import CommunityProjectsGitAuthorAvatar from "../community-projects/CommunityProjectsGitAuthorAvatar.svelte";
   import CommunityProjectsRevisionGraphIds from "../community-projects/CommunityProjectsRevisionGraphIds.svelte";
   import CommunityRelativeTime from "../community-relative-time/CommunityRelativeTime.svelte";
@@ -8,49 +9,133 @@
     target,
     revision,
     now,
+    copyableIds = true,
+    framed = true,
+    ariaLabel = "Selected commit",
   }: {
     target: string;
     revision?: RepositoryLogRevision;
     now?: number;
+    copyableIds?: boolean;
+    framed?: boolean;
+    ariaLabel?: string;
   } = $props();
+
+  const bookmarks = $derived(
+    revision?.bookmarks.filter(
+      (bookmark) => bookmark.added && !bookmark.removed,
+    ) ?? [],
+  );
+
+  function bookmarkLabel(bookmark: RepositoryLogRevision["bookmarks"][number]) {
+    return bookmark.remote
+      ? `${bookmark.name}@${bookmark.remote}`
+      : bookmark.name;
+  }
 </script>
 
 <div
   class="store-mutation-commit-target"
-  role="group"
-  aria-label="Selected commit"
+  data-framed={framed || undefined}
+  role={ariaLabel ? "group" : undefined}
+  aria-label={ariaLabel || undefined}
 >
   <CommunityProjectsGitAuthorAvatar
     name={revision?.author ?? "Unknown author"}
     email={revision?.authorEmail}
     size="small"
   />
-  <span class="store-mutation-commit-target__message" title={revision?.message}
-    >{revision?.message ?? "Selected commit"}</span
-  >
-  <CommunityProjectsRevisionGraphIds
-    changeId={revision?.changeId}
-    commitId={target}
-    placement="inline"
-  />
-  {#if revision}<CommunityRelativeTime
-      timestamp={revision.createdAt}
-      {now}
-    />{/if}
+  <span class="store-mutation-commit-target__body">
+    <span class="store-mutation-commit-target__primary">
+      <span
+        class="store-mutation-commit-target__message"
+        title={revision?.message}>{revision?.message ?? "Selected commit"}</span
+      >
+      {#if copyableIds}
+        <CommunityProjectsRevisionGraphIds
+          changeId={revision?.changeId}
+          commitId={target}
+          placement="inline"
+        />
+      {:else}
+        <span
+          class="store-mutation-commit-target__ids"
+          aria-label="Revision identifiers"
+        >
+          {#if target}<span title={`Git commit SHA ${target}`}>
+              <CommunityChip
+                size="inline"
+                shape="square"
+                variant="muted"
+                ariaHidden>GIT</CommunityChip
+              ><code>{target.slice(0, 5)}</code>
+            </span>{/if}
+          {#if revision?.changeId}<span
+              title={`JJ Change ID ${revision.changeId}`}
+            >
+              <CommunityChip
+                size="inline"
+                shape="square"
+                variant="muted"
+                ariaHidden>JJ</CommunityChip
+              ><code>{revision.changeId.slice(0, 5)}</code>
+            </span>{/if}
+        </span>
+      {/if}
+      {#if revision}<CommunityRelativeTime
+          timestamp={revision.createdAt}
+          {now}
+        />{/if}
+    </span>
+    {#if bookmarks.length || revision?.workspaces.length}
+      <span class="store-mutation-commit-target__bookmarks">
+        {#each bookmarks as bookmark (`${bookmark.name}:${bookmark.remote ?? "local"}`)}
+          <CommunityChip size="compact" variant="muted"
+            >{bookmarkLabel(bookmark)}</CommunityChip
+          >
+        {/each}
+        {#each revision?.workspaces ?? [] as workspace (workspace)}
+          <CommunityChip size="compact" tone="success"
+            >{workspace}</CommunityChip
+          >
+        {/each}
+      </span>
+    {/if}
+  </span>
 </div>
 
 <style>
   .store-mutation-commit-target {
     display: grid;
+    width: 100%;
     min-width: 0;
-    grid-template-columns: auto minmax(0, 1fr) auto auto;
-    align-items: center;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
     gap: 0.5rem;
+    box-sizing: border-box;
+    color: inherit;
+    text-align: start;
+  }
+
+  .store-mutation-commit-target[data-framed="true"] {
     padding: 0.5rem;
     border: 1px solid var(--border);
     border-radius: var(--radius-sm, 0.375rem);
     background: var(--background);
-    font-size: var(--community-text-secondary);
+  }
+
+  .store-mutation-commit-target__body {
+    display: grid;
+    min-width: 0;
+    gap: 0.4rem;
+  }
+
+  .store-mutation-commit-target__primary {
+    display: grid;
+    min-width: 0;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 0.5rem;
   }
 
   .store-mutation-commit-target__message {
@@ -62,12 +147,48 @@
     white-space: nowrap;
   }
 
+  .store-mutation-commit-target__ids,
+  .store-mutation-commit-target__ids > span,
+  .store-mutation-commit-target__bookmarks {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+  }
+
+  .store-mutation-commit-target__ids {
+    gap: 0.35rem;
+  }
+
+  .store-mutation-commit-target__ids > span {
+    gap: 0.2rem;
+  }
+
+  .store-mutation-commit-target__ids code {
+    font-size: var(--community-text-secondary);
+  }
+
+  .store-mutation-commit-target__bookmarks {
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+
   .store-mutation-commit-target :global(.community-revision-graph-ids) {
     min-width: 0;
   }
 
   .store-mutation-commit-target :global(time) {
     color: var(--muted-foreground);
+    font-size: var(--community-text-secondary);
     white-space: nowrap;
+  }
+
+  @media (max-width: 40rem) {
+    .store-mutation-commit-target__primary {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .store-mutation-commit-target__primary :global(time) {
+      grid-column: 1 / -1;
+    }
   }
 </style>

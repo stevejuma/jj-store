@@ -5,6 +5,7 @@
   import { CommunityChatComposer } from "@lapismd/lapis-community/components/community-chat-composer";
   import { untrack } from "svelte";
   import type { RepositoryLogRevision } from "../../projects/repository-log.js";
+  import StoreMutationCommitPicker from "./StoreMutationCommitPicker.svelte";
   import StoreMutationCommitTarget from "./StoreMutationCommitTarget.svelte";
   import type { StoreMutationAction } from "./model.js";
 
@@ -18,6 +19,7 @@
     retainBookmarks = $bindable(),
     restoreDescendants = $bindable(),
     selectedRevision,
+    revisions,
     now,
     onChange,
   }: {
@@ -30,6 +32,7 @@
     retainBookmarks: boolean;
     restoreDescendants: boolean;
     selectedRevision?: RepositoryLogRevision;
+    revisions: readonly RepositoryLogRevision[];
     now?: number;
     onChange: () => void;
   } = $props();
@@ -91,16 +94,14 @@
       <Field.Label for="store-mutation-target">
         {action === "new" ? "Parent commit" : "Commit"}
       </Field.Label>
-      <Input
+      <StoreMutationCommitPicker
         id="store-mutation-target"
-        bind:value={target}
-        oninput={onChange}
-        spellcheck="false"
-        autocomplete="off"
+        label={action === "new" ? "Parent commit" : "Commit"}
+        bind:target
+        {revisions}
+        {now}
+        {onChange}
       />
-      <Field.Description
-        >Use the complete 128-character native ID.</Field.Description
-      >
     </Field.Field>
   {/if}
   {#if action === "reconcile"}

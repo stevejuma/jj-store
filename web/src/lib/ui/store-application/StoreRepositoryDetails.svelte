@@ -5,6 +5,7 @@
   import CommunityProjectsRevisionGraphIds from "../community-projects/CommunityProjectsRevisionGraphIds.svelte";
   import CommunityRelativeTime from "../community-relative-time/CommunityRelativeTime.svelte";
   import StoreRepositoryActions from "../store-mutations/StoreRepositoryActions.svelte";
+  import StoreRepositoryBookmarkDetails from "./StoreRepositoryBookmarkDetails.svelte";
 
   let { controller, title }: { controller: StoreController; title: string } =
     $props();
@@ -32,19 +33,6 @@
       : view.route.page === "log" || view.route.page === "files"
         ? ({ action: "new", label: "Add change" } as const)
         : undefined,
-  );
-  const bookmarkStatus = $derived(
-    !selectedBookmark
-      ? ""
-      : selectedBookmark.targets.length === 0
-        ? "Deleted"
-        : selectedBookmark.targets.length > 1
-          ? "Conflicted"
-          : selectedBookmark.workspace
-            ? "Workspace"
-            : selectedBookmark.default
-              ? "Default"
-              : "Local",
   );
 
   function repositoryContextTitle(page: StorePage): string {
@@ -88,44 +76,11 @@
       />
     </section>
   {:else if selectedBookmark}
-    <section aria-label="Selected bookmark">
-      <p class="store-repository-details__label">Selected bookmark</p>
-      <p class="store-repository-details__message">{selectedBookmark.name}</p>
-      <p class="store-repository-details__description">
-        {selectedBookmark.description ?? "No description"}
-      </p>
-      {#if selectedBookmark.author}<div
-          class="store-repository-details__author"
-        >
-          <CommunityProjectsGitAuthorAvatar
-            email={selectedBookmark.authorEmail}
-            name={selectedBookmark.author}
-            size="small"
-          />
-          <span>{selectedBookmark.author}</span>
-          {#if selectedBookmark.updatedAt}<CommunityRelativeTime
-              timestamp={selectedBookmark.updatedAt}
-              now={view.now}
-            />{/if}
-        </div>{/if}
-      <dl>
-        <div>
-          <dt>Status</dt>
-          <dd>{bookmarkStatus}</dd>
-        </div>
-        <div>
-          <dt>Targets</dt>
-          <dd>
-            {selectedBookmark.targets.length}
-            {selectedBookmark.targets.length === 1 ? "target" : "targets"}
-          </dd>
-        </div>
-      </dl>
-      {#if selectedBookmark.targets.length === 1}<CommunityProjectsRevisionGraphIds
-          commitId={selectedBookmark.targets[0]}
-          placement="inline"
-        />{/if}
-    </section>
+    <StoreRepositoryBookmarkDetails
+      bookmark={selectedBookmark}
+      revisions={view.graph.revisions}
+      now={view.now}
+    />
   {:else}
     <section aria-label="Repository context">
       <dl>
@@ -210,8 +165,7 @@
     font-size: var(--community-text-secondary);
   }
 
-  .store-repository-details__message,
-  .store-repository-details__description {
+  .store-repository-details__message {
     margin: 0;
     padding-inline: 0.4rem;
     overflow-wrap: anywhere;
@@ -220,10 +174,6 @@
 
   .store-repository-details__message {
     font-weight: 550;
-  }
-
-  .store-repository-details__description {
-    color: var(--muted-foreground);
   }
 
   .store-repository-details__author {

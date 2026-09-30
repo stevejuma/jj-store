@@ -47,6 +47,26 @@
       page.getByRole("menuitem", { name: "Create change" }),
     );
     const dialog = await page.findByRole("dialog", { name: "Create change" });
+    await expect(
+      within(dialog).queryByRole("textbox", { name: "Parent commit" }),
+    ).not.toBeInTheDocument();
+    const parentCommit = within(dialog).getByRole("combobox", {
+      name: "Parent commit",
+    });
+    await expect(parentCommit).toHaveTextContent("Working copy");
+    await expect(parentCommit).toHaveTextContent("main");
+    await userEvent.click(parentCommit);
+    const search = page.getByRole("combobox", {
+      name: "Select parent commit",
+    });
+    await userEvent.type(search, "Stream immutable native objects");
+    await userEvent.click(
+      page.getByRole("option", { name: /Stream immutable native objects/u }),
+    );
+    await expect(parentCommit).toHaveTextContent(
+      "Stream immutable native objects",
+    );
+    await expect(parentCommit).toHaveTextContent("feature/native-objects");
     await userEvent.type(
       within(dialog).getByRole("textbox", { name: "Markdown editor" }),
       "Create the browser mutation workflow",
@@ -91,6 +111,8 @@
       within(selectedCommit).getByRole("img", { name: "maya@example.test" }),
     ).toBeVisible();
     await expect(selectedCommit).toHaveTextContent("Working copy");
+    await expect(selectedCommit).toHaveTextContent("main");
+    await expect(selectedCommit).toHaveTextContent("default");
     await expect(
       within(selectedCommit).getByRole("button", {
         name: /Copy JJ Change ID/u,

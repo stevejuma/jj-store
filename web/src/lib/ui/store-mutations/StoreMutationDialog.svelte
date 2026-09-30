@@ -33,6 +33,9 @@
   const pending = $derived(
     mutation.status === "previewing" || mutation.status === "applying",
   );
+  const revisions = $derived(
+    view.graph.revisions.filter((revision) => revision.changeId.length > 0),
+  );
   let form = $state<StoreMutationFormValue>({
     description: "",
     workspace: "",
@@ -123,9 +126,10 @@
         bind:base={form.base}
         bind:retainBookmarks={form.retainBookmarks}
         bind:restoreDescendants={form.restoreDescendants}
-        selectedRevision={view.graph.revisions.find(
+        selectedRevision={revisions.find(
           (item) => item.eventId === form.target,
         )}
+        {revisions}
         now={view.now}
         onChange={changed}
       />

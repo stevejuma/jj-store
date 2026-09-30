@@ -29,12 +29,34 @@
     });
     const panel = within(details);
     await expect(panel.getByText("Branches/Bookmarks")).toBeVisible();
-    await expect(panel.getByText("Selected bookmark")).toBeVisible();
-    await expect(panel.getByText("feature/native-objects")).toBeVisible();
     await expect(
-      panel.getByText("Stream immutable native objects"),
+      panel.queryByText("Selected bookmark"),
+    ).not.toBeInTheDocument();
+    await expect(
+      panel.getByRole("heading", { name: "feature/native-objects" }),
     ).toBeVisible();
-    await expect(panel.getByText("1 target")).toBeVisible();
+    const bookmarkRevision = panel.getByRole("group", {
+      name: "Bookmark revision",
+    });
+    await expect(
+      within(bookmarkRevision).getByRole("img", {
+        name: "maya@example.test",
+      }),
+    ).toBeVisible();
+    await expect(
+      within(bookmarkRevision).getByText("Stream immutable native objects"),
+    ).toBeVisible();
+    await expect(bookmarkRevision).toHaveTextContent("Maya Chen");
+    await expect(bookmarkRevision).toHaveTextContent(/minutes ago/u);
+    const status = panel.getByRole("group", { name: "Bookmark status" });
+    await expect(status).toHaveTextContent("Status");
+    await expect(status).toHaveTextContent("Local");
+    const targets = panel.getByRole("group", { name: "Bookmark targets" });
+    await expect(targets).toHaveTextContent("Targets");
+    await expect(targets).toHaveTextContent("1");
+    await expect(
+      within(targets).getByRole("button", { name: /Copy Git commit SHA/u }),
+    ).toBeVisible();
     await expect(
       panel.getByRole("button", { name: "Add bookmark" }),
     ).toBeVisible();
@@ -44,12 +66,49 @@
     await expect(
       panel.getByRole("button", { name: "Delete bookmark" }),
     ).toBeVisible();
+    await userEvent.click(canvas.getByRole("option", { name: "conflicted" }));
+    await expect(
+      panel.getByRole("heading", { name: "conflicted" }),
+    ).toBeVisible();
+    await expect(
+      panel.getByRole("group", { name: "Bookmark status" }),
+    ).toHaveTextContent("Conflicted");
+    const conflictedTargets = panel.getByRole("group", {
+      name: "Bookmark targets",
+    });
+    await expect(conflictedTargets).toHaveTextContent("2");
+    await expect(
+      within(conflictedTargets).getAllByRole("button", {
+        name: /Copy Git commit SHA/u,
+      }),
+    ).toHaveLength(2);
+    await userEvent.click(
+      canvas.getByRole("option", { name: "feature/native-objects" }),
+    );
     await userEvent.click(panel.getByRole("button", { name: "Add bookmark" }));
     const createDialog = await page.findByRole("dialog", {
       name: "Create bookmark",
     });
-    await expect(within(createDialog).getByLabelText("Commit")).toHaveValue(
-      IDS.left,
+    await expect(
+      within(createDialog).queryByRole("textbox", { name: "Commit" }),
+    ).not.toBeInTheDocument();
+    const createTarget = within(createDialog).getByRole("combobox", {
+      name: "Commit",
+    });
+    await expect(createTarget).toHaveTextContent(
+      "Stream immutable native objects",
+    );
+    await expect(createTarget).toHaveTextContent("feature/native-objects");
+    await userEvent.click(createTarget);
+    const search = page.getByRole("combobox", { name: "Select commit" });
+    await userEvent.type(search, "Initialize native repository");
+    await userEvent.click(
+      page.getByRole("option", {
+        name: /Initialize native repository/u,
+      }),
+    );
+    await expect(createTarget).toHaveTextContent(
+      "Initialize native repository",
     );
     await userEvent.click(
       within(createDialog).getByRole("button", { name: "Cancel" }),
@@ -64,6 +123,9 @@
     await expect(within(dialog).getByLabelText("Bookmark")).toHaveValue(
       "feature/native-objects",
     );
+    await expect(
+      within(dialog).getByRole("combobox", { name: "Commit" }),
+    ).toHaveTextContent("Stream immutable native objects");
     await userEvent.click(
       within(dialog).getByRole("button", { name: "Cancel" }),
     );
