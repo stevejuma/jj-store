@@ -73,6 +73,11 @@ publication requirements. Native head integration is also governed by
 `collaboration.md`. Backup and passive promotion retain their independent
 adapter requirements.
 
+Tracked agent guidance and CLI activation documentation describe the implemented
+single-upstream profile as active while keeping its expanded qualification and
+stock-JJ filesystem mirroring explicitly deferred. Scope alignment updates must
+preserve that boundary in this chapter and in the milestone ledger.
+
 The checkout-owned development harness stores its interactive fixture only in
 the ignored `.local/dev-demo` subtree. Restart and stop preserve that fixture;
 reset is the explicit destructive reseed boundary. Reset publishes

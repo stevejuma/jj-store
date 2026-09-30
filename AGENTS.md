@@ -89,12 +89,14 @@ changed layer and its direct consumers.
 ## Current execution scope
 
 The LocalTrusted application, native browsing, search, typed mutations and
-conflict editing are implemented. M9 now adds repository-native AgentStore and
+conflict editing are implemented. M9 adds repository-native AgentStore and
 ReviewStore capabilities through the existing immutable object, WAL, receipt and
-manifest authority. The active sequence is independent publication roots,
-sanitized Codex/Cursor/OpenCode capture, exact review anchors and concurrency,
-LocalTrusted CLI/API, shared Community and Design Core presentation, then cold
-native recovery and real-harness qualification.
+manifest authority. The initial M10 local-first profile is also implemented: one
+explicitly configured authenticated upstream per repository, server-owned
+bounded bidirectional transfer, durable peer checkpoints, non-destructive
+workspace migration, local-only status, explicit controls and reconciliation,
+and SSE/search freshness after accepted imports. Ordinary reads and mutations
+remain local during an upstream outage.
 
 Production components live under `web/src/lib`; catalog fixtures and harnesses
 may import them, while production MUST remain independent of catalog state.
@@ -104,9 +106,11 @@ only a released registry version in jj-store. Credentials stay memory-only; SSE
 announces freshness and displayed snapshots change only on explicit refresh.
 Stories remain visual-pending; baseline approval is separate from interaction
 and accessibility acceptance. Manual-token authenticated repository discovery is
-implemented; shared release qualification, controller dispatch, remote
-replication, backup/restore, Git/Nostr export, other harnesses and CRDT
-semantics remain deferred.
+implemented. Expanded replication pressure/fault qualification, its browser UI,
+cold two-instance real-RustFS qualification, archive/export tooling, additional
+deployment topologies, shared release qualification, controller dispatch,
+backup/restore, stock-JJ filesystem mirroring, Git/Nostr export, other harnesses
+and CRDT semantics remain deferred.
 
 ## Local execution
 

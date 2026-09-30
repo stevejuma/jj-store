@@ -4,6 +4,50 @@ bidirectional worker with the server and stops it during graceful shutdown.
 Ordinary repository commands continue to use local authority during upstream
 outage.
 
+## Activate replication
+
+Create and start the persistent local service with the development binaries:
+
+```sh
+target/debug/jj-store init --local --state-dir /absolute/path/jj-store-local
+target/debug/jj-store config check \
+  --config /absolute/path/jj-store-local/server.toml
+target/debug/jj-store run \
+  --config /absolute/path/jj-store-local/server.toml
+```
+
+For an existing authenticated native workspace, leave that process running and
+hydrate it into the local service from another terminal:
+
+```sh
+target/debug/jj store migrate-local \
+  --unix-socket /absolute/path/jj-store-local/native.sock
+```
+
+This switches only the workspace's `.jj/repo` descriptor after the local copy is
+verified; it does not snapshot or rewrite working files. A workspace already
+attached to this local service skips the migration step.
+
+Use the reported repository ID to add its single `[[replication]]` entry to
+`server.toml` as described in the
+[server configuration guide](server-config.md). Grant the named credential write
+access on the upstream, load its `JJ_STORE_REPLICATION_TOKEN_...` environment
+variable from the local secret facility, validate the edited configuration, and
+restart the foreground local server. Migration does not add this ongoing
+replication configuration itself.
+
+Confirm the active worker from the migrated or attached workspace:
+
+```sh
+target/debug/jj sync status
+target/debug/jj sync now
+target/debug/jj sync wait --timeout 30s
+target/debug/jj replica inspect
+```
+
+`sync status` and `replica inspect` are local reads. `sync wait` contacts the
+upstream only to capture its finite frontier, then waits for that fixed target.
+
 - `jj sync status` reads local worker, checkpoint and search state without
   contacting the upstream. It reports local readiness and keeps issuer-bound
   local and peer positions separate.

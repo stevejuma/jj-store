@@ -69,14 +69,14 @@ adds evidence here in its enclosing Jujutsu change.
 | M9.4        | Done        | M9.2,M9.3   | JST-COLLAB-004                                                                                                                                                           | LocalTrusted bounded CLI/HTTP APIs, pagination, receipts and live collaboration hints                               | Implement M9.5 shared application presentation                     | E-M9-024,E-M9-025,E-M9-026,E-M9-027,E-M9-028,E-M9-029,E-M9-030,E-M9-031,E-M9-035                                                                                                                                                                                                                                                                               |
 | M9.5        | Done        | M9.4        | JST-COLLAB-005                                                                                                                                                           | Community-owned thread/agent widgets and Design Core exact diff selection integrated into the application           | Retain focused application and Storybook acceptance                | E-M9-032,E-M9-034,E-M9-035,E-M9-036,E-M9-037,E-M9-038,E-M9-039                                                                                                                                                                                                                                                                                                 |
 | M9.6        | Done        | M9.5        | JST-COLLAB-002,JST-COLLAB-006,JST-COLLAB-007                                                                                                                             | Three harness qualification, cold recovery, three-root native copy and bounded fault/security/browser acceptance    | Retain exact-version and native-copy regression gates              | E-M9-033                                                                                                                                                                                                                                                                                                                                                       |
-| M10         | In progress | M9.6        | JST-REPL-001,JST-REPL-002,JST-REPL-003,JST-REPL-004,JST-REPL-005,JST-REPL-006,JST-REPL-007,JST-REPL-008,JST-REPL-009,JST-REPL-010,JST-REPL-011,JST-REPL-012,JST-REPL-013 | Complete local-first writable replication and existing-workspace migration                                          | Retain the active profile; expanded qualification is M10.8         | E-M10-001,E-M10-002,E-M10-003,E-M10-004,E-M10-005,E-M10-006,E-M10-007,E-M10-008,E-M10-009,E-M10-010,E-M10-011,E-M10-012,E-M10-013                                                                                                                                                                                                                              |
-| M10.1       | In progress | M9.6        | JST-REPL-001,JST-REPL-002,JST-REPL-013                                                                                                                                   | Audit source pins and isolate every foreground storage path from upstream capability                                | Implement M10.2 origin authority                                   | E-M10-001,E-M10-010                                                                                                                                                                                                                                                                                                                                            |
-| M10.2       | In progress | M10.1       | JST-REPL-002,JST-REPL-003,JST-REPL-005                                                                                                                                   | Durable origin streams, causal catalogs and authored publication integration                                        | Implement verified receiver                                        | E-M10-002                                                                                                                                                                                                                                                                                                                                                      |
-| M10.3       | In progress | M10.2       | JST-REPL-004,JST-REPL-005,JST-REPL-006                                                                                                                                   | Verified one-way transfer, atomic import, durable acknowledgements and lost-response recovery                       | Integrate worker lifecycle and outage qualification                | E-M10-003,E-M10-005,E-M10-006,E-M10-010                                                                                                                                                                                                                                                                                                                        |
-| M10.4       | In progress | M10.3       | JST-REPL-007,JST-REPL-013                                                                                                                                                | Bidirectional native operation-head integration, distinct workspaces and explicit reconciliation                    | Retain explicit reconciliation RPC/CLI acceptance                  | E-M10-003,E-M10-007                                                                                                                                                                                                                                                                                                                                            |
-| M10.5       | In progress | M10.4       | JST-REPL-008,JST-REPL-009,JST-REPL-013                                                                                                                                   | AgentStore and ReviewStore accepted-fact convergence under reordered and duplicate delivery                         | Retain matrix and complete aggregate qualification                 | E-M10-004                                                                                                                                                                                                                                                                                                                                                      |
-| M10.6       | In progress | M10.5       | JST-REPL-004,JST-REPL-010,JST-REPL-011                                                                                                                                   | Complete snapshot-plus-tail bootstrap, format-2 seed upgrade and non-destructive existing-workspace migration       | Retain bootstrap acceptance and complete wider qualification       | E-M10-008,E-M10-010                                                                                                                                                                                                                                                                                                                                            |
-| M10.7       | In progress | M10.6       | JST-REPL-001,JST-REPL-006,JST-REPL-011,JST-REPL-012                                                                                                                      | Server-owned worker, one upstream, local outage readiness, controls, finite waits and SSE/search integration        | Resolve aggregate browser/timing failures; hardening remains M10.8 | E-M10-009,E-M10-010                                                                                                                                                                                                                                                                                                                                            |
+| M10         | In progress | M9.6        | JST-REPL-001,JST-REPL-002,JST-REPL-003,JST-REPL-004,JST-REPL-005,JST-REPL-006,JST-REPL-007,JST-REPL-008,JST-REPL-009,JST-REPL-010,JST-REPL-011,JST-REPL-012,JST-REPL-013 | Retain the active local-first replication and existing-workspace migration profile                                  | Expanded qualification remains deferred to M10.8                   | E-M10-001,E-M10-002,E-M10-003,E-M10-004,E-M10-005,E-M10-006,E-M10-007,E-M10-008,E-M10-009,E-M10-010,E-M10-011,E-M10-012,E-M10-013,E-M10-014                                                                                                                                                                                                                    |
+| M10.1       | Done        | M9.6        | JST-REPL-001,JST-REPL-002,JST-REPL-013                                                                                                                                   | Audit source pins and isolate every foreground storage path from upstream capability                                | Retain zero-upstream foreground regressions                        | E-M10-001,E-M10-010,E-M10-013                                                                                                                                                                                                                                                                                                                                  |
+| M10.2       | Done        | M10.1       | JST-REPL-002,JST-REPL-003,JST-REPL-005                                                                                                                                   | Durable origin streams, causal catalogs and authored publication integration                                        | Retain origin authority and idempotent receipt regressions         | E-M10-002,E-M10-013                                                                                                                                                                                                                                                                                                                                            |
+| M10.3       | Done        | M10.2       | JST-REPL-004,JST-REPL-005,JST-REPL-006                                                                                                                                   | Verified one-way transfer, atomic import, durable acknowledgements and lost-response recovery                       | Retain verified transfer and lost-response regressions             | E-M10-003,E-M10-005,E-M10-006,E-M10-010,E-M10-013                                                                                                                                                                                                                                                                                                              |
+| M10.4       | Done        | M10.3       | JST-REPL-007,JST-REPL-013                                                                                                                                                | Bidirectional native operation-head integration, distinct workspaces and explicit reconciliation                    | Retain explicit reconciliation RPC/CLI acceptance                  | E-M10-003,E-M10-007,E-M10-013                                                                                                                                                                                                                                                                                                                                  |
+| M10.5       | Done        | M10.4       | JST-REPL-008,JST-REPL-009,JST-REPL-013                                                                                                                                   | AgentStore and ReviewStore accepted-fact convergence under reordered and duplicate delivery                         | Retain collaboration delivery permutation regressions              | E-M10-004,E-M10-013                                                                                                                                                                                                                                                                                                                                            |
+| M10.6       | Done        | M10.5       | JST-REPL-004,JST-REPL-010,JST-REPL-011                                                                                                                                   | Complete snapshot-plus-tail bootstrap, format-2 seed upgrade and non-destructive existing-workspace migration       | Retain bootstrap, migration and zero-upstream regressions          | E-M10-008,E-M10-010,E-M10-013                                                                                                                                                                                                                                                                                                                                  |
+| M10.7       | Done        | M10.6       | JST-REPL-001,JST-REPL-006,JST-REPL-011,JST-REPL-012                                                                                                                      | Server-owned worker, one upstream, local outage readiness, controls, finite waits and SSE/search integration        | Retain active profile; expanded hardening stays deferred to M10.8. | E-M10-009,E-M10-010,E-M10-013,E-M10-014                                                                                                                                                                                                                                                                                                                        |
 | M10.8       | Deferred    | M10.7       | JST-REPL-011,JST-REPL-012                                                                                                                                                | Expanded pressure/fault soak, browser UI, cold two-instance RustFS, archive/export and topology qualification       | Future replication hardening                                       | -                                                                                                                                                                                                                                                                                                                                                              |
 
 The user reopened production browsing integration on 27 September 2026 after
@@ -19298,7 +19298,14 @@ and named tests are checked by the progress gate.
   {
     "id": "E-M10-013",
     "tasks": [
-      "M10"
+      "M10",
+      "M10.1",
+      "M10.2",
+      "M10.3",
+      "M10.4",
+      "M10.5",
+      "M10.6",
+      "M10.7"
     ],
     "date": "2026-09-30",
     "kind": "parent-workspace-replication-integration",
@@ -19486,6 +19493,82 @@ and named tests are checked by the progress gate.
     "remaining": [],
     "versions": "pnpm 10.32.1; Storybook 10.5.7; Vitest browser 4.1.11.",
     "formats": "No product API, persistence, wire format or visual baseline change; this repairs the browser-story assertion for the existing file preview layout."
+  },
+  {
+    "id": "E-M10-014",
+    "tasks": [
+      "M10",
+      "M10.7"
+    ],
+    "date": "2026-09-30",
+    "kind": "minimal-replication-activation-scope-alignment",
+    "files": [
+      "AGENTS.md",
+      "docs/cli/sync.md",
+      "spec/src/cli.md",
+      "spec/src/milestones.md",
+      "spec/src/spec-governance.md"
+    ],
+    "runs": [
+      {
+        "command": "pnpm check:progress",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before this evidence entry, the checker correctly rejected the protected guide and CLI documentation changes because the enclosing change had no ledger update."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 103 canonical requirements validate with the active single-upstream profile and explicit deferral boundary."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "The protected agent guide and CLI documentation changes have their mapped spec-governance and CLI chapter updates."
+      },
+      {
+        "command": "pnpm exec prettier --check AGENTS.md docs/cli/sync.md spec/src/cli.md spec/src/spec-governance.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "All alignment documents are formatted before the ledger update."
+      },
+      {
+        "command": "pnpm exec prettier --write AGENTS.md docs/cli/sync.md spec/src/cli.md spec/src/milestones.md spec/src/spec-governance.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "The final guide, command help, canonical chapters and evidence ledger are formatted together."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 70 task rows and the new scope-alignment evidence entry pass ledger validation."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "The final protected change maps the guide and CLI documentation to three updated canonical chapters."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 103 canonical requirements validate after the final milestone alignment."
+      },
+      {
+        "command": "pnpm format:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rust and tracked-text formatting pass. Production tests and aggregate gates were not repeated because this slice changes only guidance and status; the merged implementation passed them under E-M10-013."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "versions": "jj 0.45.1; pnpm 10.32.1; manifest format 2.",
+    "formats": "No product API, persistence or wire format change. The guide and CLI help now identify the existing format-2 single-upstream profile as active and keep M10.8 plus stock-JJ filesystem mirroring deferred."
   }
 ]
 ```

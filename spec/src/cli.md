@@ -425,6 +425,14 @@ mode and never return the configured credential or its resolved value.
 `jj sync reconcile` remains a separate receipt-backed application mutation. No
 status read, wait, import or background worker step invokes it implicitly.
 
+The command guide documents the minimum activation sequence with explicit
+development binary paths: initialize and validate a persistent LocalTrusted
+service, migrate an existing authenticated workspace when needed, add one
+repository/upstream configuration and its environment credential reference,
+restart the server, then inspect and wake the worker or wait for a captured
+frontier. Migration and ongoing replication configuration remain separate
+operations, and neither rewrites physical working-copy files.
+
 ## Configured search lifecycle
 
 Server TOML may contain up to eight explicit search entries. Each binds a full
