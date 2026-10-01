@@ -347,5 +347,5 @@ pub fn capabilities() -> serde_json::Value {
         "abandon":"verified","rebase":"verified","squash":"verified","split":"verified","undo":"verified",
         "resolve --list":"verified","file show":"verified","file list":"verified","file chmod":"verified",
         "sign":"verified (SSH)","unsign":"verified (SSH)","operation reconciliation":"verified",
-        "git":"unsupported","util gc":"unsupported"},"git_bridge":{"stage":"GB0","dispatch":"native backend-aware hook","native_transport":"not implemented","publication":"bookmarks only; tag publication deferred"},"creation":"jj store init with durable retries","physical_state":"client-local","ordinary_commands":"upstream jj 0.45.1"})
+        "git remote add/list/set-url":"verified local bridge","git fetch":"verified local bounded scope","git push":"unsupported","git import/export":"unsupported","util gc":"unsupported"},"git_bridge":{"stage":"GB2 local fetch slice","dispatch":"native backend-aware hook","native_transport":"approved device-local Git 2.55.0; code origin activation gated until GB4","fetch":"one named remote; simple bookmark filters; commit tags retained","publication":"bookmarks only; tag publication deferred"},"creation":"jj store init with durable retries","physical_state":"client-local","ordinary_commands":"upstream jj 0.45.1"})
 }

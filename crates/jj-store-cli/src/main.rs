@@ -17,10 +17,13 @@ fn main() -> std::process::ExitCode {
         }
     };
     let _entered = runtime.enter();
+    let registry = jj_store_cli::binding::FactoryRegistry::default();
     runner
-        .add_store_factories(jj_store_cli::binding::lazy_factories())
+        .add_store_factories(registry.factories())
         .add_subcommand(jj_store_cli::commands::run)
-        .add_dispatch_hook(jj_store_cli::presentation::dispatch)
+        .add_dispatch_hook(async move |ui, helper, inner| {
+            jj_store_cli::presentation::dispatch(ui, helper, inner, &registry).await
+        })
         .run()
         .into()
 }

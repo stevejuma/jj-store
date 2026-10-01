@@ -7,20 +7,59 @@ use jj_store_jj::{
 };
 use jj_store_model as m;
 use jj_store_rpc::client::{NativeClient, RemoteObjects};
-use std::{collections::BTreeSet, sync::Arc};
+use std::{
+    collections::BTreeSet,
+    sync::{Arc, Mutex},
+};
 
-pub struct RemoteAuthority(pub NativeClient);
+#[derive(Clone)]
+pub struct BridgeContext {
+    pub client: NativeClient,
+    pending: Arc<Mutex<Option<jj_store_service::git_bridge::Request>>>,
+}
+pub struct PendingGit(BridgeContext);
+impl Drop for PendingGit {
+    fn drop(&mut self) {
+        if let Ok(mut pending) = self.0.pending.lock() {
+            *pending = None;
+        }
+    }
+}
+impl BridgeContext {
+    pub fn new(client: NativeClient) -> Self {
+        Self {
+            client,
+            pending: Arc::default(),
+        }
+    }
+    pub fn begin(
+        &self,
+        request: jj_store_service::git_bridge::Request,
+    ) -> AuthorityResult<PendingGit> {
+        let mut pending = self
+            .pending
+            .lock()
+            .map_err(|_| "Git publication lock poisoned")?;
+        if pending.is_some() {
+            return Err("Git publication already bound".into());
+        }
+        *pending = Some(request);
+        Ok(PendingGit(self.clone()))
+    }
+}
+pub struct RemoteAuthority(BridgeContext);
 #[async_trait::async_trait]
 impl BackendAuthority for RemoteAuthority {
     async fn authorize_read(&self) -> AuthorityResult<()> {
-        Ok(self.0.authorize(false).await?)
+        Ok(self.0.client.authorize(false).await?)
     }
     async fn authorize_write(&self) -> AuthorityResult<()> {
-        Ok(self.0.authorize(true).await?)
+        Ok(self.0.client.authorize(true).await?)
     }
     async fn copy_ids(&self, limit: usize) -> AuthorityResult<BTreeSet<m::CopyId>> {
         Ok(self
             .0
+            .client
             .inventory(true, limit)
             .await?
             .into_iter()
@@ -37,11 +76,12 @@ impl OperationAuthority for RemoteAuthority {
         BackendAuthority::authorize_write(self).await
     }
     async fn heads(&self) -> AuthorityResult<BTreeSet<m::OperationId>> {
-        Ok(self.0.heads().await?)
+        Ok(self.0.client.heads().await?)
     }
     async fn operation_ids(&self, limit: usize) -> AuthorityResult<BTreeSet<m::OperationId>> {
         Ok(self
             .0
+            .client
             .inventory(false, limit)
             .await?
             .into_iter()
@@ -55,12 +95,31 @@ impl OperationAuthority for RemoteAuthority {
     ) -> AuthorityResult<()> {
         // A failed response never becomes success. Deterministic server-side
         // transition identities preserve receipt recovery after reconnection.
-        Ok(self.0.publish(old, new).await?)
+        let pending = self
+            .0
+            .pending
+            .lock()
+            .map_err(|_| "Git publication lock poisoned")?
+            .clone();
+        if let Some(mut request) = pending {
+            request.transition = Some(jj_store_service::git_bridge::NativeTransition {
+                remove: old,
+                add: new,
+            });
+            match self.0.client.accept_git_bridge(&request).await? {
+                jj_store_service::git_bridge::Outcome::Committed { .. } => Ok(()),
+                jj_store_service::git_bridge::Outcome::OutcomeUnknown { request_id } => Err(
+                    format!("Git native acceptance outcome unknown; request {request_id}").into(),
+                ),
+            }
+        } else {
+            Ok(self.0.client.publish(old, new).await?)
+        }
     }
 }
 impl NativeAuthority for RemoteAuthority {
     fn repository(&self) -> m::RepositoryId {
-        self.0.repository()
+        self.0.client.repository()
     }
 }
 pub fn stores(
@@ -69,6 +128,15 @@ pub fn stores(
     backend: BackendLimits,
     operations: OperationLimits,
 ) -> AuthorityResult<NativeStores> {
+    stores_with_context(BridgeContext::new(client), max_blob, backend, operations)
+}
+pub fn stores_with_context(
+    context: BridgeContext,
+    max_blob: u64,
+    backend: BackendLimits,
+    operations: OperationLimits,
+) -> AuthorityResult<NativeStores> {
+    let client = context.client.clone();
     let objects = Arc::new(NativeObjects::new(
         Arc::new(RemoteObjects(client.clone())),
         client.repository(),
@@ -76,7 +144,7 @@ pub fn stores(
     )?);
     NativeStores::new(
         objects,
-        Arc::new(RemoteAuthority(client)),
+        Arc::new(RemoteAuthority(context)),
         backend,
         operations,
     )

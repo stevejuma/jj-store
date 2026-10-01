@@ -27,6 +27,7 @@ pub struct Request {
 pub struct State {
     pub version: u32,
     pub code: Snapshot,
+    pub activation_available: bool,
     pub git: Option<GitStoreSnapshot>,
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -58,6 +59,8 @@ pub async fn read(session: Arc<NativeSession>) -> wal::Result<State> {
     Ok(State {
         version: 1,
         code: before.manifest().snapshot(),
+        activation_available: before.manifest().work_root.is_some()
+            || before.manifest().replication_root.is_none(),
         git,
     })
 }

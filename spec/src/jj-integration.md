@@ -490,3 +490,10 @@ The service verifies conversion evidence using the pinned integration crate and
 rechecks repository write access before publication. The CLI may bind a pending
 Git delta to its existing request-scoped OpHeadsStore publication so normal JJ
 transaction/rebase/workspace finishing performs only one acceptance.
+
+An invocation-owned factory registry shares the native client and a scoped
+pending Git delta across backend/operation/head adapters. The pending guard is
+installed only around the Git command's final transaction. Snapshot and ordinary
+head reconciliation remain ordinary native publications, and the guard clears on
+success, failure or cancellation. No global principal or pending request is
+introduced.

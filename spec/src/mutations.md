@@ -505,3 +505,7 @@ transport identity, verifies representation bytes/mappings before acceptance,
 and preserves stable request identity through unknown outcomes. Freshness hints
 fire only for committed acceptance. Reads and receipt lookup reauthorize current
 repository access and never perform Git transport.
+
+Git state reports whether explicit bridge activation is currently qualified for
+the selected domains. The CLI can check this immutable snapshot before normal
+working-copy snapshotting or endpoint execution; it grants no additional access.

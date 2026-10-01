@@ -1068,8 +1068,8 @@ async fn native_git_dispatch_honors_alias_repository_and_no_snapshot() {
     ).unwrap();
     let before = f.snapshot().await;
     for args in [
-        vec!["git", "fetch", "--remote", "origin"],
-        vec!["gb", "--remote", "origin"],
+        vec!["git", "fetch", "--all-remotes"],
+        vec!["gb", "--all-remotes"],
         vec!["git", "push", "--bookmark", "feature", "--dry-run"],
         vec![
             "git",
@@ -1077,6 +1077,8 @@ async fn native_git_dispatch_honors_alias_repository_and_no_snapshot() {
             "add",
             "origin",
             "https://example.invalid/code.git",
+            "--push-url",
+            "https://example.invalid/other.git",
         ],
         vec!["git", "import"],
         vec!["git", "export"],
@@ -1194,4 +1196,162 @@ async fn executable_workstore_creates_tasks_comments_and_recovers_without_an_ups
     assert_eq!(shown["tasks"][0]["version"], 2);
     assert_eq!(f.snapshot().await, before);
     f.stop().await;
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn native_git_fetch_tracks_refs_repeats_without_code_operation_and_survives_cache_loss() {
+    let f = Fixture::new().await;
+    f.attach("git-fetch");
+    let work = f.root.path().join("git-fetch");
+    let device = f.root.path().join("git-device");
+    let run = |args: &[&str]| {
+        success(
+            f.command(&work, args)
+                .env("JJ_STORE_GIT_HOME", &device)
+                .output()
+                .unwrap(),
+        )
+    };
+    run(&[
+        "project",
+        "create",
+        "--request-id",
+        &m::RequestId::new([140; 16]).to_string(),
+        "--title",
+        "Local home",
+    ]);
+    let bare = f.root.path().join("source.git");
+    let git = gix::init_bare(&bare).unwrap();
+    use gix::objs::Write as _;
+    let tree = git.write_object(gix::objs::Tree::empty()).unwrap();
+    let body = format!(
+        "tree {tree}\nauthor Native Test <native@example.invalid> 1000 +0000\ncommitter Native Test <native@example.invalid> 1000 +0000\n\nImported project\n"
+    );
+    let oid = git
+        .objects
+        .write_buf(gix::objs::Kind::Commit, body.as_bytes())
+        .unwrap();
+    git.reference(
+        "refs/heads/main",
+        oid,
+        gix::refs::transaction::PreviousValue::MustNotExist,
+        "fixture",
+    )
+    .unwrap();
+    run(&["git", "remote", "add", "origin", bare.to_str().unwrap()]);
+    let bindings = fs::read_to_string(device.join(REPO.to_string()).join("bindings.json")).unwrap();
+    assert!(!bindings.contains(f.token.expose().as_str()));
+    assert!(run(&["git", "remote", "list"]).contains("origin"));
+    run(&["git", "fetch", "--remote", "origin"]);
+    let bookmarks = run(&["bookmark", "list", "--all-remotes"]);
+    assert!(bookmarks.contains("main@origin"), "{bookmarks}");
+    assert!(
+        !bookmarks.lines().any(|line| line.starts_with("main:")),
+        "must remain untracked: {bookmarks}"
+    );
+    run(&["bookmark", "track", "main", "--remote", "origin"]);
+    run(&["new", "main@origin", "-m", "Native child"]);
+    let before = f.snapshot().await;
+    fs::remove_dir_all(device.join(REPO.to_string()).join("cache")).unwrap();
+    let repeated_output = f
+        .command(&work, &["git", "fetch"])
+        .env("JJ_STORE_GIT_HOME", &device)
+        .output()
+        .unwrap();
+    let repeated_stderr = String::from_utf8_lossy(&repeated_output.stderr).into_owned();
+    let repeated = success(repeated_output);
+    assert!(
+        repeated.contains("Nothing changed"),
+        "{repeated}\n{repeated_stderr}"
+    );
+    assert_eq!(f.snapshot().await, before);
+    assert!(!work.join(".git").exists());
+    let stored = NativeSession::new(
+        f.store.clone(),
+        Arc::new(NativeObjects::new(f.store.clone(), REPO, 32 * 1024 * 1024).unwrap()),
+        f.token.clone(),
+        Arc::new(SystemClock),
+        Protection::default(),
+        SessionLimits::default(),
+    )
+    .unwrap()
+    .snapshot()
+    .await
+    .unwrap();
+    assert_eq!(stored.manifest().format, 4);
+    assert!(stored.manifest().git_root.is_some());
+
+    // A force rewrite and a local advance produce the normal native conflict.
+    run(&["bookmark", "set", "main", "-r", "@"]);
+    let rewritten_body = body.replace("Imported project", "External rewrite");
+    let rewritten = git
+        .objects
+        .write_buf(gix::objs::Kind::Commit, rewritten_body.as_bytes())
+        .unwrap();
+    git.find_reference("refs/heads/main")
+        .unwrap()
+        .set_target_id(rewritten, "rewrite")
+        .unwrap();
+    git.reference(
+        "refs/heads/keep",
+        oid,
+        gix::refs::transaction::PreviousValue::MustNotExist,
+        "fixture",
+    )
+    .unwrap();
+    let tag_body = format!(
+        "object {oid}\ntype commit\ntag release\ntagger Native Test <native@example.invalid> 1000 +0000\n\nSigned-like release\n"
+    );
+    let tag = git
+        .objects
+        .write_buf(gix::objs::Kind::Tag, tag_body.as_bytes())
+        .unwrap();
+    git.reference(
+        "refs/tags/release",
+        tag,
+        gix::refs::transaction::PreviousValue::MustNotExist,
+        "fixture",
+    )
+    .unwrap();
+    run(&["git", "fetch"]);
+    let bookmarks = run(&["bookmark", "list", "--all-remotes"]);
+    assert!(bookmarks.contains("main (conflicted)"), "{bookmarks}");
+    assert!(bookmarks.contains("keep@origin"), "{bookmarks}");
+    git.find_reference("refs/heads/keep")
+        .unwrap()
+        .delete()
+        .unwrap();
+    git.find_reference("refs/heads/main")
+        .unwrap()
+        .delete()
+        .unwrap();
+    run(&["git", "fetch", "--branch", "main"]);
+    let bookmarks = run(&["bookmark", "list", "--all-remotes"]);
+    assert!(!bookmarks.contains("main@origin"), "{bookmarks}");
+    assert!(
+        bookmarks.contains("keep@origin"),
+        "filtered omission must retain keep: {bookmarks}"
+    );
+    run(&["git", "fetch"]);
+    assert!(!run(&["bookmark", "list", "--all-remotes"]).contains("keep@origin"));
+    let session = NativeSession::new(
+        f.store.clone(),
+        Arc::new(NativeObjects::new(f.store.clone(), REPO, 32 * 1024 * 1024).unwrap()),
+        f.token.clone(),
+        Arc::new(SystemClock),
+        Protection::default(),
+        SessionLimits::default(),
+    )
+    .unwrap();
+    let git_state = jj_store_service::git_bridge::read(Arc::new(session))
+        .await
+        .unwrap()
+        .git
+        .unwrap();
+    let tag_oid = tag.to_string();
+    let commit_oid = oid.to_string();
+    assert!(git_state.values.values().any(
+        |v| matches!(v, jj_store_wal::publication::GitRecordV1::Object(v) if v.oid == tag_oid)
+    ));
+    assert!(git_state.values.values().any(|v| matches!(v, jj_store_wal::publication::GitRecordV1::Observation(v) if v.refs.get("refs/tags/release").is_some_and(|v| v.oid.as_deref() == Some(tag_oid.as_str()) && v.commit_oid.as_deref() == Some(commit_oid.as_str())))));
 }

@@ -561,3 +561,14 @@ workspace through JJ's loader without snapshotting or reconciling operations.
 Ordinary Git repositories and creation commands retain upstream dispatch. Native
 import/export remains unsupported; implemented stages alone appear in the
 capability matrix. Aliases and global arguments are parsed upstream.
+
+Native Git bindings live in private device-local state outside checkouts. An
+explicit remote add/set-url approves one HTTPS/SSH or canonical local endpoint;
+replicated logical names grant no transport permission. A binding fingerprint
+changes with endpoint approval and prevents lease reuse across destinations.
+Cache attempts are private, exclusively locked and disposable, with bounded Git
+subprocess output, duration and disk use. Hooks and repository-provided helpers
+remain disabled. Fetch uses one explicit scope and the existing native
+transaction/rebase/workspace finish path with a pending typed Git delta.
+Unsupported parsed flags and historical/non-integrating mutation contexts fail
+before transport. Ordinary Git-backed dispatch remains upstream-owned.

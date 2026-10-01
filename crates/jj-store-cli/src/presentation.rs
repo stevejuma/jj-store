@@ -130,6 +130,7 @@ pub async fn dispatch(
     ui: &mut Ui,
     helper: &CommandHelper,
     inner: BoxedAsyncCliDispatch<'_>,
+    registry: &crate::binding::FactoryRegistry,
 ) -> Result<(), CommandError> {
     if let Some(matches) = helper.matches().subcommand_matches("help") {
         let path: Vec<_> = matches
@@ -143,7 +144,7 @@ pub async fn dispatch(
         }
     }
     if let Some(operation) = crate::git_bridge::native_operation(helper)? {
-        return Err(crate::git_bridge::unavailable(&operation));
+        return crate::git_bridge::run(ui, helper, registry, &operation).await;
     }
     inner.call(ui, helper).await
 }

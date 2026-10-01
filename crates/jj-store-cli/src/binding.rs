@@ -215,54 +215,78 @@ pub fn bounded_read(path: &Path, limit: u64) -> AuthorityResult<Vec<u8>> {
 }
 /// One cache per CLI invocation. Captured closures never install process-global
 /// principal or repository state, and upstream factories handle other backends.
+#[derive(Clone, Default)]
+pub struct FactoryRegistry {
+    entries: Arc<Mutex<BTreeMap<PathBuf, (NativeStores, remote::BridgeContext)>>>,
+}
+impl FactoryRegistry {
+    pub fn context(&self, path: &Path) -> AuthorityResult<remote::BridgeContext> {
+        self.entries
+            .lock()
+            .map_err(|_| "native factory lock poisoned")?
+            .get(&path.canonicalize()?)
+            .map(|(_, context)| context.clone())
+            .ok_or_else(|| "native factory context missing".into())
+    }
+    pub fn factories(&self) -> StoreFactories {
+        let loaded = self.entries.clone();
+        let load = move |component: &Path| -> AuthorityResult<NativeStores> {
+            let cache = component
+                .parent()
+                .ok_or("missing native cache directory")?
+                .canonicalize()?;
+            let mut entries = loaded.lock().map_err(|_| "native factory lock poisoned")?;
+            if let Some((stores, _)) = entries.get(&cache) {
+                return Ok(stores.clone());
+            }
+            let connection = Connection::read(&cache)?;
+            let client = futures::executor::block_on(connection.connect())?;
+            let context = remote::BridgeContext::new(client);
+            let stores = remote::stores_with_context(
+                context.clone(),
+                connection.max_blob_bytes,
+                BackendLimits::default(),
+                OperationLimits::default(),
+            )?;
+            entries.insert(cache, (stores.clone(), context));
+            Ok(stores)
+        };
+        let mut factories = StoreFactories::empty();
+        let backend = load.clone();
+        factories.add_backend(
+            "jj-store",
+            Box::new(move |settings, path| {
+                backend(path)
+                    .map_err(BackendLoadError)?
+                    .factories()
+                    .load_backend(settings, path)
+                    .map_err(|e| BackendLoadError(e.into()))
+            }),
+        );
+        let operations = load.clone();
+        factories.add_op_store(
+            "jj-store",
+            Box::new(move |settings, path, root| {
+                operations(path)
+                    .map_err(BackendLoadError)?
+                    .factories()
+                    .load_op_store(settings, path, root)
+                    .map_err(|e| BackendLoadError(e.into()))
+            }),
+        );
+        factories.add_op_heads_store(
+            "jj-store",
+            Box::new(move |settings, path| {
+                load(path)
+                    .map_err(BackendLoadError)?
+                    .factories()
+                    .load_op_heads_store(settings, path)
+                    .map_err(|e| BackendLoadError(e.into()))
+            }),
+        );
+        factories
+    }
+}
 pub fn lazy_factories() -> StoreFactories {
-    let loaded: Arc<Mutex<BTreeMap<PathBuf, NativeStores>>> = Arc::default();
-    let load = move |component: &Path| -> AuthorityResult<NativeStores> {
-        let cache = component
-            .parent()
-            .ok_or("missing native cache directory")?
-            .canonicalize()?;
-        let mut entries = loaded.lock().map_err(|_| "native factory lock poisoned")?;
-        if let Some(stores) = entries.get(&cache) {
-            return Ok(stores.clone());
-        }
-        let connection = Connection::read(&cache)?;
-        let stores = futures::executor::block_on(connection.stores())?;
-        entries.insert(cache, stores.clone());
-        Ok(stores)
-    };
-    let mut factories = StoreFactories::empty();
-    let backend = load.clone();
-    factories.add_backend(
-        "jj-store",
-        Box::new(move |settings, path| {
-            backend(path)
-                .map_err(BackendLoadError)?
-                .factories()
-                .load_backend(settings, path)
-                .map_err(|e| BackendLoadError(e.into()))
-        }),
-    );
-    let operations = load.clone();
-    factories.add_op_store(
-        "jj-store",
-        Box::new(move |settings, path, root| {
-            operations(path)
-                .map_err(BackendLoadError)?
-                .factories()
-                .load_op_store(settings, path, root)
-                .map_err(|e| BackendLoadError(e.into()))
-        }),
-    );
-    factories.add_op_heads_store(
-        "jj-store",
-        Box::new(move |settings, path| {
-            load(path)
-                .map_err(BackendLoadError)?
-                .factories()
-                .load_op_heads_store(settings, path)
-                .map_err(|e| BackendLoadError(e.into()))
-        }),
-    );
-    factories
+    FactoryRegistry::default().factories()
 }
