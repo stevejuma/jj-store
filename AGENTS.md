@@ -113,9 +113,13 @@ upstream, but the CLI requires the native local service. Explicit native Git
 bookmark fetch and selected push use the private disposable CLI cache and
 manifest-selected Git facts. Code repositories use the owned reducer-2 data-only
 origin path; WorkStore homes keep their existing origin freeze. Endpoint
-approval stays device-local. Remaining M12 selectors, process lifetime,
-credential and cold end-to-end gates remain explicit in the ledger. Server-free
-storage remains deferred.
+approval stays device-local. M12 selectors, process lifetime, credential and
+cold end-to-end gates are qualified through GB6 on macOS ARM64 with JJ 0.45.1
+and Git 2.55.0 under the SHA-1 bookmark profile. The ledger owns the exact
+fault, credential, cache-loss, real-RustFS and browser evidence. Tag
+publication, signing/conflict export profiles, native Git import/export and
+other platform qualification remain deferred. Server-free storage remains
+deferred.
 
 Production components live under `web/src/lib`; catalog fixtures and harnesses
 may import them, while production MUST remain independent of catalog state.

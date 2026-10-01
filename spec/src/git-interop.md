@@ -48,6 +48,14 @@ bookmark selectors, remote rename/remove and atomic multi-ref pushes. GB6
 qualifies the cold real-RustFS external merge cycle and resource/credential
 gates. No stage can advertise an unimplemented later capability.
 
+GB0 through GB6 are qualified on macOS ARM64 with the `jj-git-sha1-0.45.1-v1`
+bookmark profile. E-M12-010 records generated-credential HTTPS/SSH transport and
+a cold native-to-Git-to-external-merge-to-native cycle using actual persistent
+RustFS and the served browser. This is local fixture qualification;
+Linux/Windows and external forge deployments remain unqualified. Native Git
+import/export, tag publication, signing/conflict export and server-free native
+storage remain unsupported. WorkStore replication stays frozen.
+
 ## Identity and outcomes
 
 Git OIDs carry their hash algorithm and remain distinct from native CommitIds,
@@ -213,3 +221,21 @@ Later observations from another approved binding are retained; ambiguous frozen
 bases leave apply pending. Recovery cannot silently replace a later ref target.
 Interrupted cache directories are owner-only from creation, so crash cleanup can
 verify and remove them without requiring a manual purge.
+
+## Approved device credentials
+
+The invoking device may explicitly select absolute executable `GIT_ASKPASS`,
+`SSH_ASKPASS` and `GIT_SSH` paths and an absolute bounded `GIT_SSL_CAINFO` trust
+file. The bridge validates these paths, retains SSH agent access and fixes the
+SSH argument profile. Shell-valued `GIT_SSH_COMMAND`, Git trace/config injection
+and TLS-verification overrides are not forwarded. An explicit
+`JJ_STORE_GIT_CREDENTIAL_HELPER` selects `none`, `osxkeychain`, `manager` or
+`libsecret`; arbitrary credential-helper strings are refused. The macOS default
+uses its OS keychain. Native/server bearer and storage credentials are removed
+from transport and helper environments. Device approvals are never serialized
+into immutable Git facts. Authentication and trust failures accept no fetch.
+
+Dry-run prints the frozen source operation, destination approval, profile and
+per-ref known-OID/known-absent lease, desired Git OID/deletion and complete
+native target. These are planning facts, with no native intent or external
+write.

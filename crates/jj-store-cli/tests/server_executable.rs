@@ -1926,3 +1926,6 @@ fn cold_search_worker_polls_failed_storage_and_stops_with_foreground_server() {
         server.terminate();
     }
 }
+
+#[path = "server_executable/git_bridge.rs"]
+mod git_bridge_acceptance;

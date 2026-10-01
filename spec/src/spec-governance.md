@@ -434,8 +434,14 @@ through GB6; every slice retains exact targeted evidence and explicit
 unimplemented gates. Attached sketches never satisfy product acceptance.
 
 The tracked execution guide reports the qualified native Git fact reducer and
-keeps M12 selector, fault, credential and cold end-to-end gates explicit.
-Reducer negotiation is versioned independently of legacy origin serialization;
-protected transfer and receiver changes include publication, replication, JJ
-integration, CLI and mutation contracts with focused regression evidence in the
-same change.
+completed GB0 through GB6 gates under the macOS ARM64 SHA-1 bookmark profile,
+with JJ 0.45.1 and Git 2.55.0. E-M12-010 records the final credential,
+cache-loss, cold real-RustFS, search and explicit browser refresh acceptance;
+earlier M12 evidence owns conversion, ref parity, concurrency and stage faults.
+This qualification does not establish Linux/Windows acceptance, an external
+forge deployment, tag publication, signing/conflict export, native Git
+import/export or server-free storage. Those capabilities remain separately
+gated; WorkStore replication remains frozen. Reducer negotiation is versioned
+independently of legacy origin serialization; protected transfer and receiver
+changes include publication, replication, JJ integration, CLI and mutation
+contracts with focused regression evidence in the same change.

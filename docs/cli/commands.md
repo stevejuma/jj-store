@@ -50,5 +50,14 @@ not push again or prove who authored a currently observed desired ref.
 Native Git code repositories carry immutable Git facts through reducer-2 origin
 replication. Peers receive logical aliases and exact evidence; endpoint bindings
 and credentials remain device-local. WorkStore homes retain local Git support
-and their frozen origin ledger. Cold credential/resource and end-to-end
-qualification remain explicit gates.
+and their frozen origin ledger. GB6 qualification covers macOS ARM64 with JJ
+0.45.1 and Git 2.55.0 under `jj-git-sha1-0.45.1-v1`, including generated
+HTTPS/SSH credentials and the cold real-RustFS/browser external merge cycle.
+Other platforms and external forge deployments remain unqualified.
+
+For explicit device credential approval, use an absolute `GIT_ASKPASS` or
+`GIT_SSH` executable path and, where required, an absolute `GIT_SSL_CAINFO`
+file. `JJ_STORE_GIT_CREDENTIAL_HELPER` accepts `none`, `osxkeychain`, `manager`
+and `libsecret`. Native/server credentials are withheld from transport helpers.
+Dry-run prints the source, destination approval and every exact proposed lease
+and target; it retains no attempt and sends no ref update.

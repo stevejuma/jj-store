@@ -579,14 +579,15 @@ outcomes and applies remote bookkeeping without moving local bookmarks. Dry-run
 does not publish an intent or bridge-induced code. `jj store git status` reads
 durable attempts; `jj store git recover` inspects the original approved endpoint
 and repairs local bookkeeping without retransmitting. Capability gates remain
-explicit for selectors, multi-ref transport, conflicts, tag publication and
-sign-on-push until their focused acceptance passes.
+explicit for conflicts, tag publication, sign-on-push and unsupported push
+options. Bookmark selectors and atomic multi-ref transport are qualified below.
 
 Native Git code repositories use reducer-2 origin negotiation for data-only
 facts. Device bindings are still explicit and local. The bridge capability
-reports qualified native fact replication separately from remaining fault,
-selector, credential and cold end-to-end gates; ordinary upstream dispatch is
-unchanged.
+reports GB6 qualification on macOS ARM64 with JJ 0.45.1, gix 0.87.1 and Git
+2.55.0 under `jj-git-sha1-0.45.1-v1`. Native fact replication is data-only;
+ordinary upstream dispatch is unchanged. Linux/Windows and external forge
+deployment qualification remain deferred.
 
 Native Git bookmark selection supports patterns, --revision, --all, --tracked,
 --deleted, --change and --named under the bookmark-only capability profile.
@@ -606,3 +607,14 @@ Git apply/recovery reads the frozen native operation's remote-ref base and
 merges its result into current tracking state, including renamed aliases. An
 attempt cache starts with owner-only directory permissions and remains safely
 removable after a hard-killed invocation.
+
+Native Git honors explicit absolute device askpass/SSH executable and CA-file
+approvals. `JJ_STORE_GIT_CREDENTIAL_HELPER` selects a supported OS helper or
+`none`. Configuration and TLS-verification environment injection stays disabled;
+helpers do not inherit native bearer or server storage credentials.
+
+The GB6 cold fixture uses production CLI/server binaries, persistent embedded
+RustFS, actual Git refs and a freshly built served browser. It retains a native
+review anchor and AgentStore receipt through cache deletion, server restart, Git
+publication and external merge import. Git hosting outages leave ordinary local
+new/describe usable; no Git checkout or background mirror is installed.

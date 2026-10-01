@@ -2,6 +2,7 @@
 use super::*;
 use std::{path::Path, process::Stdio, time::Duration};
 use tokio::{io::AsyncReadExt as _, process::Command};
+mod credentials;
 mod network;
 pub use network::{fetch, inspect, push};
 const OUTPUT_BYTES: u64 = 1024 * 1024;
@@ -57,13 +58,7 @@ pub async fn run(cache: &Path, args: &[String]) -> Result<Output> {
             command.env_remove(key);
         }
     }
-    // SSH agent and ordinary user SSH configuration stay device-local. Only
-    // caller-selected askpass programs are restored; replicated data cannot set them.
-    for key in ["GIT_ASKPASS", "SSH_ASKPASS"] {
-        if let Some(value) = std::env::var_os(key) {
-            command.env(key, value);
-        }
-    }
+    credentials::apply(&mut command)?;
     command
         .env("GIT_CONFIG_NOSYSTEM", "1")
         .env("GIT_CONFIG_GLOBAL", "/dev/null")
@@ -100,10 +95,6 @@ pub async fn run(cache: &Path, args: &[String]) -> Result<Output> {
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::piped());
-    #[cfg(target_os = "macos")]
-    {
-        command.args(["-c", "credential.helper=osxkeychain"]);
-    }
     command.args(args);
     let mut child = command.spawn()?;
     // Dropping this pipe (including when the future is canceled) tells the

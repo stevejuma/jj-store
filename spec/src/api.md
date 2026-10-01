@@ -907,3 +907,9 @@ The shared browser history independently restores Projects task identities and
 the JJ Log evolution anchor. Page changes clear incompatible selections while
 preserving the full code operation pin; Back, Forward and reload restore the
 selected destination without publishing repository state.
+
+Cold Git bridge browser acceptance uses actual LocalTrusted RustFS publication
+and an external merge imported by the custom CLI. SSE announces new history; the
+displayed graph and operation route remain pinned until explicit refresh. The
+refreshed graph exposes the imported merge without synthetic agent history. The
+same cold fixture verifies the native search adapter catches up to that import.

@@ -2271,3 +2271,295 @@ async fn native_git_recovery_preserves_a_later_observation_from_another_binding(
         Some(pushed.as_ref())
     );
 }
+
+#[cfg(unix)]
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn native_git_https_uses_approved_ca_and_askpass_without_serializing_secrets() {
+    use std::io::{BufRead as _, BufReader};
+    use std::os::unix::{fs::PermissionsExt as _, process::CommandExt as _};
+    let f = Fixture::new().await;
+    f.attach("https-git");
+    let work = f.root.path().join("https-git");
+    let device = f.root.path().join("https-device");
+    let source = f.root.path().join("source.git");
+    let git = gix::init_bare(&source).unwrap();
+    use gix::objs::Write as _;
+    let tree = git.write_object(gix::objs::Tree::empty()).unwrap();
+    let base = git.objects.write_buf(gix::objs::Kind::Commit, format!("tree {tree}\nauthor Test <test@example.invalid> 1000 +0000\ncommitter Test <test@example.invalid> 1000 +0000\n\nHTTPS base\n").as_bytes()).unwrap();
+    git.reference(
+        "refs/heads/main",
+        base,
+        gix::refs::transaction::PreviousValue::MustNotExist,
+        "fixture",
+    )
+    .unwrap();
+    let config = fs::read_to_string(source.join("config")).unwrap();
+    fs::write(
+        source.join("config"),
+        format!("{config}\n[http]\n receivepack = true\n"),
+    )
+    .unwrap();
+    let certificate = rcgen::generate_simple_self_signed(vec!["localhost".into()]).unwrap();
+    let ca = f.root.path().join("ca.pem");
+    let key = f.root.path().join("key.pem");
+    fs::write(&ca, certificate.cert.pem()).unwrap();
+    fs::write(&key, certificate.signing_key.serialize_pem()).unwrap();
+    fs::set_permissions(&key, fs::Permissions::from_mode(0o600)).unwrap();
+    let script = f.root.path().join("git-https.py");
+    fs::write(&script, include_str!("git_bridge/https.py")).unwrap();
+    struct Server(std::process::Child);
+    impl Drop for Server {
+        fn drop(&mut self) {
+            let pid = rustix::process::Pid::from_raw(self.0.id() as i32).unwrap();
+            let _ = rustix::process::kill_process_group(pid, rustix::process::Signal::KILL);
+            let _ = self.0.wait();
+        }
+    }
+    let mut server = Server(
+        Command::new("python3")
+            .args([
+                script.as_os_str(),
+                f.root.path().as_os_str(),
+                ca.as_os_str(),
+                key.as_os_str(),
+            ])
+            .stdout(std::process::Stdio::piped())
+            .process_group(0)
+            .spawn()
+            .unwrap(),
+    );
+    let mut port = String::new();
+    BufReader::new(server.0.stdout.take().unwrap())
+        .read_line(&mut port)
+        .unwrap();
+    let endpoint = format!("https://localhost:{}/source.git", port.trim());
+    let askpass = f.root.path().join("askpass");
+    fs::write(&askpass,"#!/bin/sh\ntest -z \"${JJ_STORE_TOKEN:-}\" || exit 1\ncase \"$1\" in *Username*) printf git-fixture;; *) printf fixture-only;; esac\n").unwrap();
+    fs::set_permissions(&askpass, fs::Permissions::from_mode(0o700)).unwrap();
+    let run = |args: &[&str]| {
+        f.command(&work, args)
+            .env("JJ_STORE_GIT_HOME", &device)
+            .env("GIT_SSL_CAINFO", &ca)
+            .env("GIT_ASKPASS", &askpass)
+            .env("JJ_STORE_GIT_CREDENTIAL_HELPER", "none")
+            .output()
+            .unwrap()
+    };
+    success(run(&["git", "remote", "add", "origin", &endpoint]));
+    let before = f.snapshot().await;
+    let untrusted = f
+        .command(&work, &["git", "fetch"])
+        .env("JJ_STORE_GIT_HOME", &device)
+        .env("GIT_ASKPASS", &askpass)
+        .env("JJ_STORE_GIT_CREDENTIAL_HELPER", "none")
+        .output()
+        .unwrap();
+    assert!(!untrusted.status.success());
+    assert_eq!(f.snapshot().await, before);
+    let ready = f.root.path().join("credential-ready");
+    let group = f.root.path().join("credential-group");
+    fs::write(
+        &askpass,
+        format!(
+            "#!/bin/sh\nps -o pgid= -p $$ > '{}'\ntouch '{}'\nwhile :; do sleep 0.02; done\n",
+            group.display(),
+            ready.display()
+        ),
+    )
+    .unwrap();
+    struct Pending(std::process::Child);
+    impl Drop for Pending {
+        fn drop(&mut self) {
+            let _ = self.0.kill();
+            let _ = self.0.wait();
+        }
+    }
+    let mut pending = Pending(
+        f.command(&work, &["git", "fetch"])
+            .env("JJ_STORE_GIT_HOME", &device)
+            .env("GIT_SSL_CAINFO", &ca)
+            .env("GIT_ASKPASS", &askpass)
+            .env("JJ_STORE_GIT_CREDENTIAL_HELPER", "none")
+            .stdout(std::process::Stdio::null())
+            .stderr(std::process::Stdio::null())
+            .spawn()
+            .unwrap(),
+    );
+    let deadline = std::time::Instant::now() + Duration::from_secs(10);
+    while !ready.exists() {
+        assert!(std::time::Instant::now() < deadline);
+        assert!(pending.0.try_wait().unwrap().is_none());
+        tokio::time::sleep(Duration::from_millis(20)).await;
+    }
+    pending.0.kill().unwrap();
+    pending.0.wait().unwrap();
+    let pgid = fs::read_to_string(&group).unwrap();
+    let deadline = std::time::Instant::now() + Duration::from_secs(5);
+    while Command::new("/bin/kill")
+        .args(["-0", "--", &format!("-{}", pgid.trim())])
+        .stdout(std::process::Stdio::null())
+        .stderr(std::process::Stdio::null())
+        .status()
+        .unwrap()
+        .success()
+    {
+        assert!(
+            std::time::Instant::now() < deadline,
+            "credential helper survives hard cancellation"
+        );
+        tokio::time::sleep(Duration::from_millis(20)).await;
+    }
+    assert_eq!(f.snapshot().await, before);
+    fs::write(&askpass,"#!/bin/sh\ntest -z \"${JJ_STORE_TOKEN:-}\" || exit 1\ncase \"$1\" in *Username*) printf git-fixture;; *) printf fixture-only;; esac\n").unwrap();
+    let unsafe_helper = f
+        .command(&work, &["git", "fetch"])
+        .env("JJ_STORE_GIT_HOME", &device)
+        .env("JJ_STORE_GIT_CREDENTIAL_HELPER", "!unapproved-command")
+        .output()
+        .unwrap();
+    assert!(!unsafe_helper.status.success());
+    assert_eq!(f.snapshot().await, before);
+    success(run(&["git", "fetch"]));
+    success(run(&["new", "main@origin", "-m", "HTTPS native feature"]));
+    success(run(&["bookmark", "create", "feature", "-r", "@"]));
+    success(run(&["git", "push", "--bookmark", "feature"]));
+    assert!(git.find_reference("refs/heads/feature").is_ok());
+    let status = success(run(&["store", "git", "status", "--format", "json"]));
+    let bindings = fs::read_to_string(device.join(REPO.to_string()).join("bindings.json")).unwrap();
+    for value in [&status, &bindings] {
+        assert!(!value.contains("fixture-only"));
+        assert!(!value.contains(f.token.expose().as_str()));
+    }
+    let oid = base.to_string();
+    let corrupt = source.join("objects").join(&oid[..2]).join(&oid[2..]);
+    fs::set_permissions(&corrupt, fs::Permissions::from_mode(0o600)).unwrap();
+    fs::write(corrupt, b"corrupt loose Git object").unwrap();
+    let before = f.snapshot().await;
+    assert!(!run(&["git", "fetch"]).status.success());
+    assert_eq!(
+        f.snapshot().await,
+        before,
+        "corrupted external objects cannot select native code or evidence"
+    );
+}
+
+#[cfg(unix)]
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn native_git_ssh_uses_approved_key_and_strict_host_trust() {
+    use std::os::unix::{fs::PermissionsExt as _, process::CommandExt as _};
+    let f = Fixture::new().await;
+    f.attach("ssh-git");
+    let work = f.root.path().join("ssh-git");
+    let device = f.root.path().join("ssh-device");
+    let source = f.root.path().join("ssh-source.git");
+    let git = gix::init_bare(&source).unwrap();
+    use gix::objs::Write as _;
+    let tree = git.write_object(gix::objs::Tree::empty()).unwrap();
+    let base=git.objects.write_buf(gix::objs::Kind::Commit,format!("tree {tree}\nauthor Test <test@example.invalid> 1000 +0000\ncommitter Test <test@example.invalid> 1000 +0000\n\nSSH base\n").as_bytes()).unwrap();
+    git.reference(
+        "refs/heads/main",
+        base,
+        gix::refs::transaction::PreviousValue::MustNotExist,
+        "fixture",
+    )
+    .unwrap();
+    let host = f.root.path().join("host-key");
+    let client = f.root.path().join("client-key");
+    for path in [&host, &client] {
+        success(
+            Command::new("/usr/bin/ssh-keygen")
+                .args([
+                    "-q",
+                    "-t",
+                    "ed25519",
+                    "-N",
+                    "",
+                    "-f",
+                    path.to_str().unwrap(),
+                ])
+                .output()
+                .unwrap(),
+        );
+    }
+    let reservation = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+    let port = reservation.local_addr().unwrap().port();
+    drop(reservation);
+    let username = String::from_utf8(Command::new("id").arg("-un").output().unwrap().stdout)
+        .unwrap()
+        .trim()
+        .to_owned();
+    let config = f.root.path().join("sshd.conf");
+    fs::write(&config,format!("Port {port}\nListenAddress 127.0.0.1\nHostKey {}\nPidFile {}/sshd.pid\nAuthorizedKeysFile {}.pub\nPasswordAuthentication no\nKbdInteractiveAuthentication no\nUsePAM no\nStrictModes no\nAllowUsers {username}\nLogLevel ERROR\n",host.display(),f.root.path().display(),client.display())).unwrap();
+    struct Server(std::process::Child);
+    impl Drop for Server {
+        fn drop(&mut self) {
+            let _ = rustix::process::kill_process_group(
+                rustix::process::Pid::from_raw(self.0.id() as i32).unwrap(),
+                rustix::process::Signal::KILL,
+            );
+            let _ = self.0.wait();
+        }
+    }
+    let mut server = Server(
+        Command::new("/usr/sbin/sshd")
+            .args(["-D", "-e", "-f", config.to_str().unwrap()])
+            .stderr(std::process::Stdio::piped())
+            .process_group(0)
+            .spawn()
+            .unwrap(),
+    );
+    let deadline = std::time::Instant::now() + Duration::from_secs(5);
+    while std::net::TcpStream::connect(("127.0.0.1", port)).is_err() {
+        if server.0.try_wait().unwrap().is_some() {
+            use std::io::Read as _;
+            let mut detail = String::new();
+            server
+                .0
+                .stderr
+                .take()
+                .unwrap()
+                .read_to_string(&mut detail)
+                .unwrap();
+            panic!("isolated sshd failed: {detail}");
+        }
+        assert!(std::time::Instant::now() < deadline);
+        tokio::time::sleep(Duration::from_millis(20)).await;
+    }
+    let known = f.root.path().join("known_hosts");
+    let pubkey = fs::read_to_string(host.with_extension("pub")).unwrap();
+    fs::write(&known, format!("[127.0.0.1]:{port} {pubkey}")).unwrap();
+    let ssh_config = f.root.path().join("ssh.conf");
+    fs::write(&ssh_config,format!("Host *\nIdentityFile {}\nUserKnownHostsFile {}\nStrictHostKeyChecking yes\nIdentitiesOnly yes\nBatchMode yes\n",client.display(),known.display())).unwrap();
+    let ssh = f.root.path().join("approved-ssh");
+    fs::write(
+        &ssh,
+        format!(
+            "#!/bin/sh\nexec /usr/bin/ssh -F '{}' \"$@\"\n",
+            ssh_config.display()
+        ),
+    )
+    .unwrap();
+    fs::set_permissions(&ssh, fs::Permissions::from_mode(0o700)).unwrap();
+    let endpoint = format!("ssh://{username}@127.0.0.1:{port}{}", source.display());
+    let run = |args: &[&str]| {
+        f.command(&work, args)
+            .env("JJ_STORE_GIT_HOME", &device)
+            .env("GIT_SSH", &ssh)
+            .output()
+            .unwrap()
+    };
+    success(run(&["git", "remote", "add", "origin", &endpoint]));
+    success(run(&["git", "fetch"]));
+    success(run(&["new", "main@origin", "-m", "SSH native feature"]));
+    success(run(&["bookmark", "create", "feature", "-r", "@"]));
+    success(run(&["git", "push", "--bookmark", "feature"]));
+    assert!(git.find_reference("refs/heads/feature").is_ok());
+    fs::write(&known, "").unwrap();
+    let before = f.snapshot().await;
+    assert!(!run(&["git", "fetch"]).status.success());
+    assert_eq!(
+        f.snapshot().await,
+        before,
+        "untrusted SSH host cannot publish native facts"
+    );
+}

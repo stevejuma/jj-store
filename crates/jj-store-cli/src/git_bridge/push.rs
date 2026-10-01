@@ -84,11 +84,24 @@ pub async fn run(
     .await?;
     let selection = refs.keys().cloned().collect::<Vec<_>>().join(", ");
     if flag(args, "dry_run") {
-        return crate::presentation::text(
-            ui,
-            helper,
-            &format!("Dry-run: {selection} -> {remote_name}; exact leases; no publication.\n"),
+        let mut plan = format!(
+            "Dry-run: {selection} -> {remote_name}; exact leases; no publication.\nSource operation: {}\nDestination approval: {}\nProfile: {}\n",
+            workspace.repo().op_id(),
+            endpoint.fingerprint,
+            GIT_PROFILE
         );
+        for (name, value) in &refs {
+            plan.push_str(&format!(
+                "{name}: {} -> {}; native target: {}\n",
+                value.expected.as_deref().unwrap_or("known absent"),
+                value.desired.oid.as_deref().unwrap_or("delete"),
+                value
+                    .desired
+                    .native
+                    .map_or_else(|| "absent".into(), |id| id.to_string())
+            ));
+        }
+        return crate::presentation::text(ui, helper, &plan);
     }
     if !generated.is_empty() {
         let mut tx = workspace.start_transaction();
