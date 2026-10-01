@@ -396,3 +396,15 @@ origins; protocol negotiation, feed, offer, closure, import and seed routes
 reject the unsupported profile explicitly. The local WAL and native copy retain
 complete WorkStore authority. Existing configured replication becomes
 unavailable for a WorkStore home; WorkStore does not claim remote convergence.
+
+## Retained Git interoperability domain
+
+Git interoperability adds an optional independently versioned domain selected by
+the shared manifest CAS. Its immutable radix catalog retains verified raw Git
+object descriptors and native/Git representation associations. Descriptors
+strongly reference native streamed file payloads; associations strongly retain
+their native revisions and required Git objects. Recovery and native copy walk
+these selected records and every retained historical domain root. Activation
+uses format 4 without changing native identities or existing domain versions.
+Until the Git origin reducer is qualified, bridge enablement is unavailable on
+replication-enabled code repositories; WorkStore retains its frozen ledger.

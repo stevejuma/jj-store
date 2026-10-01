@@ -10,6 +10,7 @@ mod agent_reads;
 mod application;
 mod collaboration;
 mod domains;
+mod git_interop;
 mod native_copy;
 mod reader;
 mod replication;
@@ -44,6 +45,10 @@ pub use agent_reads::{AgentCatalogPage, AgentRelationCursor, AgentRelationRange,
 pub use application::ApplicationIntent;
 pub use collaboration::{CollaborationOutcome, CollaborationRequest};
 pub use domains::{Domain, DomainFactsV1, DomainRequest, DomainState, RepositoryDomains};
+pub use git_interop::{
+    GIT_PROFILE, GitObjectKind, GitObjectV1, GitRecordV1, GitRepresentationV1, GitRootV1,
+    GitStoreSnapshot, valid_git_oid,
+};
 pub use jj_agent::{
     AgentAliasV1, AgentCatalogConflictV1, AgentCatalogEditV1, AgentCatalogKey, AgentCatalogKind,
     AgentCheckpointId, AgentCheckpointVersionV1, AgentContentV1, AgentDeltaV1, AgentEntityRefV1,
@@ -166,6 +171,10 @@ pub struct Manifest {
     pub work_root: Option<RecordRef>,
     #[serde(default, skip_serializing_if = "is_zero")]
     pub work_state_version: u64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub git_root: Option<RecordRef>,
+    #[serde(default, skip_serializing_if = "is_zero")]
+    pub git_state_version: u64,
 }
 impl Manifest {
     pub fn snapshot(&self) -> Snapshot {
@@ -181,6 +190,7 @@ impl Manifest {
             Domain::Agent => (self.agent_root, self.agent_state_version),
             Domain::Review => (self.review_root, self.review_state_version),
             Domain::Work => (self.work_root, self.work_state_version),
+            Domain::Git => (self.git_root, self.git_state_version),
         };
         root.map(|root| DomainState { root, version })
     }
@@ -189,10 +199,11 @@ impl Manifest {
             agent: self.domain_state(Domain::Agent)?,
             review: self.domain_state(Domain::Review)?,
             work: self.domain_state(Domain::Work),
+            git: self.domain_state(Domain::Git),
         })
     }
     fn validate(&self, repository: RepositoryId) -> Result<()> {
-        if !matches!(self.format, 1..=3)
+        if !matches!(self.format, 1..=4)
             || self.repository != repository
             || self.heads.is_empty()
             || self.heads.len() > MAX_HEADS
@@ -213,7 +224,7 @@ impl Manifest {
             {
                 return Err(Error::Corrupt("legacy manifest domains"));
             }
-            2 | 3
+            2..=4
                 if self.domains().is_none()
                     || self.agent_root.is_some_and(|r| {
                         r.kind != RecordKind::AgentRoot || r.attempt.is_some()
@@ -239,6 +250,16 @@ impl Manifest {
                 .is_some_and(|r| r.kind != RecordKind::WorkRoot || r.attempt.is_some())
         {
             return Err(Error::Corrupt("work manifest state"));
+        }
+        if (self.format < 4 && (self.git_root.is_some() || self.git_state_version != 0))
+            || (self.format == 4 && (self.git_root.is_none() || self.git_state_version == 0))
+            || (self.work_root.is_some() != (self.work_state_version != 0))
+            || self.git_state_version > self.published.0
+            || self
+                .git_root
+                .is_some_and(|r| r.kind != RecordKind::GitRoot || r.attempt.is_some())
+        {
+            return Err(Error::Corrupt("Git manifest state"));
         }
         if self.replication_root.is_some_and(|reference| {
             reference.kind != RecordKind::ReplicationRoot || reference.attempt.is_some()
@@ -360,6 +381,7 @@ pub enum SemanticKind {
     AgentStateChanged,
     ReviewStateChanged,
     WorkStateChanged,
+    GitStateChanged,
     ReplicationImported,
     ReplicationSeeded,
 }
@@ -672,6 +694,8 @@ impl Coordinator {
                 replication_root,
                 work_root: None,
                 work_state_version: 0,
+                git_root: None,
+                git_state_version: 0,
             };
             let bytes = records::encode(&manifest, MAX_MANIFEST)?;
             let upload = StagedUpload::from_bytes(&bytes, MAX_MANIFEST).await?;
@@ -1289,6 +1313,9 @@ impl Coordinator {
                         .await?,
                 );
             }
+            if let Some(root) = manifest.git_root {
+                domain_native.extend(self.git_store(root).await?.native);
+            }
             if let Some(root) = manifest.work_root {
                 self.work_store(root).await?;
             }
@@ -1387,6 +1414,9 @@ impl Coordinator {
                             self.read_domain_root(Domain::Review, domains.review.root)
                                 .await?,
                         );
+                        if let Some(git) = domains.git {
+                            native.extend(self.git_store(git.root).await?.native);
+                        }
                         for key in native {
                             if self
                                 .catalog

@@ -207,6 +207,9 @@ impl Coordinator {
         let Some(domains) = domains else {
             return Ok(());
         };
+        if let Some(git) = domains.git {
+            records.extend(self.git_store(git.root).await?.records);
+        }
         if let Some(work) = domains.work {
             records.extend(self.work_store(work.root).await?.records);
         }

@@ -7,6 +7,7 @@ pub enum Domain {
     Agent,
     Review,
     Work,
+    Git,
 }
 impl Domain {
     fn record_kind(self) -> RecordKind {
@@ -14,6 +15,7 @@ impl Domain {
             Self::Agent => RecordKind::AgentRoot,
             Self::Review => RecordKind::ReviewRoot,
             Self::Work => RecordKind::WorkRoot,
+            Self::Git => RecordKind::GitRoot,
         }
     }
     fn semantic_kind(self) -> SemanticKind {
@@ -21,6 +23,7 @@ impl Domain {
             Self::Agent => SemanticKind::AgentStateChanged,
             Self::Review => SemanticKind::ReviewStateChanged,
             Self::Work => SemanticKind::WorkStateChanged,
+            Self::Git => SemanticKind::GitStateChanged,
         }
     }
 }
@@ -39,6 +42,8 @@ pub struct RepositoryDomains {
     pub review: DomainState,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub work: Option<DomainState>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub git: Option<DomainState>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -113,7 +118,7 @@ impl DomainRequest {
             || self.facts.as_ref().is_some_and(|facts| match self.domain {
                 Domain::Agent => facts.agent.is_none() || facts.review.is_some(),
                 Domain::Review => facts.agent.is_some() || facts.review.is_none(),
-                Domain::Work => true,
+                Domain::Work | Domain::Git => true,
             })
         {
             return Err(Error::Corrupt("domain publication request"));
@@ -172,6 +177,15 @@ impl Coordinator {
             if request.domain == Domain::Work && current.is_none() {
                 current = Some(DomainState {
                     root: self.empty_work_store().await?.reference(),
+                    version: 0,
+                });
+            }
+            if request.domain == Domain::Git && current.is_none() {
+                if base.manifest.work_root.is_none() && base.manifest.replication_root.is_some() {
+                    return Err(Error::Unsupported("Git origin reducer not qualified"));
+                }
+                current = Some(DomainState {
+                    root: self.empty_git_store().await?.reference,
                     version: 0,
                 });
             }
@@ -241,11 +255,12 @@ impl Coordinator {
                 Domain::Agent => after_domains.agent = selected,
                 Domain::Review => after_domains.review = selected,
                 Domain::Work => after_domains.work = Some(selected),
+                Domain::Git => after_domains.git = Some(selected),
             }
             let changed_domain = match request.domain {
                 Domain::Agent => OriginDomainV1::Agent,
                 Domain::Review => OriginDomainV1::Review,
-                Domain::Work => OriginDomainV1::Repository,
+                Domain::Work | Domain::Git => OriginDomainV1::Repository,
             };
             let origin = self
                 .author_origin(
@@ -299,11 +314,15 @@ impl Coordinator {
                 )
                 .await?;
             let manifest = Manifest {
-                format: if after_domains.work.is_some() {
+                format: if after_domains.git.is_some() {
+                    4
+                } else if after_domains.work.is_some() {
                     3
                 } else {
                     base.manifest.format
                 },
+                git_root: after_domains.git.map(|s| s.root),
+                git_state_version: after_domains.git.map_or(0, |s| s.version),
                 work_root: after_domains.work.map(|s| s.root),
                 work_state_version: after_domains.work.map_or(0, |s| s.version),
                 revision: base
@@ -352,6 +371,7 @@ impl Coordinator {
         root: RecordRef,
     ) -> Result<BTreeSet<ObjectKey>> {
         match domain {
+            Domain::Git => Ok(self.git_store(root).await?.native),
             Domain::Work => {
                 self.work_store(root).await?;
                 Ok(BTreeSet::new())

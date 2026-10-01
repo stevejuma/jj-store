@@ -416,3 +416,7 @@ unavailable for a WorkStore home; WorkStore does not claim remote convergence.
 native durable evidence domain. Core storage and publication consume owned
 records only. No persistent writable mirror or additional transport daemon is
 introduced. WorkStore origin replication retains its separately deferred gate.
+
+The exact converter adds gix 0.87.1 to the JJ integration boundary while keeping
+JJ 0.45.1 and the existing resolved Git dependency pin. Its temporary GitBackend
+is a conversion tool; no Git dependency enters WAL, model or object storage.

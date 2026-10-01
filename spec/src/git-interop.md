@@ -64,3 +64,13 @@ transport-started, result-recorded and applied states, plus
 unknown/partial/apply-pending outcomes. Observed desired state is satisfaction
 evidence, not proof of attempt authorship. Recovery does not roll back or
 silently retransmit an external update.
+
+## GB1 storage gate
+
+The bridge root selects immutable Git object and representation records through
+the existing radix catalog. Raw bodies use the native streamed file codec;
+record validation checks OID/profile/closure and publication retains the
+complete native dependency set. Missing or changed records fail cold recovery
+and copy. No accepted state relies on a cache-local extra table.
+Replication-enabled code repository activation remains unavailable until GB4
+qualifies its reducer.

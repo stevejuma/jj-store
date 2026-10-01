@@ -474,3 +474,12 @@ The native WorkStore RPC uses the same authorized service as HTTP, including
 pinned collection pages, explicit query-bound opaque continuations and durable
 apply/status. CLI project/task commands use the bound local native service and
 do not require an upstream hub.
+
+## Exact Git representation conversion
+
+Git conversion remains an owned adapter in this crate. It uses a private pinned
+GitBackend as a conversion tool and translates explicit parent/tree/file IDs
+into native identities. Original raw bytes and required conversion evidence
+remain native durable dependencies. Imported metadata is validated before the
+pinned decoder can normalize or replace it. Cache removal must not reidentify
+accepted imported commits or their exported children.
