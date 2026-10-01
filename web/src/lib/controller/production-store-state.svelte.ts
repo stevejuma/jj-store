@@ -1,3 +1,7 @@
+import {
+  emptyWorkspaceLinks,
+  type WorkspaceLinkSettings,
+} from "./workspace-link-types.js";
 import type { FileListingViewMode } from "@lapismd/design-core/diff";
 import type { Head, Model, Snapshot } from "../api/client.js";
 import type {
@@ -29,7 +33,7 @@ type MutableStatus = {
   -readonly [K in keyof StoreControllerStatus]: StoreControllerStatus[K];
 };
 
-export interface ProductionStoreState {
+export interface ProductionStoreState extends WorkspaceLinkSettings {
   accessMode: "bootstrapping" | "authenticated" | "local_trusted";
   storageReady: boolean;
   backups: Model<"BackupStatus">[];
@@ -125,6 +129,7 @@ export const initialStatus = (): MutableStatus => ({
 
 export function createProductionStoreState(): ProductionStoreState {
   const state: ProductionStoreState = $state({
+    ...emptyWorkspaceLinks(),
     accessMode: "bootstrapping",
     storageReady: false,
     backups: [],

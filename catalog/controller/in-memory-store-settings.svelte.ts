@@ -1,3 +1,4 @@
+import { emptyWorkspaceLinks } from "../../web/src/lib/controller/workspace-link-types.js";
 import type {
   StoreLoadStatus,
   StoreSettingsState,
@@ -83,6 +84,7 @@ export function createInMemoryStoreSettings(options: {
     get state(): StoreSettingsState {
       const search = mode !== "unavailable";
       return {
+        ...emptyWorkspaceLinks(),
         capabilities: capabilities(search),
         snapshot: {
           version: 1,

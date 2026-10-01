@@ -20,12 +20,15 @@ import { HttpStoreWriteDataSource } from "./http-store-write-data-source.js";
 
 import { HttpWorkDataSource } from "./http-work-data-source.js";
 
+import { HttpWorkspaceLinks } from "./http-workspace-links.js";
+
 export class HttpStoreDataSource implements StoreDataSource {
   readonly #client: Client;
   readonly #scope: StoreQueryScope;
   readonly #collaboration: HttpCollaborationDataSource;
   readonly #writes: HttpStoreWriteDataSource;
   readonly work: HttpWorkDataSource;
+  readonly localWorkspaces: HttpWorkspaceLinks;
   #active = true;
 
   constructor(
@@ -37,6 +40,7 @@ export class HttpStoreDataSource implements StoreDataSource {
     fetcher?: typeof fetch,
   ) {
     this.#client = new Client(repository, token, denied, fetcher);
+    this.localWorkspaces = new HttpWorkspaceLinks(this.#client);
     this.#scope = { repository, session };
     this.work = new HttpWorkDataSource(this.#client, this);
     this.#writes = new HttpStoreWriteDataSource(this.#client);

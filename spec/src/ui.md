@@ -78,6 +78,16 @@ adaptations retain provenance and Apache-2.0 attribution. Shared primitives
 remain public Design Core imports. Stories are visual-pending until human
 review.
 
+Repository settings includes a Local folders section when the service advertises
+workspace-link management. Its explicit path form preserves the draft through
+section changes and failed requests until successful linking or Cancel. Refresh
+folders rereads saved device state without changing repository snapshots. Only
+currently verified links display Ready; unavailable folders retain their path
+and a binding/location prompt. Unsupported connections explain availability and
+expose no link action. Repository switching/disconnection clears drafts and
+ignores late requests. Folder paths wrap on mobile, and form actions remain
+keyboard accessible.
+
 ## Local management delivery
 
 This staged extension keeps the transient Settings shell and explicit snapshot

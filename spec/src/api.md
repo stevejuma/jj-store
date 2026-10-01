@@ -988,3 +988,10 @@ and unavailable state. The transport delegates to owned service interfaces; CLI
 composition owns JJ discovery and the server owns registry persistence. No
 request may supply a principal, socket, executable, state directory or shell
 command.
+
+The Settings client uses this advertised capability independently of Search. It
+binds link requests to the displayed device revision and preserves the path
+draft after failures, including stale or unknown outcomes. An explicit folder
+refresh rereads saved device state before retry without moving the repository
+snapshot. Repository/source changes invalidate pending responses and clear
+private folder drafts; a late request cannot populate another repository.

@@ -1,3 +1,4 @@
+import type { WorkspaceLinkSettings } from "./workspace-link-types.js";
 import type { FileListingViewMode } from "@lapismd/design-core/diff";
 import type { FileDiffLineContext } from "@lapismd/design-core/diff";
 import type { Head, Model } from "../api/client.js";
@@ -128,7 +129,7 @@ export interface StoreRepositorySummary {
   readonly permission: Model<"EffectivePermission"> | null;
   readonly principal?: string;
 }
-export interface StoreSettingsState {
+export interface StoreSettingsState extends WorkspaceLinkSettings {
   readonly capabilities: Model<"Capabilities"> | null;
   readonly snapshot: Head | null;
   readonly searchStatus: Model<"SearchStatus"> | null;
@@ -207,6 +208,9 @@ export interface StoreController {
     selectOperation(id: string): Promise<void>;
     selectComparisonParent(id: string): Promise<void>;
     refreshSettings(): Promise<void>;
+    refreshWorkspaceLinks(): Promise<void>;
+    setWorkspacePath(path: string): void;
+    linkWorkspace(): Promise<void>;
     prepareIndex(): Promise<void>;
     loadMore(
       collection:

@@ -74,6 +74,8 @@
 }
 
 .store-settings__rows dt {
+  min-width: 0;
+  overflow-wrap: anywhere;
   font-size: var(--community-text-secondary);
   font-weight: 550;
 }

@@ -1,3 +1,4 @@
+import { createProductionWorkspaceLinks } from "./production-workspace-links.js";
 import type { StoreDataSource } from "./native-data-source.js";
 import type { ProductionStoreState } from "./production-store-state.svelte.js";
 import { storeErrorMessage } from "./http-store-data-source.js";
@@ -11,8 +12,10 @@ export function createProductionStoreSettings(options: {
   restore: () => Promise<void>;
 }) {
   const { data } = options;
+  const workspaces = createProductionWorkspaceLinks(options);
 
   function clear() {
+    workspaces.clear();
     data.capabilities = null;
     data.neededIndex = null;
     data.searchStatus = null;
@@ -22,7 +25,7 @@ export function createProductionStoreSettings(options: {
     data.indexPreparationError = "";
   }
 
-  async function refresh() {
+  async function refreshSearch() {
     if (!data.capabilities?.search) {
       data.searchStatus = null;
       data.searchStatusState = "unavailable";
@@ -87,5 +90,8 @@ export function createProductionStoreSettings(options: {
     }
   }
 
-  return { clear, refresh, prepareIndex };
+  async function refresh() {
+    await Promise.all([refreshSearch(), workspaces.refreshWorkspaceLinks()]);
+  }
+  return { ...workspaces, clear, refresh, prepareIndex };
 }

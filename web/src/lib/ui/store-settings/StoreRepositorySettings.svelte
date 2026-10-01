@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Model } from "../../api/client.js";
   import type { StoreController } from "../../controller/contracts.js";
+  import StoreWorkspaceSettings from "./StoreWorkspaceSettings.svelte";
   import StoreGraphIndexSettings from "./StoreGraphIndexSettings.svelte";
   let { controller }: { controller: StoreController } = $props();
   const state = $derived(controller.state);
@@ -78,6 +79,14 @@
     </div>
   </dl>
 </section>
+
+<StoreWorkspaceSettings
+  {settings}
+  supported={Boolean(settings.capabilities?.local_workspace_links)}
+  onRefresh={controller.actions.refreshWorkspaceLinks}
+  onPath={controller.actions.setWorkspacePath}
+  onLink={controller.actions.linkWorkspace}
+/>
 
 <StoreGraphIndexSettings {controller} />
 
