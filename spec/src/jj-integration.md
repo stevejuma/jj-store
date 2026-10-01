@@ -1,5 +1,8 @@
 # Native JJ integration
 
+The local Git-backed companion profile is governed by local-jj.md. Its Git
+object/ref adapter stays in this crate and does not replace native publication.
+
 Search visibility uses the same bounded native commit-parent traversal as
 operation differences. It starts at the explicitly selected operation's view
 heads and does not follow predecessor links or reconcile operation heads.

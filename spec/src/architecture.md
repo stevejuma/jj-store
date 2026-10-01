@@ -7,7 +7,8 @@ composition consume these owned contracts; publication remains independent.
 Crates are added as milestones begin, not as empty placeholders. Native codecs
 initially live with JJ integration. The server uses in-process stores rather
 than calling its own RPC. Local indexes are derived and rebuildable. The source
-repo is colocated for development; product storage has no Git carrier.
+repo is colocated for development. Native product storage has no Git carrier;
+the separate local Git-backed companion profile is governed by local-jj.md.
 
 ## Requirements
 

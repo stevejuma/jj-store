@@ -11,6 +11,7 @@
 - [Native JJ integration](jj-integration.md)
 - [CLI and server commands](cli.md)
 - [Explicit Git interoperability](git-interop.md)
+- [Local Git-backed JJ collaboration](local-jj.md)
 - [Read APIs and browser](api.md)
 - [Typed mutations](mutations.md)
 - [Security and deployment](security.md)

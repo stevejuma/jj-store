@@ -103,6 +103,13 @@ adds evidence here in its enclosing Jujutsu change.
 | M12.5       | Done        | M12.4       | JST-GIT-007                                                                                                                                                              | GB4: Fault/concurrency and qualified data-only native replication                                                              | Complete staged bridge gate                                                   | E-M12-006,E-M12-008,E-M12-009                                                                                                                                                                                                                                                                                                                                  |
 | M12.6       | Done        | M12.5       | JST-GIT-001,JST-GIT-005                                                                                                                                                  | GB5: Bookmark selectors safe remote lifecycle and atomic multi-ref parity                                                      | Complete staged bridge gate                                                   | E-M12-007,E-M12-009                                                                                                                                                                                                                                                                                                                                            |
 | M12.7       | Done        | M12.6       | JST-GIT-002,JST-GIT-007,JST-GIT-008                                                                                                                                      | GB6: Cold real-RustFS external merge credentials resources and UI freshness                                                    | Maintain cold native Git acceptance                                           | E-M12-008,E-M12-010                                                                                                                                                                                                                                                                                                                                            |
+| M13         | In progress | M12         | JST-LOCAL-001,JST-LOCAL-002,JST-LOCAL-003,JST-LOCAL-004,JST-LOCAL-005,JST-LOCAL-006                                                                                      | Complete qualified local Git-backed collaboration profile                                                                      | Prove storage foundation before domain adapters                               | E-M13-001                                                                                                                                                                                                                                                                                                                                                      |
+| M13.1       | Done        | M12         | JST-LOCAL-001,JST-LOCAL-002                                                                                                                                              | Qualified metadata CAS/receipt/GC and stock JJ primitive compatibility                                                         | Implement M13.2 shared WorkStore/CLI                                          | E-M13-001                                                                                                                                                                                                                                                                                                                                                      |
+| M13.2       | Planned     | M13.1       | JST-LOCAL-003                                                                                                                                                            | Shared WorkStore semantics and server-free CLI                                                                                 | Implement projects, tasks and threaded comments                               | -                                                                                                                                                                                                                                                                                                                                                              |
+| M13.3       | Planned     | M13.2       | JST-LOCAL-002,JST-LOCAL-003                                                                                                                                              | Portable agent/review anchors and exact retained evidence                                                                      | Implement portable codecs and capture adapters                                | -                                                                                                                                                                                                                                                                                                                                                              |
+| M13.4       | Planned     | M13.3       | JST-LOCAL-004,JST-LOCAL-005                                                                                                                                              | Filesystem-only server, local UI and recoverable code commands                                                                 | Implement registration, versioned contracts and cold browser gates            | -                                                                                                                                                                                                                                                                                                                                                              |
+| M13.5       | Planned     | M13.4       | JST-LOCAL-006                                                                                                                                                            | Independent local/native conversion with complete collaboration history                                                        | Implement bounded jobs and mapping reports                                    | -                                                                                                                                                                                                                                                                                                                                                              |
+| M13.6       | Planned     | M13.5       | JST-LOCAL-001,JST-LOCAL-002,JST-LOCAL-003,JST-LOCAL-004,JST-LOCAL-005,JST-LOCAL-006                                                                                      | Cold end-to-end and retained native regression qualification                                                                   | Qualify all accepted layouts and publish evidence                             | -                                                                                                                                                                                                                                                                                                                                                              |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -24241,6 +24248,167 @@ and named tests are checked by the progress gate.
     "versions": "jj 0.45.1; Node 24.10.0; pnpm 10.32.1; Svelte 5.57.1; Storybook 10.5.7; Vitest 4.1.11; Vite 8.3.1. Existing dependency setup unchanged; no sibling or package manifest edits.",
     "formats": "File presentation requires a nonempty selected native path before honoring a requested edit path. Directory/root transitions end edit presentation and release the existing workspace navigation guard. Explicit landing-document editing and typed edit/rename submission retain existing behavior. No controller, read DTO, native identity, object, manifest, WAL, receipt or credential format changes.",
     "next": "Retain exact root-navigation, workspace-guard and explicit-edit regressions; visual approval remains separate."
+  },
+  {
+    "id": "E-M13-001",
+    "tasks": ["M13", "M13.1"],
+    "date": "2026-10-01",
+    "kind": "filesystem-git",
+    "revision": "nlvotsvl",
+    "files": [
+      "AGENTS.md",
+      "spec-validator.config.mjs",
+      "spec/src/SUMMARY.md",
+      "spec/src/local-jj.md",
+      "spec/src/jj-integration.md",
+      "spec/src/architecture.md",
+      "spec/src/spec-governance.md",
+      "spec/src/milestones.md",
+      "spec/src/verification.md",
+      "crates/jj-store-jj/src/lib.rs",
+      "crates/jj-store-jj/src/local_metadata/mod.rs",
+      "crates/jj-store-jj/src/local_metadata/objects.rs",
+      "crates/jj-store-jj/src/local_metadata/prepare.rs",
+      "crates/jj-store-jj/src/local_metadata/types.rs",
+      "crates/jj-store-jj/tests/local_metadata.rs"
+    ],
+    "tests": [
+      "crates/jj-store-jj/tests/local_metadata.rs#reads_and_staged_candidates_never_initialize_or_publish",
+      "crates/jj-store-jj/tests/local_metadata.rs#racing_initializers_adopt_winning_identity_and_do_not_replace_siblings",
+      "crates/jj-store-jj/tests/local_metadata.rs#receipts_survive_lost_response_restart_and_later_domain_publication",
+      "crates/jj-store-jj/tests/local_metadata.rs#stock_git_gc_retains_history_code_and_nonstandard_dependencies",
+      "crates/jj-store-jj/tests/local_metadata.rs#lock_failures_remain_unknown_and_retry_uses_the_exact_candidate",
+      "crates/jj-store-jj/tests/local_metadata.rs#admission_and_missing_selected_objects_fail_without_partial_reads",
+      "crates/jj-store-jj/tests/local_metadata.rs#hard_process_exit_before_and_after_ref_publication_recovers_correctly",
+      "crates/jj-store-jj/tests/local_metadata.rs#jj_conflict_header_terms_get_real_git_reachability",
+      "crates/jj-store-jj/tests/local_metadata.rs#broken_nested_dependencies_and_budget_exhaustion_never_publish",
+      "crates/jj-store-jj/tests/local_metadata.rs#stock_jj_import_gc_and_undo_preserve_companion_metadata"
+    ],
+    "runs": [
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-jj --locked --test local_metadata",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before state: no local_metadata test target or implementation exists."
+      },
+      {
+        "command": "pnpm install --frozen-lockfile --offline",
+        "result": "pass",
+        "failures": 0,
+        "note": "544 cached packages; no lockfile changes. Existing development pnpm hook resolves Community/Design Core locally; no publication or registry claim."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo check -p jj-store-jj --locked",
+        "result": "fail",
+        "failures": 3,
+        "note": "Initial compile: missing Write trait, missing SHA-1 argument, and moving a Drop-owned buffer. All three corrected."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-jj --locked --test local_metadata",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial filesystem gate: 8 tests pass, including killed subprocesses and stock Git GC. Follow-up closure audit and stock JJ compatibility still pending."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-jj --locked --test local_metadata",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final expanded gate: 11 tests pass including SHA-1 closure validation, missing nested objects, JJ conflict-header terms, stock JJ import/undo/GC, Git fsck/GC and killed subprocesses."
+      },
+      {
+        "command": "cargo fmt -p jj-store-jj",
+        "result": "pass",
+        "failures": 0,
+        "note": "Pinned toolchain and tracked formatter policy; no unrelated source diffs."
+      },
+      {
+        "command": "pnpm exec prettier --write AGENTS.md spec-validator.config.mjs spec/src/SUMMARY.md spec/src/local-jj.md spec/src/jj-integration.md spec/src/architecture.md spec/src/spec-governance.md spec/src/milestones.md spec/src/verification.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed canonical documents formatted; verification rows were then moved into the existing table."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo clippy -p jj-store-jj --test local_metadata --locked -- -D warnings",
+        "result": "fail",
+        "failures": 1,
+        "note": "One redundant closure in the new module; corrected without suppressing diagnostics."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "fail",
+        "failures": 6,
+        "note": "New verification rows initially appended after the table were parsed as prose; moved into the canonical table."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "8 protected files and 5 canonical chapters pass."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "102 tasks pass evidence bookkeeping; not product proof."
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "15 package boundaries pass; no dependency additions."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/verification.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Canonical verification table repaired and formatted."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo clippy -p jj-store-jj --test local_metadata --locked -- -D warnings",
+        "result": "pass",
+        "failures": 0,
+        "note": "Owning package and exact test target pass with no warnings."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "4 validators, 21 chapters and 129 requirements pass."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-jj --locked --test native_codec",
+        "result": "pass",
+        "failures": 0,
+        "note": "8 retained native identity, malformed-data, frozen-envelope and full-field regression tests pass."
+      },
+      {
+        "command": "cargo fmt -p jj-store-jj -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Owning package formatting passes."
+      },
+      {
+        "command": "pnpm exec prettier --check AGENTS.md spec-validator.config.mjs spec/src/SUMMARY.md spec/src/local-jj.md spec/src/jj-integration.md spec/src/architecture.md spec/src/spec-governance.md spec/src/milestones.md spec/src/verification.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "All changed canonical documents/configuration pass formatting."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-jj --locked --test local_metadata",
+        "result": "pass",
+        "failures": 0,
+        "note": "11 exact tests pass after adding immediate previous-commit checks and bounded history materialization/immutable receipt validation."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "deferred": [
+      "M13.2-M13.6 remain planned; no CLI, UI, portable anchor or import/export completion claim.",
+      "Unrelated UI, native RustFS, root aggregate lanes and visual baselines are out of scope for the storage foundation."
+    ],
+    "versions": "JJ/jj-lib 0.45.1; gix 0.87.1; Git 2.55.0; Rust 1.98.1; macOS ARM64. Shared ignored Cargo target cache; source edits confined to local-jj workspace.",
+    "formats": "Local metadata commit/tree/ref v1; canonical bounded RootV1; typed 20-byte SHA-1 GitOid; existing native identities/codecs unchanged. Ref CAS selects roots and receipts; parent/tree edges retain history and evidence. Explicit limits: 16 MiB/object, 4 MiB root, 16,384 receipt/retention entries, 100,000 closure objects/history steps, 256 MiB retained closure. Budget exhaustion rejects rather than truncates.",
+    "next": "M13.1 metadata primitive gate complete. Implement M13.2 shared WorkStore service and direct CLI in the isolated local-jj workspace."
   }
 ]
 ```

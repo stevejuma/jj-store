@@ -25,6 +25,10 @@ repository suites remain outside the default verification scope.
 
 ## Change map
 
+Local Git-backed companion implementation additionally requires local-jj.md;
+native identity and publication chapters continue to govern their existing
+formats.
+
 | Protected area                                                                                                                                                                                                                                 | Required chapter     |
 | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
 | `^(?:catalog/\|\.storybook/\|docs/catalog\.md$)`                                                                                                                                                                                               | `ui.md`              |
