@@ -20,6 +20,13 @@ root and retains every declared Git commit and nonstandard tree dependency;
 descriptor V1 remains readable. The shared provenance reducer can stage records
 and relation pages but cannot publish either provider's state.
 
+ReviewStore catalog editing and bounded reads use owned repository-bound
+immutable object and pinned snapshot interfaces. Native wrappers retain full
+root/thread cross-object audit, authorization, receipts and manifest selection.
+The shared editor returns a root value; it cannot stage a publication or select
+repository state. Alternative providers must audit the complete root before
+publication and recovery.
+
 ## Requirements
 
 | ID          | Requirement                                                                                                                                                                              |

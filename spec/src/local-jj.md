@@ -40,6 +40,10 @@ provenance after conversion.
 
 ## Delivery gates
 
+ReviewStore shared-engine extraction preserves native root bytes and all native
+cross-object audits. A reusable catalog or reader alone does not qualify local
+review publication, portable artifact validation or review CLI support.
+
 Local WorkStore pagination reuses the native record and four-MiB page limits.
 Continuations bind an immutable selected metadata commit, filters, page size and
 offset. A continuation can only name selected history, never a staged candidate;

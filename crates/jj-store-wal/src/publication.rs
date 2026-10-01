@@ -32,6 +32,7 @@ mod review_audit_events;
 mod review_audit_relations;
 mod review_audit_replication;
 mod review_catalog;
+mod review_catalog_engine;
 mod review_command_apply;
 mod review_command_commit;
 mod review_command_history;
@@ -39,6 +40,8 @@ mod review_command_relations;
 mod review_command_stage;
 mod review_command_update;
 mod review_commands;
+mod review_io;
+mod review_read_engine;
 mod review_reads;
 mod review_resolver;
 mod work;
@@ -111,7 +114,10 @@ pub use replication_transfer::{
     OriginClosureV1, OriginFeedItemV1, OriginFeedPageV1, OriginOfferResultV1, OriginOfferV1,
 };
 pub use review_catalog::ReviewStoreSnapshot;
+pub use review_catalog_engine::ReviewCatalogEditor;
 pub use review_commands::{ReviewCommandError, ReviewCommandRequest};
+pub use review_io::{ReviewObjectIo, ReviewSnapshotRead};
+pub use review_read_engine::ReviewReader;
 pub use review_reads::ReviewCatalogPage;
 pub use work::{WorkRootV1, WorkStoreSnapshot};
 pub use work_commands::{WorkCommandError, WorkCommandRequest};

@@ -456,6 +456,13 @@ or for lineage evidence.
 
 ## Immutable ReviewStore objects
 
+Catalog path copying and bounded root-pinned enumeration share one owned engine
+across persistence adapters. Its object interface requires canonical identity,
+semantic kind and dependency validation; its snapshot interface admits only the
+audited selected closure. These interfaces do not carry publication authority.
+Native staging repeats existing catalog, relation, comment ownership and event
+reconstruction audits before selecting the returned root.
+
 `ReviewRootV1` selects independent COW catalog roots for threads, comments,
 thread events, original-anchor relations, artifact relations, statuses, work
 requests, external aliases and accepted source positions. The canonical empty
