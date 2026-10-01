@@ -293,3 +293,8 @@ releasing ownership. The selected absolute path is only a draft; linking still
 performs full physical workspace, profile, repository and installation
 validation. GETs never open a dialog, and bearer sessions never obtain picker
 capability.
+
+Sync browser management requires exact LocalTrusted admin admission and fresh
+repository authorization, including for status. Typed commands delegate to the
+existing owned worker; no remote endpoint, credential, configuration path or
+shell execution is accepted.

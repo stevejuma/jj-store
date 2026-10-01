@@ -12,6 +12,7 @@ mod repositories;
 mod review_mutations;
 mod routes;
 mod search;
+mod sync_management;
 mod work;
 pub use search::SearchIndex;
 mod uploads;
@@ -93,6 +94,7 @@ pub struct Config {
     pub origin: String,
     pub access: Access,
     pub registry: Option<Arc<dyn RepositoryRegistry>>,
+    pub local_sync: Option<Arc<dyn jj_store_service::sync_management::SyncManager>>,
     pub local_workspaces: Option<Arc<dyn jj_store_service::local_management::WorkspaceManager>>,
     pub local_folder_picker: Option<Arc<dyn jj_store_service::local_management::FolderPicker>>,
     pub storage_ready: bool,
@@ -117,6 +119,7 @@ impl Default for Config {
             access: Access::Authenticated,
             registry: None,
             local_workspaces: None,
+            local_sync: None,
             local_folder_picker: None,
             storage_ready: true,
             backups: Vec::new(),

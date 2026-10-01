@@ -591,3 +591,8 @@ interface. It returns a bounded draft path or cancellation, never a workspace
 proof, publication or saved link. Transport admission precedes helper execution;
 workspace verification remains read-only and linking retains its existing
 checks.
+
+Owned local Sync management contracts describe credential-free
+configured/local-only status and typed pause/resume/retry commands. The server
+adapter reuses existing control-plane operations rather than publishing
+repository mutations.

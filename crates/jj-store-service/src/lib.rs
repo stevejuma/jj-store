@@ -31,3 +31,5 @@ pub mod work;
 pub mod git_bridge;
 
 pub mod local_management;
+
+pub mod sync_management;

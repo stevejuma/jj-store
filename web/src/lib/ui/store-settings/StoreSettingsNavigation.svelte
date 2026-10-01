@@ -2,6 +2,7 @@
   import { Button } from "@lapismd/design-core/shadcn/button";
   import ArrowLeftIcon from "@lucide/svelte/icons/arrow-left";
   import DatabaseIcon from "@lucide/svelte/icons/database";
+  import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
   import SearchIcon from "@lucide/svelte/icons/search";
   import ServerIcon from "@lucide/svelte/icons/server";
   import type { StoreSettingsSection } from "./model.js";
@@ -23,6 +24,7 @@
     { id: "service", label: "Local service", icon: ServerIcon },
     { id: "repository", label: "Repository", icon: DatabaseIcon },
     { id: "search", label: "Search", icon: SearchIcon },
+    { id: "sync", label: "Sync", icon: RefreshCwIcon },
   ] as const;
 </script>
 

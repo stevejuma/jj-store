@@ -130,6 +130,7 @@ export interface StoreRepositorySummary {
   readonly principal?: string;
 }
 export interface StoreSettingsState extends WorkspaceLinkSettings {
+  readonly syncSettings: import("./sync-settings.js").SyncSettings;
   readonly capabilities: Model<"Capabilities"> | null;
   readonly snapshot: Head | null;
   readonly searchStatus: Model<"SearchStatus"> | null;
@@ -213,6 +214,8 @@ export interface StoreController {
     linkWorkspace(): Promise<void>;
     pickWorkspaceFolder(): Promise<void>;
     prepareIndex(): Promise<void>;
+    refreshSyncSettings(): Promise<void>;
+    controlSync(action: import("./sync-settings.js").SyncAction): Promise<void>;
     loadMore(
       collection:
         | "bookmarks"

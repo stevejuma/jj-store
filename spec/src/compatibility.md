@@ -478,3 +478,7 @@ V1 response with a nullable path. Absence retains manual entry on older services
 and unsupported platforms. It changes no repository or workspace-registry
 format. The initial OS adapter is macOS; Linux and Windows dialog adapters are
 deferred.
+
+Sync management adds an optional local capability and V1 browser report/command
+schemas. Existing replication RPC DTO bytes and persisted checkpoints remain
+unchanged; clients treat absent capability as unsupported.

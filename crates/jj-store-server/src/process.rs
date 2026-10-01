@@ -243,6 +243,17 @@ impl PreparedServer {
                     .ascii_serialization(),
                 access: http_access,
                 registry: Some(registry as Arc<dyn jj_store_service::registry::RepositoryRegistry>),
+                local_sync: matches!(
+                    config.access,
+                    Access::LocalTrusted {
+                        permission: jj_store_service::auth::Permission::Admin,
+                        ..
+                    }
+                )
+                .then(|| {
+                    Arc::new(crate::sync_management::LocalSync(replication.controls()))
+                        as Arc<dyn jj_store_service::sync_management::SyncManager>
+                }),
                 local_folder_picker: local_workspaces.as_ref().and(picker),
                 local_workspaces,
                 storage_ready: true,

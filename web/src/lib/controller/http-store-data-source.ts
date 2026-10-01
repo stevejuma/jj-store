@@ -1,3 +1,4 @@
+import { HttpRepositoryTransports } from "./http-repository-transports.js";
 import type { QueryClient } from "@tanstack/svelte-query";
 import {
   Client,
@@ -20,15 +21,15 @@ import { HttpStoreWriteDataSource } from "./http-store-write-data-source.js";
 
 import { HttpWorkDataSource } from "./http-work-data-source.js";
 
-import { HttpWorkspaceLinks } from "./http-workspace-links.js";
-
-export class HttpStoreDataSource implements StoreDataSource {
+export class HttpStoreDataSource
+  extends HttpRepositoryTransports
+  implements StoreDataSource
+{
   readonly #client: Client;
   readonly #scope: StoreQueryScope;
   readonly #collaboration: HttpCollaborationDataSource;
   readonly #writes: HttpStoreWriteDataSource;
   readonly work: HttpWorkDataSource;
-  readonly localWorkspaces: HttpWorkspaceLinks;
   #active = true;
 
   constructor(
@@ -39,8 +40,9 @@ export class HttpStoreDataSource implements StoreDataSource {
     denied: () => void,
     fetcher?: typeof fetch,
   ) {
-    this.#client = new Client(repository, token, denied, fetcher);
-    this.localWorkspaces = new HttpWorkspaceLinks(this.#client);
+    const client = new Client(repository, token, denied, fetcher);
+    super(client);
+    this.#client = client;
     this.#scope = { repository, session };
     this.work = new HttpWorkDataSource(this.#client, this);
     this.#writes = new HttpStoreWriteDataSource(this.#client);
@@ -288,13 +290,6 @@ export class HttpStoreDataSource implements StoreDataSource {
   }
   indexTask(id: string) {
     return this.#writes.indexTask(id);
-  }
-  events(
-    after: string | undefined,
-    signal: AbortSignal,
-    deliver: Parameters<Client["events"]>[2],
-  ) {
-    return this.#client.events(after, signal, deliver);
   }
   close() {
     this.#active = false;

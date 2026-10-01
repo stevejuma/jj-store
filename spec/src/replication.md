@@ -261,3 +261,10 @@ visibility boundary. Native operation ancestry belongs to the JJ integration;
 unsupported validators fail closed. Peer arrival never grants endpoint authority
 or executes Git, credentials, helpers or hooks. WorkStore's origin freeze still
 applies.
+
+The local browser Sync management adapter reuses the existing status, wake and
+set-paused control plane. It preserves distinct local/peer origins, captured
+frontiers, pending counts and faults; no changes to reconciliation, authority,
+WorkStore support or worker semantics are introduced. Pause/Resume is idempotent
+process-lifetime control. Browser finite-frontier waits remain a subsequent UI
+slice.

@@ -692,3 +692,7 @@ asynchronous, single flight, limited to 4096 path bytes and 25 seconds, and
 cleans up children on timeout or caller cancellation. Other platforms advertise
 no picker; missing helpers or headless sessions return unavailable and leave
 manual path entry usable. No installed binary or service is changed by picking.
+
+The LocalTrusted admin server composes a browser Sync manager over the same
+replication controls used by the CLI/RPC. It starts no additional worker and
+modifies no upstream configuration. Paused state remains process-local.

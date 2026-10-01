@@ -1008,3 +1008,9 @@ apply.
 Settings grouping and joined ID Copy controls preserve full wire identities and
 existing explicit actions. Tabs and clipboard feedback are local presentation
 state and never publish or change the selected repository snapshot.
+
+LocalTrusted admin Sync settings use optional `local_sync_management`.
+Repository GET `/local/sync` returns a V1 local-only or configured-worker
+report; POST `/local/sync/control` accepts only V1 pause, resume or retry
+intent. Both reauthorize before accessing the worker. No upstream URL, token or
+environment variable is exposed or editable.

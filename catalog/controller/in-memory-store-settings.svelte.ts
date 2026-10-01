@@ -1,3 +1,4 @@
+import { emptySyncSettings } from "../../web/src/lib/controller/sync-settings.js";
 import { emptyWorkspaceLinks } from "../../web/src/lib/controller/workspace-link-types.js";
 import type {
   StoreLoadStatus,
@@ -85,6 +86,7 @@ export function createInMemoryStoreSettings(options: {
       const search = mode !== "unavailable";
       return {
         ...emptyWorkspaceLinks(),
+        syncSettings: emptySyncSettings(),
         capabilities: capabilities(search),
         snapshot: {
           version: 1,

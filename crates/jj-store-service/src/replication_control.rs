@@ -6,8 +6,9 @@
 use jj_store_model as m;
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(rename_all = "snake_case")]
+#[schemars(rename = "SyncPhase")]
 pub enum Phase {
     Connecting,
     Running,
@@ -16,8 +17,9 @@ pub enum Phase {
     Stopped,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(rename_all = "snake_case")]
+#[schemars(rename = "SyncFault")]
 pub enum Fault {
     TransientEndpoint,
     PermanentEndpoint,
@@ -27,8 +29,9 @@ pub enum Fault {
     OutcomeUnknown,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
+#[schemars(rename = "SyncFrontier")]
 pub struct FrontierV1 {
     pub replica: m::ReplicaId,
     pub log_epoch: m::EpochId,
@@ -36,16 +39,20 @@ pub struct FrontierV1 {
     pub observed_upper_bound: m::WalPosition,
 }
 
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(
+    Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema,
+)]
 #[serde(deny_unknown_fields)]
+#[schemars(rename = "SyncDirectionStatus")]
 pub struct DirectionStatusV1 {
     pub consecutive_failures: u32,
     pub circuit_open: bool,
     pub last_fault: Option<Fault>,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
+#[schemars(rename = "SyncSearchStatus")]
 pub struct SearchStatusV1 {
     pub configured: bool,
     pub repository_position: Option<m::WalPosition>,
@@ -53,8 +60,9 @@ pub struct SearchStatusV1 {
     pub degraded: bool,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
+#[schemars(rename = "SyncStatus")]
 pub struct StatusV1 {
     pub version: u32,
     pub repository: m::RepositoryId,
@@ -77,8 +85,9 @@ pub struct StatusV1 {
     pub search: SearchStatusV1,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
+#[schemars(rename = "SyncBarrier")]
 pub struct BarrierV1 {
     pub version: u32,
     pub repository: m::RepositoryId,
@@ -90,16 +99,18 @@ pub struct BarrierV1 {
     pub pull_through: m::WalPosition,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
+#[schemars(rename = "SyncWaitRequest")]
 pub struct WaitRequestV1 {
     pub version: u32,
     pub barrier: BarrierV1,
     pub timeout_millis: u64,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
+#[schemars(rename = "SyncWaitOutcome")]
 pub struct WaitOutcomeV1 {
     pub version: u32,
     pub barrier: BarrierV1,

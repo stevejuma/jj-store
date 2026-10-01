@@ -1,1 +1,1 @@
-export type StoreSettingsSection = "service" | "repository" | "search";
+export type StoreSettingsSection = "service" | "repository" | "search" | "sync";

@@ -5,6 +5,7 @@ use crate::mutations::{
 };
 use crate::review_mutations::{apply as review_command_apply, status as review_command_status};
 use crate::search::{Query as SearchQuery, search, search_status};
+use crate::sync_management::{local_sync_control, local_sync_status};
 use crate::work::{
     apply as work_apply, browse as work_browse, page as work_page, status as work_status,
 };
@@ -257,6 +258,8 @@ macro_rules! endpoints {
     ($register:ident) => {
         $register! {
             (get, "/repos/{repo}/capabilities", capabilities, Empty, Capabilities, Reply::Json(200)),
+            (get, "/repos/{repo}/local/sync", local_sync_status, Empty, jj_store_service::sync_management::LocalSyncStatus, Reply::Json(200)),
+            (post, "/repos/{repo}/local/sync/control", local_sync_control, Empty, jj_store_service::sync_management::LocalSyncStatus, Reply::Json(200)),
             (get, "/repos/{repo}/local/workspaces", local_workspaces, Empty, jj_store_service::local_management::WorkspaceLinks, Reply::Json(200)),
             (post, "/repos/{repo}/local/workspaces/pick", pick_workspace_folder, Empty, jj_store_service::local_management::FolderSelection, Reply::Json(200)),
             (post, "/repos/{repo}/local/workspaces/link", link_workspace, Empty, jj_store_service::local_management::WorkspaceLinks, Reply::Json(200)),
@@ -318,6 +321,10 @@ pub(super) fn document(doc: &mut Document) {
         };
     }
     endpoints!(register);
+    doc.body::<jj_store_service::sync_management::SyncCommand>(
+        "/v1/repos/{repo}/local/sync/control",
+        "post",
+    );
     doc.body::<Empty>("/v1/repos/{repo}/local/workspaces/pick", "post");
     doc.body::<jj_store_service::local_management::LinkWorkspace>(
         "/v1/repos/{repo}/local/workspaces/link",

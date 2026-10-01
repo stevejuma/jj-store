@@ -14,7 +14,7 @@ use jj_store_service::{
 };
 use std::sync::Arc;
 
-async fn manager<'a>(state: &'a State, context: &Context) -> Result<&'a Arc<dyn WorkspaceManager>> {
+pub(crate) async fn admit(state: &State, context: &Context) -> Result<()> {
     if !matches!(
         state.config.access,
         Access::LocalTrusted {
@@ -29,6 +29,11 @@ async fn manager<'a>(state: &'a State, context: &Context) -> Result<&'a Arc<dyn 
         .principal(Permission::Admin)
         .await
         .map_err(crate::reads::Error::from)?;
+    Ok(())
+}
+
+async fn manager<'a>(state: &'a State, context: &Context) -> Result<&'a Arc<dyn WorkspaceManager>> {
+    admit(state, context).await?;
     state
         .config
         .local_workspaces

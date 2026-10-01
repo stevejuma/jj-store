@@ -46,6 +46,7 @@ export type StoreReviewCommandRequest = Exact<
 
 export interface StoreDataSource {
   readonly repository: string;
+  readonly sync?: import("./sync-settings.js").SyncTransport;
   readonly localWorkspaces?: import("./workspace-link-types.js").WorkspaceLinkTransport;
   readonly work?: import("./work-types.js").WorkTransport;
   capabilities(): Promise<Model<"Capabilities">>;

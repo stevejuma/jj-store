@@ -1,3 +1,4 @@
+import { createProductionSyncSettings } from "./production-sync-settings.js";
 import { createProductionWorkspaceLinks } from "./production-workspace-links.js";
 import type { StoreDataSource } from "./native-data-source.js";
 import type { ProductionStoreState } from "./production-store-state.svelte.js";
@@ -12,10 +13,12 @@ export function createProductionStoreSettings(options: {
   restore: () => Promise<void>;
 }) {
   const { data } = options;
+  const sync = createProductionSyncSettings(options);
   const workspaces = createProductionWorkspaceLinks(options);
 
   function clear() {
     workspaces.clear();
+    sync.clear();
     data.capabilities = null;
     data.neededIndex = null;
     data.searchStatus = null;
@@ -91,7 +94,11 @@ export function createProductionStoreSettings(options: {
   }
 
   async function refresh() {
-    await Promise.all([refreshSearch(), workspaces.refreshWorkspaceLinks()]);
+    await Promise.all([
+      refreshSearch(),
+      workspaces.refreshWorkspaceLinks(),
+      sync.refreshSyncSettings(),
+    ]);
   }
-  return { ...workspaces, clear, refresh, prepareIndex };
+  return { ...workspaces, ...sync, clear, refresh, prepareIndex };
 }

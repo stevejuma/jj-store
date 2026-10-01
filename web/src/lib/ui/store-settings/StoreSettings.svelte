@@ -2,6 +2,7 @@
   import { AppShell } from "@lapismd/design-core/shell";
   import type { StoreController } from "../../controller/contracts.js";
   import StoreRepositorySettings from "./StoreRepositorySettings.svelte";
+  import StoreSyncSettings from "./StoreSyncSettings.svelte";
   import StoreSearchSettings from "./StoreSearchSettings.svelte";
   import StoreServiceSettings from "./StoreServiceSettings.svelte";
   import type { StoreSettingsSection } from "./model.js";
@@ -17,14 +18,18 @@
       ? "Local service"
       : section === "repository"
         ? "Repository"
-        : "Search",
+        : section === "sync"
+          ? "Sync"
+          : "Search",
   );
   const description = $derived(
     section === "service"
       ? "Connection and storage state for this jj-store installation."
       : section === "repository"
         ? "Identity, snapshot, graph preparation and capabilities for the selected repository."
-        : "Text-search projection health for the selected repository.",
+        : section === "sync"
+          ? "Local readiness and controls for the configured upstream."
+          : "Text-search projection health for the selected repository.",
   );
 </script>
 
@@ -39,6 +44,15 @@
         <StoreServiceSettings {controller} />
       {:else if section === "repository"}
         <StoreRepositorySettings {controller} />
+      {:else if section === "sync"}
+        <StoreSyncSettings
+          settings={controller.state.settings.syncSettings}
+          supported={Boolean(
+            controller.state.settings.capabilities?.local_sync_management,
+          )}
+          onRefresh={controller.actions.refreshSyncSettings}
+          onControl={controller.actions.controlSync}
+        />
       {:else}
         <StoreSearchSettings {controller} />
       {/if}

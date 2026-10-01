@@ -876,3 +876,12 @@ reported as incomplete, never classified as absent. Filter loading is explicit;
 empty filtered pages retain accessible continuation controls. Returning to all
 commits restores the ordinary mounted-row lazy behavior. No task/review event
 history is synthesized.
+
+Sync settings group Overview and Progress in keyboard-accessible tabs. Overview
+provides explicit Refresh, Pause/Resume and Retry for a configured worker, with
+local/offline readiness and reconciliation guidance. Progress keeps local and
+peer frontiers separate, shows pending counts, fault/circuit state and Search
+freshness. No upstream shows local-only guidance without action buttons;
+unsupported services expose no controls. Requests are single flight and late
+replies cannot populate another repository. Pause is process-lifetime state and
+does not persist across restart.
