@@ -59,6 +59,15 @@ fails stale. Publishing AgentStore preserves WorkStore and other domains. Native
 V1 code associations require native evidence and are rejected by this provider
 until the portable association/checkpoint gate is qualified.
 
+CLI hook ingestion retains the existing sanitizer-before-durability boundary.
+Its shared private spool persists the complete local typed request before a
+companion ref publication, checks the receipt's repository, actor, request,
+intent and batch, and removes an entry only after a matching committed result.
+Unknown outcomes retain that exact request across process restart and block
+later source batches. Native prepared deltas and local prepared requests cannot
+be delivered through each other's provider. Local session continuations bind
+selected metadata history and stay usable across CLI processes.
+
 Portable evidence uses an explicit source profile and SHA-256 capsule identity.
 The Git profile records the complete selected operation and view, including
 predecessor maps, and the complete backend commit metadata needed by their

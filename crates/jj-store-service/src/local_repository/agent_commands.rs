@@ -10,7 +10,7 @@ use jj_store_wal::publication::{
 use serde::{Deserialize, Serialize};
 use sha2::{Digest as _, Sha256};
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "command", rename_all = "snake_case", deny_unknown_fields)]
 pub enum LocalAgentCommand {
     Initialize,
@@ -19,12 +19,31 @@ pub enum LocalAgentCommand {
         batch: Box<SanitizedObservationBatchV1>,
     },
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct LocalAgentRequest {
     pub version: u32,
     pub request_id: m::RequestId,
     pub command: LocalAgentCommand,
+}
+impl LocalAgentRequest {
+    pub fn validate(&self) -> LocalResult<()> {
+        if self.version != 1 {
+            return Err(LocalError::Invalid);
+        }
+        if let LocalAgentCommand::Capture { profile, batch } = &self.command {
+            batch.validate().map_err(|_| LocalError::Invalid)?;
+            profile.validate().map_err(|_| LocalError::Unsupported)?;
+        }
+        Ok(())
+    }
+    pub fn intent_for(&self, actor: m::PrincipalId) -> LocalResult<m::IntentDigest> {
+        self.validate()?;
+        let mut hash = Sha256::new_with_prefix(b"jj-store/local-agent-command/v1\0");
+        hash.update(actor.as_bytes());
+        hash.update(serde_json::to_vec(self).map_err(|_| LocalError::Invalid)?);
+        Ok(m::IntentDigest::new(hash.finalize().into()))
+    }
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -84,19 +103,10 @@ impl LocalRepository {
         &self,
         request: &LocalAgentRequest,
     ) -> LocalResult<LocalAgentOutcome> {
-        if request.version != 1 {
-            return Err(LocalError::Invalid);
-        }
-        if let LocalAgentCommand::Capture { profile, batch } = &request.command {
-            batch.validate().map_err(|_| LocalError::Invalid)?;
-            profile.validate().map_err(|_| LocalError::Unsupported)?;
-        }
+        request.validate()?;
         let actor = self.ensure_actor()?;
         let proposed = Self::proposed_repository()?;
-        let mut hash = Sha256::new_with_prefix(b"jj-store/local-agent-command/v1\0");
-        hash.update(actor.as_bytes());
-        hash.update(serde_json::to_vec(request).map_err(|_| LocalError::Invalid)?);
-        let intent = m::IntentDigest::new(hash.finalize().into());
+        let intent = request.intent_for(actor)?;
         let at = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .map_err(|_| LocalError::Unavailable)?

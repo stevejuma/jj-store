@@ -23,7 +23,12 @@ const MAX_ENTRIES: usize = 4096;
 #[serde(tag = "state", rename_all = "snake_case", deny_unknown_fields)]
 pub enum PendingCaptureStateV1 {
     Captured,
-    Prepared { request: AgentDeltaRequest },
+    Prepared {
+        request: AgentDeltaRequest,
+    },
+    LocalPrepared {
+        request: jj_store_service::local_repository::LocalAgentRequest,
+    },
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -35,41 +40,6 @@ pub struct PendingCaptureV1 {
     pub cursor: CaptureCursorV1,
     pub batch: SanitizedObservationBatchV1,
     pub state: PendingCaptureStateV1,
-}
-
-impl PendingCaptureV1 {
-    fn validate(&self) -> AuthorityResult<()> {
-        self.profile.validate()?;
-        self.cursor.validate()?;
-        self.batch.validate()?;
-        let last_sequence = self
-            .batch
-            .observations
-            .last()
-            .ok_or("capture batch must contain observations")?
-            .source_sequence;
-        if self.schema_version != 1
-            || self.profile.integration != self.batch.integration
-            || self.cursor.integration != self.batch.integration
-            || self.cursor.source_instance_id != self.batch.source_instance_id
-            || matches!(
-                self.cursor.position,
-                SourcePositionV1::NativeSequence { sequence } if sequence != last_sequence
-            )
-        {
-            return Err("capture spool identity mismatch".into());
-        }
-        if let PendingCaptureStateV1::Prepared { request } = &self.state {
-            AgentDeltaRequest::new(
-                request.principal,
-                request.request_id,
-                request.publication_id,
-                request.delta.clone(),
-                request.result.clone(),
-            )?;
-        }
-        Ok(())
-    }
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -148,7 +118,8 @@ impl AgentCaptureSpool {
             PendingCaptureStateV1::Prepared { request: current } if current == &request => {
                 return Ok(());
             }
-            PendingCaptureStateV1::Prepared { .. } => {
+            PendingCaptureStateV1::Prepared { .. }
+            | PendingCaptureStateV1::LocalPrepared { .. } => {
                 return Err("capture publication retry differs from durable intent".into());
             }
             PendingCaptureStateV1::Captured => {}
@@ -188,7 +159,8 @@ impl AgentCaptureSpool {
                 PendingCaptureStateV1::Prepared { request }
                     if request.request_id == request_id
                         && request.publication_id == publication_id => {}
-                PendingCaptureStateV1::Prepared { .. } => {
+                PendingCaptureStateV1::Prepared { .. }
+                | PendingCaptureStateV1::LocalPrepared { .. } => {
                     return Err("capture completion identity mismatch".into());
                 }
                 PendingCaptureStateV1::Captured => {
@@ -201,11 +173,11 @@ impl AgentCaptureSpool {
         Ok(())
     }
 
-    fn path(&self, batch_id: CaptureBatchId) -> PathBuf {
+    pub(crate) fn path(&self, batch_id: CaptureBatchId) -> PathBuf {
         self.pending.join(format!("{batch_id}.json"))
     }
 
-    fn read(&self, path: &Path) -> AuthorityResult<PendingCaptureV1> {
+    pub(crate) fn read(&self, path: &Path) -> AuthorityResult<PendingCaptureV1> {
         let metadata = fs::symlink_metadata(path)?;
         if !metadata.is_file() || metadata.file_type().is_symlink() {
             return Err("capture spool entry must be a regular file".into());
@@ -226,7 +198,7 @@ impl AgentCaptureSpool {
         Ok(entry)
     }
 
-    fn persist(&self, path: &Path, entry: &PendingCaptureV1) -> AuthorityResult<()> {
+    pub(crate) fn persist(&self, path: &Path, entry: &PendingCaptureV1) -> AuthorityResult<()> {
         let bytes = serde_json::to_vec(entry)?;
         self.check_total(bytes.len() as u64, Some(path))?;
         let mut temporary = tempfile::NamedTempFile::new_in(&self.pending)?;

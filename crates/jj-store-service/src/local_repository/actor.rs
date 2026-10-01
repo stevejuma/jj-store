@@ -37,7 +37,9 @@ impl LocalRepository {
                 .map_err(|_| Error::Corrupt)?,
         ))
     }
-    pub(crate) fn ensure_actor(&self) -> Result<PrincipalId> {
+    /// Establish device provenance for an explicitly requested local write.
+    /// Read-only facades use `actor` and must never call this method.
+    pub fn ensure_actor(&self) -> Result<PrincipalId> {
         if let Some(actor) = self.actor()? {
             return Ok(actor);
         }

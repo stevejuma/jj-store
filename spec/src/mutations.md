@@ -14,6 +14,13 @@ version and canonical record inventory are selected only by companion ref CAS.
 Unknown outcomes preserve the original request for retry; no code operation,
 checkout or native manifest is changed by this domain command.
 
+The local session pager binds continuations to selected metadata history, page
+size and the last catalog key. Staged candidates cannot be selected through a
+cursor; later publications and process restart do not replace the pinned root.
+Responses enforce the shared page count and a four-MiB byte ceiling. Explicit
+capture delivery may establish device actor provenance after sanitization;
+ordinary reads never do so.
+
 An authorized read can produce a credential-free, immutable selected-view commit
 set for search filtering. Only the service constructs this value after native
 traversal and a final authorization check. It is informational, cannot publish,

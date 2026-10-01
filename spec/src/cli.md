@@ -1,5 +1,14 @@
 # CLI and server commands
 
+M13 local agent commands resolve the admitted GitBackend without a native
+connection. Status and session reads do not initialize companion metadata;
+explicit initialization and supported enablement are metadata writes. Existing
+registry, owned setup and sanitizer behavior is shared with native capture. The
+private spool records either the original local typed capture request or the
+native prepared delta before publication, rejects cross-profile delivery and
+stops ordered progress on unknown outcomes. Local receipt and pinned
+session-page output identify their metadata profile and snapshot explicitly.
+
 Native search acceptance compares selected-view commit visibility with retained
 historical metadata, including invisible predecessors and pagination after
 hidden-hit filtering. These fixtures do not introduce CLI search commands.

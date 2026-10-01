@@ -12,6 +12,8 @@ use jj_agent::IntegrationId;
 use jj_cli::{cli_util::CommandHelper, command_error::CommandError, ui::Ui};
 use sha2::{Digest as _, Sha256};
 use std::path::{Path, PathBuf};
+mod backend;
+use backend::{Backend, default_state, workspace_root};
 
 #[derive(Clone, Debug, Args)]
 #[command(disable_help_subcommand = true)]
@@ -27,6 +29,24 @@ pub struct AgentArgs {
 
 #[derive(Clone, Debug, Subcommand)]
 pub enum AgentCommand {
+    /// Initialize companion AgentStore metadata in a local Git-backed JJ repository
+    Initialize {
+        #[arg(long)]
+        request_id: jj_store_model::RequestId,
+    },
+    /// List one pinned page of local Git-backed AgentStore sessions
+    Sessions {
+        #[arg(long, default_value_t = 50)]
+        limit: usize,
+        #[arg(long)]
+        cursor: Option<String>,
+    },
+    /// Read a local capture's original durable receipt
+    Receipt {
+        request_id: jj_store_model::RequestId,
+    },
+    /// Retry pending sanitized captures in source order
+    Drain,
     /// Probe integrations and report desired versus installed state
     Status,
     /// Enable explicit supported integrations in the device registry
@@ -85,26 +105,71 @@ pub async fn run(ui: &mut Ui, helper: &CommandHelper, args: AgentArgs) -> Result
     let Some(command) = args.command else {
         return presentation::help(ui, helper, &["agent".into()]);
     };
-    let loader = helper.workspace_loader()?;
-    let connection = crate::binding::Connection::read(loader.repo_path()).map_err(error)?;
+    let backend = Backend::open(helper)?;
     let workspace = workspace_root(helper.cwd()).map_err(error)?;
+    if backend.repository()?.is_none()
+        && matches!(command, AgentCommand::Status | AgentCommand::Enable { .. })
+    {
+        let mut value = backend.uninitialized_status()?;
+        if let AgentCommand::Enable {
+            agents,
+            non_interactive,
+            ..
+        } = &command
+        {
+            if !non_interactive || agents.is_empty() || agents.len() > 3 {
+                return Err(error("agent enable requires --non-interactive"));
+            }
+            for agent in agents {
+                let key = serde_json::to_value(IntegrationId::from(*agent)).map_err(error)?;
+                let status = &mut value["integrations"]
+                    [key.as_str().ok_or_else(|| error("integration identity"))?];
+                if status["support"] != "supported" {
+                    return Err(error("agent integration is unsupported or unavailable"));
+                }
+                status["state"] = serde_json::json!("enabled");
+            }
+            if let AgentCommand::Enable { dry_run: false, .. } = &command {
+                backend.ensure_repository().await?;
+            } else {
+                value["dry_run"] = serde_json::json!(true);
+            }
+        }
+        if backend.repository()?.is_none() {
+            return presentation::result(
+                ui,
+                helper,
+                args.format,
+                &value,
+                "Local agent metadata is not initialized.\n",
+            );
+        }
+    }
+    let selected_repository = backend.repository()?;
     let state = args
         .state_dir
         .map(|path| helper.cwd().join(path))
-        .unwrap_or_else(|| default_state(&workspace, connection.repository));
+        .unwrap_or_else(|| default_state(&workspace, selected_repository));
+    if let Some(value) = backend.local_action(&command, &state).await? {
+        let text = format!("{}\n", serde_json::to_string_pretty(&value).map_err(error)?);
+        return presentation::result(ui, helper, args.format, &value, &text);
+    }
+    let repository = backend
+        .repository()?
+        .ok_or_else(|| error("enable an integration or initialize local agent metadata first"))?;
     if let AgentCommand::Hook { agent } = &command {
         crate::agent_hook::ingest_stdin(
             &workspace,
             &state,
-            connection.repository,
+            repository,
             IntegrationId::from(*agent),
         )
         .map_err(error)?;
-        crate::agent_hook::publish_pending_best_effort(&state, &connection).await;
+        backend.publish_pending(&state).await;
         return Ok(());
     }
     let mut registry =
-        AgentIntegrationRegistry::open(&state, &workspace, connection.repository).map_err(error)?;
+        AgentIntegrationRegistry::open(&state, &workspace, repository).map_err(error)?;
     registry.refresh_environment().map_err(error)?;
     audit_installations(&mut registry).map_err(error)?;
     let (status, action) = match command {
@@ -181,6 +246,10 @@ pub async fn run(ui: &mut Ui, helper: &CommandHelper, args: AgentArgs) -> Result
             );
         }
         AgentCommand::Hook { .. } => return Err(error("agent hook dispatch failed")),
+        AgentCommand::Initialize { .. }
+        | AgentCommand::Sessions { .. }
+        | AgentCommand::Receipt { .. }
+        | AgentCommand::Drain => return Err(error("agent local command dispatch failed")),
     };
     present(ui, helper, args.format, &status, action)
 }
@@ -213,23 +282,4 @@ fn present(
             status.workspace.display()
         ),
     )
-}
-
-fn workspace_root(cwd: &Path) -> Result<PathBuf, &'static str> {
-    let cwd = cwd
-        .canonicalize()
-        .map_err(|_| "workspace path unavailable")?;
-    cwd.ancestors()
-        .find(|path| path.join(".jj").exists())
-        .map(Path::to_owned)
-        .ok_or("agent commands require a JJ workspace")
-}
-
-fn default_state(workspace: &Path, repository: jj_store_model::RepositoryId) -> PathBuf {
-    let digest = Sha256::digest(workspace.as_os_str().as_encoded_bytes());
-    dirs::data_local_dir()
-        .unwrap_or_else(std::env::temp_dir)
-        .join("jj-store/agent")
-        .join(repository.to_string())
-        .join(hex::encode(&digest[..16]))
 }

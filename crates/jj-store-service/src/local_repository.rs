@@ -3,12 +3,14 @@
 mod actor;
 mod agent_commands;
 mod agent_io;
+mod agent_pages;
 mod agent_store;
 mod errors;
 mod records;
 pub use agent_commands::{
     LocalAgentCommand, LocalAgentOutcome, LocalAgentReceipt, LocalAgentRequest,
 };
+pub use agent_pages::{LocalAgentPage, LocalAgentSessionRow};
 pub use agent_store::{LocalAgentSnapshot, LocalAgentStore};
 pub use errors::{LocalError, LocalResult};
 mod work;

@@ -2,6 +2,7 @@
 #![forbid(unsafe_code)]
 pub mod agent_capture;
 mod agent_capture_files;
+mod agent_capture_intent;
 pub mod agent_commands;
 pub mod agent_hook;
 pub mod agent_integrations;
@@ -18,6 +19,7 @@ pub mod commands;
 pub mod credentials;
 pub mod git_bridge;
 pub mod initialization;
+pub mod local_agent_publication;
 pub mod migration;
 pub mod presentation;
 pub mod remote;

@@ -1,5 +1,23 @@
 # Agent capture
 
+Ordinary Git-backed JJ repositories use the local companion metadata store.
+Agent capture runs in the CLI process without a native server connection.
+`jj agent initialize --request-id <id>` explicitly initializes this metadata;
+the first successful enablement can initialize it too. Status and session reads
+on an uninitialized repository leave both metadata and actor state absent.
+
+`jj agent sessions [--limit <count>] [--cursor <cursor>]` reads a pinned local
+session page. Continue with the returned cursor to keep the same metadata
+snapshot across processes. `jj agent receipt <request-id>` returns the original
+local capture or initialization receipt. These two commands currently target the
+local Git profile. Native repository collaboration reads remain available
+through the existing local API.
+
+`jj agent drain` retries the private sanitized spool in source order using the
+repository's backend. Local requests are synchronized before ref publication;
+native requests retain their prepared RPC delta. A prepared request cannot move
+between those profiles. Unknown outcomes leave the original request pending.
+
 `jj agent status` probes Codex, Cursor, and OpenCode against the exact supported
 versions and reports detection, desired enablement, and setup separately.
 
@@ -19,9 +37,9 @@ before installing the hook. The first setup can take longer; later hook
 processes reuse the private device-local cache.
 
 The registry is user-restricted, contains no credentials or transcript content,
-and is bound to one native repository, physical workspace, and stable device
-identity. A missing executable, failed probe, or different version is reported
-without forwarding harness stderr.
+and is bound to one repository, physical workspace, and stable device identity.
+A missing executable, failed probe, or different version is reported without
+forwarding harness stderr.
 
 Before changing a project file, setup stores its exact original bytes and the
 intended content hash in the device-local registry area. Repeated setup is
@@ -41,6 +59,6 @@ before allocating durable source order and enqueuing the sanitized observation.
 Invalid or oversized input is represented only by a fixed omission record. Hook
 commands produce no normal output and never persist raw input. Pending capture
 publication is attempted for three seconds after durable enqueue. An unavailable
-server, unknown outcome, stale request, or timeout leaves the capture in the
-private spool without failing the hook; the next hook invocation retries the
+native server, unknown outcome, stale request, or timeout leaves the capture in
+the private spool without failing the hook; the next hook invocation retries the
 oldest exact source-ordered request before later observations.

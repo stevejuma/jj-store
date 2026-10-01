@@ -60,7 +60,10 @@ pub async fn drain_capture_spool<P: AgentCapturePublisher>(
     publisher: &P,
 ) -> AuthorityResult<CaptureDrainReport> {
     let mut pending = spool.pending()?;
-    if pending.iter().any(|entry| entry.repository != repository) {
+    if pending.iter().any(|entry| {
+        entry.repository != repository
+            || matches!(entry.state, PendingCaptureStateV1::LocalPrepared { .. })
+    }) {
         return Err("capture spool belongs to another repository".into());
     }
     pending.sort_by(capture_order);
@@ -85,6 +88,9 @@ pub async fn drain_capture_spool<P: AgentCapturePublisher>(
                 request
             }
             PendingCaptureStateV1::Prepared { request } => request,
+            PendingCaptureStateV1::LocalPrepared { .. } => {
+                return Err("local capture cannot publish through native RPC".into());
+            }
         };
         match publisher.publish_agent_delta(&request).await? {
             PublishOutcome::Committed(receipt) => {
@@ -118,7 +124,10 @@ pub async fn drain_capture_spool<P: AgentCapturePublisher>(
     })
 }
 
-fn capture_order(left: &PendingCaptureV1, right: &PendingCaptureV1) -> std::cmp::Ordering {
+pub(crate) fn capture_order(
+    left: &PendingCaptureV1,
+    right: &PendingCaptureV1,
+) -> std::cmp::Ordering {
     left.batch
         .integration
         .cmp(&right.batch.integration)
@@ -141,7 +150,7 @@ fn first_sequence(entry: &PendingCaptureV1) -> u64 {
         .source_sequence
 }
 
-fn request_id(repository: RepositoryId, batch: CaptureBatchId) -> RequestId {
+pub(crate) fn request_id(repository: RepositoryId, batch: CaptureBatchId) -> RequestId {
     RequestId::new(derived_identity(
         b"jj-store/agent-capture-request/v1\0",
         repository,
