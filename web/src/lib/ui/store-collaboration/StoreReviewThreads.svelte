@@ -28,21 +28,21 @@
   aria-label="Repository reviews"
   aria-busy={view.status.reviews === "loading"}
 >
-  <ScrollArea class="store-collaboration__review-scroll" type="hover">
-    {#if view.route.reviewThreadId}
-      {#if view.status.reviewAction === "loading" && !detail}
-        <div class="store-reviews__loading">
-          <StoreCollaborationSkeleton label="Loading review details" />
-        </div>
-      {:else if detail}{#key detail.thread.thread_id}<StoreReviewDetail
-            {controller}
-          />{/key}
-      {:else}<CommunityProjectsColumnAlert
-          title="Review unavailable"
-          description={view.status.error ||
-            "The selected review could not be loaded."}
-        />{/if}
-    {:else}
+  {#if view.route.reviewThreadId}
+    {#if view.status.reviewAction === "loading" && !detail}
+      <div class="store-reviews__loading">
+        <StoreCollaborationSkeleton label="Loading review details" />
+      </div>
+    {:else if detail}{#key detail.thread.thread_id}<StoreReviewDetail
+          {controller}
+        />{/key}
+    {:else}<CommunityProjectsColumnAlert
+        title="Review unavailable"
+        description={view.status.error ||
+          "The selected review could not be loaded."}
+      />{/if}
+  {:else}
+    <ScrollArea class="store-collaboration__review-scroll" type="hover">
       <div class="store-projects__review-directory">
         <header class="community-projects__surface-header">
           <div>
@@ -107,8 +107,8 @@
           </div>
         {/if}
       </div>
-    {/if}
-  </ScrollArea>
+    </ScrollArea>
+  {/if}
 </section>
 
 <style>

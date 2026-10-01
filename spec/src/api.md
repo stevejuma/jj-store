@@ -82,7 +82,11 @@ uses public Design Core CopyableValue controls with the complete native value
 supplied unchanged; abbreviation affects display only. Repository, Search
 generation and Sync frontier values share this control. The page navigation Back
 action invokes the shell's existing transient Settings close callback; it never
-performs a new read, navigation or persisted-route write.
+performs a new read, navigation or persisted-route write. Overview insets,
+full-width file editor tokens, a stationary review header and native record Copy
+submenus are presentation-only. Clipboard values, read sessions, routes,
+capabilities and publication callbacks retain their existing contracts; these
+layouts add no request or generated schema.
 
 ## Read-session foundation
 

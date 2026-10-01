@@ -1,6 +1,6 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
-  import { expect, userEvent, within } from "storybook/test";
+  import { expect, userEvent, waitFor, within } from "storybook/test";
   import StoreRepositoryApplication from "../../fixtures/StoreRepositoryApplicationFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Native review detail",
@@ -87,6 +87,24 @@
     await expect(
       view.getByRole("list", { name: "Review comments" }),
     ).toBeVisible();
+    const header = detail.querySelector<HTMLElement>(
+      ".community-projects__review-header",
+    )!;
+    const scrollRoot = canvasElement.querySelector<HTMLElement>(
+      ".store-collaboration__review-scroll",
+    )!;
+    scrollRoot.style.maxHeight = "24rem";
+    const viewport = scrollRoot.querySelector<HTMLElement>(
+      '[data-ui-part="scroll-area-viewport"]',
+    )!;
+    await waitFor(() =>
+      expect(viewport.scrollHeight).toBeGreaterThan(viewport.clientHeight),
+    );
+    viewport.scrollTop = 0;
+    const headerTop = header.getBoundingClientRect().top;
+    viewport.scrollTop = 240;
+    await waitFor(() => expect(viewport.scrollTop).toBeGreaterThan(0));
+    await expect(header.getBoundingClientRect().top).toBeCloseTo(headerTop, 0);
     await userEvent.click(
       view.getByRole("button", { name: "Back to reviews" }),
     );

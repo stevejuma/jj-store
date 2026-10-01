@@ -338,6 +338,8 @@ breadcrumb is rendered in the body below these tabs only while Overview is
 active, immediately above its file content. The breadcrumb has no bottom border,
 is rooted at the current repository and retains directory and selected-file
 navigation. Branches, Commits, Op Log, Agents and Reviews do not render it.
+Overview's file-body region has a compact inset around the file tree and content
+surface. This padding belongs only to Overview and does not change other pages.
 
 The repository file tree is a shell body-left sidebar with a full-height
 divider, small inner padding, keyboard-resizable width and the shared file
@@ -376,32 +378,37 @@ Selecting a file renders a stacked source preview: copied commit metadata,
 deterministic file statistics, then the selected content. The metadata header
 keeps the file-tree toggle as its far-left control. The content-card header
 keeps the `Preview`, `Source` and `Edit` display controls visible while an edit
-is in progress; non-Markdown text uses `Source` and `Edit`. Edit mode replaces
-only the content-card body and replaces the selected filename breadcrumb segment
-with a content-sized filename input with horizontal padding and a bounded
-maximum width. It does not add a second filename field. The editor footer offers
-`Save changes` and `Cancel`; saving opens a dialog that captures the change
-description before the existing preview, apply, retry and status flow. Returning
-to a directory or the repository root through breadcrumbs or navigation history
-ends file edit mode, removes the filename input and releases the workspace
-editing guard. Opening another file shows its ordinary preview unless that file
-was explicitly requested for editing. An empty selected path never starts an
-edit session. Edit mode uses the public Design Core Mira MDE code editor with
-line numbers and filename-matched CodeMirror language support. It renders flush
-with the content body without a field label, nested border or focus frame; a
-focused CodeMirror surface and its editable content expose no outline or box
-shadow. A static application stylesheet resets the editable content's native
-focus outline so the served asset policy does not depend on CodeMirror's
-injected reset. The same scoped treatment applies to Community prose composers
-for review comments, replies and mutation descriptions, retaining editable focus
-and toolbar controls. Its right-aligned line-number gutter stays beside and
-vertically aligned with the content, and the editor, gutter and active line
-retain the content-card theme background. Markdown files open in safe preview
-mode, and draft preview/source modes retain unsaved content. Source mode uses
-the public Design Core CodeBlock with the filename/source body on the theme
-background. Rust source previews use CodeBlock's public custom-tokenizer
-extension point so `.rs` files highlight in the catalog while retaining the
-shared code component.
+is in progress; non-Markdown text uses `Source` and `Edit`. Repository file
+editing uses the full available editor width, with a compact left gutter and no
+centered readable-width column. Mira's file-margin and line-width tokens are
+scoped to the file editor; prose composers retain their own layout. Editor
+content can shrink with its pane without horizontal overflow.
+
+Edit mode replaces only the content-card body and replaces the selected filename
+breadcrumb segment with a content-sized filename input with horizontal padding
+and a bounded maximum width. It does not add a second filename field. The editor
+footer offers `Save changes` and `Cancel`; saving opens a dialog that captures
+the change description before the existing preview, apply, retry and status
+flow. Returning to a directory or the repository root through breadcrumbs or
+navigation history ends file edit mode, removes the filename input and releases
+the workspace editing guard. Opening another file shows its ordinary preview
+unless that file was explicitly requested for editing. An empty selected path
+never starts an edit session. Edit mode uses the public Design Core Mira MDE
+code editor with line numbers and filename-matched CodeMirror language support.
+It renders flush with the content body without a field label, nested border or
+focus frame; a focused CodeMirror surface and its editable content expose no
+outline or box shadow. A static application stylesheet resets the editable
+content's native focus outline so the served asset policy does not depend on
+CodeMirror's injected reset. The same scoped treatment applies to Community
+prose composers for review comments, replies and mutation descriptions,
+retaining editable focus and toolbar controls. Its right-aligned line-number
+gutter stays beside and vertically aligned with the content, and the editor,
+gutter and active line retain the content-card theme background. Markdown files
+open in safe preview mode, and draft preview/source modes retain unsaved
+content. Source mode uses the public Design Core CodeBlock with the
+filename/source body on the theme background. Rust source previews use
+CodeBlock's public custom-tokenizer extension point so `.rs` files highlight in
+the catalog while retaining the shared code component.
 
 An authenticated single-target bookmark exposes Edit for an existing bounded
 UTF-8 ordinary file. The editor keeps filename and content independently
@@ -793,7 +800,9 @@ Reviews use the same full-width Community review rows as the Projects directory,
 with measured virtual rows and cursor-edge continuation. Selecting a row opens a
 full page with the review header as the primary navigation and no repository
 tabs. Returning from the header opens the list. Reviews do not expose column
-styling or sidebar layout controls. Retired `review_view=columns` links remain
+styling or sidebar layout controls. The review title and Back control remain
+outside the scrolling detail body, so metadata, files, commits and activity
+scroll without moving the header. Retired `review_view=columns` links remain
 readable and open the list or selected detail with the same native identities.
 Review metadata and disclosure content have an additional responsive body inset
 to distinguish them from the header. The header Back control is vertically
@@ -864,9 +873,12 @@ turn, sanitized input/output and recorded paths. Open portaled menus keep their
 hover toolbar visible; touch exposes the actions without hover.
 
 Native review and task bubbles use Community hover/focus Reply and message
-menus. Copy is available for readable records. Edit is offered for visible
-comments created by the authenticated repository principal when write access
-exists. The composer shows the original text above an edit and the parent
+menus. Native record menus group readable copy values in one keyboard-accessible
+Copy submenu, with decorative icons matching message, comment, revision, author,
+thread, agent, snapshot, tool and task values. Items copy the complete native
+value and keep clipboard feedback and selection unchanged. Edit is offered for
+visible comments created by the authenticated repository principal when write
+access exists. The composer shows the original text above an edit and the parent
 author/content above a reply, supports cancellation and retains draft/context
 after a failed or unknown publication. Captured agent messages are immutable
 evidence and offer copy actions rather than comment-edit callbacks.

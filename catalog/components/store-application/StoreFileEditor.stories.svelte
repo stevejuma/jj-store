@@ -99,6 +99,21 @@
       editor.querySelectorAll<HTMLElement>(".cm-lineNumbers .cm-gutterElement"),
     ).find((element) => element.textContent?.trim() === "1")!;
     await expect(firstLineNumber).toBeDefined();
+    await expect(
+      gutters.getBoundingClientRect().left -
+        scroller.getBoundingClientRect().left,
+    ).toBeLessThanOrEqual(16);
+    const content = editor.querySelector<HTMLElement>(".cm-content")!;
+    await expect(
+      scroller.getBoundingClientRect().right -
+        content.getBoundingClientRect().right,
+    ).toBeLessThanOrEqual(16);
+    await expect(content.getBoundingClientRect().width).toBeGreaterThan(
+      scroller.clientWidth - 100,
+    );
+    await expect(scroller.scrollWidth).toBeLessThanOrEqual(
+      scroller.clientWidth,
+    );
     await expect(getComputedStyle(scroller).display).toBe("flex");
     await expect(
       Math.abs(

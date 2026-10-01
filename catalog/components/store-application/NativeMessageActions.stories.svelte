@@ -12,7 +12,7 @@
     canvas.querySelector<HTMLElement>(
       '[data-message-id="' + "11".repeat(16) + '"]',
     )!;
-  async function openMenu(message: HTMLElement) {
+  async function openMenu(message: HTMLElement, copyValues = true) {
     await userEvent.hover(message);
     await waitFor(() =>
       expect(message).toHaveAttribute("data-actions-visible"),
@@ -20,7 +20,23 @@
     await userEvent.click(
       within(message).getByRole("button", { name: "More message actions" }),
     );
-    return within(document.body);
+    const menu = within(document.body);
+    await expect(
+      menu.queryByRole("menuitem", { name: "Copy comment ID" }),
+    ).toBeNull();
+    const copy = menu.getByRole("menuitem", { name: /^Copy$/ });
+    await expect(copy).toHaveAttribute("aria-haspopup", "menu");
+    if (copyValues) {
+      await waitFor(() =>
+        expect(
+          copy.closest('[role="menu"]')!.contains(document.activeElement),
+        ).toBe(true),
+      );
+      copy.focus();
+      await userEvent.keyboard("{ArrowRight}");
+      await menu.findByRole("menuitem", { name: "Copy comment ID" });
+    }
+    return menu;
   }
 </script>
 
@@ -40,6 +56,18 @@
     });
     try {
       let menu = await openMenu(message);
+      const icons = [
+        "Copy message",
+        "Copy comment ID",
+        "Copy revision ID",
+        "Copy author ID",
+        "Copy thread ID",
+      ].map((name) => {
+        const icon = menu.getByRole("menuitem", { name }).querySelector("svg")!;
+        expect(icon).toHaveAttribute("aria-hidden", "true");
+        return icon.getAttribute("class");
+      });
+      await expect(new Set(icons).size).toBe(5);
       await userEvent.unhover(message);
       await expect(
         message.querySelector('[data-ui-part="message-actions"]'),
@@ -71,7 +99,7 @@
         .getByText("Nested native reply", { exact: true })
         .closest("[data-thread-depth]")!;
       await expect(reply).toHaveAttribute("data-thread-depth", "1");
-      menu = await openMenu(message);
+      menu = await openMenu(message, false);
       await userEvent.click(
         menu.getByRole("menuitem", { name: "Edit comment" }),
       );
@@ -122,7 +150,7 @@
   args={{ unknown: true }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement),
-      menu = await openMenu(root(canvasElement));
+      menu = await openMenu(root(canvasElement), false);
     await userEvent.click(menu.getByRole("menuitem", { name: "Edit comment" }));
     const editor = c.getByRole("textbox");
     await userEvent.click(editor);

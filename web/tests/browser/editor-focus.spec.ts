@@ -7,7 +7,8 @@ const assetSource = readFileSync(
   new URL("../../../crates/jj-store-http/src/assets.rs", import.meta.url),
   "utf8",
 );
-const csp = /CONTENT_SECURITY_POLICY,\s*"([^"]+)"/.exec(assetSource)![1]!;
+const csp = /const STRICT_CSP:\s*&str\s*=\s*"([^"]+)"/.exec(assetSource)?.[1];
+if (!csp) throw new Error("Production asset policy STRICT_CSP was not found");
 
 test.beforeEach(async ({ page }) => {
   await api(page, { access: "local_trusted", editFile: true });

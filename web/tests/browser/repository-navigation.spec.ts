@@ -8,6 +8,7 @@ const labels = [
   "Op Log",
   "Agents",
   "Reviews",
+  "Projects",
 ];
 
 test("right rail destinations match repository tabs and preserve workspace snapshot", async ({
@@ -17,6 +18,18 @@ test("right rail destinations match repository tabs and preserve workspace snaps
   await page.goto(
     `/#/repos/${repo}/files?at_op=${operation}&workspace=desktop`,
   );
+  const overviewInsets = await page
+    .locator(".store-application__body-regions")
+    .evaluate((el) => {
+      const style = getComputedStyle(el);
+      return [
+        style.paddingTop,
+        style.paddingLeft,
+        style.paddingRight,
+        style.paddingBottom,
+      ].map(Number.parseFloat);
+    });
+  expect(overviewInsets.every((inset) => inset >= 12)).toBe(true);
   await expect(
     page.getByRole("combobox", { name: "Repository workspace" }),
   ).toContainText("desktop");
@@ -42,6 +55,11 @@ test("right rail destinations match repository tabs and preserve workspace snaps
       page.getByRole("tab", { name: tab, exact: true }),
     ).toHaveAttribute("data-state", "active");
     const hash = new URL(page.url()).hash;
+    expect(
+      await page
+        .locator(".store-application__body-regions")
+        .evaluate((el) => getComputedStyle(el).padding),
+    ).toBe("0px");
     expect(hash).toContain(`/repos/${repo}/${route}?`);
     expect(hash).toContain(`at_op=${operation}`);
     expect(hash).toContain("workspace=desktop");
@@ -65,6 +83,11 @@ test("phone overflow supports keyboard selection, reload, resize and right rail 
   await page.goto(
     `/#/repos/${repo}/files?at_op=${operation}&workspace=desktop`,
   );
+  expect(
+    await page
+      .locator(".store-application__body-regions")
+      .evaluate((el) => el.scrollWidth - el.clientWidth),
+  ).toBeLessThanOrEqual(0);
   const more = page.getByRole("button", { name: "More repository sections" });
   await expect(more).toBeVisible();
   await expect(

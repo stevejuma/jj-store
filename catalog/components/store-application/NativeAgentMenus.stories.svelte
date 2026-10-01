@@ -9,6 +9,11 @@
     args: { initiallyCollapsed: true },
     parameters: { layout: "fullscreen" },
   });
+  async function openCopy() {
+    const menu = within(document.body);
+    await userEvent.click(menu.getByRole("menuitem", { name: /^Copy$/ }));
+    await menu.findByRole("menu", { name: /^Copy$/ });
+  }
 </script>
 
 <Story
@@ -30,6 +35,7 @@
           name: "Agent session actions",
         }),
       );
+      await openCopy();
       await userEvent.click(
         within(document.body).getByRole("menuitem", {
           name: "Copy session ID",
@@ -41,6 +47,7 @@
       await userEvent.click(
         c.getByRole("button", { name: "Agent details actions" }),
       );
+      await openCopy();
       await userEvent.click(
         within(document.body).getByRole("menuitem", {
           name: "Copy agent root",
@@ -67,6 +74,7 @@
           name: "Actions for apply_patch tool call",
         }),
       ).toHaveAttribute("data-visible");
+      await openCopy();
       await userEvent.click(
         within(document.body).getByRole("menuitem", {
           name: "Copy tool call ID",
@@ -86,6 +94,7 @@
       await expect(
         within(document.body).queryByRole("menuitem", { name: "Edit comment" }),
       ).toBeNull();
+      await openCopy();
       await userEvent.click(
         within(document.body).getByRole("menuitem", { name: "Copy message" }),
       );

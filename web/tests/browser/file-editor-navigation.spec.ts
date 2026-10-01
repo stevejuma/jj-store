@@ -17,6 +17,27 @@ for (const navigation of ["breadcrumb", "history"] as const) {
       if (edit) {
         await page.getByRole("button", { name: "Edit", exact: true }).click();
         await expect(page.getByLabel("File name")).toHaveValue("bin");
+        const scroller = page.locator(
+          ".store-file-editor__contents .cm-scroller",
+        );
+        const gutter = page.locator(".store-file-editor__contents .cm-gutters");
+        const contents = page.getByRole("textbox", {
+          name: "Editing bin file contents",
+        });
+        const scrollerBounds = (await scroller.boundingBox())!;
+        const gutterBounds = (await gutter.boundingBox())!;
+        const contentBounds = (await contents.boundingBox())!;
+        expect(gutterBounds.x - scrollerBounds.x).toBeLessThanOrEqual(16);
+        expect(
+          scrollerBounds.x +
+            scrollerBounds.width -
+            contentBounds.x -
+            contentBounds.width,
+        ).toBeLessThanOrEqual(16);
+        expect(contentBounds.width).toBeGreaterThan(scrollerBounds.width - 100);
+        expect(
+          await scroller.evaluate((el) => el.scrollWidth - el.clientWidth),
+        ).toBeLessThanOrEqual(0);
         await expect(
           page.getByRole("combobox", { name: "Repository workspace" }),
         ).toBeDisabled();

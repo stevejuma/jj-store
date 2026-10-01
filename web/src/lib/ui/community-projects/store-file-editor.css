@@ -11,6 +11,10 @@
 }
 
 .store-file-editor__contents {
+  --file-line-width: 100%;
+  --file-margins-x: 0.5rem;
+  --file-margins-y: 0.5rem;
+
   min-width: 0;
   min-height: 28rem;
 }
@@ -55,7 +59,8 @@
 }
 
 .store-file-editor__contents .cm-content {
-  flex: 1 0 auto;
+  min-width: 0;
+  flex: 1 1 auto;
 }
 
 .store-file-editor__contents .cm-lineNumbers .cm-gutterElement {

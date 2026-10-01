@@ -260,7 +260,7 @@
                 disabled={workspaceBlocked}
               />{/if}
             <StoreRepositoryNotices {controller} />{/if}
-          <div class="store-application__body-regions">
+          <div class="store-application__body-regions" data-page={current.page}>
             {#key current.repository + current.page}
               {#if children}{@render children(
                   current.page,

@@ -108,6 +108,8 @@
   display: flex;
   box-sizing: border-box;
   flex-direction: column;
+  border: 0;
+  border-radius: 0;
   padding: 0.75rem;
 }
 

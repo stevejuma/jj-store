@@ -6,6 +6,7 @@
   import EllipsisIcon from "@lucide/svelte/icons/ellipsis";
   import PencilIcon from "@lucide/svelte/icons/pencil";
   import Trash2Icon from "@lucide/svelte/icons/trash-2";
+  import { recordCopyIcon } from "./record-copy-icon.js";
   let {
     label = "More message actions",
     items,
@@ -22,6 +23,7 @@
     onOpenChange?: ((open: boolean) => void) | undefined;
   } = $props();
   let feedback = $state("");
+  const copyItems = $derived(items.filter((item) => item.value != null));
   $effect(() => {
     void items;
     feedback = "";
@@ -62,17 +64,36 @@
           comment</DropdownMenu.Item
         ></DropdownMenu.Group
       ><DropdownMenu.Separator />{/if}
-    <DropdownMenu.Group>
-      {#each items as item (item.label)}
-        {#if item.value != null}<DropdownMenu.Item
-            onSelect={() => void copy(item.label, item.value!)}
+    {#if copyItems.length}<DropdownMenu.Group>
+        <DropdownMenu.Sub>
+          <DropdownMenu.SubTrigger
             ><CopyIcon
               data-icon="inline-start"
               aria-hidden="true"
-            />{item.label}</DropdownMenu.Item
-          >{/if}
-      {/each}
-    </DropdownMenu.Group>
+            />Copy</DropdownMenu.SubTrigger
+          >
+          <DropdownMenu.SubContent
+            aria-label="Copy"
+            class="community-message__menu-content"
+            style="min-width: 13.5rem;"
+          >
+            <DropdownMenu.Group>
+              {#each copyItems as item (item.label)}
+                {@const ItemIcon = recordCopyIcon(item.label)}
+                <DropdownMenu.Item
+                  aria-label={item.label}
+                  onSelect={() => void copy(item.label, item.value!)}
+                >
+                  <ItemIcon
+                    data-icon="inline-start"
+                    aria-hidden="true"
+                  />{item.label.replace(/^Copy /, "")}
+                </DropdownMenu.Item>
+              {/each}
+            </DropdownMenu.Group>
+          </DropdownMenu.SubContent>
+        </DropdownMenu.Sub>
+      </DropdownMenu.Group>{/if}
     {#if onRemove}<DropdownMenu.Separator /><DropdownMenu.Group
         ><DropdownMenu.Item {disabled} variant="destructive" onSelect={onRemove}
           ><Trash2Icon data-icon="inline-start" aria-hidden="true" />Remove

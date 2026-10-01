@@ -288,7 +288,7 @@
       ".community-projects__file-tree-title",
     )!;
     await expect(fileTreeTitle.getBoundingClientRect().left).toBeCloseTo(
-      fileTree.getBoundingClientRect().left +
+      fileTreeActions.getBoundingClientRect().left +
         Number.parseFloat(getComputedStyle(fileTreeActions).paddingLeft),
       0,
     );
@@ -325,8 +325,11 @@
     const filesBody = canvasElement.querySelector(
       ".store-application__body-regions",
     )!;
+    const filesBodyStyle = getComputedStyle(filesBody);
     await expect(fileTree.getBoundingClientRect().height).toBeCloseTo(
-      filesBody.getBoundingClientRect().height,
+      filesBody.getBoundingClientRect().height -
+        Number.parseFloat(filesBodyStyle.paddingTop) -
+        Number.parseFloat(filesBodyStyle.paddingBottom),
       0,
     );
     const fileBrowser = canvasElement.querySelector<HTMLElement>(

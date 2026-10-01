@@ -3,15 +3,21 @@
   --community-project-tabs-height: 0rem;
   --community-project-review-section-height: 2.5rem;
   --community-project-review-toolbar-height: 3.35rem;
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  flex: 1 1 auto;
+  flex-direction: column;
   width: min(100%, 74rem);
   box-sizing: border-box;
   margin-inline: auto;
-  padding-bottom: 2.5rem;
 }
 
 .community-projects__review-header {
   position: relative;
   display: grid;
+  flex: none;
   width: 100%;
   box-sizing: border-box;
   grid-template-columns: minmax(0, 1fr);
@@ -213,9 +219,10 @@
   overflow-wrap: anywhere;
 }
 .community-projects__review-detail {
-  overflow: visible;
+  overflow: hidden;
 }
 .community-projects__review-body {
+  padding-block-end: 2.5rem;
   padding-inline: 1rem;
 }
 @media (max-width: 640px) {
