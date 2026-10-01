@@ -22,3 +22,5 @@ pub enum Error {
     Service(&'static str),
 }
 pub type Result<T> = std::result::Result<T, Error>;
+
+pub mod workspaces;

@@ -118,7 +118,7 @@ shared-package release qualification does not alter those original Git gates.
 | M13.6       | Planned     | M13.5                   | JST-LOCAL-001,JST-LOCAL-002,JST-LOCAL-003,JST-LOCAL-004,JST-LOCAL-005,JST-LOCAL-006                                                                                      | Cold end-to-end and retained native regression qualification                                                                   | Qualify completed local flow cold and retain native regressions                    | -                                                                                                                                                                                                                                                                                                                                                              |
 | M14         | In progress | M4.18                   | JST-UI-012,JST-UI-016                                                                                                                                                    | Local settings, profile-aware device links and safe maintenance                                                                | Implement typed local management and workspace links after graph/search separation | E-M14-001                                                                                                                                                                                                                                                                                                                                                      |
 | M14.1       | Done        | M4.18                   | JST-UI-012                                                                                                                                                               | Graph preparation independent of text-search health                                                                            | Retain independent graph/search regressions; proceed to M14.2                      | E-M14-001                                                                                                                                                                                                                                                                                                                                                      |
-| M14.2       | Planned     | M14.1                   | JST-UI-016,JST-SEC-005,JST-SEC-006                                                                                                                                       | Typed local management and profile-aware workspace links                                                                       | Reuse M13 discovery; gate Git-backed browser management on M13.4                   | -                                                                                                                                                                                                                                                                                                                                                              |
+| M14.2       | In progress | M14.1                   | JST-UI-016,JST-SEC-005,JST-SEC-006                                                                                                                                       | Typed local management and profile-aware workspace links                                                                       | Complete folder-link Settings presentation and cold browser acceptance             | E-M14-002                                                                                                                                                                                                                                                                                                                                                      |
 | M14.3       | Planned     | M14.2                   | JST-UI-016,JST-COLLAB-002,JST-COLLAB-006                                                                                                                                 | Agent setup, queue inspection and automatic recovery                                                                           | Reuse backend-aware agent drain; split enqueue locks from drain ownership          | -                                                                                                                                                                                                                                                                                                                                                              |
 | M14.4       | Planned     | M14.2                   | JST-UI-016,JST-ADAPT-003,JST-ADAPT-004                                                                                                                                   | Editable Search and isolated worker replacement                                                                                | Add desired/effective configuration and safe text-search rebuild                   | -                                                                                                                                                                                                                                                                                                                                                              |
 | M14.5       | Planned     | M14.2                   | JST-UI-016,JST-PUB-005,JST-PUB-006                                                                                                                                       | Storage integrity and non-destructive checkpoints                                                                              | Add bounded authorized operations and uncertain-outcome recovery                   | -                                                                                                                                                                                                                                                                                                                                                              |
@@ -29715,6 +29715,190 @@ and named tests are checked by the progress gate.
       "Visual baseline approval remains separate."
     ],
     "artifacts": "Local settings workspace .scratch contains unit, web/catalog, Storybook, build, specification and cold-browser logs/configuration; web/test-results/settings contains the browser results. Disposable Vite preview ended with Playwright."
+  },
+  {
+    "id": "E-M14-002",
+    "tasks": ["M14", "M14.2"],
+    "date": "2026-10-01",
+    "kind": "implementation",
+    "files": [
+      "crates/jj-store-cli/src/lib.rs",
+      "crates/jj-store-cli/src/server_commands.rs",
+      "crates/jj-store-cli/src/workspace_management.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/http_local_management.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/http_reads.rs",
+      "crates/jj-store-cli/tests/server_executable.rs",
+      "crates/jj-store-cli/tests/workspace_management.rs",
+      "crates/jj-store-http/src/dto.rs",
+      "crates/jj-store-http/src/lib.rs",
+      "crates/jj-store-http/src/local_management.rs",
+      "crates/jj-store-http/src/routes.rs",
+      "crates/jj-store-server/src/lib.rs",
+      "crates/jj-store-server/src/process.rs",
+      "crates/jj-store-server/src/workspaces.rs",
+      "crates/jj-store-server/tests/workspace_links.rs",
+      "crates/jj-store-service/src/lib.rs",
+      "crates/jj-store-service/src/local_management.rs",
+      "schemas/openapi.json",
+      "scripts/contracts.mjs",
+      "spec/src/api.md",
+      "spec/src/cli.md",
+      "spec/src/compatibility.md",
+      "spec/src/milestones.md",
+      "spec/src/mutations.md",
+      "spec/src/security.md",
+      "spec/src/spec-governance.md",
+      "spec/src/verification.md",
+      "web/src/lib/api/generated.ts"
+    ],
+    "tests": [
+      "crates/jj-store-server/tests/workspace_links.rs#links_are_read_only_until_explicitly_added_and_survive_restart",
+      "crates/jj-store-server/tests/workspace_links.rs#revisions_repository_scope_and_limits_fail_closed",
+      "crates/jj-store-server/tests/workspace_links.rs#foreign_corrupt_and_symlinked_registries_are_rejected",
+      "crates/jj-store-cli/tests/workspace_management.rs#discovery_is_nonmutating_and_binds_the_exact_installation",
+      "crates/jj-store-cli/tests/workspace_management.rs#unqualified_git_corrupt_and_symlink_metadata_fail_closed",
+      "crates/jj-store-cli/tests/native_lifecycle/http_local_management.rs#local_workspace_management_requires_local_admin_and_captures_contracts",
+      "crates/jj-store-cli/tests/server_executable.rs#local_trusted_executable_bootstraps_registers_and_serves_without_tokens"
+    ],
+    "runs": [
+      {
+        "command": "jj rebase -s qmuvzusm -o nqpoyvww; jj squash --into qmuvzusm --use-destination-message",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rebased onto completed main c22556aa. Resolved only specification table/ledger conflicts. Preserved all 194 main evidence entries and E-M14-001; original checkout clean and unchanged. Settings change is now ecc3521d."
+      },
+      {
+        "command": "pnpm spec:validate; pnpm check:progress; pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-store-settings.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rebased specification/progress checks passed; all six settings controller tests passed."
+      },
+      {
+        "command": "cargo test --locked -p jj-store-server --test workspace_links",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before implementation: workspace_links target absent; no cases executed."
+      },
+      {
+        "command": "cargo test --locked -p jj-store-server --test workspace_links",
+        "result": "pass",
+        "failures": 0,
+        "note": "Three persistence, revision, scope, resource-limit, corruption and symlink regressions passed."
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test workspace_management",
+        "result": "pass",
+        "failures": 0,
+        "note": "Two bounded native discovery/profile/installation regressions passed."
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test native_lifecycle content_acceptance::http_acceptance::local_management::local_workspace_management_requires_local_admin_and_captures_contracts -- --exact",
+        "result": "fail",
+        "failures": 2,
+        "note": "Initial fixture compile exposed imported auth Result alias; qualified std::result::Result. No test cases executed."
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test native_lifecycle content_acceptance::http_acceptance::local_management::local_workspace_management_requires_local_admin_and_captures_contracts -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "One real handler/native authorization fixture passed; 182 unrelated cases filtered."
+      },
+      {
+        "command": "pnpm contracts:generate",
+        "result": "fail",
+        "failures": 1,
+        "note": "Generator rejected GET/POST sharing one path. Used explicit POST /local/workspaces/link, preserving the generator invariant."
+      },
+      {
+        "command": "pnpm contracts:generate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Generated OpenAPI and TypeScript successfully after route correction."
+      },
+      {
+        "command": "JJ_STORE_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs cargo test --locked -p jj-store-cli --test server_executable local_trusted_executable_bootstraps_registers_and_serves_without_tokens -- --exact --ignored",
+        "result": "pass",
+        "failures": 0,
+        "note": "One cold real-RustFS test passed in 11.62 seconds after compilation: isolated native CLI/server startup, verified folder link, unchanged native snapshot and link equality after service restart. Only disposable processes/state were created and cleaned up."
+      },
+      {
+        "command": "pnpm test:contracts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Six contract validation tests and generated TypeScript narrowing passed."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Generated contract consumer: zero errors/warnings."
+      },
+      {
+        "command": "pnpm check:boundaries; pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "15 package boundaries and 403 production modules accepted."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "fail",
+        "failures": 3,
+        "note": "Initial check identified compatibility, mutation and governance chapters mapped by generated contracts and new service/capture code; added the concrete device-state compatibility, retry and qualification contracts."
+      },
+      {
+        "command": "pnpm contracts:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All registered captures ran; 84 actual HTTP/SSE responses conform. Six schema tests plus TypeScript narrowing passed. Includes final POST /local/workspaces/link route."
+      },
+      {
+        "command": "cargo clippy --locked -p jj-store-server -p jj-store-http -p jj-store-cli --lib -- -D warnings",
+        "result": "pass",
+        "failures": 0,
+        "note": "Focused package lint/check passed."
+      },
+      {
+        "command": "cargo test --locked -p jj-store-server --test configuration --test local_installation --test workspace_links",
+        "result": "pass",
+        "failures": 0,
+        "note": "21 passed: 12 configuration, six installation and three workspace registry tests."
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test workspace_management",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final two discovery regressions passed after requiring a regular working-copy directory."
+      },
+      {
+        "command": "cargo fmt -p jj-store-service -p jj-store-server -p jj-store-http -p jj-store-cli -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rust formatting passed."
+      },
+      {
+        "command": "pnpm exec prettier --write scripts/contracts.mjs spec/src/api.md spec/src/cli.md spec/src/security.md spec/src/verification.md spec/src/milestones.md spec/src/compatibility.md spec/src/mutations.md spec/src/spec-governance.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed scripts and canonical chapters formatted; commands were run in two batches."
+      },
+      {
+        "command": "pnpm spec:validate; pnpm spec:first; pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Specification validation and progress passed; corrected spec-first passed with 20 protected files and seven canonical chapters."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "Service contracts, CLI-owned bounded discovery, server-owned registry/lifecycle and HTTP admission are one local-management behavior. Generated-contract changes justify the complete contract capture lane; unchanged RustFS is reused through its explicit development runtime. All cargo commands set CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target to reuse the build cache without duplicating it; sources stay in the isolated settings workspace. Root aggregates, full Rust workspace, unrelated UI suites and release qualification are out of scope.",
+    "formats": "Adds device-local workspace-links.json v1 with installation identity, monotonic revision and bounded verified folder bindings. Adds optional local_workspace_links capability and versioned GET/list plus POST/link DTOs. Native object/WAL/receipt/agent formats unchanged. Enclosing Jujutsu change is the revision reference.",
+    "versions": "JJ/jj-lib 0.45.1; macOS ARM64; existing pinned embedded RustFS runtime; pnpm 10.32.1; locked Axum 0.8 and Svelte toolchain.",
+    "next": "Complete M14.2 folder-link Settings presentation, then M14.3 agent setup and queue recovery.",
+    "deferred": [
+      "Git-backed browser management remains gated on M13.4.",
+      "No unlink, agent setup, queue worker, editable Search, storage maintenance or Sync UI is delivered by this backend slice."
+    ],
+    "artifacts": "Ignored .scratch/workspace-*.log in jj-store-local-settings; cold fixture used temporary directories and owned child cleanup."
   }
 ]
 ```

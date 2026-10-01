@@ -574,3 +574,14 @@ filesystem admission supplies the access boundary. Exact immutable thread or
 comment selections and workflow counters retain native stale semantics. Unknown
 ref publication returns the original request identity; status/retry checks the
 selected receipt before reapplying any entity precondition.
+
+## Device-local link commands
+
+Linking a physical workspace changes only installation-owned discovery state. It
+is not a repository publication, checkout operation or captured AgentStore
+delta. Native snapshots and receipts remain unchanged. The server resolves a
+validated native binding before a revision-checked update; identical retry
+intent returns the selected existing link after an uncertain acknowledgement. A
+different folder with a stale revision fails explicitly. No device link grants
+repository access, permits a different principal, or enables an unqualified
+backend. Every transport request retains the local-administration guard.

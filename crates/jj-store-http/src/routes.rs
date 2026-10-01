@@ -1,4 +1,5 @@
 use super::*;
+use crate::local_management::{link_workspace, local_workspaces};
 use crate::mutations::{
     apply as mutation_apply, preview as mutation_preview, status as mutation_status,
 };
@@ -256,6 +257,8 @@ macro_rules! endpoints {
     ($register:ident) => {
         $register! {
             (get, "/repos/{repo}/capabilities", capabilities, Empty, Capabilities, Reply::Json(200)),
+            (get, "/repos/{repo}/local/workspaces", local_workspaces, Empty, jj_store_service::local_management::WorkspaceLinks, Reply::Json(200)),
+            (post, "/repos/{repo}/local/workspaces/link", link_workspace, Empty, jj_store_service::local_management::WorkspaceLinks, Reply::Json(200)),
             (get, "/repos/{repo}/search", search, SearchQuery, search_paging::Page, Reply::Json(200)),
             (get, "/repos/{repo}/search/status", search_status, Empty, search_paging::Status, Reply::Json(200)),
             (get, "/repos/{repo}/agent/sessions", agent_sessions, AgentSessions, crate::collaboration::SessionPage, Reply::Json(200)),
@@ -314,6 +317,10 @@ pub(super) fn document(doc: &mut Document) {
         };
     }
     endpoints!(register);
+    doc.body::<jj_store_service::local_management::LinkWorkspace>(
+        "/v1/repos/{repo}/local/workspaces/link",
+        "post",
+    );
     doc.body::<Prepare>("/v1/repos/{repo}/index/tasks", "post");
     doc.body::<mutation::Request>("/v1/repos/{repo}/mutations/preview", "post");
     doc.body::<mutation::Request>("/v1/repos/{repo}/mutations", "post");

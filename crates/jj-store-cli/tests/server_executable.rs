@@ -481,6 +481,31 @@ async fn local_trusted_executable_bootstraps_registers_and_serves_without_tokens
         .await
         .unwrap();
     assert_eq!(snapshot.status(), reqwest::StatusCode::OK);
+    let before_link: serde_json::Value = snapshot.json().await.unwrap();
+    let linked = http
+        .post(format!(
+            "{origin}/v1/repos/{repository}/local/workspaces/link"
+        ))
+        .json(&serde_json::json!({"version":1,"expected_revision":0,"path":workspace}))
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(linked.status(), reqwest::StatusCode::OK);
+    let linked: serde_json::Value = linked.json().await.unwrap();
+    assert_eq!(linked["links"][0]["availability"], "ready");
+    assert_eq!(
+        linked["links"][0]["path"],
+        workspace.canonicalize().unwrap().to_str().unwrap()
+    );
+    let after_link: serde_json::Value = http
+        .get(format!("{origin}/v1/repos/{repository}/snapshot"))
+        .send()
+        .await
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    assert_eq!(before_link, after_link);
     let doctor: serde_json::Value = serde_json::from_str(&success(
         command()
             .args([
@@ -556,6 +581,17 @@ name = "local-acceptance"
         .await
         .unwrap();
     assert_eq!(capabilities["search"], true);
+    assert_eq!(capabilities["local_workspace_links"], true);
+    let restored_links: serde_json::Value = http
+        .get(format!("{base}/local/workspaces"))
+        .send()
+        .await
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    assert_eq!(restored_links, linked);
+
     let result = http
         .get(format!(
             "{base}/search?q=searchable&scope=workspace&mode=historical"

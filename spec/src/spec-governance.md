@@ -108,10 +108,10 @@ retention and inline presentation are jointly governed by `collaboration.md` and
 `api.md`. This includes byte-offset to line-coordinate presentation and the
 exact CSP allowance required by the pinned Community emoji dependency. Each
 separately registered captured-response fixture in `scripts/contracts.mjs` must
-be recorded here and in the M9 evidence ledger so generation cannot widen
-runtime acceptance without same-change governance review. Upstream Community and
-Design Core changes remain separate source-owned changes with consumer
-acceptance in this repository.
+be recorded here and in the owning milestone's evidence ledger so generation
+cannot widen runtime acceptance without same-change governance review. Upstream
+Community and Design Core changes remain separate source-owned changes with
+consumer acceptance in this repository.
 
 M10 owns local-first writable replication. Its origin ledger and imported
 publication path are jointly governed by `replication.md` and the existing
@@ -489,3 +489,15 @@ static imports, dynamic imports, styles and assets, rejecting missing or unsafe
 references. It excludes unrelated emitted worker entries. Its regression retains
 lazy preview chunks and fonts and fails closed on invalid references; cold
 native-browser acceptance verifies the server's unchanged asset limits.
+
+## Local-management qualification
+
+The registered local workspace capture fixture is
+`content_acceptance::http_acceptance::local_management::local_workspace_management_requires_local_admin_and_captures_contracts`.
+It exercises the actual list/link handlers, current repository authorization,
+local-only admission, strict request fields, revision conflicts and unchanged
+native authority. Generated-contract checks validate its responses alongside the
+existing captures. M14 records device-registry and JJ-discovery tests separately
+from cold real-RustFS lifecycle and browser acceptance. CLI composition may
+inject the owned workspace-verifier interface into the server; this does not
+permit a server dependency on CLI or upstream JJ.

@@ -260,3 +260,26 @@ load native credentials; those credentials are also removed from its inherited
 environment. Authenticated HTTPS qualification uses generated fixture-only
 credentials and trust, including refusal without the approved CA. Neither
 bindings nor durable attempts contain the credential secret.
+
+## Device workspace management
+
+Local workspace links require LocalTrusted administration of the selected
+repository and the existing browser admission checks. Bearer sessions cannot
+obtain this capability, even when they have repository admin permission. The
+installation owns a bounded, private registry outside checkout content. Reads
+only inspect existing files; they do not initialize state, probe executables,
+load a working copy or publish an operation.
+
+Linking requires an absolute existing physical workspace root, bounded JJ
+metadata, the native backend/profile and repository binding, and the exact
+configured installation Unix socket. Git-backed folders remain explicitly
+unsupported until M13.4. Resolve linked-workspace repository pointers through JJ
+discovery without loading/reconciling the repository. Revalidate the canonical
+workspace and metadata locations before each action. A moved, missing or rebound
+folder is reported unavailable and cannot authorize setup.
+
+The registry is revision checked, locked and atomically replaced with parent
+directory durability. Identical link retries recover the existing link; a stale
+revision cannot add another link. Limits apply to paths, bytes and link counts.
+Linking never copies checkout files or agent captures. Unlinking and agent
+setup/recovery are not exposed by this foundation slice.

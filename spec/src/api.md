@@ -63,19 +63,15 @@ discovery, capabilities, snapshot, search-status and index-task contracts. The
 production controller retains each discovered repository's effective permission
 and exposes the already captured capabilities and snapshot authority to
 presentation. Search status is requested only when search is advertised, and its
-failure does not replace repository content or connection state. Native graph
-preparation requires only the index-task capability, not text search. It submits
-the operation reported by a graph rebuild-required response when present,
-otherwise the explicitly selected snapshot operation; concurrent unselected
-heads cannot start a task. Its completion retries that pinned graph view without
-refreshing or changing text-search health. Repository settings own this action;
-Search settings report the independent Tantivy projection. Repository switching,
-disconnection and revocation close the source session, abort outstanding
-requests and clear this settings projection. This UI adds no server route,
-schema or generated contract. The transient destination consumes the shell's
-existing compact state so a collapsed desktop rail exposes Back and each
-settings section as labelled icon controls while keeping section selection and
-repository authority unchanged.
+failure does not replace repository content or connection state. Index
+preparation submits the operation reported by an index-lag response when
+present, otherwise the explicitly selected snapshot operation; concurrent
+unselected heads cannot start a task. Repository switching, disconnection and
+revocation close the source session, abort outstanding requests and clear this
+settings projection. This UI adds no server route, schema or generated contract.
+The transient destination consumes the shell's existing compact state so a
+collapsed desktop rail exposes Back and each settings section as labelled icon
+controls while keeping section selection and repository authority unchanged.
 
 ## Read-session foundation
 
@@ -977,3 +973,18 @@ not add an HTTP schema variant or accept client author/time fields. Reply menus
 pass the stable parent through `append_reply`. Unknown command outcomes retain
 the request ID and prevent a new command from replacing the pending identity;
 receipt processing checks the owning connection before refreshing or navigating.
+
+## Local workspace links
+
+The optional `local_workspace_links` capability is advertised only by a
+LocalTrusted admin deployment with a composed workspace manager. Repository
+`GET /local/workspaces` returns a versioned revision and bounded list of
+canonical device folders with explicit profile and ready/unavailable state.
+`POST /local/workspaces/link` accepts only version, expected revision and an
+absolute folder path; it returns the updated list. Both routes reauthorize the
+repository and require local administration before consulting device state.
+Errors distinguish invalid folder, unsupported profile, stale revision, limits
+and unavailable state. The transport delegates to owned service interfaces; CLI
+composition owns JJ discovery and the server owns registry persistence. No
+request may supply a principal, socket, executable, state directory or shell
+command.

@@ -455,3 +455,13 @@ not change manifest, WAL, native WorkStore objects or CLI/RPC command formats.
 Collection and browse continuations share the same resource budget and cannot be
 exchanged across query kinds. Browser production builds use Community's public
 Vite integration and ES module workers for its existing WASM runtime.
+
+## Local-management compatibility
+
+Device workspace links use a separate installation-private V1 registry. Their
+IDs identify local bindings and are not portable repository identities. The
+additive optional HTTP capability is absent on older or non-managing services;
+clients must treat absence as unavailable. New routes retain protocol version 1
+and do not alter native objects, operation identities, WAL or receipt formats.
+Cold acceptance covers the pinned macOS ARM64 native profile and persisted links
+across restart; filesystem-only Git serving and other platforms remain gated.

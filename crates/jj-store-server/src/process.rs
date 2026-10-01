@@ -53,6 +53,13 @@ impl Drop for SocketGuard {
 }
 impl PreparedServer {
     pub async fn prepare(config: &Config, require_loopback: bool) -> Result<Self> {
+        Self::prepare_with_workspaces(config, require_loopback, None).await
+    }
+    pub async fn prepare_with_workspaces(
+        config: &Config,
+        require_loopback: bool,
+        verifier: Option<Arc<dyn jj_store_service::local_management::WorkspaceVerifier>>,
+    ) -> Result<Self> {
         config.validate()?;
         if require_loopback && !config.bind.ip().is_loopback() {
             return Err(Error::Config(
@@ -203,6 +210,21 @@ impl PreparedServer {
                 last_verified_restore_point: None,
             })
             .collect();
+        let local_workspaces = match (&config.access, verifier) {
+            (
+                Access::LocalTrusted {
+                    permission: jj_store_service::auth::Permission::Admin,
+                    ..
+                },
+                Some(verifier),
+            ) => Some(Arc::new(crate::workspaces::Workspaces::new(
+                state.clone(),
+                Identity::load(installation)?,
+                verifier,
+            )?)
+                as Arc<dyn jj_store_service::local_management::WorkspaceManager>),
+            _ => None,
+        };
         let http = HttpApi::with_search(
             host,
             state.join("native-reads"),
@@ -213,6 +235,7 @@ impl PreparedServer {
                     .ascii_serialization(),
                 access: http_access,
                 registry: Some(registry as Arc<dyn jj_store_service::registry::RepositoryRegistry>),
+                local_workspaces,
                 storage_ready: true,
                 backups,
                 concurrency: config.limits.concurrent_requests.min(64),

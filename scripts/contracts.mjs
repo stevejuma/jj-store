@@ -59,6 +59,10 @@ if (mode === "--check") {
     const samples = [];
     for (const [fixture, variable] of [
       [
+        "content_acceptance::http_acceptance::local_management::local_workspace_management_requires_local_admin_and_captures_contracts",
+        "JJ_STORE_LOCAL_MANAGEMENT_CONTRACT_CAPTURE",
+      ],
+      [
         "content_acceptance::http_acceptance::http_contract_capture_matches_registered_routes",
         "JJ_STORE_CONTRACT_CAPTURE",
       ],

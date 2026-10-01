@@ -6,6 +6,7 @@ mod collaboration;
 pub mod contract;
 mod dto;
 mod error;
+mod local_management;
 mod mutations;
 mod repositories;
 mod review_mutations;
@@ -92,6 +93,7 @@ pub struct Config {
     pub origin: String,
     pub access: Access,
     pub registry: Option<Arc<dyn RepositoryRegistry>>,
+    pub local_workspaces: Option<Arc<dyn jj_store_service::local_management::WorkspaceManager>>,
     pub storage_ready: bool,
     pub backups: Vec<BackupStatus>,
     pub concurrency: usize,
@@ -113,6 +115,7 @@ impl Default for Config {
             origin: "http://127.0.0.1:7443".into(),
             access: Access::Authenticated,
             registry: None,
+            local_workspaces: None,
             storage_ready: true,
             backups: Vec::new(),
             concurrency: 8,

@@ -278,7 +278,16 @@ pub async fn serve(
     local: bool,
 ) -> AuthorityResult<()> {
     let config = Config::load(path)?;
-    let server = PreparedServer::prepare(&config, local).await?;
+    let verifier = match &config.access {
+        jj_store_server::config::Access::LocalTrusted { rpc_socket, .. } => Some(
+            std::sync::Arc::new(crate::workspace_management::NativeWorkspaceVerifier::new(
+                rpc_socket,
+            )?)
+                as std::sync::Arc<dyn jj_store_service::local_management::WorkspaceVerifier>,
+        ),
+        _ => None,
+    };
+    let server = PreparedServer::prepare_with_workspaces(&config, local, verifier).await?;
     let address = server.address()?;
     let shutdown = process::shutdown_signal()?;
     emit(

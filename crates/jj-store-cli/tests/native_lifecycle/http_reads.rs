@@ -964,3 +964,6 @@ async fn http_reads_reject_unframed_request_content() {
     let response = router.oneshot(req).await.unwrap();
     assert_eq!(response.status(), StatusCode::BAD_REQUEST);
 }
+
+#[path = "http_local_management.rs"]
+mod local_management;
