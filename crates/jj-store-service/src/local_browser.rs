@@ -95,6 +95,14 @@ pub struct RemoveBinding {
     pub expected_revision: u64,
 }
 
+#[derive(Clone, Debug, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct ReconnectFolder {
+    pub version: u32,
+    pub expected_revision: u64,
+    pub path: String,
+}
+
 #[async_trait::async_trait]
 pub trait LocalRepositories: Send + Sync {
     fn inspect(&self, path: &str) -> Result<LocalFolder>;
@@ -104,4 +112,9 @@ pub trait LocalRepositories: Send + Sync {
     async fn register(&self, request: RegisterFolder) -> Result<RegistrationOutcome>;
     async fn status(&self, request: RequestId) -> Result<RegistrationOutcome>;
     fn remove(&self, repository: RepositoryId, request: RemoveBinding) -> Result<LocalBindings>;
+    fn reconnect(
+        &self,
+        repository: RepositoryId,
+        request: ReconnectFolder,
+    ) -> Result<LocalBindings>;
 }

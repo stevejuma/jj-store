@@ -3,7 +3,7 @@ use crate::{installation::Identity, policy};
 use jj_store_model::{RepositoryId, RequestId};
 use jj_store_service::{
     local_browser::*,
-    local_repository::{LocalAgentCommand, LocalAgentOutcome, LocalAgentRequest, LocalRepository},
+    local_repository::{LocalAgentOutcome, LocalRepository},
     registry::RepositoryRegistry,
 };
 use serde::{Deserialize, Serialize};
@@ -21,6 +21,7 @@ struct SavedBinding {
 struct Journal {
     request: RegisterFolder,
     folder: LocalFolder,
+    proposed_repository: RepositoryId,
     result: Option<RegistrationOutcome>,
 }
 #[derive(Serialize, Deserialize)]
@@ -102,9 +103,18 @@ impl DeviceRepositories {
         {
             return Err(Error::Conflict);
         }
+        let proposed_repository = match folder.repository {
+            Some(id) => id,
+            None => {
+                let mut bytes = [0; 16];
+                getrandom::fill(&mut bytes).map_err(|_| Error::Unavailable)?;
+                RepositoryId::new(bytes)
+            }
+        };
         registry.requests.push(Journal {
             request,
             folder,
+            proposed_repository,
             result: None,
         });
         let index = registry.requests.len() - 1;
@@ -168,10 +178,50 @@ impl DeviceRepositories {
             return Err(Error::Unavailable);
         }
         let mut ids = std::collections::BTreeSet::new();
+        let mut names = std::collections::BTreeSet::new();
+        let mut metadata_paths = std::collections::BTreeSet::new();
+        let mut generations = std::collections::BTreeSet::new();
+        if value.bindings.iter().any(|b| {
+            !ids.insert(b.folder.repository)
+                || !names.insert(&b.name)
+                || !metadata_paths.insert(&b.folder.metadata)
+                || !generations.insert(b.generation)
+        }) {
+            return Err(Error::Unavailable);
+        }
+        let mut request_ids = std::collections::BTreeSet::new();
         if value
             .bindings
             .iter()
-            .any(|b| !ids.insert(b.folder.repository))
+            .any(|b| b.generation == 0 || b.generation > value.revision)
+            || value.requests.iter().any(|j| {
+                !request_ids.insert(j.request.request_id)
+                    || j.request.version != 1
+                    || j.request.expected_revision > value.revision
+                    || !valid_path(&j.request.path)
+                    || !valid_path(&j.folder.path)
+                    || !valid_path(&j.folder.metadata)
+                    || !crate::registry::valid_name(&j.request.name)
+                    || j.folder
+                        .repository
+                        .is_some_and(|id| id != j.proposed_repository)
+                    || j.result.as_ref().is_some_and(|result| match result {
+                        RegistrationOutcome::Committed {
+                            request_id,
+                            binding,
+                            revision,
+                        } => {
+                            *request_id != j.request.request_id
+                                || binding.repository != j.proposed_repository
+                                || binding.name != j.request.name
+                                || !valid_path(&binding.path)
+                                || binding.generation == 0
+                                || binding.generation > *revision
+                                || *revision > value.revision
+                        }
+                        _ => true,
+                    })
+            })
         {
             return Err(Error::Unavailable);
         }
@@ -237,19 +287,21 @@ impl DeviceRepositories {
         // After an interrupted first initialization, replay the original receipt.
         if journal.folder.repository.is_none() {
             let result = repo
-                .apply_agent_command(&LocalAgentRequest {
-                    version: 1,
-                    request_id,
-                    command: LocalAgentCommand::Initialize,
-                })
+                .initialize_for_browser(request_id, journal.proposed_repository)
                 .await
-                .map_err(|_| Error::Unavailable)?;
+                .map_err(|error| match error {
+                    jj_store_service::local_repository::LocalError::Stale => Error::IdentityChanged,
+                    _ => Error::Unavailable,
+                })?;
             if !matches!(result, LocalAgentOutcome::Committed { .. }) {
                 return Ok(RegistrationOutcome::OutcomeUnknown { request_id });
             }
         }
         let folder = self.provider.inspect(&journal.folder.path)?;
         let repository = folder.repository.ok_or(Error::Unavailable)?;
+        if repository != journal.proposed_repository {
+            return Err(Error::IdentityChanged);
+        }
         let native = self
             .native
             .snapshot(None)
@@ -350,6 +402,52 @@ impl LocalRepositories for DeviceRepositories {
         tokio::task::spawn_blocking(move || runtime.block_on(manager.status_inner(request)))
             .await
             .map_err(|_| Error::Unavailable)?
+    }
+    fn reconnect(
+        &self,
+        repository: RepositoryId,
+        request: ReconnectFolder,
+    ) -> Result<LocalBindings> {
+        if request.version != 1 || !valid_path(&request.path) {
+            return Err(Error::Invalid);
+        }
+        let _lock = policy::exclusive_lock(&self.path.with_extension("lock"))
+            .map_err(|_| Error::Unavailable)?;
+        let mut registry = self.read()?;
+        if request.expected_revision != registry.revision {
+            return Err(Error::Stale);
+        }
+        let index = registry
+            .bindings
+            .iter()
+            .position(|b| b.folder.repository == Some(repository))
+            .ok_or(Error::Unavailable)?;
+        let folder = self.provider.inspect(&request.path)?;
+        if folder.repository != Some(repository) {
+            return Err(Error::IdentityChanged);
+        }
+        let old = &registry.bindings[index];
+        if self.binding(old).availability == Availability::Ready
+            && folder.metadata != old.folder.metadata
+        {
+            return Err(Error::Conflict);
+        }
+        if registry
+            .bindings
+            .iter()
+            .enumerate()
+            .any(|(i, b)| i != index && b.folder.metadata == folder.metadata)
+        {
+            return Err(Error::Conflict);
+        }
+        if old.folder == folder {
+            return Ok(self.snapshot(&registry));
+        }
+        registry.revision = registry.revision.checked_add(1).ok_or(Error::Limit)?;
+        registry.bindings[index].folder = folder;
+        registry.bindings[index].generation = registry.revision;
+        self.persist(&registry)?;
+        Ok(self.snapshot(&registry))
     }
     fn remove(&self, repository: RepositoryId, request: RemoveBinding) -> Result<LocalBindings> {
         let _lock = policy::exclusive_lock(&self.path.with_extension("lock"))

@@ -160,6 +160,14 @@ shared JJ metadata path and original intent. Replay recovers the selected
 receipt before making the folder discoverable. Folder removal affects only
 device discovery. Each read revalidates identity and binding generation.
 
+Admission persists the proposed repository identity before first companion
+publication. Initialization retries must use that identity and fail closed when
+another identity appears. All journal records, request IDs, generations and
+recorded results are validated on restart. Explicit reconnect accepts a
+supported folder with the original identity, preserves project links, and
+increments the binding generation. A different ready copy is rejected; reconnect
+never changes repository contents or initializes replacement metadata.
+
 Local code APIs are separate from native DTOs and preserve Git SHA-1 IDs and
 explicit JJ operations. Collaboration pins a separate committed metadata
 selection; staged commits and unrelated cursor histories are unavailable. Local

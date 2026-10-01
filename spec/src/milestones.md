@@ -32931,6 +32931,105 @@ and named tests are checked by the progress gate.
     "deferred": [
       "M13.4 remains In progress; frontend and cold mixed acceptance follow."
     ]
+  },
+  {
+    "id": "E-M13-018",
+    "tasks": ["M13.4"],
+    "date": "2026-10-01",
+    "kind": "local-browser-registration-reconnect",
+    "files": [
+      "crates/jj-store-cli/tests/local_browser.rs",
+      "crates/jj-store-http/src/contract/tests.rs",
+      "crates/jj-store-http/src/local_browser.rs",
+      "crates/jj-store-server/src/local_repositories.rs",
+      "crates/jj-store-service/src/local_browser.rs",
+      "crates/jj-store-service/src/local_repository/agent_commands.rs",
+      "schemas/openapi.json",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/compatibility.md",
+      "spec/src/local-jj.md",
+      "spec/src/milestones.md",
+      "spec/src/mutations.md",
+      "web/src/lib/api/generated.ts"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/local_browser.rs#registration_replays_across_restart_and_removal_preserves_metadata",
+      "crates/jj-store-cli/tests/local_browser.rs#registration_recovers_after_initialization_and_rejects_identity_replacement",
+      "crates/jj-store-cli/tests/local_browser.rs#filesystem_runtime_registers_and_reads_without_native_storage"
+    ],
+    "runs": [
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo check -p jj-store-server --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Durable admission identity and reconnect boundary compile."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-cli --test local_browser --locked -- registration_",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both focused registration/reconnect/recovery tests pass."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-cli --test local_browser --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 6 tests pass after additional copied-folder and cross-repository cursor rejection; explicit initializer interruption and replay retains exact proposed identity."
+      },
+      {
+        "command": "pnpm spec:first && pnpm check:progress && pnpm check:boundaries && pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "6 protected files, 7 chapters, 111 tasks and 132 requirements pass."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-http --lib --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "13 HTTP contract tests pass including the additive reconnect inventory."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-service --test local_agent --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "8 local agent tests pass after initializer identity guard."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target pnpm contracts:generate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Additive reconnect request and response contract generated."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target pnpm contracts:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "115 actual HTTP/SSE responses conform; 6 contract tests and TypeScript pass."
+      },
+      {
+        "command": "cargo fmt --all",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rust format updated."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/{local-jj,api,architecture,cli,mutations,compatibility,milestones}.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Canonical files formatted."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "versions": "JJ 0.45.1, Git SHA-1, macOS ARM64.",
+    "formats": "Device journal now binds proposed_repository before first publication; additive reconnect endpoint. Companion codecs remain unchanged. Enclosing Jujutsu change qxtoormk.",
+    "next": "Commit verified slice and integrate profile-aware frontend.",
+    "scope": "Device registration and reconnect. Shared agent initialization now has an explicit admission identity and identity guards, so retain local agent service regressions. HTTP inventory and generated schemas require retained native contract capture. Root aggregate suites and unrelated UI lanes are out of scope.",
+    "deferred": [
+      "Frontend folder controls and cold mixed acceptance follow; M13.4 remains In progress."
+    ]
   }
 ]
 ```

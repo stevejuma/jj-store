@@ -503,3 +503,8 @@ profile and committed companion selection. Portable associations expose their
 source repository, actual Git IDs and capsule identity. Shared sanitized
 activity and transcript fields preserve native presentation while native wire
 schemas remain unchanged.
+
+The additive local reconnect endpoint changes only device bindings. Registration
+journals bind a proposed companion identity before initialization; all journal
+records and result identities are checked on restart. Existing code and
+companion object formats remain unchanged.

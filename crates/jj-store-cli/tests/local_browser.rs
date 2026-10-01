@@ -85,6 +85,20 @@ async fn registration_replays_across_restart_and_removal_preserves_metadata() {
         path: folder.to_str().unwrap().into(),
         name: "Local demo".into(),
     };
+    let metadata_lock = folder.join(".git/refs/lapis/state/v1.lock");
+    fs::create_dir_all(metadata_lock.parent().unwrap()).unwrap();
+    fs::write(&metadata_lock, b"fixture interruption").unwrap();
+    assert!(matches!(
+        manager.register(request.clone()).await.unwrap(),
+        RegistrationOutcome::OutcomeUnknown { .. }
+    ));
+    assert!(manager.list().unwrap().bindings.is_empty());
+    let journal: serde_json::Value = serde_json::from_slice(
+        &fs::read(installed.state_dir.join("local-repositories.json")).unwrap(),
+    )
+    .unwrap();
+    let proposed = journal["requests"][0]["proposed_repository"].clone();
+    fs::remove_file(metadata_lock).unwrap();
     let first = manager.register(request.clone()).await.unwrap();
     let RegistrationOutcome::Committed {
         binding, revision, ..
@@ -93,6 +107,7 @@ async fn registration_replays_across_restart_and_removal_preserves_metadata() {
         panic!("registration must commit")
     };
     assert_eq!(binding.availability, Availability::Ready);
+    assert_eq!(serde_json::json!(binding.repository), proposed);
     let selected = LocalFolders
         .open(&LocalFolders.inspect(&request.path).unwrap())
         .unwrap()
@@ -113,19 +128,86 @@ async fn registration_replays_across_restart_and_removal_preserves_metadata() {
     let mut wrong = request.clone();
     wrong.name = "Other intent".into();
     assert!(matches!(make().register(wrong).await, Err(Error::Conflict)));
+    let copy = temp.path().join("conflicting-copy");
+    assert!(
+        Command::new("cp")
+            .arg("-R")
+            .arg(&folder)
+            .arg(&copy)
+            .status()
+            .unwrap()
+            .success()
+    );
+    assert!(matches!(
+        make().reconnect(
+            binding.repository,
+            ReconnectFolder {
+                version: 1,
+                expected_revision: revision,
+                path: copy.to_str().unwrap().into()
+            }
+        ),
+        Err(Error::Conflict)
+    ));
+    assert!(matches!(
+        make()
+            .register(RegisterFolder {
+                request_id: jj_store_model::RequestId::new([8; 16]),
+                expected_revision: revision,
+                path: copy.to_str().unwrap().into(),
+                ..request.clone()
+            })
+            .await,
+        Err(Error::Conflict)
+    ));
     let renamed = temp.path().join("moved");
     fs::rename(&folder, &renamed).unwrap();
     assert_eq!(
         make().list().unwrap().bindings[0].availability,
         Availability::Unavailable
     );
+    let reconnected = make()
+        .reconnect(
+            binding.repository,
+            ReconnectFolder {
+                version: 1,
+                expected_revision: revision,
+                path: renamed.to_str().unwrap().into(),
+            },
+        )
+        .unwrap();
+    assert_eq!(reconnected.bindings[0].repository, binding.repository);
+    assert_eq!(reconnected.bindings[0].availability, Availability::Ready);
+    assert!(reconnected.bindings[0].generation > binding.generation);
+    assert!(matches!(
+        make().reconnect(
+            binding.repository,
+            ReconnectFolder {
+                version: 1,
+                expected_revision: revision,
+                path: renamed.to_str().unwrap().into()
+            }
+        ),
+        Err(Error::Stale)
+    ));
     fs::rename(&renamed, &folder).unwrap();
+    let reconnected = make()
+        .reconnect(
+            binding.repository,
+            ReconnectFolder {
+                version: 1,
+                expected_revision: reconnected.revision,
+                path: folder.to_str().unwrap().into(),
+            },
+        )
+        .unwrap();
+
     make()
         .remove(
             binding.repository,
             RemoveBinding {
                 version: 1,
-                expected_revision: revision,
+                expected_revision: reconnected.revision,
             },
         )
         .unwrap();
@@ -197,6 +279,10 @@ async fn registration_recovers_after_initialization_and_rejects_identity_replace
     state["requests"][0]["folder"] = serde_json::to_value(original).unwrap();
     state["requests"][0]["result"] = serde_json::Value::Null;
     fs::write(&registry, serde_json::to_vec(&state).unwrap()).unwrap();
+    assert_eq!(
+        state["requests"][0]["proposed_repository"],
+        serde_json::json!(binding.repository)
+    );
     let before = LocalFolders
         .open(&LocalFolders.inspect(&request.path).unwrap())
         .unwrap()
@@ -217,6 +303,13 @@ async fn registration_recovers_after_initialization_and_rejects_identity_replace
         .unwrap()
         .commit();
     assert_eq!(before, after);
+    let valid_state = fs::read(&registry).unwrap();
+    let mut corrupt: serde_json::Value = serde_json::from_slice(&valid_state).unwrap();
+    corrupt["requests"][0]["result"]["request_id"] =
+        serde_json::json!("99999999999999999999999999999999");
+    fs::write(&registry, serde_json::to_vec(&corrupt).unwrap()).unwrap();
+    assert!(matches!(make().list(), Err(Error::Unavailable)));
+    fs::write(&registry, valid_state).unwrap();
     jj(
         &folder,
         &[
@@ -831,6 +924,40 @@ async fn filesystem_runtime_registers_and_reads_without_native_storage() {
             .status(),
         400
     );
+    let other_folder = temp.path().join("other");
+    jj(
+        temp.path(),
+        &["git", "init", "--colocate", other_folder.to_str().unwrap()],
+    );
+    let other: Value = post("/local/repositories", json!({"version":1,"request_id":"18181818181818181818181818181818","expected_revision":result["revision"],"path":other_folder,"name":"Other local"})).send().await.unwrap().error_for_status().unwrap().json().await.unwrap();
+    let mut cross = query.clone();
+    cross["cursor"] = json!(cursor);
+    assert_eq!(
+        post(
+            &format!(
+                "/local/repos/{}/query",
+                other["binding"]["repository"].as_str().unwrap()
+            ),
+            cross
+        )
+        .send()
+        .await
+        .unwrap()
+        .status(),
+        400
+    );
+    let reconnected: Value = post(
+        &format!("/local/repositories/{id}/reconnect"),
+        json!({"version":1,"expected_revision":other["revision"],"path":folder}),
+    )
+    .send()
+    .await
+    .unwrap()
+    .error_for_status()
+    .unwrap()
+    .json()
+    .await
+    .unwrap();
     let rejected = post(&format!("/local/repos/{id}/query"), query)
         .header("Origin", "https://untrusted.invalid")
         .send()
@@ -1194,6 +1321,7 @@ async fn filesystem_runtime_registers_and_reads_without_native_storage() {
                 sample("/v1/local/repositories/inspect", "post", inspected),
                 sample("/v1/local/repositories", "post", result),
                 sample("/v1/repositories", "get", repos),
+                sample("/v1/local/repositories/{repo}/reconnect", "post", reconnected),
                 sample("/v1/local/repos/{repo}/snapshot", "get", snapshot),
                 sample("/v1/local/repos/{repo}/query", "post", page),
                 sample("/v1/local/repos/{repo}/agents/sessions", "post", agents),

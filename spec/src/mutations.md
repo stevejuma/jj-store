@@ -623,3 +623,7 @@ validate exact entity versions. Code commands remain disabled for this profile.
 Recorded AgentStore browser POSTs and local freshness streams are read-only
 queries of committed companion metadata and operation heads. They cannot install
 hooks, record agents, reconcile heads or advance the displayed selection.
+
+Local folder reconnect is a revision-checked device-binding update only. First
+Add journals the proposed repository identity before initialization; retries
+cannot initialize another identity after interruption.

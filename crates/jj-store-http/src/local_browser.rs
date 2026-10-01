@@ -72,6 +72,7 @@ macro_rules! endpoints {
         (post, "/local/repositories/inspect", inspect, "local_repository_inspect", management::InspectFolder, management::LocalFolder),
         (post, "/local/repositories/pick", pick, "local_repository_pick", routes::Empty, jj_store_service::local_management::FolderSelection),
         (get, "/local/repositories/requests/{request_id}", status, "local_repository_status", routes::Empty, management::RegistrationOutcome),
+        (post, "/local/repositories/{repo}/reconnect", reconnect, "local_repository_reconnect", management::ReconnectFolder, management::LocalBindings),
         (post, "/local/repositories/{repo}/remove", remove, "local_repository_remove", management::RemoveBinding, management::LocalBindings),
         (get, "/local/repos/{repo}/snapshot", snapshot, "local_code_snapshot", routes::Empty, Snapshot),
         (get, "/local/repos/{repo}/capabilities", capabilities, "local_code_capabilities", routes::Empty, Capabilities),
@@ -191,6 +192,22 @@ async fn status(
     state.json(
         &blocking(&state, move || {
             runtime.block_on(manager.status(request)).map_err(map)
+        })
+        .await?,
+    )
+}
+async fn reconnect(
+    ExtractState(state): ExtractState<Arc<State>>,
+    Path(repository): Path<m::RepositoryId>,
+    args: routes::Input<routes::Empty>,
+    body: Body<management::ReconnectFolder>,
+) -> Result<Response> {
+    routes::input(args)?;
+    let request = decode_body(body)?;
+    let manager = manager(&state)?;
+    state.json(
+        &blocking(&state, move || {
+            manager.reconnect(repository, request).map_err(map)
         })
         .await?,
     )

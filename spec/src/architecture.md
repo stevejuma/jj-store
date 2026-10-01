@@ -467,3 +467,8 @@ Device-bound collaboration facades carry the admitted local repository identity
 into the existing WorkStore provider. Identity is rechecked on publication
 retries, while reads validate independently selected companion history. Native
 manifest authority and local Git ref authority remain separate.
+
+Folder initialization composition persists the proposed identity before
+publication and reuses the same initialization receipt. Reconnect changes only a
+validated device binding; companion metadata and linked project identities
+remain authoritative and unchanged.

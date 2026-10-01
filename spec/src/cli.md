@@ -757,3 +757,8 @@ Local browser AgentStore reads present only records already selected through
 local CLI capture/provenance publication. Opening the app does not enable
 capture, install hooks or create observations; independently pinned browser
 selections can remain older than subsequent CLI captures until explicit refresh.
+
+Local browser admission retains a durably proposed repository identity before
+companion initialization. Existing CLI actor and initialization receipts are
+reused after restart; explicit reconnect revalidates a moved folder without
+changing portable metadata or installing hooks.

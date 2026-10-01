@@ -1083,3 +1083,8 @@ independent committed `metadata_commit`. Signed continuations bind the complete
 query, repository and binding generation. GET `/events` announces bounded local
 head/ref freshness with local-profile event DTOs and never advances a display
 pin.
+
+POST `/v1/local/repositories/{repo}/reconnect` requires the current device
+registry revision and an inspected folder path with the original companion
+identity. It replaces only the device binding, increments its generation and
+rejects a conflicting ready copy. It does not initialize replacement metadata.
