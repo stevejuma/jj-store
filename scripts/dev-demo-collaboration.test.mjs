@@ -52,11 +52,21 @@ test("agent seed installs, publishes, and removes each owned integration", async
       repositoryRoot,
       runtimeRoot,
       repository: "/sample/workspace",
-      run: async (_command, args) => {
+      run: async (_command, args, options) => {
+        assert.equal(
+          options.cwd,
+          "/sample/workspace",
+          "setup must target the isolated folder, not the source checkout",
+        );
         commands.push(args);
         return { stdout: "", stderr: "" };
       },
-      runInput: async (_command, args, input) => {
+      runInput: async (_command, args, input, options) => {
+        assert.equal(
+          options.cwd,
+          "/sample/workspace",
+          "hooks must target the isolated folder",
+        );
         hooks.push({ args, event: JSON.parse(input) });
         return { stdout: "", stderr: "" };
       },

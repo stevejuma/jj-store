@@ -45,6 +45,10 @@
     repositoryShellStorageKey,
     resolveLayoutStorage,
   } from "../layout-storage.js";
+  import {
+    loadNavigationLayout,
+    saveNavigationLayout,
+  } from "../navigation-storage.js";
   let {
     controller,
     initiallyCollapsed = true,
@@ -59,6 +63,12 @@
     children?: Snippet<[StorePage, string]>;
   } = $props();
   const storage = untrack(() => resolveLayoutStorage(layoutStorage));
+  const navigationLayout = untrack(() => loadNavigationLayout(storage));
+  let sectionOpen = $state(navigationLayout.sections);
+  let itemOpen = $state(navigationLayout.items);
+  $effect(() =>
+    saveNavigationLayout(storage, { sections: sectionOpen, items: itemOpen }),
+  );
   const initialLayout = untrack(() => loadRepositoryShellLayout(storage));
   const shell = new AppShellController({
     leftCollapsed:
@@ -195,6 +205,8 @@
         onClose={closeSettings}
       />{:else}<CommunityNavigation
         model={navigation}
+        bind:sectionOpen
+        bind:itemOpen
         activeItemId={activeNavigationItem}
         {compact}
         onSelect={select}

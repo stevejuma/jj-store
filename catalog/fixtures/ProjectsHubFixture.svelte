@@ -16,6 +16,7 @@
     childId,
   } from "./projects-hub-fixture.js";
   let {
+    layoutStorage,
     detail = false,
     failedHome = false,
     readonly = false,
@@ -24,6 +25,7 @@
     loading = false,
     repositoryProjects = false,
   }: {
+    layoutStorage?: Storage;
     detail?: boolean;
     failedHome?: boolean;
     readonly?: boolean;
@@ -98,6 +100,7 @@
 
 <StoreRepositoryApplication
   {controller}
+  {layoutStorage}
   initiallyCollapsed={false}
   displayMode={mobile ? "mobile" : "desktop"}
 />

@@ -14,6 +14,9 @@ import {
 import { seedAgentActivity } from "./dev-demo-agents.mjs";
 import { seedReviews } from "./dev-demo-reviews.mjs";
 import { seedRepository } from "./dev-demo-repository.mjs";
+import { seedRepositoryProfiles } from "./dev-demo-profiles.mjs";
+import { linkDemoFolder } from "./dev-demo-folder.mjs";
+import { seedSampleWork } from "./dev-demo-work-run.mjs";
 import { seedWork } from "./dev-demo-work.mjs";
 import {
   configureSearch,
@@ -36,14 +39,14 @@ const developmentEnvironment = {
 
 async function run(command, args, options = {}) {
   return execute(command, args, {
-    cwd: repositoryRoot,
+    cwd: options.cwd ?? repositoryRoot,
     env: { ...developmentEnvironment, ...options.env },
   });
 }
 
 async function runInput(command, args, input, options = {}) {
   return executeWithInput(command, args, input, {
-    cwd: repositoryRoot,
+    cwd: options.cwd ?? repositoryRoot,
     env: { ...developmentEnvironment, ...options.env },
   });
 }
@@ -182,6 +185,7 @@ async function restart({ reset = false } = {}) {
   let restartStartupMillis;
   let fixturePreparationMillis = 0;
   let searchConfigured = true;
+  let profiles;
   try {
     await waitForServer(origin);
     searchConfigured =
@@ -200,7 +204,25 @@ async function restart({ reset = false } = {}) {
         repositoryId: fixture.repositoryId,
         references,
       });
-      await seedWork({ origin, repositoryId: fixture.repositoryId });
+    }
+    profiles = await seedRepositoryProfiles({
+      repositoryRoot,
+      runtimeRoot: layout.runtimeRoot,
+      repositoryId: fixture.repositoryId,
+      unixSocket: layout.unixSocket,
+      run,
+    });
+    await linkDemoFolder({
+      origin,
+      repositoryId: fixture.repositoryId,
+      path: layout.repository,
+    });
+    const work = await seedWork({
+      origin,
+      repositoryId: fixture.repositoryId,
+      repositoryLinks: profiles.repositoryLinks,
+    });
+    if (references || work.publications) {
       await waitForSearch(
         origin,
         fixture.repositoryId,
@@ -227,6 +249,7 @@ async function restart({ reset = false } = {}) {
     serverPid: server.pid,
     origin,
     repositoryId: fixture.repositoryId,
+    repositoryProfiles: profiles,
     runtimeRoot: layout.runtimeRoot,
     serverConfig: layout.serverConfig,
     resources: {
@@ -241,7 +264,7 @@ async function restart({ reset = false } = {}) {
   });
   await chmod(layout.runtimeRoot, 0o700);
   console.log(
-    `JJ Store LocalTrusted development demo is ready.\n\nURL: ${origin}\nRepository ID: ${fixture.repositoryId}\nCredentials: none (local loopback access)\nRuntime: ${layout.runtimeRoot}\nStorage: embedded RustFS\nFixture: ${reset ? "reset and seeded" : "reused or initialized"}\nSearch: ${searchConfigured ? "ready" : "disabled"}\nStartup: ${fixture.firstStartupMillis} ms cold, ${restartStartupMillis} ms restart\nResident memory: ${processes.totalRssKiB} KiB server plus storage\n\nThe repository, installation identity and RustFS volume persist across restart and stop. Run pnpm dev:reset to replace them with a deterministic sample fixture.`,
+    `JJ Store LocalTrusted development demo is ready.\n\nURL: ${origin}\nRepository ID: ${fixture.repositoryId}\nServer-only native: ${profiles.nativeServer}\nLocal Git-backed JJ: ${profiles.localGit} (${profiles.localFolder}; CLI only, browser serving pending)\nCredentials: none (local loopback access)\nRuntime: ${layout.runtimeRoot}\nStorage: embedded RustFS\nFixture: ${reset ? "reset and seeded" : "reused or initialized"}\nSearch: ${searchConfigured ? "ready" : "disabled"}\nStartup: ${fixture.firstStartupMillis} ms cold, ${restartStartupMillis} ms restart\nResident memory: ${processes.totalRssKiB} KiB server plus storage\n\nThe repository, installation identity and RustFS volume persist across restart and stop. Run pnpm dev:reset to replace them with a deterministic sample fixture.`,
   );
 }
 
@@ -256,45 +279,13 @@ async function stop() {
   );
 }
 
-async function seedSampleWork() {
-  const fixture = await loadFixture(layout);
-  if (!fixture)
-    throw new Error(
-      "start the owned development demo with pnpm dev:restart first",
-    );
-  const runtime = JSON.parse(await readFile(layout.runtimeFile, "utf8"));
-  if (
-    runtime.runtimeRoot !== layout.runtimeRoot ||
-    runtime.serverConfig !== layout.serverConfig ||
-    runtime.repositoryId !== fixture.repositoryId ||
-    runtime.origin !== `http://127.0.0.1:${serverPort}/`
-  )
-    throw new Error(
-      "development work seed requires the matching owned LocalTrusted demo runtime",
-    );
-  const ownedProcess = await run("ps", [
-    "-p",
-    String(runtime.serverPid),
-    "-o",
-    "command=",
-  ]);
-  if (!ownedProcess.stdout.includes(layout.serverConfig))
-    throw new Error("development work seed refuses an unowned process");
-  const result = await seedWork({
-    origin: runtime.origin,
-    repositoryId: fixture.repositoryId,
-  });
-  console.log(
-    `Development work samples ready: ${result.projects} projects, ${result.tasks} tasks, ${result.comments} comments; ${result.publications} new publications. Existing records preserved. Refresh projects to load the samples.`,
-  );
-}
-
 const action = process.argv[2] ?? "restart";
 try {
   if (action === "restart") await restart();
   else if (action === "reset") await restart({ reset: true });
   else if (action === "stop") await stop();
-  else if (action === "seed-work") await seedSampleWork();
+  else if (action === "seed-work")
+    await seedSampleWork({ layout, repositoryRoot, serverPort, run });
   else
     throw new Error(
       `unknown action ${action}; expected restart, reset, stop or seed-work`,

@@ -47,6 +47,7 @@ export async function seedAgentActivity({
     ),
   );
   const env = { PATH: `${bin}:${process.env.PATH ?? ""}` };
+  const execution = { env, cwd: repository };
   const args = (...values) => [
     "-R",
     repository,
@@ -70,12 +71,12 @@ export async function seedAgentActivity({
       "--agent",
       "opencode",
     ),
-    { env },
+    execution,
   );
   const installed = [];
   try {
     for (const integration of integrations) {
-      await run(executable, args("setup", integration), { env });
+      await run(executable, args("setup", integration), execution);
       installed.push(integration);
     }
     const events = await representativeAgentEvents(repositoryRoot, repository);
@@ -85,13 +86,13 @@ export async function seedAgentActivity({
           executable,
           args("hook", integration),
           `${JSON.stringify(event)}\n`,
-          { env },
+          execution,
         );
       }
     }
   } finally {
     for (const integration of installed.reverse()) {
-      await run(executable, args("remove", integration), { env });
+      await run(executable, args("remove", integration), execution);
     }
   }
 }

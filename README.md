@@ -55,3 +55,19 @@ complete seeded repository position is indexed.
 On macOS with Xcode license prompts, prefix checks with
 `DEVELOPER_DIR=/Library/Developer/CommandLineTools` to use the installed Command
 Line Tools SDK; this does not change the system developer selection.
+
+Use `pnpm cli:install` to build release binaries and install `jj-store` (server
+administration) and `jj-store-jj` (custom JJ and project commands) in
+`~/.local/bin`. Add that directory to `PATH`. `--bin-dir <path>` selects a
+different destination; `--debug --no-build` installs existing debug artifacts.
+The installer never replaces the installed `jj` or starts a service.
+
+The demo now includes the existing native local checkout, a server-only native
+repository and an ordinary Git-backed JJ folder at
+`.local/dev-demo/git-repository`. The three sample projects retain their native
+metadata home and link one repository each. The Git-backed folder uses real Git
+storage and companion metadata; it is available through the local CLI, while
+browser serving remains pending. Restart adds these variants to an existing
+fixture and changes only untouched sample links and task targets. Edited records
+and retired links remain intact. Projects and Repositories sidebar disclosure
+choices persist in browser local storage.

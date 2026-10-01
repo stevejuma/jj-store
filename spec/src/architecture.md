@@ -450,3 +450,10 @@ serve application-reachable chunks, styles and fonts plus declared agent icons.
 Unused package-emitted workers are excluded, while server asset admission limits
 remain unchanged. The manifest traversal regression is wired into the existing
 governance test lane.
+
+The development harness includes native local, native server-only and ordinary
+Git-backed JJ fixtures. All three original projects keep the native metadata
+home and link distinct repository identities. The Git-backed fixture is CLI-only
+until local serving is qualified; discovery never substitutes a native copy for
+its storage profile. `cli:install` builds the owned CLI package and copies the
+server and custom JJ tools under distinct names without replacing system JJ.

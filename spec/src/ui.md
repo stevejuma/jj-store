@@ -945,3 +945,9 @@ separate explicit actions; desired/effective state and operation progress remain
 visible. Pending or failed requests cannot silently retry a save or apply a
 stale configuration. Refresh recovers the current revision before another
 action.
+
+Projects and Repositories sidebar section expansion and individual project
+expansion persist in versioned browser local storage. Explicit collapsed choices
+win over automatic expansion of an active child, including after Settings closes
+or the application reloads. Storage contains disclosure flags only; unavailable
+or malformed storage falls back to normal navigation.

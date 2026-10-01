@@ -21,6 +21,7 @@
     activeItemId,
     compact = false,
     sectionOpen = $bindable<Record<string, boolean>>({}),
+    itemOpen = $bindable<Record<string, boolean>>({}),
     onSelect,
     onSearch,
     footer,
@@ -29,11 +30,11 @@
     activeItemId?: string;
     compact?: boolean;
     sectionOpen?: Record<string, boolean>;
+    itemOpen?: Record<string, boolean>;
     onSelect: (item: CommunityNavigationItemModel) => void;
     onSearch?: (query: string) => void;
     footer?: Snippet;
   } = $props();
-  let itemOpen = $state<Record<string, boolean>>({});
   let compactSectionId = $state("");
   let compactTooltipId = $state("");
   let compactSectionQuery = $state("");
@@ -56,10 +57,10 @@
 
   function isItemOpen(item: CommunityNavigationItemModel): boolean {
     return (
-      item.children?.some((child) => child.id === activeItemId) ||
-      item.initiallyExpanded ||
-      itemOpen[item.id] ||
-      false
+      itemOpen[item.id] ??
+      (item.children?.some((child) => child.id === activeItemId) ||
+        item.initiallyExpanded ||
+        false)
     );
   }
 

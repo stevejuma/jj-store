@@ -1045,3 +1045,7 @@ scopes/prefixes/index budget and operation state. Save and Apply carry the
 observed revision. Control intents are apply, retry and rebuild. Browser
 requests cannot select configuration paths or credentials. Accepted lifecycle
 operations continue after HTTP disconnect and remain queryable through status.
+
+Sidebar disclosure persistence is presentation state only: versioned boolean
+maps for Projects/Repositories sections and individual projects. It cannot
+restore authorization, credentials, repository snapshots or capability claims.

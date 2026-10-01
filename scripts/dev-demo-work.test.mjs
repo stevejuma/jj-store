@@ -194,3 +194,64 @@ test("work seed resumes an interrupted task creation before its initial state up
     9,
   );
 });
+
+test("work samples use one distinct repository per project and migrate only untouched seeded targets", async () => {
+  const state = service();
+  await seedWork({ ...options, fetcher: state.fetcher });
+  const repositoryLinks = [
+    options.repositoryId,
+    "22".repeat(16),
+    "33".repeat(16),
+  ];
+  await seedWork({ ...options, repositoryLinks, fetcher: state.fetcher });
+  for (const [index, project] of [...state.projects.values()].entries()) {
+    assert.deepEqual(
+      Object.entries(project.repositories)
+        .filter(([, active]) => active)
+        .map(([id]) => id),
+      [repositoryLinks[index]],
+    );
+    assert.ok(
+      [...state.tasks.values()]
+        .filter((t) => t.project === project.id && t.repository)
+        .every((t) => t.repository === repositoryLinks[index]),
+    );
+  }
+  const count = state.requests.length;
+  await seedWork({ ...options, repositoryLinks, fetcher: state.fetcher });
+  assert.equal(state.requests.length, count);
+});
+
+test("profile migration preserves edited tasks and resumes unknown outcomes", async () => {
+  const state = service();
+  await seedWork({ ...options, fetcher: state.fetcher });
+  const repositoryLinks = [
+    options.repositoryId,
+    "22".repeat(16),
+    "33".repeat(16),
+  ];
+  const edited = [...state.tasks.values()].find(
+    (task) => task.title === "Document local setup",
+  );
+  edited.title = "My local setup";
+  edited.version++;
+  state.loseNextReceipt("update_task");
+  await assert.rejects(
+    seedWork({ ...options, repositoryLinks, fetcher: state.fetcher }),
+    /outcome_unknown/u,
+  );
+  await seedWork({ ...options, repositoryLinks, fetcher: state.fetcher });
+  assert.equal(edited.repository, options.repositoryId);
+  assert.equal(edited.title, "My local setup");
+  assert.equal(
+    state.projects.get(edited.project).repositories[options.repositoryId],
+    true,
+  );
+  assert.equal(
+    state.projects.get(edited.project).repositories[repositoryLinks[2]],
+    true,
+  );
+  const count = state.requests.length;
+  await seedWork({ ...options, repositoryLinks, fetcher: state.fetcher });
+  assert.equal(state.requests.length, count);
+});

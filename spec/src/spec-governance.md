@@ -505,3 +505,16 @@ permit a server dependency on CLI or upstream JJ.
 The owned development restart helper honors explicitly disabled Search settings:
 it checks the repository capability before waiting for an index and reports
 disabled rather than timing out. It preserves the saved Search configuration.
+
+The development profile seed uses production JJ publication, local companion
+commands and native WorkStore commands. It preserves the original fixture and
+sample identities, resumes missing samples and migrates only untouched seeded
+links/targets. Native server-only fixture preparation leaves no physical folder
+or workspace after publication. Git-backed fixture serving remains deferred; its
+real local identity is never advertised as native authority. Installer
+acceptance uses an isolated prefix and preserves the installed `jj`.
+
+Agent seed setup, hooks and removal MUST run with the isolated physical fixture
+folder as their working directory, as well as an explicit repository argument.
+The harness must not temporarily install hook configuration in the source
+checkout. Cold acceptance verifies teardown in both locations.

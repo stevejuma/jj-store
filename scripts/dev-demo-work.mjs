@@ -1,8 +1,18 @@
 import { sampleWork, workSeedId } from "./dev-demo-work-samples.mjs";
 
-export async function seedWork({ origin, repositoryId, fetcher = fetch }) {
+export async function seedWork({
+  origin,
+  repositoryId,
+  repositoryLinks = [repositoryId, repositoryId, repositoryId],
+  fetcher = fetch,
+}) {
   if (!/^[0-9a-f]{32}$/u.test(repositoryId))
     throw new Error("invalid demo repository ID");
+  if (
+    repositoryLinks.length !== 3 ||
+    repositoryLinks.some((id) => !/^[0-9a-f]{32}$/u.test(id))
+  )
+    throw new Error("invalid demo repository links");
   const base = `${origin}v1/repos/${repositoryId}/`;
   const headers = {
     Origin: new URL(origin).origin,
@@ -64,7 +74,7 @@ export async function seedWork({ origin, repositoryId, fetcher = fetch }) {
     publications += 1;
     return outcome.receipt.result;
   };
-  const samples = sampleWork(repositoryId);
+  const samples = sampleWork(repositoryId, repositoryLinks);
   const projects = new Map((await page()).projects.map((p) => [p.id, p]));
   for (const sample of samples) {
     let project = projects.get(sample.id);
@@ -77,13 +87,27 @@ export async function seedWork({ origin, repositoryId, fetcher = fetch }) {
           body: sample.body,
         })
       ).project;
-    if (!Object.hasOwn(project.repositories, repositoryId))
+    const migrate =
+      sample.repository !== repositoryId &&
+      project.title === sample.title &&
+      project.body === sample.body &&
+      project.repositories[repositoryId] === true &&
+      Object.entries(project.repositories).every(
+        ([id, active]) =>
+          active && [repositoryId, sample.repository].includes(id),
+      );
+    if (
+      (!projects.has(sample.id) ||
+        sample.repository === repositoryId ||
+        migrate) &&
+      !Object.hasOwn(project.repositories, sample.repository)
+    )
       project = (
         await apply({
           command: "set_repository",
           project: project.id,
           expected_version: project.version,
-          repository: repositoryId,
+          repository: sample.repository,
           active: true,
         })
       ).project;
@@ -124,23 +148,61 @@ export async function seedWork({ origin, repositoryId, fetcher = fetch }) {
             state: item.state,
           })
         ).task;
-      if (!item.comments.length) continue;
-      const current = await page({ project: project.id, task: task.id });
-      task = current.tasks[0];
-      const comments = new Set(current.comments.map((c) => c.id));
-      for (const comment of item.comments) {
-        if (comments.has(comment.id)) continue;
+      if (item.comments.length) {
+        const current = await page({ project: project.id, task: task.id });
+        task = current.tasks[0];
+        const comments = new Set(current.comments.map((c) => c.id));
+        for (const comment of item.comments) {
+          if (comments.has(comment.id)) continue;
+          task = (
+            await apply({
+              command: "add_comment",
+              id: comment.id,
+              task: task.id,
+              expected_task_version: task.version,
+              reply_to: comment.reply_to,
+              body: comment.body,
+            })
+          ).task;
+        }
+      }
+      if (
+        migrate &&
+        task.repository === repositoryId &&
+        task.version ===
+          1 + (item.state === "open" ? 0 : 1) + item.comments.length &&
+        task.state === item.state &&
+        task.title === item.title &&
+        task.body === item.body &&
+        task.parent === item.parent &&
+        item.repository
+      ) {
         task = (
           await apply({
-            command: "add_comment",
-            id: comment.id,
-            task: task.id,
-            expected_task_version: task.version,
-            reply_to: comment.reply_to,
-            body: comment.body,
+            command: "update_task",
+            id: task.id,
+            expected_version: task.version,
+            expected_project_version: project.version,
+            ...metadata,
+            state: task.state,
           })
         ).task;
       }
+      tasks.set(task.id, task);
+    }
+    if (
+      migrate &&
+      ![...tasks.values()].some((task) => task.repository === repositoryId)
+    ) {
+      project = (
+        await apply({
+          command: "set_repository",
+          project: project.id,
+          expected_version: project.version,
+          repository: repositoryId,
+          active: false,
+        })
+      ).project;
     }
   }
   return {

@@ -7,7 +7,10 @@ export function workSeedId(repository, kind, key) {
     .slice(0, 32);
 }
 
-export function sampleWork(repository) {
+export function sampleWork(
+  repository,
+  repositoryLinks = [repository, repository, repository],
+) {
   const projects = [
     {
       key: "browser",
@@ -123,13 +126,14 @@ export function sampleWork(repository) {
       ],
     },
   ];
-  return projects.map((project) => ({
+  return projects.map((project, index) => ({
     ...project,
     id: workSeedId(repository, "project", project.key),
+    repository: repositoryLinks[index],
     tasks: project.tasks.map((task) => ({
       ...task,
       id: workSeedId(repository, "task", `${project.key}/${task.key}`),
-      repository: task.unassigned ? null : repository,
+      repository: task.unassigned ? null : repositoryLinks[index],
       parent: task.parent
         ? workSeedId(repository, "task", `${project.key}/${task.parent}`)
         : null,

@@ -29,7 +29,7 @@ shared-package release qualification does not alter those original Git gates.
 | M3          | Done        | M2                      | JST-JJ-001,JST-JJ-002,JST-CLI-001,JST-SEC-001                                                                                                                            | Native CLI/server vertical slice with authentication                                                                           | Implement M4 pinned read sessions                                              | E-M3-001,E-M3-002,E-M3-003,E-M3-004,E-M3-005,E-M3-006,E-M3-007,E-M3-008,E-M3-009,E-M3-010,E-M3-011,E-M3-012,E-M3-013,E-M3-014,E-M3-015,E-UI-044                                                                                                                                                                                                                |
 | M3.1        | Done        | M2                      | JST-SEC-001,JST-SEC-002,JST-SEC-003,JST-SEC-004                                                                                                                          | Revocable tokens and transport authorization                                                                                   | Retain native slice acceptance                                                 | E-M3-001,E-M3-004,E-M3-005,E-M3-006,E-M3-007,E-M3-008,E-M3-009,E-M3-011,E-M3-012,E-M3-014                                                                                                                                                                                                                                                                      |
 | M3.2        | Done        | M3.1                    | JST-JJ-001,JST-JJ-004,JST-JJ-005                                                                                                                                         | Create edit describe log restart op-log evolog; multi-workspace                                                                | Retain native slice acceptance                                                 | E-M3-002,E-M3-003,E-M3-004,E-M3-005,E-M3-006,E-M3-008,E-M3-009,E-M3-010,E-M3-011,E-M3-013,E-M3-014                                                                                                                                                                                                                                                             |
-| M3.3        | Done        | M3.2                    | JST-CLI-001,JST-CLI-002,JST-CLI-003,JST-CLI-004                                                                                                                          | Custom command presentation and capability parity                                                                              | Retain native slice acceptance                                                 | E-M3-006,E-M3-009,E-M3-010,E-M3-011,E-M3-012,E-M3-013,E-M3-014,E-M3-015                                                                                                                                                                                                                                                                                        |
+| M3.3        | Done        | M3.2                    | JST-CLI-001,JST-CLI-002,JST-CLI-003,JST-CLI-004                                                                                                                          | Custom command presentation and capability parity                                                                              | Retain native slice acceptance                                                 | E-M3-006,E-M3-009,E-M3-010,E-M3-011,E-M3-012,E-M3-013,E-M3-014,E-M3-015,E-UI-050                                                                                                                                                                                                                                                                               |
 | M4          | Deferred    | M3                      | JST-API-001,JST-API-005                                                                                                                                                  | Registry-only/shared-deployment browser finalization beyond the functional local application                                   | Future shared/package release                                                  | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010,E-M4-011,E-M4-012,E-M4-013,E-M4-014,E-M4-015,E-M4-016,E-M4-017,E-M4-018,E-SCOPE-001,E-UI-007,E-UI-008,E-UI-016,E-UI-017,E-UI-018                                                                                                                                     |
 | M4.1        | Done        | M3                      | JST-API-001,JST-API-002,JST-JJ-003                                                                                                                                       | Pinned three-graph reads with zero GET publications                                                                            | Retain pinned read conformance                                                 | E-M4-001,E-M4-002,E-M4-003,E-M4-004,E-M4-005,E-M4-006,E-M4-007,E-M4-008,E-M4-009,E-M4-010,E-M4-011,E-M4-012,E-M4-013,E-M4-014                                                                                                                                                                                                                                  |
 | M4.2        | Done        | M4.1                    | JST-API-003,JST-API-006                                                                                                                                                  | Committed SSE and generated API contract deployment qualification                                                              | Retain real RustFS/TLS SSE conformance                                         | E-M4-015,E-M4-016,E-M4-017,E-SCOPE-001,E-UI-028                                                                                                                                                                                                                                                                                                                |
@@ -100,7 +100,7 @@ shared-package release qualification does not alter those original Git gates.
 | M11.1       | Done        | M9.6                    | JST-WORK-001,JST-WORK-002,JST-WORK-003,JST-WORK-004,JST-WORK-005,JST-WORK-007                                                                                            | Native model, publication, receipts, recovery and copy                                                                         | Retain native and real RustFS gates                                            | E-M11-001,E-M11-003                                                                                                                                                                                                                                                                                                                                            |
 | M11.2       | Done        | M11.1                   | JST-WORK-005,JST-WORK-006,JST-WORK-008                                                                                                                                   | Authorized service, API, RPC and CLI                                                                                           | Retain local transport/CLI gates                                               | E-M11-002                                                                                                                                                                                                                                                                                                                                                      |
 | M11.3       | Done        | M11.2                   | JST-WORK-008                                                                                                                                                             | Browser projects/tasks/comments and explicit refresh                                                                           | Retain cold browser gates; visual baselines pending                            | E-M11-003,E-M11-004                                                                                                                                                                                                                                                                                                                                            |
-| M11.4       | In progress | M11.3                   | JST-WORK-005,JST-WORK-006,JST-WORK-008,JST-WORK-009,JST-UI-015                                                                                                           | Installation Projects hub, full-root browse and cold browser acceptance                                                        | Shared-package qualification; visual baselines pending                         | E-M11-005,E-M11-006,E-M11-007,E-UI-045,E-UI-046,E-UI-047,E-M11-008,E-UI-048,E-UI-049                                                                                                                                                                                                                                                                           |
+| M11.4       | In progress | M11.3                   | JST-WORK-005,JST-WORK-006,JST-WORK-008,JST-WORK-009,JST-UI-015                                                                                                           | Installation Projects hub, full-root browse and cold browser acceptance                                                        | Shared-package qualification; visual baselines pending                         | E-M11-005,E-M11-006,E-M11-007,E-UI-045,E-UI-046,E-UI-047,E-M11-008,E-UI-048,E-UI-049,E-UI-050                                                                                                                                                                                                                                                                  |
 | M12         | Done        | M11.1,M11.2,M11.3       | JST-GIT-001,JST-GIT-002,JST-GIT-003,JST-GIT-004,JST-GIT-005,JST-GIT-006,JST-GIT-007,JST-GIT-008                                                                          | Native fetch/edit/push/external-merge cycle with cache-loss and fault qualification                                            | Maintain qualified bookmark bridge                                             | E-M12-001,E-M12-002,E-M12-003,E-M12-004,E-M12-005,E-M12-006,E-M12-007,E-M12-008,E-M12-009,E-M12-010                                                                                                                                                                                                                                                            |
 | M12.1       | Done        | M11.1,M11.2,M11.3       | JST-GIT-001                                                                                                                                                              | GB0: Parsed backend-aware dispatch and ordinary path regression                                                                | Complete staged bridge gate                                                    | E-M12-001                                                                                                                                                                                                                                                                                                                                                      |
 | M12.2       | Done        | M12.1                   | JST-GIT-002,JST-GIT-003                                                                                                                                                  | GB1: Exact conversion and native retained cache-loss identity                                                                  | Complete staged bridge gate                                                    | E-M12-002                                                                                                                                                                                                                                                                                                                                                      |
@@ -111,7 +111,7 @@ shared-package release qualification does not alter those original Git gates.
 | M12.7       | Done        | M12.6                   | JST-GIT-002,JST-GIT-007,JST-GIT-008                                                                                                                                      | GB6: Cold real-RustFS external merge credentials resources and UI freshness                                                    | Maintain cold native Git acceptance                                            | E-M12-008,E-M12-010                                                                                                                                                                                                                                                                                                                                            |
 | M13         | In progress | M12                     | JST-LOCAL-001,JST-LOCAL-002,JST-LOCAL-003,JST-LOCAL-004,JST-LOCAL-005,JST-LOCAL-006                                                                                      | Complete qualified local Git-backed collaboration profile                                                                      | Complete portable review/capture gates, then local serving and conversion      | E-M13-001,E-M13-002,E-M13-012                                                                                                                                                                                                                                                                                                                                  |
 | M13.1       | Done        | M12                     | JST-LOCAL-001,JST-LOCAL-002                                                                                                                                              | Qualified metadata CAS/receipt/GC and stock JJ primitive compatibility                                                         | Retain CAS, receipt, retention and stock-JJ regression gates                   | E-M13-001                                                                                                                                                                                                                                                                                                                                                      |
-| M13.2       | Done        | M13.1                   | JST-LOCAL-003                                                                                                                                                            | Shared WorkStore semantics and server-free CLI                                                                                 | Retain WorkStore/CLI parity while completing M13.3                             | E-M13-002                                                                                                                                                                                                                                                                                                                                                      |
+| M13.2       | Done        | M13.1                   | JST-LOCAL-003                                                                                                                                                            | Shared WorkStore semantics and server-free CLI                                                                                 | Retain WorkStore/CLI parity while completing M13.3                             | E-M13-002,E-UI-050                                                                                                                                                                                                                                                                                                                                             |
 | M13.3       | In progress | M13.2                   | JST-LOCAL-002,JST-LOCAL-003                                                                                                                                              | Portable agent/review anchors and exact retained evidence                                                                      | Qualify portable review anchors/CLI, hook causality and native capsule carrier | E-M13-003,E-M13-004,E-M13-005,E-M13-006,E-M13-007,E-M13-008,E-M13-009,E-M13-010,E-M13-011,E-M13-012                                                                                                                                                                                                                                                            |
 | M13.4       | Planned     | M13.3                   | JST-LOCAL-004,JST-LOCAL-005                                                                                                                                              | Filesystem-only server, local UI and recoverable code commands                                                                 | Implement device bindings/APIs, recoverable code commands and cold UI gates    | -                                                                                                                                                                                                                                                                                                                                                              |
 | M13.5       | Planned     | M13.4                   | JST-LOCAL-006                                                                                                                                                            | Independent local/native conversion with complete collaboration history                                                        | Implement bounded history/evidence conversion, mappings and source safety      | -                                                                                                                                                                                                                                                                                                                                                              |
@@ -31869,6 +31869,309 @@ and named tests are checked by the progress gate.
       "Source visual comparison remains pending because the isolated comparison cache denied access; functional gates pass. No global cache, permission or baseline changes were made."
     ],
     "artifacts": "Ignored .scratch/header-source-*.log, source-csp-before.log, Source/Settings review screenshots and web/test-results; source package runs /tmp/design-core-code-highlight-*.log, with durable source evidence in Design Core spec/records/code-block-static-highlighting.md."
+  },
+  {
+    "id": "E-UI-050",
+    "tasks": ["M11.4", "M3.3", "M13.2"],
+    "date": "2026-10-01",
+    "kind": "development-fixtures-and-navigation",
+    "files": [
+      "README.md",
+      "catalog/components/store-work/NavigationPersistence.stories.svelte",
+      "catalog/fixtures/NavigationPersistenceFixture.svelte",
+      "catalog/fixtures/ProjectsHubFixture.svelte",
+      "package.json",
+      "scripts/dev-demo-agents.mjs",
+      "scripts/dev-demo-collaboration.test.mjs",
+      "scripts/dev-demo-folder.mjs",
+      "scripts/dev-demo-folder.test.mjs",
+      "scripts/dev-demo-profiles.acceptance.mjs",
+      "scripts/dev-demo-profiles.mjs",
+      "scripts/dev-demo-profiles.test.mjs",
+      "scripts/dev-demo-work-run.mjs",
+      "scripts/dev-demo-work-samples.mjs",
+      "scripts/dev-demo-work.mjs",
+      "scripts/dev-demo-work.test.mjs",
+      "scripts/dev-demo.mjs",
+      "scripts/install-cli.mjs",
+      "scripts/install-cli.test.mjs",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/milestones.md",
+      "spec/src/spec-governance.md",
+      "spec/src/ui.md",
+      "web/src/lib/ui/community-navigation/CommunityNavigation.svelte",
+      "web/src/lib/ui/navigation-storage.ts",
+      "web/src/lib/ui/store-application/StoreApplication.svelte",
+      "web/tests/navigation-storage.test.ts"
+    ],
+    "tests": [
+      "web/tests/navigation-storage.test.ts#navigation restores explicit collapsed sections and expanded projects",
+      "scripts/dev-demo-work.test.mjs#work samples use one distinct repository per project and migrate only untouched seeded targets",
+      "scripts/dev-demo-profiles.test.mjs#profiles seed real native and Git backends, remove server checkout, and reuse identities",
+      "scripts/install-cli.test.mjs#CLI installer copies both tools without replacing jj or following target symlinks",
+      "scripts/dev-demo-collaboration.test.mjs#agent seed installs, publishes, and removes each owned integration"
+    ],
+    "runs": [
+      {
+        "command": "pnpm exec tsx --test web/tests/navigation-storage.test.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before implementation: missing navigation persistence module."
+      },
+      {
+        "command": "node --test scripts/install-cli.test.mjs",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before implementation: missing installer module."
+      },
+      {
+        "command": "node --test scripts/dev-demo-profiles.test.mjs",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before implementation: missing profile seeder."
+      },
+      {
+        "command": "node --test scripts/dev-demo-work.test.mjs",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before implementation: all three project links still target the same repository."
+      },
+      {
+        "command": "pnpm exec tsx --test web/tests/navigation-storage.test.ts web/tests/layout-storage.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "6 focused storage tests."
+      },
+      {
+        "command": "node --test scripts/dev-demo-profiles.test.mjs scripts/dev-demo-work.test.mjs scripts/dev-demo-state.test.mjs scripts/dev-demo-repository.test.mjs scripts/install-cli.test.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "13 focused script tests before two further migration/folder regressions."
+      },
+      {
+        "command": "node --test scripts/dev-demo-folder.test.mjs scripts/dev-demo-work.test.mjs scripts/install-cli.test.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "9 focused tests, including interrupted migration, edited-task preservation, native-folder binding and installer target symlinks."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero errors or warnings."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "fail",
+        "failures": 5,
+        "note": "New story supplied unsupported Testing Library getByRole exact option; remove redundant option."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero errors or warnings; 114 catalog modules."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/NavigationPersistence.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "New story used section tooltip as accessible name; use visible section name."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/NavigationPersistence.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Disclosure choices restore across fresh app mounts."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-work/ProjectsDirectory.stories.svelte catalog/components/store-work/ProjectsFilters.stories.svelte catalog/components/store-work/ProjectsActivity.stories.svelte catalog/components/store-work/ProjectsActivityControls.stories.svelte catalog/components/store-work/NavigationPersistence.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "38 complete directly affected stories across 8 files, interaction and accessibility; cold Vitest process."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "fail",
+        "failures": 1,
+        "note": "dev-demo entry point exceeded 300 counted lines; extract unchanged owned seed-work command guard."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "456 modules pass after extraction."
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "15 package boundaries."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "4 validators, 21 chapters, 132 requirements."
+      },
+      {
+        "command": "pnpm cli:install --debug --no-build --bin-dir /tmp/jj-store-cli-install-review",
+        "result": "pass",
+        "failures": 0,
+        "note": "Real built binaries installed into isolated prefix. No global installation."
+      },
+      {
+        "command": "/tmp/jj-store-cli-install-review/jj-store version --format=json; /tmp/jj-store-cli-install-review/jj-store-jj --version",
+        "result": "fail",
+        "failures": 1,
+        "note": "Server version succeeded; custom JJ exposes version as a subcommand rather than --version."
+      },
+      {
+        "command": "/tmp/jj-store-cli-install-review/jj-store-jj version --format=json",
+        "result": "fail",
+        "failures": 1,
+        "note": "Upstream version does not support format option."
+      },
+      {
+        "command": "/tmp/jj-store-cli-install-review/jj-store-jj version",
+        "result": "pass",
+        "failures": 0,
+        "note": "Installed custom tool executes."
+      },
+      {
+        "command": "node --test --test-name-pattern=agent seed installs scripts/dev-demo-collaboration.test.mjs against parent dev-demo-agents.mjs",
+        "result": "fail",
+        "failures": 1,
+        "note": "New regression against parent proves source-cwd escape; restored current module immediately. Initial cold run transiently installed source hooks; teardown restored the source checkout."
+      },
+      {
+        "command": "node --test scripts/dev-demo-collaboration.test.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "4 focused tests pass with explicit fixture cwd on setup, hooks and remove."
+      },
+      {
+        "command": "node --test scripts/dev-demo-repository.test.mjs scripts/dev-demo-state.test.mjs scripts/dev-demo-work.test.mjs scripts/dev-demo-profiles.test.mjs scripts/dev-demo-folder.test.mjs scripts/dev-demo-collaboration.test.mjs scripts/install-cli.test.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final complete directly affected script suite: 19 pass, zero failures."
+      },
+      {
+        "command": "JJ_STORE_DEV_ROOT=/tmp/jj-store-three-profiles-cold JJ_STORE_DEV_PORT=7461 JJ_STORE_DEV_RUSTFS_RUNTIME=$PWD/runtime/embedded-rustfs/target/debug/jj-store-rustfs DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm dev:restart",
+        "result": "pass",
+        "failures": 0,
+        "note": "Fresh isolated native installation, UI and debug binary cold builds. Real embedded RustFS; three genuine distinct profiles seeded; native-only checkout removed. Existing sanitizer cache compilation made initial seed slow; no contract weakened."
+      },
+      {
+        "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm dev:restart",
+        "result": "pass",
+        "failures": 0,
+        "note": "Owned interactive upgrade preserves native repository 1bdb89c409c1b891ac7f180c01a265d5, seeds server-only 817cfb949001fb0c693298a628c81e3a and local Git 61c5a6c6e2dfb74cd9d636dee2138b41; original three projects each have one distinct active link; no reset or global installation."
+      },
+      {
+        "command": "JJ_STORE_DEV_ROOT=$PWD/.local/dev-demo node scripts/dev-demo-profiles.acceptance.mjs",
+        "result": "fail",
+        "failures": 1,
+        "note": "Acceptance adapter initially omitted Sec-Fetch headers and was correctly denied. Add existing same-origin request headers; security policy unchanged."
+      },
+      {
+        "command": "JJ_STORE_DEV_ROOT=$PWD/.local/dev-demo node scripts/dev-demo-profiles.acceptance.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Read-only real service qualification: three projects, nine task targets, only two native discovery entries, ready native folder binding, empty server-only links, no temporary checkout, current Git companion identity."
+      },
+      {
+        "command": "JJ_STORE_DEV_ROOT=/tmp/jj-store-three-profiles-cold node scripts/dev-demo-profiles.acceptance.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both before and after a second cold service restart pass the same real-service checks."
+      },
+      {
+        "command": "JJ_STORE_DEV_ROOT=/tmp/jj-store-three-profiles-cold JJ_STORE_DEV_PORT=7461 JJ_STORE_DEV_RUSTFS_RUNTIME=$PWD/runtime/embedded-rustfs/target/debug/jj-store-rustfs DEVELOPER_DIR=/Library/Developer/CommandLineTools pnpm dev:restart",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final wrapper in fresh processes reuses fixture, links and identities; no new WorkStore publication."
+      },
+      {
+        "command": "node --input-type=module",
+        "result": "pass",
+        "failures": 0,
+        "note": "assert.deepEqual compares the complete before/after acceptance JSON: identities and exact native code/WorkStore snapshots retained; no read or restart-induced publications."
+      },
+      {
+        "command": "node .scratch/agent-seed-cwd-acceptance.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final agent seed executed in the isolated real Git-backed JJ fixture. Explicitly reused the isolated compiled Kingfisher cache; 37 setup/capture/remove subprocesses kept fixture cwd; no hook configuration remained in fixture or source checkout."
+      },
+      {
+        "command": "cua_repl: built main demo reload, three linked projects, disclosure flags/reload and active-child collapse/reload; open server-only Overview; return to Projects",
+        "result": "pass",
+        "failures": 0,
+        "note": "Expanded projects and collapsed repository section restore after browser reload; explicit active-child collapse restores false. Server-only main and README load without a physical folder. Saved .scratch/three-profiles-projects.jpg; user-owned tab unchanged. An initial heading locator omitted the Markdown collapse-section accessible prefix; AX state confirmed correct content."
+      },
+      {
+        "command": "pnpm exec prettier --check (all changed source, test, package and canonical files)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final changed-file formatting passes after redundant story option formatting."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final 457-module source audit passes."
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "15 package boundaries pass."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final 4 validators, 21 chapters, 132 requirements pass."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final spec-first gate: 23 protected files and 6 canonical chapters pass."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final evidence bookkeeping passes for 111 tasks; milestone statuses unchanged."
+      },
+      {
+        "command": "JJ_STORE_DEV_ROOT=/tmp/jj-store-three-profiles-cold JJ_STORE_DEV_PORT=7461 pnpm dev:stop; node --input-type=module",
+        "result": "pass",
+        "failures": 0,
+        "note": "Owned isolated service stopped; verified test fixture and temporary installer prefix removed. Interactive main demo remains running."
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final ledger formatting passes."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "Three real development repository profiles, native sample links, browser sidebar flags and explicit CLI installer. Production storage/API contracts unchanged. Git-backed browser serving excluded by user choice. Rust qualification and root aggregates are out of scope; builds only supply real fixture/startup artifacts. The cold seed also fixes its source-cwd escape; complete affected seeding tests and an isolated live capture/teardown cover that harness boundary.",
+    "before": "One native checkout; all three projects linked to it. Sidebar flags reset on app mount. No installer script.",
+    "formats": "Native manifest/WAL and Git SHA-1 companion authorities unchanged. Private profile marker version 1; browser navigation flags version 1. Enclosing Jujutsu change muputzvr.",
+    "versions": "JJ 0.45.1; Node 24.10.0; pnpm 10.32.1; locked CLI, Svelte, Storybook and Vitest.",
+    "next": "Review the three repository profiles and persisted sidebar in the main demo; run pnpm cli:install for an explicit user CLI installation.",
+    "deferred": [
+      "Git-backed JJ browser serving remains M13.4; visual baseline approval and release qualification remain separate."
+    ],
+    "artifacts": "Ignored .scratch/three-profiles-*.log and navigation-persistence-*.log; isolated /tmp/jj-store-three-profiles-cold and /tmp/jj-store-cli-install-review. Durable source chapter/ledger evidence retains scope; ignored .scratch/three-profiles-cold-before.json and -after.json bind the exact compared snapshots. .scratch/three-profiles-projects.jpg shows the native home and its three distinct links."
   }
 ]
 ```

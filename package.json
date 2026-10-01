@@ -42,6 +42,7 @@
     "dev:restart": "node scripts/dev-demo.mjs restart",
     "dev:reset": "node scripts/dev-demo.mjs reset",
     "dev:stop": "node scripts/dev-demo.mjs stop",
+    "cli:install": "node scripts/install-cli.mjs",
     "dev:seed:work": "node scripts/dev-demo.mjs seed-work",
     "web:test": "tsx --test web/tests/*.test.ts",
     "web:test:browser": "pnpm web:build && node scripts/browser-fixtures.mjs && playwright test --config web/playwright.config.ts",
