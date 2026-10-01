@@ -300,6 +300,10 @@ async fn local_trusted_bootstrap_and_http_admission_fail_closed() {
         serde_json::from_slice(&to_bytes(response.into_body(), 64 * 1024).await.unwrap()).unwrap();
     assert_eq!(repositories["repositories"][0]["id"], REPO.to_string());
     assert_eq!(repositories["repositories"][0]["name"], "Local fixture");
+    assert_eq!(
+        repositories["repositories"][0]["principal"],
+        ACTOR.to_string()
+    );
 
     let snapshot = router
         .clone()
@@ -452,7 +456,16 @@ async fn authenticated_repository_discovery_reauthorizes_one_token_per_repositor
         let mut policy = TokenPolicy::new(Scope::Repository(*repository));
         if let Some((permission, expires_at)) = grant {
             policy
-                .grant(&shared, ACTOR, *permission, *expires_at)
+                .grant(
+                    &shared,
+                    if index == 1 {
+                        m::PrincipalId::new([99; 16])
+                    } else {
+                        ACTOR
+                    },
+                    *permission,
+                    *expires_at,
+                )
                 .unwrap();
         }
         create_repository(
@@ -524,8 +537,8 @@ async fn authenticated_repository_discovery_reauthorizes_one_token_per_repositor
     assert_eq!(
         body["repositories"],
         serde_json::json!([
-            {"id":repositories[0].0,"name":"lapis/alpha","permission":"read"},
-            {"id":repositories[1].0,"name":"lapis/beta","permission":"write"}
+            {"id":repositories[0].0,"name":"lapis/alpha","permission":"read","principal": ACTOR},
+            {"id":repositories[1].0,"name":"lapis/beta","permission":"write","principal": m::PrincipalId::new([99;16])}
         ])
     );
 

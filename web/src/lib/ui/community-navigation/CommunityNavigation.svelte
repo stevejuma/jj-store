@@ -70,7 +70,13 @@
   function compactItems(
     section: CommunityNavigationSectionModel,
   ): readonly CommunityNavigationItemModel[] {
-    return section.items.flatMap((item) => [item, ...(item.children ?? [])]);
+    return [
+      ...new Map(
+        section.items
+          .flatMap((item) => [item, ...(item.children ?? [])])
+          .map((item) => [item.id, item]),
+      ).values(),
+    ];
   }
 
   function setCompactSectionOpen(sectionId: string, open: boolean): void {
@@ -157,7 +163,7 @@
 
       {#each model.sections as section (section.id)}
         {#if compact}
-          {@const SectionIcon = navigationSectionIcon()}
+          {@const SectionIcon = navigationSectionIcon(section.id)}
 
           <div class="lc-community-navigation__compact-section">
             <Popover.Root

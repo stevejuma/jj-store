@@ -3,7 +3,10 @@ export type StorePage =
 export interface CommunityNavigationItemModel {
   id: string;
   label: string;
-  kind: StorePage | "repository";
+  kind:
+    StorePage | "repository" | "project" | "more-projects" | "retry-projects";
+  home?: string;
+  project?: string;
   children?: readonly CommunityNavigationItemModel[];
   initiallyExpanded?: boolean;
 }
@@ -18,7 +21,7 @@ export interface CommunityNavigationModel {
   sections: readonly CommunityNavigationSectionModel[];
 }
 export function communityNavigationSectionKind(
-  _section: CommunityNavigationSectionModel,
+  section: CommunityNavigationSectionModel,
 ) {
-  return "repositories";
+  return section.id === "projects" ? "projects" : "repositories";
 }

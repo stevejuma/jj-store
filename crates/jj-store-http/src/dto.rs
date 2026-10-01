@@ -68,6 +68,7 @@ pub(crate) struct RepositorySummary {
     pub id: RepositoryId,
     pub name: String,
     pub permission: EffectivePermission,
+    pub principal: jj_store_model::PrincipalId,
 }
 
 #[derive(Serialize, JsonSchema)]

@@ -25,6 +25,13 @@ reading a comment never dispatches an agent.
 
 ## Initial delivery boundaries
 
+Review summary presentation is derived from the same selected ReviewStore root
+as the page, including resumed pages. It records the immutable creation actor
+and time, last accepted event time and a bounded excerpt of the selected initial
+comment. Hidden, tombstoned or conflicted comment bodies produce no excerpt.
+This adds a rebuildable read projection and changes no native persistence
+format.
+
 The active sequence is publication foundation, AgentStore model and capture,
 ReviewStore exact anchors, LocalTrusted API/CLI integrations, shared UI, then
 cold recovery and real-harness qualification. Codex CLI 0.156.1, Cursor 3.22.7

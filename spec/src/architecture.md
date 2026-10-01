@@ -95,6 +95,9 @@ extracted when integration changes their responsibilities. Production web
 modules cannot import catalog fixtures, and presentation modules cannot import
 the API or controller layers.
 
+Native navigation tree styles and catalog layout assertions have separate owners
+so adding hierarchy and visual regressions preserves those no-growth limits.
+
 The browser may bundle reviewed static integration artwork under `web/public`
 and Storybook serves that same directory so catalog and production use one
 asset. Git author presentation depends directly on the locked browser-safe hash
@@ -425,3 +428,11 @@ Git transport supervision uses the already resolved rustix 1.1.5 process API
 inside the CLI only. Non-reaping wait retains the owned group leader's PID until
 cleanup completes, preventing a cleanup signal from targeting a recycled PID. No
 transport or process dependency enters native authority layers.
+
+The Projects hub preserves native model/service ownership and adds only an
+installation UI orchestration layer and read-only HTTP summary contract.
+Production build qualification uses the generated Vite dependency manifest to
+serve application-reachable chunks, styles and fonts plus declared agent icons.
+Unused package-emitted workers are excluded, while server asset admission limits
+remain unchanged. The manifest traversal regression is wired into the existing
+governance test lane.

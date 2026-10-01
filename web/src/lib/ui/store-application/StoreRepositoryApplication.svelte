@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { AppShellDisplayMode } from "@lapismd/design-core/shell";
   import type { StoreController } from "../../controller/contracts.js";
+  import StoreProjects from "../store-work/StoreProjects.svelte";
   import StoreWork from "../store-work/StoreWork.svelte";
   import StoreApplication from "./StoreApplication.svelte";
   import CommunityProjectsRepositoryLog from "../community-projects/CommunityProjectsRepositoryLog.svelte";
@@ -40,8 +41,12 @@
   {layoutStorage}
 >
   {#snippet children(page)}
-    {#if page === "projects" && controller.work}<StoreWork
+    {#if page === "projects" && controller.projects}<StoreProjects
+        {controller}
+      />
+    {:else if page === "projects" && controller.work}<StoreWork
         work={controller.work}
+        principal={state.repository.principal}
         repositories={state.repositories}
         onOpenRepository={controller.actions.openRepository}
         writable={state.accessMode === "local_trusted" ||

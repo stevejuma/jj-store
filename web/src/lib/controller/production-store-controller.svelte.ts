@@ -1,10 +1,8 @@
+import { createProductionProjects } from "./production-projects-integration.js";
+import { createProductionConnect } from "./production-store-connect.js";
 import { connectionDeniedMessage, storeErrorMessage } from "./store-error.js";
-import {
-  createWorkReader,
-  hasBrowseContext,
-} from "./production-work-integration.js";
+
 import { ApiError } from "../api/client.js";
-import { repositories as loadRepositories } from "../api/repositories.js";
 import type { StoreController } from "./contracts.js";
 import { HttpStoreDataSource } from "./http-store-data-source.js";
 import type { StoreDataSource } from "./native-data-source.js";
@@ -61,17 +59,28 @@ export function createProductionStoreController(
   if (history.error)
     Object.assign(data.status, { navigation: "failed", error: history.error });
 
-  const { work, restorePage } = createWorkReader(
-    activeSource,
-    history,
+  const {
+    projects,
+    clear: clearProjects,
+    stopEvents: stopProjectEvents,
+  } = createProductionProjects(
     data,
-    reader.restorePage,
+    history,
+    () => sessionToken,
+    () => session,
+    () => feed.abort(),
+    options.fetcher,
   );
   async function restoreRoute() {
-    if (!source || !hasBrowseContext(history.route)) return;
+    if (history.route.page === "projects") {
+      version += 1;
+      await projects.restore();
+      return;
+    }
+    if (!source || !history.route.snapshotOperationId) return;
     version += 1;
     clearProductionStoreView(data);
-    await restorePage();
+    await reader.restorePage();
   }
 
   const search = createProductionStoreSearch({
@@ -94,8 +103,9 @@ export function createProductionStoreController(
     const repositoryStatus = data.status.repositories;
     version += 1;
     feed.abort();
+    stopProjectEvents();
     discovery.abort();
-    work.reset();
+    if (!preserveSession) clearProjects();
     source?.close();
     source = null;
     settings.clear();
@@ -112,7 +122,8 @@ export function createProductionStoreController(
   async function connectRepository(repository: string, token: string | null) {
     disconnect("", false, true);
     data.status.connection = "connecting";
-    const ticket = ++version;
+    const ticket = ++version,
+      requestedRoute = history.route;
     const credential =
       data.accessMode === "authenticated" ? (token ?? sessionToken) : null;
     if (data.accessMode === "authenticated" && !credential)
@@ -133,7 +144,7 @@ export function createProductionStoreController(
     try {
       const capabilities = await active.capabilities();
       const captured = await active.snapshot();
-      if (!current(ticket, active)) return;
+      if (!current(ticket, active) || history.route !== requestedRoute) return;
       data.heads = [...captured.heads];
       data.head = captured;
       data.capabilities = capabilities;
@@ -157,7 +168,7 @@ export function createProductionStoreController(
         history.route.snapshotOperationId ||
         history.route.page === "projects"
       )
-        await restorePage();
+        await reader.restorePage();
     } catch (cause) {
       if (!current(ticket, active)) return;
       const message = storeErrorMessage(cause);
@@ -165,40 +176,27 @@ export function createProductionStoreController(
       data.status.connection = "failed";
     }
   }
-  async function connect(repository: string, token: string | null) {
-    if (data.accessMode !== "authenticated" || token === null)
-      return connectRepository(repository, token);
-    disconnect();
-    const ticket = version;
-    discovery = new AbortController();
-    data.status.connection = "connecting";
-    data.status.repositories = "loading";
-    try {
-      const repositories = await loadRepositories(
-        token,
-        options.fetcher,
-        discovery.signal,
-      );
-      if (ticket !== version) return;
-      data.repositories = repositories.map((candidate) => ({ ...candidate }));
-      data.status.repositories = data.repositories.length ? "ready" : "empty";
+  const connect = createProductionConnect({
+    data,
+    route: () => history.route,
+    projects,
+    connectRepository,
+    disconnect,
+    version: () => version,
+    discovery: (abort) => {
+      discovery = abort;
+    },
+    token: (token) => {
       sessionToken = token;
-      const requested = data.repositories.find(
-        (candidate) =>
-          candidate.id === (repository.trim() || history.route.repository),
-      );
-      const selected =
-        requested ??
-        (data.repositories.length === 1 ? data.repositories[0] : undefined);
-      if (selected) await connectRepository(selected.id, token);
-      else data.status.connection = "disconnected";
-    } catch (cause) {
-      const message = storeErrorMessage(cause);
-      disconnect(message, cause instanceof ApiError);
-      data.status.connection = "failed";
-    }
-  }
+    },
+    fetcher: options.fetcher,
+  });
   async function refresh() {
+    if (history.route.page === "projects") {
+      await projects.refresh();
+      data.status.refreshAvailable = false;
+      return;
+    }
     const active = activeSource();
     feed.abort();
     const captured = await active.snapshot(true);
@@ -217,7 +215,7 @@ export function createProductionStoreController(
       data,
       feed.signal,
     );
-    if (selected || history.route.page === "projects") await restorePage();
+    if (selected) await reader.restorePage();
   }
   const mutations = createProductionStoreMutations({
     state: data.mutation,
@@ -238,7 +236,7 @@ export function createProductionStoreController(
     clearProductionStoreView(data);
     search.clear();
     history.selectSnapshot(id);
-    await restorePage();
+    await reader.restorePage();
   }
   const selectRevision = createProductionRevisionSelector(
     data,
@@ -275,7 +273,8 @@ export function createProductionStoreController(
     refresh,
     selectOperation,
     restoreRoute,
-    activeRepository: () => source?.repository,
+    activeRepository: () =>
+      data.status.connection === "connected" ? source?.repository : undefined,
     invalidate: () => {
       version += 1;
     },
@@ -293,13 +292,15 @@ export function createProductionStoreController(
   });
 
   return {
-    work,
+    projects,
     get state() {
       return productionControllerView(
         data,
         history,
         source,
         options.now?.() ?? Math.floor(Date.now() / 1000),
+        data.storageReady &&
+          (data.accessMode === "local_trusted" || sessionToken !== null),
       );
     },
     actions,

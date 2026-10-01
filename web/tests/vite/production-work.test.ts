@@ -120,3 +120,51 @@ test("loaded hierarchy orders children after parents and retains page fragments"
     ["child", 1],
   ]);
 });
+
+test("revoked WorkStore reads clear protected content and retained requests", async () => {
+  const { ApiError } = await import("../../src/lib/api/client.js");
+  const transport: WorkTransport = {
+    page: async () => {
+      throw new ApiError("access_denied");
+    },
+    apply: async (r) => ({
+      status: "outcome_unknown",
+      request_id: r.request_id,
+    }),
+    status: async (id) => ({ status: "not_known", request_id: id }),
+  };
+  const work = createWorkController({
+    source: () => transport,
+    route: () => ({}),
+    select: () => {},
+    changed: () => {},
+  });
+  work.state.comments = [
+    {
+      schema_version: 1,
+      id: "33".repeat(16),
+      task: "44".repeat(16),
+      reply_to: null,
+      body: "Protected discussion",
+      version: 1,
+      actor: {
+        created_by: "55".repeat(16),
+        updated_by: "55".repeat(16),
+        created_at_millis: 1,
+        updated_at_millis: 1,
+      },
+    },
+  ];
+  await work.submit({
+    command: "create_project",
+    id: "66".repeat(16),
+    title: "Pending",
+    body: "",
+  });
+  expect(work.state.pending).not.toBeNull();
+  await work.refresh();
+  expect(work.state.comments).toEqual([]);
+  expect(work.state.pending).toBeNull();
+  expect(work.state.loading).toBe(false);
+  expect(work.state.error).toContain("access denied");
+});

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreRepositoryPicker from "./StoreRepositoryPicker.svelte";
   import * as Alert from "@lapismd/design-core/shadcn/alert";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as Card from "@lapismd/design-core/shadcn/card";
@@ -84,23 +85,12 @@
           >
         </Alert.Root>
       {:else if repositories.length > 0}
-        <div
-          class="store-connection__repositories"
-          aria-label={accessMode === "local_trusted"
-            ? "Local repositories"
-            : "Authorized repositories"}
-        >
-          {#each repositories as candidate (candidate.id)}
-            <Button
-              variant="outline"
-              disabled={pending}
-              onclick={() => void openRepository(candidate.id)}
-            >
-              <span>{candidate.name}</span>
-              <small>{candidate.id}</small>
-            </Button>
-          {/each}
-        </div>
+        <StoreRepositoryPicker
+          {repositories}
+          label="Repository"
+          disabled={pending}
+          onChange={(repository) => void openRepository(repository)}
+        />
       {:else if accessMode === "local_trusted"}
         <Alert.Root>
           <Alert.Title>No registered repositories</Alert.Title>
@@ -168,17 +158,5 @@
     gap: 0.5rem;
     min-height: 5rem;
     color: var(--muted-foreground);
-  }
-  .store-connection__repositories {
-    display: grid;
-    gap: 0.5rem;
-  }
-  :global(.store-connection__repositories button) {
-    justify-content: space-between;
-    min-height: 3rem;
-  }
-  :global(.store-connection__repositories small) {
-    color: var(--muted-foreground);
-    font-family: var(--font-mono);
   }
 </style>

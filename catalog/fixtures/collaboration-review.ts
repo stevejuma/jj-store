@@ -43,6 +43,12 @@ const summary: ReviewThread = {
   comment_count: 3,
   comment_conflict_count: 0,
   last_event_sequence: 3,
+  presentation: {
+    created_by: reviewer,
+    created_at_millis: Date.UTC(2026, 8, 28),
+    updated_at_millis: Date.UTC(2026, 8, 30),
+    excerpt: "Preserve the exact operation when this retry races",
+  },
 };
 
 export const reviewThreads: ReviewThread[] = [

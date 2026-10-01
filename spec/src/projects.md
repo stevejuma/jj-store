@@ -4,18 +4,29 @@ WorkStore is a repository-owned application domain alongside AgentStore and
 ReviewStore. One project home owns metadata, tasks and discussion history. A
 home may contain several projects and may also contain ordinary code.
 
+Repository directory rows and cards use Community's name/description,
+contributor avatar, commit/review/task activity bar and relative date anatomy.
+The native profile uses the latest selected change summary and contributor when
+there is no independently stored repository description or owner. Code counts
+and activity come from bounded, separately authorized snapshots; partial pages
+and unavailable homes remain explicit. Mine continues to mean administer access.
+Review rows and cards use the current root comment excerpt, full bound thread
+identity, exact artifact label, comment count, creation actor and last accepted
+event date. Tombstoned, hidden and conflicted root comments expose no old body.
+
 ## Requirements
 
-| ID           | Requirement                                                                                                                                                                                                                     |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| JST-WORK-001 | Projects MUST have stable identities and link repositories by stable RepositoryId. Retired links preserve existing task targets; new targets require active membership.                                                         |
-| JST-WORK-002 | Tasks MUST have title, body, optional linked repository, optional same-project parent and open, in_progress, blocked or done state. Parent cycles and cross-project parents MUST be rejected.                                   |
-| JST-WORK-003 | Comments MUST support same-task threaded replies, versioned edits and tombstones with authenticated actors and immutable history.                                                                                               |
-| JST-WORK-004 | WorkStore MUST use typed repository-bound immutable records, bounded persistent radix catalogs, an independent manifest root/version, manifest CAS, WAL and durable request receipts. Unselected objects MUST remain invisible. |
-| JST-WORK-005 | Reads MUST pin the selected WorkStore root. Mutations MUST validate exact entity and project versions; identical retries and reconstructed-service status MUST return the original durable receipt.                             |
-| JST-WORK-006 | Home repository read/write permissions MUST govern metadata; linked-code reads MUST separately authorize the target repository. CLI, RPC and HTTP MUST share owned service semantics.                                           |
-| JST-WORK-007 | Cold recovery and manifest-last native copy MUST verify every selected and historical WorkStore closure. Unsupported origin replication MUST fail closed for a WorkStore home while retaining its existing origin ledger.       |
-| JST-WORK-008 | CLI and browser MUST expose project links, task state/hierarchy and comments. SSE announces freshness; explicit refresh changes displayed snapshots. Unknown command outcomes retain the request identity.                      |
+| ID           | Requirement                                                                                                                                                                                                                            |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| JST-WORK-001 | Projects MUST have stable identities and link repositories by stable RepositoryId. Retired links preserve existing task targets; new targets require active membership.                                                                |
+| JST-WORK-002 | Tasks MUST have title, body, optional linked repository, optional same-project parent and open, in_progress, blocked or done state. Parent cycles and cross-project parents MUST be rejected.                                          |
+| JST-WORK-003 | Comments MUST support same-task threaded replies, versioned edits and tombstones with authenticated actors and immutable history.                                                                                                      |
+| JST-WORK-004 | WorkStore MUST use typed repository-bound immutable records, bounded persistent radix catalogs, an independent manifest root/version, manifest CAS, WAL and durable request receipts. Unselected objects MUST remain invisible.        |
+| JST-WORK-005 | Reads MUST pin the selected WorkStore root. Mutations MUST validate exact entity and project versions; identical retries and reconstructed-service status MUST return the original durable receipt.                                    |
+| JST-WORK-006 | Home repository read/write permissions MUST govern metadata; linked-code reads MUST separately authorize the target repository. CLI, RPC and HTTP MUST share owned service semantics.                                                  |
+| JST-WORK-007 | Cold recovery and manifest-last native copy MUST verify every selected and historical WorkStore closure. Unsupported origin replication MUST fail closed for a WorkStore home while retaining its existing origin ledger.              |
+| JST-WORK-008 | CLI and browser MUST expose project links, task state/hierarchy and comments. SSE announces freshness; explicit refresh changes displayed snapshots. Unknown command outcomes retain the request identity.                             |
+| JST-WORK-009 | Browse summaries MUST filter the complete authorized selected root before paging, derive counts and parent labels from that root, bind exact queries to opaque continuations and share the existing bounded WorkStore cursor registry. |
 
 ## Initial profile
 
@@ -76,3 +87,67 @@ visible fragment rather than inventing another relationship. Cold RustFS
 qualification covers separate source/destination stores, historical WorkStore
 closures after checkpointing, retained origin ledger, local readiness and
 durable service receipts after both stores restart.
+
+## Projects hub browse reads
+
+The Projects hub discovers currently authorized homes within one installation.
+Repository-scoped browse summaries search title/body before pagination and
+expose project task counts, task comment/subtask counts, timestamps and parent
+labels from one selected WorkStore root. Projects sort by case-insensitive title
+and stable identity; tasks sort by descending update time then stable identity.
+Filters and continuations bind the exact query and retained root. The hub keeps
+independent home snapshots and visibly reports partial discovery, failed homes
+and remaining pages. Linked repository metadata never grants code access.
+
+The installation directory includes Projects, Tasks, Reviews and Repositories.
+The sidebar reads unfiltered projects independently from main-view queries and
+nests active linked repositories. Reviews remain owned by ReviewStore and are
+read with separate target authorization and independent pinned pagination.
+Missing project metadata never broadens project review scope. Repository
+permission changes clear protected retained results on explicit refresh.
+
+Projects navigation uses Community's FolderGit2 icon, restores the section gap
+above collapsible groups, and places each project expand/collapse control at the
+trailing edge of its row without reserving space for an absent row menu.
+
+Directory card/list layout and collapsible Mine/Other groups copy Community,
+including the inset content spacing beneath collection headings. Project titles
+and descriptions MUST NOT be repeated as unstyled text above the collections.
+The task title and refresh action share the first detail row, with refresh at
+the far right. Subtask lists align with the detail content without an additional
+list inset; review rows retain the collection heading inset and distribute their
+five native fields across the full row, with the comment count at the trailing
+edge. Community's absent author and timestamp fields MUST NOT reserve columns.
+Task disclosures copy Community's review-section heading treatment: plain
+secondary text at weight 500, an adjacent chevron, 1.5rem horizontal trigger
+inset, 2.5rem row height and 0.1rem section spacing, while content retains its
+existing alignment. Project filters live in the far-right rail; breadcrumbs use
+the centered top shell header and the mobile toolbar. Forms reuse Settings-style
+bordered field groups with divided rows. Projects and tasks belong to Mine only
+when their creation actor matches the current principal reauthorized for their
+home. Repositories belong to Mine when the current session can administer them;
+this is an access grouping and does not introduce repository ownership. Unknown
+principals leave authored items in Other. Selection controls use one searchable
+repository Command View with full native IDs as values, distinct duplicate
+names, retained inaccessible selections, permission-scoped choices, and optional
+project-only/all choices. Repository picker search sits in the first row beside
+the trailing close control; its accessible title is visually hidden because the
+placeholder already identifies the search surface. Editing a comment previews
+the displayed original body independently from its mutable draft, with a single
+truncated line and full-text title.
+
+Task selectors use the same Command View composition with title, state,
+repository context and shortened identity, retaining the full native value.
+Parent choices stay within the project and exclude the task being edited. Server
+search and snapshot-bound pagination remain authoritative; an unavailable
+current selection stays bound until the user changes it. Description composers
+occupy the full field width below their labels in project and task forms. Rail
+search uses one Input Group with an inline trailing icon-only Search submit
+action and an accessible, visually hidden label. The search control has no
+visible border or focus ring, a transparent background and compact top and
+bottom row padding, including a single search-only filter group, matching the
+Command View search treatment. Task-state filters use the shared shadcn dropdown
+radio group with a status icon beside the selected value and each choice.
+Repository directory rows size native actions by their content rather than
+Community's four-column activity metadata; names and access labels wrap within
+the remaining width so opening the right rail cannot cause text to overlap.

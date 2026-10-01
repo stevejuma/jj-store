@@ -4,7 +4,9 @@ use crate::mutations::{
 };
 use crate::review_mutations::{apply as review_command_apply, status as review_command_status};
 use crate::search::{Query as SearchQuery, search, search_status};
-use crate::work::{apply as work_apply, page as work_page, status as work_status};
+use crate::work::{
+    apply as work_apply, browse as work_browse, page as work_page, status as work_status,
+};
 use crate::{
     contract::{Document, Reply},
     dto::*,
@@ -267,6 +269,7 @@ macro_rules! endpoints {
             (get, "/repos/{repo}/reviews/threads/{thread}", review_thread, Empty, crate::collaboration::ReviewDetail, Reply::Json(200)),
             (post, "/repos/{repo}/reviews/commands", review_command_apply, Empty, jj_store_service::review_mutations::Outcome, Reply::Json(200)),
             (get, "/repos/{repo}/reviews/commands/{request_id}", review_command_status, Empty, jj_store_service::review_mutations::Status, Reply::Json(200)),
+            (get, "/repos/{repo}/work/browse", work_browse, jj_store_service::work::WorkBrowseQuery, jj_store_service::work::WorkBrowsePage, Reply::Json(200)),
             (get, "/repos/{repo}/work", work_page, jj_store_service::work::WorkQuery, jj_store_service::work::WorkPage, Reply::Json(200)),
             (post, "/repos/{repo}/work/commands", work_apply, Empty, jj_store_service::work::Outcome, Reply::Json(200)),
             (get, "/repos/{repo}/work/commands/{request_id}", work_status, Empty, jj_store_service::work::Status, Reply::Json(200)),

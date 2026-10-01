@@ -7,6 +7,7 @@ export function productionStoreView(
   route: StoreRoute,
   options: {
     connected: boolean;
+    installationReady?: boolean;
     repository: string;
     canBack: boolean;
     canForward: boolean;
@@ -15,6 +16,7 @@ export function productionStoreView(
 ): StoreControllerState {
   const repository = options.repository;
   return {
+    installationReady: options.installationReady ?? false,
     accessMode: data.accessMode,
     storageReady: data.storageReady,
     backups: data.backups,
@@ -92,7 +94,11 @@ export function productionStoreView(
     reviewPatch: data.reviewPatch,
     reviewActionMessage: data.reviewActionMessage,
     reviewActionRequestId: data.reviewActionRequestId,
-    authenticated: options.connected && data.status.connection === "connected",
+    authenticated:
+      options.connected &&
+      (data.status.connection === "connected" ||
+        data.status.repositories === "ready" ||
+        data.status.repositories === "empty"),
     member: {
       id:
         data.accessMode === "local_trusted"
@@ -131,9 +137,11 @@ export function productionControllerView(
   >,
   source: import("./native-data-source.js").StoreDataSource | null,
   now: number,
+  installationReady = false,
 ) {
   return productionStoreView(data, history.route, {
-    connected: source !== null,
+    connected: source !== null || installationReady,
+    installationReady,
     repository: source?.repository ?? history.route.repository,
     canBack: history.canBack,
     canForward: history.canForward,

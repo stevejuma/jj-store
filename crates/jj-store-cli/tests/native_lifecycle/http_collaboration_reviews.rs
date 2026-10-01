@@ -128,6 +128,11 @@ async fn local_trusted_http_pages_root_pinned_review_threads_and_resolves_detail
 
     let (status, first_page) = json(&router, "reviews/threads?limit=1", None).await;
     assert_eq!(status, StatusCode::OK, "{first_page}");
+    let presentation = &first_page["threads"][0]["presentation"];
+    assert!(presentation["created_by"].is_string());
+    assert!(presentation["created_at_millis"].is_number());
+    assert!(presentation["updated_at_millis"].is_number());
+    assert!(presentation["excerpt"].is_string());
     let cursor = first_page["next_cursor"].as_str().unwrap();
     let reply_request = command(
         125,
@@ -164,6 +169,10 @@ async fn local_trusted_http_pages_root_pinned_review_threads_and_resolves_detail
     );
     assert_eq!(detail["comments"].as_array().unwrap().len(), 2);
     assert_eq!(detail["events"].as_array().unwrap().len(), 2);
+    assert_eq!(
+        detail["thread"]["presentation"]["excerpt"],
+        "Initial review"
+    );
 
     let (status, missing) = json(
         &router,

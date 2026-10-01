@@ -1,5 +1,8 @@
 //! Home-authorized native project/task reads and receipt-backed commands.
+mod browse;
+mod browse_models;
 mod commands;
+pub use browse_models::*;
 mod cursors;
 mod models;
 mod reads;

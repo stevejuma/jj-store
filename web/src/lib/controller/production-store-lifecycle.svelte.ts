@@ -74,6 +74,10 @@ export function followProductionExternalRoutes(options: {
       options.data.status.error = result.message;
       return;
     }
+    if (result.kind === "route" && result.route.page === "projects") {
+      void options.restore();
+      return;
+    }
     const source = options.source();
     if (result.kind !== "route" || !source) return;
     if (result.route.repository === source.repository) {
@@ -130,8 +134,9 @@ export async function initializeProductionStore(options: {
       (options.data.repositories.length === 1
         ? options.data.repositories[0]
         : undefined);
-    if (selected) await options.connect(selected.id, null);
-    else options.data.status.connection = "disconnected";
+    if (selected || options.history.route.page === "projects")
+      await options.connect(selected?.id ?? "", null);
+    else await options.connect("", null);
   } catch (cause) {
     if (cause instanceof DOMException && cause.name === "AbortError") return;
     options.data.status.connection = "failed";

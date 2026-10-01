@@ -77,7 +77,7 @@ test("LocalTrusted bootstrap auto-opens the sole catalog repository without a to
   controller.actions.destroy();
 });
 
-test("LocalTrusted bootstrap exposes a chooser for several repositories", async () => {
+test("LocalTrusted bootstrap exposes Projects for several repositories", async () => {
   const second = "cd".repeat(16);
   const controller = createProductionStoreController({
     fetcher: async (input) => {
@@ -99,12 +99,36 @@ test("LocalTrusted bootstrap exposes a chooser for several repositories", async 
             { id: second, name: "Two", permission: "admin" },
           ],
         });
+      if (path.includes("/work/browse"))
+        return response({
+          version: 1,
+          snapshot: {
+            repo_id: path.includes(repository) ? repository : second,
+            epoch: "11".repeat(16),
+            manifest_revision: 0,
+            published_seq: 0,
+            work_root: null,
+            work_state_version: 0,
+          },
+          projects: [],
+          tasks: [],
+          total_matches: 0,
+          next_cursor: null,
+        });
       throw new Error(`unexpected request ${path}`);
     },
   });
-  await ready(() => controller.state.accessMode === "local_trusted");
+  await ready(
+    () =>
+      controller.state.accessMode === "local_trusted" &&
+      !controller.projects!.loading,
+  );
 
   expect(controller.state.status.connection).toBe("disconnected");
+  expect(controller.state.installationReady).toBe(true);
+  expect(controller.state.route.page).toBe("projects");
+  expect(controller.projects!.homes).toHaveLength(2);
+  expect(controller.projects!.homes.every((h) => h.error === "")).toBe(true);
   expect(controller.state.repositories.map(({ name }) => name)).toEqual([
     "One",
     "Two",

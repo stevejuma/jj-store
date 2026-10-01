@@ -213,3 +213,47 @@ test("WorkStore task routes need a project and preserve independent code pin", (
     "invalid",
   );
 });
+
+test("Projects hub routes round-trip full identities and filters without a code pin", () => {
+  const base = storeRouteFromHash("#/projects");
+  assert.equal(base.kind, "route");
+  if (base.kind !== "route") return;
+  const selected = {
+    ...base.route,
+    page: "projects" as const,
+    projectsHub: true,
+    repository: "11".repeat(16),
+    projectId: "22".repeat(16),
+    taskId: "33".repeat(16),
+    workTab: "tasks" as const,
+    workQuery: "native tasks",
+    workState: "blocked" as const,
+    workRepository: "44".repeat(16),
+    workHome: "",
+  };
+  const hash = storeRouteToHash(selected)!;
+  const result = storeRouteFromHash(hash);
+  assert.equal(result.kind, "route");
+  if (result.kind === "route") assert.deepEqual(result.route, selected);
+  for (const invalid of [
+    "#/projects?task=" + "33".repeat(16),
+    "#/projects?home=bad",
+    "#/projects?tab=board",
+    "#/projects?tab=tasks&tab=projects",
+  ])
+    assert.equal(storeRouteFromHash(invalid).kind, "invalid");
+});
+
+test("Projects hub carries a legacy home code operation independently of WorkStore", () => {
+  const parsed = storeRouteFromHash(
+    `#/projects?home=${repository}&project=${"11".repeat(16)}&at_op=${operation}`,
+  );
+  assert.equal(parsed.kind, "route");
+  if (parsed.kind !== "route") return;
+  assert.equal(parsed.route.snapshotOperationId, operation);
+  assert.ok(storeRouteToHash(parsed.route)?.includes(`at_op=${operation}`));
+  assert.equal(
+    storeRouteFromHash(`#/projects?at_op=${operation}`).kind,
+    "invalid",
+  );
+});

@@ -8,7 +8,7 @@
   onDestroy(() => controller.actions.destroy());
 </script>
 
-{#if controller.state.authenticated}
+{#if controller.state.authenticated || controller.state.installationReady}
   <StoreRepositoryApplication {controller} />
 {:else}
   <StoreConnection

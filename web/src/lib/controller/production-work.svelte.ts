@@ -16,6 +16,35 @@ export function createWorkController(context: {
   const state = $state(emptyWorkState());
   let version = 0,
     session = 0;
+  let reads = new AbortController();
+  const cached = new Map<string, ReturnType<typeof readView>>();
+  const key = (project?: string | null, task?: string | null) =>
+    `${project ?? ""}:${task ?? ""}`;
+  function readView() {
+    const {
+      projects,
+      project,
+      tasks,
+      task,
+      comments,
+      snapshot,
+      projectCursor,
+      taskCursor,
+      commentCursor,
+    } = state;
+    return {
+      savedPins: [...pins],
+      projects,
+      project,
+      tasks,
+      task,
+      comments,
+      snapshot,
+      projectCursor,
+      taskCursor,
+      commentCursor,
+    };
+  }
   const pins = new Map<string, string>();
   const message = (cause: unknown) =>
     cause instanceof Error ? cause.message : "Request failed";
@@ -55,18 +84,39 @@ export function createWorkController(context: {
   ) {
     const source = context.source(),
       ticket = version;
-    const result = await source.page({ ...query, limit: 50 });
+    const result = await source.page({ ...query, limit: 50 }, reads.signal);
     if (ticket !== version || source !== context.source()) return;
     accept(result, kind, more);
   }
-  async function restore() {
+  async function restore(refresh = true) {
+    if (state.snapshot && !state.error && !state.loading) {
+      cached.set(key(state.project?.id, state.task?.id), readView());
+      if (cached.size > 16) cached.delete(cached.keys().next().value!);
+    }
+    reads.abort();
+    reads = new AbortController();
     const ticket = ++version;
     state.loading = true;
     state.error = "";
-    state.project = null;
-    state.task = null;
-    state.tasks = [];
-    state.comments = [];
+    const selection = context.route();
+    const saved =
+      !refresh && cached.get(key(selection.projectId, selection.taskId));
+    if (saved) {
+      const { savedPins, ...view } = saved;
+      pins.clear();
+      for (const [kind, pin] of savedPins) pins.set(kind, pin);
+      Object.assign(state, view, { loading: false });
+      return;
+    }
+    if (
+      selection.projectId !== state.project?.id ||
+      (selection.taskId ?? null) !== (state.task?.id ?? null)
+    ) {
+      state.project = null;
+      state.task = null;
+      state.tasks = [];
+      state.comments = [];
+    }
     state.taskCursor = null;
     state.commentCursor = null;
     try {
@@ -81,10 +131,26 @@ export function createWorkController(context: {
           "comments",
         );
     } catch (cause) {
-      if (ticket === version) state.error = message(cause);
+      if (ticket === version) {
+        if (
+          cause instanceof ApiError &&
+          ["access_denied", "bearer_required"].includes(cause.code)
+        ) {
+          reset();
+        }
+        state.error = message(cause);
+      }
     } finally {
       if (ticket === version) state.loading = false;
     }
+  }
+  function reset() {
+    version++;
+    session++;
+    reads.abort();
+    pins.clear();
+    cached.clear();
+    Object.assign(state, emptyWorkState());
   }
   async function send() {
     const request = state.pending;
@@ -105,6 +171,14 @@ export function createWorkController(context: {
         state.message = "Outcome unknown. Check status or retry this request.";
     } catch (cause) {
       if (ticket !== session) return;
+      if (
+        cause instanceof ApiError &&
+        ["access_denied", "bearer_required"].includes(cause.code)
+      ) {
+        reset();
+        state.error = message(cause);
+        return;
+      }
       // Only explicit admission rejections prove that this request did not publish.
       if (
         cause instanceof ApiError &&
@@ -127,13 +201,8 @@ export function createWorkController(context: {
   return {
     state,
     restore,
-    refresh: restore,
-    reset() {
-      version++;
-      session++;
-      pins.clear();
-      Object.assign(state, emptyWorkState());
-    },
+    refresh: () => restore(true),
+    reset,
     async select(project, task = null) {
       context.select(project, task);
       await restore();
@@ -179,6 +248,7 @@ export function createWorkController(context: {
         ticket = session;
       if (!pending || state.writing) return;
       state.writing = true;
+      state.error = "";
       try {
         const result = await context.source().status(pending.request_id);
         if (ticket !== session) return;
@@ -190,7 +260,14 @@ export function createWorkController(context: {
           state.message =
             "No committed receipt yet. Retain this request and retry.";
       } catch (cause) {
-        if (ticket === session) state.error = message(cause);
+        if (ticket === session) {
+          if (
+            cause instanceof ApiError &&
+            ["access_denied", "bearer_required"].includes(cause.code)
+          )
+            reset();
+          state.error = message(cause);
+        }
       } finally {
         if (ticket === session) state.writing = false;
       }

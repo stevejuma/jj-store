@@ -344,3 +344,138 @@ async fn linked_repository_metadata_does_not_grant_code_access_and_cursors_expir
         Error::Denied
     );
 }
+
+#[tokio::test]
+async fn work_browse_filters_complete_roots_and_pins_summary_counts() {
+    let (store, writer) = fixture().await;
+    let pager = WorkPager::new(Arc::new(SystemClock));
+    let empty = pager
+        .browse(writer.clone(), WorkBrowseQuery::default())
+        .await
+        .unwrap();
+    assert_eq!(empty.total_matches, 0);
+    assert!(empty.snapshot.work_root.is_none());
+    create(writer.clone(), 80).await;
+    let project = ProjectId::new([80; 16]);
+    for byte in 81..=83 {
+        WorkCommandService
+            .apply(
+                writer.clone(),
+                &request(
+                    byte,
+                    WorkCommandV1::CreateTask {
+                        id: TaskId::new([byte; 16]),
+                        project,
+                        expected_project_version: 1,
+                        title: format!("Task {byte}"),
+                        body: if byte == 83 {
+                            "Unique NEEDLE"
+                        } else {
+                            "Other body"
+                        }
+                        .into(),
+                        repository: None,
+                        parent: if byte == 83 {
+                            Some(TaskId::new([81; 16]))
+                        } else {
+                            None
+                        },
+                    },
+                ),
+            )
+            .await
+            .unwrap();
+    }
+    let query = WorkBrowseQuery {
+        kind: WorkBrowseKind::Tasks,
+        limit: 1,
+        ..Default::default()
+    };
+    let first = pager.browse(writer.clone(), query.clone()).await.unwrap();
+    assert_eq!(first.total_matches, 3);
+    let filtered = pager
+        .browse(
+            writer.clone(),
+            WorkBrowseQuery {
+                q: "needle".into(),
+                ..query.clone()
+            },
+        )
+        .await
+        .unwrap();
+    assert_eq!(filtered.total_matches, 1);
+    assert_eq!(filtered.tasks[0].parent_title.as_deref(), Some("Task 81"));
+    WorkCommandService
+        .apply(
+            writer.clone(),
+            &request(
+                84,
+                WorkCommandV1::AddComment {
+                    id: WorkCommentId::new([84; 16]),
+                    task: TaskId::new([83; 16]),
+                    expected_task_version: 1,
+                    reply_to: None,
+                    body: "Comment".into(),
+                },
+            ),
+        )
+        .await
+        .unwrap();
+    let mut next = query.clone();
+    next.cursor = first.next_cursor.clone();
+    let second = pager.browse(writer.clone(), next.clone()).await.unwrap();
+    assert_eq!(second.snapshot, first.snapshot);
+    next.q = "needle".into();
+    assert_eq!(
+        pager.browse(writer.clone(), next).await.unwrap_err(),
+        Error::InvalidCursor
+    );
+    let fresh = pager
+        .browse(
+            writer.clone(),
+            WorkBrowseQuery {
+                q: "needle".into(),
+                ..query
+            },
+        )
+        .await
+        .unwrap();
+    assert_eq!(fresh.tasks[0].comment_count, 1);
+    let projects = pager
+        .browse(writer.clone(), WorkBrowseQuery::default())
+        .await
+        .unwrap();
+    assert_eq!(projects.projects[0].task_counts.active, 3);
+    let children = pager
+        .browse(
+            writer.clone(),
+            WorkBrowseQuery {
+                kind: WorkBrowseKind::Tasks,
+                parent: Some(TaskId::new([81; 16])),
+                ..Default::default()
+            },
+        )
+        .await
+        .unwrap();
+    assert_eq!(children.total_matches, 1);
+    let before = writer.snapshot().await.unwrap().digest();
+    assert!(
+        pager
+            .browse(session(store, Permission::Read), WorkBrowseQuery::default())
+            .await
+            .is_ok()
+    );
+    assert_eq!(writer.snapshot().await.unwrap().digest(), before);
+    let done = pager
+        .browse(
+            writer,
+            WorkBrowseQuery {
+                kind: WorkBrowseKind::Tasks,
+                state: Some(WorkStateFilter::Done),
+                ..Default::default()
+            },
+        )
+        .await
+        .unwrap();
+    assert_eq!(done.total_matches, 0);
+}

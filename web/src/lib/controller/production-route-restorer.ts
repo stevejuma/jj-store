@@ -119,6 +119,7 @@ export async function restoreProductionStoreRoute(
   data.status.error = "";
   data.status.navigation = "loading";
   await reads.loadReferences();
+  if (history.route !== desired) return;
   if (data.status.bookmarks === "failed") {
     data.status.navigation = "failed";
     return;

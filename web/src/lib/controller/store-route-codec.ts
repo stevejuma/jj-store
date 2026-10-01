@@ -1,3 +1,7 @@
+import {
+  projectsRouteFromHash,
+  projectsRouteToHash,
+} from "./projects-route-codec.js";
 import type { StorePage } from "../ui/community-navigation/model.js";
 import type { StoreRoute } from "./contracts.js";
 
@@ -66,6 +70,8 @@ function validOptional(
 }
 
 export function storeRouteToHash(route: StoreRoute): string | null {
+  if (route.projectsHub && route.page === "projects")
+    return projectsRouteToHash(route);
   if (!repositoryId.test(route.repository) || !pages.has(route.page))
     return null;
   const query = new URLSearchParams();
@@ -90,6 +96,12 @@ export function storeRouteToHash(route: StoreRoute): string | null {
 }
 
 export function storeRouteFromHash(hash: string): StoreRouteHashResult {
+  if (hash.startsWith("#/projects")) {
+    const route = projectsRouteFromHash(hash);
+    return route
+      ? { kind: "route", route }
+      : { kind: "invalid", message: "Invalid Projects route." };
+  }
   if (!hash.startsWith("#/repos/")) return { kind: "none" };
   const separator = hash.indexOf("?");
   const pathname = separator === -1 ? hash : hash.slice(0, separator);

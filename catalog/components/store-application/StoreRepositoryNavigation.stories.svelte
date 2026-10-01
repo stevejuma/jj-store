@@ -38,7 +38,7 @@
     const section = canvasElement.querySelector(
       ".lc-community-navigation__section",
     )!;
-    await expect(getComputedStyle(section).marginBlockStart).toBe("0px");
+    await expect(getComputedStyle(section).marginBlockStart).toBe("20px");
     for (const label of [
       "Branches",
       "JJ Log",
@@ -250,7 +250,7 @@
     const expanded = canvasElement.querySelector(
       ".lc-community-navigation__section",
     )!;
-    await expect(getComputedStyle(expanded).marginBlockStart).toBe("0px");
+    await expect(getComputedStyle(expanded).marginBlockStart).toBe("20px");
   }}
 />
 

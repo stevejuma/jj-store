@@ -74,8 +74,9 @@
   }}
   play={async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole("combobox", { name: "Repository" }));
     await userEvent.click(
-      canvas.getByRole("button", { name: /lapis\/community/ }),
+      within(document.body).getByRole("option", { name: /lapis\/community/ }),
     );
     await waitFor(() =>
       expect(args.onConnect).toHaveBeenCalledWith({
@@ -116,7 +117,10 @@
   }}
   play={async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
-    await userEvent.click(canvas.getByRole("button", { name: /Notes/ }));
+    await userEvent.click(canvas.getByRole("combobox", { name: "Repository" }));
+    await userEvent.click(
+      within(document.body).getByRole("option", { name: /Notes/ }),
+    );
     await waitFor(() =>
       expect(args.onConnect).toHaveBeenCalledWith({
         repository: "12".repeat(16),

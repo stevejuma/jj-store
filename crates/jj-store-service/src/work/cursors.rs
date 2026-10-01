@@ -42,17 +42,48 @@ impl Pin {
                 .sum::<usize>()
     }
 }
-struct Entry {
+struct Entry<Q> {
     pin: Arc<Pin>,
-    query: WorkQuery,
+    query: Q,
     offset: usize,
     expires: u64,
 }
-pub(super) struct Registry {
+pub(super) struct Registry<Q = WorkQuery> {
     clock: Arc<dyn Clock>,
-    entries: Mutex<BTreeMap<String, Entry>>,
+    entries: Mutex<BTreeMap<String, Entry<Q>>>,
 }
-impl Registry {
+pub(super) trait CursorQuery: Clone + PartialEq {
+    fn cursor(&self) -> Option<&String>;
+    fn clear_cursor(&mut self);
+}
+impl CursorQuery for WorkQuery {
+    fn cursor(&self) -> Option<&String> {
+        self.cursor.as_ref()
+    }
+    fn clear_cursor(&mut self) {
+        self.cursor = None;
+    }
+}
+#[derive(Clone, PartialEq)]
+pub(super) enum WorkCursorQuery {
+    Page(WorkQuery),
+    Browse(WorkBrowseQuery),
+}
+impl CursorQuery for WorkCursorQuery {
+    fn cursor(&self) -> Option<&String> {
+        match self {
+            Self::Page(q) => q.cursor(),
+            Self::Browse(q) => q.cursor(),
+        }
+    }
+    fn clear_cursor(&mut self) {
+        match self {
+            Self::Page(q) => q.clear_cursor(),
+            Self::Browse(q) => q.clear_cursor(),
+        }
+    }
+}
+impl<Q: CursorQuery> Registry<Q> {
     pub fn new(clock: Arc<dyn Clock>) -> Self {
         Self {
             clock,
@@ -65,9 +96,9 @@ impl Registry {
     pub fn lookup(
         &self,
         repository: jj_store_model::RepositoryId,
-        query: &WorkQuery,
+        query: &Q,
     ) -> Result<(Arc<Pin>, usize)> {
-        let token = query.cursor.as_ref().ok_or(Error::InvalidCursor)?;
+        let token = query.cursor().ok_or(Error::InvalidCursor)?;
         if token.len() != 64
             || !token
                 .bytes()
@@ -80,13 +111,13 @@ impl Registry {
         entries.retain(|_, entry| now < entry.expires);
         let entry = entries.get(token).ok_or(Error::CursorReset)?;
         let mut requested = query.clone();
-        requested.cursor = None;
+        requested.clear_cursor();
         if requested != entry.query || repository != entry.pin.snapshot.repo_id {
             return Err(Error::InvalidCursor);
         }
         Ok((entry.pin.clone(), entry.offset))
     }
-    pub fn retain(&self, pin: Arc<Pin>, mut query: WorkQuery, offset: usize) -> Result<String> {
+    pub fn retain(&self, pin: Arc<Pin>, mut query: Q, offset: usize) -> Result<String> {
         let now = self.now()?;
         let expires = now.checked_add(300).ok_or(Error::Limit)?;
         let mut entries = self.entries.lock().map_err(|_| Error::Unavailable)?;
@@ -111,7 +142,7 @@ impl Registry {
         if entries.contains_key(&token) {
             return Err(Error::Unavailable);
         }
-        query.cursor = None;
+        query.clear_cursor();
         entries.insert(
             token.clone(),
             Entry {

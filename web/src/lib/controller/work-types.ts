@@ -13,11 +13,12 @@ export type WorkQuery = {
   limit?: number;
 };
 export interface WorkTransport {
-  page(query: WorkQuery): Promise<Model<"WorkPage">>;
+  page(query: WorkQuery, signal?: AbortSignal): Promise<Model<"WorkPage">>;
   apply(request: WorkRequest): Promise<Model<"WorkCommandOutcome">>;
   status(id: string): Promise<Model<"WorkCommandStatus">>;
 }
 export interface WorkState {
+  drafts?: Record<string, WorkDraft>;
   projects: Model<"ProjectV1">[];
   project: Model<"ProjectV1"> | null;
   tasks: Model<"TaskV1">[];
@@ -35,7 +36,7 @@ export interface WorkState {
 }
 export interface WorkController {
   readonly state: WorkState;
-  restore(): Promise<void>;
+  restore(refresh?: boolean): Promise<void>;
   refresh(): Promise<void>;
   reset(): void;
   select(project: string | null, task?: string | null): Promise<void>;
@@ -50,6 +51,7 @@ export function workId(): string {
     .join("");
 }
 export const emptyWorkState = (): WorkState => ({
+  drafts: undefined,
   projects: [],
   project: null,
   tasks: [],
@@ -65,3 +67,13 @@ export const emptyWorkState = (): WorkState => ({
   pending: null,
   writing: false,
 });
+
+export interface WorkDraft {
+  title: string;
+  body: string;
+  repository: string;
+  parent: string;
+  status: "open" | "in_progress" | "blocked" | "done";
+  reply: string | null;
+  edit: string | null;
+}

@@ -198,3 +198,19 @@ test("Projects and Evo Log restore independent identities through browser histor
     restored.destroy();
   }
 });
+
+test("connecting code from the installation Projects hub preserves one Back destination", () => {
+  const navigation = fakeBrowser("#/projects?tab=reviews");
+  const history = createStoreRouteHistory(navigation.browser);
+  history.connect(repository, operation);
+  expect(history.route).toMatchObject({
+    repository,
+    page: "files",
+    projectsHub: false,
+  });
+  expect(navigation.pushed).toHaveLength(1);
+  expect(navigation.replaced).toHaveLength(0);
+  navigation.visit("#/projects?tab=reviews");
+  expect(history.route).toMatchObject({ page: "projects", workTab: "reviews" });
+  history.destroy();
+});
