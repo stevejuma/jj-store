@@ -6,6 +6,13 @@ future log digest. Manifest revision differs from publication sequence, and an
 epoch identifies an authority lineage without itself fencing an old writer. No
 destructive GC, automated promotion, or multi-writer serving in v1.
 
+Shared AgentStore projection and catalog edits stage immutable objects through
+owned repository-bound interfaces. They do not select native or local roots.
+Native adapters retain all manifest guards and receipts; the local companion
+adapter admits only immutable domain records and publishes through its separate
+expected-old-value ref protocol. Record framing and native authority are
+unchanged.
+
 ## Requirements
 
 | ID          | Requirement                                                                                                                                                                              |

@@ -48,6 +48,17 @@ Actor identities are device state under the shared JJ repository, so physical
 workspaces and the local UI use the same actor. They carry no access grants and
 are excluded from portable transfer.
 
+The local AgentStore uses the existing canonical repository-bound immutable
+record envelope and one shared normalization, transcript and catalog engine. The
+selected domain descriptor binds the complete record-to-Git-blob inventory;
+reads audit retained membership and expose only the pinned root closure. A
+sanitized capture request binds its original batch and profile before reduction,
+so receipt replay precedes overlap checks and generated object identities do not
+alter intent. A ref race retries against the selected root; source overlap still
+fails stale. Publishing AgentStore preserves WorkStore and other domains. Native
+V1 code associations require native evidence and are rejected by this provider
+until the portable association/checkpoint gate is qualified.
+
 Portable evidence uses an explicit source profile and SHA-256 capsule identity.
 The Git profile records the complete selected operation and view, including
 predecessor maps, and the complete backend commit metadata needed by their

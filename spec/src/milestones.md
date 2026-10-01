@@ -106,7 +106,7 @@ adds evidence here in its enclosing Jujutsu change.
 | M13         | In progress | M12         | JST-LOCAL-001,JST-LOCAL-002,JST-LOCAL-003,JST-LOCAL-004,JST-LOCAL-005,JST-LOCAL-006                                                                                      | Complete qualified local Git-backed collaboration profile                                                                      | Prove storage foundation before domain adapters                               | E-M13-001,E-M13-002                                                                                                                                                                                                                                                                                                                                            |
 | M13.1       | Done        | M12         | JST-LOCAL-001,JST-LOCAL-002                                                                                                                                              | Qualified metadata CAS/receipt/GC and stock JJ primitive compatibility                                                         | Implement M13.2 shared WorkStore/CLI                                          | E-M13-001                                                                                                                                                                                                                                                                                                                                                      |
 | M13.2       | Done        | M13.1       | JST-LOCAL-003                                                                                                                                                            | Shared WorkStore semantics and server-free CLI                                                                                 | Implement M13.3 portable anchors and capture                                  | E-M13-002                                                                                                                                                                                                                                                                                                                                                      |
-| M13.3       | In progress | M13.2       | JST-LOCAL-002,JST-LOCAL-003                                                                                                                                              | Portable agent/review anchors and exact retained evidence                                                                      | Qualify source evidence, then domain adapters                                 | E-M13-003                                                                                                                                                                                                                                                                                                                                                      |
+| M13.3       | In progress | M13.2       | JST-LOCAL-002,JST-LOCAL-003                                                                                                                                              | Portable agent/review anchors and exact retained evidence                                                                      | Qualify source evidence, then domain adapters                                 | E-M13-003,E-M13-004                                                                                                                                                                                                                                                                                                                                            |
 | M13.4       | Planned     | M13.3       | JST-LOCAL-004,JST-LOCAL-005                                                                                                                                              | Filesystem-only server, local UI and recoverable code commands                                                                 | Implement registration, versioned contracts and cold browser gates            | -                                                                                                                                                                                                                                                                                                                                                              |
 | M13.5       | Planned     | M13.4       | JST-LOCAL-006                                                                                                                                                            | Independent local/native conversion with complete collaboration history                                                        | Implement bounded jobs and mapping reports                                    | -                                                                                                                                                                                                                                                                                                                                                              |
 | M13.6       | Planned     | M13.5       | JST-LOCAL-001,JST-LOCAL-002,JST-LOCAL-003,JST-LOCAL-004,JST-LOCAL-005,JST-LOCAL-006                                                                                      | Cold end-to-end and retained native regression qualification                                                                   | Qualify all accepted layouts and publish evidence                             | -                                                                                                                                                                                                                                                                                                                                                              |
@@ -24780,6 +24780,180 @@ and named tests are checked by the progress gate.
     "versions": "JJ/jj-lib 0.45.1; gix 0.87.1; Git 2.55.0; Rust 1.98.1; macOS ARM64. Shared ignored build cache; no installed executable changes.",
     "formats": "Git evidence capsule v1 with explicit profile, exact operation/view IDs and complete owned fields; source backend commit extra metadata follows bounded ancestry/evolution closure. SHA-256 CodeCapsuleId, typed SHA-1 IDs and schema-2 portable code anchors. Native V1 frozen codecs unchanged. Source identity remains separate from independent destination identity.",
     "next": "Commit qualified source-evidence subgate, then add shared AgentStore/ReviewStore persistence and backend-aware CLI."
+  },
+  {
+    "id": "E-M13-004",
+    "tasks": ["M13", "M13.3"],
+    "date": "2026-10-01",
+    "kind": "filesystem-git",
+    "revision": "npsqzsms",
+    "files": [
+      "crates/jj-store-jj/src/local_metadata/blobs.rs",
+      "crates/jj-store-service/src/local_repository.rs",
+      "crates/jj-store-service/src/local_repository/agent_commands.rs",
+      "crates/jj-store-service/src/local_repository/agent_io.rs",
+      "crates/jj-store-service/src/local_repository/agent_store.rs",
+      "crates/jj-store-service/src/local_repository/errors.rs",
+      "crates/jj-store-service/src/local_repository/records.rs",
+      "crates/jj-store-service/tests/local_agent.rs",
+      "crates/jj-store-wal/src/publication.rs",
+      "crates/jj-store-wal/src/publication/agent_capture.rs",
+      "crates/jj-store-wal/src/publication/agent_capture_projection.rs",
+      "crates/jj-store-wal/src/publication/agent_capture_records.rs",
+      "crates/jj-store-wal/src/publication/agent_capture_transcript.rs",
+      "crates/jj-store-wal/src/publication/agent_catalog.rs",
+      "crates/jj-store-wal/src/publication/agent_catalog_engine.rs",
+      "crates/jj-store-wal/src/publication/agent_io.rs",
+      "crates/jj-store-wal/src/publication/agent_read_engine.rs",
+      "crates/jj-store-wal/src/publication/agent_reads.rs",
+      "spec/src/architecture.md",
+      "spec/src/collaboration.md",
+      "spec/src/jj-integration.md",
+      "spec/src/local-jj.md",
+      "spec/src/milestones.md",
+      "spec/src/mutations.md",
+      "spec/src/publication.md"
+    ],
+    "tests": [
+      "crates/jj-store-service/tests/local_agent.rs#local_agent_reads_do_not_initialize_metadata_or_actor",
+      "crates/jj-store-service/tests/local_agent.rs#local_capture_replays_original_receipt_after_restart_and_git_gc",
+      "crates/jj-store-service/tests/local_agent.rs#local_transcripts_are_cumulative_and_old_reads_remain_pinned",
+      "crates/jj-store-service/tests/local_agent.rs#agent_and_work_publications_preserve_each_other",
+      "crates/jj-store-service/tests/local_agent.rs#invalid_or_unsupported_capture_never_selects_partial_metadata",
+      "crates/jj-store-service/tests/local_agent.rs#concurrent_disjoint_captures_preserve_both_sources",
+      "crates/jj-store-service/tests/local_agent.rs#git_carrier_preserves_native_record_bytes_and_repository_bound_ids"
+    ],
+    "runs": [
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-wal --locked --test agent_catalog",
+        "result": "pass",
+        "failures": 0,
+        "note": "Native before state: 3 tests pass; projector/catalog extraction rerun passed 3 tests."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-wal --locked --test agent_catalog",
+        "result": "fail",
+        "failures": 2,
+        "note": "Extraction initially introduced lifetime-shadow diagnostics; fixed before native 3-test rerun."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-service --locked --test local_agent",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before state: local_agent test target did not exist."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo check -p jj-store-service --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "Private supported method rejected; replaced with existing public profile validation."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo check -p jj-store-service --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Local provider and shared immutable engines compile."
+      },
+      {
+        "command": "cargo fmt -p jj-store-wal -p jj-store-service -p jj-store-jj",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected packages formatted, repeated after test creation."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-service --locked --test local_agent -p jj-store-wal --test agent_catalog",
+        "result": "fail",
+        "failures": 1,
+        "note": "5 local tests pass. Invalid fixture used a valid zero source sequence; corrected to duplicate source order. Native test binary was not reached."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-service --locked --test local_agent -p jj-store-wal --test agent_catalog",
+        "result": "pass",
+        "failures": 0,
+        "note": "Corrected exact fixture: 6 local and 3 native tests pass. Final expanded gate: 7 local and 3 native tests pass, including exact native/local record-byte and ID parity."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-service --locked --test local_work --test agent_sessions --test agent_relations --test agent_checkpoints",
+        "result": "pass",
+        "failures": 0,
+        "note": "Direct consumers: 8 local WorkStore, 5 native agent session, 1 native relation and 1 native checkpoint tests pass. Native evidence uses memory store, not real RustFS."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/architecture.md spec/src/collaboration.md spec/src/publication.md spec/src/mutations.md spec/src/local-jj.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed canonical chapters formatted."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "21 chapters and 129 requirements pass."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "fail",
+        "failures": 1,
+        "note": "Missing mapped jj-integration chapter for the staging-read addition; owning chapter updated."
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "15 package boundaries pass."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "312 web modules pass; new Rust production modules separately counted at most 265 lines, local tests 411."
+      },
+      {
+        "command": "cargo fmt -p jj-store-jj -p jj-store-wal -p jj-store-service -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected Rust packages pass formatting."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo clippy -p jj-store-wal --test agent_catalog -p jj-store-service --test local_agent --test local_work --test agent_sessions --test agent_relations --test agent_checkpoints -p jj-store-jj --lib --locked -- -D warnings",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected libraries and exact direct-consumer targets pass without warnings."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/jj-integration.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Mapped chapter and final ledger formatted."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "18 protected files and 7 canonical chapters pass."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "102 tasks pass evidence bookkeeping."
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/architecture.md spec/src/collaboration.md spec/src/publication.md spec/src/mutations.md spec/src/local-jj.md spec/src/jj-integration.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed canonical documents pass formatting."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "deferred": [
+      "Portable agent code associations/checkpoints, review provider and local capture CLI remain incomplete; M13.3 is not Done.",
+      "UI, conversion, real-RustFS and unrelated aggregate lanes are out of scope for this agent projection slice."
+    ],
+    "versions": "JJ/jj-lib 0.45.1; gix 0.87.1; Git 2.55.0; Rust 1.98.1; macOS ARM64; isolated local-jj workspace and shared ignored target cache.",
+    "formats": "Existing native AgentStore V1 record envelopes and IDs unchanged. Local AgentStore descriptor v1 retains exact immutable framed records in Git blobs; local typed command/receipt and snapshot report explicit local Git profile. Native code-anchor V1 records fail closed without native evidence.",
+    "next": "Qualify and commit shared AgentStore/local-provider slice, then continue portable associations, ReviewStore and backend-aware capture integration."
   }
 ]
 ```

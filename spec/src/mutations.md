@@ -7,6 +7,13 @@ repository-local device state on first write; reads never create it. Receipts
 identify the Git metadata profile explicitly rather than fabricating a native
 WAL snapshot.
 
+Local AgentStore commands retain the typed sanitized capture request as their
+intent, resolve selected receipts before running the shared reducer and use the
+same source-order and overlap policy as native capture. Their independent state
+version and canonical record inventory are selected only by companion ref CAS.
+Unknown outcomes preserve the original request for retry; no code operation,
+checkout or native manifest is changed by this domain command.
+
 An authorized read can produce a credential-free, immutable selected-view commit
 set for search filtering. Only the service constructs this value after native
 traversal and a final authorization check. It is informational, cannot publish,

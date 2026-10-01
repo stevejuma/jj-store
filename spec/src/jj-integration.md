@@ -1,5 +1,12 @@
 # Native JJ integration
 
+The companion metadata adapter provides bounded immutable blob staging and
+staging reads for the shared collaboration reducer. These operations cannot
+select metadata. Public retained reads additionally prove membership in the
+explicit selected metadata closure; service facades audit their domain root
+before exposing immutable objects. Native object access and code publication
+keep their existing authority boundaries.
+
 The local Git-backed companion profile is governed by local-jj.md. Its Git
 object/ref adapter stays in this crate and does not replace native publication.
 The local repository resolver loads only the pinned GitBackend to obtain its

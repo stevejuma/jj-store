@@ -1,6 +1,16 @@
 //! In-process LocalTrusted collaboration facade. Caller composition owns folder
 //! admission; filesystem permissions remain the local access boundary.
 mod actor;
+mod agent_commands;
+mod agent_io;
+mod agent_store;
+mod errors;
+mod records;
+pub use agent_commands::{
+    LocalAgentCommand, LocalAgentOutcome, LocalAgentReceipt, LocalAgentRequest,
+};
+pub use agent_store::{LocalAgentSnapshot, LocalAgentStore};
+pub use errors::{LocalError, LocalResult};
 mod work;
 mod work_pages;
 pub use work::*;

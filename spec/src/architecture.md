@@ -14,6 +14,10 @@ filesystem qualification uses a test-only temporary-directory dependency.
 Portable source identity types stay in the neutral model layer; their pinned
 upstream conversions and Git evidence capsule framing stay in JJ integration.
 The adapter uses the existing SHA-256 primitive directly for capsule integrity.
+Agent projection, catalog edits and bounded reads use owned immutable interfaces
+in WAL. The service's Git record carrier preserves the existing repository-bound
+envelope bytes, while companion ref publication remains in JJ integration.
+Neither the shared reducer nor the object interface can select repository state.
 
 ## Requirements
 

@@ -11,6 +11,13 @@ source native and Git identities and name immutable evidence capsules. Existing
 native V1 anchor bytes and their interpretation remain unchanged. An evidence
 reference is not a device binding or permission to open a local path.
 
+Agent normalization, cumulative transcript construction and catalog path-copy
+edits use one owned projection engine behind a repository-bound immutable object
+interface. Persistence providers validate canonical records, kinds and complete
+dependencies; the shared engine has no publication capability. Native adapters
+retain manifest authorization and their existing record framing, while the local
+provider selects its complete closure through companion ref CAS.
+
 The first release is LocalTrusted. It captures Codex, Cursor and OpenCode
 through qualified integrations, stores sanitized evidence before normalized
 views and supports exact discussions on immutable code, diff and agent
