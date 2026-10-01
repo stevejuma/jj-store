@@ -102,6 +102,14 @@ cannot masquerade as stronger evidence. Stable IDs and JJ change IDs are lookup
 facts; exact operation/commit IDs and immutable evidence objects are retention
 edges.
 
+Portable `CodeAssociationV2` and `AgentCheckpointVersionV2` use explicit source
+repository, profile and capsule references for operations and commits. A commit
+must match its evidence profile. Their shared non-code facts preserve the native
+path, evidence, correction, coverage and dependency rules. Canonical bounded
+decoders reject unknown versions, fields and noncanonical bytes. Native V1 field
+order and serialization remain frozen; these additive models do not by
+themselves enable a persistence provider or CLI command.
+
 An AgentStore read is pinned to one selected `AgentRootV1`. Stable session,
 checkpoint and association keys resolve through bounded persistent radix pages;
 immutable object reads succeed only for references in that root's audited

@@ -1,14 +1,13 @@
 use crate::{
-    AgentCheckpointId, AgentObjectKind, AgentObjectRef, AgentSessionId, AssociationId,
-    CompletenessV1, CoverageV1, Error, ProvenanceScopeId, Result, SourceTrust, ToolCallId, TurnId,
-    activity::valid_label,
+    AgentCheckpointFactsV1, AgentCheckpointId, AgentObjectRef, AgentSessionId, AssociationId,
+    CodeAssociationFactsV1, CoverageV1, Error, ProvenanceScopeId, Result, SourceTrust, ToolCallId,
+    TurnId,
 };
 use jj_store_model::{ChangeId, CommitId, ObjectKey, OperationId};
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet};
 
 const MAX_ANCHORS: usize = 256;
-const MAX_REFS: usize = 4096;
 
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
@@ -101,27 +100,32 @@ pub struct CodeAssociationV1 {
     pub correction_reason: Option<String>,
 }
 impl CodeAssociationV1 {
+    pub fn facts(&self) -> CodeAssociationFactsV1 {
+        CodeAssociationFactsV1 {
+            association_id: self.association_id,
+            checkpoint_id: self.checkpoint_id,
+            session_id: self.session_id,
+            turn_id: self.turn_id,
+            tool_call_ids: self.tool_call_ids.clone(),
+            scope_id: self.scope_id,
+            relation: self.relation,
+            changes: self.changes.clone(),
+            paths: self.paths.clone(),
+            granularity: self.granularity,
+            evidence_method: self.evidence_method,
+            source_trust: self.source_trust,
+            exclusive_write_scope: self.exclusive_write_scope,
+            evidence: self.evidence.clone(),
+            coverage: self.coverage.clone(),
+            created_at_millis: self.created_at_millis,
+            supersedes: self.supersedes,
+            correction_reason: self.correction_reason.clone(),
+        }
+    }
     pub fn validate(&self) -> Result<()> {
         self.before.validate()?;
         self.after.validate()?;
-        let invalid_path = self.paths.iter().any(|path| {
-            path.is_empty()
-                || path.len() > 4096
-                || path.starts_with('/')
-                || path.contains('\\')
-                || path.chars().any(char::is_control)
-                || path
-                    .split('/')
-                    .any(|part| part.is_empty() || matches!(part, "." | ".."))
-        });
-        let wrong_evidence = self.evidence.iter().any(|value| {
-            !matches!(
-                value.kind,
-                AgentObjectKind::ObservationBatch
-                    | AgentObjectKind::EventBatch
-                    | AgentObjectKind::Content
-            )
-        });
+        self.facts().validate()?;
         let wrong_granularity = match self.granularity {
             AssociationGranularity::Operation => {
                 self.before.operations.is_empty() && self.after.operations.is_empty()
@@ -132,38 +136,17 @@ impl CodeAssociationV1 {
             AssociationGranularity::SnapshotInterval => false,
             AssociationGranularity::File => self.paths.is_empty(),
         };
-        let correction_valid = match (self.supersedes, &self.correction_reason) {
-            (None, None) => true,
-            (Some(value), Some(reason)) => {
-                value.kind == AgentObjectKind::Association && valid_label(reason, 1024)
-            }
-            _ => false,
-        };
         if self.schema_version != 1
-            || self.tool_call_ids.len() > MAX_REFS
-            || self.changes.len() > MAX_ANCHORS
-            || self.paths.len() > MAX_REFS
-            || self.evidence.len() > MAX_REFS
             || (self.before.is_empty() && self.after.is_empty())
-            || invalid_path
-            || wrong_evidence
             || wrong_granularity
-            || !correction_valid
-            || (self.relation == AssociationRelation::ManualAssertion
-                && self.evidence_method != EvidenceMethod::ManualAssertion)
         {
             return Err(Error::Invalid("code association"));
         }
-        self.coverage.validate()
+        Ok(())
     }
     pub fn dependencies(&self) -> Result<BTreeSet<AgentObjectRef>> {
         self.validate()?;
-        Ok(self
-            .evidence
-            .iter()
-            .copied()
-            .chain(self.supersedes)
-            .collect())
+        self.facts().dependencies()
     }
     pub fn native_dependencies(&self) -> Result<BTreeSet<ObjectKey>> {
         self.validate()?;
@@ -236,46 +219,36 @@ impl AgentCheckpointVersionV1 {
         }
         Ok(())
     }
+    pub fn facts(&self) -> AgentCheckpointFactsV1 {
+        AgentCheckpointFactsV1 {
+            checkpoint_id: self.checkpoint_id,
+            session_id: self.session_id,
+            turn_id: self.turn_id,
+            scope_id: self.scope_id,
+            session_snapshot: self.session_snapshot,
+            transcript_manifest: self.transcript_manifest,
+            event_batches: self.event_batches.clone(),
+            tools: self.tools.clone(),
+            associations: self.associations.clone(),
+            evidence_method: self.evidence_method,
+            source_trust: self.source_trust,
+            exclusive_write_scope: self.exclusive_write_scope,
+            coverage: self.coverage.clone(),
+            capture_status: self.capture_status,
+            execution_outcome: self.execution_outcome,
+            supersedes: self.supersedes,
+        }
+    }
     pub fn validate(&self) -> Result<()> {
-        Self::validate_code_relation(&self.before, &self.after, self.code_relation)?;
-        let complete = self.capture_status != CaptureStatusV1::Complete
-            || self.coverage.completeness == CompletenessV1::Complete;
-        if self.schema_version != 1
-            || self.session_snapshot.kind != AgentObjectKind::SessionSnapshot
-            || self.transcript_manifest.kind != AgentObjectKind::TranscriptManifest
-            || self.event_batches.len() > MAX_REFS
-            || self.tools.len() > MAX_REFS
-            || self.associations.len() > MAX_REFS
-            || self
-                .event_batches
-                .iter()
-                .any(|value| value.kind != AgentObjectKind::EventBatch)
-            || self
-                .tools
-                .values()
-                .any(|value| value.kind != AgentObjectKind::ToolSnapshot)
-            || self
-                .associations
-                .iter()
-                .any(|value| value.kind != AgentObjectKind::Association)
-            || self
-                .supersedes
-                .is_some_and(|value| value.kind != AgentObjectKind::CheckpointVersion)
-            || !complete
-        {
+        if self.schema_version != 1 {
             return Err(Error::Invalid("agent checkpoint"));
         }
-        self.coverage.validate()
+        Self::validate_code_relation(&self.before, &self.after, self.code_relation)?;
+        self.facts().validate()
     }
     pub fn dependencies(&self) -> Result<BTreeSet<AgentObjectRef>> {
         self.validate()?;
-        Ok([self.session_snapshot, self.transcript_manifest]
-            .into_iter()
-            .chain(self.event_batches.iter().copied())
-            .chain(self.tools.values().copied())
-            .chain(self.associations.iter().copied())
-            .chain(self.supersedes)
-            .collect())
+        self.facts().dependencies()
     }
     pub fn native_dependencies(&self) -> Result<BTreeSet<ObjectKey>> {
         self.validate()?;

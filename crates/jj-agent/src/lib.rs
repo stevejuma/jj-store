@@ -12,7 +12,9 @@ mod indexes;
 mod normalize;
 mod normalizers;
 mod objects;
+mod portable;
 mod provenance;
+mod provenance_facts;
 mod reducer;
 mod transcript;
 
@@ -26,7 +28,9 @@ pub use ids::*;
 pub use indexes::*;
 pub use normalize::*;
 pub use objects::*;
+pub use portable::*;
 pub use provenance::*;
+pub use provenance_facts::*;
 pub use transcript::*;
 
 pub type Result<T> = std::result::Result<T, Error>;

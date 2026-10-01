@@ -77,6 +77,12 @@ all-zero upstream root sentinel is never treated as a physical Git object. This
 archives source context without installing or replaying an old operation graph.
 Native V1 envelopes and codecs remain unchanged.
 
+Portable agent provenance models retain typed operation capsules and commit
+evidence pairs. Code changed/no-change/not-observed is validated independently
+of capture completeness and execution outcome. Shared non-code policy does not
+grant a provider permission to accept missing source capsules: local persistence
+must qualify selected evidence and its retained closure separately.
+
 M13.1 proves versioned publication, receipt replay, initialization races and Git
 reachability before dependent implementation. M13.2 adds WorkStore and direct
 CLI access. M13.3 adds portable AgentStore/ReviewStore evidence. M13.4 adds
