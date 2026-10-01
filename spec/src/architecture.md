@@ -526,3 +526,8 @@ The browser bundles the pinned Shiki 4.0.2 theme data as generated semantic and
 syntax palettes and Inter 5.2.8 fonts for the Buzz-derived Appearance page.
 Generation uses npm theme data and the attributed owned palette adapter; no Buzz
 or Community checkout is a runtime/build dependency.
+
+Local Appearance acceptance in main uses the existing ignored foundational
+package hook against landed Design Core source. Its chat typography and native
+scrolling extensions are absent from registry 0.2.0; portable manifest/lockfile
+ranges remain registry-based and registry-only qualification stays separate.

@@ -39,3 +39,10 @@ workspace. Consumer acceptance uses an explicit temporary pnpm hook at
 Publishable package and lockfile ranges remain registry-based. A foundation
 release and registry-only qualification are separate gates; this validation
 setup is not publication evidence.
+
+Local main landing is recorded in E-UI-053. The default Design Core workspace
+contains `yovkqwtu`; jj-store main uses its existing ignored `.pnpmfile.cjs`
+source hook with `pnpm install --no-frozen-lockfile --lockfile=false`. Installed
+foundation files match the landed source. Main retains portable registry
+manifests and lockfiles. The published 0.2.0 tarball lacks these extensions, so
+this local main acceptance is not registry-only release qualification.

@@ -132,7 +132,7 @@ shared-package release qualification does not alter those original Git gates.
 | M15.5       | In progress | M15.3                   | JST-COLLAB-016,JST-GOV-008,JST-UI-017                                                                                                                                                   | Owned Community channel/forum templates, Threads navigation and native workspace search                                        | Retain interaction/cold UI and qualify remaining full flow                                     | E-M15-011,E-M15-015,E-M15-016,E-M15-017,E-M15-018,E-M15-019,E-M15-021,E-M15-022,E-M15-025                                                                                                                                                                                                                                                                      |
 | M15.6       | In progress | M15.3                   | JST-COLLAB-009,JST-COLLAB-010,JST-API-009,JST-ADAPT-007                                                                                                                                 | Derived canonical-source timeline/search and review integration                                                                | Qualify authorized joins                                                                       | E-M15-006,E-M15-020,E-M15-021,E-M15-022,E-M15-025                                                                                                                                                                                                                                                                                                              |
 | M15.7       | Planned     | M15.4,M15.5,M15.6       | JST-COLLAB-007,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                                                                                              | Cold real-RustFS/local full flow and runner qualification                                                                      | Retain native/local/cold evidence                                                              | -                                                                                                                                                                                                                                                                                                                                                              |
-| M16         | Partial     | M15.5                   | JST-UI-018                                                                                                                                                                              | Complete device Appearance and cold consumer qualification                                                                     | Complete source release and registry-only consumer qualification                               | E-UI-052                                                                                                                                                                                                                                                                                                                                                       |
+| M16         | Partial     | M15.5                   | JST-UI-018                                                                                                                                                                              | Complete device Appearance and cold consumer qualification                                                                     | Complete source release and registry-only consumer qualification                               | E-UI-052,E-UI-053                                                                                                                                                                                                                                                                                                                                              |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -39949,6 +39949,119 @@ and named tests are checked by the progress gate.
     "artifacts": "Ignored .scratch/appearance-preview.mjs and appearance.playwright.config.ts use built web/dist, fixture APIs, isolated port7489 and exact production STRICT_CSP; owned server closes automatically. Logs in /tmp/jj-appearance-*.log and /tmp/dc-appearance-*.log; desktop/mobile screenshots /tmp/jj-store-appearance*.png.",
     "integrationBase": "59f1cfe8: latest committed Thread presentation and separate repository/details rail changes; active main landing evidence is user-owned and untouched.",
     "mainWork": "Default workspace subsequently started active uncommitted Thread-menu/reaction edits in wytvknwz. No active main files are copied, overwritten or landed here. Consumer qualification is pinned to the committed 59f1cfe8 Thread layout, including its separate details rail; review/rebase after concurrent work completes before any main integration."
+  },
+  {
+    "id": "E-UI-053",
+    "tasks": ["M16"],
+    "date": "2026-10-02",
+    "kind": "appearance-local-main-landing",
+    "revision": "enclosing Jujutsu change krqtopsq",
+    "before": "Main is clean at krylzqny/0c75eb0c; Appearance rmwvnkzr is qualified on 59f1cfe8, before the direct settings, aligned headers and targeted reaction-metadata commits. Foundation yovkqwtu is qualified and both default and source workspaces are clean. User explicitly requests landing in main.",
+    "files": [
+      "spec/src/milestones.md",
+      "spec/src/verification.md",
+      "docs/reference/appearance-provenance.md",
+      "spec/src/architecture.md"
+    ],
+    "tests": [
+      "web/tests/browser/appearance.spec.ts#cold device appearance restores under the production CSP and propagates across tabs"
+    ],
+    "runs": [
+      {
+        "command": "jj rebase -s rmwvnkzr -o krylzqny; jj squash --into rmwvnkzr --use-destination-message",
+        "result": "pass",
+        "failures": 0,
+        "note": "Resolved UI/ledger/Thread-story conflicts by preserving all 251 prior main evidence entries and current Thread requirements/stories, then adding the Appearance requirement/evidence/draft scenario. No unresolved conflicts. Source change identity rmwvnkzr retained; final implementation 68a3dbdc."
+      },
+      {
+        "command": "npm view @lapismd/design-core version dist-tags --json; npm pack @lapismd/design-core@0.2.0 --pack-destination /tmp/jj-appearance-registry --json",
+        "result": "pass",
+        "failures": 0,
+        "note": "Registry latest is 0.2.0. Read-only tarball inspection confirms chat type scale and root native scrolling extensions are absent. This proves the remaining release gate; no publication."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-threads/StoreThreads.stories.svelte -t AppearanceFocus",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rebased Appearance workspace: exact draft/independent details rail acceptance 1/1, 6 filtered skips; /tmp/jj-appearance-main-exact.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/appearance.test.ts web/tests/vite/production-settings.test.ts web/tests/vite/production-threads.test.ts web/tests/vite/reaction-feedback.test.ts web/tests/vite/store-shell-layout.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial subset 33/33 across four matching files. production-settings.test.ts does not exist; actual three Settings files are included in the complete focused rerun below."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/appearance.test.ts web/tests/vite/production-store-settings.test.ts web/tests/vite/production-search-settings.test.ts web/tests/vite/production-sync-settings.test.ts web/tests/vite/production-threads.test.ts web/tests/vite/reaction-feedback.test.ts web/tests/vite/store-shell-layout.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Complete focused surface: 46/46 across seven files; /tmp/jj-appearance-main-complete-unit.log."
+      },
+      {
+        "command": "pnpm exec tsx scripts/appearance-palettes.mts --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 62 generated palette files match pinned source bytes; /tmp/jj-appearance-main-palettes.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-appearance/StoreAppearance.stories.svelte catalog/components/store-threads catalog/components/store-application/AppearanceDiscussions.stories.svelte catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-work/ProjectsDirectory.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "21/21 across seven files including axe, Appearance controls, newer targeted main/reply reaction feedback, Thread settings/alignment and retained Focus/Split drafts; /tmp/jj-appearance-main-stories.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:ui-ownership; pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rebased source workspace: zero type errors/warnings; 125 catalog modules; 714 architecture modules; ownership passes. /tmp/jj-appearance-main-*-check.log, ownership.log and architecture.log."
+      },
+      {
+        "command": "pnpm web:build; pnpm exec playwright test -c .scratch/appearance.playwright.config.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rebased source workspace: production build passes with inherited large-chunk advisory; cold healthy-directory Appearance flow 1/1, desktop/mobile axe, OS mode/reload/cross-tab and scoped CSP/no external requests. /tmp/jj-appearance-main-build.log and cold.log."
+      },
+      {
+        "command": "jj rebase -r @ -o yovkqwtu (Design Core default); jj rebase -r @ -o rmwvnkzr (jj-store default); pnpm install --no-frozen-lockfile --lockfile=false",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both clean default workspaces advance locally. Main installation uses its existing ignored .pnpmfile.cjs source hook; no tracked manifest/lock rewrite. Byte comparison of installed chat.css, chat.tokens.ts and scroll-area.svelte matches landed Design Core yovkqwtu. /tmp/jj-appearance-land-main-install.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-threads/StoreThreads.stories.svelte -t AppearanceFocus; pnpm web:check; pnpm web:build; pnpm exec playwright test -c .scratch/appearance-land.playwright.config.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Actual main workspace: draft/rail regression 1/1 with 6 filtered skips, zero type errors/warnings, fresh bundle passes with existing size warning, and isolated port7491 cold Appearance flow 1/1. /tmp/jj-appearance-land-main-exact.log, web-check.log, build.log and cold.log."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "fail",
+        "failures": 1,
+        "note": "Landing provenance documentation maps to the architecture chapter; the initial evidence-only change omitted that chapter. Added the explicit local-source/registry qualification boundary in the owning chapter; no gate suppression. /tmp/jj-appearance-land-main-spec-first.log."
+      },
+      {
+        "command": "pnpm spec:validate; pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Five validators, 21 chapters, 146 requirements and 120 tasks. Evidence bookkeeping only. /tmp/jj-appearance-land-main-spec-validate.log and progress.log."
+      },
+      {
+        "command": "pnpm spec:first; pnpm exec prettier --check spec/src/architecture.md spec/src/milestones.md spec/src/verification.md docs/reference/appearance-provenance.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Repaired exact governance target passes: one protected file and two canonical chapters. Four changed documentation files are formatted. /tmp/jj-appearance-land-main-spec-first-repaired.log and format.log. Final evidence is consumed again before commit."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Compatible Design Core registry release containing yovkqwtu and registry-only consumer qualification",
+      "Inherited broad Storybook accessibility/mobile-draft and Bits teardown failures, mounted Mira/CodeMirror strict-CSP qualification, and separate visual baseline approval"
+    ],
+    "scope": "Local main landing is complete. UI-only rebase/integration verification covers current main Thread changes and Appearance direct consumers. Earlier full relevant source qualification remains E-UI-052; inherited broad-suite failures remain explicit. Root aggregate checks/tests/builds, Rust lanes, live-service/browser full flows and wire contract generation are out of scope. No shared test infrastructure changes. No package publication, remote push, installed CLI change or service restart.",
+    "versions": "Buzz ef2aa1ae38fadcc0bc22b8bf6ed96b35933146be; Shiki 4.0.2; Inter 5.2.8; JJ 0.45.1; pnpm 10.32.1; installed source Design Core 0.1.2/yovkqwtu; portable registry manifest/lock ^0.2.0.",
+    "formats": "Existing device-local jj-store.appearance.v1 version1, exact repository/conversation session draft keys and native operation/receipt/WAL formats unchanged.",
+    "next": "Keep M16 Partial. Complete separately authorized foundation release and registry-only acceptance; qualify inherited composer CSP and broader Storybook gaps independently.",
+    "artifacts": "Ignored main .scratch/appearance-land-preview.mjs and appearance-land.playwright.config.ts serve the rebuilt bundle with the exact production STRICT_CSP on isolated port7491, retain existing web-responses.json, and close their own server after the test. Source harness uses port7489. Logs /tmp/jj-appearance-main-*.log and /tmp/jj-appearance-land-main-*.log."
   }
 ]
 ```
