@@ -1,4 +1,7 @@
 fn main() -> std::process::ExitCode {
+    if let Some(code) = jj_store_cli::git_bridge::transport_worker() {
+        return code.into();
+    }
     let runner = jj_cli::cli_util::CliRunner::init();
     if let Some(code) = jj_store_cli::presentation::preflight() {
         return code.into();

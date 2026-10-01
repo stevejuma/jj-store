@@ -4,19 +4,6 @@ use std::{path::Path, process::Stdio, time::Duration};
 use tokio::{io::AsyncReadExt as _, process::Command};
 const OUTPUT_BYTES: u64 = 1024 * 1024;
 const CACHE_BYTES: u64 = 512 * 1024 * 1024;
-struct ProcessGroup(Option<u32>);
-impl Drop for ProcessGroup {
-    fn drop(&mut self) {
-        #[cfg(unix)]
-        if let Some(pid) = self.0.take() {
-            let _ = std::process::Command::new("/bin/kill")
-                .args(["-KILL", "--", &format!("-{pid}")])
-                .stdout(Stdio::null())
-                .stderr(Stdio::null())
-                .status();
-        }
-    }
-}
 fn disk(path: &Path) -> Result<u64> {
     let mut pending = vec![path.to_owned()];
     let mut bytes = 0u64;
@@ -61,7 +48,8 @@ pub struct Output {
     pub stdout: Vec<u8>,
 }
 pub async fn run(cache: &Path, args: &[String]) -> Result<Output> {
-    let mut command = Command::new("git");
+    let mut command = Command::new(std::env::current_exe()?);
+    command.arg(super::watchdog::MARKER);
     for (key, _) in std::env::vars_os() {
         if key.to_string_lossy().starts_with("GIT_") {
             command.env_remove(key);
@@ -107,22 +95,18 @@ pub async fn run(cache: &Path, args: &[String]) -> Result<Output> {
         ])
         .arg("--git-dir")
         .arg(cache)
-        .stdin(Stdio::null())
+        .stdin(Stdio::piped())
         .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
-        .kill_on_drop(true);
+        .stderr(Stdio::piped());
     #[cfg(target_os = "macos")]
     {
         command.args(["-c", "credential.helper=osxkeychain"]);
     }
     command.args(args);
-    #[cfg(unix)]
-    {
-        use std::os::unix::process::CommandExt as _;
-        command.as_std_mut().process_group(0);
-    }
     let mut child = command.spawn()?;
-    let mut group = ProcessGroup(child.id());
+    // Dropping this pipe (including when the future is canceled) tells the
+    // independent supervisor to kill and reap its owned Git group.
+    let _lifetime = child.stdin.take().ok_or("Git lifetime pipe missing")?;
     let stdout = child.stdout.take().ok_or("Git stdout missing")?;
     let stderr = child.stderr.take().ok_or("Git stderr missing")?;
     let work = async {
@@ -142,7 +126,6 @@ pub async fn run(cache: &Path, args: &[String]) -> Result<Output> {
         tokio::pin!(watch);
         let stdout = tokio::select! {output=&mut streams => output?, checked=&mut watch => {checked?; return Err("Git monitor stopped".into());}};
         let status = child.wait().await?;
-        group.0 = None;
         disk(cache)?;
         Ok(Output {
             success: status.success(),
@@ -322,6 +305,19 @@ pub async fn inspect<'a>(
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[tokio::test]
+    async fn subprocess_stream_limit_accepts_boundary_and_rejects_overflow() {
+        let exact = vec![b'x'; OUTPUT_BYTES as usize];
+        assert_eq!(read(exact.as_slice()).await.unwrap().len(), exact.len());
+        let overflow = vec![b'x'; OUTPUT_BYTES as usize + 1];
+        assert!(
+            read(overflow.as_slice())
+                .await
+                .unwrap_err()
+                .to_string()
+                .contains("output limit")
+        );
+    }
     #[test]
     fn cache_monitor_rejects_excess_bytes_and_symlinks() {
         let cache = tempfile::tempdir().unwrap();

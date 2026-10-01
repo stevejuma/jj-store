@@ -40,6 +40,7 @@ pub fn unavailable(operation: &str) -> CommandError {
 mod device;
 mod push;
 mod transport;
+mod watchdog;
 use crate::{commands::error, remote::BridgeContext};
 use jj_cli::{cli_util::WorkspaceCommandTransaction, ui::Ui};
 use jj_lib::{
@@ -56,6 +57,7 @@ use std::{
     collections::{BTreeMap, BTreeSet},
     sync::Arc,
 };
+pub use watchdog::entry as transport_worker;
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error + Send + Sync>>;
 
 fn string(args: &clap::ArgMatches, name: &str) -> Option<String> {

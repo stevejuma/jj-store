@@ -1496,17 +1496,23 @@ async fn native_git_push_uses_exact_leases_retains_parent_and_recovers_without_r
         run(&["bookmark", "set", "feature", "-r", "@"]);
         let local_advance = run(&["log", "--no-graph", "-r", "feature", "-T", "commit_id"]);
         child.kill().unwrap();
-        // The hook intentionally holds this owned transport group alive, so
-        // its PID cannot have been reused. Clean up only that disposable group.
         let pgid: u32 = fs::read_to_string(&group).unwrap().trim().parse().unwrap();
         assert!(pgid > 1);
-        assert!(
-            Command::new("/bin/kill")
-                .args(["-KILL", "--", &format!("-{pgid}")])
-                .status()
-                .unwrap()
-                .success()
-        );
+        let deadline = std::time::Instant::now() + Duration::from_secs(5);
+        while Command::new("/bin/kill")
+            .args(["-0", "--", &format!("-{pgid}")])
+            .stdout(std::process::Stdio::null())
+            .stderr(std::process::Stdio::null())
+            .status()
+            .unwrap()
+            .success()
+        {
+            assert!(
+                std::time::Instant::now() < deadline,
+                "owned transport survives hard CLI cancellation"
+            );
+            tokio::time::sleep(Duration::from_millis(20)).await;
+        }
         pending.child.take().unwrap().wait_with_output().unwrap();
         fs::remove_file(hook).unwrap();
         let session = NativeSession::new(

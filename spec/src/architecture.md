@@ -420,3 +420,8 @@ introduced. WorkStore origin replication retains its separately deferred gate.
 The exact converter adds gix 0.87.1 to the JJ integration boundary while keeping
 JJ 0.45.1 and the existing resolved Git dependency pin. Its temporary GitBackend
 is a conversion tool; no Git dependency enters WAL, model or object storage.
+
+Git transport supervision uses the already resolved rustix 1.1.5 process API
+inside the CLI only. Non-reaping wait retains the owned group leader's PID until
+cleanup completes, preventing a cleanup signal from targeting a recycled PID. No
+transport or process dependency enters native authority layers.

@@ -193,3 +193,15 @@ facts while atomically moving native tracking metadata. Removal tombstones the
 alias and removes only its native tracking view; local bookmarks, immutable
 objects, origins and attempts survive. Reusing the name creates a new logical
 identity and cannot inherit the removed remote's leases.
+
+## Process lifetime qualification
+
+Every transport subprocess runs under an invocation-owned supervisor entered
+before CLI configuration or credential loading. Only that supervisor owns the
+Git process group. A kernel pipe ties its lifetime to the invoking CLI; EOF,
+unexpected input or the fixed 60-second deadline kills the group and reaps the
+leader. Ordinary future cancellation, output/disk-limit failures and hard CLI
+SIGKILL therefore terminate owned transport children. The supervisor is a
+short-lived helper, with no installed service, shared state or replay trigger.
+Cancellation after remote acceptance remains an unknown external outcome until
+explicit recovery inspects the approved destination.

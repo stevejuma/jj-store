@@ -99,9 +99,9 @@ adds evidence here in its enclosing Jujutsu change.
 | M12.2       | Done        | M12.1       | JST-GIT-002,JST-GIT-003                                                                                                                                                  | GB1: Exact conversion and native retained cache-loss identity                                                                  | Complete staged bridge gate                                                   | E-M12-002                                                                                                                                                                                                                                                                                                                                                      |
 | M12.3       | Done        | M12.2       | JST-GIT-004,JST-GIT-008                                                                                                                                                  | GB2: Bounded fetch with native tracking and concurrent ref merge                                                               | Complete staged bridge gate                                                   | E-M12-003,E-M12-004,E-M12-006                                                                                                                                                                                                                                                                                                                                  |
 | M12.4       | Done        | M12.3       | JST-GIT-005,JST-GIT-006                                                                                                                                                  | GB3: Selected single-ref push with leases and durable recovery                                                                 | Complete staged bridge gate                                                   | E-M12-005,E-M12-006                                                                                                                                                                                                                                                                                                                                            |
-| M12.5       | In progress | M12.4       | JST-GIT-007                                                                                                                                                              | GB4: Fault/concurrency and qualified data-only native replication                                                              | Complete staged bridge gate                                                   | E-M12-006                                                                                                                                                                                                                                                                                                                                                      |
+| M12.5       | In progress | M12.4       | JST-GIT-007                                                                                                                                                              | GB4: Fault/concurrency and qualified data-only native replication                                                              | Complete staged bridge gate                                                   | E-M12-006,E-M12-008                                                                                                                                                                                                                                                                                                                                            |
 | M12.6       | In progress | M12.5       | JST-GIT-001,JST-GIT-005                                                                                                                                                  | GB5: Bookmark selectors safe remote lifecycle and atomic multi-ref parity                                                      | Complete staged bridge gate                                                   | E-M12-007                                                                                                                                                                                                                                                                                                                                                      |
-| M12.7       | Planned     | M12.6       | JST-GIT-002,JST-GIT-007,JST-GIT-008                                                                                                                                      | GB6: Cold real-RustFS external merge credentials resources and UI freshness                                                    | Complete staged bridge gate                                                   | -                                                                                                                                                                                                                                                                                                                                                              |
+| M12.7       | In progress | M12.6       | JST-GIT-002,JST-GIT-007,JST-GIT-008                                                                                                                                      | GB6: Cold real-RustFS external merge credentials resources and UI freshness                                                    | Complete staged bridge gate                                                   | E-M12-008                                                                                                                                                                                                                                                                                                                                                      |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -24295,6 +24295,77 @@ and named tests are checked by the progress gate.
     "result": "pass",
     "remaining": [],
     "next": "GB5 behavior qualified; M12.6 stays In progress until dependency M12.5 fault/cancellation gate completes. Continue owned transport lifetime and GB6 credentials/resource/cold real-RustFS/browser cycle."
+  },
+  {
+    "id": "E-M12-008",
+    "tasks": [
+      "M12",
+      "M12.5",
+      "M12.7"
+    ],
+    "date": "2026-10-01",
+    "kind": "native-git-owned-process-lifetime",
+    "revision": "Enclosing Jujutsu change lnwolwuz.",
+    "before": "Hard-kill regression failed once: owned post-receive Git group survives SIGKILL of invoking CLI. Fixture cleans its disposable group on failure.",
+    "versions": "JJ 0.45.1;gix 0.87.1;Git 2.55.0;Rust 1.98.1;rustix 1.1.5 existing dependency pin",
+    "formats": "No native schema/profile change. Invocation-local supervisor argv and non-secret lifetime pipe.",
+    "files": [
+      "crates/jj-store-cli/src/main.rs",
+      "crates/jj-store-cli/src/git_bridge.rs",
+      "crates/jj-store-cli/src/git_bridge/watchdog.rs",
+      "crates/jj-store-cli/src/git_bridge/transport.rs",
+      "crates/jj-store-cli/Cargo.toml",
+      "Cargo.lock",
+      "crates/jj-store-cli/tests/executable_native.rs",
+      "spec/src/git-interop.md",
+      "spec/src/cli.md",
+      "spec/src/architecture.md"
+    ],
+    "runs": [
+      {
+        "command": "cargo fmt --all && cargo test -p jj-store-cli --locked --test executable_native native_git_push_uses_exact_leases_retains_parent_and_recovers_without_repush -- --exact",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before: owned transport survives hard CLI cancellation."
+      },
+      {
+        "command": "cargo fmt --all && cargo test -p jj-store-cli --locked --test executable_native native_git_push_uses_exact_leases_retains_parent_and_recovers_without_repush -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "Supervisor kills group after CLI hard kill; attempt recovers after cache deletion while preserving concurrent local advance."
+      },
+      {
+        "command": "cargo fmt --all && cargo check -p jj-store-cli",
+        "result": "fail",
+        "failures": 1,
+        "note": "Safe non-reaping wait API requires WaitId::Pid. Initial pin accidentally downgraded resolved rustix; restored existing 1.1.5 before acceptance."
+      },
+      {
+        "command": "cargo check -p jj-store-cli",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final non-reaping cleanup compiles using existing rustix 1.1.5; group leader PID is retained until cleanup finishes."
+      },
+      {
+        "command": "cargo fmt --all && cargo test -p jj-store-cli --locked --lib --test executable_native --test native_rpc --test workspace_migration && cargo clippy -p jj-store-cli --all-targets --locked -- -D warnings",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final safe process cleanup:7 library,18 executable,7 RPC,1 migration cases pass;3 unrelated OS-credential cases ignored. Clippy passes."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/git-interop.md spec/src/cli.md spec/src/architecture.md spec/src/milestones.md && pnpm spec:validate && pnpm check:progress && pnpm spec:first && pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "123 requirements,94 tasks,7 protected files/4 chapters and15 package boundaries pass. Other Rust/UI aggregate lanes out of scope."
+      }
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/executable_native.rs#native_git_push_uses_exact_leases_retains_parent_and_recovers_without_repush",
+      "crates/jj-store-cli/src/git_bridge/transport.rs#subprocess_stream_limit_accepts_boundary_and_rejects_overflow"
+    ],
+    "result": "pass",
+    "remaining": [],
+    "next": "Continue GB4 fault/ref-concurrency and GB6 credentials/real-RustFS/browser gates. No complete bridge claim."
   }
 ]
 ```

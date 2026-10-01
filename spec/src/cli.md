@@ -596,3 +596,8 @@ updates use atomic transport with exact leases for every full ref. Remote rename
 and removal change owned alias/tracking metadata while preserving durable facts.
 Unsupported tag publication, signing/conflict profiles and push options still
 reject before external writes; ordinary backend command semantics are unchanged.
+
+The Git transport supervisor uses an internal executable entry point before
+CliRunner and native credential loading. It accepts invocation-owned argv and a
+lifetime pipe; replicated Git facts cannot launch it. Hard cancellation closes
+the pipe and terminates the owned Git group without changing native evidence.
