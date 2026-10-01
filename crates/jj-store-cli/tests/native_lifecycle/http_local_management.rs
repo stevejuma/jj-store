@@ -17,6 +17,34 @@ impl WorkspaceVerifier for Verifier {
     }
 }
 
+struct Picker(AtomicUsize);
+#[async_trait::async_trait]
+impl management::FolderPicker for Picker {
+    async fn pick(
+        &self,
+    ) -> std::result::Result<management::FolderSelection, management::PickerError> {
+        let call = self.0.fetch_add(1, Ordering::SeqCst);
+        match call {
+            0 | 1 => Ok(management::FolderSelection {
+                version: 1,
+                path: (call == 0).then(|| "/picked folder".into()),
+            }),
+            2 => Err(management::PickerError::Busy),
+            3 => Err(management::PickerError::Timeout),
+            4 => Err(management::PickerError::Invalid),
+            _ => Err(management::PickerError::Unavailable),
+        }
+    }
+}
+fn pick_request() -> Request<Body> {
+    let mut request = link_request("/unused", 0);
+    *request.uri_mut() = format!("/v1/repos/{REPO}/local/workspaces/pick")
+        .parse()
+        .unwrap();
+    *request.body_mut() = Body::from("{}");
+    request
+}
+
 fn link_request(path: &str, revision: u64) -> Request<Body> {
     Request::builder()
         .method("POST")
@@ -47,6 +75,7 @@ async fn local_workspace_management_requires_local_admin_and_captures_contracts(
         )
         .unwrap(),
     );
+    let picker = Arc::new(Picker(AtomicUsize::new(0)));
     let before = f.f.session.snapshot().await.unwrap().manifest().clone();
     let local = api(
         &f,
@@ -57,6 +86,7 @@ async fn local_workspace_management_requires_local_admin_and_captures_contracts(
                 permission: Permission::Admin,
             },
             local_workspaces: Some(manager.clone()),
+            local_folder_picker: Some(picker.clone()),
             ..Config::default()
         },
     );
@@ -81,6 +111,49 @@ async fn local_workspace_management_requires_local_admin_and_captures_contracts(
     assert_eq!(samples[0]["data"]["links"], serde_json::json!([]));
     assert_eq!(samples[1]["data"]["links"][0]["availability"], "ready");
     assert_eq!(samples[1]["data"], samples[2]["data"]);
+    let capabilities = local
+        .clone()
+        .oneshot(protected(&format!("/v1/repos/{REPO}/capabilities")))
+        .await
+        .unwrap();
+    let capabilities: Value = serde_json::from_slice(
+        &to_bytes(capabilities.into_body(), 1024 * 1024)
+            .await
+            .unwrap(),
+    )
+    .unwrap();
+    assert_eq!(capabilities["local_folder_picker"], true);
+    assert_eq!(
+        picker.0.load(Ordering::SeqCst),
+        0,
+        "GETs cannot invoke picker"
+    );
+    for (expected, code) in [
+        (StatusCode::OK, None),
+        (StatusCode::OK, None),
+        (StatusCode::CONFLICT, Some("folder_picker_busy")),
+        (StatusCode::REQUEST_TIMEOUT, Some("folder_picker_timeout")),
+        (
+            StatusCode::SERVICE_UNAVAILABLE,
+            Some("folder_picker_invalid_output"),
+        ),
+        (
+            StatusCode::SERVICE_UNAVAILABLE,
+            Some("folder_picker_unavailable"),
+        ),
+    ] {
+        let response = local.clone().oneshot(pick_request()).await.unwrap();
+        assert_eq!(response.status(), expected);
+        let data: Value =
+            serde_json::from_slice(&to_bytes(response.into_body(), 1024 * 1024).await.unwrap())
+                .unwrap();
+        if let Some(code) = code {
+            assert_eq!(data["code"], code);
+        }
+        samples.push(serde_json::json!({"path":"/v1/repos/{repo}/local/workspaces/pick","method":"post","status":expected.as_u16(),"media":"application/json","data":data}));
+    }
+    assert_eq!(samples[4]["data"]["path"], "/picked folder");
+    assert!(samples[5]["data"]["path"].is_null());
     let calls = verifier.0.load(Ordering::SeqCst);
     for access in [
         Access::Authenticated,
@@ -96,10 +169,12 @@ async fn local_workspace_management_requires_local_admin_and_captures_contracts(
             Config {
                 access,
                 local_workspaces: Some(manager.clone()),
+                local_folder_picker: Some(picker.clone()),
                 ..Config::default()
             },
         );
         for mut req in [
+            pick_request(),
             link_request("/forbidden", 1),
             protected(&format!("/v1/repos/{REPO}/local/workspaces")),
         ] {
@@ -117,7 +192,7 @@ async fn local_workspace_management_requires_local_admin_and_captures_contracts(
             );
         }
     }
-    let mut foreign = link_request("/forbidden", 1);
+    let mut foreign = pick_request();
     foreign
         .headers_mut()
         .insert("origin", "http://evil.example".parse().unwrap());
@@ -130,9 +205,18 @@ async fn local_workspace_management_requires_local_admin_and_captures_contracts(
         r#"{"version":1,"expected_revision":1,"path":"/forbidden","executable":"/bin/sh"}"#,
     );
     assert_eq!(
-        local.oneshot(invalid).await.unwrap().status(),
+        local.clone().oneshot(invalid).await.unwrap().status(),
         StatusCode::BAD_REQUEST
     );
+    for body in [r#"{"executable":"/bin/sh"}"#, r#"{"path":"/tmp"}"#] {
+        let mut invalid = pick_request();
+        *invalid.body_mut() = Body::from(body);
+        assert_eq!(
+            local.clone().oneshot(invalid).await.unwrap().status(),
+            StatusCode::BAD_REQUEST
+        );
+    }
+    assert_eq!(picker.0.load(Ordering::SeqCst), 6);
     assert_eq!(verifier.0.load(Ordering::SeqCst), calls);
     assert_eq!(f.f.session.snapshot().await.unwrap().manifest(), &before);
     if let Ok(path) = std::env::var("JJ_STORE_LOCAL_MANAGEMENT_CONTRACT_CAPTURE") {

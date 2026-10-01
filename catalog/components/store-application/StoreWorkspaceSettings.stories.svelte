@@ -49,3 +49,60 @@
     ).not.toBeInTheDocument();
   }}
 />
+
+<Story
+  name="Browse fills draft before linking"
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const input = canvas.getByRole("textbox", { name: "Folder path" });
+    await userEvent.click(canvas.getByRole("button", { name: "Browse…" }));
+    await expect(input).toHaveValue("/workspaces/picked folder");
+    await expect(
+      canvas.queryByText("Ready", { exact: true }),
+    ).not.toBeInTheDocument();
+    await userEvent.click(canvas.getByRole("button", { name: "Link folder" }));
+    await expect(
+      canvas.getByText("/workspaces/picked folder", { exact: true }),
+    ).toBeVisible();
+  }}
+/>
+<Story
+  name="Picker cancellation preserves draft"
+  args={{ selection: "cancelled" }}
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const input = canvas.getByRole("textbox", { name: "Folder path" });
+    await userEvent.type(input, "/existing draft");
+    await userEvent.click(canvas.getByRole("button", { name: "Browse…" }));
+    await expect(input).toHaveValue("/existing draft");
+  }}
+/>
+<Story
+  name="Picker failure keeps manual entry"
+  args={{ selection: "failed" }}
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole("button", { name: "Browse…" }));
+    await expect(
+      canvas.getByText(
+        "Folder picker unavailable. Enter the folder path manually.",
+      ),
+    ).toBeVisible();
+    const input = canvas.getByRole("textbox", { name: "Folder path" });
+    await userEvent.type(input, "/manual");
+    await expect(input).toHaveValue("/manual");
+  }}
+/>
+<Story
+  name="Manual entry without native picker"
+  args={{ pickerSupported: false }}
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(
+      canvas.queryByRole("button", { name: "Browse…" }),
+    ).not.toBeInTheDocument();
+    await expect(
+      canvas.getByRole("textbox", { name: "Folder path" }),
+    ).toBeEnabled();
+  }}
+/>

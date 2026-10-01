@@ -472,3 +472,9 @@ clients must treat absence as unavailable. New routes retain protocol version 1
 and do not alter native objects, operation identities, WAL or receipt formats.
 Cold acceptance covers the pinned macOS ARM64 native profile and persisted links
 across restart; filesystem-only Git serving and other platforms remain gated.
+
+Native folder selection adds an optional `local_folder_picker` capability and a
+V1 response with a nullable path. Absence retains manual entry on older services
+and unsupported platforms. It changes no repository or workspace-registry
+format. The initial OS adapter is macOS; Linux and Windows dialog adapters are
+deferred.

@@ -683,3 +683,12 @@ files or reconciling heads. Browser links must target that service's configured
 Unix socket and the selected repository. Authenticated serving and unsupported
 Git-backed serving do not advertise workspace management. Development tests use
 explicit binaries and isolated state; existing installations are not restarted.
+
+## Native folder selection for local settings
+
+Local server composition supplies the separate owned folder-picker interface on
+macOS using `/usr/bin/osascript` with a fixed folder-dialog script. Execution is
+asynchronous, single flight, limited to 4096 path bytes and 25 seconds, and
+cleans up children on timeout or caller cancellation. Other platforms advertise
+no picker; missing helpers or headless sessions return unavailable and leave
+manual path entry usable. No installed binary or service is changed by picking.

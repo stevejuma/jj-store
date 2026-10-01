@@ -110,6 +110,7 @@ export function createInMemoryStoreController(
     async refreshWorkspaceLinks() {},
     setWorkspacePath() {},
     async linkWorkspace() {},
+    async pickWorkspaceFolder() {},
     prepareIndex: settings.prepareIndex,
     async loadMore() {},
     search: search.search,

@@ -995,3 +995,12 @@ draft after failures, including stale or unknown outcomes. An explicit folder
 refresh rereads saved device state before retry without moving the repository
 snapshot. Repository/source changes invalidate pending responses and clear
 private folder drafts; a late request cannot populate another repository.
+
+The optional `local_folder_picker` capability additionally requires a composed
+OS picker. `POST /local/workspaces/pick` accepts an empty JSON object and
+returns `{version: 1, path: string | null}`; null denotes cancellation. It
+requires the same LocalTrusted admin admission and repository authorization as
+linking. It neither links nor validates a workspace. Failures distinguish busy,
+timeout, invalid helper output and unavailable picker. No executable, prompt or
+initial path is accepted from a caller. Existing HTTP request deadlines still
+apply.

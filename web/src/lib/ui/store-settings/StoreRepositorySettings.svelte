@@ -86,6 +86,8 @@
   onRefresh={controller.actions.refreshWorkspaceLinks}
   onPath={controller.actions.setWorkspacePath}
   onLink={controller.actions.linkWorkspace}
+  pickerSupported={Boolean(settings.capabilities?.local_folder_picker)}
+  onBrowse={controller.actions.pickWorkspaceFolder}
 />
 
 <StoreGraphIndexSettings {controller} />

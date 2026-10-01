@@ -1,5 +1,5 @@
 use super::*;
-use crate::local_management::{link_workspace, local_workspaces};
+use crate::local_management::{link_workspace, local_workspaces, pick_workspace_folder};
 use crate::mutations::{
     apply as mutation_apply, preview as mutation_preview, status as mutation_status,
 };
@@ -258,6 +258,7 @@ macro_rules! endpoints {
         $register! {
             (get, "/repos/{repo}/capabilities", capabilities, Empty, Capabilities, Reply::Json(200)),
             (get, "/repos/{repo}/local/workspaces", local_workspaces, Empty, jj_store_service::local_management::WorkspaceLinks, Reply::Json(200)),
+            (post, "/repos/{repo}/local/workspaces/pick", pick_workspace_folder, Empty, jj_store_service::local_management::FolderSelection, Reply::Json(200)),
             (post, "/repos/{repo}/local/workspaces/link", link_workspace, Empty, jj_store_service::local_management::WorkspaceLinks, Reply::Json(200)),
             (get, "/repos/{repo}/search", search, SearchQuery, search_paging::Page, Reply::Json(200)),
             (get, "/repos/{repo}/search/status", search_status, Empty, search_paging::Status, Reply::Json(200)),
@@ -317,6 +318,7 @@ pub(super) fn document(doc: &mut Document) {
         };
     }
     endpoints!(register);
+    doc.body::<Empty>("/v1/repos/{repo}/local/workspaces/pick", "post");
     doc.body::<jj_store_service::local_management::LinkWorkspace>(
         "/v1/repos/{repo}/local/workspaces/link",
         "post",

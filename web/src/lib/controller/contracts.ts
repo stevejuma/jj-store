@@ -211,6 +211,7 @@ export interface StoreController {
     refreshWorkspaceLinks(): Promise<void>;
     setWorkspacePath(path: string): void;
     linkWorkspace(): Promise<void>;
+    pickWorkspaceFolder(): Promise<void>;
     prepareIndex(): Promise<void>;
     loadMore(
       collection:

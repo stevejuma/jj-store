@@ -8,9 +8,25 @@ test("local folder settings preserve drafts and link without changing repository
   await api(page, { access: "local_trusted" });
   await page.route("**/capabilities", (route) =>
     route.fulfill({
-      json: { ...sample("capabilities"), local_workspace_links: true },
+      json: {
+        ...sample("capabilities"),
+        local_workspace_links: true,
+        local_folder_picker: true,
+      },
     }),
   );
+  let picks = 0;
+  await page.route("**/local/workspaces/pick", async (route) => {
+    expect(route.request().method()).toBe("POST");
+    expect(route.request().postDataJSON()).toEqual({});
+    picks++;
+    await route.fulfill({
+      json: {
+        version: 1,
+        path: picks === 1 ? "/workspaces/example with spaces" : null,
+      },
+    });
+  });
   const requests: unknown[] = [];
   let revision = 7;
   const links: Array<{
@@ -56,7 +72,11 @@ test("local folder settings preserve drafts and link without changing repository
   await page.getByRole("button", { name: "Repository", exact: true }).click();
   const input = page.getByRole("textbox", { name: "Folder path" });
   await expect(page.getByText("No local folders linked.")).toBeVisible();
-  await input.fill("/workspaces/example with spaces");
+  await page.getByRole("button", { name: "Browse…" }).click();
+  await expect(input).toHaveValue("/workspaces/example with spaces");
+  expect(requests).toHaveLength(0);
+  await page.getByRole("button", { name: "Browse…" }).click();
+  await expect(input).toHaveValue("/workspaces/example with spaces");
   await page.getByRole("button", { name: "Search", exact: true }).click();
   await page.getByRole("button", { name: "Repository", exact: true }).click();
   await expect(input).toHaveValue("/workspaces/example with spaces");

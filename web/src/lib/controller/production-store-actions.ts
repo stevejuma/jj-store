@@ -75,6 +75,7 @@ export function createProductionStoreActions(options: {
     refreshWorkspaceLinks: options.settings.refreshWorkspaceLinks,
     setWorkspacePath: options.settings.setWorkspacePath,
     linkWorkspace: options.settings.linkWorkspace,
+    pickWorkspaceFolder: options.settings.pickWorkspaceFolder,
     prepareIndex: options.settings.prepareIndex,
     async loadMore(collection) {
       if (collection === "bookmarks" && options.data.refsCursor)

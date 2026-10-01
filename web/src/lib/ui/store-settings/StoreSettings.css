@@ -144,3 +144,22 @@
     flex-direction: column;
   }
 }
+
+.store-settings__folder-input {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+.store-settings__folder-input input {
+  flex: 1;
+  min-width: 0;
+}
+.store-settings__folder-input button {
+  flex-shrink: 0;
+}
+@media (max-width: 480px) {
+  .store-settings__folder-input {
+    flex-wrap: wrap;
+  }
+}

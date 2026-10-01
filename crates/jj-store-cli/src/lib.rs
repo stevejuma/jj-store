@@ -18,6 +18,7 @@ pub mod attachment;
 pub mod binding;
 pub mod commands;
 pub mod credentials;
+mod folder_picker;
 pub mod git_bridge;
 pub mod initialization;
 pub mod local_agent_publication;

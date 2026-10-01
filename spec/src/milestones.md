@@ -116,9 +116,9 @@ shared-package release qualification does not alter those original Git gates.
 | M13.4       | Planned     | M13.3                   | JST-LOCAL-004,JST-LOCAL-005                                                                                                                                              | Filesystem-only server, local UI and recoverable code commands                                                                 | Implement device bindings/APIs, recoverable code commands and cold UI gates    | -                                                                                                                                                                                                                                                                                                                                                              |
 | M13.5       | Planned     | M13.4                   | JST-LOCAL-006                                                                                                                                                            | Independent local/native conversion with complete collaboration history                                                        | Implement bounded history/evidence conversion, mappings and source safety      | -                                                                                                                                                                                                                                                                                                                                                              |
 | M13.6       | Planned     | M13.5                   | JST-LOCAL-001,JST-LOCAL-002,JST-LOCAL-003,JST-LOCAL-004,JST-LOCAL-005,JST-LOCAL-006                                                                                      | Cold end-to-end and retained native regression qualification                                                                   | Qualify completed local flow cold and retain native regressions                | -                                                                                                                                                                                                                                                                                                                                                              |
-| M14         | In progress | M4.18                   | JST-UI-012,JST-UI-016                                                                                                                                                    | Local settings, profile-aware device links and safe maintenance                                                                | Implement M14.3 agent setup and automatic recovery                             | E-M14-001,E-M14-002,E-M14-003,E-M14-004,E-M14-005                                                                                                                                                                                                                                                                                                              |
+| M14         | In progress | M4.18                   | JST-UI-012,JST-UI-016                                                                                                                                                    | Local settings, profile-aware device links and safe maintenance                                                                | Implement M14.3 agent setup and automatic recovery                             | E-M14-001,E-M14-002,E-M14-003,E-M14-004,E-M14-005,E-M14-006                                                                                                                                                                                                                                                                                                    |
 | M14.1       | Done        | M4.18                   | JST-UI-012                                                                                                                                                               | Graph preparation independent of text-search health                                                                            | Retain independent graph/search regressions; proceed to M14.2                  | E-M14-001                                                                                                                                                                                                                                                                                                                                                      |
-| M14.2       | Done        | M14.1                   | JST-UI-016,JST-SEC-005,JST-SEC-006                                                                                                                                       | Typed local management and profile-aware workspace links                                                                       | Retain folder-link regressions and proceed to M14.3                            | E-M14-002,E-M14-003,E-M14-005                                                                                                                                                                                                                                                                                                                                  |
+| M14.2       | Done        | M14.1                   | JST-UI-016,JST-SEC-005,JST-SEC-006                                                                                                                                       | Typed local management and profile-aware workspace links                                                                       | Retain folder-link regressions and proceed to M14.3                            | E-M14-002,E-M14-003,E-M14-005,E-M14-006                                                                                                                                                                                                                                                                                                                        |
 | M14.3       | In progress | M14.2                   | JST-UI-016,JST-COLLAB-002,JST-COLLAB-006                                                                                                                                 | Agent setup, queue inspection and automatic recovery                                                                           | Add agent management and worker lifecycle on the shared drain foundation       | E-M14-004,E-M14-005                                                                                                                                                                                                                                                                                                                                            |
 | M14.4       | Planned     | M14.2                   | JST-UI-016,JST-ADAPT-003,JST-ADAPT-004                                                                                                                                   | Editable Search and isolated worker replacement                                                                                | Add desired/effective configuration and safe text-search rebuild               | -                                                                                                                                                                                                                                                                                                                                                              |
 | M14.5       | Planned     | M14.2                   | JST-UI-016,JST-PUB-005,JST-PUB-006                                                                                                                                       | Storage integrity and non-destructive checkpoints                                                                              | Add bounded authorized operations and uncertain-outcome recovery               | -                                                                                                                                                                                                                                                                                                                                                              |
@@ -30251,6 +30251,190 @@ and named tests are checked by the progress gate.
       "Agent enable/setup/remove Settings UI, service-owned recovery worker, Search/Storage/Sync management and visual baseline approval remain pending."
     ],
     "artifacts": "Ignored .scratch/landing-*.log in jj-store-local-settings; .scratch/settings-landing-before.json and .scratch/settings-landing-restart.log in main. Post-restart live probes: .scratch/settings-landing-after.json. In-app browser review tab is retained."
+  },
+  {
+    "id": "E-M14-006",
+    "tasks": ["M14", "M14.2"],
+    "date": "2026-10-01",
+    "kind": "implementation",
+    "files": [
+      "catalog/components/store-application/StoreWorkspaceSettings.stories.svelte",
+      "catalog/controller/in-memory-store-controller.svelte.ts",
+      "catalog/fixtures/WorkspaceSettingsFixture.svelte",
+      "crates/jj-store-cli/src/folder_picker.rs",
+      "crates/jj-store-cli/src/folder_picker_tests.rs",
+      "crates/jj-store-cli/src/lib.rs",
+      "crates/jj-store-cli/src/server_commands.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/http_local_management.rs",
+      "crates/jj-store-http/src/dto.rs",
+      "crates/jj-store-http/src/lib.rs",
+      "crates/jj-store-http/src/local_management.rs",
+      "crates/jj-store-http/src/routes.rs",
+      "crates/jj-store-server/src/process.rs",
+      "crates/jj-store-service/src/local_management.rs",
+      "schemas/openapi.json",
+      "spec/src/api.md",
+      "spec/src/cli.md",
+      "spec/src/compatibility.md",
+      "spec/src/mutations.md",
+      "spec/src/security.md",
+      "spec/src/ui.md",
+      "web/src/lib/api/generated.ts",
+      "web/src/lib/controller/contracts.ts",
+      "web/src/lib/controller/http-workspace-links.ts",
+      "web/src/lib/controller/production-store-actions.ts",
+      "web/src/lib/controller/production-store-view.ts",
+      "web/src/lib/controller/production-workspace-links.ts",
+      "web/src/lib/controller/workspace-link-types.ts",
+      "web/src/lib/ui/store-settings/StoreRepositorySettings.svelte",
+      "web/src/lib/ui/store-settings/StoreSettings.css",
+      "web/src/lib/ui/store-settings/StoreWorkspaceSettings.svelte",
+      "web/tests/browser/local-workspaces.spec.ts",
+      "web/tests/vite/http-workspace-links.test.ts",
+      "web/tests/vite/production-store-workspaces.test.ts",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "crates/jj-store-cli/src/folder_picker_tests.rs#selection_cancellation_and_unavailable_preserve_path_bytes",
+      "crates/jj-store-cli/src/folder_picker_tests.rs#busy_timeout_and_cancellation_hold_ownership_until_reaped",
+      "crates/jj-store-cli/src/folder_picker_tests.rs#output_is_bounded_before_process_exit",
+      "crates/jj-store-cli/tests/native_lifecycle/http_local_management.rs#local_workspace_management_requires_local_admin_and_captures_contracts"
+    ],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-store-workspaces.test.ts",
+        "result": "fail",
+        "failures": 2,
+        "note": "Before: six existing cases passed; two new picker regressions failed at the missing action. .scratch/folder-picker-before.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --lib folder_picker::tests",
+        "result": "fail",
+        "failures": 1,
+        "note": "First compilation failed because a test moved a picker while its pinned future still borrowed it; fixed the fixture to share an Arc."
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --lib folder_picker::tests",
+        "result": "pass",
+        "failures": 0,
+        "note": "Three pass: exact path bytes/cancellation/missing helper/invalid output; single-flight/timeout/request cancellation with kill and reap; bounded stdout/stderr before process exit. .scratch/folder-picker-rust.log"
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-store-workspaces.test.ts web/tests/vite/http-workspace-links.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Intermediate nine tests passed before the added transport POST check."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-store-workspaces.test.ts web/tests/vite/http-workspace-links.test.ts web/tests/vite/production-store-settings.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final 16 pass; draft-only selection, cancel/failure preservation, capability gating, single flight, late-response exclusion, protected empty POST and existing settings consumers. .scratch/folder-picker-unit.log"
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test native_lifecycle content_acceptance::http_acceptance::local_management::local_workspace_management_requires_local_admin_and_captures_contracts -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "One passes: local admin only, no GET invocation, selection/cancellation/error replies, bearer/read/foreign-origin/unknown-body rejection, no workspace verification or repository publication from picking. Final handler samples also checked by contracts:check. .scratch/folder-picker-http.log"
+      },
+      {
+        "command": "pnpm contracts:generate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Regenerated OpenAPI and TypeScript from registered Rust handlers."
+      },
+      {
+        "command": "pnpm contracts:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Generated artifacts match; all handler capture fixtures and six schema/strictness tests plus TypeScript contracts pass. .scratch/folder-picker-contract-check.log"
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both type checks pass with zero errors/warnings; catalog boundaries accept 100 modules."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreWorkspaceSettings.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Fresh Vitest/Vite process: six interaction/accessibility stories pass, including selection, cancellation, failure/manual fallback and unsupported connection. .scratch/folder-picker-stories.log"
+      },
+      {
+        "command": "cargo clippy --locked -p jj-store-service -p jj-store-http -p jj-store-server --lib -p jj-store-cli --lib --test native_lifecycle -- -D warnings",
+        "result": "fail",
+        "failures": 1,
+        "note": "Invocation rejected duplicate --lib; no checks ran."
+      },
+      {
+        "command": "cargo clippy --locked -p jj-store-service -p jj-store-http -p jj-store-server -p jj-store-cli --lib --test native_lifecycle -- -D warnings",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected libraries and native lifecycle test compile/lint with no warnings. .scratch/folder-picker-clippy.log"
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Fresh production build passes; existing bundle-size warning retained. .scratch/folder-picker-build.log"
+      },
+      {
+        "command": "pnpm exec playwright test --config web/playwright.config.ts web/tests/browser/local-workspaces.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "One cold browser test passes against a fresh preview process: selection only fills draft, cancellation retains it, save/revision recovery and route retention work, mobile overflow and axe pass. HTTP picker is stubbed in this lane. .scratch/folder-picker-browser.log"
+      },
+      {
+        "command": "pnpm check:architecture; pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "422 web modules and 15 package boundaries accepted."
+      },
+      {
+        "command": "cargo fmt -p jj-store-service -p jj-store-http -p jj-store-server -p jj-store-cli -- --check",
+        "result": "fail",
+        "failures": 1,
+        "note": "One final HTTP error tuple needed rustfmt after status adjustment; formatted again."
+      },
+      {
+        "command": "cargo fmt -p jj-store-service -p jj-store-http -p jj-store-server -p jj-store-cli; pnpm exec prettier --write <changed TS/Svelte/CSS/Markdown files>",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formatted changed files; generated contracts are formatted by their generator."
+      },
+      {
+        "command": "pnpm dev:restart",
+        "result": "pass",
+        "failures": 0,
+        "note": "Main-owned demo rebuilt and restarted at http://127.0.0.1:7460/; repository 1bdb89c409c1b891ac7f180c01a265d5 and persisted data reused, Search ready, server PID 97083. .scratch/folder-picker-dev-restart.log"
+      },
+      {
+        "command": "cua_repl: createBrowserTab; profile menu > Settings > Repository > Browse; getAXState",
+        "result": "pass",
+        "failures": 0,
+        "note": "Live rebuilt demo advertises Browse, shows pending system-dialog state, then returns to enabled form with empty draft and no error. No folder linked. Automation could not bind the non-bundled osascript process; no native selection/cancellation interaction is claimed. Initial connection during restart was refused; retried after HTTP readiness."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Protected changes have owning chapters; 132 requirements and 111 tasks accepted. Canonical UI/security describe explicit fixed native helper exception, capability gating and lifecycle limits."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "before": "Main working copy clean at 96fedc24 above 82bacf59; Local folders only accepted manual path entry. Two new exact controller regressions fail before implementation.",
+    "scope": "One folder-picking behavior across owned service/HTTP, CLI/server composition and Settings UI. Focused checks cover each boundary and direct consumer. Full contract lane is required for additive public schemas. Root aggregates, full Rust/UI suites and release qualification are out of scope.",
+    "formats": "Additive optional local_folder_picker capability and V1 FolderSelection {version,path:null|string}; empty strict JSON request. No registry/native persistence changes. Enclosing Jujutsu change is the revision reference.",
+    "versions": "Rust 1.98.1; JJ 0.45.1; macOS ARM64; pnpm 10.32.1; locked Svelte/Vite/Storybook/Vitest; existing local Community/Design Core resolution.",
+    "next": "Review the macOS Browse action in Repository settings; continue M14.3 agent setup and automatic recovery.",
+    "deferred": [
+      "Linux/Windows native dialog adapters and headless GUI availability; manual path entry remains supported.",
+      "Visual baselines remain visual-pending; no visual approval claimed.",
+      "M14.3-M14.7 remain unfinished."
+    ],
+    "artifacts": "Ignored .scratch/folder-picker-*.log and web/test-results; disposable process fixtures cleaned up."
   }
 ]
 ```

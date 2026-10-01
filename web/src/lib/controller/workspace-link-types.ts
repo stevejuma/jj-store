@@ -8,6 +8,7 @@ export type WorkspaceLinkRequest = Exact<
   >["content"]["application/json"]
 >;
 export interface WorkspaceLinkTransport {
+  pick(): Promise<Model<"FolderSelection">>;
   list(): Promise<Model<"WorkspaceLinks">>;
   link(request: WorkspaceLinkRequest): Promise<Model<"WorkspaceLinks">>;
 }
@@ -17,6 +18,8 @@ export interface WorkspaceLinkSettings {
   workspaceLinksError: string;
   workspacePath: string;
   workspaceLinking: boolean;
+  workspacePicking: boolean;
+  workspacePickerError: string;
 }
 export function emptyWorkspaceLinks(): WorkspaceLinkSettings {
   return {
@@ -25,5 +28,7 @@ export function emptyWorkspaceLinks(): WorkspaceLinkSettings {
     workspaceLinksError: "",
     workspacePath: "",
     workspaceLinking: false,
+    workspacePicking: false,
+    workspacePickerError: "",
   };
 }

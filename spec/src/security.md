@@ -14,7 +14,7 @@ not make authoritative storage unready.
 | JST-SEC-002 | Production credentials MUST remain outside checkouts; an explicit owner-only development fixture MAY use an ignored `.local` subtree, while servers MUST retain token verifiers, CLI credentials MUST use the OS credential facility or automation environment, and browser tokens MUST remain in memory. |
 | JST-SEC-003 | Authorization MUST precede every object, historical, staging, search, preview, and publication request; knowledge of an object ID MUST NOT grant access.                                                                                                                                                  |
 | JST-SEC-004 | Shared deployments MUST use TLS; unauthenticated operation MUST require an explicit restricted-loopback development setting.                                                                                                                                                                              |
-| JST-SEC-005 | Server operations MUST NOT execute repository hooks, arbitrary programs, editors, or merge tools; paths, bodies, queries, and work queues MUST have explicit limits.                                                                                                                                      |
+| JST-SEC-005 | Server operations MUST NOT execute repository hooks, arbitrary programs, editors, or merge tools; only explicitly admitted, fixed OS folder-dialog helpers MAY run for local folder selection; paths, bodies, queries, and work queues MUST have explicit limits.                                         |
 | JST-SEC-006 | LocalTrusted MUST accept only verified local peers, assign stable installation principals, and protect every browser route with exact loopback authority, origin, fetch-metadata, protocol-version, method, and media-type checks; authenticated shared deployment remains deferred.                      |
 | JST-SEC-007 | Authenticated discovery MUST derive candidates from a token ID without treating that index as authority, reauthorize the full token against every current repository policy, preserve independent permission, expiry and revocation per repository, and reveal no repository for a forged secret.         |
 
@@ -283,3 +283,13 @@ directory durability. Identical link retries recover the existing link; a stale
 revision cannot add another link. Limits apply to paths, bytes and link counts.
 Linking never copies checkout files or agent captures. Unlinking and agent
 setup/recovery are not exposed by this foundation slice.
+
+An explicit LocalTrusted admin folder-pick request may invoke the composition's
+fixed OS folder-dialog helper, independently of the read-only verifier. No
+client or repository data selects the executable or script. One dialog per
+service, a 25-second deadline and bounded output limit resource use;
+cancellation, timeout and request teardown terminate and reap the child before
+releasing ownership. The selected absolute path is only a draft; linking still
+performs full physical workspace, profile, repository and installation
+validation. GETs never open a dialog, and bearer sessions never obtain picker
+capability.

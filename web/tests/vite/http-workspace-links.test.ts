@@ -37,3 +37,25 @@ test("workspace transport preserves revisions and uses protected local requests"
   await expect(transport.list()).rejects.toMatchObject({ name: "AbortError" });
   expect(fetcher).toHaveBeenCalledTimes(2);
 });
+
+test("folder picker uses an empty protected POST and returns cancellation", async () => {
+  const fetcher = vi.fn<typeof fetch>(
+    async () =>
+      new Response('{"version":1,"path":null}', {
+        headers: { "content-type": "application/json" },
+      }),
+  );
+  const transport = new HttpWorkspaceLinks(
+    new Client("ab".repeat(16), null, () => {}, fetcher),
+  );
+  expect(await transport.pick()).toEqual({ version: 1, path: null });
+  expect(fetcher.mock.calls[0]?.[0]).toBe(
+    `/v1/repos/${"ab".repeat(16)}/local/workspaces/pick`,
+  );
+  expect(fetcher.mock.calls[0]?.[1]).toMatchObject({
+    method: "POST",
+    body: "{}",
+    headers: { "x-jj-store-protocol": "1", "content-type": "application/json" },
+    credentials: "omit",
+  });
+});

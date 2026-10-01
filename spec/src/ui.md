@@ -88,6 +88,13 @@ expose no link action. Repository switching/disconnection clears drafts and
 ignores late requests. Folder paths wrap on mobile, and form actions remain
 keyboard accessible.
 
+The optional native folder picker adds Browse beside Folder path. Only an
+explicit click opens the dialog on the local-service machine. Selection fills
+the draft; Link folder remains the separate validation/save action. Cancel
+preserves the draft; failures retain manual entry and explain the fallback.
+While picking, repeated browse and link actions are disabled. Repository changes
+discard late selections. Unsupported platforms keep the manual form.
+
 ## Local management delivery
 
 This staged extension keeps the transient Settings shell and explicit snapshot

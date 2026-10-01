@@ -78,3 +78,35 @@ pub(crate) async fn link_workspace(
             .map_err(failure)?,
     )
 }
+
+pub(crate) async fn pick_workspace_folder(
+    ExtractState(state): ExtractState<Arc<State>>,
+    context: Context,
+    query: Input<Empty>,
+    body: std::result::Result<Json<Empty>, JsonRejection>,
+) -> Result<Response> {
+    input(query)?;
+    manager(&state, &context).await?;
+    let Json(_) = body.map_err(|_| Error::invalid())?;
+    let picker =
+        state.config.local_folder_picker.as_ref().ok_or_else(|| {
+            Error::new(StatusCode::SERVICE_UNAVAILABLE, "folder_picker_unavailable")
+        })?;
+    let selection = picker.pick().await.map_err(|error| {
+        use management::PickerError;
+        let (status, code) = match error {
+            PickerError::Unavailable => {
+                (StatusCode::SERVICE_UNAVAILABLE, "folder_picker_unavailable")
+            }
+            PickerError::Busy => (StatusCode::CONFLICT, "folder_picker_busy"),
+            PickerError::Timeout => (StatusCode::REQUEST_TIMEOUT, "folder_picker_timeout"),
+            PickerError::Invalid => (
+                StatusCode::SERVICE_UNAVAILABLE,
+                "folder_picker_invalid_output",
+            ),
+        };
+        Error::new(status, code)
+    })?;
+    // A picker result is a draft, not proof of a valid workspace.
+    state.json(&selection)
+}

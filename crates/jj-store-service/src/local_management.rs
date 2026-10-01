@@ -6,6 +6,31 @@ use serde::{Deserialize, Serialize};
 pub const MAX_WORKSPACES: usize = 64;
 pub const MAX_PATH_BYTES: usize = 4096;
 
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct FolderSelection {
+    pub version: u32,
+    pub path: Option<String>,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq, thiserror::Error)]
+pub enum PickerError {
+    #[error("folder picker is unavailable")]
+    Unavailable,
+    #[error("folder picker is already open")]
+    Busy,
+    #[error("folder picker timed out")]
+    Timeout,
+    #[error("folder picker returned invalid output")]
+    Invalid,
+}
+
+#[async_trait::async_trait]
+pub trait FolderPicker: Send + Sync {
+    /// Explicit OS interaction only; selection never saves or verifies a link.
+    async fn pick(&self) -> Result<FolderSelection, PickerError>;
+}
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum WorkspaceProfile {

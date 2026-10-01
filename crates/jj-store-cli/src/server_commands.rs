@@ -287,7 +287,13 @@ pub async fn serve(
         ),
         _ => None,
     };
-    let server = PreparedServer::prepare_with_workspaces(&config, local, verifier).await?;
+    let server = PreparedServer::prepare_with_local_management(
+        &config,
+        local,
+        verifier,
+        crate::folder_picker::native_picker(),
+    )
+    .await?;
     let address = server.address()?;
     let shutdown = process::shutdown_signal()?;
     emit(

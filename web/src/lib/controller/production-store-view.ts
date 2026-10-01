@@ -79,6 +79,8 @@ export function productionStoreView(
       workspaceLinksError: data.workspaceLinksError,
       workspacePath: data.workspacePath,
       workspaceLinking: data.workspaceLinking,
+      workspacePicking: data.workspacePicking,
+      workspacePickerError: data.workspacePickerError,
       capabilities: data.capabilities,
       snapshot: data.head,
       searchStatus: data.searchStatus,

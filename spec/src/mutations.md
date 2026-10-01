@@ -585,3 +585,9 @@ intent returns the selected existing link after an uncertain acknowledgement. A
 different folder with a stale revision fails explicitly. No device link grants
 repository access, permits a different principal, or enables an unqualified
 backend. Every transport request retains the local-administration guard.
+
+Device-local folder selection uses a separate owned `FolderPicker` service
+interface. It returns a bounded draft path or cancellation, never a workspace
+proof, publication or saved link. Transport admission precedes helper execution;
+workspace verification remains read-only and linking retains its existing
+checks.

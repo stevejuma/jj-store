@@ -8,6 +8,7 @@ function fixture() {
   const data = createProductionStoreState();
   data.capabilities = {
     local_workspace_links: true,
+    local_folder_picker: true,
     search: false,
   } as Model<"Capabilities">;
   const links = {
@@ -20,8 +21,12 @@ function fixture() {
     ...links,
     revision: 5n,
   }));
+  const pick = vi.fn(async () => ({
+    version: 1,
+    path: "/selected folder" as string | null,
+  }));
   const source = {
-    localWorkspaces: { list, link },
+    localWorkspaces: { list, link, pick },
   } as unknown as StoreDataSource;
   let current = true;
   const settings = createProductionStoreSettings({
@@ -36,6 +41,7 @@ function fixture() {
     data,
     list,
     link,
+    pick,
     settings,
     disconnect: () => {
       current = false;
@@ -148,4 +154,49 @@ test("late folder refresh cannot replace the result of linking", async () => {
   await pending;
   expect(f.data.workspaceLinks?.revision).toBe(5n);
   expect(f.data.workspaceLinksState).toBe("ready");
+});
+
+test("folder selection fills only the draft; cancellation and failure preserve it", async () => {
+  const f = fixture();
+  await f.settings.refresh();
+  await f.settings.pickWorkspaceFolder();
+  expect(f.data.workspacePath).toBe("/selected folder");
+  expect(f.link).not.toHaveBeenCalled();
+  f.pick.mockResolvedValueOnce({ version: 1, path: null });
+  await f.settings.pickWorkspaceFolder();
+  expect(f.data.workspacePath).toBe("/selected folder");
+  f.pick.mockRejectedValueOnce(new ApiError("folder_picker_unavailable"));
+  await f.settings.pickWorkspaceFolder();
+  expect(f.data.workspacePath).toBe("/selected folder");
+  expect(f.data.workspacePickerError).toContain(
+    "Enter the folder path manually",
+  );
+  expect(f.data.workspacePicking).toBe(false);
+});
+
+test("picking is capability gated, single flight and discards late selections", async () => {
+  const f = fixture();
+  f.data.capabilities!.local_folder_picker = undefined;
+  await f.settings.pickWorkspaceFolder();
+  expect(f.pick).not.toHaveBeenCalled();
+  f.data.capabilities!.local_folder_picker = true;
+  await f.settings.refresh();
+  let deliver!: (value: { version: number; path: string }) => void;
+  f.pick.mockImplementationOnce(
+    () =>
+      new Promise((resolve) => {
+        deliver = resolve;
+      }),
+  );
+  const pending = f.settings.pickWorkspaceFolder();
+  await f.settings.pickWorkspaceFolder();
+  await f.settings.linkWorkspace();
+  expect(f.pick).toHaveBeenCalledOnce();
+  expect(f.link).not.toHaveBeenCalled();
+  expect(f.data.workspacePicking).toBe(true);
+  f.disconnect();
+  deliver({ version: 1, path: "/late" });
+  await pending;
+  expect(f.data.workspacePath).toBe("");
+  expect(f.data.workspacePicking).toBe(false);
 });

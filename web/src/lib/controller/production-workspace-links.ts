@@ -17,7 +17,7 @@ export function createProductionWorkspaceLinks(options: {
     Object.assign(data, emptyWorkspaceLinks());
   }
   async function refreshWorkspaceLinks() {
-    if (data.workspaceLinking) return;
+    if (data.workspaceLinking || data.workspacePicking) return;
     if (!available()) {
       generation++;
       data.workspaceLinks = null;
@@ -43,7 +43,8 @@ export function createProductionWorkspaceLinks(options: {
     }
   }
   function setWorkspacePath(path: string) {
-    if (data.workspaceLinking) return;
+    if (data.workspaceLinking || data.workspacePicking) return;
+    data.workspacePickerError = "";
     data.workspacePath = path;
     if (!path) data.workspaceLinksError = "";
   }
@@ -52,7 +53,8 @@ export function createProductionWorkspaceLinks(options: {
       !available() ||
       !data.workspaceLinks ||
       !data.workspacePath ||
-      data.workspaceLinking
+      data.workspaceLinking ||
+      data.workspacePicking
     )
       return;
     const source = options.source(),
@@ -83,5 +85,38 @@ export function createProductionWorkspaceLinks(options: {
         data.workspaceLinking = false;
     }
   }
-  return { clear, refreshWorkspaceLinks, setWorkspacePath, linkWorkspace };
+  async function pickWorkspaceFolder() {
+    if (
+      !available() ||
+      !data.capabilities?.local_folder_picker ||
+      data.workspaceLinking ||
+      data.workspacePicking ||
+      ["loading", "refreshing"].includes(data.workspaceLinksState)
+    )
+      return;
+    const source = options.source(),
+      ticket = options.version(),
+      request = ++generation;
+    data.workspacePicking = true;
+    data.workspacePickerError = "";
+    try {
+      if (!source.localWorkspaces) throw new Error("Folder picker unavailable");
+      const result = await source.localWorkspaces.pick();
+      if (!options.current(ticket, source) || request !== generation) return;
+      if (result.path !== null) data.workspacePath = result.path;
+    } catch (cause) {
+      if (!options.current(ticket, source) || request !== generation) return;
+      data.workspacePickerError = `${storeErrorMessage(cause)}. Enter the folder path manually or try Browse again.`;
+    } finally {
+      if (options.current(ticket, source) && request === generation)
+        data.workspacePicking = false;
+    }
+  }
+  return {
+    clear,
+    refreshWorkspaceLinks,
+    setWorkspacePath,
+    linkWorkspace,
+    pickWorkspaceFolder,
+  };
 }

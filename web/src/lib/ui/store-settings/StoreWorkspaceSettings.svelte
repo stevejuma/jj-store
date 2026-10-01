@@ -10,15 +10,20 @@
     onRefresh,
     onPath,
     onLink,
+    pickerSupported,
+    onBrowse,
   }: {
     settings: WorkspaceLinkSettings;
     supported: boolean;
     onRefresh: () => Promise<void>;
     onPath: (path: string) => void;
     onLink: () => Promise<void>;
+    pickerSupported: boolean;
+    onBrowse: () => Promise<void>;
   } = $props();
   const busy = $derived(
     settings.workspaceLinking ||
+      settings.workspacePicking ||
       ["loading", "refreshing"].includes(settings.workspaceLinksState),
   );
 </script>
@@ -63,7 +68,9 @@
     {#if busy}<p role="status">
         {settings.workspaceLinking
           ? "Linking folder…"
-          : "Loading local folders…"}
+          : settings.workspacePicking
+            ? "Choose a folder in the system dialog…"
+            : "Loading local folders…"}
       </p>{/if}
     <form
       onsubmit={(event) => {
@@ -74,20 +81,31 @@
       <Field.Group>
         <Field.Field data-disabled={busy}>
           <Field.Label for="workspace-folder-path">Folder path</Field.Label>
-          <Input
-            id="workspace-folder-path"
-            value={settings.workspacePath}
-            oninput={(event) => onPath(event.currentTarget.value)}
-            required
-            maxlength={4096}
-            disabled={busy}
-            autocomplete="off"
-            spellcheck={false}
-            aria-describedby="workspace-folder-help"
-          />
+          <div class="store-settings__folder-input">
+            <Input
+              id="workspace-folder-path"
+              value={settings.workspacePath}
+              oninput={(event) => onPath(event.currentTarget.value)}
+              required
+              maxlength={4096}
+              disabled={busy}
+              autocomplete="off"
+              spellcheck={false}
+              aria-describedby="workspace-folder-help"
+            />
+            {#if pickerSupported}
+              <Button
+                type="button"
+                variant="outline"
+                disabled={busy}
+                onclick={() => void onBrowse()}>Browse…</Button
+              >
+            {/if}
+          </div>
           <Field.Description id="workspace-folder-help"
             >Enter the absolute path of an existing native JJ workspace
-            connected to this local service.</Field.Description
+            connected to this local service. {#if pickerSupported}Browse opens a
+              dialog on the machine running the local service.{/if}</Field.Description
           >
         </Field.Field>
         <Field.Field orientation="horizontal">
@@ -106,6 +124,13 @@
         </Field.Field>
       </Field.Group>
     </form>
+    {#if settings.workspacePickerError}
+      <Alert.Root variant="destructive"
+        ><Alert.Title>Folder picker unavailable</Alert.Title>
+        <Alert.Description>{settings.workspacePickerError}</Alert.Description
+        ></Alert.Root
+      >
+    {/if}
     {#if settings.workspaceLinksError}
       <Alert.Root variant="destructive"
         ><Alert.Title>Local folders unavailable</Alert.Title><Alert.Description

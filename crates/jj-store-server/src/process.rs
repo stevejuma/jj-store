@@ -60,6 +60,14 @@ impl PreparedServer {
         require_loopback: bool,
         verifier: Option<Arc<dyn jj_store_service::local_management::WorkspaceVerifier>>,
     ) -> Result<Self> {
+        Self::prepare_with_local_management(config, require_loopback, verifier, None).await
+    }
+    pub async fn prepare_with_local_management(
+        config: &Config,
+        require_loopback: bool,
+        verifier: Option<Arc<dyn jj_store_service::local_management::WorkspaceVerifier>>,
+        picker: Option<Arc<dyn jj_store_service::local_management::FolderPicker>>,
+    ) -> Result<Self> {
         config.validate()?;
         if require_loopback && !config.bind.ip().is_loopback() {
             return Err(Error::Config(
@@ -235,6 +243,7 @@ impl PreparedServer {
                     .ascii_serialization(),
                 access: http_access,
                 registry: Some(registry as Arc<dyn jj_store_service::registry::RepositoryRegistry>),
+                local_folder_picker: local_workspaces.as_ref().and(picker),
                 local_workspaces,
                 storage_ready: true,
                 backups,
