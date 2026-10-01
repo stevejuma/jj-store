@@ -1,5 +1,9 @@
 # CLI and server commands
 
+The native lifecycle HTTP acceptance fixture qualifies the Thread/Reaction
+transport and representative generated responses through isolated MemoryStore
+authority. It does not establish real-RustFS or jj-acp execution qualification.
+
 The native CLI uses the typed RPC client for Thread/Reaction commands, status,
 signed pages and Thread detail. Native pages use opaque --cursor; local Git
 pages use --after with --at-metadata. Mixing these profiles fails explicitly.

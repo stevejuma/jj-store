@@ -6,6 +6,7 @@ use serde_json::{Map, Value, json};
 pub(crate) enum Reply {
     Json(u16),
     Binary,
+    Raster,
     Events,
 }
 pub(crate) struct Document {
@@ -53,6 +54,22 @@ impl Document {
             "version" => self
                 .output
                 .subschema_for::<jj_store_service::collaboration::AgentCheckpointVersionIdentity>()
+                .to_value(),
+            "thread_id" => self
+                .output
+                .subschema_for::<jj_store_service::collab_model::ThreadId>()
+                .to_value(),
+            "message_id" => self
+                .output
+                .subschema_for::<jj_store_service::collab_model::HumanMessageId>()
+                .to_value(),
+            "message_revision" | "asset" => self
+                .output
+                .subschema_for::<jj_store_service::collab_model::CollabObjectId>()
+                .to_value(),
+            "emoji_id" => self
+                .output
+                .subschema_for::<jj_store_service::collab_model::CustomEmojiId>()
                 .to_value(),
             "thread" => self
                 .output
@@ -152,6 +169,24 @@ impl Document {
                         "x-sse-id-schema":event_id_schema()}}}));
                 200
             }
+            Reply::Raster => {
+                let headers = json!({
+                    "X-JJ-Store-Repository": {"schema": self.output.subschema_for::<m::RepositoryId>()},
+                    "X-JJ-Store-Epoch": {"schema": self.output.subschema_for::<m::EpochId>()},
+                    "X-JJ-Store-Position": {"schema": {"type":"integer", "minimum":0}},
+                    "X-JJ-Store-Revision": {"schema": self.output.subschema_for::<m::RecordDigest>()},
+                    "X-JJ-Store-Reaction-Asset": {"schema": self.output.subschema_for::<jj_store_service::collab_model::CollabObjectId>()}
+                });
+                let mut content = Map::new();
+                for media in ["image/png", "image/jpeg", "image/gif", "image/webp"] {
+                    content.insert(
+                        media.into(),
+                        json!({"schema":{"type":"string","format":"binary"}}),
+                    );
+                }
+                responses.insert("200".into(), json!({"description":"Authorized retained raster. Source and static preview IDs are independent immutable assets. No byte ranges or external URLs; snapshot/content identity is in headers.", "headers": headers, "content":content}));
+                200
+            }
             Reply::Binary => {
                 parameters.push(json!({"name":"Range", "in":"header", "required":false,
                     "schema":{"type":"string"}, "description":"One bytes=start-end, bytes=start- or bytes=-count range. Bounds are clamped to EOF after verifying the complete native file."}));
@@ -167,7 +202,12 @@ impl Document {
             }
         };
         let mutation = path.contains("/mutations");
-        let mut operation = json!({"operationId":id, "tags":["reads"],
+        let operation_id = if id == "collab_status" {
+            format!("{id}_{}", path.split('/').nth(3).unwrap())
+        } else {
+            id.to_owned()
+        };
+        let mut operation = json!({"operationId":operation_id, "tags":["reads"],
             "description":"Requires current repository read permission. Unknown query fields are rejected. Source strings are untrusted data. Reads never reconcile or publish native operations.",
             "parameters":parameters, "responses":responses, "x-jj-store-query-schema":query,
             "security":[{"repositoryBearer":[]},{}]});
@@ -216,6 +256,22 @@ impl Document {
                 "cursor_reset after expiry, process restart, or repository epoch replacement."
             );
         }
+        if path.contains("/threads") && !path.contains("/reviews/")
+            || path.contains("/reactions/")
+            || path.contains("/reaction-emojis")
+            || path.contains("/reaction-assets/")
+        {
+            operation["tags"] = json!(["collaboration"]);
+            operation["description"] = json!(
+                "Current repository permission is checked for every request. Commands and status require Write; all other routes require Read. Authenticated actors and publication identities are service-derived. Signed pages bind complete captured roots, viewer, exact query and page size; expiry/restart returns cursor_reset. Retain original request IDs after outcome_unknown; not_known never proves rejection. Native code writes require reducer 3; WorkStore homes retain their frozen origin ledger. Reads and imports never execute agents."
+            );
+            operation["responses"]["409"]["description"] = json!(
+                "cursor_reset, stale_collaboration, intent_conflict or collaboration_replication_unsupported. No latest-state fallback or automatic retry."
+            );
+        }
+        if path == "/repos/{repo}/reaction-emojis/{emoji_id}" {
+            operation["requestBody"] = json!({"required":true, "description":"At most 2097152 encoded bytes; only bounded PNG/JPEG/GIF/WebP are admitted. Static preview is retained by the service.", "content":{"application/octet-stream":{"schema":{"type":"string","format":"binary"}}}});
+        }
         if path.ends_with("/conflict-uploads") {
             operation["tags"] = json!(["mutations"]);
             operation["description"] = json!(
@@ -226,7 +282,7 @@ impl Document {
         let mut item = json!({method:operation});
         if method == "get" {
             let mut head = operation;
-            head["operationId"] = json!(format!("{id}_head"));
+            head["operationId"] = json!(format!("{operation_id}_head"));
             head["description"] = json!(
                 "Runs the same authorized GET validation and drops the body. No JSON, binary bytes or SSE frames are returned."
             );

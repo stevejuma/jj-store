@@ -1,5 +1,14 @@
 use super::*;
 use crate::local_management::{link_workspace, local_workspaces, pick_workspace_folder};
+use crate::collab::{
+    assets::{define as collab_emoji_define, image as collab_image},
+    commands::{
+        reaction_apply as collab_reaction_apply, retire as collab_emoji_retire,
+        status as collab_status, thread_apply as collab_thread_apply,
+    },
+    emojis as collab_emojis, events as collab_events, message as collab_message,
+    reactions as collab_reactions, thread as collab_thread, threads as collab_threads,
+};
 use crate::mutations::{
     apply as mutation_apply, preview as mutation_preview, status as mutation_status,
 };
@@ -280,6 +289,20 @@ macro_rules! endpoints {
             (get, "/repos/{repo}/reviews/threads/{thread}", review_thread, Empty, crate::collaboration::ReviewDetail, Reply::Json(200)),
             (post, "/repos/{repo}/reviews/commands", review_command_apply, Empty, jj_store_service::review_mutations::Outcome, Reply::Json(200)),
             (get, "/repos/{repo}/reviews/commands/{request_id}", review_command_status, Empty, jj_store_service::review_mutations::Status, Reply::Json(200)),
+            (get, "/repos/{repo}/threads", collab_threads, crate::collab::PageQuery, jj_store_service::collab_pages::Page, Reply::Json(200)),
+            (get, "/repos/{repo}/threads/{thread_id}", collab_thread, Empty, jj_store_service::collab_reads::ThreadDetailV1, Reply::Json(200)),
+            (get, "/repos/{repo}/threads/{thread_id}/timeline", collab_events, crate::collab::PageQuery, jj_store_service::collab_pages::Page, Reply::Json(200)),
+            (get, "/repos/{repo}/threads/{thread_id}/messages/{message_id}/revisions/{message_revision}", collab_message, Empty, jj_store_service::collab_reads::HumanMessageDetailV1, Reply::Json(200)),
+            (post, "/repos/{repo}/threads/commands", collab_thread_apply, Empty, jj_store_service::collab_mutations::Outcome, Reply::Json(200)),
+            (get, "/repos/{repo}/threads/commands/{request_id}", collab_status, Empty, jj_store_service::collab_mutations::Status, Reply::Json(200)),
+            (post, "/repos/{repo}/reactions/query", collab_reactions, Empty, jj_store_service::collab_pages::Page, Reply::Json(200)),
+            (post, "/repos/{repo}/reactions/commands", collab_reaction_apply, Empty, jj_store_service::collab_mutations::Outcome, Reply::Json(200)),
+            (get, "/repos/{repo}/reactions/commands/{request_id}", collab_status, Empty, jj_store_service::collab_mutations::Status, Reply::Json(200)),
+            (get, "/repos/{repo}/reaction-emojis", collab_emojis, crate::collab::PageQuery, jj_store_service::collab_pages::Page, Reply::Json(200)),
+            (post, "/repos/{repo}/reaction-emojis/{emoji_id}", collab_emoji_define, crate::collab::assets::DefineQuery, jj_store_service::collab_mutations::Outcome, Reply::Json(200)),
+            (post, "/repos/{repo}/reaction-emojis/commands", collab_emoji_retire, Empty, jj_store_service::collab_mutations::Outcome, Reply::Json(200)),
+            (get, "/repos/{repo}/reaction-emojis/commands/{request_id}", collab_status, Empty, jj_store_service::collab_mutations::Status, Reply::Json(200)),
+            (get, "/repos/{repo}/reaction-assets/{asset}", collab_image, Empty, String, Reply::Raster),
             (get, "/repos/{repo}/work/browse", work_browse, jj_store_service::work::WorkBrowseQuery, jj_store_service::work::WorkBrowsePage, Reply::Json(200)),
             (get, "/repos/{repo}/work", work_page, jj_store_service::work::WorkQuery, jj_store_service::work::WorkPage, Reply::Json(200)),
             (post, "/repos/{repo}/work/commands", work_apply, Empty, jj_store_service::work::Outcome, Reply::Json(200)),
@@ -342,6 +365,16 @@ pub(super) fn document(doc: &mut Document) {
         "/v1/repos/{repo}/local/workspaces/link",
         "post",
     );
+    doc.body::<crate::collab::commands::ThreadRequest>("/v1/repos/{repo}/threads/commands", "post");
+    doc.body::<crate::collab::commands::ReactionRequest>(
+        "/v1/repos/{repo}/reactions/commands",
+        "post",
+    );
+    doc.body::<crate::collab::commands::RetireRequest>(
+        "/v1/repos/{repo}/reaction-emojis/commands",
+        "post",
+    );
+    doc.body::<crate::collab::ReactionQuery>("/v1/repos/{repo}/reactions/query", "post");
     doc.body::<Prepare>("/v1/repos/{repo}/index/tasks", "post");
     doc.body::<mutation::Request>("/v1/repos/{repo}/mutations/preview", "post");
     doc.body::<mutation::Request>("/v1/repos/{repo}/mutations", "post");
@@ -355,7 +388,11 @@ pub(super) fn router() -> Router<Arc<State>> {
     macro_rules! register {
         ($(($method:ident, $path:literal, $handler:ident, $query:ty, $response:ty, $reply:expr)),* ) => {
             Router::new()$(.route($path, $method($handler).layer(DefaultBodyLimit::max(
-                if $path.contains("/mutations") {
+                if $path == "/repos/{repo}/reaction-emojis/{emoji_id}" {
+                    jj_store_service::collab_model::MAX_IMAGE_BYTES
+                } else if $path.contains("/threads/commands") || $path.contains("/reactions/") || $path == "/repos/{repo}/reaction-emojis/commands" {
+                    crate::collab::commands::MAX_REQUEST_BYTES
+                } else if $path.contains("/mutations") {
                     crate::mutations::MAX_REQUEST_BYTES
                 } else if $path.ends_with("/work/commands") {
                     crate::work::MAX_REQUEST_BYTES

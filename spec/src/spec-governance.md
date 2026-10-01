@@ -1,5 +1,10 @@
 # Specification governance
 
+M14 route additions register executable handlers and OpenAPI together. The
+contract lane validates actual Thread/Reaction responses, including raster media
+and strict actor-free command bodies, and rechecks all existing route captures
+because the route inventory and generated contract infrastructure are shared.
+
 The targeted verification policy in the tracked agent guide is jj-store's
 controlling interpretation of the parent workspace test escalation ladder. The
 archived attachment is non-normative; requirement changes belong here before or

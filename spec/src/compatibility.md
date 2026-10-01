@@ -1,5 +1,11 @@
 # Compatibility and release
 
+M14 HTTP contract samples cover Thread commands/status/detail/events, exact
+human message revisions, Reaction queries/commands, custom
+definitions/retirement and retained raster reads. They validate actual isolated
+MemoryStore transport responses against generated OpenAPI; this is distinct from
+persistent RustFS, cold browser and real runner evidence.
+
 Rust 1.98.1 and edition 2024 are the qualified toolchain for managed RustFS. New
 native repositories ship first through LocalTrusted access with no user
 authentication. M8a hardens that local release. A new embedded runtime or

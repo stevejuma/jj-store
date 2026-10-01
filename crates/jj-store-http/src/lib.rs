@@ -2,6 +2,7 @@
 #![forbid(unsafe_code)]
 pub mod assets;
 mod body;
+mod collab;
 mod collaboration;
 pub mod contract;
 mod dto;
@@ -154,6 +155,7 @@ struct State {
     operation_browser: OperationBrowserPager,
     agent_sessions: AgentSessionPager,
     review_threads: ReviewThreadPager,
+    collab: jj_store_service::collab_pages::CollabPager,
     work: jj_store_service::work::WorkPager,
     review_commands: jj_store_service::review_mutations::ReviewCommandService,
     tasks: index_tasks::IndexTasks,
@@ -236,6 +238,16 @@ impl HttpApi {
             .map_err(|_| "HTTP collaboration cursor limits")?;
         let review_threads = ReviewThreadPager::new(paging_limits, Arc::new(SystemClock))
             .map_err(|_| "HTTP review cursor limits")?;
+        let collab = jj_store_service::collab_pages::CollabPager::new(
+            jj_store_service::collab_pages::Limits {
+                concurrency: config.concurrency,
+                timeout: config.timeout,
+                ..Default::default()
+            },
+            Arc::new(SystemClock),
+            Arc::new(jj_store_service::collab_reads::RepositoryMemberReactionActors),
+        )
+        .map_err(|_| "HTTP Thread/Reaction cursor limits")?;
         let review_commands = jj_store_service::review_mutations::ReviewCommandService;
         let tasks = index_tasks::IndexTasks::new(
             queries.graph().clone(),
@@ -267,6 +279,7 @@ impl HttpApi {
             operation_browser,
             agent_sessions,
             review_threads,
+            collab,
             work: jj_store_service::work::WorkPager::new(Arc::new(SystemClock)),
             review_commands,
             tasks,
@@ -403,7 +416,13 @@ async fn admit(
                     return Err(Error::invalid());
                 }
             } else if request.method() == axum::http::Method::POST {
-                let expected = if path.ends_with("/conflict-uploads") {
+                let expected = if path.ends_with("/conflict-uploads")
+                    || request
+                        .extensions()
+                        .get::<axum::extract::MatchedPath>()
+                        .is_some_and(|p| {
+                            p.as_str() == "/v1/repos/{repo}/reaction-emojis/{emoji_id}"
+                        }) {
                     "application/octet-stream"
                 } else {
                     "application/json"

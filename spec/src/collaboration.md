@@ -1,5 +1,11 @@
 # Agent activity, repository reviews, Threads and Reactions
 
+HTTP keeps Thread and Reaction intent namespaces distinct. Binary custom emoji
+definition and typed retirement assemble the same service commands. Empty reads
+do not initialize domains; resumed pages retain signed captured selections.
+Exact message revision and image reads validate retained membership. HTTP
+transport reconstruction is independent of persistent restart and runner gates.
+
 AgentStore and ReviewStore are first-party repository capabilities. They share
 the existing object envelopes, WAL, receipts and manifest publication service,
 but retain independent models, authorization and state versions. They are not
@@ -44,6 +50,23 @@ reading a comment never dispatches an agent.
 | JST-COLLAB-014 | Typed bounded service, HTTP, native RPC and local CLI commands MUST share authorization, root-pinned reads, idempotency and unknown-outcome semantics; capture and runner binding remain explicit and optional.                         |
 | JST-COLLAB-015 | Thread/Reaction origin facts MUST converge under semantic reducer 3 without executing agents, tools, hooks, network image fetches or notifications; WorkStore native homes retain their replication freeze.                             |
 | JST-COLLAB-016 | The application MUST present persistent Threads and rich reactions through qualified Community/Design Core public contracts, explicit refresh, authorized actor inspection and reversible optimistic receipt-aware state.               |
+
+## Thread presentation template
+
+A persistent Thread is presented as a Community channel. M14.5 MUST use
+Community channel navigation and room-selection semantics, the channel header,
+conversation timeline, shared composer, message actions, reply affordances,
+reactions, history loading and responsive behavior as its template. The public
+`CommunityConversation`, `CommunityChatComposer`, `CommunityMessage` and
+`CommunityReactions` contracts are the first composition owners; inspect the
+current Community channel application and contract stories before choosing the
+remaining public parts. jj-store owns the authorized adapter and explicit
+captured-root refresh behavior. It MUST NOT create a separate chat UI, copy
+private markup/styles or turn Nostr policy into repository authority. Missing
+public extension points are fixed in Community and consumed through a released
+registry version. Native Thread identity/lifecycle and receipt semantics remain
+the persistence contract; matching channel presentation does not imply running
+an agent or importing Nostr membership.
 
 ## Persistent Threads and Reactions (M14)
 

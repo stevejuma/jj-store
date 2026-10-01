@@ -303,3 +303,36 @@ impl From<jj_store_service::work::Error> for Error {
         }
     }
 }
+
+impl From<jj_store_service::collab_mutations::Error> for Error {
+    fn from(error: jj_store_service::collab_mutations::Error) -> Self {
+        use jj_store_service::collab_mutations::Error as E;
+        match error {
+            E::Denied => Self::denied(),
+            E::Stale => Self::new(StatusCode::CONFLICT, "stale_collaboration"),
+            E::IntentConflict => Self::new(StatusCode::CONFLICT, "intent_conflict"),
+            E::Unsupported => Self::new(
+                StatusCode::CONFLICT,
+                "collaboration_replication_unsupported",
+            ),
+            E::NotFound => Self::new(StatusCode::NOT_FOUND, "not_found"),
+            E::Invalid => Self::invalid(),
+            E::Corrupt => Self::new(StatusCode::SERVICE_UNAVAILABLE, "corrupt_collaboration"),
+            E::Limit => Self::limit(),
+            E::Unavailable => Self::unavailable(),
+        }
+    }
+}
+impl From<jj_store_service::collab_pages::Error> for Error {
+    fn from(error: jj_store_service::collab_pages::Error) -> Self {
+        use jj_store_service::collab_pages::Error as E;
+        match error {
+            E::InvalidCursor => Self::new(StatusCode::BAD_REQUEST, "invalid_cursor"),
+            E::CursorReset => Self::new(StatusCode::CONFLICT, "cursor_reset"),
+            E::Busy => Self::busy(),
+            E::Limit => Self::limit(),
+            E::Unavailable => Self::unavailable(),
+            E::Read(error) => error.into(),
+        }
+    }
+}

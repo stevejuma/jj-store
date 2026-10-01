@@ -103,6 +103,10 @@ if (mode === "--check") {
         "JJ_STORE_REVIEW_CONTRACT_CAPTURE",
       ],
       [
+        "http_threads_reactions_acceptance::http_threads_reactions_keep_exact_targets_assets_signed_roots_and_receipts",
+        "JJ_STORE_THREADS_REACTIONS_CONTRACT_CAPTURE",
+      ],
+      [
         "http_work_acceptance::http_workstore_pages_commands_permissions_and_contract_capture",
         "JJ_STORE_WORK_CONTRACT_CAPTURE",
       ],

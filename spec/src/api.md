@@ -1,5 +1,18 @@
 # Read APIs and browser
 
+Persistent Threads use Community channels as their presentation template, with
+shared conversation/composer/message/reaction semantics. The browser adapter
+retains jj-store authorization, exact revisions, receipts and explicit refresh.
+
+HTTP exposes typed Thread/reaction command bodies without actor fields, signed
+Thread/event/emoji GET pages and an exact-target Reaction query POST. Exact
+human message revisions use typed path identities. Custom emoji definitions use
+a bounded two-MiB binary POST with finite query metadata; retirement uses typed
+JSON. Retained images return verified raster bytes with snapshot/content
+headers, nosniff and no-store; SVG, external URLs and byte ranges are
+unsupported. All routes share current repository admission, including status and
+assets.
+
 The served browser and Storybook consume the same production-owned shell,
 repository views, presentation models and styles under `web/src/lib`. Catalog
 fixtures implement the shared asynchronous controller contract without a

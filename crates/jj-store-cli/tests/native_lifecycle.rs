@@ -1135,3 +1135,6 @@ mod adapter_acceptance;
 
 #[path = "native_lifecycle/http_work.rs"]
 mod http_work_acceptance;
+
+#[path = "native_lifecycle/http_threads_reactions.rs"]
+mod http_threads_reactions_acceptance;

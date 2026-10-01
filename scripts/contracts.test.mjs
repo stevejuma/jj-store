@@ -157,3 +157,60 @@ test("mutation_requests_are_strict_and_unknown_outcomes_retain_identity", () => 
     validate(response, { status: "committed", request_id: request.request_id }),
   );
 });
+
+test("collaboration_commands_reject_actor_injection_and_keep_exact_rich_values", () => {
+  const operation = document.paths["/v1/repos/{repo}/reactions/commands"].post;
+  const body = operation.requestBody.content["application/json"].schema;
+  const request = {
+    version: 1,
+    request_id: "ab".repeat(16),
+    command: {
+      type: "set",
+      target: { type: "thread", thread_id: "cd".repeat(16) },
+      observed: [],
+      value: { type: "emoji", sequence: "❤️" },
+    },
+  };
+  validate(body, request);
+  assert.throws(() => validate(body, { ...request, actor: "ef".repeat(16) }));
+  assert.throws(() =>
+    validate(body, {
+      ...request,
+      command: {
+        ...request.command,
+        value: { type: "custom", emoji_id: "12".repeat(16) },
+      },
+    }),
+  );
+  validate(body, {
+    ...request,
+    command: {
+      ...request.command,
+      value: {
+        type: "custom",
+        emoji_id: "12".repeat(16),
+        version: { kind: "custom_emoji_version", id: "34".repeat(32) },
+      },
+    },
+  });
+  const raster = document.paths["/v1/repos/{repo}/reaction-assets/{asset}"].get;
+  assert.ok(raster.responses[200].content["image/png"]);
+  assert.equal(
+    raster.parameters.some((p) => p.name === "Range"),
+    false,
+  );
+  assert.deepEqual(Object.keys(raster.responses[200].content).sort(), [
+    "image/gif",
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+  ]);
+  const upload =
+    document.paths["/v1/repos/{repo}/reaction-emojis/{emoji_id}"].post;
+  assert.ok(upload.requestBody.content["application/octet-stream"]);
+  assert.equal(upload.requestBody.content["application/json"], undefined);
+  const ids = Object.values(document.paths).flatMap((path) =>
+    Object.values(path).map((op) => op.operationId),
+  );
+  assert.equal(new Set(ids).size, ids.length);
+});

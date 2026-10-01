@@ -258,7 +258,16 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
         json!(["authenticated", "local_trusted"])
     );
     let paths = doc["paths"].as_object().unwrap();
-    assert_eq!(paths.len(), 40);
+    assert_eq!(paths.len(), 58);
+    for path in [
+        "/v1/repos/{repo}/threads",
+        "/v1/repos/{repo}/threads/{thread_id}/timeline",
+        "/v1/repos/{repo}/reactions/query",
+        "/v1/repos/{repo}/reaction-emojis/{emoji_id}",
+        "/v1/repos/{repo}/reaction-assets/{asset}",
+    ] {
+        assert!(paths.contains_key(path), "missing M14 route: {path}");
+    }
     let mut ids = std::collections::BTreeSet::new();
     for (name, path) in paths {
         for (method, operation) in path.as_object().unwrap() {

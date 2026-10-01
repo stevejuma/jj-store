@@ -133,3 +133,45 @@ function mutationId(value: MutationOutcome): string {
   return value.request_id;
 }
 void [mutation, actor, shell, mutationId];
+
+type ReactionBody =
+  operations["collab_reaction_apply"]["requestBody"]["content"]["application/json"];
+const richReaction: ReactionBody = {
+  version: 1,
+  request_id: "ab",
+  command: {
+    type: "set",
+    target: { type: "thread", thread_id: "cd" },
+    observed: [],
+    value: { type: "emoji", sequence: "❤️" },
+  },
+};
+const customReaction: ReactionBody = {
+  ...richReaction,
+  command: {
+    type: "set",
+    target: { type: "thread", thread_id: "cd" },
+    observed: [],
+    value: {
+      type: "custom",
+      emoji_id: "ef",
+      version: { kind: "custom_emoji_version", id: "12" },
+    },
+  },
+};
+const invalidActor: ReactionBody = {
+  ...richReaction,
+  // @ts-expect-error HTTP actors are authenticated by the service.
+  actor: "ab",
+};
+const invalidCustom: ReactionBody = {
+  ...richReaction,
+  command: {
+    type: "set",
+    target: { type: "thread", thread_id: "cd" },
+    observed: [],
+    // @ts-expect-error Custom values pin an exact immutable definition.
+    value: { type: "custom", emoji_id: "ef" },
+  },
+};
+void [richReaction, customReaction, invalidActor, invalidCustom];
