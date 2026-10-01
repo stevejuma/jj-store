@@ -42,7 +42,10 @@ provenance after conversion.
 
 ReviewStore shared-engine extraction preserves native root bytes and all native
 cross-object audits. A reusable catalog or reader alone does not qualify local
-review publication, portable artifact validation or review CLI support.
+review publication, portable artifact validation or review CLI support. Shared
+command projection MUST retain all native catalog, relation, comment ownership
+and linear/merged event reconstruction checks. External dependency verification
+and publication are qualified separately by each provider.
 
 Local WorkStore pagination reuses the native record and four-MiB page limits.
 Continuations bind an immutable selected metadata commit, filters, page size and

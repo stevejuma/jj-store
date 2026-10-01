@@ -9,11 +9,11 @@ use jj_review::{
     ThreadSnapshotId, ThreadStatusV1,
 };
 
-impl Coordinator {
+impl ReviewProjector<'_> {
     #[allow(clippy::too_many_arguments)]
     pub(super) async fn append_review_reply(
         &self,
-        store: &ReviewStoreSnapshot,
+        store: &dyn ReviewSnapshotRead,
         request: &ReviewCommandRequest,
         thread_id: ReviewThreadId,
         expected_workflow_version: u64,
@@ -41,7 +41,7 @@ impl Coordinator {
             return Err(Error::Limit("review thread comments").into());
         }
         let comment_id = CommentId::new(command_entity_id(
-            self.records.repository,
+            self.io.repository(),
             request,
             b"reply-comment",
         ));
@@ -88,7 +88,7 @@ impl Coordinator {
 
     pub(super) async fn revise_review_comment(
         &self,
-        store: &ReviewStoreSnapshot,
+        store: &dyn ReviewSnapshotRead,
         request: &ReviewCommandRequest,
         comment_id: CommentId,
         expected_revision_id: &CommentRevisionId,
@@ -155,7 +155,7 @@ impl Coordinator {
 
     pub(super) async fn resolve_review_comment_conflict(
         &self,
-        store: &ReviewStoreSnapshot,
+        store: &dyn ReviewSnapshotRead,
         request: &ReviewCommandRequest,
         comment_id: CommentId,
         expected_revision_ids: &[CommentRevisionId],
@@ -255,7 +255,7 @@ impl Coordinator {
     #[allow(clippy::too_many_arguments)]
     pub(super) async fn change_review_workflow(
         &self,
-        store: &ReviewStoreSnapshot,
+        store: &dyn ReviewSnapshotRead,
         request: &ReviewCommandRequest,
         thread_id: ReviewThreadId,
         expected_thread_version: &ThreadSnapshotId,
@@ -278,7 +278,7 @@ impl Coordinator {
             b"reopen-action"
         };
         let action_id =
-            ReviewActionId::new(command_entity_id(self.records.repository, request, label));
+            ReviewActionId::new(command_entity_id(self.io.repository(), request, label));
         let event = if resolve {
             ReviewThreadEventKindV1::Resolved {
                 action_id,

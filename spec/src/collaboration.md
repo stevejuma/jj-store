@@ -461,7 +461,12 @@ across persistence adapters. Its object interface requires canonical identity,
 semantic kind and dependency validation; its snapshot interface admits only the
 audited selected closure. These interfaces do not carry publication authority.
 Native staging repeats existing catalog, relation, comment ownership and event
-reconstruction audits before selecting the returned root.
+reconstruction audits before selecting the returned root. Typed command
+reduction and complete cross-object review auditing MUST use the same owned
+projector across adapters. It returns a root value, delta and typed result only;
+authorization, external code/agent retention, receipt replay and publication
+remain adapter responsibilities. Repository identity is checked before immutable
+reads or staging, and no projector result alone selects state.
 
 `ReviewRootV1` selects independent COW catalog roots for threads, comments,
 thread events, original-anchor relations, artifact relations, statuses, work

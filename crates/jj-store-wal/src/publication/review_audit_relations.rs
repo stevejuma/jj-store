@@ -5,7 +5,7 @@ use jj_review::{
     ReviewRootV1, ReviewStatusPageV1, ReviewThreadRelationV1, review_status_key,
 };
 
-impl Coordinator {
+impl ReviewProjector<'_> {
     pub(super) async fn audit_review_relation_catalogs(
         &self,
         root: &ReviewRootV1,

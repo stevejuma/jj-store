@@ -1,5 +1,4 @@
 //! Deterministic data-only ReviewStore import reduction.
-use super::replication_review_graph::{event_parent_map, graph_is_ancestor};
 use super::*;
 
 impl Coordinator {
@@ -199,69 +198,6 @@ impl Coordinator {
             }
             _ => Err(Error::Corrupt("review comment selection kind")),
         }
-    }
-
-    pub(super) async fn reduce_review_workflow(
-        &self,
-        graph: &ReviewEventGraphV1,
-    ) -> Result<(ThreadStatusV1, Vec<ReviewActionId>, u64, u64)> {
-        let parents = event_parent_map(graph);
-        let mut activity = Vec::new();
-        let mut workflows = Vec::new();
-        for node in &graph.nodes {
-            let ReviewObjectV1::ThreadEvent(event) = self.read_review_object(node.event).await?
-            else {
-                return Err(Error::Corrupt("review event graph selection"));
-            };
-            match event.event {
-                ReviewThreadEventKindV1::Created { .. }
-                | ReviewThreadEventKindV1::ReplyAdded { .. }
-                | ReviewThreadEventKindV1::CommentRevised { .. }
-                | ReviewThreadEventKindV1::CommentConflictResolved { .. } => {
-                    activity.push(node.event)
-                }
-                ReviewThreadEventKindV1::Resolved { .. }
-                | ReviewThreadEventKindV1::Reopened { .. } => workflows.push(node.event),
-            }
-        }
-        let activity_heads = maximal_events(&parents, &activity);
-        let workflow_heads = maximal_events(&parents, &workflows);
-        let mut actions = Vec::new();
-        let mut resolved = !workflow_heads.is_empty();
-        for reference in &workflow_heads {
-            let ReviewObjectV1::ThreadEvent(event) = self.read_review_object(*reference).await?
-            else {
-                return Err(Error::Corrupt("review workflow selection"));
-            };
-            match event.event {
-                ReviewThreadEventKindV1::Resolved { action_id, .. } => {
-                    actions.push(action_id);
-                    if activity_heads
-                        .iter()
-                        .any(|activity| !graph_is_ancestor(&parents, *activity, *reference))
-                    {
-                        resolved = false;
-                    }
-                }
-                ReviewThreadEventKindV1::Reopened { .. } => resolved = false,
-                _ => return Err(Error::Corrupt("review workflow event kind")),
-            }
-        }
-        actions.sort();
-        actions.dedup();
-        if !resolved {
-            actions.clear();
-        }
-        Ok((
-            if resolved {
-                ThreadStatusV1::Resolved
-            } else {
-                ThreadStatusV1::Open
-            },
-            actions,
-            activity.len() as u64,
-            workflows.len() as u64 + 1,
-        ))
     }
 
     async fn rebuild_imported_review_indexes(
@@ -471,21 +407,6 @@ fn graph_contains(container: &ReviewEventGraphV1, candidate: &ReviewEventGraphV1
             .get(&node.event)
             .is_some_and(|parents| **parents == node.parents)
     })
-}
-
-fn maximal_events(
-    parents: &BTreeMap<ReviewObjectRef, BTreeSet<ReviewObjectRef>>,
-    events: &[ReviewObjectRef],
-) -> Vec<ReviewObjectRef> {
-    events
-        .iter()
-        .copied()
-        .filter(|candidate| {
-            !events.iter().any(|descendant| {
-                candidate != descendant && graph_is_ancestor(parents, *candidate, *descendant)
-            })
-        })
-        .collect()
 }
 
 fn relation_entries(

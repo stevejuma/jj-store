@@ -2,7 +2,7 @@
 use super::review_audit::require_selected;
 use super::*;
 
-impl Coordinator {
+impl ReviewProjector<'_> {
     pub(super) async fn audit_replicated_review_thread(
         &self,
         snapshot: &ReviewThreadMergeV1,

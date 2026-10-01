@@ -8,11 +8,11 @@ use jj_review::{
     CommentId, ReviewActionId, ReviewCatalogKind, ReviewThreadEventKindV1, ReviewThreadEventV1,
 };
 
-impl Coordinator {
+impl ReviewProjector<'_> {
     #[allow(clippy::too_many_arguments)]
     pub(super) async fn commit_review_thread(
         &self,
-        store: &ReviewStoreSnapshot,
+        store: &dyn ReviewSnapshotRead,
         request: &ReviewCommandRequest,
         mut loaded: LoadedReviewThread,
         mut next: jj_review::ReviewThreadSnapshotV1,

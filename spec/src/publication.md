@@ -25,7 +25,11 @@ immutable object and pinned snapshot interfaces. Native wrappers retain full
 root/thread cross-object audit, authorization, receipts and manifest selection.
 The shared editor returns a root value; it cannot stage a publication or select
 repository state. Alternative providers must audit the complete root before
-publication and recovery.
+publication and recovery. The shared ReviewProjector also stages typed commands
+and audits complete review roots without publication. Native adapters verify the
+returned external code and AgentStore dependency closure and retain
+authorization, receipt-first replay and manifest CAS around the shared
+projection.
 
 ## Requirements
 

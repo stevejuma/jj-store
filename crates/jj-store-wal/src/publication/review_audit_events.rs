@@ -5,7 +5,7 @@ use jj_review::{
     CommentSelectionV1, ReviewThreadEventKindV1, ReviewThreadSnapshotV1, ThreadStatusV1,
 };
 
-impl Coordinator {
+impl ReviewProjector<'_> {
     #[allow(clippy::too_many_arguments)]
     pub(super) async fn reduce_review_audit_event(
         &self,
