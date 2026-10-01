@@ -124,12 +124,12 @@ shared-package release qualification does not alter those original Git gates.
 | M14.5       | Planned     | M14.2                   | JST-UI-016,JST-PUB-005,JST-PUB-006                                                                                                                                       | Storage integrity and non-destructive checkpoints                                                                              | Add bounded authorized operations and uncertain-outcome recovery               | -                                                                                                                                                                                                                                                                                                                                                              |
 | M14.6       | In progress | M14.2,M10.7             | JST-UI-016,JST-REPL-012                                                                                                                                                  | Configured sync status and controls in Settings                                                                                | Expose existing controls without upstream configuration or credential editing  | E-M14-008,E-M14-010,E-M14-011,E-M14-012                                                                                                                                                                                                                                                                                                                        |
 | M14.7       | Planned     | M14.3,M14.4,M14.5,M14.6 | JST-UI-016,JST-SEC-006                                                                                                                                                   | Integrated local settings and cold persistent acceptance                                                                       | Qualify completed native flow and preserve unsupported M13 capabilities        | -                                                                                                                                                                                                                                                                                                                                                              |
-| M15         | In progress | M13.1                   | JST-COLLAB-008,JST-COLLAB-009,JST-COLLAB-010,JST-COLLAB-011,JST-COLLAB-012,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                   | Persistent Threads and rich Reactions                                                                                          | Qualify native/local publication                                               | E-M15-001,E-M15-005,E-M15-006,E-M15-007,E-M15-008,E-M15-009,E-M15-010,E-M15-011,E-M15-012,E-M15-013,E-M15-014,E-M15-015,E-M15-016                                                                                                                                                                                                                              |
+| M15         | In progress | M13.1                   | JST-COLLAB-008,JST-COLLAB-009,JST-COLLAB-010,JST-COLLAB-011,JST-COLLAB-012,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                   | Persistent Threads and rich Reactions                                                                                          | Qualify native/local publication                                               | E-M15-001,E-M15-005,E-M15-006,E-M15-007,E-M15-008,E-M15-009,E-M15-010,E-M15-011,E-M15-012,E-M15-013,E-M15-014,E-M15-015,E-M15-016,E-M15-017                                                                                                                                                                                                                    |
 | M15.1       | In progress | M13.1                   | JST-COLLAB-008,JST-COLLAB-009,JST-COLLAB-010,JST-COLLAB-011,JST-COLLAB-012                                                                                               | Canonical domain, lifecycle, exact targets, conflict semantics and retained images                                             | Qualify command/provider membership                                            | E-M15-001,E-M15-005,E-M15-016                                                                                                                                                                                                                                                                                                                                  |
 | M15.2       | In progress | M15.1                   | JST-COLLAB-013                                                                                                                                                           | Native format 5, local version 2, atomic roots, receipts, recovery and copy                                                    | Qualify native commands/capture and cold full flow                             | E-M15-002,E-M15-004,E-M15-005,E-M15-012,E-M15-014,E-M15-016                                                                                                                                                                                                                                                                                                    |
 | M15.3       | In progress | M15.2                   | JST-COLLAB-014                                                                                                                                                           | Bounded authorized services, HTTP/RPC, CLI and capture binding                                                                 | Complete native/public command boundaries                                      | E-M15-004,E-M15-005,E-M15-006,E-M15-007,E-M15-008,E-M15-009,E-M15-010,E-M15-011,E-M15-012,E-M15-013,E-M15-014,E-M15-015,E-M15-016                                                                                                                                                                                                                              |
 | M15.4       | Planned     | M15.2                   | JST-COLLAB-015                                                                                                                                                           | Reducer 3 data-only convergence and complete closure transfer                                                                  | Qualify reordered and duplicate origin sets                                    | -                                                                                                                                                                                                                                                                                                                                                              |
-| M15.5       | In progress | M15.3                   | JST-COLLAB-016                                                                                                                                                           | Released Community channel template, Threads navigation and rich reactions                                                     | Qualify owners and cold consumer flow                                          | E-M15-011,E-M15-015,E-M15-016                                                                                                                                                                                                                                                                                                                                  |
+| M15.5       | In progress | M15.3                   | JST-COLLAB-016                                                                                                                                                           | Released Community channel template, Threads navigation and rich reactions                                                     | Qualify owners and cold consumer flow                                          | E-M15-011,E-M15-015,E-M15-016,E-M15-017                                                                                                                                                                                                                                                                                                                        |
 | M15.6       | In progress | M15.3                   | JST-COLLAB-009,JST-COLLAB-010                                                                                                                                            | Derived canonical-source timeline/search and review integration                                                                | Qualify authorized joins                                                       | E-M15-006                                                                                                                                                                                                                                                                                                                                                      |
 | M15.7       | Planned     | M15.4,M15.5,M15.6       | JST-COLLAB-007,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                                                                               | Cold real-RustFS/local full flow and runner qualification                                                                      | Retain native/local/cold evidence                                              | -                                                                                                                                                                                                                                                                                                                                                              |
 
@@ -35286,6 +35286,65 @@ and named tests are checked by the progress gate.
         "scope": "cold interaction/accessibility; visual-pending"
       }
     ]
+  },
+  {
+    "id": "E-M15-017",
+    "tasks": ["M15", "M15.5"],
+    "date": "2026-10-01",
+    "kind": "main-workspace-landing",
+    "revision": "enclosing Jujutsu change vuovmsop",
+    "versions": "JJ 0.45.1 domain baseline; existing local file package snapshots; Svelte 5.57.1 and Vitest 4.1.11. E-M15-016 retains exact dependency provenance and qualification gaps.",
+    "formats": "No production, generated-contract, manifest or companion format change. Main now contains the exact committed Threads/replies/reactions tree from xrkpynxm / cea45f3a.",
+    "files": ["spec/src/milestones.md"],
+    "tests": [],
+    "runs": [
+      {
+        "command": "jj --no-pager st (main and threads-reactions); jj --no-pager log; jj workspace list",
+        "result": "pass",
+        "failures": 0,
+        "note": "Before landing, both workspaces are clean. Main vuovmsop is an empty child of 590462ef; isolated workspace has committed cea45f3a on the same parent."
+      },
+      {
+        "command": "jj rebase -r @ -o xrkpynxm",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rebased the empty main working change onto the committed UI slice; added 22 and modified 45 files without conflicts. Isolated workspace is preserved."
+      },
+      {
+        "command": "jj --no-pager diff --from xrkpynxm --to @ --summary; jj --no-pager st",
+        "result": "pass",
+        "failures": 0,
+        "note": "Before this ledger entry, main has no changes and matches the source commit exactly."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Main workspace: 0 errors and 0 warnings. /tmp/jj-thread-main-web-check.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-threads.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Main workspace: 14 tests in 1 file pass. /tmp/jj-thread-main-unit.log."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md; pnpm check:progress; pnpm spec:validate; pnpm spec:first; pnpm exec prettier --check spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Ledger formatting and 119-task bookkeeping pass. Specification validates 4 validators, 21 chapters and 141 requirements; spec-first confirms no protected files changed."
+      },
+      {
+        "command": "python3 (compare parent and current JSON evidence entries)",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 228 prior evidence entries remain identical; the landing entry is the only addition."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "Local workspace landing only. Existing isolated Rust, generated-contract, unit and cold Storybook evidence in E-M15-016 remains applicable because the landed production tree is identical. No conflict resolution or production edits occurred. No root aggregates, Rust rebuild, package publication, service restart, visual approval or repository migration. Main dev server PID 66628 remains running its prior build; this entry does not claim live browser qualification.",
+    "next": "Continue released Community dependency, cold backend/browser full-flow and remaining M15 qualification. M15 and M15.5 remain In progress."
   }
 ]
 ```
