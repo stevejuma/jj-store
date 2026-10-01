@@ -94,7 +94,8 @@
           tool={entry.tool}
           {patches}
           {controller}
-          {interactive}
+          interactive={interactive &&
+            controller.state.repository.profile !== "git_sha1_jj045"}
         />
       {:else if entry.type === "capture_gap"}
         <Chat.SystemMessage>

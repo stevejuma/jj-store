@@ -54,7 +54,7 @@
 </script>
 
 {#snippet lineAccessory(line: FileDiffLineContext)}
-  {#if controller && line.lineNumber !== null}
+  {#if controller && controller.state.repository.profile !== "git_sha1_jj045" && line.lineNumber !== null}
     <Button
       type="button"
       variant="secondary"

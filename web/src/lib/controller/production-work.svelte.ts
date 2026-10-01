@@ -49,7 +49,7 @@ export function createWorkController(context: {
   const message = (cause: unknown) =>
     cause instanceof Error ? cause.message : "Request failed";
   function accept(
-    page: Model<"WorkPage">,
+    page: import("./work-types.js").WorkPage,
     kind: "projects" | "tasks" | "comments",
     more: boolean,
   ) {
@@ -201,7 +201,10 @@ export function createWorkController(context: {
   return {
     state,
     restore,
-    refresh: () => restore(true),
+    refresh: async () => {
+      await context.source().refresh?.();
+      await restore(true);
+    },
     reset,
     async select(project, task = null) {
       context.select(project, task);

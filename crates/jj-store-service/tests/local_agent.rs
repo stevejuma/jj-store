@@ -70,6 +70,68 @@ fn request(id: u8, batch: SanitizedObservationBatchV1) -> LocalAgentRequest {
         },
     }
 }
+
+#[tokio::test]
+async fn browser_agent_presentation_pins_metadata_and_transcript_membership() {
+    let (_root, repo) = fixture();
+    repo.apply_agent_command(&request(1, batch()))
+        .await
+        .unwrap();
+    let pin = repo.metadata_store().read().unwrap().unwrap().commit();
+    let page = repo.browser_agent_sessions(pin, 20, None).await.unwrap();
+    assert_eq!(page.sessions.len(), 1);
+    let id = page.sessions[0].session_id;
+    let detail = repo.browser_agent_session(pin, id).await.unwrap();
+    assert!(!detail.activity.is_empty());
+    assert_eq!(detail.tools.len(), 3);
+    let stream = &detail.transcripts[0];
+    let query = LocalBrowserTranscriptRequest {
+        session_id: id,
+        transcript_id: stream.transcript_id,
+        source_instance_id: stream.source_instance_id,
+        source_generation: stream.source_generation,
+        limit: 10,
+        max_bytes: 1024,
+    };
+    let transcript = repo
+        .browser_agent_transcript(pin, query.clone(), None)
+        .await
+        .unwrap();
+    assert_eq!(transcript.chunks[0].content, "Update the parser");
+    let mut wrong = query;
+    wrong.transcript_id = AgentObjectId::new([9; 32]);
+    assert!(matches!(
+        repo.browser_agent_transcript(pin, wrong, None).await,
+        Err(LocalError::NotFound)
+    ));
+    repo.apply_agent_command(&LocalAgentRequest {
+        version: 1,
+        request_id: m::RequestId::new([8; 16]),
+        command: LocalAgentCommand::Initialize,
+    })
+    .await
+    .unwrap();
+    assert_eq!(
+        repo.browser_agent_sessions(pin, 20, None)
+            .await
+            .unwrap()
+            .snapshot,
+        page.snapshot
+    );
+    assert!(matches!(
+        repo.browser_agent_sessions(
+            "0909090909090909090909090909090909090909".parse().unwrap(),
+            20,
+            None
+        )
+        .await,
+        Err(LocalError::Stale)
+    ));
+    assert!(matches!(
+        repo.browser_agent_sessions(pin, 0, None).await,
+        Err(LocalError::Invalid)
+    ));
+}
 async fn session(store: &LocalAgentStore) -> (AgentObjectRef, AgentSessionSnapshotV1) {
     let page = store.reads().list_sessions(None, 20).await.unwrap();
     assert_eq!(page.selections.len(), 1);

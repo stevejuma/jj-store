@@ -96,6 +96,7 @@ pub enum Access {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(tag = "mode", rename_all = "kebab-case", deny_unknown_fields)]
 pub enum Storage {
+    Filesystem,
     ExternalS3 {
         endpoint: String,
         bucket: String,

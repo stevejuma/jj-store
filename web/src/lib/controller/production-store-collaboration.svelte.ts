@@ -96,6 +96,10 @@ export function createProductionStoreCollaboration(context: Context) {
   }
 
   async function loadReviews(more = false) {
+    if (context.source().profile === "git_sha1_jj045") {
+      data.status.reviews = "unavailable";
+      return;
+    }
     const source = context.source(),
       ticket = context.version();
     data.status.reviews = more ? "refreshing" : "loading";
@@ -166,7 +170,9 @@ export function createProductionStoreCollaboration(context: Context) {
     try {
       const [relations, reviews] = await Promise.all([
         readAgentRelations(source, subject),
-        readReviewContext(source, matches),
+        source.profile === "git_sha1_jj045"
+          ? Promise.resolve({ threads: [], cursor: null, selected: undefined })
+          : readReviewContext(source, matches),
       ]);
       if (!context.current(ticket, source)) return;
       data.agentRelations = relations;

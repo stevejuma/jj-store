@@ -1,4 +1,4 @@
-import type { Model } from "../api/client.js";
+import { pretty, type Model } from "../api/client.js";
 import type { StoreDataSource } from "./native-data-source.js";
 import type { NativeAgentContext } from "./native-activity-types.js";
 
@@ -8,19 +8,23 @@ const errorMessage = (cause: unknown) =>
 export async function readNativeAgentContext(
   source: StoreDataSource,
   subject: { commit: string } | { operation: string },
-  options: { pin?: Model<"AgentReadSnapshot">; deferSessions?: boolean } = {},
+  options: {
+    pin?: import("./repository-read-types.js").AgentSnapshot;
+    deferSessions?: boolean;
+  } = {},
 ): Promise<NativeAgentContext> {
   try {
     let cursor: string | undefined;
     const cursors = new Set<string>(),
       ids = new Set<string>();
-    let pin: Model<"AgentReadSnapshot"> | undefined = options.pin,
+    let pin: import("./repository-read-types.js").AgentSnapshot | undefined =
+        options.pin,
       count = 0;
     do {
       const page = await source.agentRelations(subject, cursor);
       if (
         page.snapshot.repo_id !== source.repository ||
-        (pin && JSON.stringify(pin) !== JSON.stringify(page.snapshot))
+        (pin && pretty(pin) !== pretty(page.snapshot))
       )
         throw new Error("Agent context snapshot changed. Refresh to retry.");
       pin = page.snapshot;
@@ -58,7 +62,7 @@ export async function readNativeAgentContext(
           const session = await source.agentSession(id);
           if (
             session.session.session_id !== id ||
-            JSON.stringify(session.snapshot) !== JSON.stringify(pin)
+            pretty(session.snapshot) !== pretty(pin)
           )
             throw new Error(
               "Agent context snapshot changed. Refresh to retry.",
@@ -86,7 +90,7 @@ function once(read: () => Promise<NativeAgentContext>) {
 /** Shared two-reader budget for a page; memoization survives virtual unmounts. */
 export function createDeferredAgentContexts(
   source: StoreDataSource,
-  pin?: Model<"AgentReadSnapshot">,
+  pin?: import("./repository-read-types.js").AgentSnapshot,
 ) {
   let active = 0;
   const waiting: (() => void)[] = [];

@@ -66,8 +66,8 @@
         <Alert.Root>
           <Alert.Title>Multiple operation heads</Alert.Title>
           <Alert.Description
-            >Choose the native operation snapshot to browse. Opening this view
-            never reconciles history.</Alert.Description
+            >Choose the operation snapshot to browse. Opening this view never
+            reconciles history.</Alert.Description
           >
           <div class="store-repository-application__choices">
             {#each state.operationHeads as operation}<Button
@@ -94,6 +94,11 @@
         {controller}
         {layoutStorage}
       />
+    {:else if page === "reviews" && state.repository.profile === "git_sha1_jj045"}<p
+        class="store-repository-application__state"
+      >
+        Reviews are not supported for local JJ repositories.
+      </p>
     {:else if page === "reviews"}<StoreReviewThreads
         {controller}
         {layoutStorage}

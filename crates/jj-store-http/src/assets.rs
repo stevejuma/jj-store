@@ -9,7 +9,7 @@ use axum::{
 use serde::Deserialize;
 use std::{collections::BTreeMap, fs, io::Read, path::Path};
 
-const STRICT_CSP: &str = "default-src 'none'; script-src 'self'; style-src 'self' 'sha256-+A14ONesVdzkn6nr37Osn+rUqNz4oFGZFDbLXrlae04='; connect-src 'self'; img-src 'self' https://www.gravatar.com; font-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'";
+const STRICT_CSP: &str = "default-src 'none'; script-src 'self'; style-src 'self' 'sha256-+A14ONesVdzkn6nr37Osn+rUqNz4oFGZFDbLXrlae04='; style-src-attr 'unsafe-hashes' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='; connect-src 'self'; img-src 'self' https://www.gravatar.com; font-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'";
 const DEVELOPMENT_ANNOTATION_CSP: &str = "default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self' https://www.gravatar.com; font-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'";
 
 #[derive(Clone)]

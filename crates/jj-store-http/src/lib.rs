@@ -7,6 +7,7 @@ mod collaboration;
 pub mod contract;
 mod dto;
 mod error;
+mod local_browser;
 mod local_management;
 mod mutations;
 mod repositories;
@@ -96,11 +97,13 @@ pub struct Config {
     pub origin: String,
     pub access: Access,
     pub registry: Option<Arc<dyn RepositoryRegistry>>,
+    pub local_repositories: Option<Arc<dyn jj_store_service::local_browser::LocalRepositories>>,
     pub local_search: Option<Arc<dyn jj_store_service::search_management::SearchManager>>,
     pub local_sync: Option<Arc<dyn jj_store_service::sync_management::SyncManager>>,
     pub local_workspaces: Option<Arc<dyn jj_store_service::local_management::WorkspaceManager>>,
     pub local_folder_picker: Option<Arc<dyn jj_store_service::local_management::FolderPicker>>,
     pub storage_ready: bool,
+    pub native_authority: bool,
     pub backups: Vec<BackupStatus>,
     pub concurrency: usize,
     pub event_concurrency: usize,
@@ -122,10 +125,12 @@ impl Default for Config {
             access: Access::Authenticated,
             registry: None,
             local_workspaces: None,
+            local_repositories: None,
             local_sync: None,
             local_search: None,
             local_folder_picker: None,
             storage_ready: true,
+            native_authority: true,
             backups: Vec::new(),
             concurrency: 8,
             event_concurrency: 16,
@@ -143,7 +148,9 @@ impl Default for Config {
     }
 }
 struct State {
-    host: RepositoryHost,
+    host: Option<RepositoryHost>,
+    local_reader: jj_store_service::local_browser::code::Executor,
+    local_jobs: Arc<Semaphore>,
     search: SearchRegistry,
     config: Config,
     slots: Arc<Semaphore>,
@@ -175,11 +182,14 @@ impl HttpApi {
     }
     /// Compose explicitly configured search projections without starting adapter writers.
     pub fn with_search(
-        host: RepositoryHost,
+        host: impl Into<Option<RepositoryHost>>,
         cache: PathBuf,
         config: Config,
         indexes: BTreeMap<m::RepositoryId, SearchIndex>,
     ) -> std::result::Result<Self, &'static str> {
+        let host = host.into();
+        let mut config = config;
+        config.native_authority = host.is_some();
         let url = url::Url::parse(&config.origin).map_err(|_| "HTTP origin")?;
         if !matches!(url.scheme(), "http" | "https")
             || url.origin().ascii_serialization() != config.origin
@@ -266,10 +276,16 @@ impl HttpApi {
             .map_err(|_| "HTTP upload limits")?;
         let mut repository_cursor_key = [0; 32];
         getrandom::fill(&mut repository_cursor_key).map_err(|_| "HTTP cursor entropy")?;
+        let local_reader = jj_store_service::local_browser::code::Executor::with_workers(
+            queries.workers().clone(),
+            config.content,
+        );
         Ok(Self(Arc::new(State {
             host,
+            local_reader,
             search,
             slots: Arc::new(Semaphore::new(config.concurrency)),
+            local_jobs: Arc::new(Semaphore::new(config.workers)),
             event_slots: Arc::new(Semaphore::new(config.event_concurrency)),
             config,
             queries,
@@ -295,6 +311,7 @@ impl HttpApi {
         Router::new().nest(
             "/v1",
             routes::router()
+                .merge(local_browser::router())
                 .with_state(self.0.clone())
                 .layer(middleware::from_fn_with_state(self.0.clone(), admit)),
         )
@@ -406,6 +423,17 @@ async fn admit(
                 return Err(Error::denied());
             }
             let path = request.uri().path();
+            if (path.starts_with("/local/") || path.starts_with("/v1/local/"))
+                && !matches!(
+                    state.config.access,
+                    Access::LocalTrusted {
+                        permission: Permission::Admin,
+                        ..
+                    }
+                )
+            {
+                return Err(Error::denied());
+            }
             let bodyless = matches!(
                 *request.method(),
                 axum::http::Method::GET | axum::http::Method::HEAD
@@ -460,7 +488,12 @@ async fn admit(
         && request
             .extensions()
             .get::<axum::extract::MatchedPath>()
-            .is_some_and(|path| path.as_str() == "/v1/repos/{repo}/events");
+            .is_some_and(|path| {
+                matches!(
+                    path.as_str(),
+                    "/v1/repos/{repo}/events" | "/v1/local/repos/{repo}/events"
+                )
+            });
     let slots = if event_route {
         &state.event_slots
     } else {
@@ -529,7 +562,11 @@ impl FromRequestParts<Arc<State>> for Context {
             .ok_or_else(Error::invalid)?
             .parse()
             .map_err(|_| Error::invalid())?;
-        let endpoint = state.host.endpoint(repository)?;
+        let endpoint = state
+            .host
+            .as_ref()
+            .ok_or_else(|| Error::new(StatusCode::NOT_IMPLEMENTED, "native_authority_unavailable"))?
+            .endpoint(repository)?;
         let session = match &state.config.access {
             Access::Authenticated => {
                 if parts.headers.get_all(header::AUTHORIZATION).iter().count() != 1 {

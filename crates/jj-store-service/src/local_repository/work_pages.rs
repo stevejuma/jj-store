@@ -25,10 +25,19 @@ struct Cursor {
 }
 impl LocalRepository {
     pub fn work_page(&self, query: &WorkQuery) -> Result<LocalWorkPage> {
+        self.work_page_inner(None, query)
+    }
+    pub fn work_page_at(&self, commit: GitOid, query: &WorkQuery) -> Result<LocalWorkPage> {
+        self.work_page_inner(Some(commit), query)
+    }
+    fn work_page_inner(&self, commit: Option<GitOid>, query: &WorkQuery) -> Result<LocalWorkPage> {
         if !(1..=256).contains(&query.limit) {
             return Err(Error::Invalid);
         }
-        let current = self.metadata.read().map_err(map_metadata)?;
+        let current = match commit {
+            Some(commit) => Some(self.selected_metadata(commit)?),
+            None => self.metadata.read().map_err(map_metadata)?,
+        };
         let (snapshot, offset) = if let Some(cursor) = &query.cursor {
             if cursor.len() > 2048 {
                 return Err(Error::InvalidCursor);
@@ -38,7 +47,8 @@ impl LocalRepository {
                 .map_err(|_| Error::InvalidCursor)?;
             let cursor: Cursor =
                 serde_json::from_slice(&bytes).map_err(|_| Error::InvalidCursor)?;
-            if cursor.version != 1
+            if commit.is_some_and(|selected| selected != cursor.commit)
+                || cursor.version != 1
                 || cursor.project != query.project
                 || cursor.task != query.task
                 || cursor.limit != query.limit

@@ -25,7 +25,7 @@
     onPreview,
   }: {
     controller: StoreController;
-    active?: Model<"ConflictDescriptor">;
+    active?: import("../../controller/repository-read-types.js").CodeConflict;
     resolution?: StoreConflictResolution;
     uploading: boolean;
     selectedCount: number;

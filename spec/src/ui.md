@@ -7,6 +7,15 @@ disconnection discard stale responses. Interaction/accessibility and cold
 consumer qualification are required; visual baselines remain separately
 approved.
 
+The local Git-backed browser reuses these screens through explicit profile-aware
+transports. Native snapshots retain manifest/WAL authority; local snapshots
+retain binding generation, code operation and independent committed companion
+selection. Routes accept complete Git SHA-1 or native commit IDs syntactically
+and validate their width against discovered profile before reads. Cache keys
+include profile, repository and connection session. External freshness only
+offers refresh, including changes missed during disconnection. Unsupported local
+search, code writes, reviews, conversion and synchronization remain gated.
+
 The reviewed catalog application is the presentation authority for the served
 browser. Production browsing, search, typed mutations and conflict editing share
 the same components and asynchronous controller contract. Reusable components
@@ -958,3 +967,28 @@ expansion persist in versioned browser local storage. Explicit collapsed choices
 win over automatic expansion of an active child, including after Settings closes
 or the application reloads. Storage contains disclosure flags only; unavailable
 or malformed storage falls back to normal navigation.
+
+## Registered local JJ folders
+
+The repository directory offers Add local repository with the existing joined
+path/Browse field and DialogFrame. Inspection is read-only; explicit Add may
+initialize missing companion metadata. Existing code, dirty files and project
+homes remain unchanged. Registered local repositories reuse repository browsing,
+Projects and Agents presentation with profile-aware identities and separately
+pinned collaboration state. Settings expose binding recovery and removal.
+Capabilities hide unavailable code editing, indexed search, reviews, native
+maintenance and synchronization. Browser navigation preferences retain their
+existing device-local format.
+
+The development runner admits the existing Git-backed fixture without reseeding
+its code or moving any sample project's metadata home. Restart acceptance checks
+the three deterministic sample project identities and their separate repository
+links, while allowing additional projects created during normal use.
+
+Merged native Threads navigation is advertised only when the connected provider
+exposes its Thread transport, or an available native home can be selected. Local
+code browsing does not imply local Thread/reaction browser support. Switching to
+a local provider clears displayed native Thread state while retaining any exact
+unknown request under its original repository and principal. Route restoration
+reconnects the requested repository before restoring independently pinned Thread
+metadata; a Thread route does not require a code operation selection.

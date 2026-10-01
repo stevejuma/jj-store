@@ -1,4 +1,4 @@
-import type { Graph } from "./api/client";
+import type { CodeGraph as Graph } from "./controller/repository-read-types.js";
 export interface Row {
   id: string;
   title: string;

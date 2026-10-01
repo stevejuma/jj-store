@@ -1,7 +1,11 @@
 import { repositories as loadRepositories } from "../api/repositories.js";
 import { followProductionStoreEvents } from "./production-store-events.js";
 import { ApiError } from "../api/client.js";
-import { HttpStoreDataSource } from "./http-store-data-source.js";
+import {
+  repositorySource,
+  captureRepositoryActor,
+} from "./repository-source.js";
+import type { StoreDataSource } from "./native-data-source.js";
 import { createStoreQueryClient } from "./store-query-client.js";
 import { createProjectsHub } from "./production-projects-hub.svelte.js";
 import type { ProductionStoreState } from "./production-store-state.svelte.js";
@@ -24,7 +28,7 @@ export function createProductionProjects(
     pauseCodeEvents,
     fetcher,
   };
-  const sources = new Map<string, HttpStoreDataSource>();
+  const sources = new Map<string, StoreDataSource>();
   let feed = new AbortController(),
     discovery = new AbortController();
   const projects = createProjectsHub({
@@ -59,16 +63,26 @@ export function createProductionProjects(
         throw new ApiError("access_denied");
       let source = sources.get(home);
       if (!source) {
-        source = new HttpStoreDataSource(
-          home,
+        const candidate = context.data.repositories.find((r) => r.id === home)!;
+        source = repositorySource(
+          candidate,
           context.token(),
-          createStoreQueryClient(),
           `projects-${context.session()}`,
           () => {},
           context.fetcher,
         );
         sources.set(home, source);
       }
+      if (!source.work) throw new ApiError("work_unavailable");
+      const active = source;
+      if (active.profile === "git_sha1_jj045")
+        void active
+          .snapshot()
+          .then((head) => {
+            if (sources.get(home) === active)
+              captureRepositoryActor(context.data, home, head);
+          })
+          .catch(() => {});
       return source.work;
     },
     activate: (home) => {

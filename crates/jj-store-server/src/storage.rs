@@ -32,6 +32,9 @@ impl AuthoritativeStorage {
             _ => {}
         }
         match &config.storage {
+            Storage::Filesystem => Err(Error::Config(
+                "native authority is unavailable in filesystem mode",
+            )),
             Storage::ExternalS3 { credentials, .. } => {
                 let store = Arc::new(
                     S3Store::new(config.s3_config(resolve_credentials(credentials)?)?)

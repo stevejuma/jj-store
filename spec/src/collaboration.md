@@ -1102,3 +1102,20 @@ native typed multi-domain request authorizes every selected domain, checks all
 observed roots, and publishes one WAL position and original durable receipt.
 Local companion batches similarly select all named domain blobs under one
 expected-old-value CAS.
+
+### Local browser recorded AgentStore
+
+The local Git profile exposes independently companion-pinned recorded sessions,
+sanitized activity, transcript streams and qualified portable associations.
+Presentation uses the shared immutable reader and sanitizer-preserving
+projection; local snapshots identify their real metadata commit and AgentStore
+version. Native epochs, publication positions and V1 code IDs are never
+fabricated. Association presentation retains source repository and capsule
+evidence alongside exact operation and Git commit IDs. Session/transcript reads
+validate committed metadata history and selected session membership before
+returning content.
+
+Local Agents presentation retains selected companion metadata, qualified source
+repository identities, Git commits and immutable evidence. The browser gates
+review controls for local repositories and compares freshness announcements with
+retained selections, including stream reconnects.

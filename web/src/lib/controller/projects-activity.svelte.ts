@@ -1,3 +1,4 @@
+import { snapshotOperation } from "./repository-profile.js";
 import { ApiError } from "../api/client.js";
 import type { StoreRepositorySummary } from "./contracts.js";
 import type { WorkBrowseTransport } from "./projects-hub-types.js";
@@ -33,7 +34,7 @@ export function createProjectsActivity(context: {
       const page = await source.activity(
         more && previous
           ? {
-              operation: previous.snapshot.operation_id,
+              operation: snapshotOperation(previous.snapshot),
               cursor: previous.cursor ?? undefined,
               atTimeMillis: previous.atTimeMillis,
               agentSnapshot: previous.agentSnapshot,
@@ -94,7 +95,9 @@ export function createProjectsActivity(context: {
             (h) =>
               h.repository.id === repository.id &&
               (!operations[repository.id] ||
-                h.page?.snapshot.operation_id === operations[repository.id]),
+                (h.page &&
+                  snapshotOperation(h.page.snapshot) ===
+                    operations[repository.id])),
           )?.page ?? null,
         loading: false,
         error: "",

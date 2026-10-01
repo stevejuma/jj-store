@@ -253,7 +253,7 @@ pub struct AgentSessionDetail {
     pub code_truncated: bool,
 }
 
-pub(super) fn summary(
+pub(crate) fn summary(
     reference: AgentObjectRef,
     session: &AgentSessionSnapshotV1,
     timing: super::agent_session_timing::SessionTiming,
@@ -316,7 +316,7 @@ pub(super) fn detail(
     }
 }
 
-pub(super) fn transcript_descriptor(
+pub(crate) fn transcript_descriptor(
     transcript_id: AgentObjectId,
     stream: &TranscriptStreamV1,
 ) -> AgentTranscriptDescriptor {

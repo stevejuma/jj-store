@@ -7,7 +7,7 @@ test("native project task and review pages share pinned commit activity", async 
   const home = process.env.JJ_STORE_REAL_REPOSITORY!;
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  await page.goto("/#/projects?tab=activity");
+  await page.goto(`/#/projects?tab=activity&scope=${home}`);
   const view = page.getByRole("region", { name: "Projects and tasks" });
   await expect(
     view.getByRole("tab", { name: "Activity", exact: true }),

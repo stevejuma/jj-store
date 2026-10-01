@@ -64,6 +64,8 @@ test("LocalTrusted bootstrap auto-opens the sole catalog repository without a to
 
   expect(controller.state.accessMode).toBe("local_trusted");
   expect(controller.state.repository).toEqual({
+    profile: "native",
+    availability: "ready",
     id: repository,
     name: "Demo repository",
     permission: "admin",
@@ -79,9 +81,11 @@ test("LocalTrusted bootstrap auto-opens the sole catalog repository without a to
 
 test("LocalTrusted bootstrap exposes Projects for several repositories", async () => {
   const second = "cd".repeat(16);
+  const paths: string[] = [];
   const controller = createProductionStoreController({
     fetcher: async (input) => {
       const path = String(input);
+      paths.push(path);
       if (path === "/v1/bootstrap")
         return response({
           version: 1,
@@ -133,6 +137,9 @@ test("LocalTrusted bootstrap exposes Projects for several repositories", async (
     "One",
     "Two",
   ]);
+  // Native actors already come from discovery; asking for collaboration
+  // transports must not launch unrelated code snapshots.
+  expect(paths.filter((path) => path.endsWith("/snapshot"))).toEqual([]);
   controller.actions.destroy();
 });
 
@@ -193,6 +200,8 @@ test("authenticated bootstrap accepts one token and exposes every authorized rep
   await controller.actions.openRepository(second);
   await ready(() => controller.state.status.connection === "connected");
   expect(controller.state.repository).toEqual({
+    profile: "native",
+    availability: "ready",
     id: second,
     name: "lapis/two",
     permission: "write",

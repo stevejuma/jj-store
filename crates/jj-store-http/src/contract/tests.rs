@@ -258,7 +258,6 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
         json!(["authenticated", "local_trusted"])
     );
     let paths = doc["paths"].as_object().unwrap();
-    assert_eq!(paths.len(), 66);
     for path in [
         "/v1/repos/{repo}/local/workspaces",
         "/v1/repos/{repo}/local/workspaces/link",
@@ -276,6 +275,21 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
     ] {
         assert!(paths.contains_key(path), "missing integrated route: {path}");
     }
+    assert_eq!(paths.len(), 84);
+    assert_eq!(
+        paths
+            .keys()
+            .filter(|name| name.starts_with("/v1/local/"))
+            .count(),
+        18
+    );
+    assert_eq!(
+        paths
+            .keys()
+            .filter(|name| !name.starts_with("/v1/local/"))
+            .count(),
+        66
+    );
     let mut ids = std::collections::BTreeSet::new();
     for (name, path) in paths {
         for (method, operation) in path.as_object().unwrap() {
@@ -292,6 +306,9 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
                         .all(|parameter| parameter["in"] == "query")
                 );
                 assert_eq!(operation["security"], json!([{"repositoryBearer":[]},{}]));
+            } else if name.starts_with("/v1/local/") {
+                assert_eq!(operation["security"], json!([{}]));
+                assert_eq!(operation["tags"], json!(["local"]));
             } else {
                 assert_eq!(operation["parameters"][0]["name"], "repo");
                 assert_eq!(operation["security"], json!([{"repositoryBearer":[]},{}]));
@@ -589,6 +606,57 @@ fn search_contract_requires_query_and_exposes_freshness_and_resets() {
     assert!(
         schemas["ErrorBody"]["properties"]
             .get("search_status")
+            .is_some()
+    );
+}
+
+#[test]
+fn local_contracts_preserve_separate_profiles_and_strict_pinned_queries() {
+    let doc = openapi();
+    let schemas = &doc["components"]["schemas"];
+    assert_eq!(schemas["CommitId"]["minLength"], 128);
+    assert_eq!(schemas["GitSha1Id"]["minLength"], 40);
+    assert_eq!(
+        schemas["LocalCodeSnapshot"]["properties"]["operation"]["$ref"],
+        "#/components/schemas/OperationId"
+    );
+    assert!(
+        schemas["LocalCodeSnapshot"]["properties"]
+            .get("epoch")
+            .is_none()
+    );
+    assert!(
+        schemas["LocalCodeSnapshot"]["properties"]
+            .get("published_seq")
+            .is_none()
+    );
+    assert!(
+        schemas["LocalGraphPage"]["properties"]
+            .get("cache")
+            .is_none()
+    );
+    let query = &doc["paths"]["/v1/local/repos/{repo}/query"]["post"];
+    assert_eq!(query["operationId"], "local_code_query");
+    assert_eq!(
+        doc["paths"]["/v1/local/repositories"]["get"]["operationId"],
+        "local_repository_list"
+    );
+    assert_eq!(
+        doc["paths"]["/v1/local/repositories"]["post"]["operationId"],
+        "local_repository_register"
+    );
+    assert_eq!(query["security"], json!([{}]));
+    assert_eq!(
+        query["requestBody"]["content"]["application/json"]["schema"]["additionalProperties"],
+        false
+    );
+    assert_eq!(
+        schemas["LocalRepositoryCapabilities"]["properties"]["search"]["type"],
+        "boolean"
+    );
+    assert!(
+        schemas["Capabilities"]["properties"]
+            .get("native_profile")
             .is_some()
     );
 }

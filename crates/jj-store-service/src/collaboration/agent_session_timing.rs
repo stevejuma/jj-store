@@ -7,13 +7,13 @@ use jj_store_wal::publication::{
 const MAX_TIMING_EVENTS: usize = 4_096;
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
-pub(super) struct SessionTiming {
+pub(crate) struct SessionTiming {
     pub first_activity_at_millis: Option<i64>,
     pub last_activity_at_millis: Option<i64>,
 }
 
-pub(super) async fn resolve(
-    store: &wal::publication::AgentStoreSnapshot,
+pub(crate) async fn resolve(
+    store: &dyn wal::publication::AgentSnapshotRead,
     session: &AgentSessionSnapshotV1,
 ) -> Result<SessionTiming> {
     let mut timing = SessionTiming::default();

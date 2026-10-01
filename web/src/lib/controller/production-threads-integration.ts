@@ -35,8 +35,16 @@ export function createThreadsIntegration(options: {
         threadId,
       }),
   });
+  const nativeHome = () =>
+    data.repositories.find(
+      (repository) => (repository.profile ?? "native") === "native",
+    );
   return {
     threads,
+    available() {
+      const source = options.source();
+      return source ? !!source.threads : !!nativeHome();
+    },
     async restore() {
       if (history.route.page !== "threads" || !options.source()) return false;
       await threads.restore();
@@ -49,12 +57,18 @@ export function createThreadsIntegration(options: {
       return true;
     },
     async connected() {
+      if (!options.source()?.threads) {
+        threads.clear(true);
+        if (history.route.page === "threads")
+          throw new ApiError("threads_unavailable");
+        return;
+      }
       if (history.route.page === "threads") await threads.restore();
       else await threads.list();
     },
     async openThreads(id: string | null = null) {
       if (!options.source()) {
-        const repo = data.repositories[0];
+        const repo = nativeHome();
         if (!repo) return;
         history.push({
           ...initialStoreRoute(),
@@ -64,6 +78,7 @@ export function createThreadsIntegration(options: {
         });
         await options.connectRepository(repo.id, null);
       }
+      if (!options.source()?.threads) throw new ApiError("threads_unavailable");
       await threads.open(id);
     },
   };

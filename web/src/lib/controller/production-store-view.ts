@@ -1,4 +1,9 @@
-import type { StoreControllerState, StoreRoute } from "./contracts.js";
+import { snapshotOperation } from "./repository-profile.js";
+import type {
+  StoreController,
+  StoreControllerState,
+  StoreRoute,
+} from "./contracts.js";
 import { nextPathPage } from "./production-file-pages.js";
 import type { ProductionStoreState } from "./production-store-state.svelte.js";
 
@@ -25,6 +30,7 @@ export function productionStoreView(
     canNavigateForward: options.canForward,
     repositories: data.repositories,
     repository: {
+      ...data.repositories.find((candidate) => candidate.id === repository),
       id: repository,
       name:
         data.repositories.find((candidate) => candidate.id === repository)
@@ -91,7 +97,8 @@ export function productionStoreView(
       indexPreparation: data.indexPreparation,
       indexPreparationError: data.indexPreparationError,
       indexOperation:
-        data.neededIndex?.operation_id ?? route.snapshotOperationId,
+        (data.neededIndex ? snapshotOperation(data.neededIndex) : null) ??
+        route.snapshotOperationId,
     },
     mutation: data.mutation,
     agentSessions: data.agentSessions,
@@ -158,4 +165,56 @@ export function productionControllerView(
     canForward: history.canForward,
     now,
   });
+}
+
+export function productionSessionView(
+  data: ProductionStoreState,
+  history: Parameters<typeof productionControllerView>[1],
+  source: Parameters<typeof productionControllerView>[2],
+  token: string | null,
+  now?: () => number,
+) {
+  return productionControllerView(
+    data,
+    history,
+    source,
+    now?.() ?? Math.floor(Date.now() / 1000),
+    data.storageReady &&
+      (data.accessMode === "local_trusted" || token !== null),
+  );
+}
+
+export function productionControllerSurface(
+  data: ProductionStoreState,
+  history: Parameters<typeof productionControllerView>[1],
+  source: () => Parameters<typeof productionControllerView>[2],
+  token: () => string | null,
+  options: {
+    threads: Pick<
+      ReturnType<
+        typeof import("./production-threads-integration.js").createThreadsIntegration
+      >,
+      "available" | "threads"
+    >;
+    projects: StoreController["projects"];
+    now?: () => number;
+    actions: StoreController["actions"];
+  },
+): StoreController {
+  return {
+    get threads() {
+      return options.threads.available() ? options.threads.threads : undefined;
+    },
+    projects: options.projects,
+    get state() {
+      return productionSessionView(
+        data,
+        history,
+        source(),
+        token(),
+        options.now,
+      );
+    },
+    actions: options.actions,
+  };
 }

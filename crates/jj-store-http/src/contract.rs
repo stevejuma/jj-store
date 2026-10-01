@@ -292,10 +292,20 @@ impl Document {
             assert!(head["responses"].get(success.to_string()).is_some());
             item["head"] = head;
         }
-        assert!(
-            self.paths.insert(format!("/v1{path}"), item).is_none(),
-            "duplicate route"
-        );
+        let existing = self
+            .paths
+            .entry(format!("/v1{path}"))
+            .or_insert_with(|| json!({}));
+        for (method, operation) in item.as_object().unwrap() {
+            assert!(
+                existing
+                    .as_object_mut()
+                    .unwrap()
+                    .insert(method.clone(), operation.clone())
+                    .is_none(),
+                "duplicate route method"
+            );
+        }
     }
     pub(crate) fn public_endpoint<Q: JsonSchema, R: JsonSchema>(
         &mut self,
@@ -313,6 +323,46 @@ impl Document {
             );
         }
     }
+    pub(crate) fn local_endpoint<Q: JsonSchema, R: JsonSchema>(
+        &mut self,
+        method: &str,
+        path: &str,
+        id: &str,
+    ) {
+        self.endpoint::<Q, R>(method, path, id, Reply::Json(200));
+        let item = self.paths.get_mut(&format!("/v1{path}")).unwrap();
+        for verb in if method == "get" {
+            vec!["get", "head"]
+        } else {
+            vec![method]
+        } {
+            let operation = item.get_mut(verb).unwrap();
+            operation["security"] = json!([{}]);
+            operation["tags"] = json!(["local"]);
+            operation["description"] = json!(
+                "LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay."
+            );
+        }
+    }
+
+    pub(crate) fn local_events<R: JsonSchema>(&mut self, path: &str, id: &str) {
+        self.local_endpoint::<routes::Empty, R>("get", path, id);
+        let schema = self.output.subschema_for::<R>().to_value();
+        let operation = self
+            .paths
+            .get_mut(&format!("/v1{path}"))
+            .unwrap()
+            .get_mut("get")
+            .unwrap();
+        operation["responses"]["200"]["description"] = json!(
+            "Bounded LocalTrusted freshness stream; no durable replay cursor. Compare ready heads and companion ref against the retained display selection after reconnect. Only explicit refresh changes that selection."
+        );
+        operation["responses"]["200"]["content"] = json!({"text/event-stream":{
+            "schema":{"type":"string"}, "x-sse-data-schema":schema,
+            "x-sse-events":{"ready":"ready", "repository-changed":"changed"}
+        }});
+    }
+
     pub(crate) fn body<T: JsonSchema>(&mut self, path: &str, method: &str) {
         let operation = self.paths.get_mut(path).unwrap().get_mut(method).unwrap();
         operation["requestBody"] = json!({"required":true,
@@ -377,6 +427,7 @@ fn non_null(mut value: Value) -> Value {
 pub fn openapi() -> Value {
     let mut document = Document::new();
     routes::document(&mut document);
+    crate::local_browser::document(&mut document);
     document.finish()
 }
 

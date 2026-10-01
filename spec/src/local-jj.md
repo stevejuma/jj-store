@@ -169,7 +169,7 @@ network synchronization is outside this profile.
 | --------- | -------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | M13.3     | Portable code and agent review anchors, backend-aware review CLI, bounded review detail/pagination and durable retry | Validate exact selected capsules and retained Git closures; preserve stale semantics and original receipts across restart, unknown outcomes and ref races; reject missing or unsupported evidence.                                                                                                                                  |
 | M13.3     | Automatic hook code-causality associations and native portable capsule carrier                                       | Associate original sanitized captures with observed explicit code operations without inventing causality; qualify native retained capsule publication and replay. Native providers continue rejecting portable records until that carrier passes.                                                                                   |
-| M13.4     | Filesystem-only LocalTrusted server/UI, explicit device folder bindings, versioned local APIs and code reads/search  | Serve registered ordinary JJ folders without RustFS, pin explicit operation and metadata selections, preserve separate code authorization and require explicit refresh. Qualify cold startup and mixed native/local use.                                                                                                            |
+| M13.4     | Indexed local code search                                                                                            | Build bounded rebuildable local search over explicit operation and companion selections; preserve independent code access, native search contracts and refresh-only snapshot advancement.                                                                                                                                           |
 | M13.4     | Recoverable local code mutations                                                                                     | Durably journal the exact unpublished JJ operation before publishing heads; prove stable unknown/retry outcomes, concurrent sibling preservation, undo/abandon safety and protection of dirty unsnapshotted checkout files.                                                                                                         |
 | M13.5     | Bounded durable local/native conversion and identity mapping reports                                                 | Create an independent destination with a fresh operation log, selected code state/ancestry, complete collaboration history and exact evidence archives. Reject unsupported active representations in preflight, verify bounded closures, publish native manifests last, export only to a new folder and leave the source untouched. |
 | M13.6     | Cold full-flow qualification and retained native regressions                                                         | Exercise the completed local CLI, filesystem server/UI, recovery and conversion in fresh processes; retain native identity, publication, collaboration and browser regression evidence. Focused provider tests alone do not satisfy this gate.                                                                                      |
@@ -206,3 +206,107 @@ most 256 rows and four MiB, and require the captured metadata commit for a
 continuation. Raw reaction records are not exposed by the local asset reader.
 Capture-plus-binding publication and cold full-process CLI/UI acceptance remain
 separate pending gates.
+
+## Local browser delivery slice
+
+M13.4 is delivered in independently verified stages. Folder registration,
+filesystem-only serving, code browsing, WorkStore editing and qualified
+AgentStore reads reuse the M13.1/M13.2 foundation and recorded M13.3 provider
+proofs. They do not advertise unqualified ReviewStore anchors or code mutations.
+Indexed search, recoverable code commands and the remaining review gates remain
+explicitly pending; this slice cannot complete M13.4 or M13.
+
+Folder inspection and all GETs are non-publishing. Explicit Add may initialize
+companion identity using the existing agent initialization command; it never
+installs capture hooks, creates a project or snapshots checkout files. A durable
+installation-owned request precedes initialization and binds canonical folder,
+shared JJ metadata path and original intent. Replay recovers the selected
+receipt before making the folder discoverable. Folder removal affects only
+device discovery. Each read revalidates identity and binding generation.
+
+Admission persists the proposed repository identity before first companion
+publication. Initialization retries must use that identity and fail closed when
+another identity appears. All journal records, request IDs, generations and
+recorded results are validated on restart. Explicit reconnect accepts a
+supported folder with the original identity, preserves project links, and
+increments the binding generation. A different ready copy is rejected; reconnect
+never changes repository contents or initializes replacement metadata.
+
+Local code APIs are separate from native DTOs and preserve Git SHA-1 IDs and
+explicit JJ operations. Collaboration pins a separate committed metadata
+selection; staged commits and unrelated cursor histories are unavailable. Local
+providers expose only bounded owned queries and existing collaboration commands.
+Installation-level registration is LocalTrusted administration, and local
+folders are never exposed through authenticated shared deployments.
+
+Mixed and filesystem-only startup use the same device registry and browser. The
+filesystem mode requires no object-store runtime or native RPC. Local freshness
+notifications announce changed operation heads or companion refs; only explicit
+refresh advances displayed snapshots. An unavailable folder, changed identity or
+unsupported capability is distinguished from denied access.
+
+Format-2 server configuration selects filesystem storage explicitly; native
+storage remains the default. Filesystem startup requires literal-loopback
+LocalTrusted administration and rejects native backup, search and replication
+configuration. Bootstrap and discovery identify the available authority.
+Installation management and operation-pinned code APIs use the separate
+`/v1/local` namespace, with process-bound cursors that bind repository, binding
+generation, operation and query. Native URLs and native identity widths retain
+their existing contracts.
+
+The browsing stage provides owned Git-profile graph, content, references,
+operation-difference and conflict descriptors. A local binding generation and
+explicit operation replace native manifest positions in its code snapshot; there
+is no fabricated native epoch, WAL position or publication sequence.
+Content-filter revsets remain disabled until their bounded resource proofs are
+qualified. File text is bounded; binary/oversized content reports its status.
+
+### Pinned local WorkStore transport
+
+Local browser WorkStore pages require an explicit committed companion metadata
+selection, independently from the code operation. Initial pages and resumed
+queries validate that selection against bounded current committed history and
+reject staged or unrelated commits. Filtered summaries use the same complete
+root projection, ordering, counts and bounds as native WorkStore. Browser
+continuations bind repository, binding generation, metadata selection and exact
+query; changed filters or another repository fail closed.
+
+Local browser edits and status use the existing CLI device actor and original
+typed WorkStore request. Receipt replay precedes stale entity checks. Transport
+timeouts after dispatch retain the exact request as an unknown outcome; removal
+or replacement of a folder binding cannot grant access to a retained page.
+
+Admitted browser collaboration facades bind the original repository identity.
+Every write checks that identity before device actor initialization and on each
+publication retry; a replaced companion root is stale rather than another home
+to which the original command may be applied.
+
+### Local AgentStore browser selection
+
+Recorded local agent reads require an explicit committed companion metadata
+selection. They reuse audited AgentStore closure readers and shared sanitized
+activity/timing/transcript presentation. Session and transcript identities
+remain stable and immutable respectively. Portable code associations retain
+their exact source repository, Git SHA-1 commits, operations and evidence
+capsules; source identity is never substituted with the metadata home. Browser
+relation queries are bounded projections of selected associations and report
+continuation when more qualified records exist. Reads cannot initialize metadata
+or record agents.
+
+Local freshness streams revalidate device bindings and perform bounded checks of
+operation heads and the selected companion ref. They announce current selections
+without reconciling heads, changing working files or moving displayed snapshots.
+A reconnect must compare the announced selections against the retained browser
+pin, so changes while disconnected remain visible until explicit refresh.
+
+The browser selects transports by discovered profile and availability. Folder
+controls persist the exact pending Add request in device browser storage before
+dispatch. Reload checks its outcome; retry reuses the same intent. Removal and
+reconnect retain repository and project identities. Displayed code and
+collaboration selections remain pinned until explicit refresh.
+
+Local browser read transports reuse the existing bounded busy-retry policy for
+shared read-worker admission. A retry retains the exact operation, companion
+selection and query, including its continuation; it never captures a newer
+snapshot. Only read operations retry automatically. Registration and domain
+commands retain their explicit receipt and unknown-outcome handling.

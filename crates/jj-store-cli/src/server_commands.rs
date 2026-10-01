@@ -39,6 +39,9 @@ pub enum ServerCommand {
         state_dir: PathBuf,
         #[arg(long)]
         rustfs_executable: Option<PathBuf>,
+        /// Native embedded storage (default), or existing Git-backed JJ folders only
+        #[arg(long, value_parser = ["native", "filesystem"], default_value = "native")]
+        storage: String,
     },
     /// List, grant, revoke and recover repository token requests
     #[command(long_about=include_str!("../../../docs/cli/tokens.md"))]
@@ -287,12 +290,13 @@ pub async fn serve(
         ),
         _ => None,
     };
-    let server = PreparedServer::prepare_with_settings(
+    let server = PreparedServer::prepare_with_browser(
         &config,
         local,
         verifier,
         crate::folder_picker::native_picker(),
         Some(path),
+        Some(std::sync::Arc::new(crate::local_browser::LocalFolders)),
     )
     .await?;
     let address = server.address()?;
@@ -325,13 +329,20 @@ async fn run(ui: &Ui, cli: ServerCli) -> AuthorityResult<()> {
             local,
             state_dir,
             rustfs_executable,
+            storage,
         } => {
             if !local {
                 return Err("only explicit --local initialization is supported".into());
             }
-            let runtime = embedded_runtime(rustfs_executable)?;
-            let initialized =
-                jj_store_server::installation::initialize_local(&state_dir, &runtime)?;
+            let initialized = if storage == "filesystem" {
+                if rustfs_executable.is_some() {
+                    return Err("filesystem storage cannot configure RustFS".into());
+                }
+                jj_store_server::installation::initialize_filesystem(&state_dir)?
+            } else {
+                let runtime = embedded_runtime(rustfs_executable)?;
+                jj_store_server::installation::initialize_local(&state_dir, &runtime)?
+            };
             let text = format!(
                 "Local installation created at {}\nConfiguration: {}\nBackups: disabled\n",
                 initialized.state_dir.display(),

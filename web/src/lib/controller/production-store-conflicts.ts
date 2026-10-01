@@ -1,9 +1,10 @@
+import { isLocal, type RepositoryHead } from "./repository-profile.js";
 import type { Head, Model } from "../api/client.js";
 import type { StoreDataSource } from "./native-data-source.js";
 
 export function createProductionStoreConflicts(options: {
   source: () => StoreDataSource;
-  head: () => Head | null;
+  head: () => RepositoryHead | null;
   current: (source: StoreDataSource) => boolean;
   uploadLimit: () => number | bigint;
 }) {
@@ -17,7 +18,7 @@ export function createProductionStoreConflicts(options: {
     if (BigInt(bytes.byteLength) > BigInt(limit))
       throw new Error(`Conflict files are limited to ${limit} bytes.`);
     const head = options.head();
-    if (!head || head.heads.length !== 1)
+    if (!head || isLocal(head) || head.heads.length !== 1)
       throw new Error("Choose one current operation head before uploading.");
     const source = options.source();
     const result = await source.uploadConflict(

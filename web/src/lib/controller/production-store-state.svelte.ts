@@ -1,3 +1,9 @@
+import type {
+  RepositoryHead as Head,
+  RepositoryCapabilities,
+} from "./repository-profile.js";
+import type { AgentDetail } from "./repository-read-types.js";
+import type { CodeSnapshot as Snapshot } from "./repository-profile.js";
 import { emptySearchSettings } from "./search-settings.js";
 import { emptySyncSettings } from "./sync-settings.js";
 import {
@@ -5,7 +11,7 @@ import {
   type WorkspaceLinkSettings,
 } from "./workspace-link-types.js";
 import type { FileListingViewMode } from "@lapismd/design-core/diff";
-import type { Head, Model, Snapshot } from "../api/client.js";
+import type { Model } from "../api/client.js";
 import type {
   RepositoryLogGraph,
   RepositoryWorkingCopy,
@@ -43,7 +49,7 @@ export interface ProductionStoreState extends WorkspaceLinkSettings {
   backups: Model<"BackupStatus">[];
   heads: string[];
   repositories: StoreRepositorySummary[];
-  capabilities: Model<"Capabilities"> | null;
+  capabilities: RepositoryCapabilities | null;
   searchStatus: Model<"SearchStatus"> | null;
   searchStatusState: import("./contracts.js").StoreLoadStatus;
   searchStatusError: string;
@@ -62,7 +68,7 @@ export interface ProductionStoreState extends WorkspaceLinkSettings {
     import("../projects/repository-log.js").RepositoryLogRevision | undefined;
   comparisonParents: string[];
   conflictCount: number | null;
-  conflicts: Model<"ConflictDescriptor">[];
+  conflicts: import("./repository-read-types.js").CodeConflict[];
   conflictResolutionActions: string[];
   conflictUploadBytes: number | bigint;
   unavailableComparisonCount: number;
@@ -91,7 +97,7 @@ export interface ProductionStoreState extends WorkspaceLinkSettings {
   head: Head | null;
   mutation: MutableStoreMutationState;
   agentSessions: Model<"AgentSessionSummary">[];
-  agentSession: Model<"AgentSessionDetail"> | undefined;
+  agentSession: AgentDetail | undefined;
   agentRelations: Model<"AgentRelationLink">[];
   agentTranscript: Model<"AgentTranscriptChunk">[];
   agentCursor: string | null;

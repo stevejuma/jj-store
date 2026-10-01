@@ -12,9 +12,10 @@ supported Agent messages. It preserves explicit refresh and durable request
 identities for unknown outcomes.
 
 The rebased HTTP inventory retains all local workspace, Search and Sync
-management routes alongside Thread, Reaction and retained-image routes.
-Generated contracts and response captures qualify the combined 66-path inventory
-before UI composition.
+management routes alongside Thread, Reaction and retained-image routes. The
+merged inventory retains all 66 native routes and 18 separately scoped local
+routes. Generated contracts and response captures qualify the combined 84-path
+inventory before UI composition.
 
 Native Agent capture preparation adds optional canonical ThreadBindingV1 bytes
 on protobuf field 7. Empty bytes preserve legacy unlinked behavior. The server
@@ -651,10 +652,13 @@ served; repository paths cannot select filesystem content. Agent icons retain
 their stable same-origin `/agent-icons/<name>.svg` URLs. The production document
 permits same-origin scripts, styles, connections and images plus image loads
 from the exact `https://www.gravatar.com` origin. The only admitted inline style
-is the exact SHA-256 hash of the pinned emoji-mart 5.6.0 shadow stylesheet used
-by Community's emoji picker; arbitrary inline style and every inline script
-remain blocked. The document also prohibits framing and plugins. The browser
-read client is independent of the later typed mutation and search capabilities.
+element is the exact SHA-256 hash of the pinned emoji-mart 5.6.0 shadow
+stylesheet used by Community's emoji picker. Style attributes admit only the
+SHA-256 hash of the empty string with `unsafe-hashes`, allowing dialog cleanup
+to clear its temporary CSSOM lock. Nonempty inline style attributes and every
+inline script remain blocked. The document also prohibits framing and plugins.
+The browser read client is independent of the later typed mutation and search
+capabilities.
 
 The explicit loopback LocalTrusted development annotation setting admits inline
 scripts and styles only for the static bundle. It defaults to false; the owned
@@ -1101,3 +1105,53 @@ operations continue after HTTP disconnect and remain queryable through status.
 Sidebar disclosure persistence is presentation state only: versioned boolean
 maps for Projects/Repositories sections and individual projects. It cannot
 restore authorization, credentials, repository snapshots or capability claims.
+
+## Filesystem local repository API
+
+LocalTrusted administrative installation endpoints under
+`/v1/local/repositories` inspect, register, remove and recover device-local
+Git-backed JJ bindings. The OS picker is available before repository selection.
+Registration retains its request identity through companion initialization and
+discovery persistence. `/v1/local/repos/{repo}/...` serves profile-aware code
+snapshots, bounded code queries and existing local WorkStore/AgentStore
+semantics. Native repository endpoints and native identities retain their
+contracts. Discovery includes profile and availability without filesystem paths.
+All local routes reuse the existing origin, protocol, media-type and
+literal-loopback admission checks.
+
+Local code reads use a strictly typed, non-publishing POST
+`/v1/local/repos/{repo}/query` with explicit operation and owned query variant.
+Snapshot, capabilities, registration inspection/list/add/remove/status and
+installation folder picker endpoints use the same admission. Continuations bind
+repository, generation, operation and exact request, expire after five minutes
+and reset across process restart. Native ID schemas are unchanged.
+
+Local WorkStore POST `/work/page` and `/work/browse` under the local repository
+namespace require `metadata_commit` and a strict owned query. Their signed
+continuations bind that committed selection and complete filters. POST
+`/work/commands` and GET `/work/commands/{request_id}` reuse CLI device actor
+provenance, original request receipts and unknown outcomes. They do not require
+or fabricate a native code snapshot.
+
+Local repository AgentStore POST endpoints `/agents/sessions`,
+`/agents/session`, `/agents/transcript` and `/agents/relations` require an
+independent committed `metadata_commit`. Signed continuations bind the complete
+query, repository and binding generation. GET `/events` announces bounded local
+head/ref freshness with local-profile event DTOs and never advances a display
+pin.
+
+POST `/v1/local/repositories/{repo}/reconnect` requires the current device
+registry revision and an inspected folder path with the original companion
+identity. It replaces only the device binding, increments its generation and
+rejects a conflicting ready copy. It does not initialize replacement metadata.
+
+The application dispatches Git-backed repositories only through the LocalTrusted
+local namespace. Native ID validation, endpoints and event parser retain their
+original contracts. Shared screen models use explicit native/local snapshot
+unions; local data cannot fabricate native epoch, WAL positions or graph cache
+reports.
+
+Admitted local requests wait within the existing HTTP request/deadline bound for
+a local worker. Parallel startup code and project reads cannot fail merely
+because the bounded worker pool is briefly occupied. Cancellation before
+admission performs no folder work.

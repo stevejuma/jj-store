@@ -1,12 +1,17 @@
 import { createProductionRefresh } from "./production-store-refresh.js";
 import { createThreadsIntegration } from "./production-threads-integration.js";
+import { createProfileRouteRestorer } from "./production-profile-route.js";
 import { createProductionProjects } from "./production-projects-integration.js";
 import { createProductionConnect } from "./production-store-connect.js";
 import { connectionDeniedMessage, storeErrorMessage } from "./store-error.js";
 
 import { ApiError } from "../api/client.js";
 import type { StoreController } from "./contracts.js";
-import { HttpStoreDataSource } from "./http-store-data-source.js";
+import {
+  repositorySource,
+  selectedRepository,
+  configureRepositoryConnection,
+} from "./repository-source.js";
 import type { StoreDataSource } from "./native-data-source.js";
 import { followProductionStoreEvents } from "./production-store-events.js";
 import { createProductionStoreReader } from "./production-store-reader.svelte.js";
@@ -14,9 +19,8 @@ import {
   clearProductionStoreView,
   createProductionStoreState,
 } from "./production-store-state.svelte.js";
-import { createStoreQueryClient } from "./store-query-client.js";
 import { createStoreRouteHistory } from "./store-route-history.svelte.js";
-import { productionControllerView } from "./production-store-view.js";
+import { productionControllerSurface } from "./production-store-view.js";
 import { createProductionStoreSearch } from "./production-store-search-controller.js";
 import { createProductionStoreMutations } from "./production-store-mutations.js";
 import { createProductionStoreConflicts } from "./production-store-conflicts.js";
@@ -80,18 +84,19 @@ export function createProductionStoreController(
     connectRepository,
   });
   const { threads, openThreads } = threadsIntegration;
-  async function restoreRoute() {
-    if (await threadsIntegration.restore()) return;
-    if (history.route.page === "projects") {
+  const restoreRoute = createProfileRouteRestorer({
+    data,
+    route: () => history.route,
+    source: () => source,
+    projects,
+    connect: connectRepository,
+    token: () => sessionToken,
+    restoreThreads: threadsIntegration.restore,
+    invalidate: () => {
       version += 1;
-      await projects.restore();
-      return;
-    }
-    if (!source || !history.route.snapshotOperationId) return;
-    version += 1;
-    clearProductionStoreView(data);
-    await reader.restorePage();
-  }
+    },
+    restore: reader.restorePage,
+  });
 
   const search = createProductionStoreSearch({
     data,
@@ -139,32 +144,30 @@ export function createProductionStoreController(
       data.accessMode === "authenticated" ? (token ?? sessionToken) : null;
     if (data.accessMode === "authenticated" && !credential)
       throw new ApiError("bearer_required");
-    let active!: HttpStoreDataSource;
-    active = new HttpStoreDataSource(
-      repository.trim(),
-      credential,
-      createStoreQueryClient(),
-      `session-${++session}`,
-      () => {
-        if (source === active)
-          disconnect(connectionDeniedMessage(data.accessMode), true);
-      },
-      options.fetcher,
-    );
-    source = active;
     try {
+      const candidate = selectedRepository(data, history.route, repository);
+      const active = repositorySource(
+        candidate,
+        credential,
+        `session-${++session}`,
+        () => {
+          if (source === active)
+            disconnect(connectionDeniedMessage(data.accessMode), true);
+        },
+        options.fetcher,
+      );
+      source = active;
       const capabilities = await active.capabilities();
       const captured = await active.snapshot();
       if (!current(ticket, active) || history.route !== requestedRoute) return;
-      data.heads = [...captured.heads];
-      data.head = captured;
-      data.capabilities = capabilities;
-      mutations.configure(capabilities.typed_mutations);
-      data.conflictResolutionActions = capabilities.conflict_resolution_actions;
-      data.conflictUploadBytes = capabilities.conflict_upload_bytes;
-      const selected = data.heads.length === 1 ? data.heads[0]! : null;
+      const selected = configureRepositoryConnection(
+        data,
+        active.repository,
+        captured,
+        capabilities,
+        mutations.configure,
+      );
       if (data.accessMode === "authenticated") sessionToken = credential;
-      data.searchAvailable = capabilities.search;
       history.connect(active.repository, selected);
       data.status.connection = "connected";
       data.status.repositories = "ready";
@@ -179,7 +182,7 @@ export function createProductionStoreController(
       if (history.route.page === "projects") await projects.restore();
       else if (history.route.snapshotOperationId) await reader.restorePage();
     } catch (cause) {
-      if (!current(ticket, active)) return;
+      if (ticket !== version) return;
       const message = storeErrorMessage(cause);
       disconnect(message);
       data.status.connection = "failed";
@@ -288,19 +291,16 @@ export function createProductionStoreController(
     signal: lifecycle.signal,
   });
 
-  return {
-    threads,
-    projects,
-    get state() {
-      return productionControllerView(
-        data,
-        history,
-        source,
-        options.now?.() ?? Math.floor(Date.now() / 1000),
-        data.storageReady &&
-          (data.accessMode === "local_trusted" || sessionToken !== null),
-      );
+  return productionControllerSurface(
+    data,
+    history,
+    () => source,
+    () => sessionToken,
+    {
+      threads: threadsIntegration,
+      projects,
+      now: options.now,
+      actions: { ...actions, openThreads },
     },
-    actions: { ...actions, openThreads },
-  };
+  );
 }

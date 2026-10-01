@@ -7,6 +7,7 @@ license.workspace = true
 publish = false
 
 [dependencies]
+async-trait = "0.1"
 schemars.workspace = true
 jj-store-model.workspace = true
 jj-store-service.workspace = true

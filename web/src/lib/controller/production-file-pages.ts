@@ -1,10 +1,11 @@
+import type { CodeSnapshot as Snapshot } from "./repository-profile.js";
 import type { FileListingViewMode } from "@lapismd/design-core/diff";
-import type { Model, Snapshot } from "../api/client.js";
+import type { CodeEntry } from "./repository-read-types.js";
 
 export interface StoredPathPage {
   path: string;
   recursive: boolean;
-  entries: Model<"Entry">[];
+  entries: CodeEntry[];
   cursor: string | null;
   snapshot: Snapshot;
 }
@@ -30,12 +31,12 @@ export function storePathPage(
 export function visiblePathEntries(
   pages: ReadonlyMap<string, StoredPathPage>,
   mode: FileListingViewMode,
-): Model<"Entry">[] {
+): CodeEntry[] {
   const recursive = mode !== "tree";
   const candidates = recursive
     ? [pages.get(pathPageKey("", true))].filter(Boolean)
     : [...pages.values()].filter((page) => !page.recursive);
-  const entries = new Map<string, Model<"Entry">>();
+  const entries = new Map<string, CodeEntry>();
   for (const page of candidates)
     for (const entry of page?.entries ?? []) entries.set(entry.path, entry);
   return [...entries.values()];

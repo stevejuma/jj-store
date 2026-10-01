@@ -236,3 +236,44 @@ fn local_initialization_rejects_checkouts_and_does_not_leave_partial_state() {
     assert!(initialize_local(&state, &std::env::current_exe().unwrap()).is_err());
     assert!(!state.exists());
 }
+
+#[test]
+fn filesystem_initialization_is_private_and_rejects_nonlocal_authority() {
+    let root = tempfile::tempdir().unwrap();
+    let state = root.path().join("filesystem");
+    let initialized = jj_store_server::installation::initialize_filesystem(&state).unwrap();
+    let mut config = Config::load(&initialized.config).unwrap();
+    assert!(matches!(config.storage, Storage::Filesystem));
+    assert!(matches!(config.access, Access::LocalTrusted { .. }));
+    assert!(!state.join("rustfs").exists());
+    assert!(!state.join("rustfs-credentials.json").exists());
+    assert!(!state.join("storage-owner.json").exists());
+    assert!(!state.join("native.sock").exists());
+    assert!(jj_store_server::installation::initialize_filesystem(&state).is_err());
+    config.bind = "0.0.0.0:7443".parse().unwrap();
+    assert!(config.validate().is_err());
+    config.bind = "127.0.0.1:7443".parse().unwrap();
+    let Access::LocalTrusted {
+        ref mut permission, ..
+    } = config.access
+    else {
+        panic!()
+    };
+    *permission = jj_store_service::auth::Permission::Read;
+    assert!(config.validate().is_err());
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt as _;
+        for file in [
+            "installation.json",
+            "repositories.json",
+            "operators.json",
+            "server.toml",
+        ] {
+            assert_eq!(
+                fs::metadata(state.join(file)).unwrap().permissions().mode() & 0o077,
+                0
+            );
+        }
+    }
+}

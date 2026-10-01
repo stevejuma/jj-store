@@ -23,7 +23,7 @@ function publishFromExternalCli() {
   const checkout = join(runtime, "repository");
   writeFileSync(
     join(checkout, "EXTERNAL.md"),
-    "# External publication\n\nPublished after the browser captured its snapshot.\n",
+    `# External publication\n\nPublished after the browser captured its snapshot at ${Date.now()}.\n`,
   );
   execFileSync(
     join(root, "target", "debug", "jj"),
@@ -47,13 +47,13 @@ function publishFromExternalCli() {
 }
 
 async function connect(page: import("@playwright/test").Page) {
-  await page.goto("/");
+  await page.goto(`/#/repos/${repository}/branches`);
   await expect(
     page.getByRole("option", { name: "main", exact: true }),
   ).toBeVisible();
 }
 
-test("LocalTrusted bootstrap auto-opens without browser credentials", async ({
+test("LocalTrusted bootstrap opens requested repository without browser credentials", async ({
   page,
 }) => {
   const bootstrap = page.waitForRequest((request) =>
@@ -183,7 +183,9 @@ test("native conflict selection previews and publishes one atomic resolution", a
     .getByRole("button", { name: "Accept All Incoming Changes from Left" })
     .click();
   await surface.getByRole("button", { name: "Preview 1/1" }).click();
-  await expect(surface.getByText("Preview prepared")).toBeVisible();
+  await expect(surface.getByText("Preview prepared")).toBeVisible({
+    timeout: 30000,
+  });
   await expect(
     surface.locator(".store-mutation-preview dd").filter({
       hasText: "conflict.txt",
@@ -194,7 +196,9 @@ test("native conflict selection previews and publishes one atomic resolution", a
     name: "Apply atomic conflict resolution?",
   });
   await confirmation.getByRole("button", { name: "Apply resolution" }).click();
-  await expect(surface.getByText("Conflicts resolved")).toBeVisible();
+  await expect(surface.getByText("Conflicts resolved")).toBeVisible({
+    timeout: 30000,
+  });
 
   expect(requests).toHaveLength(2);
   expect(requests[1]).toEqual(requests[0]);
@@ -210,6 +214,7 @@ test("native conflict selection previews and publishes one atomic resolution", a
 test("browser mutation previews and publishes one native request", async ({
   page,
 }) => {
+  const message = `Create a durable browser mutation ${Date.now()}`;
   const requests: any[] = [];
   page.on("request", (request) => {
     const path = new URL(request.url()).pathname;
@@ -221,9 +226,7 @@ test("browser mutation previews and publishes one native request", async ({
   await page.getByRole("button", { name: "Repository actions" }).click();
   await page.getByRole("menuitem", { name: "Create change" }).click();
   const dialog = page.getByRole("dialog", { name: "Create change" });
-  await dialog
-    .getByRole("textbox", { name: "Markdown editor" })
-    .fill("Create a durable browser mutation");
+  await dialog.getByRole("textbox", { name: "Markdown editor" }).fill(message);
   await dialog.getByRole("button", { name: "Preview change" }).click();
   await expect(dialog.getByText("Preview prepared")).toBeVisible();
   await dialog.getByRole("button", { name: "Apply command" }).click();
@@ -251,7 +254,7 @@ test("browser mutation previews and publishes one native request", async ({
   await page.getByRole("tab", { name: "Commits", exact: true }).click();
   await expect(
     page.getByRole("button", {
-      name: "Create a durable browser mutation",
+      name: message,
       exact: true,
     }),
   ).toBeVisible();

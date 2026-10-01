@@ -4,7 +4,7 @@ import type { StoreDataSource } from "./native-data-source.js";
 import type { ProductionStoreState } from "./production-store-state.svelte.js";
 import { assertPinned } from "./production-snapshot.js";
 
-type NativeTreeValue = Model<"NativeTreeValue">;
+type NativeTreeValue = import("./repository-read-types.js").CodeTreeValue;
 type FileValue = Extract<NativeTreeValue, { type: "file" }>;
 
 interface SelectedFile {
@@ -20,7 +20,9 @@ function selectedFile(
   return { file: terms[0], path };
 }
 
-function beforeFile(change: Model<"FileDiffChange">): SelectedFile | undefined {
+function beforeFile(
+  change: import("./repository-read-types.js").CodeDiffChange,
+): SelectedFile | undefined {
   const direct = selectedFile(change.before, change.path);
   if (direct) return direct;
   const sources = change.sources
@@ -73,6 +75,8 @@ export async function createCodeLineReviewAnchor(
 ): Promise<Model<"ArtifactAnchorV1"> | undefined> {
   const comparison = data.comparisons.get(context.path);
   if (!comparison || context.lineNumber === null) return;
+  if (source.profile === "git_sha1_jj045")
+    throw new Error("Local reviews are not supported.");
   const response = await source.diff(
     comparison.afterOperation,
     comparison.from,
@@ -131,8 +135,18 @@ export async function createCodeLineReviewAnchor(
       },
     },
     created_context: {
-      publication_position: response.snapshot.published_seq,
-      code_state_version: response.snapshot.code_state_version,
+      publication_position:
+        "published_seq" in response.snapshot
+          ? response.snapshot.published_seq
+          : (() => {
+              throw new Error("Local reviews are not supported.");
+            })(),
+      code_state_version:
+        "code_state_version" in response.snapshot
+          ? response.snapshot.code_state_version
+          : (() => {
+              throw new Error("Local reviews are not supported.");
+            })(),
       agent_root: data.agentSession?.snapshot.agent_root ?? null,
     },
     sensitivity: "repository",
@@ -177,8 +191,16 @@ export function createAgentToolReviewAnchor(
       },
     },
     created_context: {
-      publication_position: detail.snapshot.published_seq,
-      code_state_version: data.head?.code_state_version ?? null,
+      publication_position:
+        "published_seq" in detail.snapshot
+          ? detail.snapshot.published_seq
+          : (() => {
+              throw new Error("Local reviews are not supported.");
+            })(),
+      code_state_version:
+        data.head && "code_state_version" in data.head
+          ? data.head.code_state_version
+          : null,
       agent_root: detail.snapshot.agent_root,
     },
     sensitivity: "repository",

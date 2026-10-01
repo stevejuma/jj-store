@@ -495,3 +495,18 @@ repository-bound immutable WAL records. Complete source closures include
 external AgentStore, ReviewStore and native code edges. Local companion batches
 retain independently versioned domains through one owned ref and a versioned
 receipt envelope.
+
+Filesystem-only composition omits native object storage, RPC, search and
+replication workers. The HTTP host is optional; native requests fail explicitly
+when absent. Installation-owned bindings and the Git-profile reader use the same
+HTTP admission and query-worker pool as native serving.
+
+Device-bound collaboration facades carry the admitted local repository identity
+into the existing WorkStore provider. Identity is rechecked on publication
+retries, while reads validate independently selected companion history. Native
+manifest authority and local Git ref authority remain separate.
+
+Folder initialization composition persists the proposed identity before
+publication and reuses the same initialization receipt. Reconnect changes only a
+validated device binding; companion metadata and linked project identities
+remain authoritative and unchanged.

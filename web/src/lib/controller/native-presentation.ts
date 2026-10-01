@@ -1,3 +1,9 @@
+import type {
+  CodeEntry,
+  CodeDiffChange,
+  CodeTreeValue,
+  CodeGraph,
+} from "./repository-read-types.js";
 import type { FileListingFile } from "@lapismd/design-core/diff";
 import type { Model } from "../api/client.js";
 import { encodeJjChangeId } from "../projects/repository-log-graph.js";
@@ -10,11 +16,11 @@ import type { Bookmark } from "../projects/presentation.js";
 import type { RepositoryChoice, RepositorySnapshot } from "./contracts.js";
 
 type Reference = Model<"Reference">;
-type GraphPage = Model<"GraphPage">;
-type PathEntry = Model<"Entry">;
-type DiffChange = Model<"FileDiffChange">;
-type FileTreeValue = Extract<Model<"NativeTreeValue">, { type: "file" }>;
-type DirectoryTreeValue = Extract<Model<"NativeTreeValue">, { type: "tree" }>;
+type GraphPage = CodeGraph;
+type PathEntry = CodeEntry;
+type DiffChange = CodeDiffChange;
+type FileTreeValue = Extract<CodeTreeValue, { type: "file" }>;
+type DirectoryTreeValue = Extract<CodeTreeValue, { type: "tree" }>;
 
 export interface PresentedReferences {
   bookmarks: Bookmark[];

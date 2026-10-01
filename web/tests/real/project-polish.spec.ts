@@ -7,7 +7,9 @@ test("repository documents linked projects and Activity filters retain native sc
   const home = process.env.JJ_STORE_REAL_REPOSITORY!;
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  await page.goto(`/#/repos/${home}/files`);
+  await page.goto(`/#/repos/${home}/branches`);
+  await page.getByRole("option", { name: "main", exact: true }).click();
+  await page.getByRole("tab", { name: "Overview", exact: true }).click();
   const documents = page.getByRole("region", {
     name: "Repository document preview",
   });
@@ -98,11 +100,7 @@ test("repository documents linked projects and Activity filters retain native sc
     name: "Filter activity",
     exact: true,
   });
-  await expect(
-    page
-      .getByRole("region", { name: "Project filters" })
-      .getByRole("button", { name: "Filter activity" }),
-  ).toBeVisible();
+  await expect(filter).toBeVisible();
   await filter.click();
   await page.getByPlaceholder("Find an activity type...").fill("Without");
   await page.getByRole("option", { name: /Without agent context/ }).click();

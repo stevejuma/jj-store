@@ -1,3 +1,4 @@
+import { snapshotOperation } from "./repository-profile.js";
 import { createProductionSearchSettings } from "./production-search-settings.js";
 import { createProductionSyncSettings } from "./production-sync-settings.js";
 import { createProductionWorkspaceLinks } from "./production-workspace-links.js";
@@ -56,7 +57,9 @@ export function createProductionStoreSettings(options: {
 
   async function prepareIndex() {
     const { data } = options;
-    const operation = data.neededIndex?.operation_id ?? options.operation();
+    const operation =
+      (data.neededIndex ? snapshotOperation(data.neededIndex) : null) ??
+      options.operation();
     if (
       !operation ||
       !data.capabilities?.index_tasks ||

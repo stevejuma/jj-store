@@ -1,4 +1,5 @@
-import type { Model, Snapshot } from "../api/client.js";
+import type { CodeSnapshot as Snapshot } from "./repository-profile.js";
+import type { Model } from "../api/client.js";
 import type { StoreDataSource } from "./native-data-source.js";
 import { presentChangedFiles } from "./native-presentation.js";
 import type { Comparison } from "./production-store-loaders.js";
@@ -43,7 +44,7 @@ export interface InspectionPage {
 }
 
 function comparisonEntries(
-  changes: readonly Model<"FileDiffChange">[],
+  changes: readonly import("./repository-read-types.js").CodeDiffChange[],
   comparison: Comparison,
 ) {
   return new Map(changes.map((change) => [change.path, comparison]));
@@ -180,7 +181,9 @@ export async function startOperationInspection(
   source: StoreDataSource,
   operation: string,
   parent: string,
-  groups: Model<"Window2">,
+  groups: import("./repository-read-types.js").CodeWindow<
+    import("./repository-read-types.js").CodeOperationChanges
+  >,
 ): Promise<InspectionPage> {
   assertPinned(groups.snapshot, source, operation);
   return readMoreOperationInspection(source, {

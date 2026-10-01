@@ -26,6 +26,7 @@ export class HttpStoreDataSource
   extends HttpRepositoryTransports
   implements StoreDataSource
 {
+  readonly profile = "native" as const;
   readonly #client: Client;
   readonly #scope: StoreQueryScope;
   readonly #collaboration: HttpCollaborationDataSource;
@@ -45,7 +46,7 @@ export class HttpStoreDataSource
     const client = new Client(repository, token, denied, fetcher);
     super(client);
     this.#client = client;
-    this.#scope = { repository, session };
+    this.#scope = { repository, session, profile: this.profile };
     this.threads = new HttpThreadsDataSource(client);
     this.work = new HttpWorkDataSource(this.#client, this);
     this.#writes = new HttpStoreWriteDataSource(this.#client);

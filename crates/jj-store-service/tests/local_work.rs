@@ -393,6 +393,18 @@ fn forged_continuations_cannot_read_staged_metadata_candidates() {
     else {
         panic!("expected staged candidate");
     };
+    assert_eq!(
+        repository
+            .work_page_at(candidate.commit(), &WorkQuery::default())
+            .unwrap_err(),
+        Error::Stale
+    );
+    assert_eq!(
+        repository
+            .work_browse_at(candidate.commit(), &WorkBrowseQuery::default())
+            .unwrap_err(),
+        Error::Stale
+    );
     let mut cursor: serde_json::Value =
         serde_json::from_slice(&URL_SAFE_NO_PAD.decode(first.next_cursor.unwrap()).unwrap())
             .unwrap();
@@ -453,4 +465,129 @@ fn concurrent_local_writers_share_actor_and_preserve_disjoint_projects() {
     assert_eq!(page.projects.len(), 4);
     let actor = repository.actor().unwrap().unwrap();
     assert!(page.projects.iter().all(|p| p.actor.created_by == actor));
+}
+
+#[test]
+fn local_browser_browse_uses_complete_root_and_explicit_committed_pin() {
+    let (_root, repository) = fixture();
+    let first = project(&repository, 30);
+    project(&repository, 31);
+    let parent = task(&repository, 32, first, None);
+    task(&repository, 33, first, Some(parent));
+    let selected = repository.metadata_store().read().unwrap().unwrap();
+    let query = WorkBrowseQuery {
+        limit: 1,
+        ..Default::default()
+    };
+    let page = repository
+        .work_browse_at(selected.commit(), &query)
+        .unwrap();
+    assert_eq!(page.total_matches, 2);
+    assert_eq!(page.projects[0].task_counts.total, 2);
+    assert_eq!(page.projects[0].task_counts.active, 2);
+    project(&repository, 34);
+    let resumed = repository
+        .work_browse_at(
+            selected.commit(),
+            &WorkBrowseQuery {
+                cursor: page.next_cursor.clone(),
+                ..query.clone()
+            },
+        )
+        .unwrap();
+    assert_eq!(resumed.snapshot, page.snapshot);
+    assert_eq!(resumed.total_matches, 2);
+    assert_eq!(resumed.projects[0].id, ProjectId::new([31; 16]));
+    assert!(resumed.next_cursor.is_none());
+    assert_eq!(
+        repository
+            .work_browse_at(
+                selected.commit(),
+                &WorkBrowseQuery {
+                    cursor: page.next_cursor,
+                    q: "changed".into(),
+                    ..query
+                }
+            )
+            .unwrap_err(),
+        Error::InvalidCursor
+    );
+    let tasks = repository
+        .work_browse_at(
+            selected.commit(),
+            &WorkBrowseQuery {
+                kind: WorkBrowseKind::Tasks,
+                parent: Some(parent),
+                q: "Task body".into(),
+                state: Some(WorkStateFilter::Active),
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    assert_eq!(tasks.total_matches, 1);
+    assert_eq!(tasks.tasks[0].parent_title.as_deref(), Some("Task 32"));
+    assert_eq!(
+        repository
+            .work_page_at(selected.commit(), &WorkQuery::default())
+            .unwrap()
+            .projects
+            .len(),
+        2
+    );
+    let (_other, other) = fixture();
+    project(&other, 35);
+    assert_eq!(
+        other
+            .work_page_at(selected.commit(), &WorkQuery::default())
+            .unwrap_err(),
+        Error::Stale
+    );
+    assert_eq!(
+        other
+            .work_browse_at(selected.commit(), &WorkBrowseQuery::default())
+            .unwrap_err(),
+        Error::Stale
+    );
+}
+
+#[test]
+fn bound_local_browser_commands_cannot_follow_replaced_repository_identity() {
+    let (_root, repository) = fixture();
+    project(&repository, 36);
+    let selected = repository.metadata_store().read().unwrap().unwrap();
+    let bound = repository.clone().bound_to(m::RepositoryId::new([99; 16]));
+    assert_eq!(
+        bound
+            .apply_work_command(&request(
+                37,
+                WorkCommandV1::CreateProject {
+                    id: ProjectId::new([37; 16]),
+                    title: "Replacement".into(),
+                    body: "".into()
+                }
+            ))
+            .unwrap_err(),
+        Error::Stale
+    );
+    assert_eq!(
+        bound
+            .work_command_status(m::RequestId::new([36; 16]))
+            .unwrap_err(),
+        Error::Stale
+    );
+    assert_eq!(
+        bound
+            .work_browse_at(selected.commit(), &WorkBrowseQuery::default())
+            .unwrap_err(),
+        Error::Stale
+    );
+    assert_eq!(
+        repository
+            .metadata_store()
+            .read()
+            .unwrap()
+            .unwrap()
+            .commit(),
+        selected.commit()
+    );
 }

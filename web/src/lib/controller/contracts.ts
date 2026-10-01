@@ -1,8 +1,14 @@
+import type {
+  RepositoryHead as Head,
+  RepositoryCapabilities,
+  RepositoryProfile,
+} from "./repository-profile.js";
 import type { WorkspaceLinkSettings } from "./workspace-link-types.js";
 import type { FileListingViewMode } from "@lapismd/design-core/diff";
 import type { FileDiffLineContext } from "@lapismd/design-core/diff";
-import type { Head, Model } from "../api/client.js";
-export type StoreConflictDescriptor = Model<"ConflictDescriptor">;
+import type { Model } from "../api/client.js";
+export type StoreConflictDescriptor =
+  import("./repository-read-types.js").CodeConflict;
 export type StoreConflictUpload = Model<"ConflictUpload">;
 import type { CommunityMemberModel } from "../ui/community-workspace/model.js";
 import type { StorePage } from "../ui/community-navigation/model.js";
@@ -128,13 +134,15 @@ export interface StoreConnection {
 export interface StoreRepositorySummary {
   readonly id: string;
   readonly name: string;
+  readonly profile?: RepositoryProfile;
+  readonly availability?: "ready" | "unavailable" | "identity_changed";
   readonly permission: Model<"EffectivePermission"> | null;
   readonly principal?: string;
 }
 export interface StoreSettingsState extends WorkspaceLinkSettings {
   readonly searchSettings: import("./search-settings.js").SearchSettings;
   readonly syncSettings: import("./sync-settings.js").SyncSettings;
-  readonly capabilities: Model<"Capabilities"> | null;
+  readonly capabilities: RepositoryCapabilities | null;
   readonly snapshot: Head | null;
   readonly searchStatus: Model<"SearchStatus"> | null;
   readonly searchStatusState: StoreLoadStatus;
@@ -184,7 +192,8 @@ export interface StoreControllerState {
   readonly settings: StoreSettingsState;
   readonly mutation: StoreMutationState;
   readonly agentSessions: readonly Model<"AgentSessionSummary">[];
-  readonly agentSession: Model<"AgentSessionDetail"> | undefined;
+  readonly agentSession:
+    import("./repository-read-types.js").AgentDetail | undefined;
   readonly agentRelations: readonly Model<"AgentRelationLink">[];
   readonly agentTranscript: readonly Model<"AgentTranscriptChunk">[];
   readonly reviewThreads: readonly Model<"ReviewThreadSummary">[];

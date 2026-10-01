@@ -156,9 +156,37 @@ impl LocalRepository {
         &self,
         request: &LocalAgentRequest,
     ) -> LocalResult<LocalAgentOutcome> {
+        self.apply_agent_command_with_identity(request, None).await
+    }
+    /// Installation admission has durably recorded this identity before publication.
+    pub async fn initialize_for_browser(
+        &self,
+        request_id: m::RequestId,
+        repository: m::RepositoryId,
+    ) -> LocalResult<LocalAgentOutcome> {
+        self.apply_agent_command_with_identity(
+            &LocalAgentRequest {
+                version: 1,
+                request_id,
+                command: LocalAgentCommand::Initialize,
+            },
+            Some(repository),
+        )
+        .await
+    }
+    async fn apply_agent_command_with_identity(
+        &self,
+        request: &LocalAgentRequest,
+        admitted: Option<m::RepositoryId>,
+    ) -> LocalResult<LocalAgentOutcome> {
         request.validate()?;
+        let initial = self.metadata.read()?;
+        self.check_identity(initial.as_ref())?;
+        if admitted.is_some_and(|id| initial.as_ref().is_some_and(|s| s.repository() != id)) {
+            return Err(LocalError::Stale);
+        }
         let actor = self.ensure_actor()?;
-        let proposed = Self::proposed_repository()?;
+        let proposed = admitted.unwrap_or(Self::proposed_repository()?);
         let intent = request.intent_for(actor)?;
         let at = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
@@ -168,6 +196,10 @@ impl LocalRepository {
             .map_err(|_| LocalError::Limit)?;
         for _ in 0..8 {
             let selected = self.metadata.read()?;
+            self.check_identity(selected.as_ref())?;
+            if admitted.is_some_and(|id| selected.as_ref().is_some_and(|s| s.repository() != id)) {
+                return Err(LocalError::Stale);
+            }
             if let Some(value) = selected
                 .as_ref()
                 .and_then(|s| s.receipt(actor, request.request_id))
