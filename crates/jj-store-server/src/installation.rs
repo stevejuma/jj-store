@@ -208,6 +208,7 @@ fn local_config(state: &Path, runtime: &Path, bucket: &str) -> config::Config {
         operator_policy: state.join("operators.json"),
         tls: None,
         web_root: None,
+        development_browser_annotations: false,
         access: config::Access::LocalTrusted {
             installation: state.join(INSTALLATION_FILE),
             catalog: state.join(CATALOG_FILE),

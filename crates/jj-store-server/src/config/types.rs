@@ -15,6 +15,8 @@ pub struct Config {
     pub operator_policy: PathBuf,
     pub tls: Option<Tls>,
     pub web_root: Option<PathBuf>,
+    #[serde(default)]
+    pub development_browser_annotations: bool,
     pub access: Access,
     pub storage: Storage,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]

@@ -26,7 +26,7 @@ shared-package release qualification does not alter those original Git gates.
 | M2.1        | Done        | M1                | JST-PUB-001,JST-PUB-002                                                                                                                                                  | Complete inventory and unique candidate CAS                                                                                    | Retain publication and cold recovery conformance                               | E-M2-001,E-M2-002                                                                                                                                                                                                                                                                                                                                              |
 | M2.2        | Done        | M2.1              | JST-PUB-003,JST-PUB-004,JST-PUB-005                                                                                                                                      | Retry receipts and unknown outcome recovery                                                                                    | Retain publication and cold recovery conformance                               | E-M2-002                                                                                                                                                                                                                                                                                                                                                       |
 | M2.3        | Done        | M2.2              | JST-PUB-006                                                                                                                                                              | Checkpoint equivalence and cache-free restart                                                                                  | Retain publication and cold recovery conformance                               | E-M2-002                                                                                                                                                                                                                                                                                                                                                       |
-| M3          | Done        | M2                | JST-JJ-001,JST-JJ-002,JST-CLI-001,JST-SEC-001                                                                                                                            | Native CLI/server vertical slice with authentication                                                                           | Implement M4 pinned read sessions                                              | E-M3-001,E-M3-002,E-M3-003,E-M3-004,E-M3-005,E-M3-006,E-M3-007,E-M3-008,E-M3-009,E-M3-010,E-M3-011,E-M3-012,E-M3-013,E-M3-014,E-M3-015                                                                                                                                                                                                                         |
+| M3          | Done        | M2                | JST-JJ-001,JST-JJ-002,JST-CLI-001,JST-SEC-001                                                                                                                            | Native CLI/server vertical slice with authentication                                                                           | Implement M4 pinned read sessions                                              | E-M3-001,E-M3-002,E-M3-003,E-M3-004,E-M3-005,E-M3-006,E-M3-007,E-M3-008,E-M3-009,E-M3-010,E-M3-011,E-M3-012,E-M3-013,E-M3-014,E-M3-015,E-UI-044                                                                                                                                                                                                                |
 | M3.1        | Done        | M2                | JST-SEC-001,JST-SEC-002,JST-SEC-003,JST-SEC-004                                                                                                                          | Revocable tokens and transport authorization                                                                                   | Retain native slice acceptance                                                 | E-M3-001,E-M3-004,E-M3-005,E-M3-006,E-M3-007,E-M3-008,E-M3-009,E-M3-011,E-M3-012,E-M3-014                                                                                                                                                                                                                                                                      |
 | M3.2        | Done        | M3.1              | JST-JJ-001,JST-JJ-004,JST-JJ-005                                                                                                                                         | Create edit describe log restart op-log evolog; multi-workspace                                                                | Retain native slice acceptance                                                 | E-M3-002,E-M3-003,E-M3-004,E-M3-005,E-M3-006,E-M3-008,E-M3-009,E-M3-010,E-M3-011,E-M3-013,E-M3-014                                                                                                                                                                                                                                                             |
 | M3.3        | Done        | M3.2              | JST-CLI-001,JST-CLI-002,JST-CLI-003,JST-CLI-004                                                                                                                          | Custom command presentation and capability parity                                                                              | Retain native slice acceptance                                                 | E-M3-006,E-M3-009,E-M3-010,E-M3-011,E-M3-012,E-M3-013,E-M3-014,E-M3-015                                                                                                                                                                                                                                                                                        |
@@ -37,7 +37,7 @@ shared-package release qualification does not alter those original Git gates.
 | M4.4        | Done        | Bootstrap         | JST-UI-001                                                                                                                                                               | Isolated catalog types, interaction/a11y and static build                                                                      | Implement shell stories                                                        | E-UI-001                                                                                                                                                                                                                                                                                                                                                       |
 | M4.5        | Done        | M4.4              | JST-UI-002                                                                                                                                                               | Community shell mechanics and navigation acceptance                                                                            | Implement repository fixture views                                             | E-UI-002                                                                                                                                                                                                                                                                                                                                                       |
 | M4.6        | Done        | M4.5              | JST-UI-003                                                                                                                                                               | Native fixture graph/file/diff drill-down and accessibility                                                                    | Visual review; live UI remains deferred                                        | E-UI-003                                                                                                                                                                                                                                                                                                                                                       |
-| M4.7        | Done        | M4.6              | JST-UI-004                                                                                                                                                               | Complete in-memory application, snapshot file browser and profile footer                                                       | Retain fixture acceptance; live UI remains deferred                            | E-UI-004,E-UI-029                                                                                                                                                                                                                                                                                                                                              |
+| M4.7        | Done        | M4.6              | JST-UI-004                                                                                                                                                               | Complete in-memory application, snapshot file browser and profile footer                                                       | Retain fixture acceptance; live UI remains deferred                            | E-UI-004,E-UI-029,E-UI-044                                                                                                                                                                                                                                                                                                                                     |
 | M4.8        | Done        | M4.7              | JST-UI-002,JST-UI-003,JST-UI-004                                                                                                                                         | Reviewed shell/card/header styling and directory navigation pass interaction, accessibility and cold catalog checks            | Visual review pending; live UI remains deferred                                | E-UI-005,E-UI-006,E-UI-009,E-UI-010,E-UI-022,E-UI-025,E-UI-026,E-UI-028                                                                                                                                                                                                                                                                                        |
 | M4.9        | Done        | M4.8              | JST-ARCH-004,JST-UI-005                                                                                                                                                  | Shared production components/controller and no-growth architecture checks                                                      | Retain source ownership and proceed to bounded APIs                            | E-UI-007,E-UI-008                                                                                                                                                                                                                                                                                                                                              |
 | M4.10       | Done        | M4.9              | JST-API-001,JST-API-002,JST-API-006                                                                                                                                      | Bounded bookmark, directory metadata and operation-change contracts                                                            | Implement M4.11 authenticated browser data/controller                          | E-M4-018                                                                                                                                                                                                                                                                                                                                                       |
@@ -25379,7 +25379,7 @@ and named tests are checked by the progress gate.
         "command": "pnpm test:governance",
         "result": "pass",
         "failures": 0,
-        "note": "jsh-directory-governance1.log: ✔ rejects_unchanged_ledger_for_code (0.628042ms); ✔ allows_documentation_without_execution_ledger (0.079ms); ℹ pass 34"
+        "note": "jsh-directory-governance1.log: \u2714 rejects_unchanged_ledger_for_code (0.628042ms); \u2714 allows_documentation_without_execution_ledger (0.079ms); \u2139 pass 34"
       },
       {
         "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7468 JJ_STORE_REAL_REPOSITORY=5ae8240e6d77fe8d0f6dd0b13f3d3874 JJ_STORE_REAL_RUNTIME=/tmp/jsh-cold-ijPU4c JJ_STORE_REAL_ROOT=/Users/stevejuma/code/lapismd/jj-store-projects-hub pnpm exec playwright test --config web/playwright.real.config.ts work-store.spec.ts",
@@ -28417,6 +28417,236 @@ and named tests are checked by the progress gate.
     "versions": "macOS ARM64; Rust 1.98.1 (48a229cea); JJ 0.45.1; Git 2.55.0; Git SHA-1 companion profile.",
     "formats": "Existing refs/lapis/state/v1 immutable companion commit/receipt profile, LocalWorkStore V1, canonical AgentStore/ReviewStore records and typed portable capsules. Native manifest/WAL/identity formats unchanged. Merge retains original parent evidence and canonical requirement identities. Integration introduces no new persistence format or public contract.",
     "next": "Retain the landed native/local regression gates; resume the explicit pending M13.3 portable review/capture capabilities in a subsequent implementation slice."
+  },
+  {
+    "id": "E-UI-044",
+    "tasks": ["M3", "M4.7"],
+    "date": "2026-10-01",
+    "kind": "development-browser-annotation-policy",
+    "revision": "Enclosing Jujutsu change rlvvyrkm.",
+    "before": "Live demo HTTP 200 serves strict CSP with same-origin scripts and only the pinned inline style hash. User confirms Annotate works in Storybook but overlays are absent in the live app. Current in-app tab inspection also times out at browser focus emulation, so actual Codex Annotate rendering is not claimed from that diagnostic. Main has active M13 work in ptqprvlv touching shared specifications; this slice is isolated from verified parent vqqlmmol in dev-annotations. New exact development policy regression fails once before implementation because configuration rewriting has no annotation option.",
+    "files": [
+      "crates/jj-store-http/src/assets.rs",
+      "crates/jj-store-http/tests/assets.rs",
+      "crates/jj-store-server/src/config.rs",
+      "crates/jj-store-server/src/config/types.rs",
+      "crates/jj-store-server/src/installation.rs",
+      "crates/jj-store-server/src/process.rs",
+      "crates/jj-store-server/tests/configuration.rs",
+      "scripts/dev-demo.mjs",
+      "scripts/dev-demo-state.mjs",
+      "scripts/dev-demo-state.test.mjs",
+      "scripts/real-browser-acceptance.mjs",
+      "web/tests/real/browser-annotations.spec.ts",
+      "spec/src/api.md",
+      "spec/src/cli.md",
+      "spec/src/security.md",
+      "spec/src/spec-governance.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "scripts/dev-demo-state.test.mjs#development browser policy can be enabled and disabled idempotently",
+      "crates/jj-store-http/tests/assets.rs#development_annotations_allow_inline_helpers_without_widening_resource_sources",
+      "crates/jj-store-server/tests/configuration.rs#development_browser_annotations_require_explicit_loopback_local_trusted_assets",
+      "web/tests/real/browser-annotations.spec.ts#browser annotation helpers render only with the explicit development policy"
+    ],
+    "runs": [
+      {
+        "command": "node --test --test-name-pattern='development browser policy' scripts/dev-demo-state.test.mjs (before implementation)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Configuration lacks the explicit annotation setting. .scratch/annotations-before.log."
+      },
+      {
+        "command": "node --test --test-name-pattern='development browser policy' scripts/dev-demo-state.test.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "1/1 exact regression passes after implementation. .scratch/annotations-after.log."
+      },
+      {
+        "command": "pnpm install --frozen-lockfile",
+        "result": "pass",
+        "failures": 0,
+        "note": "Released registry dependencies installed in the isolated workspace; tracked dependency files unchanged. .scratch/annotations-install.log."
+      },
+      {
+        "command": "cp -cR /Users/stevejuma/code/lapismd/jj-store/target /Users/stevejuma/code/lapismd/jj-store-dev-annotations/target",
+        "result": "pass",
+        "failures": 0,
+        "note": "APFS copy-on-write build cache reused in the isolated workspace; main artifacts unmodified."
+      },
+      {
+        "command": "rustfmt --edition 2024 crates/jj-store-http/src/assets.rs crates/jj-store-http/tests/assets.rs crates/jj-store-server/src/config.rs crates/jj-store-server/src/config/types.rs crates/jj-store-server/src/installation.rs crates/jj-store-server/src/process.rs crates/jj-store-server/tests/configuration.rs",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "pnpm exec prettier --write scripts/dev-demo.mjs scripts/dev-demo-state.mjs scripts/dev-demo-state.test.mjs scripts/real-browser-acceptance.mjs web/tests/real/browser-annotations.spec.ts spec/src/api.md spec/src/cli.md spec/src/security.md spec/src/spec-governance.md",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "cargo test -p jj-store-http --test assets --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "5/5 static asset tests. .scratch/annotations-assets.log."
+      },
+      {
+        "command": "node --test scripts/dev-demo-state.test.mjs scripts/governance.test.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "28/28. .scratch/annotations-harness.log."
+      },
+      {
+        "command": "node --test scripts/dev-demo-*.test.mjs scripts/governance.test.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "37/37. .scratch/annotations-harness-all.log."
+      },
+      {
+        "command": "cargo test -p jj-store-server --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "23 default server tests pass, including 12 configuration tests and 6 local installation tests. Two explicit real-RustFS storage tests ignored, not claimed by this lane. .scratch/annotations-server.log."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Pre-integration: 20 chapters, 125 requirements. .scratch/annotations-spec.log."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "12 protected files, 5 chapters. .scratch/annotations-spec-first.log."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Pre-integration: 96 tasks. .scratch/annotations-progress.log."
+      },
+      {
+        "command": "jj rebase -r rlvvyrkm -o ptqprvlv",
+        "result": "pass",
+        "failures": 0,
+        "note": "Main M13 work is committed at e3abe7b4. Rebase before cold acceptance; only the shared ledger conflicts. Resolution retains every exact parent evidence record and task row, then appends this entry."
+      },
+      {
+        "command": "pnpm check:progress (during unresolved ledger rebase)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Expected refusal with JJ conflict markers. First helper expected snapshot-style markers but JJ supplied a diff. Recover this entry from pre-rebase 577316f9 and append it to the exact new parent ledger; post-resolution progress check passes with all parent evidence preserved."
+      },
+      {
+        "command": "cargo check -p jj-store-http -p jj-store-server --all-targets --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Post-integration package check passes. Isolated .scratch/annotations-check.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test server_executable --locked -- --exact cold_tls_server_serves_only_the_configured_browser_bundle",
+        "result": "pass",
+        "failures": 0,
+        "note": "1/1 cold TLS/default bundle gate passes; 16 unrelated cases filtered. Isolated .scratch/annotations-cold-server.log."
+      },
+      {
+        "command": "node --test scripts/dev-demo-*.test.mjs scripts/governance.test.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Post-integration 37/37 pass. Isolated .scratch/annotations-harness-integrated.log."
+      },
+      {
+        "command": "rustfmt --check --edition 2024 crates/jj-store-http/src/assets.rs crates/jj-store-http/tests/assets.rs crates/jj-store-server/src/config.rs crates/jj-store-server/src/config/types.rs crates/jj-store-server/src/installation.rs crates/jj-store-server/src/process.rs crates/jj-store-server/tests/configuration.rs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed Rust files formatted. Isolated .scratch/annotations-rustfmt.log."
+      },
+      {
+        "command": "pnpm exec prettier --check scripts/dev-demo.mjs scripts/dev-demo-state.mjs scripts/dev-demo-state.test.mjs scripts/real-browser-acceptance.mjs web/tests/real/browser-annotations.spec.ts spec/src/api.md spec/src/cli.md spec/src/security.md spec/src/spec-governance.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed JS/TS/documents formatted. Isolated .scratch/annotations-format.log."
+      },
+      {
+        "command": "JJ_STORE_DEV_PORT=7483 JJ_STORE_DEV_BROWSER_ANNOTATIONS=1 JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs JJ_STORE_REAL_TEST='browser-annotations.spec.ts|native-repository.spec.ts|work-seed.spec.ts|work-store.spec.ts' pnpm web:test:real",
+        "result": "pass",
+        "failures": 0,
+        "note": "8/8 cold direct browser checks pass in 2.0 minutes. Actual inline script execution and styled visible overlay succeed; physical restart with strict opt-out blocks both and preserves the complete WorkStore snapshot. Five native repository cases, seeded WorkStore and complete task/thread/accessibility flows pass after that strict restart. Real RustFS initial startup 1024 ms, prepared restart 675 ms, resident 173232 KiB; full fixture preparation 396633 ms. Disposable service stopped and root removed. Isolated .scratch/annotations-native.log and web/test-results-real screenshot."
+      },
+      {
+        "command": "curl -sS -D - -o /dev/null http://127.0.0.1:7483/",
+        "result": "pass",
+        "failures": 0,
+        "note": "HTTP 200, development inline script/style allowance and retained resource directives."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Post-integration: 4 validators, 21 chapters, 131 requirements. Isolated .scratch/annotations-spec-integrated.log."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "Post-integration: 12 protected files, 5 canonical chapters. Isolated .scratch/annotations-spec-first-integrated.log."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Resolved ledger: 103 tasks; parent evidence retained. Isolated .scratch/annotations-progress-integrated.log."
+      },
+      {
+        "command": "jj edit rlvvyrkm",
+        "result": "pass",
+        "failures": 0,
+        "note": "Apply the verified isolated slice to clean main on the same committed M13 parent."
+      },
+      {
+        "command": "node --input-type=module (main native snapshot and identity capture)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Original main PID 60331, 3 projects, WorkStore version 28, manifest/publication 101. Exact records, snapshot and identity fingerprints in main .scratch/annotations-main-before.json."
+      },
+      {
+        "command": "JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs pnpm dev:restart",
+        "result": "pass",
+        "failures": 0,
+        "note": "Only owned main demo restarted, without reset/reseed. Search ready; restart 3743 ms, resident 160432 KiB. Main .scratch/annotations-main-restart.log."
+      },
+      {
+        "command": "node --input-type=module (main development policy and persistence verification)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Main PID 7429 serves HTTP 200 with development inline scripts/styles and no unsafe-eval. API CSP remains strict. Exact WorkStore snapshot/project records and fixture/installation/catalog SHA-256 fingerprints unchanged. Main .scratch/annotations-main-verify.json."
+      },
+      {
+        "command": "lsof -nP -iTCP:7460 -iTCP:6046 -sTCP:LISTEN",
+        "result": "pass",
+        "failures": 0,
+        "note": "Main PID 7429 on 7460; original Storybook PID 27372 on 6046."
+      },
+      {
+        "command": "test ! -e /var/folders/_3/k1jv9rtn47s_0k5bm6qn_lk80000gn/T/jj-store-real-browser-jQh6qV",
+        "result": "pass",
+        "failures": 0,
+        "note": "Disposable fixture root removed."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "Explicit server configuration crosses the static HTTP asset owner, server validation/composition/installation and shared development runtime. After the exact regression, run complete HTTP asset tests and the server package suite (public configuration changes can affect its direct consumers), the existing cold TLS browser-bundle executable gate, and all direct demo browser fixtures using an explicit file regex. Generic acceptance retains strict CSP by default. The independent Rust-provisioned Git bridge browser fixture is not a dev-demo consumer and is excluded from this invocation. Root aggregates, unrelated UI/Storybook and full Rust workspace lanes remain out of scope.",
+    "formats": "Additive format-2 server setting development_browser_annotations defaults to false; enabled only for loopback LocalTrusted with a browser bundle. Development asset CSP adds unsafe-inline for scripts/styles but retains the resource origins, framing/base/form restrictions and no unsafe-eval. API CSP/admission and all native authorization/publication authority remain unchanged. Demo rewrite enables it by default; JJ_STORE_DEV_BROWSER_ANNOTATIONS=0 opts out and generic cold acceptance defaults to that strict setting.",
+    "versions": "macOS ARM64; JJ 0.45.1; Rust 1.98.1; Node 24.10.0; pnpm 10.32.1; existing pinned browser/RustFS dependencies.",
+    "next": "Retain explicit-development policy and strict-default/deployment rejection regressions.",
+    "deferred": [
+      "Actual Codex Annotate UI confirmation remains separate from the inline-helper browser proof while the in-app browser attachment times out.",
+      "Visual baseline approval is not part of this change."
+    ],
+    "artifacts": "Focused/cold artifacts: /Users/stevejuma/code/lapismd/jj-store-dev-annotations/.scratch and web/test-results-real. Main restart/state verification: /Users/stevejuma/code/lapismd/jj-store/.scratch."
   }
 ]
 ```

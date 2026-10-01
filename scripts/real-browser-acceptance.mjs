@@ -9,7 +9,11 @@ import { resolve } from "node:path";
 const repositoryRoot = resolve(import.meta.dirname, "..");
 const keep = process.env.JJ_STORE_REAL_KEEP === "1";
 const acceptanceRoot = mkdtempSync(join(tmpdir(), "jj-store-real-browser-"));
-const demoEnvironment = { JJ_STORE_DEV_ROOT: acceptanceRoot };
+const demoEnvironment = {
+  JJ_STORE_DEV_ROOT: acceptanceRoot,
+  JJ_STORE_DEV_BROWSER_ANNOTATIONS:
+    process.env.JJ_STORE_DEV_BROWSER_ANNOTATIONS ?? "0",
+};
 
 function execute(command, args, options = {}) {
   return execFileSync(command, args, {
@@ -86,6 +90,8 @@ try {
     ],
     {
       env: {
+        JJ_STORE_DEV_BROWSER_ANNOTATIONS:
+          demoEnvironment.JJ_STORE_DEV_BROWSER_ANNOTATIONS,
         JJ_STORE_REAL_BASE_URL: baseURL,
         JJ_STORE_REAL_REPOSITORY: repository,
         JJ_STORE_REAL_RUNTIME: runtime,

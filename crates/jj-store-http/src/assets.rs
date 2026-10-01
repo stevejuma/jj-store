@@ -9,6 +9,9 @@ use axum::{
 use serde::Deserialize;
 use std::{collections::BTreeMap, fs, io::Read, path::Path};
 
+const STRICT_CSP: &str = "default-src 'none'; script-src 'self'; style-src 'self' 'sha256-+A14ONesVdzkn6nr37Osn+rUqNz4oFGZFDbLXrlae04='; connect-src 'self'; img-src 'self' https://www.gravatar.com; font-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'";
+const DEVELOPMENT_ANNOTATION_CSP: &str = "default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self' https://www.gravatar.com; font-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'";
+
 #[derive(Clone)]
 pub struct BrowserAssets(BTreeMap<String, (Bytes, &'static str)>);
 #[derive(Deserialize)]
@@ -123,23 +126,33 @@ impl BrowserAssets {
         Ok(Self(files))
     }
     pub fn router(&self) -> Router {
+        self.router_with_csp(STRICT_CSP)
+    }
+    /// The owning server must restrict this explicit policy to loopback LocalTrusted development.
+    pub fn router_for_development_annotations(&self) -> Router {
+        self.router_with_csp(DEVELOPMENT_ANNOTATION_CSP)
+    }
+    fn router_with_csp(&self, csp: &'static str) -> Router {
         let mut router = Router::new();
         for (path, (bytes, media)) in &self.0 {
             let bytes = bytes.clone();
             let media = *media;
-            router = router.route(path, get(move || {
-                let bytes = bytes.clone();
-                async move {
-                    let mut response = (StatusCode::OK, Body::from(bytes)).into_response();
-                    let headers = response.headers_mut();
-                    headers.insert(header::CONTENT_TYPE, media.parse().unwrap());
-                    headers.insert(header::CACHE_CONTROL, "no-store".parse().unwrap());
-                    headers.insert(header::X_CONTENT_TYPE_OPTIONS, "nosniff".parse().unwrap());
-                    headers.insert(header::REFERRER_POLICY, "no-referrer".parse().unwrap());
-                    headers.insert(header::CONTENT_SECURITY_POLICY, "default-src 'none'; script-src 'self'; style-src 'self' 'sha256-+A14ONesVdzkn6nr37Osn+rUqNz4oFGZFDbLXrlae04='; connect-src 'self'; img-src 'self' https://www.gravatar.com; font-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'".parse().unwrap());
-                    response
-                }
-            }));
+            router = router.route(
+                path,
+                get(move || {
+                    let bytes = bytes.clone();
+                    async move {
+                        let mut response = (StatusCode::OK, Body::from(bytes)).into_response();
+                        let headers = response.headers_mut();
+                        headers.insert(header::CONTENT_TYPE, media.parse().unwrap());
+                        headers.insert(header::CACHE_CONTROL, "no-store".parse().unwrap());
+                        headers.insert(header::X_CONTENT_TYPE_OPTIONS, "nosniff".parse().unwrap());
+                        headers.insert(header::REFERRER_POLICY, "no-referrer".parse().unwrap());
+                        headers.insert(header::CONTENT_SECURITY_POLICY, csp.parse().unwrap());
+                        response
+                    }
+                }),
+            );
         }
         router
     }

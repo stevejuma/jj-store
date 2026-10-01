@@ -28,6 +28,38 @@ fn bundle(root: &std::path::Path) {
     )
     .unwrap();
 }
+
+#[tokio::test]
+async fn development_annotations_allow_inline_helpers_without_widening_resource_sources() {
+    let root = tempfile::tempdir().unwrap();
+    bundle(root.path());
+    let assets = BrowserAssets::load(root.path()).unwrap();
+    for (router, inline) in [
+        (assets.router(), false),
+        (assets.router_for_development_annotations(), true),
+    ] {
+        let response = router
+            .oneshot(Request::builder().uri("/").body(Body::empty()).unwrap())
+            .await
+            .unwrap();
+        let csp = response.headers()["content-security-policy"]
+            .to_str()
+            .unwrap();
+        assert_eq!(csp.contains("'unsafe-inline'"), inline);
+        for directive in [
+            "default-src 'none'",
+            "connect-src 'self'",
+            "frame-ancestors 'none'",
+            "base-uri 'none'",
+            "form-action 'self'",
+        ] {
+            assert!(csp.contains(directive));
+        }
+        assert!(!csp.contains("'unsafe-eval'"));
+        assert_eq!(response.headers()["x-content-type-options"], "nosniff");
+        assert_eq!(response.headers()["cache-control"], "no-store");
+    }
+}
 #[tokio::test]
 async fn browser_assets_are_allowlisted_preloaded_and_sandboxed() {
     let root = tempfile::tempdir().unwrap();

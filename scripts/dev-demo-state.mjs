@@ -98,7 +98,10 @@ export async function writeFixture(layout, fixture) {
   return value;
 }
 
-export function rewriteServerConfiguration(source, { origin, webRoot }) {
+export function rewriteServerConfiguration(
+  source,
+  { origin, webRoot, browserAnnotations = true },
+) {
   let updated = source
     .replace(/^bind = ".*"$/mu, `bind = "${new URL(origin).host}"`)
     .replace(/^public_url = ".*"$/mu, `public_url = "${origin}"`);
@@ -107,6 +110,15 @@ export function rewriteServerConfiguration(source, { origin, webRoot }) {
     updated = updated.replace(/^web_root = .+$/mu, webLine);
   } else {
     updated = updated.replace(/^(operator_policy = .+)$/mu, `$1\n${webLine}`);
+  }
+  const annotationsLine = `development_browser_annotations = ${browserAnnotations}`;
+  if (/^development_browser_annotations = .+$/mu.test(updated)) {
+    updated = updated.replace(
+      /^development_browser_annotations = .+$/mu,
+      annotationsLine,
+    );
+  } else {
+    updated = updated.replace(/^(web_root = .+)$/mu, `$1\n${annotationsLine}`);
   }
   return updated;
 }

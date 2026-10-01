@@ -14,6 +14,32 @@ fn load(root: &std::path::Path, text: &str) -> jj_store_server::Result<Config> {
     fs::write(&path, text).unwrap();
     Config::load(&path)
 }
+
+#[test]
+fn development_browser_annotations_require_explicit_loopback_local_trusted_assets() {
+    use jj_store_server::config::Access;
+    let root = tempfile::tempdir().unwrap();
+    let mut config = load(root.path(), EXAMPLE).unwrap();
+    assert!(!config.development_browser_annotations);
+    config.development_browser_annotations = true;
+    config.web_root = Some(root.path().join("browser"));
+    assert!(
+        config.validate().is_err(),
+        "authenticated deployment must reject it"
+    );
+    config.access = Access::LocalTrusted {
+        installation: root.path().join("installation.json"),
+        catalog: root.path().join("repositories.json"),
+        rpc_socket: root.path().join("native.sock"),
+        permission: Permission::Admin,
+    };
+    config.validate().unwrap();
+    config.bind = "0.0.0.0:7443".parse().unwrap();
+    assert!(config.validate().is_err());
+    config.bind = "127.0.0.1:7443".parse().unwrap();
+    config.web_root = None;
+    assert!(config.validate().is_err());
+}
 #[test]
 fn configuration_is_bounded_strict_and_resolves_paths_without_creating_state() {
     let root = tempfile::tempdir().unwrap();

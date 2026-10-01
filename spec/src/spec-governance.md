@@ -140,6 +140,12 @@ explicitly. The loopback-only harness may recognize an exact validated Gravatar
 request only to abort it locally; it MUST NOT permit an external response or
 widen general network access.
 
+The interactive demo enables the explicit loopback LocalTrusted browser
+annotation policy. Generic cold browser acceptance opts out by default; the
+exact annotation-policy browser gate explicitly opts in and proves that inline
+helpers render. Strict asset and deployment rejection regressions remain
+separate. API security policy and repository access guards are unchanged.
+
 The same fresh fixture includes native WorkStore samples through its authorized
 HTTP commands. The additive `dev:seed:work` command checks the matching owned
 runtime before publishing, uses repository-scoped stable entity identities,

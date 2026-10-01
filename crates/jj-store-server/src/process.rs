@@ -26,6 +26,7 @@ pub struct PreparedServer {
     rpc: PreparedRpc,
     http: HttpApi,
     browser: Option<jj_store_http::assets::BrowserAssets>,
+    development_browser_annotations: bool,
     listener: tokio::net::TcpListener,
     tls: Option<tokio_rustls::TlsAcceptor>,
     concurrent: usize,
@@ -249,6 +250,7 @@ impl PreparedServer {
             rpc,
             http,
             browser,
+            development_browser_annotations: config.development_browser_annotations,
             listener,
             tls,
             concurrent: config.limits.concurrent_requests,
@@ -277,7 +279,11 @@ impl PreparedServer {
             PreparedRpc::Local(rpc) => (self.http.router().fallback(unknown_route), Some(rpc)),
         };
         if let Some(browser) = self.browser {
-            router = router.merge(browser.router());
+            router = router.merge(if self.development_browser_annotations {
+                browser.router_for_development_annotations()
+            } else {
+                browser.router()
+            });
         }
         let incoming =
             crate::listener::incoming(self.listener, self.tls, self.concurrent * 4, self.timeout);

@@ -509,6 +509,13 @@ fails closed and directs the operator to the explicit reset command. Cold
 browser acceptance supplies an isolated temporary root and cannot mutate the
 interactive fixture.
 
+The checkout-owned demo opts into `development_browser_annotations = true` so
+browser annotation helpers can inject inline scripts and styles. Set
+`JJ_STORE_DEV_BROWSER_ANNOTATIONS=0 pnpm dev:restart` to exercise the strict
+production asset policy. The server setting defaults to false and requires
+loopback LocalTrusted access plus a configured web bundle; authenticated serving
+rejects it. Restart preserves the native demo repository and its samples.
+
 Fresh development fixtures also publish three sample projects, nine tasks with
 all four states and same-project subtasks, active links to the demo repository,
 and six threaded comments through the production WorkStore HTTP command route.

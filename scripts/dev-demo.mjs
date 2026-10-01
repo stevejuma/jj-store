@@ -93,6 +93,7 @@ async function refreshServerConfiguration(origin) {
     rewriteServerConfiguration(generated, {
       origin,
       webRoot: join(repositoryRoot, "web/dist"),
+      browserAnnotations: process.env.JJ_STORE_DEV_BROWSER_ANNOTATIONS !== "0",
     }),
     { mode: 0o600 },
   );

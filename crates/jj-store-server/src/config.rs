@@ -159,6 +159,15 @@ impl Config {
     }
 
     fn validate_common(&self) -> Result<()> {
+        if self.development_browser_annotations
+            && (!self.bind.ip().is_loopback()
+                || !matches!(self.access, Access::LocalTrusted { .. })
+                || self.web_root.is_none())
+        {
+            return Err(Error::Config(
+                "development browser annotations require a loopback LocalTrusted browser bundle",
+            ));
+        }
         for path in [&self.state_dir, &self.operator_policy] {
             if !path.is_absolute() {
                 return Err(Error::Config("control paths must be absolute"));

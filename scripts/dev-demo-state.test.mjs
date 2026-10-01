@@ -59,6 +59,7 @@ bind = "127.0.0.1:7460"
 public_url = "http://127.0.0.1:7460/"
 operator_policy = "operator.toml"
 web_root = "/workspace/web/dist"
+development_browser_annotations = true
 search = []
 `;
   const options = {
@@ -67,4 +68,27 @@ search = []
   };
   assert.equal(rewriteServerConfiguration(original, options), expected);
   assert.equal(rewriteServerConfiguration(expected, options), expected);
+});
+
+test("development browser policy can be enabled and disabled idempotently", () => {
+  const source = 'operator_policy = "operator.toml"\n';
+  const options = {
+    origin: "http://127.0.0.1:7460/",
+    webRoot: "/workspace/web/dist",
+  };
+  const enabled = rewriteServerConfiguration(source, options);
+  assert.match(enabled, /^development_browser_annotations = true$/mu);
+  assert.equal(rewriteServerConfiguration(enabled, options), enabled);
+  const disabled = rewriteServerConfiguration(enabled, {
+    ...options,
+    browserAnnotations: false,
+  });
+  assert.match(disabled, /^development_browser_annotations = false$/mu);
+  assert.equal(
+    rewriteServerConfiguration(disabled, {
+      ...options,
+      browserAnnotations: false,
+    }),
+    disabled,
+  );
 });

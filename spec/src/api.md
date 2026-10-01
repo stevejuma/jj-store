@@ -577,13 +577,20 @@ exact through lossless parsing and bigint presentation.
 Static browser assets are loaded once from a bounded, explicit manifest. Only
 the listed index, JavaScript, CSS, font and fixed `agent-icons/*.svg` files are
 served; repository paths cannot select filesystem content. Agent icons retain
-their stable same-origin `/agent-icons/<name>.svg` URLs. The document permits
-same-origin scripts, styles, connections and images plus image loads from the
-exact `https://www.gravatar.com` origin. The only admitted inline style is the
-exact SHA-256 hash of the pinned emoji-mart 5.6.0 shadow stylesheet used by
-Community's emoji picker; arbitrary inline style and every inline script remain
-blocked. The document also prohibits framing and plugins. The browser read
-client is independent of the later typed mutation and search capabilities.
+their stable same-origin `/agent-icons/<name>.svg` URLs. The production document
+permits same-origin scripts, styles, connections and images plus image loads
+from the exact `https://www.gravatar.com` origin. The only admitted inline style
+is the exact SHA-256 hash of the pinned emoji-mart 5.6.0 shadow stylesheet used
+by Community's emoji picker; arbitrary inline style and every inline script
+remain blocked. The document also prohibits framing and plugins. The browser
+read client is independent of the later typed mutation and search capabilities.
+
+The explicit loopback LocalTrusted development annotation setting admits inline
+scripts and styles only for the static bundle. It defaults to false; the owned
+interactive demo enables it, while generic cold acceptance uses the strict
+policy. API responses and request admission keep their existing restrictions.
+The configuration guard and development opt-out are owned by `security.md` and
+`cli.md`.
 
 Generated schemas express reference siblings through equivalent allOf
 composition so client generators retain internal enum discriminators. The
