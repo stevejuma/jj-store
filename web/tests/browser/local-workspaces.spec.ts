@@ -64,12 +64,31 @@ test("local folder settings preserve drafts and link without changing repository
   await expect(
     page.getByRole("option", { name: "main", exact: true }),
   ).toBeVisible();
+  const originalAppBounds = (await page
+    .getByRole("option", { name: "main", exact: true })
+    .boundingBox())!;
   const originalHash = await page.evaluate(() => location.hash);
   await page
     .getByRole("button", { name: "Open profile menu for Local" })
     .click();
   await page.getByRole("menuitem", { name: "Settings" }).click();
+  await expect(
+    page
+      .getByRole("navigation", { name: "Settings page navigation" })
+      .getByRole("button", { name: "Back to app" }),
+  ).toBeVisible();
   await page.getByRole("button", { name: "Repository", exact: true }).click();
+  await expect(
+    page.getByRole("button", { name: /^Copy full Repository ID:/ }),
+  ).toBeVisible();
+  expect(
+    (await page
+      .getByRole("button", { name: /^Copy full Operation head 1:/ })
+      .boundingBox())!.width,
+  ).toBeLessThan(200);
+  await expect(
+    page.getByRole("textbox", { name: "Repository ID" }),
+  ).toHaveCount(0);
   const tabs = page.getByRole("tablist", {
     name: "Repository settings sections",
   });
@@ -77,11 +96,19 @@ test("local folder settings preserve drafts and link without changing repository
   const contentBounds = (await page
     .getByRole("region", { name: "Settings content" })
     .boundingBox())!;
-  const headingBounds = (await page
+  const navigation = page.getByRole("navigation", {
+    name: "Settings page navigation",
+  });
+  const headingBounds = (await navigation
     .getByRole("heading", { name: "Repository", level: 1 })
     .boundingBox())!;
   expect(tabBounds.y - contentBounds.y).toBeLessThan(16);
-  expect(tabBounds.y + tabBounds.height).toBeLessThan(headingBounds.y);
+  expect(headingBounds.x + headingBounds.width).toBeLessThan(tabBounds.x);
+  await expect(navigation.locator("h1 svg[aria-hidden='true']")).toBeVisible();
+  await expect(page.locator(".store-settings h1")).toHaveCount(0);
+  expect(
+    (await page.locator(".store-settings").boundingBox())!.width,
+  ).toBeCloseTo(contentBounds.width, 0);
   await page.getByRole("tab", { name: "Local folders", exact: true }).click();
   const input = page.getByRole("textbox", { name: "Folder path" });
   await expect(page.getByText("No local folders linked.")).toBeVisible();
@@ -129,9 +156,14 @@ test("local folder settings preserve drafts and link without changing repository
     violations: [],
   });
   await page.setViewportSize({ width: 1400, height: 1000 });
-  await page.getByRole("button", { name: "Back to jj-store" }).click();
+  await page.getByRole("button", { name: "Back to app" }).click();
   await expect(
     page.getByRole("option", { name: "main", exact: true }),
   ).toBeVisible();
+  const restoredAppBounds = (await page
+    .getByRole("option", { name: "main", exact: true })
+    .boundingBox())!;
+  expect(restoredAppBounds.x).toBeCloseTo(originalAppBounds.x, 0);
+  expect(restoredAppBounds.width).toBeCloseTo(originalAppBounds.width, 0);
   expect(await page.evaluate(() => location.hash)).toBe(originalHash);
 });

@@ -1,28 +1,8 @@
-.store-settings {
-  width: min(100%, 56rem);
-  min-width: 0;
-  margin-inline: auto;
-  padding: 2rem clamp(1rem, 4vw, 3rem) 4rem;
-  box-sizing: border-box;
-}
-
-.store-settings__heading {
-  margin-block-end: 2rem;
-}
-
-.store-settings__heading h1,
-.store-settings__heading p,
 .store-settings__section h2,
 .store-settings__section p {
   margin: 0;
 }
 
-.store-settings__heading h1 {
-  font-size: 1.5rem;
-  font-weight: 650;
-}
-
-.store-settings__heading p,
 .store-settings__section-heading p,
 .store-settings__empty,
 .store-settings__action-row p {
@@ -98,6 +78,7 @@
 
 .store-settings__stack {
   display: grid;
+  justify-items: start;
   gap: 0.35rem;
 }
 
@@ -129,10 +110,6 @@
 }
 
 @media (max-width: 40rem) {
-  .store-settings {
-    padding: 1.25rem 1rem 3rem;
-  }
-
   .store-settings__rows > div {
     grid-template-columns: minmax(0, 1fr);
     gap: 0.3rem;
@@ -156,10 +133,6 @@
 .store-settings__field-action button {
   flex-shrink: 0;
 }
-.store-settings__identifier input {
-  font-family: var(--font-mono, ui-monospace, monospace);
-  font-size: 0.78rem;
-}
 .store-settings__tabs {
   min-width: 0;
   gap: 0;
@@ -175,6 +148,7 @@
   min-height: 3.25rem;
   box-sizing: border-box;
   align-items: center;
+  gap: 0.45rem;
   padding: 0.55rem 1rem;
   background: color-mix(in srgb, var(--background) 96%, transparent);
   backdrop-filter: blur(12px);
@@ -216,4 +190,8 @@
 .store-settings__tab-bar [data-slot="tabs-trigger"]:hover:not(:disabled) {
   color: var(--foreground);
   background: color-mix(in srgb, var(--muted) 72%, transparent);
+}
+
+.store-settings__back {
+  flex: none;
 }

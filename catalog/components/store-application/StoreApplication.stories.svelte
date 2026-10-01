@@ -1,6 +1,7 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
+  import { playMobileSettings } from "./settings-shell-play.js";
   import StoreApplication from "../../fixtures/StoreApplicationFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Shell",
@@ -88,14 +89,18 @@
     ).not.toBeInTheDocument();
     await userEvent.click(canvas.getByRole("button", { name: "Repository" }));
     const tablist = canvas.getByRole("tablist");
-    const heading = canvas.getByRole("heading", { level: 1 });
-    await expect(tablist.getBoundingClientRect().bottom).toBeLessThan(
-      heading.getBoundingClientRect().top,
+    const heading = within(
+      canvas.getByRole("navigation", {
+        name: "Settings page navigation",
+      }),
+    ).getByRole("heading", { level: 1 });
+    await expect(heading.getBoundingClientRect().right).toBeLessThan(
+      tablist.getBoundingClientRect().left,
     );
     await expect(canvas.getByText("admin")).toBeVisible();
     await expect(
-      canvas.getByRole("textbox", { name: "Repository ID" }),
-    ).toHaveAttribute("readonly");
+      canvas.getByRole("button", { name: /^Copy full Repository ID:/ }),
+    ).toBeVisible();
     await userEvent.click(canvas.getByRole("tab", { name: "Advanced" }));
     await expect(canvas.getByText("jj-store-native-v1")).toBeVisible();
     await userEvent.click(canvas.getByRole("button", { name: "Search" }));
@@ -330,41 +335,7 @@
 <Story
   name="Settings mobile"
   args={{ displayMode: "mobile" }}
-  play={async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await userEvent.click(
-      canvas.getByRole("button", { name: "Open navigation sidebar" }),
-    );
-    await userEvent.click(
-      canvas.getByRole("button", { name: "Open profile menu for Maya Chen" }),
-    );
-    await userEvent.click(
-      await within(canvasElement.ownerDocument.body).findByRole("menuitem", {
-        name: "Settings",
-      }),
-    );
-    await expect(
-      await canvas.findByRole("heading", { name: "Local service", level: 1 }),
-    ).toBeVisible();
-    await userEvent.click(
-      canvas.getByRole("button", { name: "Open settings sidebar" }),
-    );
-    await userEvent.click(canvas.getByRole("button", { name: "Search" }));
-    await userEvent.click(canvas.getByRole("tab", { name: "Health" }));
-    await expect(
-      await canvas.findByRole("heading", { name: "Search", level: 1 }),
-    ).toBeVisible();
-    await expect(canvas.getByText("Fresh")).toBeVisible();
-    await userEvent.click(
-      canvas.getByRole("button", { name: "Open settings sidebar" }),
-    );
-    await userEvent.click(
-      canvas.getByRole("button", { name: "Back to jj-store" }),
-    );
-    await expect(
-      canvas.getByText("jj-store · Branches", { exact: true }),
-    ).toBeVisible();
-  }}
+  play={playMobileSettings}
 />
 
 <Story

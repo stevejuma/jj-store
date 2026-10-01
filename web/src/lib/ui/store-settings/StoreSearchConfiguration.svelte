@@ -1,4 +1,10 @@
 <script lang="ts">
+  import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
+  import SaveIcon from "@lucide/svelte/icons/save";
+  import XIcon from "@lucide/svelte/icons/x";
+  import CheckIcon from "@lucide/svelte/icons/check";
+  import RotateCwIcon from "@lucide/svelte/icons/rotate-cw";
+  import DatabaseIcon from "@lucide/svelte/icons/database";
   import * as Field from "@lapismd/design-core/shadcn/field";
   import * as Alert from "@lapismd/design-core/shadcn/alert";
   import { Button } from "@lapismd/design-core/shadcn/button";
@@ -54,7 +60,9 @@
     {#if supported}<Button
         variant="outline"
         disabled={settings.changing}
-        onclick={() => void onRefresh()}>Refresh settings</Button
+        onclick={() => void onRefresh()}
+        ><RefreshCwIcon data-icon="inline-start" aria-hidden="true" />Refresh
+        settings</Button
       >{/if}
   </header>
   {#if !supported}<p class="store-settings__empty">
@@ -160,12 +168,15 @@
           <div class="store-settings__action-row">
             <div class="flex flex-wrap gap-2">
               <Button type="submit" disabled={!ready || !settings.dirty}
-                >Save settings</Button
+                ><SaveIcon data-icon="inline-start" aria-hidden="true" />Save
+                settings</Button
               ><Button
                 type="button"
                 variant="outline"
                 disabled={busy || !settings.dirty}
-                onclick={onCancel}>Cancel changes</Button
+                onclick={onCancel}
+                ><XIcon data-icon="inline-start" aria-hidden="true" />Cancel
+                changes</Button
               >
             </div>
             <p>
@@ -180,7 +191,9 @@
           <Button
             variant="outline"
             disabled={!ready || settings.dirty || !pending}
-            onclick={() => void onControl("apply")}>Apply saved settings</Button
+            onclick={() => void onControl("apply")}
+            ><CheckIcon data-icon="inline-start" aria-hidden="true" />Apply
+            saved settings</Button
           >
           <Button
             variant="outline"
@@ -188,7 +201,9 @@
               settings.dirty ||
               !!pending ||
               !settings.value?.effective.enabled}
-            onclick={() => void onControl("retry")}>Retry indexing</Button
+            onclick={() => void onControl("retry")}
+            ><RotateCwIcon data-icon="inline-start" aria-hidden="true" />Retry
+            indexing</Button
           >
           <Button
             variant="outline"
@@ -196,7 +211,9 @@
               settings.dirty ||
               !!pending ||
               !settings.value?.effective.enabled}
-            onclick={() => void onControl("rebuild")}>Rebuild text index</Button
+            onclick={() => void onControl("rebuild")}
+            ><DatabaseIcon data-icon="inline-start" aria-hidden="true" />Rebuild
+            text index</Button
           >
         </div>
         <p>

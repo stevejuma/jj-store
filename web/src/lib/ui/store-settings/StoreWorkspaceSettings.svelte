@@ -1,4 +1,7 @@
 <script lang="ts">
+  import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
+  import LinkIcon from "@lucide/svelte/icons/link";
+  import XIcon from "@lucide/svelte/icons/x";
   import * as Alert from "@lapismd/design-core/shadcn/alert";
   import * as ButtonGroup from "@lapismd/design-core/shadcn/button-group";
   import GitBranchIcon from "@lucide/svelte/icons/git-branch";
@@ -42,7 +45,9 @@
     {#if supported}<Button
         variant="outline"
         disabled={busy}
-        onclick={() => void onRefresh()}>Refresh folders</Button
+        onclick={() => void onRefresh()}
+        ><RefreshCwIcon data-icon="inline-start" aria-hidden="true" />Refresh
+        folders</Button
       >{/if}
   </header>
   {#if !supported}
@@ -123,13 +128,15 @@
             type="submit"
             disabled={busy ||
               !settings.workspaceLinks ||
-              !settings.workspacePath}>Link folder</Button
+              !settings.workspacePath}
+            ><LinkIcon data-icon="inline-start" aria-hidden="true" />Link folder</Button
           >
           <Button
             type="button"
             variant="outline"
             disabled={busy || !settings.workspacePath}
-            onclick={() => onPath("")}>Cancel</Button
+            onclick={() => onPath("")}
+            ><XIcon data-icon="inline-start" aria-hidden="true" />Cancel</Button
           >
         </Field.Field>
       </Field.Group>

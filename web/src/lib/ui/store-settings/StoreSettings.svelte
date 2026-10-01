@@ -11,19 +11,25 @@
   let {
     controller,
     section,
-  }: { controller: StoreController; section: StoreSettingsSection } = $props();
+    onClose,
+  }: {
+    controller: StoreController;
+    section: StoreSettingsSection;
+    onClose: () => void;
+  } = $props();
 </script>
 
 <AppShell.Body layout="regions" label="Store settings">
   <AppShell.Body.Content label="Settings content">
     {#if section === "service"}
-      <StoreSettingsPage section="service"
+      <StoreSettingsPage section="service" {onClose}
         ><StoreServiceSettings {controller} /></StoreSettingsPage
       >
     {:else if section === "repository"}
-      <StoreRepositorySettings {controller} />
+      <StoreRepositorySettings {controller} {onClose} />
     {:else if section === "sync"}
       <StoreSyncSettings
+        {onClose}
         settings={controller.state.settings.syncSettings}
         supported={Boolean(
           controller.state.settings.capabilities?.local_sync_management,
@@ -32,7 +38,7 @@
         onControl={controller.actions.controlSync}
       />
     {:else}
-      <StoreSearchSettings {controller} />
+      <StoreSearchSettings {controller} {onClose} />
     {/if}
   </AppShell.Body.Content>
 </AppShell.Body>

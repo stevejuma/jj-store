@@ -89,9 +89,12 @@ ignores late requests. Folder paths wrap on mobile, and form actions remain
 keyboard accessible.
 
 Repository settings groups General, Local folders and Advanced values in
-keyboard-accessible tabs that wrap on narrow screens. Tab changes do not discard
-folder drafts. Long Settings identifiers use joined readonly input and Copy
-actions; full values remain selectable and copy success/failure is announced.
+keyboard-accessible tabs with horizontal overflow on narrow screens. Tab changes
+do not discard folder drafts. Repository, Search health and Sync identifiers
+compose the public Design Core CopyableValue control directly. It displays an
+abbreviated value with a compact copy icon, copies the complete value, retains
+the complete labelled identity for assistive access and uses its shared
+success/failure feedback. Missing values retain their availability label.
 
 The optional native folder picker joins Folder path to a Git-icon Browse button.
 Only an explicit click opens the dialog on the local-service machine. Selection
@@ -164,11 +167,26 @@ service installation, upstream credential editing, Git transport management or
 remote administration is included. Qualification and visual baseline approval
 remain separate.
 
+Settings content fills the available page width with responsive padding rather
+than a centered fixed-width column. Settings action buttons pair their existing
+text with decorative leading Lucide icons using the public Button icon slot.
+Refresh, link, cancel, save/apply, index preparation/rebuild, retry and
+pause/resume retain their accessible names and action availability. Stacked
+operation-head copy controls keep their natural compact width.
+
 Repository, Search and Sync subsection tabs occupy a full-width strip at the top
-of the Settings content, above the page heading, matching Projects. The strip
-stays visible while scrolling and uses horizontal overflow on narrow screens.
-Keyboard selection and tab-panel relationships remain intact; moving the
-navigation does not reset form drafts or change action availability.
+of the Settings content, matching Projects. Each page places its title and
+decorative section icon in this strip after Back and before any subsection tabs,
+and omits the former body title and description. The strip stays visible while
+scrolling and uses horizontal overflow on narrow screens. Keyboard selection and
+tab-panel relationships remain intact; moving the navigation does not reset form
+drafts or change action availability. Every Settings page starts its top
+navigation strip with Back to app, including Local service and unavailable
+sections without subsection tabs. The control closes the transient Settings
+destination and restores the retained application route and selected snapshot,
+including on mobile without reopening the sidebar. Content width and responsive
+padding are scoped to the Settings page component; other application panels
+retain their own layout.
 
 ## Shell composition
 

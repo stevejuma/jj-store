@@ -1,4 +1,5 @@
 <script lang="ts">
+  import NetworkIcon from "@lucide/svelte/icons/network";
   import * as Alert from "@lapismd/design-core/shadcn/alert";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import type { StoreController } from "../../controller/contracts.js";
@@ -22,7 +23,9 @@
         variant="outline"
         disabled={!settings.indexOperation || preparing}
         onclick={() => void controller.actions.prepareIndex()}
-        >{preparing ? "Preparing graph index…" : "Prepare graph index"}</Button
+        ><NetworkIcon data-icon="inline-start" aria-hidden="true" />{preparing
+          ? "Preparing graph index…"
+          : "Prepare graph index"}</Button
       >
     {/if}
   </header>

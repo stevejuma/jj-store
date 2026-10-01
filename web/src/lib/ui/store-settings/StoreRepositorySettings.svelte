@@ -1,12 +1,15 @@
 <script lang="ts">
   import StoreSettingsPage from "./StoreSettingsPage.svelte";
   import * as Tabs from "@lapismd/design-core/shadcn/tabs";
-  import StoreSettingsIdentifier from "./StoreSettingsIdentifier.svelte";
+  import { CopyableValue } from "@lapismd/design-core/workspace/settings";
   import type { Model } from "../../api/client.js";
   import type { StoreController } from "../../controller/contracts.js";
   import StoreWorkspaceSettings from "./StoreWorkspaceSettings.svelte";
   import StoreGraphIndexSettings from "./StoreGraphIndexSettings.svelte";
-  let { controller }: { controller: StoreController } = $props();
+  let {
+    controller,
+    onClose,
+  }: { controller: StoreController; onClose?: () => void } = $props();
   const state = $derived(controller.state);
   const settings = $derived(state.settings);
   const capabilities = $derived(settings.capabilities);
@@ -33,6 +36,7 @@
 
 <StoreSettingsPage
   section="repository"
+  {onClose}
   value="general"
   tabs={[
     { value: "general", label: "General" },
@@ -54,10 +58,7 @@
         <div>
           <dt>Repository ID</dt>
           <dd>
-            <StoreSettingsIdentifier
-              label="Repository ID"
-              value={state.repository.id}
-            />
+            <CopyableValue label="Repository ID" value={state.repository.id} />
           </dd>
         </div>
         <div>
@@ -67,7 +68,7 @@
         <div>
           <dt>Selected operation</dt>
           <dd>
-            <StoreSettingsIdentifier
+            <CopyableValue
               label="Selected operation"
               value={state.route.snapshotOperationId}
               emptyLabel="Choose an operation head"
@@ -77,7 +78,7 @@
         <div>
           <dt>Operation heads</dt>
           <dd class="store-settings__stack">
-            {#each state.operationHeads as head, index (head)}<StoreSettingsIdentifier
+            {#each state.operationHeads as head, index (head)}<CopyableValue
                 label={`Operation head ${index + 1}`}
                 value={head}
               />{/each}
@@ -90,9 +91,10 @@
         <div>
           <dt>Epoch</dt>
           <dd>
-            <StoreSettingsIdentifier
+            <CopyableValue
               label="Epoch"
               value={settings.snapshot?.epoch}
+              emptyLabel="Unavailable"
             />
           </dd>
         </div>

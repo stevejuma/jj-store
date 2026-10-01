@@ -13,6 +13,12 @@ test("local sync controls and grouped progress preserve repository context", asy
     }),
   );
   const worker = syncWorker();
+  worker.local_frontier = {
+    replica: "ab".repeat(16),
+    log_epoch: "cd".repeat(16),
+    through: 7,
+    observed_upper_bound: 9,
+  };
   await page.route("**/local/sync", (r) =>
     r.fulfill({ json: { version: 1, configured: true, worker } }),
   );
@@ -35,17 +41,27 @@ test("local sync controls and grouped progress preserve repository context", asy
     .getByRole("button", { name: "Open profile menu for Local" })
     .click();
   await page.getByRole("menuitem", { name: "Settings" }).click();
+  await expect(
+    page
+      .getByRole("navigation", { name: "Settings page navigation" })
+      .getByRole("button", { name: "Back to app" }),
+  ).toBeVisible();
   await page.getByRole("button", { name: "Sync", exact: true }).click();
   const tabs = page.getByRole("tablist", { name: "Sync settings sections" });
   const tabBounds = (await tabs.boundingBox())!;
   const contentBounds = (await page
     .getByRole("region", { name: "Settings content" })
     .boundingBox())!;
-  const headingBounds = (await page
+  const navigation = page.getByRole("navigation", {
+    name: "Settings page navigation",
+  });
+  const headingBounds = (await navigation
     .getByRole("heading", { name: "Sync", level: 1 })
     .boundingBox())!;
   expect(tabBounds.y - contentBounds.y).toBeLessThan(16);
-  expect(tabBounds.y + tabBounds.height).toBeLessThan(headingBounds.y);
+  expect(headingBounds.x + headingBounds.width).toBeLessThan(tabBounds.x);
+  await expect(navigation.locator("h1 svg[aria-hidden='true']")).toBeVisible();
+  await expect(page.locator(".store-settings h1")).toHaveCount(0);
   await page.getByRole("button", { name: "Pause sync", exact: true }).click();
   await expect(page.getByRole("button", { name: "Retry sync" })).toBeDisabled();
   await page.getByRole("button", { name: "Resume sync" }).click();
@@ -53,6 +69,12 @@ test("local sync controls and grouped progress preserve repository context", asy
   expect(actions).toEqual(["pause", "resume", "retry"]);
   await page.getByRole("tab", { name: "Progress" }).click();
   await expect(page.getByText("Local pending positions")).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: /^Copy full Local frontier replica:/ }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: /^Copy full Local frontier epoch:/ }),
+  ).toBeVisible();
   await page.setViewportSize({ width: 390, height: 844 });
   expect(
     await page.evaluate(
@@ -63,6 +85,6 @@ test("local sync controls and grouped progress preserve repository context", asy
     violations: [],
   });
   await page.setViewportSize({ width: 1400, height: 1000 });
-  await page.getByRole("button", { name: "Back to jj-store" }).click();
+  await page.getByRole("button", { name: "Back to app" }).click();
   expect(await page.evaluate(() => location.hash)).toBe(original);
 });

@@ -72,9 +72,15 @@ settings projection. This UI adds no server route, schema or generated contract.
 The transient destination consumes the shell's existing compact state so a
 collapsed desktop rail exposes Back and each settings section as labelled icon
 controls while keeping section selection and repository authority unchanged.
-Settings subsection tabs share a presentation-only page header above their
-content, retaining existing controller drafts and capability-gated actions. This
-layout adds no routes, requests or public contract changes.
+Settings page titles, section icons, Back and subsection tabs share a
+presentation-only page header above their content, retaining existing controller
+drafts and capability-gated actions. This layout adds no routes, requests or
+public contract changes. Settings identifier presentation uses public Design
+Core CopyableValue controls with the complete native value supplied unchanged;
+abbreviation affects display only. Repository, Search generation and Sync
+frontier values share this control. The page navigation Back action invokes the
+shell's existing transient Settings close callback; it never performs a new
+read, navigation or persisted-route write.
 
 ## Read-session foundation
 

@@ -12,6 +12,22 @@ test("Search tabs preserve drafts and separate Save from Apply", async ({
     }),
   );
   const value = searchSettingsValue();
+  const snapshot = sample("snapshot");
+  await page.route("**/search/status", (r) =>
+    r.fulfill({
+      json: {
+        version: 1,
+        repository: snapshot.repo_id,
+        epoch: snapshot.epoch,
+        repository_position: snapshot.published_seq,
+        durable_position: snapshot.published_seq,
+        indexed_position: snapshot.published_seq,
+        index_generation: "aa".repeat(32),
+        is_stale: false,
+        degraded: false,
+      },
+    }),
+  );
   let saves = 0,
     applies = 0;
   await page.route("**/local/search", (r) => r.fulfill({ json: value }));
@@ -52,17 +68,27 @@ test("Search tabs preserve drafts and separate Save from Apply", async ({
     .getByRole("button", { name: "Open profile menu for Local" })
     .click();
   await page.getByRole("menuitem", { name: "Settings" }).click();
+  await expect(
+    page
+      .getByRole("navigation", { name: "Settings page navigation" })
+      .getByRole("button", { name: "Back to app" }),
+  ).toBeVisible();
   await page.getByRole("button", { name: "Search", exact: true }).click();
   const tabs = page.getByRole("tablist", { name: "Search settings sections" });
   const tabBounds = (await tabs.boundingBox())!;
   const contentBounds = (await page
     .getByRole("region", { name: "Settings content" })
     .boundingBox())!;
-  const headingBounds = (await page
+  const navigation = page.getByRole("navigation", {
+    name: "Settings page navigation",
+  });
+  const headingBounds = (await navigation
     .getByRole("heading", { name: "Search", level: 1 })
     .boundingBox())!;
   expect(tabBounds.y - contentBounds.y).toBeLessThan(16);
-  expect(tabBounds.y + tabBounds.height).toBeLessThan(headingBounds.y);
+  expect(headingBounds.x + headingBounds.width).toBeLessThan(tabBounds.x);
+  await expect(navigation.locator("h1 svg[aria-hidden='true']")).toBeVisible();
+  await expect(page.locator(".store-settings h1")).toHaveCount(0);
   await page.getByRole("tab", { name: "Configuration", exact: true }).focus();
   await page.keyboard.press("ArrowRight");
   await expect(
@@ -76,6 +102,9 @@ test("Search tabs preserve drafts and separate Save from Apply", async ({
   await page.getByRole("tab", { name: "Health", exact: true }).click();
   await expect(
     page.getByRole("heading", { name: "Text-search health" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: /^Copy full Index generation:/ }),
   ).toBeVisible();
   await page.getByRole("tab", { name: "File scopes", exact: true }).click();
   await expect(prefixes).toHaveValue("private");
@@ -128,6 +157,6 @@ test("Search tabs preserve drafts and separate Save from Apply", async ({
     violations: [],
   });
   await page.setViewportSize({ width: 1400, height: 1000 });
-  await page.getByRole("button", { name: "Back to jj-store" }).click();
+  await page.getByRole("button", { name: "Back to app" }).click();
   expect(await page.evaluate(() => location.hash)).toBe(hash);
 });

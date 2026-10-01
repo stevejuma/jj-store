@@ -1,5 +1,6 @@
 <script lang="ts">
-  import StoreSettingsIdentifier from "./StoreSettingsIdentifier.svelte";
+  import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
+  import { CopyableValue } from "@lapismd/design-core/workspace/settings";
   import * as Alert from "@lapismd/design-core/shadcn/alert";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import type { StoreController } from "../../controller/contracts.js";
@@ -25,7 +26,8 @@
         disabled={settings.searchStatusState === "loading" ||
           settings.searchStatusState === "refreshing"}
         onclick={() => void controller.actions.refreshSettings()}
-        >Refresh status</Button
+        ><RefreshCwIcon data-icon="inline-start" aria-hidden="true" />Refresh
+        status</Button
       >
     {/if}
   </header>
@@ -76,7 +78,7 @@
       <div>
         <dt>Index generation</dt>
         <dd>
-          <StoreSettingsIdentifier
+          <CopyableValue
             label="Index generation"
             value={search?.index_generation}
             emptyLabel="Not available"

@@ -1,5 +1,11 @@
 <script lang="ts">
   import type { Snippet } from "svelte";
+  import { Button } from "@lapismd/design-core/shadcn/button";
+  import ArrowLeftIcon from "@lucide/svelte/icons/arrow-left";
+  import DatabaseIcon from "@lucide/svelte/icons/database";
+  import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
+  import SearchIcon from "@lucide/svelte/icons/search";
+  import ServerIcon from "@lucide/svelte/icons/server";
   import * as Tabs from "@lapismd/design-core/shadcn/tabs";
   import { ScrollArea } from "@lapismd/design-core/shadcn/scroll-area";
   import type { StoreSettingsSection } from "./model.js";
@@ -7,11 +13,13 @@
 
   let {
     section,
+    onClose,
     tabs = [],
     value = $bindable(""),
     children,
   }: {
     section: StoreSettingsSection;
+    onClose?: () => void;
     tabs?: readonly { value: string; label: string; disabled?: boolean }[];
     value?: string;
     children: Snippet;
@@ -26,30 +34,41 @@
           ? "Sync"
           : "Search",
   );
-  const description = $derived(
+  const PageIcon = $derived(
     section === "service"
-      ? "Connection and storage state for this jj-store installation."
+      ? ServerIcon
       : section === "repository"
-        ? "Identity, snapshot, graph preparation and capabilities for the selected repository."
+        ? DatabaseIcon
         : section === "sync"
-          ? "Local readiness and controls for the configured upstream."
-          : "Configuration, file scopes and text-search health for the selected repository.",
+          ? RefreshCwIcon
+          : SearchIcon,
   );
 </script>
 
 {#snippet content()}
   <div class="store-settings" aria-labelledby="store-settings-title">
-    <header class="store-settings__heading">
-      <h1 id="store-settings-title">{title}</h1>
-      <p>{description}</p>
-    </header>
     {@render children()}
   </div>
 {/snippet}
 
-{#if tabs.length}
-  <Tabs.Root bind:value class="store-settings__tabs">
-    <div class="store-settings__tab-bar">
+{#snippet navigation()}
+  <nav class="store-settings__tab-bar" aria-label="Settings page navigation">
+    {#if onClose}<Button
+        variant="ghost"
+        size="sm"
+        class="store-settings__back"
+        aria-label="Back to app"
+        onclick={onClose}
+        ><ArrowLeftIcon
+          data-icon="inline-start"
+          aria-hidden="true"
+        />Back</Button
+      >{/if}
+    <h1 id="store-settings-title" class="store-settings__page-title">
+      <PageIcon aria-hidden="true" />
+      <span>{title}</span>
+    </h1>
+    {#if tabs.length}
       <ScrollArea
         orientation="horizontal"
         type="hover"
@@ -66,9 +85,44 @@
           {/each}
         </Tabs.List>
       </ScrollArea>
-    </div>
+    {/if}
+  </nav>
+{/snippet}
+
+{#if tabs.length}
+  <Tabs.Root bind:value class="store-settings__tabs">
+    {@render navigation()}
     {@render content()}
   </Tabs.Root>
 {:else}
+  {@render navigation()}
   {@render content()}
 {/if}
+
+<style>
+  .store-settings {
+    width: 100%;
+    min-width: 0;
+    padding: 2rem clamp(1rem, 4vw, 3rem) 4rem;
+    box-sizing: border-box;
+  }
+  .store-settings__page-title {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0 0.35rem 0 0;
+    font-size: var(--community-text-body);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .store-settings__page-title :global(svg) {
+    width: 1rem;
+    height: 1rem;
+  }
+  @media (max-width: 40rem) {
+    .store-settings {
+      padding: 1.25rem 1rem 3rem;
+    }
+  }
+</style>

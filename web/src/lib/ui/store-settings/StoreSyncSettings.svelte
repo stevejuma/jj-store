@@ -1,9 +1,13 @@
 <script lang="ts">
+  import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
+  import PauseIcon from "@lucide/svelte/icons/pause";
+  import PlayIcon from "@lucide/svelte/icons/play";
+  import RotateCwIcon from "@lucide/svelte/icons/rotate-cw";
   import StoreSettingsPage from "./StoreSettingsPage.svelte";
   import * as Tabs from "@lapismd/design-core/shadcn/tabs";
   import * as Alert from "@lapismd/design-core/shadcn/alert";
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import StoreSettingsIdentifier from "./StoreSettingsIdentifier.svelte";
+  import { CopyableValue } from "@lapismd/design-core/workspace/settings";
   import type {
     SyncSettings,
     SyncAction,
@@ -11,11 +15,13 @@
   let {
     settings,
     supported,
+    onClose,
     onRefresh,
     onControl,
   }: {
     settings: SyncSettings;
     supported: boolean;
+    onClose?: () => void;
     onRefresh: () => Promise<void>;
     onControl: (action: SyncAction) => Promise<void>;
   } = $props();
@@ -31,6 +37,7 @@
 
 <StoreSettingsPage
   section="sync"
+  {onClose}
   value="overview"
   tabs={supported
     ? [
@@ -54,7 +61,11 @@
           <Button
             variant="outline"
             disabled={busy}
-            onclick={() => void onRefresh()}>Refresh sync</Button
+            onclick={() => void onRefresh()}
+            ><RefreshCwIcon
+              data-icon="inline-start"
+              aria-hidden="true"
+            />Refresh sync</Button
           >
         </header>
         {#if busy}<p role="status">
@@ -99,7 +110,13 @@
                   void onControl(
                     worker.phase === "paused" ? "resume" : "pause",
                   )}
-                >{worker.phase === "paused"
+                >{#if worker.phase === "paused"}<PlayIcon
+                    data-icon="inline-start"
+                    aria-hidden="true"
+                  />{:else}<PauseIcon
+                    data-icon="inline-start"
+                    aria-hidden="true"
+                  />{/if}{worker.phase === "paused"
                   ? "Resume sync"
                   : "Pause sync"}</Button
               >
@@ -108,7 +125,11 @@
                 disabled={busy ||
                   settings.state !== "ready" ||
                   worker.phase === "paused"}
-                onclick={() => void onControl("retry")}>Retry sync</Button
+                onclick={() => void onControl("retry")}
+                ><RotateCwIcon
+                  data-icon="inline-start"
+                  aria-hidden="true"
+                />Retry sync</Button
               >
             </div>
             <p>
@@ -179,7 +200,7 @@
                 <div>
                   <dt>Replica</dt>
                   <dd>
-                    <StoreSettingsIdentifier
+                    <CopyableValue
                       label={`${label} replica`}
                       value={frontier.replica}
                     />
@@ -188,7 +209,7 @@
                 <div>
                   <dt>Log epoch</dt>
                   <dd>
-                    <StoreSettingsIdentifier
+                    <CopyableValue
                       label={`${label} epoch`}
                       value={frontier.log_epoch}
                     />
