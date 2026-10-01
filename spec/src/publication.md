@@ -91,6 +91,14 @@ complete publication request; request and publication identity indexes share a
 durable result receipt. Duplicate lookup precedes stale-snapshot checks and head
 changes.
 
+Typed Thread/Reaction commands privately pin their full source manifest digest
+through publication. Authorization and matching durable receipt lookup precede
+this pin and all staged-root audits. A failed CAS returns stale to the typed
+outer loop before any retry can publish against changed source roots. That loop
+reloads and resolves source membership and visibility again. This private guard
+adds no fields to legacy DomainRequest intent bytes or manifest formats, and
+unknown writes still reauthorize and resolve the original request receipt.
+
 Format 2 manifests select canonical AgentStore and ReviewStore roots alongside
 native code state. Each domain has an independent version, while one global WAL
 sequence and manifest revision retain total publication order. Code transitions

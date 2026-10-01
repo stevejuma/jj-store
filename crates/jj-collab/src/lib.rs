@@ -3,6 +3,7 @@
 mod assets;
 mod catalog;
 mod codec;
+mod command_types;
 mod commands;
 mod graph;
 mod ids;
@@ -16,6 +17,7 @@ mod threads;
 pub use assets::*;
 pub use catalog::*;
 pub use codec::*;
+pub use command_types::*;
 pub use commands::*;
 pub use graph::*;
 pub use ids::*;

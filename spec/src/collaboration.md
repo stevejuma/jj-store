@@ -131,6 +131,18 @@ and real Git reachability. Typed multi-domain transitions select all changed
 roots atomically. Projectors stage and validate; providers retain authorization
 and publication CAS.
 
+Native typed commands capture Thread, Reaction, Agent, Review and code
+selections from one authorized manifest. Durable receipt replay precedes target
+and entity preconditions. A manifest CAS race invalidates the captured source
+selection and reapplies the original typed intent only after all sources are
+reloaded and validated; a changed source cannot publish feedback against a now
+hidden target. Native code baselines and links require accepted operations and
+commits in the selected inventory, never merely staged bytes. Manual evidence
+must belong to the selected AgentStore; stronger attribution and the portable
+native evidence carrier stay separately gated. Native and local providers share
+identical typed command/result domain tags without changing local receipt
+encodings.
+
 The public namespace is /v1/repos/{repo}/threads with list/detail/timeline and
 commands plus command status, /reactions/query and commands/status,
 /reaction-emojis and /reaction-assets. CLI lives under jj agent thread and jj

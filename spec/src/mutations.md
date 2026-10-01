@@ -55,6 +55,11 @@ rebase/squash/undo are deferred; client capability evidence is separate.
 | JST-MUT-005 | Client-computed RPC publications MUST pass the same semantic protected-history checks as application mutations; no arbitrary shell or CLI argument endpoint MAY be exposed.                                                                                        |
 | JST-MUT-006 | EditFile MUST create one child change from the exact single-target bookmark, replace or rename one existing bounded UTF-8 file, preserve native file mode/copy identity, move that bookmark atomically, and retain durable preview/apply/status receipt semantics. |
 
+Local collaboration command/result aliases consume the shared jj-collab domain
+contract. Provider requests and receipts retain their existing local encodings;
+this extraction does not transfer actor admission or publication authority to
+the model crate.
+
 The service's publication guard binds the authenticated token principal to the
 WAL request actor, validates replacement settings and delegates native
 transition validation to an explicit semantic policy. A transport cannot select

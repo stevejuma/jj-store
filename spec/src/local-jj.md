@@ -56,6 +56,11 @@ Repository-wide threads can initialize metadata on first write. Until portable
 code and agent anchor validation/retention is qualified, those targets MUST fail
 closed rather than substitute repository or display-only identities.
 
+Local Thread/Reaction commands and results use the shared jj-collab typed domain
+variants. Existing local names remain public aliases and preserve exact JSON
+tags, field order and receipt framing. Filesystem admission, actor derivation,
+ref publication and portable evidence retention remain local provider policy.
+
 Local WorkStore pagination reuses the native record and four-MiB page limits.
 Continuations bind an immutable selected metadata commit, filters, page size and
 offset. A continuation can only name selected history, never a staged candidate;

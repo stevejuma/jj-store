@@ -124,10 +124,10 @@ shared-package release qualification does not alter those original Git gates.
 | M14.5       | Planned     | M14.2                   | JST-UI-016,JST-PUB-005,JST-PUB-006                                                                                                                                       | Storage integrity and non-destructive checkpoints                                                                              | Add bounded authorized operations and uncertain-outcome recovery               | -                                                                                                                                                                                                                                                                                                                                                              |
 | M14.6       | In progress | M14.2,M10.7             | JST-UI-016,JST-REPL-012                                                                                                                                                  | Configured sync status and controls in Settings                                                                                | Expose existing controls without upstream configuration or credential editing  | E-M14-008,E-M14-010,E-M14-011,E-M14-012                                                                                                                                                                                                                                                                                                                        |
 | M14.7       | Planned     | M14.3,M14.4,M14.5,M14.6 | JST-UI-016,JST-SEC-006                                                                                                                                                   | Integrated local settings and cold persistent acceptance                                                                       | Qualify completed native flow and preserve unsupported M13 capabilities        | -                                                                                                                                                                                                                                                                                                                                                              |
-| M15         | In progress | M13.1             | JST-COLLAB-008,JST-COLLAB-009,JST-COLLAB-010,JST-COLLAB-011,JST-COLLAB-012,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                   | Persistent Threads and rich Reactions                                                                                          | Qualify native/local publication                                               | E-M15-001                                                                                                                                                                                                                                                                                                                                                      |
-| M15.1       | In progress | M13.1             | JST-COLLAB-008,JST-COLLAB-009,JST-COLLAB-010,JST-COLLAB-011,JST-COLLAB-012                                                                                               | Canonical domain, lifecycle, exact targets, conflict semantics and retained images                                             | Qualify command/provider membership                                            | E-M15-001                                                                                                                                                                                                                                                                                                                                                      |
-| M15.2       | In progress | M15.1             | JST-COLLAB-013                                                                                                                                                           | Native format 5, local version 2, atomic roots, receipts, recovery and copy                                                    | Qualify native commands/capture and cold full flow                             | E-M15-002,E-M15-004                                                                                                                                                                                                                                                                                                                                            |
-| M15.3       | In progress | M15.2             | JST-COLLAB-014                                                                                                                                                           | Bounded authorized services, HTTP/RPC, CLI and capture binding                                                                 | Complete native/public command boundaries                                      | E-M15-004                                                                                                                                                                                                                                                                                                                                                      |
+| M15         | In progress | M13.1             | JST-COLLAB-008,JST-COLLAB-009,JST-COLLAB-010,JST-COLLAB-011,JST-COLLAB-012,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                   | Persistent Threads and rich Reactions                                                                                          | Qualify native/local publication                                               | E-M15-001,E-M15-005                                                                                                                                                                                                                                                                                                                                            |
+| M15.1       | In progress | M13.1             | JST-COLLAB-008,JST-COLLAB-009,JST-COLLAB-010,JST-COLLAB-011,JST-COLLAB-012                                                                                               | Canonical domain, lifecycle, exact targets, conflict semantics and retained images                                             | Qualify command/provider membership                                            | E-M15-001,E-M15-005                                                                                                                                                                                                                                                                                                                                            |
+| M15.2       | In progress | M15.1             | JST-COLLAB-013                                                                                                                                                           | Native format 5, local version 2, atomic roots, receipts, recovery and copy                                                    | Qualify native commands/capture and cold full flow                             | E-M15-002,E-M15-004,E-M15-005                                                                                                                                                                                                                                                                                                                                  |
+| M15.3       | In progress | M15.2             | JST-COLLAB-014                                                                                                                                                           | Bounded authorized services, HTTP/RPC, CLI and capture binding                                                                 | Complete native/public command boundaries                                      | E-M15-004,E-M15-005                                                                                                                                                                                                                                                                                                                                            |
 | M15.4       | Planned     | M15.2             | JST-COLLAB-015                                                                                                                                                           | Reducer 3 data-only convergence and complete closure transfer                                                                  | Qualify reordered and duplicate origin sets                                    | -                                                                                                                                                                                                                                                                                                                                                              |
 | M15.5       | Planned     | M15.3             | JST-COLLAB-016                                                                                                                                                           | Released shared UI, Threads navigation and rich reactions                                                                      | Qualify owners and cold consumer flow                                          | -                                                                                                                                                                                                                                                                                                                                                              |
 | M15.6       | Planned     | M15.3             | JST-COLLAB-009,JST-COLLAB-010                                                                                                                                            | Derived canonical-source timeline/search and review integration                                                                | Qualify authorized joins                                                       | -                                                                                                                                                                                                                                                                                                                                                              |
@@ -33590,6 +33590,164 @@ and named tests are checked by the progress gate.
       "crates/jj-store-service/tests/local_collab.rs#local_captured_sessions_remain_optional_and_tool_targets_keep_native_identity",
       "crates/jj-store-service/tests/local_collab.rs#local_unknown_outcome_retains_request_and_replays_after_restart",
       "crates/jj-collab/tests/domain.rs#shared_reaction_projector_retains_conflicts_until_exact_explicit_resolution"
+    ]
+  },
+  {
+    "id": "E-M15-005",
+    "tasks": [
+      "M15",
+      "M15.1",
+      "M15.2",
+      "M15.3"
+    ],
+    "date": "2026-10-01",
+    "kind": "focused-native-commands",
+    "revision": "enclosing Jujutsu change lzpstlkq",
+    "before": "Clean isolated workspace at 00292f68. cargo test -p jj-store-wal --test collab_commands --locked fails because target is absent. Native provider has no typed commands or cross-source manifest pin.",
+    "versions": "Rust 1.98.1; JJ 0.45.1; image 0.25.10; pnpm 10.32.1",
+    "formats": "Native manifest 5 unchanged. Legacy DomainRequest bytes unchanged; private captured manifest pin. Canonical native typed request/result V1. Local commands/results become byte-compatible aliases of shared domain variants.",
+    "files": [
+      "crates/jj-collab/src/command_types.rs",
+      "crates/jj-collab/src/lib.rs",
+      "crates/jj-store-service/src/local_repository/collab_types.rs",
+      "crates/jj-store-wal/src/publication/collab_commands.rs",
+      "crates/jj-store-wal/src/publication/domains.rs",
+      "crates/jj-store-wal/src/publication.rs",
+      "crates/jj-store-wal/tests/collab_commands.rs",
+      "spec/src/collaboration.md",
+      "spec/src/publication.md",
+      "spec/src/local-jj.md",
+      "spec/src/mutations.md",
+      "spec/src/milestones.md"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-wal --test collab_commands --locked (before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Target absent."
+      },
+      {
+        "command": "cargo fmt -p jj-collab -p jj-store-wal -p jj-store-service",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "cargo check -p jj-store-wal --all-targets --locked (initial)",
+        "result": "fail",
+        "failures": 83,
+        "note": "Ambiguous glob imports selected domain Error/Result; explicit domain imports repair the cascade."
+      },
+      {
+        "command": "cargo check -p jj-store-wal --all-targets --locked",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "cargo test -p jj-store-wal --test collab_commands --locked (initial)",
+        "result": "fail",
+        "failures": 3,
+        "note": "Fixture function shadowing and native-copy signature; repaired without production changes."
+      },
+      {
+        "command": "cargo fmt -p jj-store-wal",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "cargo test -p jj-store-wal --test collab_commands --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial seven native command cases; additional disjoint-actor race and staged commit rejection added afterward."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --test collab_commands --locked (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Eight native provider tests, including source Thread/review races, disjoint actor CAS retry, exact stale state, receipt reauthorization, unknown outcomes/reopen, selected code membership, optional session linking and retained custom images/copy."
+      },
+      {
+        "command": "cargo test -p jj-collab -p jj-store-wal --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "106 tests pass across shared domain and complete WAL suites; memory provider qualification, not real RustFS or cold processes."
+      },
+      {
+        "command": "cargo test -p jj-store-service --test local_collab --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Eight real filesystem companion regressions pass after extracting shared typed variants."
+      },
+      {
+        "command": "cargo clippy -p jj-collab -p jj-store-wal -p jj-store-service --all-targets --locked -- -D warnings",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "16 package boundaries."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "4 validators, 21 chapters, 140 requirements."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "7 protected files and 5 canonical chapters."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "111 tasks."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/collaboration.md spec/src/publication.md spec/src/local-jj.md spec/src/mutations.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "cargo check -p jj-store-cli -p jj-store-rpc --all-targets --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Direct transport and CLI consumers compile; dependent HTTP/server crates compile as well."
+      },
+      {
+        "command": "cargo fmt -p jj-collab -p jj-store-wal -p jj-store-service -- --check",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/collaboration.md spec/src/publication.md spec/src/local-jj.md spec/src/mutations.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Native services/query, HTTP/RPC/CLI, capture binding, reducer 3, shared UI, timeline/search, cold real-RustFS and runner gates remain pending. Root aggregate pnpm lanes and unrelated UI/Rust workspace suites out of scope."
+    ],
+    "escalation": "Full jj-store-wal suite is required because receipt-first root audits and a private captured-manifest publication guard change the shared domain publisher used by Agent, Review, Work and Git. Shared jj-collab variants also require its suite and focused local companion acceptance. No unrelated Rust workspace or UI aggregate is required.",
+    "tests": [
+      "crates/jj-store-wal/tests/collab_commands.rs#native_commands_pin_history_preserve_siblings_and_replay_before_target_checks",
+      "crates/jj-store-wal/tests/collab_commands.rs#source_thread_cas_race_revalidates_visibility_before_reaction_publication",
+      "crates/jj-store-wal/tests/collab_commands.rs#source_review_cas_race_revalidates_moderation_and_keeps_staged_reactions_invisible",
+      "crates/jj-store-wal/tests/collab_commands.rs#manifest_unknown_outcomes_keep_identity_and_replay_after_reopen",
+      "crates/jj-store-wal/tests/collab_commands.rs#native_custom_images_retire_without_rewriting_historical_values_or_assets",
+      "crates/jj-store-wal/tests/collab_commands.rs#native_code_links_require_selected_accepted_identities_and_preserve_absent_domains",
+      "crates/jj-store-wal/tests/collab_commands.rs#native_sessions_remain_optional_and_links_check_selected_membership_and_assignment",
+      "crates/jj-store-wal/tests/collab_commands.rs#disjoint_actor_cas_race_reapplies_original_intent_and_retains_both_slots"
     ]
   }
 ]

@@ -207,13 +207,19 @@ impl Coordinator {
         request: &DomainRequest,
         intent: IntentDigest,
     ) -> Result<Receipt> {
-        let mut native_roots = BTreeSet::new();
-        for selection in request.selections() {
-            native_roots.extend(
-                self.read_domain_root(selection.domain, selection.root)
-                    .await?,
-            );
-        }
+        self.publish_domain_at_manifest(request, intent, None).await
+    }
+
+    /// Typed cross-domain commands capture every source from one manifest. A
+    /// failed CAS must return stale so their outer loop resolves those sources
+    /// again. Matching durable receipts always precede the captured pin check.
+    pub(super) async fn publish_domain_at_manifest(
+        &self,
+        request: &DomainRequest,
+        intent: IntentDigest,
+        captured: Option<RecordDigest>,
+    ) -> Result<Receipt> {
+        let mut native_roots = None;
         for _ in 0..self.limits.cas_attempts {
             let base = self.read().await?;
             self.guard.authorize_domain(&base, request).await?;
@@ -240,6 +246,9 @@ impl Coordinator {
                 .await?
             {
                 return Ok(receipt);
+            }
+            if captured.is_some_and(|digest| digest != base.digest) {
+                return Err(Error::Stale);
             }
             if request
                 .selections()
@@ -315,6 +324,17 @@ impl Coordinator {
                     }
                 }
             }
+            if native_roots.is_none() {
+                let mut roots = BTreeSet::new();
+                for selection in request.selections() {
+                    roots.extend(
+                        self.read_domain_root(selection.domain, selection.root)
+                            .await?,
+                    );
+                }
+                native_roots = Some(roots);
+            }
+            let native_roots = native_roots.as_ref().expect("domain roots audited");
             let inventory = if native_roots.is_empty() {
                 base.manifest.inventory
             } else {

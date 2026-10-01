@@ -5,13 +5,9 @@ use jj_store_model as m;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest as _, Sha256};
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
-#[serde(tag = "domain", rename_all = "snake_case", deny_unknown_fields)]
-pub enum LocalCollabCommand {
-    Thread { intent: ThreadCommandV1 },
-    Reaction { intent: ReactionCommandV1 },
-    Emoji { intent: CustomEmojiCommandV1 },
-}
+pub use jj_collab::{
+    CollabCommandResultV1 as LocalCollabResultV1, CollabCommandV1 as LocalCollabCommand,
+};
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct LocalCollabRequest {
@@ -52,43 +48,10 @@ impl LocalCollabRequest {
         Ok(m::IntentDigest::new(hash.finalize().into()))
     }
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
-#[serde(tag = "domain", rename_all = "snake_case", deny_unknown_fields)]
-pub enum LocalCollabResultV1 {
-    Thread { result: ThreadCommandResultV1 },
-    Reaction { result: ReactionCommandResultV1 },
-    Emoji { version: CollabObjectRef },
-}
-impl LocalCollabResultV1 {
-    pub(crate) fn domain(&self) -> Domain {
-        match self {
-            Self::Thread { .. } => Domain::Thread,
-            Self::Reaction { .. } | Self::Emoji { .. } => Domain::Reaction,
-        }
-    }
-    pub(crate) fn validate(&self) -> LocalResult<()> {
-        match self {
-            Self::Thread { result } => {
-                if result.version.kind != CollabObjectKind::ThreadVersion
-                    || result.event.kind != CollabObjectKind::ThreadEvent
-                    || result
-                        .message
-                        .is_some_and(|v| v.kind != CollabObjectKind::HumanMessageRevision)
-                    || result
-                        .link
-                        .is_some_and(|v| v.kind != CollabObjectKind::ThreadLink)
-                {
-                    return Err(LocalError::Corrupt);
-                }
-            }
-            Self::Reaction { result } => result.validate().map_err(|_| LocalError::Corrupt)?,
-            Self::Emoji { version } => {
-                if version.kind != CollabObjectKind::CustomEmojiVersion {
-                    return Err(LocalError::Corrupt);
-                }
-            }
-        }
-        Ok(())
+fn result_domain(value: &LocalCollabResultV1) -> Domain {
+    match value {
+        LocalCollabResultV1::Thread { .. } => Domain::Thread,
+        _ => Domain::Reaction,
     }
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
@@ -125,13 +88,13 @@ pub(crate) fn receipt(value: &Receipt) -> LocalResult<LocalCollabOutcome> {
     }
     let result: CollabResult =
         serde_json::from_slice(&value.result).map_err(|_| LocalError::Corrupt)?;
-    if result.result.domain() != value.domain
+    if result_domain(&result.result) != value.domain
         || result.accepted_at_millis < 0
         || serde_json::to_vec(&result).map_err(|_| LocalError::Corrupt)? != value.result
     {
         return Err(LocalError::Corrupt);
     }
-    result.result.validate()?;
+    result.result.validate().map_err(|_| LocalError::Corrupt)?;
     Ok(LocalCollabOutcome::Committed {
         receipt: Box::new(LocalCollabReceipt {
             version: 1,
