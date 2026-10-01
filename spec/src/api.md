@@ -1076,3 +1076,10 @@ continuations bind that committed selection and complete filters. POST
 `/work/commands` and GET `/work/commands/{request_id}` reuse CLI device actor
 provenance, original request receipts and unknown outcomes. They do not require
 or fabricate a native code snapshot.
+
+Local repository AgentStore POST endpoints `/agents/sessions`,
+`/agents/session`, `/agents/transcript` and `/agents/relations` require an
+independent committed `metadata_commit`. Signed continuations bind the complete
+query, repository and binding generation. GET `/events` announces bounded local
+head/ref freshness with local-profile event DTOs and never advances a display
+pin.

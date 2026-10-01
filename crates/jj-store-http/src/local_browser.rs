@@ -1,5 +1,7 @@
 //! LocalTrusted installation management and strictly typed operation-pinned reads.
 use crate::*;
+mod agents;
+mod events;
 mod work;
 use axum::{
     Json,
@@ -82,7 +84,10 @@ pub(super) fn router() -> Router<Arc<State>> {
             Router::new()$(.route($path,$method($handler)))*
         };
     }
-    endpoints!(register).merge(work::router())
+    endpoints!(register)
+        .merge(work::router())
+        .merge(agents::router())
+        .merge(events::router())
 }
 fn admit(state: &State) -> Result<()> {
     if !matches!(
@@ -277,7 +282,10 @@ async fn snapshot(
     args: routes::Input<routes::Empty>,
 ) -> Result<Response> {
     routes::input(args)?;
-    let access = binding(&state, repo).await?;
+    state.json(&capture(&state, repo).await?)
+}
+async fn capture(state: &State, repo: m::RepositoryId) -> Result<Snapshot> {
+    let access = binding(state, repo).await?;
     let code = state.local_reader.heads(access).await?;
     let manager = manager(&state)?;
     let (metadata_commit, actor) = blocking(&state, move || {
@@ -296,7 +304,8 @@ async fn snapshot(
         Ok((commit, repo.actor().map_err(|_| Error::unavailable())?))
     })
     .await?;
-    state.json(&Snapshot {
+    work::check(state, repo, code.generation).await?;
+    Ok(Snapshot {
         code,
         metadata_commit,
         actor,
@@ -314,7 +323,7 @@ async fn capabilities(
         profile: local::PROFILE,
         code_browse: true,
         collaboration: true,
-        agents: false,
+        agents: true,
         reviews: false,
         search: false,
         code_mutations: false,
@@ -516,4 +525,6 @@ pub(crate) fn document(document: &mut crate::contract::Document) {
     }
     endpoints!(register);
     work::document(document);
+    agents::document(document);
+    events::document(document);
 }

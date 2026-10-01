@@ -208,3 +208,21 @@ Admitted browser collaboration facades bind the original repository identity.
 Every write checks that identity before device actor initialization and on each
 publication retry; a replaced companion root is stale rather than another home
 to which the original command may be applied.
+
+### Local AgentStore browser selection
+
+Recorded local agent reads require an explicit committed companion metadata
+selection. They reuse audited AgentStore closure readers and shared sanitized
+activity/timing/transcript presentation. Session and transcript identities
+remain stable and immutable respectively. Portable code associations retain
+their exact source repository, Git SHA-1 commits, operations and evidence
+capsules; source identity is never substituted with the metadata home. Browser
+relation queries are bounded projections of selected associations and report
+continuation when more qualified records exist. Reads cannot initialize metadata
+or record agents.
+
+Local freshness streams revalidate device bindings and perform bounded checks of
+operation heads and the selected companion ref. They announce current selections
+without reconciling heads, changing working files or moving displayed snapshots.
+A reconnect must compare the announced selections against the retained browser
+pin, so changes while disconnected remain visible until explicit refresh.

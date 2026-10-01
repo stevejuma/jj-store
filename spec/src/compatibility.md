@@ -497,3 +497,9 @@ Local WorkStore browser responses use the companion profile, real metadata
 commit and independent WorkStore version. Native WorkStore receipts and
 snapshots keep their existing formats; both providers consume one shared browse
 projection and preserve the same typed command semantics.
+
+Local AgentStore browser snapshots and freshness events carry an explicit local
+profile and committed companion selection. Portable associations expose their
+source repository, actual Git IDs and capsule identity. Shared sanitized
+activity and transcript fields preserve native presentation while native wire
+schemas remain unchanged.

@@ -752,3 +752,8 @@ Local browser WorkStore writes use the same shared-JJ device actor as
 `jj project`, `jj task` and `jj task comment`. The CLI can look up browser
 requests and returns their original committed receipts, independently of the
 code operation or later metadata publications.
+
+Local browser AgentStore reads present only records already selected through
+local CLI capture/provenance publication. Opening the app does not enable
+capture, install hooks or create observations; independently pinned browser
+selections can remain older than subsequent CLI captures until explicit refresh.

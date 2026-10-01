@@ -303,3 +303,22 @@ impl From<jj_store_service::work::Error> for Error {
         }
     }
 }
+
+impl From<jj_store_service::local_repository::LocalError> for Error {
+    fn from(error: jj_store_service::local_repository::LocalError) -> Self {
+        use jj_store_service::local_repository::LocalError as E;
+        match error {
+            E::Invalid => Self::invalid(),
+            E::Stale => Self::new(StatusCode::CONFLICT, "stale_local_metadata"),
+            E::NotFound => Self::new(StatusCode::NOT_FOUND, "local_agent_not_found"),
+            E::IntentConflict => Self::new(StatusCode::CONFLICT, "intent_conflict"),
+            E::Corrupt => Self::new(StatusCode::SERVICE_UNAVAILABLE, "corrupt_local_metadata"),
+            E::Limit => Self::limit(),
+            E::Busy => Self::busy(),
+            E::Unsupported => {
+                Self::new(StatusCode::NOT_IMPLEMENTED, "unsupported_local_capability")
+            }
+            _ => Self::unavailable(),
+        }
+    }
+}

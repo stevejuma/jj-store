@@ -870,3 +870,15 @@ An unresolved review command retains its durable request identity and blocks
 replacement submissions until status proves commitment. Draft and edit/reply
 context remain present on failure or unknown outcome. Late command completions
 from an invalidated connection cannot repopulate or navigate the active view.
+
+### Local browser recorded AgentStore
+
+The local Git profile exposes independently companion-pinned recorded sessions,
+sanitized activity, transcript streams and qualified portable associations.
+Presentation uses the shared immutable reader and sanitizer-preserving
+projection; local snapshots identify their real metadata commit and AgentStore
+version. Native epochs, publication positions and V1 code IDs are never
+fabricated. Association presentation retains source repository and capsule
+evidence alongside exact operation and Git commit IDs. Session/transcript reads
+validate committed metadata history and selected session membership before
+returning content.

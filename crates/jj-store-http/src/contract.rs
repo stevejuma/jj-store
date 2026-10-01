@@ -289,6 +289,24 @@ impl Document {
         }
     }
 
+    pub(crate) fn local_events<R: JsonSchema>(&mut self, path: &str, id: &str) {
+        self.local_endpoint::<routes::Empty, R>("get", path, id);
+        let schema = self.output.subschema_for::<R>().to_value();
+        let operation = self
+            .paths
+            .get_mut(&format!("/v1{path}"))
+            .unwrap()
+            .get_mut("get")
+            .unwrap();
+        operation["responses"]["200"]["description"] = json!(
+            "Bounded LocalTrusted freshness stream; no durable replay cursor. Compare ready heads and companion ref against the retained display selection after reconnect. Only explicit refresh changes that selection."
+        );
+        operation["responses"]["200"]["content"] = json!({"text/event-stream":{
+            "schema":{"type":"string"}, "x-sse-data-schema":schema,
+            "x-sse-events":{"ready":"ready", "repository-changed":"changed"}
+        }});
+    }
+
     pub(crate) fn body<T: JsonSchema>(&mut self, path: &str, method: &str) {
         let operation = self.paths.get_mut(path).unwrap().get_mut(method).unwrap();
         operation["requestBody"] = json!({"required":true,

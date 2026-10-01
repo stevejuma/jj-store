@@ -469,7 +469,12 @@ async fn admit(
         && request
             .extensions()
             .get::<axum::extract::MatchedPath>()
-            .is_some_and(|path| path.as_str() == "/v1/repos/{repo}/events");
+            .is_some_and(|path| {
+                matches!(
+                    path.as_str(),
+                    "/v1/repos/{repo}/events" | "/v1/local/repos/{repo}/events"
+                )
+            });
     let slots = if event_route {
         &state.event_slots
     } else {

@@ -2,12 +2,15 @@
 mod agent_checkpoints;
 mod agent_cursors;
 mod agent_details;
+pub(crate) use agent_details::load_activity;
 mod agent_relations;
 mod agent_session_timing;
+pub(crate) use agent_session_timing::resolve as session_timing;
 mod agent_transcripts;
 mod checkpoint_models;
 mod cursor_position;
 mod models;
+pub(crate) use models::{summary as session_summary, transcript_descriptor};
 mod review_cursors;
 mod review_models;
 mod review_presentation;

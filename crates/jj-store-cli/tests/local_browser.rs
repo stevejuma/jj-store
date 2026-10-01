@@ -1042,6 +1042,149 @@ async fn filesystem_runtime_registers_and_reads_without_native_storage() {
         std::fs::read_to_string(folder.join("file.txt")).unwrap(),
         "filesystem browser\n"
     );
+    // External CLI capture is visible only after choosing its companion selection.
+    use jj_store_service::local_repository::*;
+    use jj_store_wal::publication::*;
+    let local = LocalFolders
+        .open(&LocalFolders.inspect(folder.to_str().unwrap()).unwrap())
+        .unwrap();
+    let values: Vec<Value> = serde_json::from_slice(include_bytes!(
+        "../../jj-agent/tests/fixtures/codex-0.156.1-hooks.json"
+    ))
+    .unwrap();
+    local
+        .apply_agent_command(&LocalAgentRequest {
+            version: 1,
+            request_id: jj_store_model::RequestId::new([50; 16]),
+            command: LocalAgentCommand::Capture {
+                profile: NormalizerProfileV1::codex_0_156_1(),
+                batch: Box::new(SanitizedObservationBatchV1 {
+                    schema_version: 1,
+                    batch_id: CaptureBatchId::new([50; 16]),
+                    integration: IntegrationId::Codex,
+                    source_instance_id: SourceInstanceId::new([50; 16]),
+                    sanitizer_version: "fixture-sanitized@1".into(),
+                    representation: SanitizedRepresentation::SanitizedNative,
+                    observations: values
+                        .into_iter()
+                        .enumerate()
+                        .map(|(i, value)| SanitizedObservationV1 {
+                            observation_id: ObservationId::new([i as u8 + 1; 16]),
+                            source_sequence: i as u64 + 1,
+                            occurred_at_millis: None,
+                            source_kind: SourceKind::Hook,
+                            source_trust: SourceTrust::LocalUserHook,
+                            payload: SanitizedPayloadV1::new(
+                                SanitizedMediaType::Json,
+                                &serde_json::to_vec(&value).unwrap(),
+                            )
+                            .unwrap(),
+                        })
+                        .collect(),
+                }),
+            },
+        })
+        .await
+        .unwrap();
+    let agent_pin = local.metadata_store().read().unwrap().unwrap().commit();
+    let agents: Value = post(
+        &format!("/local/repos/{id}/agents/sessions"),
+        json!({"metadata_commit":agent_pin,"query":{"limit":20}}),
+    )
+    .send()
+    .await
+    .unwrap()
+    .error_for_status()
+    .unwrap()
+    .json()
+    .await
+    .unwrap();
+    assert_eq!(agents["data"]["sessions"].as_array().unwrap().len(), 1);
+    let session_id = &agents["data"]["sessions"][0]["session_id"];
+    let detail: Value = post(
+        &format!("/local/repos/{id}/agents/session"),
+        json!({"metadata_commit":agent_pin,"query":{"session_id":session_id}}),
+    )
+    .send()
+    .await
+    .unwrap()
+    .error_for_status()
+    .unwrap()
+    .json()
+    .await
+    .unwrap();
+    assert!(!detail["activity"].as_array().unwrap().is_empty());
+    let descriptor = &detail["transcripts"][0];
+    let transcript: Value = post(&format!("/local/repos/{id}/agents/transcript"), json!({"metadata_commit":agent_pin,"query":{"session_id":session_id,"transcript_id":descriptor["transcript_id"],"source_instance_id":descriptor["source_instance_id"],"source_generation":descriptor["source_generation"],"limit":10,"max_bytes":1024}})).send().await.unwrap().error_for_status().unwrap().json().await.unwrap();
+    assert_eq!(
+        transcript["data"]["chunks"][0]["content"],
+        "Update the parser"
+    );
+    let relations: Value = post(&format!("/local/repos/{id}/agents/relations"), json!({"metadata_commit":agent_pin,"query":{"subject":{"subject":"session","session_id":session_id},"limit":20}})).send().await.unwrap().error_for_status().unwrap().json().await.unwrap();
+    let old: Value = post(
+        &format!("/local/repos/{id}/agents/sessions"),
+        json!({"metadata_commit":snapshot["metadata_commit"],"query":{"limit":20}}),
+    )
+    .send()
+    .await
+    .unwrap()
+    .error_for_status()
+    .unwrap()
+    .json()
+    .await
+    .unwrap();
+    assert!(old["data"]["sessions"].as_array().unwrap().is_empty());
+    let event_url = format!("/local/repos/{id}/events");
+    assert_eq!(
+        read(&event_url)
+            .header("Last-Event-ID", "forged")
+            .send()
+            .await
+            .unwrap()
+            .status(),
+        400
+    );
+    let mut stream = read(&event_url)
+        .send()
+        .await
+        .unwrap()
+        .error_for_status()
+        .unwrap();
+    let ready_frame = String::from_utf8(
+        tokio::time::timeout(std::time::Duration::from_secs(5), stream.chunk())
+            .await
+            .unwrap()
+            .unwrap()
+            .unwrap()
+            .to_vec(),
+    )
+    .unwrap();
+    let ready: Value = serde_json::from_str(
+        ready_frame
+            .lines()
+            .find_map(|line| line.strip_prefix("data: "))
+            .unwrap(),
+    )
+    .unwrap();
+    assert_eq!(ready["snapshot"]["metadata_commit"], json!(agent_pin));
+    jj(&folder, &["new", "-m", "External code change"]);
+    let changed = tokio::time::timeout(std::time::Duration::from_secs(8), async {
+        loop {
+            let frame = String::from_utf8(stream.chunk().await.unwrap().unwrap().to_vec()).unwrap();
+            if let Some(raw) = frame.lines().find_map(|line| line.strip_prefix("data: ")) {
+                break serde_json::from_str::<Value>(raw).unwrap();
+            }
+        }
+    })
+    .await
+    .unwrap();
+    assert_eq!(changed["type"], "changed");
+    assert_ne!(changed["snapshot"]["heads"], ready["snapshot"]["heads"]);
+    assert_eq!(
+        changed["snapshot"]["metadata_commit"],
+        ready["snapshot"]["metadata_commit"]
+    );
+    drop(stream);
     if let Ok(path) = std::env::var("JJ_STORE_LOCAL_BROWSER_CONTRACT_CAPTURE") {
         let sample = |path: &str, method: &str, data: Value| json!({"path":path,"method":method,"status":200,"media":"application/json","data":data});
         fs::write(
@@ -1053,6 +1196,12 @@ async fn filesystem_runtime_registers_and_reads_without_native_storage() {
                 sample("/v1/repositories", "get", repos),
                 sample("/v1/local/repos/{repo}/snapshot", "get", snapshot),
                 sample("/v1/local/repos/{repo}/query", "post", page),
+                sample("/v1/local/repos/{repo}/agents/sessions", "post", agents),
+                sample("/v1/local/repos/{repo}/agents/session", "post", detail),
+                sample("/v1/local/repos/{repo}/agents/transcript", "post", transcript),
+                sample("/v1/local/repos/{repo}/agents/relations", "post", relations),
+                json!({"path":"/v1/local/repos/{repo}/events","method":"get","status":200,"media":"text/event-stream","data":ready}),
+                json!({"path":"/v1/local/repos/{repo}/events","method":"get","status":200,"media":"text/event-stream","data":changed}),
                 sample("/v1/local/repos/{repo}/work/page", "post", work_page),
                 sample("/v1/local/repos/{repo}/work/browse", "post", work_browse),
                 sample("/v1/local/repos/{repo}/work/commands", "post", work_outcome),

@@ -32770,6 +32770,167 @@ and named tests are checked by the progress gate.
       "M13.4 remains In progress. Agent endpoints, frontend integration and final cold mixed qualification remain subsequent slices.",
       "Code writes, search, reviews, conversion and synchronization stay disabled."
     ]
+  },
+  {
+    "id": "E-M13-017",
+    "tasks": ["M13.4"],
+    "date": "2026-10-01",
+    "kind": "local-browser-agent-freshness",
+    "files": [
+      "crates/jj-store-cli/tests/local_agent_provenance.rs",
+      "crates/jj-store-cli/tests/local_browser.rs",
+      "crates/jj-store-http/src/contract/tests.rs",
+      "crates/jj-store-http/src/contract.rs",
+      "crates/jj-store-http/src/error.rs",
+      "crates/jj-store-http/src/lib.rs",
+      "crates/jj-store-http/src/local_browser/agents.rs",
+      "crates/jj-store-http/src/local_browser/events.rs",
+      "crates/jj-store-http/src/local_browser/work.rs",
+      "crates/jj-store-http/src/local_browser.rs",
+      "crates/jj-store-service/src/collaboration/agent_details.rs",
+      "crates/jj-store-service/src/collaboration/agent_session_timing.rs",
+      "crates/jj-store-service/src/collaboration/models.rs",
+      "crates/jj-store-service/src/collaboration.rs",
+      "crates/jj-store-service/src/local_repository/browser_agents/associations.rs",
+      "crates/jj-store-service/src/local_repository/browser_agents/models.rs",
+      "crates/jj-store-service/src/local_repository/browser_agents/transcripts.rs",
+      "crates/jj-store-service/src/local_repository/browser_agents.rs",
+      "crates/jj-store-service/src/local_repository.rs",
+      "crates/jj-store-service/tests/local_agent.rs",
+      "schemas/openapi.json",
+      "spec/src/api.md",
+      "spec/src/cli.md",
+      "spec/src/collaboration.md",
+      "spec/src/compatibility.md",
+      "spec/src/local-jj.md",
+      "spec/src/milestones.md",
+      "spec/src/mutations.md",
+      "web/src/lib/api/generated.ts"
+    ],
+    "tests": [
+      "crates/jj-store-service/tests/local_agent.rs#browser_agent_presentation_pins_metadata_and_transcript_membership",
+      "crates/jj-store-cli/tests/local_agent_provenance.rs#browser_associations_preserve_source_identity_and_pinned_pages",
+      "crates/jj-store-cli/tests/local_browser.rs#filesystem_runtime_registers_and_reads_without_native_storage"
+    ],
+    "runs": [
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo check -p jj-store-http --locked",
+        "result": "fail",
+        "failures": 2,
+        "note": "Portable type imports were not owned service reexports; inline inferred fields avoid an invalid jj-agent dependency. A delimiter error was corrected during the edit."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo check -p jj-store-http --locked",
+        "result": "fail",
+        "failures": 2,
+        "note": "HTTP Error cannot be embedded directly in an io stream error; changed to bounded neutral freshness-unavailable text."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo check -p jj-store-http --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "AgentStore routes and local freshness compile."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-service --test local_agent --locked -- browser_agent_presentation_pins_metadata_and_transcript_membership --exact",
+        "result": "fail",
+        "failures": 1,
+        "note": "Test passed a model GitSha1Id instead of the companion GitOid; corrected."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-service --test local_agent --locked -- browser_agent_presentation_pins_metadata_and_transcript_membership --exact",
+        "result": "fail",
+        "failures": 1,
+        "note": "Zero page limit surfaced a lower-layer error; added explicit API bound validation."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-cli --test local_agent_provenance --locked -- browser_associations_preserve_source_identity_and_pinned_pages --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "Source repository, evidence capsules, 40-character Git commits, filtered pages and independent old pin pass."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-service --test local_agent --test local_agent_pages --test agent_sessions --test agent_relations --test agent_checkpoints --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "10 local and 7 native tests pass, including pinned sessions/transcripts, staged-selection rejection and timing/activity presentation."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-cli --test local_browser --locked -- filesystem_runtime_registers_and_reads_without_native_storage --exact",
+        "result": "fail",
+        "failures": 1,
+        "note": "Fixture request reused a WorkStore request ID; domain conflict correctly rejected it. Assigned a distinct capture request."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-cli --test local_browser --locked -- filesystem_runtime_registers_and_reads_without_native_storage --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "Real filesystem HTTP AgentStore sessions/activity/transcript/relations and SSE after external JJ code change pass; old metadata pin stays empty."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target pnpm contracts:generate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Generated additive local AgentStore and SSE schemas."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-http --lib --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "13 HTTP unit and contract inventory tests pass."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero errors and warnings."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "fail",
+        "failures": 1,
+        "note": "Mutation chapter mapped to CLI and query transport updated."
+      },
+      {
+        "command": "pnpm spec:first && pnpm check:progress && pnpm check:boundaries && pnpm spec:validate",
+        "result": "fail",
+        "failures": 1,
+        "note": "Spec-first passes; ledger used invalid in-progress result. Corrected to pending until qualification finishes."
+      },
+      {
+        "command": "cargo fmt --all",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rust format updated."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/{local-jj,collaboration,api,compatibility,cli,milestones}.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Canonical files formatted."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target pnpm contracts:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "114 actual HTTP/SSE responses conform; 6 contract tests and contract TypeScript pass."
+      },
+      {
+        "command": "pnpm spec:first && pnpm check:progress && pnpm check:boundaries && pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "22 protected files, 7 chapters, 111 tasks and 132 requirements pass."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "versions": "JJ 0.45.1, Git SHA-1, macOS ARM64.",
+    "formats": "Separate companion selections, Git SHA-1 associations, signed local cursors and loss-tolerant freshness hints. Enclosing Jujutsu change uzpmnmol.",
+    "next": "Verify and commit this slice; integrate profile-aware frontend and cold mixed acceptance.",
+    "scope": "AgentStore presentation and freshness transport. Escalation: shared sanitized activity and timing projection affect native readers, so run native agent service binaries as well as focused local tests. Contract inventory and response generation require retained complete HTTP contract capture and web type consumer checks. Root aggregate suites and unrelated product surfaces are out of scope.",
+    "deferred": [
+      "M13.4 remains In progress; frontend and cold mixed acceptance follow."
+    ]
   }
 ]
 ```

@@ -66,7 +66,7 @@ impl AgentSessionPager {
             );
         }
         let (code, code_truncated) = load_code(&pin, session_id).await?;
-        let (activity, activity_truncated) = load_activity(&pin, &snapshot, &code).await?;
+        let (activity, activity_truncated) = load_activity(&pin.store, &snapshot, &code).await?;
         let timing = super::agent_session_timing::resolve(&pin.store, &snapshot).await?;
         authorize_epoch(&session, pin.snapshot.epoch).await?;
         Ok(models::detail(
@@ -125,8 +125,8 @@ async fn load_code(
     Ok((code, truncated || cursor.is_some()))
 }
 
-async fn load_activity(
-    pin: &AgentPin,
+pub(crate) async fn load_activity(
+    store: &dyn jj_store_wal::publication::AgentSnapshotRead,
     session: &jj_store_wal::publication::AgentSessionSnapshotV1,
     code: &[AgentCodeAssociation],
 ) -> Result<(Vec<AgentActivity>, bool)> {
@@ -134,7 +134,7 @@ async fn load_activity(
     let mut truncated = false;
     for reference in &session.event_batches {
         let AgentObjectV1::EventBatch(batch) =
-            pin.store.read_object(*reference).await.map_err(map_wal)?
+            store.read_object(*reference).await.map_err(map_wal)?
         else {
             return Err(Error::Corrupt);
         };
@@ -187,7 +187,7 @@ async fn load_activity(
                 content,
             } => {
                 ensure_session(session_id, session.session_id)?;
-                let content = load_content(pin, content).await?;
+                let content = load_content(store, content).await?;
                 if bytes
                     .checked_add(content.content.len())
                     .is_none_or(|value| value > MAX_ACTIVITY_BYTES)
@@ -217,14 +217,14 @@ async fn load_activity(
                 }
                 let reference = session.tools.get(&tool_call_id).ok_or(Error::Corrupt)?;
                 let AgentObjectV1::ToolSnapshot(tool) =
-                    pin.store.read_object(*reference).await.map_err(map_wal)?
+                    store.read_object(*reference).await.map_err(map_wal)?
                 else {
                     return Err(Error::Corrupt);
                 };
                 if tool.tool_call_id != tool_call_id || tool.session_id != session.session_id {
                     return Err(Error::Corrupt);
                 }
-                let (tool, content_bytes) = tool_activity(pin, *reference, tool, code).await?;
+                let (tool, content_bytes) = tool_activity(store, *reference, tool, code).await?;
                 if bytes
                     .checked_add(content_bytes)
                     .is_none_or(|value| value > MAX_ACTIVITY_BYTES)
@@ -305,13 +305,13 @@ fn ensure_session(actual: AgentSessionId, expected: AgentSessionId) -> Result<()
 }
 
 async fn tool_activity(
-    pin: &AgentPin,
+    store: &dyn jj_store_wal::publication::AgentSnapshotRead,
     reference: AgentObjectRef,
     tool: ToolInvocationSnapshotV1,
     code: &[AgentCodeAssociation],
 ) -> Result<(AgentToolActivity, usize)> {
-    let input = load_optional_content(pin, tool.input).await?;
-    let output = load_optional_content(pin, tool.output).await?;
+    let input = load_optional_content(store, tool.input).await?;
+    let output = load_optional_content(store, tool.output).await?;
     let bytes = input
         .as_ref()
         .map_or(0, |value| value.content.len())
@@ -338,21 +338,24 @@ async fn tool_activity(
 }
 
 async fn load_optional_content(
-    pin: &AgentPin,
+    store: &dyn jj_store_wal::publication::AgentSnapshotRead,
     reference: Option<AgentObjectRef>,
 ) -> Result<Option<AgentContent>> {
     match reference {
-        Some(reference) => Ok(Some(load_content(pin, reference).await?)),
+        Some(reference) => Ok(Some(load_content(store, reference).await?)),
         None => Ok(None),
     }
 }
 
-async fn load_content(pin: &AgentPin, reference: AgentObjectRef) -> Result<AgentContent> {
+async fn load_content(
+    store: &dyn jj_store_wal::publication::AgentSnapshotRead,
+    reference: AgentObjectRef,
+) -> Result<AgentContent> {
     if reference.kind != AgentObjectKind::Content {
         return Err(Error::Corrupt);
     }
     let AgentObjectV1::Content(AgentContentV1 { payload, .. }) =
-        pin.store.read_object(reference).await.map_err(map_wal)?
+        store.read_object(reference).await.map_err(map_wal)?
     else {
         return Err(Error::Corrupt);
     };

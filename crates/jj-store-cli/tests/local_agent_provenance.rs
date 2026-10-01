@@ -8,6 +8,92 @@ use jj_store_service::local_repository::*;
 use jj_store_wal::publication::AgentSnapshotRead;
 
 #[tokio::test]
+async fn browser_associations_preserve_source_identity_and_pinned_pages() {
+    let (_root, repo, input, _, session) = fixture().await;
+    let empty = repo.metadata_store().read().unwrap().unwrap().commit();
+    for id in [2, 3] {
+        repo.apply_agent_command(&request(
+            id,
+            None,
+            AgentObjectV1::PortableAssociation(association(&input, &session, id)),
+            vec![input.clone()],
+        ))
+        .await
+        .unwrap();
+    }
+    let pin = repo.metadata_store().read().unwrap().unwrap().commit();
+    let subject = LocalAgentSubject::Operation {
+        repository: input.reference.repository,
+        operation_id: input.reference.operation,
+    };
+    let first = repo
+        .browser_agent_relations(pin, subject.clone(), 1, None)
+        .await
+        .unwrap();
+    assert_eq!(first.associations.len(), 1);
+    let row = &first.associations[0];
+    assert_eq!(row.source_repositories, vec![input.reference.repository]);
+    assert_eq!(row.evidence, vec![input.reference.clone()]);
+    assert_eq!(row.after_commits[0].to_string().len(), 40);
+    repo.apply_agent_command(&request(
+        4,
+        None,
+        AgentObjectV1::PortableAssociation(association(&input, &session, 4)),
+        vec![input.clone()],
+    ))
+    .await
+    .unwrap();
+    let next = repo
+        .browser_agent_relations(pin, subject, 1, first.next_after)
+        .await
+        .unwrap();
+    assert_eq!(next.snapshot, first.snapshot);
+    assert_eq!(next.associations.len(), 1);
+    assert!(next.next_after.is_none());
+    assert_ne!(row.association_id, next.associations[0].association_id);
+    assert!(
+        repo.browser_agent_relations(
+            empty,
+            LocalAgentSubject::Session {
+                session_id: session.session_id
+            },
+            20,
+            None
+        )
+        .await
+        .unwrap()
+        .associations
+        .is_empty()
+    );
+    assert!(
+        repo.browser_agent_relations(
+            pin,
+            LocalAgentSubject::Operation {
+                repository: m::RepositoryId::new([9; 16]),
+                operation_id: input.reference.operation
+            },
+            20,
+            None
+        )
+        .await
+        .unwrap()
+        .associations
+        .is_empty()
+    );
+    let detail = repo
+        .browser_agent_session(pin, session.session_id)
+        .await
+        .unwrap();
+    assert_eq!(detail.code.len(), 2);
+    assert!(
+        detail
+            .code
+            .iter()
+            .all(|a| a.source_repositories == vec![input.reference.repository])
+    );
+}
+
+#[tokio::test]
 async fn provenance_unknown_outcome_restarts_with_exact_original_request() {
     let (root, repo, input, _, session) = fixture().await;
     let value = association(&input, &session, 2);

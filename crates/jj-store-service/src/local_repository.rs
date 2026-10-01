@@ -26,6 +26,8 @@ pub use review_store::{LocalReviewSnapshot, LocalReviewStore};
 pub use review_types::{
     LocalReviewCommand, LocalReviewOutcome, LocalReviewReceipt, LocalReviewRequest,
 };
+mod browser_agents;
+pub use browser_agents::*;
 mod browser_work;
 mod selection;
 pub use browser_work::LocalWorkBrowsePage;

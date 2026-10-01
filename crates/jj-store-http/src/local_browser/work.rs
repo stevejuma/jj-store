@@ -42,7 +42,7 @@ struct Cursor {
     expires: u64,
     continuation: String,
 }
-fn digest<T: Serialize>(kind: &str, query: &T) -> Result<String> {
+pub(super) fn digest<T: Serialize>(kind: &str, query: &T) -> Result<String> {
     let mut hash = Sha256::new_with_prefix(kind.as_bytes());
     hash.update(serde_json::to_vec(query).map_err(|_| Error::invalid())?);
     Ok(hex::encode(hash.finalize()))
@@ -55,7 +55,7 @@ fn sign(key: &[u8; 32], value: Cursor) -> Result<String> {
     body.extend_from_slice(&mac.finalize().into_bytes());
     Ok(format!("jlw1_{}", hex::encode(body)))
 }
-fn resume(
+pub(super) fn resume(
     state: &State,
     text: Option<String>,
     repository: m::RepositoryId,
@@ -89,7 +89,7 @@ fn resume(
     })
     .transpose()
 }
-fn continuation(
+pub(super) fn continuation(
     state: &State,
     raw: Option<String>,
     repository: m::RepositoryId,
@@ -111,7 +111,11 @@ fn continuation(
     })
     .transpose()
 }
-async fn check(state: &State, repository: m::RepositoryId, generation: u64) -> Result<()> {
+pub(super) async fn check(
+    state: &State,
+    repository: m::RepositoryId,
+    generation: u64,
+) -> Result<()> {
     let manager = manager(state)?;
     blocking(state, move || {
         if manager.folder(repository).map_err(map)?.1 != generation {

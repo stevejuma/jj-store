@@ -619,3 +619,7 @@ Local browser WorkStore commands dispatch through the existing companion
 provider rather than native code mutation authority. They retain the original
 request identity in transport unknown outcomes, use CLI actor provenance and
 validate exact entity versions. Code commands remain disabled for this profile.
+
+Recorded AgentStore browser POSTs and local freshness streams are read-only
+queries of committed companion metadata and operation heads. They cannot install
+hooks, record agents, reconcile heads or advance the displayed selection.
