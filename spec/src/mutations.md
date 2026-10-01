@@ -509,3 +509,17 @@ repository access and never perform Git transport.
 Git state reports whether explicit bridge activation is currently qualified for
 the selected domains. The CLI can check this immutable snapshot before normal
 working-copy snapshotting or endpoint execution; it grants no additional access.
+
+Durable Git attempts bind the admitted principal as executor. Typed acceptance
+rejects a new intent or event for another executor before publication. Retained
+intent dependencies, destination-bound observation bases and per-ref outcomes
+are verified independently of transport. Started, unknown, result-recorded and
+applied facts remain distinct. An applied event and its observation are selected
+with native bookkeeping; a remote acknowledgement never substitutes for that
+local receipt. Recovery reads or repairs data and cannot dispatch external
+writes.
+
+New Git push intents prove accepted source-operation ancestry and immutable
+bookmark selection through the owned JJ validator before publication. An
+otherwise well-formed staged source operation cannot authorize external Git
+publication. Receipt replay retains the already accepted source proof.

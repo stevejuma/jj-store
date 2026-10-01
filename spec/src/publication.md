@@ -416,3 +416,11 @@ The immutable delta is re-applied to current Git facts after CAS contention;
 conflicting record identities fail without overwriting evidence. Git-only
 acceptance leaves code freshness unchanged. Origin activation for code
 repositories stays gated until the Git reducer is qualified.
+
+Git push intent and event records retain frozen source/native dependencies,
+causal observations, an authenticated executor and exact destination leases.
+Staging validates their complete catalog closure and immutable identity.
+Prepared, transport-started, per-ref result and applied records are separate
+manifest-selected facts. An applied record requires satisfied result evidence
+and the exact accepted observation. Native code undo cannot discard these
+external facts, and cold recovery or copy never schedules external transport.

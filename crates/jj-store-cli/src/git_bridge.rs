@@ -38,6 +38,7 @@ pub fn unavailable(operation: &str) -> CommandError {
 }
 
 mod device;
+mod push;
 mod transport;
 use crate::{commands::error, remote::BridgeContext};
 use jj_cli::{cli_util::WorkspaceCommandTransaction, ui::Ui};
@@ -50,6 +51,7 @@ use jj_lib::{
 };
 use jj_store_model as m;
 use jj_store_wal::publication::*;
+pub use push::{GitArgs, run_store};
 use std::{
     collections::{BTreeMap, BTreeSet},
     sync::Arc,
@@ -167,6 +169,9 @@ pub async fn run(
 ) -> std::result::Result<(), CommandError> {
     let git = helper.matches().subcommand_matches("git").unwrap();
     let (name, args) = git.subcommand().unwrap();
+    if name == "push" {
+        return push::run(ui, helper, registry, args).await;
+    }
     if !matches!(name, "remote" | "fetch") {
         return Err(unavailable(operation));
     }

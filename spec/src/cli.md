@@ -572,3 +572,12 @@ remain disabled. Fetch uses one explicit scope and the existing native
 transaction/rebase/workspace finish path with a pending typed Git delta.
 Unsupported parsed flags and historical/non-integrating mutation contexts fail
 before transport. Ordinary Git-backed dispatch remains upstream-owned.
+
+Selected native push freezes bookmark targets and exact destination leases,
+retains representations and intent before execution, then records protocol
+outcomes and applies remote bookkeeping without moving local bookmarks. Dry-run
+does not publish an intent or bridge-induced code. `jj store git status` reads
+durable attempts; `jj store git recover` inspects the original approved endpoint
+and repairs local bookkeeping without retransmitting. Capability gates remain
+explicit for selectors, multi-ref transport, conflicts, tag publication and
+sign-on-push until their focused acceptance passes.

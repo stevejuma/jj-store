@@ -53,6 +53,8 @@ impl ConnectionArgs {
 
 #[derive(Clone, Debug, Subcommand)]
 pub(crate) enum StoreCommand {
+    /// Inspect or recover durable native Git publication attempts
+    Git(crate::git_bridge::GitArgs),
     /// List, grant, revoke and recover repository token requests
     #[command(long_about=include_str!("../../../docs/cli/tokens.md"))]
     Token(crate::token_commands::TokenArgs),

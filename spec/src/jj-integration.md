@@ -497,3 +497,11 @@ installed only around the Git command's final transaction. Snapshot and ordinary
 head reconciliation remain ordinary native publications, and the guard clears on
 success, failure or cancellation. No global principal or pending request is
 introduced.
+
+Git push applies only the frozen remote bookmark target and tracking state. It
+never resets a local bookmark to a previously uploaded target. The invoking
+transaction retains JJ operation/rebase handling and concurrent sibling heads;
+causally incomparable remote observations remain durable conflicts. Native undo
+can change its code view while retaining external attempt evidence in the Git
+root. Private conversion rebuilds the selected closure from retained mappings
+and original bodies before any transport-started event.

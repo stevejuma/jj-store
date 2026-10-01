@@ -1355,3 +1355,325 @@ async fn native_git_fetch_tracks_refs_repeats_without_code_operation_and_survive
     ));
     assert!(git_state.values.values().any(|v| matches!(v, jj_store_wal::publication::GitRecordV1::Observation(v) if v.refs.get("refs/tags/release").is_some_and(|v| v.oid.as_deref() == Some(tag_oid.as_str()) && v.commit_oid.as_deref() == Some(commit_oid.as_str())))));
 }
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn native_git_push_uses_exact_leases_retains_parent_and_recovers_without_repush() {
+    let f = Fixture::new().await;
+    f.attach("git-push");
+    let work = f.root.path().join("git-push");
+    let device = f.root.path().join("push-device");
+    let run = |args: &[&str]| {
+        success(
+            f.command(&work, args)
+                .env("JJ_STORE_GIT_HOME", &device)
+                .output()
+                .unwrap(),
+        )
+    };
+    run(&[
+        "project",
+        "create",
+        "--request-id",
+        &m::RequestId::new([150; 16]).to_string(),
+        "--title",
+        "Local push home",
+    ]);
+    let bare = f.root.path().join("push-source.git");
+    let git = gix::init_bare(&bare).unwrap();
+    use gix::objs::Write as _;
+    let tree = git.write_object(gix::objs::Tree::empty()).unwrap();
+    let body = format!(
+        "tree {tree}\nauthor Native Test <native@example.invalid> 1000 +0000\ncommitter Native Test <native@example.invalid> 1000 +0000\n\nImported base\n"
+    );
+    let base = git
+        .objects
+        .write_buf(gix::objs::Kind::Commit, body.as_bytes())
+        .unwrap();
+    git.reference(
+        "refs/heads/main",
+        base,
+        gix::refs::transaction::PreviousValue::MustNotExist,
+        "fixture",
+    )
+    .unwrap();
+    run(&["git", "remote", "add", "origin", bare.to_str().unwrap()]);
+    run(&["git", "fetch"]);
+    run(&["new", "main@origin", "-m", "Native feature"]);
+    fs::write(work.join("feature.txt"), "selected native content\n").unwrap();
+    run(&["describe", "-m", "Native feature"]);
+    run(&["bookmark", "create", "feature", "-r", "@"]);
+    let before = f.snapshot().await;
+    let dry_run = run(&["git", "push", "--bookmark", "feature", "--dry-run"]);
+    assert!(dry_run.contains("Dry-run"), "{dry_run}");
+    assert_eq!(f.snapshot().await, before);
+    assert!(git.find_reference("refs/heads/feature").is_err());
+    let pushed = run(&["git", "push", "--bookmark", "feature"]);
+    assert!(pushed.contains("Push completed"), "{pushed}");
+    let pushed_oid = git
+        .find_reference("refs/heads/feature")
+        .unwrap()
+        .target()
+        .try_id()
+        .unwrap()
+        .to_owned();
+    let pushed_commit = git.find_object(pushed_oid).unwrap();
+    assert_eq!(
+        pushed_commit
+            .try_to_commit_ref()
+            .unwrap()
+            .parents()
+            .collect::<Vec<_>>(),
+        vec![base]
+    );
+    fs::remove_dir_all(device.join(REPO.to_string()).join("cache")).unwrap();
+    run(&["new", "feature", "-m", "Later local work"]);
+    run(&["bookmark", "set", "feature", "-r", "@"]);
+    let before_default_plan = f.snapshot().await;
+    assert!(run(&["git", "push", "--dry-run"]).contains("Dry-run"));
+    assert_eq!(f.snapshot().await, before_default_plan);
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt as _;
+        let ready = f.root.path().join("post-receive-ready");
+        let group = f.root.path().join("post-receive-group");
+        let hook = bare.join("hooks/post-receive");
+        fs::create_dir_all(hook.parent().unwrap()).unwrap();
+        fs::write(
+            &hook,
+            format!(
+                "#!/bin/sh\nps -o pgid= -p $$ > '{}'\ntouch '{}'\nwhile :; do sleep 0.1; done\n",
+                group.display(),
+                ready.display()
+            ),
+        )
+        .unwrap();
+        fs::set_permissions(&hook, fs::Permissions::from_mode(0o700)).unwrap();
+        struct PendingPush {
+            child: Option<std::process::Child>,
+            group: std::path::PathBuf,
+        }
+        impl Drop for PendingPush {
+            fn drop(&mut self) {
+                if let Some(child) = self.child.as_mut() {
+                    let _ = child.kill();
+                    if let Ok(group) = fs::read_to_string(&self.group)
+                        && let Ok(group) = group.trim().parse::<u32>()
+                        && group > 1
+                    {
+                        let _ = Command::new("/bin/kill")
+                            .args(["-KILL", "--", &format!("-{group}")])
+                            .status();
+                    }
+                    let _ = child.wait();
+                }
+            }
+        }
+        let mut pending = PendingPush {
+            group: group.clone(),
+            child: Some(
+                f.command(&work, &["git", "push"])
+                    .env("JJ_STORE_GIT_HOME", &device)
+                    .stdout(std::process::Stdio::piped())
+                    .stderr(std::process::Stdio::piped())
+                    .spawn()
+                    .unwrap(),
+            ),
+        };
+        let child = pending.child.as_mut().unwrap();
+        let deadline = std::time::Instant::now() + Duration::from_secs(15);
+        while !ready.exists() {
+            assert!(
+                std::time::Instant::now() < deadline,
+                "post-receive boundary not reached"
+            );
+            assert!(
+                child.try_wait().unwrap().is_none(),
+                "push exited before boundary"
+            );
+            tokio::time::sleep(Duration::from_millis(20)).await;
+        }
+        let accepted_oid = git
+            .find_reference("refs/heads/feature")
+            .unwrap()
+            .target()
+            .try_id()
+            .unwrap()
+            .to_owned();
+        assert_ne!(accepted_oid, pushed_oid);
+        run(&["new", "feature", "-m", "Concurrent native advance"]);
+        run(&["bookmark", "set", "feature", "-r", "@"]);
+        let local_advance = run(&["log", "--no-graph", "-r", "feature", "-T", "commit_id"]);
+        child.kill().unwrap();
+        // The hook intentionally holds this owned transport group alive, so
+        // its PID cannot have been reused. Clean up only that disposable group.
+        let pgid: u32 = fs::read_to_string(&group).unwrap().trim().parse().unwrap();
+        assert!(pgid > 1);
+        assert!(
+            Command::new("/bin/kill")
+                .args(["-KILL", "--", &format!("-{pgid}")])
+                .status()
+                .unwrap()
+                .success()
+        );
+        pending.child.take().unwrap().wait_with_output().unwrap();
+        fs::remove_file(hook).unwrap();
+        let session = NativeSession::new(
+            f.store.clone(),
+            Arc::new(NativeObjects::new(f.store.clone(), REPO, 32 * 1024 * 1024).unwrap()),
+            f.token.clone(),
+            Arc::new(SystemClock),
+            Protection::default(),
+            SessionLimits::default(),
+        )
+        .unwrap();
+        let state = jj_store_service::git_bridge::read(Arc::new(session))
+            .await
+            .unwrap()
+            .git
+            .unwrap();
+        let attempt = state
+            .values
+            .values()
+            .find_map(|value| match value {
+                jj_store_wal::publication::GitRecordV1::PushIntent(intent)
+                    if state.push_status(intent.id) == "unknown" =>
+                {
+                    Some(intent.id)
+                }
+                _ => None,
+            })
+            .expect("started attempt survives lost acknowledgement");
+        fs::remove_dir_all(device.join(REPO.to_string()).join("cache")).unwrap();
+        let recovered = run(&["store", "git", "recover", &attempt.to_string()]);
+        assert!(recovered.contains("observed_satisfied"), "{recovered}");
+        assert_eq!(
+            run(&["log", "--no-graph", "-r", "feature", "-T", "commit_id"]),
+            local_advance
+        );
+        assert_eq!(
+            git.find_reference("refs/heads/feature")
+                .unwrap()
+                .target()
+                .try_id(),
+            Some(accepted_oid.as_ref())
+        );
+    }
+    let foreign_body = body.replace("Imported base", "Other writer");
+    let foreign = git
+        .objects
+        .write_buf(gix::objs::Kind::Commit, foreign_body.as_bytes())
+        .unwrap();
+    git.find_reference("refs/heads/feature")
+        .unwrap()
+        .set_target_id(foreign, "other writer")
+        .unwrap();
+    let rejected = f
+        .command(&work, &["git", "push", "--bookmark", "feature"])
+        .env("JJ_STORE_GIT_HOME", &device)
+        .output()
+        .unwrap();
+    assert!(!rejected.status.success());
+    assert_eq!(
+        git.find_reference("refs/heads/feature")
+            .unwrap()
+            .target()
+            .try_id(),
+        Some(foreign.as_ref())
+    );
+    let status = run(&["store", "git", "status"]);
+    assert!(status.contains("applied"), "{status}");
+    assert!(
+        status.contains("rejected") || status.contains("unknown"),
+        "{status}"
+    );
+    let json: serde_json::Value =
+        serde_json::from_str(&run(&["store", "git", "status", "--format=json"])).unwrap();
+    assert_eq!(json["version"], 1);
+    assert!(
+        json["attempts"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|v| v["status"] == "applied")
+    );
+    let attempt = pushed
+        .lines()
+        .find_map(|line| line.strip_prefix("Attempt: "))
+        .unwrap();
+    let recovered = run(&["store", "git", "recover", attempt]);
+    assert!(recovered.contains("already applied"), "{recovered}");
+    assert_eq!(
+        git.find_reference("refs/heads/feature")
+            .unwrap()
+            .target()
+            .try_id(),
+        Some(foreign.as_ref())
+    );
+    assert!(!work.join(".git").exists());
+    run(&["undo"]);
+    assert!(run(&["store", "git", "status"]).contains("applied"));
+    assert_eq!(
+        git.find_reference("refs/heads/feature")
+            .unwrap()
+            .target()
+            .try_id(),
+        Some(foreign.as_ref())
+    );
+    struct NoPublication;
+    #[async_trait::async_trait]
+    impl jj_store_wal::publication::PublicationGuard for NoPublication {
+        async fn authorize(
+            &self,
+            _: &jj_store_wal::publication::ManifestSnapshot,
+            _: &jj_store_wal::publication::Request,
+        ) -> jj_store_wal::Result<()> {
+            Err(jj_store_wal::Error::Denied)
+        }
+        async fn validate_transition(
+            &self,
+            _: &jj_store_wal::publication::ManifestSnapshot,
+            _: &jj_store_wal::publication::Request,
+            _: &jj_store_wal::publication::Snapshot,
+        ) -> jj_store_wal::Result<()> {
+            Err(jj_store_wal::Error::Denied)
+        }
+    }
+    let objects = Arc::new(NativeObjects::new(f.store.clone(), REPO, 32 * 1024 * 1024).unwrap());
+    let c = jj_store_wal::publication::Coordinator::new(
+        f.store.clone(),
+        REPO,
+        objects,
+        Arc::new(NoPublication),
+        Limits::default(),
+    )
+    .unwrap();
+    c.checkpoint().await.unwrap();
+    let cold = c.recover(4096).await.unwrap();
+    let retained = c
+        .git_store(cold.manifest().git_root.unwrap())
+        .await
+        .unwrap();
+    let destination = Arc::new(MemoryStore::default());
+    let destination_objects =
+        Arc::new(NativeObjects::new(destination.clone(), REPO, 32 * 1024 * 1024).unwrap());
+    c.copy_native_to(destination.clone(), destination_objects.clone(), 4096)
+        .await
+        .unwrap();
+    let copied = jj_store_wal::publication::Coordinator::new(
+        destination,
+        REPO,
+        destination_objects,
+        Arc::new(NoPublication),
+        Limits::default(),
+    )
+    .unwrap();
+    let recovered = copied.recover(4096).await.unwrap();
+    assert_eq!(
+        retained.values,
+        copied
+            .git_store(recovered.manifest().git_root.unwrap())
+            .await
+            .unwrap()
+            .values
+    );
+}

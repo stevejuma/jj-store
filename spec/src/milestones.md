@@ -98,7 +98,7 @@ adds evidence here in its enclosing Jujutsu change.
 | M12.1       | Done        | M11         | JST-GIT-001                                                                                                                                                              | GB0: Parsed backend-aware dispatch and ordinary path regression                                                                | Complete staged bridge gate                                                   | E-M12-001                                                                                                                                                                                                                                                                                                                                                      |
 | M12.2       | Done        | M12.1       | JST-GIT-002,JST-GIT-003                                                                                                                                                  | GB1: Exact conversion and native retained cache-loss identity                                                                  | Complete staged bridge gate                                                   | E-M12-002                                                                                                                                                                                                                                                                                                                                                      |
 | M12.3       | In progress | M12.2       | JST-GIT-004,JST-GIT-008                                                                                                                                                  | GB2: Bounded fetch with native tracking and concurrent ref merge                                                               | Complete staged bridge gate                                                   | E-M12-003,E-M12-004                                                                                                                                                                                                                                                                                                                                            |
-| M12.4       | Planned     | M12.3       | JST-GIT-005,JST-GIT-006                                                                                                                                                  | GB3: Selected single-ref push with leases and durable recovery                                                                 | Complete staged bridge gate                                                   | -                                                                                                                                                                                                                                                                                                                                                              |
+| M12.4       | In progress | M12.3       | JST-GIT-005,JST-GIT-006                                                                                                                                                  | GB3: Selected single-ref push with leases and durable recovery                                                                 | Complete staged bridge gate                                                   | E-M12-005                                                                                                                                                                                                                                                                                                                                                      |
 | M12.5       | Planned     | M12.4       | JST-GIT-007                                                                                                                                                              | GB4: Fault/concurrency and qualified data-only native replication                                                              | Complete staged bridge gate                                                   | -                                                                                                                                                                                                                                                                                                                                                              |
 | M12.6       | Planned     | M12.5       | JST-GIT-001,JST-GIT-005                                                                                                                                                  | GB5: Bookmark selectors safe remote lifecycle and atomic multi-ref parity                                                      | Complete staged bridge gate                                                   | -                                                                                                                                                                                                                                                                                                                                                              |
 | M12.7       | Planned     | M12.6       | JST-GIT-002,JST-GIT-007,JST-GIT-008                                                                                                                                      | GB6: Cold real-RustFS external merge credentials resources and UI freshness                                                    | Complete staged bridge gate                                                   | -                                                                                                                                                                                                                                                                                                                                                              |
@@ -23840,6 +23840,203 @@ and named tests are checked by the progress gate.
     "result": "pass",
     "remaining": [],
     "next": "Continue GB3 durable selected push and recovery. M12.3 remains incomplete pending code-origin activation in GB4. Expanded peer races, cancellation, credentials, real RustFS and end-to-end/browser gates remain later acceptance work. UI and unrelated Rust aggregate lanes were out of scope under targeted policy."
+  },
+  {
+    "id": "E-M12-005",
+    "tasks": [
+      "M12",
+      "M12.4"
+    ],
+    "date": "2026-10-01",
+    "kind": "native-git-push-attempts",
+    "revision": "Enclosing Jujutsu change ylyqvktz.",
+    "before": "GB2 local fetch de1c275c: push/status/recovery unavailable. Exact acceptance target: native selected push with exact original parent, stale lease rejection, dry-run and cache-loss recovery without retransmission. Review found a staged source operation could authorize a push; the exact service regression failed once before the accepted-ancestry and frozen-view proof.",
+    "versions": "JJ 0.45.1;gix 0.87.1;Git 2.55.0;Rust 1.98.1",
+    "formats": "Manifest 4;Git immutable record V1;typed acceptance V1.",
+    "files": [
+      "spec/src/git-interop.md",
+      "crates/jj-store-cli/tests/executable_native.rs",
+      "crates/jj-store-wal/src/publication.rs",
+      "crates/jj-store-wal/src/publication/git_interop.rs",
+      "crates/jj-store-wal/src/publication/git_interop/attempts.rs",
+      "crates/jj-store-service/src/git_bridge.rs",
+      "crates/jj-store-cli/src/git_bridge.rs",
+      "crates/jj-store-cli/src/git_bridge/push.rs",
+      "crates/jj-store-cli/src/git_bridge/transport.rs",
+      "crates/jj-store-cli/src/presentation.rs",
+      "crates/jj-store-cli/src/store_commands.rs",
+      "crates/jj-store-cli/src/commands.rs",
+      "crates/jj-store-wal/src/publication/git_interop/facts.rs",
+      "crates/jj-store-service/tests/git_bridge.rs",
+      "spec/src/cli.md",
+      "spec/src/mutations.md",
+      "spec/src/jj-integration.md",
+      "spec/src/publication.md",
+      "docs/cli/commands.md",
+      "crates/jj-store-jj/src/git_bridge/mod.rs"
+    ],
+    "runs": [
+      {
+        "command": "jj --no-pager st",
+        "result": "pass",
+        "failures": 0,
+        "note": "Clean child of verified local fetch slice before work."
+      },
+      {
+        "command": "cargo fmt --all && cargo test -p jj-store-cli --locked --test executable_native native_git_push_uses_exact_leases_retains_parent_and_recovers_without_repush -- --exact",
+        "result": "fail",
+        "failures": 2,
+        "note": "New fixture oid versus ObjectId reference type mismatch; fixed fixture."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --locked --test executable_native native_git_push_uses_exact_leases_retains_parent_and_recovers_without_repush -- --exact",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before-state proof: push is unavailable, as expected."
+      },
+      {
+        "command": "cargo fmt --all && cargo check -p jj-store-wal --locked",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "cargo fmt --all && cargo check -p jj-store-cli --locked",
+        "result": "fail",
+        "failures": 23,
+        "note": "Missing public reexports, resolved revset API adaptation and CommandError hint formatting; corrected."
+      },
+      {
+        "command": "cargo fmt --all && cargo test -p jj-store-cli --locked --test executable_native native_git_push_uses_exact_leases_retains_parent_and_recovers_without_repush -- --exact",
+        "result": "fail",
+        "failures": 20,
+        "note": "Root reexport edit had missed inline list; explicit reexports corrected."
+      },
+      {
+        "command": "cargo fmt --all && cargo check -p jj-store-cli --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "Run twice while reexports were repaired; resolved revset lifetime held immutable workspace borrow through apply. Explicitly dropped validation state before mutable transaction."
+      },
+      {
+        "command": "cargo fmt --all && cargo test -p jj-store-cli --locked --test executable_native native_git_push_uses_exact_leases_retains_parent_and_recovers_without_repush -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "First selected native push, dry-run, original parent and stale lease passed; repeated after adding actual post-receive process kill and concurrent local advance, passed."
+      },
+      {
+        "command": "cargo fmt --all && cargo test -p jj-store-cli --locked --test executable_native native_git_push_uses_exact_leases_retains_parent_and_recovers_without_repush -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "Expanded status JSON, native undo, checkpoint, manifest-last native copy and cold memory-store recovery passed. Recovery repairs acknowledged-unknown push without repush or rolling back advanced local bookmark."
+      },
+      {
+        "command": "cargo clippy -p jj-store-wal -p jj-store-service -p jj-store-cli --all-targets --locked -- -D warnings",
+        "result": "fail",
+        "failures": 1,
+        "note": "New transport functions followed existing test module; moved test module last."
+      },
+      {
+        "command": "cargo fmt --all && cargo test -p jj-store-service --locked --test git_bridge git_push_executor_cannot_be_spoofed_or_changed_by_another_writer -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial executor spoof and fabricated acknowledgement rejected; expanded another-writer check requires rerun."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/git-interop.md spec/src/cli.md spec/src/mutations.md spec/src/jj-integration.md spec/src/milestones.md && pnpm spec:validate && pnpm check:progress && pnpm spec:first && pnpm check:boundaries",
+        "result": "fail",
+        "failures": 1,
+        "note": "Spec/progress passed; protected WAL change also requires publication chapter, now updated. Boundary command did not run."
+      },
+      {
+        "command": "cargo fmt --all && cargo check -p jj-store-wal --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Borrowed-observation refactor attempt first stopped at a Python assertion without changes; subsequent WAL check passed. Corrected refactor and focused observation regression follow."
+      },
+      {
+        "command": "cargo fmt --all && cargo clippy -p jj-store-wal -p jj-store-service -p jj-store-cli --all-targets --locked -- -D warnings",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "cargo test -p jj-store-cli --locked --test executable_native native_git_push_uses_exact_leases_retains_parent_and_recovers_without_repush -- --exact && cargo test -p jj-store-service -p jj-store-jj --locked --test git_bridge",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact expanded executable target and 8 JJ/2 service Git scenarios passed, including another-writer event denial and causal expectation reuse after borrowed-observation refactor."
+      },
+      {
+        "command": "cargo test -p jj-store-wal -p jj-store-jj -p jj-store-service -p jj-store-rpc --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All relevant suites passed; 2 real RustFS tests ignored."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --locked --test executable_native --test native_rpc --test native_lifecycle --test administration_rpc --test server_executable --test local_trusted_cli --test attachment_recovery --test workspace_migration",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 8 direct CLI consumer binaries passed; 16 executable native tests, 182 lifecycle and 7 RPC tests among them. 3 OS credential and 2 real RustFS tests ignored."
+      },
+      {
+        "command": "pnpm contracts:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Generated HTTP/SSE contracts unchanged; 78 actual responses and 6 schema regression tests passed, TypeScript compiled."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/git-interop.md spec/src/cli.md spec/src/mutations.md spec/src/jj-integration.md spec/src/publication.md spec/src/milestones.md && pnpm spec:validate && pnpm check:progress && pnpm spec:first && pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "20 chapters/123 requirements;94 tasks;13 protected files/6 owning chapters;15 boundaries."
+      },
+      {
+        "command": "pnpm exec prettier --write docs/cli/commands.md spec/src/milestones.md && cargo fmt --all --check && cargo clippy -p jj-store-wal -p jj-store-service -p jj-store-cli --all-targets --locked -- -D warnings",
+        "result": "fail",
+        "failures": 1,
+        "note": "Test default selector edit required rustfmt; formatter corrected. Clippy did not run in this command."
+      },
+      {
+        "command": "cargo fmt --all && cargo test -p jj-store-service --locked --test git_bridge git_push_executor_cannot_be_spoofed_or_changed_by_another_writer -- --exact",
+        "result": "fail",
+        "failures": 1,
+        "note": "New unselected-operation admission regression failed before fix; first repair then failed once on virtual root loading. Added explicit pinned virtual roots without weakening admission."
+      },
+      {
+        "command": "cargo fmt --all && cargo test -p jj-store-service --locked --test git_bridge git_push_executor_cannot_be_spoofed_or_changed_by_another_writer -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "Accepted-ancestry admission, executor authority and immutable frozen bookmark proof pass."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --locked --test executable_native native_git_push_uses_exact_leases_retains_parent_and_recovers_without_repush -- --exact && cargo test -p jj-store-jj -p jj-store-service -p jj-store-rpc --locked --test git_bridge",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact interrupted push/cache-loss recovery and 8 JJ, 2 service, 1 RPC Git scenarios passed after source proof."
+      },
+      {
+        "command": "cargo clippy -p jj-store-wal -p jj-store-jj -p jj-store-service -p jj-store-cli --all-targets --locked -- -D warnings",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "cargo test -p jj-store-jj -p jj-store-service --locked && cargo test -p jj-store-cli --locked --test executable_native --test native_rpc",
+        "result": "pass",
+        "failures": 0,
+        "note": "Escalated because source admission changes the shared JJ/service security boundary and direct CLI consumers: affected JJ/service suites, 16 executable and 7 RPC scenarios pass; 2 real RustFS and 3 OS-credential scenarios ignored."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/git-interop.md spec/src/mutations.md spec/src/milestones.md && pnpm spec:validate && pnpm check:progress && pnpm spec:first && pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "15 protected files/6 chapters; 94 tasks; all governance gates passed."
+      }
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/executable_native.rs#native_git_push_uses_exact_leases_retains_parent_and_recovers_without_repush",
+      "crates/jj-store-service/tests/git_bridge.rs#git_push_executor_cannot_be_spoofed_or_changed_by_another_writer"
+    ],
+    "result": "pass",
+    "remaining": [],
+    "next": "GB4 data-only Git origins and code activation; then GB5 selector/remote/multi-ref parity and GB6 real RustFS, credentials, process lifetime and browser freshness. All remain required before M12 completion."
   }
 ]
 ```

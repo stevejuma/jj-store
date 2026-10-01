@@ -27,6 +27,7 @@ pub struct Request {
 pub struct State {
     pub version: u32,
     pub code: Snapshot,
+    pub principal: m::PrincipalId,
     pub activation_available: bool,
     pub git: Option<GitStoreSnapshot>,
 }
@@ -55,10 +56,11 @@ pub async fn read(session: Arc<NativeSession>) -> wal::Result<State> {
         Some(root) => Some(session.coordinator.git_store(root).await?),
         None => None,
     };
-    session.principal(Permission::Read).await?;
+    let principal = session.principal(Permission::Read).await?.id();
     Ok(State {
         version: 1,
         code: before.manifest().snapshot(),
+        principal,
         activation_available: before.manifest().work_root.is_some()
             || before.manifest().replication_root.is_none(),
         git,
@@ -84,6 +86,23 @@ pub async fn accept(session: Arc<NativeSession>, request: &Request) -> wal::Resu
         .coordinator
         .stage_git_records(&current, &request.records)
         .await?;
+    // An authenticated caller can prepare or report only its own attempts.
+    // Peer replay has a separate data-only origin path and cannot execute Git.
+    for record in &request.records {
+        match record {
+            GitRecordV1::PushIntent(intent) if intent.executor != principal => {
+                return Err(wal::Error::Denied);
+            }
+            GitRecordV1::PushEvent(event)
+                if staged
+                    .push_intent(event.attempt)
+                    .is_none_or(|v| v.executor != principal) =>
+            {
+                return Err(wal::Error::Denied);
+            }
+            _ => {}
+        }
+    }
     let native = Arc::new(
         NativeObjects::new(
             session.object_store.clone(),
@@ -92,6 +111,15 @@ pub async fn accept(session: Arc<NativeSession>, request: &Request) -> wal::Resu
         )
         .map_err(|_| wal::Error::Limit("Git native object configuration"))?,
     );
+    for record in &request.records {
+        if let GitRecordV1::PushIntent(intent) = record
+            && !current.values.contains_key(&record.key()?)
+        {
+            git_bridge::verify_push_source(native.clone(), &before.manifest().heads, intent)
+                .await
+                .map_err(|_| wal::Error::Denied)?;
+        }
+    }
     tokio::time::timeout(
         session.limits.timeout,
         git_bridge::verify_delta(native, &staged, Some(&current)),

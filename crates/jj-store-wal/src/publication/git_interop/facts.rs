@@ -164,38 +164,45 @@ impl GitStoreSnapshot {
                 _ => None,
             })
             .collect();
-        let covering: BTreeMap<_, _> = observations
-            .iter()
-            .filter(|(_, v)| {
-                v.refs.contains_key(reference)
-                    || (v.complete_heads && reference.starts_with("refs/heads/"))
-            })
-            .map(|(id, v)| (*id, *v))
-            .collect();
-        let mut superseded = BTreeSet::new();
-        let mut pending: Vec<_> = covering
-            .values()
-            .flat_map(|v| v.predecessors.iter().copied())
-            .collect();
-        while let Some(id) = pending.pop() {
-            if superseded.insert(id)
-                && let Some(previous) = observations.get(&id)
-            {
-                pending.extend(previous.predecessors.iter().copied());
-            }
-        }
-        let mut expected: BTreeSet<_> = covering
-            .into_iter()
-            .filter(|(id, _)| !superseded.contains(id))
-            .map(|(_, v)| v.refs.get(reference).and_then(|v| v.oid.clone()))
-            .collect();
-        if expected.len() == 1 {
-            expected.pop_first()
-        } else {
-            None
-        }
+        observed_expectation(&observations, reference)
     }
 }
+pub(super) fn observed_expectation(
+    observations: &BTreeMap<RequestId, &GitObservationV1>,
+    reference: &str,
+) -> Option<Option<String>> {
+    let covering: BTreeMap<_, _> = observations
+        .iter()
+        .filter(|(_, v)| {
+            v.refs.contains_key(reference)
+                || (v.complete_heads && reference.starts_with("refs/heads/"))
+        })
+        .map(|(id, v)| (*id, *v))
+        .collect();
+    let mut superseded = BTreeSet::new();
+    let mut pending: Vec<_> = covering
+        .values()
+        .flat_map(|v| v.predecessors.iter().copied())
+        .collect();
+    while let Some(id) = pending.pop() {
+        if superseded.insert(id)
+            && let Some(previous) = observations.get(&id)
+        {
+            pending.extend(previous.predecessors.iter().copied());
+        }
+    }
+    let mut expected: BTreeSet<_> = covering
+        .into_iter()
+        .filter(|(id, _)| !superseded.contains(id))
+        .map(|(_, v)| v.refs.get(reference).and_then(|v| v.oid.clone()))
+        .collect();
+    if expected.len() == 1 {
+        expected.pop_first()
+    } else {
+        None
+    }
+}
+
 pub(super) fn validate_closure(values: &BTreeMap<RecordDigest, GitRecordV1>) -> Result<()> {
     let remotes: BTreeMap<_, _> = values
         .values()

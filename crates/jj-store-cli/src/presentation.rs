@@ -132,6 +132,15 @@ pub async fn dispatch(
     inner: BoxedAsyncCliDispatch<'_>,
     registry: &crate::binding::FactoryRegistry,
 ) -> Result<(), CommandError> {
+    if let Some(matches) = helper
+        .matches()
+        .subcommand_matches("store")
+        .and_then(|v| v.subcommand_matches("git"))
+    {
+        use clap::FromArgMatches as _;
+        let args = crate::git_bridge::GitArgs::from_arg_matches(matches)?;
+        return crate::git_bridge::run_store(ui, helper, registry, args).await;
+    }
     if let Some(matches) = helper.matches().subcommand_matches("help") {
         let path: Vec<_> = matches
             .get_many::<String>("command")

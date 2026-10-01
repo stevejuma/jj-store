@@ -34,3 +34,15 @@
   grant/revoke requests independently per repository.
 
 The milestone ledger records remaining command parity and release gates.
+
+Native Git bridge supports explicit approved remote add/list/set-url and scoped
+fetch. Selected single-bookmark push and default tracked bookmark selection use
+exact destination leases; `--dry-run` plans without publication. Fetched commit
+tags are retained; tag publication, multi-ref updates and other push selectors
+remain gated. Code repositories with native origins await the Git reducer;
+WorkStore homes preserve their frozen origin ledger.
+
+After interrupted publication, use `jj store git status [attempt]` (also
+`--format=json`) and `jj store git recover <attempt>`. Recovery inspects the
+original approved destination and repairs satisfied local bookkeeping. It does
+not push again or prove who authored a currently observed desired ref.

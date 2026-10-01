@@ -134,3 +134,143 @@ async fn git_acceptance_reauthorizes_write_and_preserves_home_origins() {
             .is_some()
     );
 }
+
+#[tokio::test]
+async fn git_push_executor_cannot_be_spoofed_or_changed_by_another_writer() {
+    use jj_store_wal::publication::*;
+    use std::collections::{BTreeMap, BTreeSet};
+    let (store, writer) = fixture().await;
+    create(writer.clone(), 50).await;
+    let before = writer.snapshot().await.unwrap();
+    let remote = m::RequestId::new([51; 16]);
+    let observation = m::RequestId::new([52; 16]);
+    let binding = m::RecordDigest::new([53; 32]);
+    let request = jj_store_service::git_bridge::Request {
+        version: 1,
+        request_id: remote,
+        transition: None,
+        records: vec![
+            GitRecordV1::Remote(GitRemoteV1 {
+                remote,
+                event: remote,
+                predecessors: BTreeSet::new(),
+                name: "origin".into(),
+                active: true,
+            }),
+            GitRecordV1::Observation(GitObservationV1 {
+                id: observation,
+                remote,
+                binding,
+                predecessors: BTreeSet::new(),
+                operation: *before.manifest().heads.first().unwrap(),
+                complete_heads: true,
+                refs: BTreeMap::new(),
+            }),
+        ],
+    };
+    jj_store_service::git_bridge::accept(writer.clone(), &request)
+        .await
+        .unwrap();
+    let attempt = m::RequestId::new([54; 16]);
+    let mut intent = GitPushIntentV1 {
+        id: attempt,
+        executor: m::PrincipalId::new([55; 16]),
+        remote,
+        binding,
+        operation: *before.manifest().heads.first().unwrap(),
+        observations: BTreeSet::from([observation]),
+        refs: BTreeMap::from([(
+            "refs/heads/missing".into(),
+            GitPushRefV1 {
+                expected: None,
+                desired: GitRefV1 {
+                    oid: None,
+                    commit_oid: None,
+                    native: None,
+                },
+            },
+        )]),
+    };
+    let mut request = jj_store_service::git_bridge::Request {
+        version: 1,
+        request_id: attempt,
+        transition: None,
+        records: vec![GitRecordV1::PushIntent(intent.clone())],
+    };
+    let before = writer.snapshot().await.unwrap();
+    assert!(matches!(
+        jj_store_service::git_bridge::accept(writer.clone(), &request).await,
+        Err(jj_store_wal::Error::Denied)
+    ));
+    assert_eq!(writer.snapshot().await.unwrap().digest(), before.digest());
+    intent.executor = ACTOR;
+    request.records = vec![GitRecordV1::PushIntent(intent)];
+    jj_store_service::git_bridge::accept(writer.clone(), &request)
+        .await
+        .unwrap();
+    let event = m::RequestId::new([56; 16]);
+    let mut unselected = jj_store_jj::roots::operation();
+    unselected.metadata.description = "unselected source".into();
+    let objects = NativeObjects::new(store.clone(), REPO, 2 * 1024 * 1024).unwrap();
+    let (m::ObjectKey::Operation(unselected), _) = objects.put(&unselected).await.unwrap() else {
+        panic!()
+    };
+    let mut unselected_request = request.clone();
+    unselected_request.request_id = m::RequestId::new([57; 16]);
+    let GitRecordV1::PushIntent(unselected_intent) = &mut unselected_request.records[0] else {
+        panic!()
+    };
+    unselected_intent.id = unselected_request.request_id;
+    unselected_intent.operation = unselected;
+    let before = writer.snapshot().await.unwrap();
+    assert!(
+        jj_store_service::git_bridge::accept(writer.clone(), &unselected_request)
+            .await
+            .is_err(),
+        "unselected source operation cannot authorize Git publication"
+    );
+    assert_eq!(writer.snapshot().await.unwrap().digest(), before.digest());
+    let other = Arc::new(
+        NativeSession::new_local_trusted(
+            store.clone(),
+            Arc::new(NativeObjects::new(store, REPO, 2 * 1024 * 1024).unwrap()),
+            m::PrincipalId::new([55; 16]),
+            Permission::Write,
+            Arc::new(SystemClock),
+            Protection::default(),
+            SessionLimits::default(),
+        )
+        .unwrap(),
+    );
+    let before = writer.snapshot().await.unwrap();
+    request.request_id = event;
+    request.records = vec![GitRecordV1::PushEvent(GitPushEventV1 {
+        id: event,
+        attempt,
+        predecessors: BTreeSet::new(),
+        kind: GitPushEventKindV1::TransportStarted,
+    })];
+    assert!(matches!(
+        jj_store_service::git_bridge::accept(other, &request).await,
+        Err(jj_store_wal::Error::Denied)
+    ));
+    assert_eq!(writer.snapshot().await.unwrap().digest(), before.digest());
+    let forged = GitPushEventV1 {
+        id: event,
+        attempt,
+        predecessors: BTreeSet::new(),
+        kind: GitPushEventKindV1::ResultRecorded {
+            refs: BTreeMap::from([(
+                "refs/heads/missing".into(),
+                GitPushRefOutcomeV1::Acknowledged,
+            )]),
+        },
+    };
+    request.request_id = event;
+    request.records = vec![GitRecordV1::PushEvent(forged)];
+    assert!(
+        jj_store_service::git_bridge::accept(writer, &request)
+            .await
+            .is_err()
+    );
+}

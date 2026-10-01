@@ -107,6 +107,7 @@ pub async fn run(
         return presentation::help(ui, helper, &[]);
     };
     match command {
+        StoreCommand::Git(_) => Err(user_error("Git attempts require native bridge dispatch")),
         StoreCommand::Token(token_args) => {
             let (value, text) = crate::token_commands::run(ui, token_args)
                 .await
@@ -347,5 +348,5 @@ pub fn capabilities() -> serde_json::Value {
         "abandon":"verified","rebase":"verified","squash":"verified","split":"verified","undo":"verified",
         "resolve --list":"verified","file show":"verified","file list":"verified","file chmod":"verified",
         "sign":"verified (SSH)","unsign":"verified (SSH)","operation reconciliation":"verified",
-        "git remote add/list/set-url":"verified local bridge","git fetch":"verified local bounded scope","git push":"unsupported","git import/export":"unsupported","util gc":"unsupported"},"git_bridge":{"stage":"GB2 local fetch slice","dispatch":"native backend-aware hook","native_transport":"approved device-local Git 2.55.0; code origin activation gated until GB4","fetch":"one named remote; simple bookmark filters; commit tags retained","publication":"bookmarks only; tag publication deferred"},"creation":"jj store init with durable retries","physical_state":"client-local","ordinary_commands":"upstream jj 0.45.1"})
+        "git remote add/list/set-url":"verified local bridge","git fetch":"verified local bounded scope","git push":"verified single bookmark/default tracked selection and dry-run","store git status/recover":"verified data-only status and no-repush recovery","git import/export":"unsupported","util gc":"unsupported"},"git_bridge":{"stage":"GB3 local push slice","dispatch":"native backend-aware hook","native_transport":"approved device-local Git 2.55.0; code origin activation gated until GB4","fetch":"one named remote; simple bookmark filters; commit tags retained","publication":"one bookmark with exact lease; tag/multi-ref/other selectors deferred","attempts":"durable prepare/start/result/apply; cache-loss and lost-ack repair; no exactly-once external claim"},"creation":"jj store init with durable retries","physical_state":"client-local","ordinary_commands":"upstream jj 0.45.1"})
 }

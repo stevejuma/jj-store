@@ -309,6 +309,9 @@ pub async fn verify_delta(
         }
     }
     for value in &added {
+        if let GitRecordV1::PushIntent(value) = value {
+            verify_intent_view(converter.native.clone(), value).await?;
+        }
         if let GitRecordV1::Observation(value) = value {
             for target in value.refs.values().filter(|v| v.oid.is_some()) {
                 let oid = target.oid.as_ref().unwrap();
@@ -326,4 +329,61 @@ pub async fn verify_delta(
         }
     }
     Ok(())
+}
+
+/// Validate the fixed existing-bookmark selection against its immutable view.
+async fn verify_intent_view(
+    native: Arc<NativeObjects>,
+    intent: &jj_store_wal::publication::GitPushIntentV1,
+) -> Result<()> {
+    use jj_lib::{op_store as op, ref_name::RefName};
+    let operation: op::Operation = if intent.operation == crate::roots::ROOT_OPERATION {
+        crate::roots::operation()
+    } else {
+        native
+            .get(m::ObjectKey::Operation(intent.operation))
+            .await?
+    };
+    let view_id = m::ViewId::from_slice(operation.view_id.as_bytes())?;
+    let view: op::View = if view_id == crate::roots::ROOT_VIEW {
+        crate::roots::view()
+    } else {
+        native.get(m::ObjectKey::View(view_id)).await?
+    };
+    for (name, value) in &intent.refs {
+        let name = RefName::new(
+            name.strip_prefix("refs/heads/")
+                .ok_or("Git push bookmark namespace")?,
+        );
+        let target = view
+            .local_bookmarks
+            .get(name)
+            .unwrap_or_else(|| op::RefTarget::absent_ref());
+        let desired = value
+            .desired
+            .native
+            .map(|id| op::RefTarget::normal(b::CommitId::from_bytes(id.as_bytes())))
+            .unwrap_or_else(op::RefTarget::absent);
+        if target != &desired {
+            return Err("Git push selection differs from frozen native bookmark".into());
+        }
+    }
+    Ok(())
+}
+/// Admission proof for a new attempt. Retained attempts use their original
+/// immutable evidence during recovery, even if native operation undo follows.
+pub async fn verify_push_source(
+    native: Arc<NativeObjects>,
+    heads: &BTreeSet<m::OperationId>,
+    intent: &jj_store_wal::publication::GitPushIntentV1,
+) -> Result<()> {
+    use jj_store_wal::publication::OperationHeadReducer as _;
+    let reducer = crate::replication::NativeOperationHeadReducer::new(native.clone());
+    let mut candidates = heads.clone();
+    candidates.insert(intent.operation);
+    let maximal = reducer.maximal_heads(candidates).await?;
+    if !heads.contains(&intent.operation) && maximal.contains(&intent.operation) {
+        return Err("Git source operation is not in accepted code history".into());
+    }
+    verify_intent_view(native, intent).await
 }

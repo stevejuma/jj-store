@@ -3,6 +3,8 @@ use super::*;
 use jj_store_model::{CommitId, FileId};
 mod facts;
 pub use facts::*;
+mod attempts;
+pub use attempts::*;
 
 pub const GIT_PROFILE: &str = "jj-git-sha1-0.45.1-v1";
 const MAX_GIT_RECORDS: usize = 100_000;
@@ -42,6 +44,8 @@ pub enum GitRecordV1 {
     Representation(GitRepresentationV1),
     Remote(GitRemoteV1),
     Observation(GitObservationV1),
+    PushIntent(GitPushIntentV1),
+    PushEvent(GitPushEventV1),
 }
 impl GitRecordV1 {
     pub fn key(&self) -> Result<RecordDigest> {
@@ -49,6 +53,8 @@ impl GitRecordV1 {
         let identity = match self {
             Self::Remote(v) => format!("remote:{}", v.event),
             Self::Observation(v) => format!("observation:{}", v.id),
+            Self::PushIntent(v) => format!("push_intent:{}", v.id),
+            Self::PushEvent(v) => format!("push_event:{}", v.id),
             Self::Object(v) => format!("object:{}", v.oid),
             Self::Representation(v) => format!(
                 "representation:{}:{}:{}",
@@ -63,6 +69,8 @@ impl GitRecordV1 {
         match self {
             Self::Remote(v) => v.validate(),
             Self::Observation(v) => v.validate(),
+            Self::PushIntent(v) => v.validate(),
+            Self::PushEvent(v) => v.validate(),
             Self::Object(v)
                 if valid_git_oid(&v.oid)
                     && v.dependencies.len() <= MAX_GIT_RECORDS
@@ -132,6 +140,16 @@ impl Coordinator {
             }
             match &value {
                 GitRecordV1::Remote(_) => {}
+                GitRecordV1::PushEvent(_) => {}
+                GitRecordV1::PushIntent(v) => {
+                    native.insert(ObjectKey::Operation(v.operation));
+                    native.extend(
+                        v.refs
+                            .values()
+                            .filter_map(|r| r.desired.native)
+                            .map(ObjectKey::Commit),
+                    );
+                }
                 GitRecordV1::Observation(v) => {
                     native.insert(ObjectKey::Operation(v.operation));
                     native.extend(
@@ -170,13 +188,15 @@ impl Coordinator {
                 _ => {}
             }
         }
-        Ok(GitStoreSnapshot {
+        let snapshot = GitStoreSnapshot {
             repository: self.records.repository,
             reference,
             values,
             records,
             native,
-        })
+        };
+        attempts::validate_attempts(&snapshot)?;
+        Ok(snapshot)
     }
     pub async fn stage_git_records(
         &self,

@@ -46,7 +46,8 @@ pub use application::ApplicationIntent;
 pub use collaboration::{CollaborationOutcome, CollaborationRequest};
 pub use domains::{Domain, DomainFactsV1, DomainRequest, DomainState, RepositoryDomains};
 pub use git_interop::{
-    GIT_PROFILE, GitObjectKind, GitObjectV1, GitObservationV1, GitRecordV1, GitRefV1, GitRemoteV1,
+    GIT_PROFILE, GitObjectKind, GitObjectV1, GitObservationV1, GitPushEventKindV1, GitPushEventV1,
+    GitPushIntentV1, GitPushRefOutcomeV1, GitPushRefV1, GitRecordV1, GitRefV1, GitRemoteV1,
     GitRepresentationV1, GitRootV1, GitStoreSnapshot, valid_git_oid, valid_git_ref,
     valid_remote_name,
 };
