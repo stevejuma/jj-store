@@ -2,7 +2,7 @@
   import * as Chat from "@lapismd/design-core/ai/chat";
   import { FileDiff } from "@lapismd/design-core/diff";
   import type { Model } from "../../api/client.js";
-  import StoreIdentityCopy from "./StoreIdentityCopy.svelte";
+  import CommunityProjectsRevisionGraphIds from "../community-projects/CommunityProjectsRevisionGraphIds.svelte";
 
   let {
     tool,
@@ -62,8 +62,13 @@
 
 <div class="store-agent-tool-detail">
   <div class="store-agent-tool-detail__identities">
-    <StoreIdentityCopy value={tool.tool_call_id} label="tool call ID" />
-    <StoreIdentityCopy value={tool.snapshot_id} label="tool snapshot ID" />
+    {#each tool.code as association (association.association_id)}<CommunityProjectsRevisionGraphIds
+        commitId={association.after_commits[0] ??
+          association.before_commits[0] ??
+          ""}
+        changeId={association.changes[0]}
+        placement="inline"
+      />{/each}
   </div>
   {#if paths.length > 0 && (tool.kind === "edit" || tool.kind === "delete" || tool.kind === "move")}
     {#each paths as path (path)}

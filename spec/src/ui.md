@@ -735,3 +735,23 @@ icon. Refresh becomes busy synchronously before discovery and remains busy
 through sidebar and current-view reads; mutation controls are disabled through
 that interval. Keyboard, mobile, permission, paging and cold browser acceptance
 remain separate from visual baseline approval.
+
+### Native collaboration action placement
+
+The mobile main toolbar keeps navigation at the start, project breadcrumbs in
+its center and the details-sidebar toggle at its far end. Projects landing tabs
+start with Activity, followed by Projects, Tasks, Reviews and Repositories. Only
+recorded Git/JJ code identities remain inline on agent session rows and headers.
+Session, root, snapshot, author and comment identities belong in a
+keyboard-accessible shadcn kebab menu that copies complete native values without
+changing selection. Tool hover actions include the same menu for call, snapshot,
+turn, sanitized input/output and recorded paths. Open portaled menus keep their
+hover toolbar visible; touch exposes the actions without hover.
+
+Native review and task bubbles use Community hover/focus Reply and message
+menus. Copy is available for readable records. Edit is offered for visible
+comments created by the authenticated repository principal when write access
+exists. The composer shows the original text above an edit and the parent
+author/content above a reply, supports cancellation and retains draft/context
+after a failed or unknown publication. Captured agent messages are immutable
+evidence and offer copy actions rather than comment-edit callbacks.

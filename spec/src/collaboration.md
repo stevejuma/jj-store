@@ -836,3 +836,19 @@ dependency source and must reproduce the exact manifest digest plus code,
 AgentStore and ReviewStore roots before success is returned. This is a local
 native snapshot copy primitive, not backup, migration, remote export, failover
 or promotion; those deployment behaviors remain deferred.
+
+### Native comment presentation and edit context
+
+Review reply actions bind the selected stable parent comment ID. Native comment
+editing captures the original text and exact comment revision/version when the
+edit begins; an explicit refresh does not silently replace that precondition.
+Only visible own-author comments offer the Community edit action, and native
+service authorization remains authoritative. A missing edited comment must not
+fall back to creating a reply. Task edit context also retains the observed task
+version. Agent transcript and tool captures stay immutable; copy menus expose
+only the selected sanitized native presentation records.
+
+An unresolved review command retains its durable request identity and blocks
+replacement submissions until status proves commitment. Draft and edit/reply
+context remain present on failure or unknown outcome. Late command completions
+from an invalidated connection cannot repopulate or navigate the active view.

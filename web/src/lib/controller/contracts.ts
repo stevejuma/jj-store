@@ -188,6 +188,7 @@ export interface StoreControllerState {
     import("./review-anchor-patch.js").ReviewInlinePatch | undefined;
   readonly reviewActionMessage: string;
   readonly reviewActionRequestId: string | null;
+  readonly committedReviewRequestId?: string | null;
   readonly authenticated: boolean;
   readonly member: CommunityMemberModel;
   readonly status: StoreControllerStatus;
@@ -246,6 +247,11 @@ export interface StoreController {
     selectAgentSession(id: string | null): void | Promise<void>;
     selectReviewThread(id: string | null): void | Promise<void>;
     replyToReview(text: string, parentCommentId?: string): Promise<void>;
+    editReviewComment(
+      commentId: string,
+      expectedRevisionId: string,
+      text: string,
+    ): Promise<void>;
     commentOnDiffLine(
       context: FileDiffLineContext,
       text: string,

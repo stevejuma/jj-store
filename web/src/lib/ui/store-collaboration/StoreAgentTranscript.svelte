@@ -6,6 +6,7 @@
   import type { Model } from "../../api/client.js";
   import type { StoreController } from "../../controller/contracts.js";
   import StoreAgentToolReview from "./StoreAgentToolReview.svelte";
+  import StoreMessageActions from "./StoreMessageActions.svelte";
   import CommunityProjectsVirtualRows from "../community-projects/CommunityProjectsVirtualRows.svelte";
 
   let {
@@ -15,6 +16,7 @@
     patches = {},
     controller,
     interactive = true,
+    sessionId,
   }: {
     activity: readonly Model<"AgentActivity">[];
     agent: CommunityMemberModel;
@@ -22,6 +24,7 @@
     patches?: Readonly<Record<string, string>>;
     controller: StoreController;
     interactive?: boolean;
+    sessionId: string;
   } = $props();
 
   const members = $derived([agent, member]);
@@ -67,7 +70,17 @@
           {author}
           {members}
           highlighted={entry.role === "user"}
-        />
+          >{#snippet supplement()}<StoreMessageActions
+              authorName={author.name}
+              items={[
+                { label: "Copy message", value: entry.content.content },
+                { label: "Copy message ID", value: entry.message_id },
+                { label: "Copy turn ID", value: entry.turn_id },
+                { label: "Copy session ID", value: sessionId },
+                { label: "Copy sequence", value: String(entry.sequence) },
+              ]}
+            />{/snippet}</CommunityMessage
+        >
       {:else if entry.type === "tool"}
         <StoreAgentToolReview
           tool={entry.tool}

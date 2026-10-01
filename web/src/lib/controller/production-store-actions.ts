@@ -204,6 +204,7 @@ export function createProductionStoreActions(options: {
       await options.reader.selectReviewThread(id);
     },
     replyToReview: options.reader.reply,
+    editReviewComment: options.reader.edit,
     commentOnDiffLine: options.reader.commentOnDiffLine,
     commentOnAgentTool: options.reader.commentOnAgentTool,
     setReviewResolved: options.reader.setResolved,

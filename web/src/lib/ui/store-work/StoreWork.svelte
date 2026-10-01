@@ -159,6 +159,7 @@
         />
       {:else if view.task && view.project}
         {#key view.task.id}<StoreWorkTaskDetail
+            {principal}
             {work}
             {repositories}
             {writable}

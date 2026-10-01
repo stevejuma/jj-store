@@ -97,6 +97,7 @@ export interface ProductionStoreState {
   reviewCursor: string | null;
   reviewActionMessage: string;
   reviewActionRequestId: string | null;
+  committedReviewRequestId: string | null;
 }
 
 export const emptyGraph = (): RepositoryLogGraph => ({
@@ -189,6 +190,7 @@ export function createProductionStoreState(): ProductionStoreState {
     reviewCursor: null,
     reviewActionMessage: "",
     reviewActionRequestId: null,
+    committedReviewRequestId: null,
   });
   return state;
 }
@@ -234,4 +236,5 @@ export function clearProductionStoreView(state: ProductionStoreState) {
   state.reviewCursor = null;
   state.reviewActionMessage = "";
   state.reviewActionRequestId = null;
+  state.committedReviewRequestId = null;
 }

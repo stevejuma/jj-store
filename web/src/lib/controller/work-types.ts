@@ -76,4 +76,11 @@ export interface WorkDraft {
   status: "open" | "in_progress" | "blocked" | "done";
   reply: string | null;
   edit: string | null;
+  editContext?:
+    | {
+        body: string;
+        commentVersion: number | bigint;
+        taskVersion: number | bigint;
+      }
+    | undefined;
 }

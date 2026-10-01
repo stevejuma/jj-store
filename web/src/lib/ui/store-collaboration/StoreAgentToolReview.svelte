@@ -12,6 +12,7 @@
   } from "../../collaboration/presentation.js";
   import type { StoreController } from "../../controller/contracts.js";
   import StoreAgentToolDetail from "./StoreAgentToolDetail.svelte";
+  import StoreRecordMenu from "./StoreRecordMenu.svelte";
   import StoreReviewConversation from "./StoreReviewConversation.svelte";
 
   let {
@@ -29,6 +30,7 @@
   let draftOpen = $state(false);
   let draft = $state("");
   let actionsVisible = $state(false);
+  let menuOpen = $state(false);
 
   const selected = $derived.by(() => {
     const detail = controller.state.reviewThread;
@@ -123,23 +125,23 @@
       },
     ]}
   />
-  {#if interactive}<div
-      class="store-agent-tool-review__actions"
-      role="group"
-      aria-label={`Actions for ${tool.native_name} tool call`}
-      data-visible={actionsVisible ? "" : undefined}
-    >
-      {#if review}
-        <span
-          class="store-agent-tool-review__count"
-          aria-label={`${review.comment_count} comments`}
-          title={`${review.comment_count} comments`}
-        >
-          <MessageSquareIcon aria-hidden="true" />
-          {review.comment_count}
-        </span>
-      {/if}
-      <Button
+  <div
+    class="store-agent-tool-review__actions"
+    role="group"
+    aria-label={`Actions for ${tool.native_name} tool call`}
+    data-visible={actionsVisible || menuOpen ? "" : undefined}
+  >
+    {#if interactive && review}
+      <span
+        class="store-agent-tool-review__count"
+        aria-label={`${review.comment_count} comments`}
+        title={`${review.comment_count} comments`}
+      >
+        <MessageSquareIcon aria-hidden="true" />
+        {review.comment_count}
+      </span>
+    {/if}
+    {#if interactive}<Button
         type="button"
         variant="ghost"
         size="icon-sm"
@@ -148,9 +150,26 @@
         onclick={() => void beginReply()}
       >
         <MessageSquareReplyIcon aria-hidden="true" />
-      </Button>
-    </div>
-  {/if}
+      </Button>{/if}
+    <StoreRecordMenu
+      label={`More ${tool.native_name} tool actions`}
+      onOpenChange={(open) => (menuOpen = open)}
+      items={[
+        { label: "Copy tool call ID", value: tool.tool_call_id },
+        { label: "Copy snapshot ID", value: tool.snapshot_id },
+        { label: "Copy turn ID", value: tool.turn_id },
+        { label: "Copy tool name", value: tool.native_name },
+        { label: "Copy input", value: tool.input?.content },
+        { label: "Copy output", value: tool.output?.content },
+        {
+          label: "Copy paths",
+          value: tool.observed_paths.length
+            ? tool.observed_paths.join("\n")
+            : null,
+        },
+      ]}
+    />
+  </div>
   {#if interactive && selected}
     <div class="store-agent-tool-review__thread">
       <StoreReviewConversation
@@ -170,7 +189,8 @@
         mode="form"
         showSubmitButton
         bind:value={draft}
-        disabled={controller.state.status.reviewAction === "refreshing"}
+        disabled={controller.state.status.reviewAction === "refreshing" ||
+          !!controller.state.reviewActionRequestId}
         busy={controller.state.status.reviewAction === "refreshing"}
         ariaLabel={`Reply to ${tool.native_name} tool call`}
         submitLabel="Reply"

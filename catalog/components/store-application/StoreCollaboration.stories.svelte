@@ -58,8 +58,9 @@
       canvas.getByRole("log", { name: "Agent conversation activity" }),
     ).toBeVisible();
     await expect(
-      canvas.getByRole("button", { name: /agent root/u }),
-    ).toBeVisible();
+      canvas.queryByRole("button", { name: /Copy full agent root/u }),
+    ).toBeNull();
+    await expect(sessionCard).toHaveAttribute("data-selected", "true");
     await expect(
       canvas.getByText(
         "Update the native parser and keep its review anchors exact.",
@@ -75,8 +76,8 @@
       canvas.getByRole("region", { name: "Changed file src/lib.rs" }),
     ).toBeVisible();
     await expect(
-      canvas.getByRole("button", { name: /tool call ID/u }),
-    ).toBeVisible();
+      canvas.queryByRole("button", { name: /Copy full tool call ID/u }),
+    ).toBeNull();
     const transcript = canvas.getByRole("log", {
       name: "Agent conversation activity",
     });
@@ -363,7 +364,11 @@
     await userEvent.type(editor, "The pinned root remains exact.");
     await expect(editor).toHaveFocus();
     await expect(getComputedStyle(editor).outlineStyle).toBe("none");
-    await userEvent.click(canvas.getByRole("button", { name: "Reply" }));
+    await userEvent.click(
+      within(
+        canvas.getByRole("group", { name: "Reply to review thread" }),
+      ).getByRole("button", { name: "Reply" }),
+    );
     await expect(
       canvas.getByText("The pinned root remains exact."),
     ).toBeVisible();

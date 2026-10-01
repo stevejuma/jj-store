@@ -25379,7 +25379,7 @@ and named tests are checked by the progress gate.
         "command": "pnpm test:governance",
         "result": "pass",
         "failures": 0,
-        "note": "jsh-directory-governance1.log: ✔ rejects_unchanged_ledger_for_code (0.628042ms); ✔ allows_documentation_without_execution_ledger (0.079ms); ℹ pass 34"
+        "note": "jsh-directory-governance1.log: \u2714 rejects_unchanged_ledger_for_code (0.628042ms); \u2714 allows_documentation_without_execution_ledger (0.079ms); \u2139 pass 34"
       },
       {
         "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7468 JJ_STORE_REAL_REPOSITORY=5ae8240e6d77fe8d0f6dd0b13f3d3874 JJ_STORE_REAL_RUNTIME=/tmp/jsh-cold-ijPU4c JJ_STORE_REAL_ROOT=/Users/stevejuma/code/lapismd/jj-store-projects-hub pnpm exec playwright test --config web/playwright.real.config.ts work-store.spec.ts",
@@ -29092,6 +29092,212 @@ and named tests are checked by the progress gate.
     ],
     "artifacts": "Ignored .scratch/activity-review-*.log, .scratch/activity-history-before.log, .scratch/activity-lazy-*.log and native state captures; web/test-results-real/projects-activity-native-p-693ed-hare-pinned-commit-activity/{project-activity,native-review-list,native-review-detail,anchored-agent-review}.png. Final full-width review list and inset/centered detail screenshots inspected; visual baselines remain pending.",
     "live_data": "All three current seeded agent sessions have empty code-association pages (relations=[] and next_cursor=null); the Codex session also has code=[]. Their tools were captured without intervening code changes. Commit-inline context follows only genuine recorded relations and is proven in fixtures, while the live original anchored agent review displays its recorded tools. No timestamp-based or fabricated association, seed or repository mutation added."
+  },
+  {
+    "id": "E-UI-046",
+    "tasks": ["M9.5", "M11.4"],
+    "date": "2026-10-01",
+    "kind": "community-native-message-actions-and-copy-menus",
+    "revision": "Enclosing Jujutsu change soynnsrx.",
+    "before": "Main clean at c22556aa; settings workspace excluded. Exact edit tests fail twice for absent edit action. Mobile/header and Agent activity story files fail twice, with 18 other cases passing. Initial human-name -t filters skip all 20 stories and are not acceptance evidence; a list attempt overlaps a temporary component rename and fails to import. No persistence change or visual-baseline approval.",
+    "files": [
+      "catalog/components/store-application/NativeAgentMenus.stories.svelte",
+      "catalog/components/store-application/NativeMessageActions.stories.svelte",
+      "catalog/components/store-application/StoreApplication.stories.svelte",
+      "catalog/components/store-application/StoreCollaboration.stories.svelte",
+      "catalog/components/store-work/ProjectsHub.stories.svelte",
+      "catalog/controller/fixture-review-edit.ts",
+      "catalog/controller/in-memory-store-collaboration.svelte.ts",
+      "catalog/fixtures/NativeReviewConversationFixture.svelte",
+      "spec/src/api.md",
+      "spec/src/collaboration.md",
+      "spec/src/milestones.md",
+      "spec/src/ui.md",
+      "spec/src/verification.md",
+      "web/src/lib/controller/contracts.ts",
+      "web/src/lib/controller/production-review-actions.ts",
+      "web/src/lib/controller/production-store-actions.ts",
+      "web/src/lib/controller/production-store-collaboration.svelte.ts",
+      "web/src/lib/controller/production-store-state.svelte.ts",
+      "web/src/lib/controller/production-store-view.ts",
+      "web/src/lib/controller/work-types.ts",
+      "web/src/lib/ui/store-application/StoreApplication.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentContext.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentSessions.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentToolDetail.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentToolReview.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentTranscript.svelte",
+      "web/src/lib/ui/store-collaboration/StoreMessageActions.svelte",
+      "web/src/lib/ui/store-collaboration/StoreNativeAgentContext.svelte",
+      "web/src/lib/ui/store-collaboration/StoreRecordMenu.svelte",
+      "web/src/lib/ui/store-collaboration/StoreReviewComposer.svelte",
+      "web/src/lib/ui/store-collaboration/StoreReviewConversation.svelte",
+      "web/src/lib/ui/store-collaboration/review-drafts.svelte.ts",
+      "web/src/lib/ui/store-work/StoreProjects.svelte",
+      "web/src/lib/ui/store-work/StoreWork.svelte",
+      "web/src/lib/ui/store-work/StoreWorkComments.svelte",
+      "web/src/lib/ui/store-work/StoreWorkMessageActions.svelte",
+      "web/src/lib/ui/store-work/StoreWorkRemoveComment.svelte",
+      "web/src/lib/ui/store-work/StoreWorkTaskDetail.svelte",
+      "web/tests/vite/production-store-collaboration.test.ts"
+    ],
+    "tests": [
+      "web/tests/vite/production-store-collaboration.test.ts#review edits preserve the edit-start revision and native body contract",
+      "web/tests/vite/production-store-collaboration.test.ts#unknown review edits block replacement submissions and retain their request",
+      "web/tests/vite/production-store-collaboration.test.ts#late review receipts cannot restore a disconnected selection"
+    ],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-store-collaboration.test.ts -t 'review edits|unknown review edits'",
+        "result": "fail",
+        "failures": 2,
+        "note": "Before: edit is not a function. .scratch/native-actions-unit-before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte -t 'Mobile details control|Agent response activity'",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 20 skipped; no acceptance credit."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte",
+        "result": "fail",
+        "failures": 2,
+        "note": "Before: header end alignment and inline agent root; 18 pass. .scratch/native-actions-stories-before-full.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-store-collaboration.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final 16/16 including edit-start revision, pending identity and disconnected receipt. .scratch/native-actions-unit.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/NativeMessageActions.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-work/StoreWork.stories.svelte",
+        "result": "fail",
+        "failures": 2,
+        "note": "Intermediate suite import errors: invalid Svelte state initializer assignment; 17 passing tests. Replaced with a declaration initializer."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/NativeMessageActions.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte",
+        "result": "fail",
+        "failures": 5,
+        "note": "First: wait for Community delayed hover before pointer action; scope new reply controls and remove duplicate outcome alert. Next rerun: two invalid test-only ControlOrMeta key expressions; use supported editor clear. .scratch/native-actions-message-stories{,2}.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/NativeMessageActions.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final three direct native-comment interactions pass in fixed-story rerun; intermediate assertions confused CodeMirror placeholder text with document text. Assert visible placeholder and absence of saved draft. Original/read-only/unknown cases retained."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/NativeMessageActions.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-work/NativeActivity.stories.svelte catalog/components/store-work/ProjectsActivity.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte",
+        "result": "fail",
+        "failures": 2,
+        "note": "40 pass; two fixture expectations: composer placeholder and superseded tab order. Direct unchanged consumers pass. .scratch/native-actions-direct-stories.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/NativeMessageActions.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "11 pass; old ProjectsHub array order still on one line. Update to requested Activity-first order."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "18/18 after tab order correction and exact identifier menu assertions. .scratch/native-actions-final-focused-stories.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/NativeAgentMenus.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Extracted native-menu story passes; exact session/root/tool/message values, no row selection and portaled toolbar retention. .scratch/native-actions-agent-menu-story.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final 13/13 after extracting comment removal and standalone menu story; .scratch/native-actions-extracted-stories.log."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final zero errors/warnings. Intermediate two full-width version type errors and one missing pending-request initializer; preserve number|bigint and initialize the field."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final zero errors/warnings and 96 modules; earlier six type errors from fixture content narrowing, literal permission widening and unsupported ByRole exact options, then one missing draft field. All repaired."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Extracted composer, task removal, fixture edits and standalone agent menu story; intermediate four counted-line failures repaired without raising budgets."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Cold generated UI build and manifest; existing large-chunk advisory remains. .scratch/native-actions-web-build.log."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "fail",
+        "failures": 8,
+        "note": "Intermediate ledger lacked named test fragments and recorded component removal; repair ledger references without altering tests. Story cases are recorded in stories/runs because the named-test checker recognizes unit definitions only."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "34 protected files, 4 canonical chapters."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "131 requirements validated."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final ledger names/removal/chapter references verified."
+      },
+      {
+        "command": "python3 .scratch/format-native-slice.py",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formats the existing changed files and verifies their formatting; removed paths excluded."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "One native collaboration presentation/controller surface and its direct UI consumers. Fresh Vitest browser processes, exact controller tests, focused type/boundary/architecture checks and cold web output. Root aggregates, unrelated Rust and full Storybook remain out of scope. Main settings workspace is untouched. Subsequent repository Projects/activity-filter/document changes belong to a separate slice.",
+    "formats": "Existing V1 ReviewStore edit_comment and safe_markdown/review-markdown-v1; no HTTP schema, Rust, WAL or repository format change. In-memory WorkDraft retains full number|bigint comment/task versions. Readable native IDs copy complete values; only exact recorded Git/JJ associations are inline. Review drafts are memory-only and clear on matching committed request after an unknown outcome. Captured agent transcripts remain immutable.",
+    "versions": "macOS ARM64; JJ 0.45.1; Node 24.10.0; pnpm 10.32.1; existing pinned Svelte, Community, Design Core and Chromium.",
+    "next": "Complete repository-linked Projects tab, document Markdown preview and requested project Activity filter; preserve stored demo data during owned restart. Visual approval remains separate.",
+    "deferred": [
+      "Visual baseline approval remains pending.",
+      "Shared release and independent deployment qualification remain deferred."
+    ],
+    "artifacts": "Ignored .scratch/native-actions-*.log; no baseline changes or seed mutations.",
+    "removed_files": [
+      "web/src/lib/ui/store-work/StoreWorkMessageActions.svelte"
+    ],
+    "stories": [
+      "catalog/components/store-application/NativeMessageActions.stories.svelte#Native copy reply and own author edit",
+      "catalog/components/store-application/NativeMessageActions.stories.svelte#Read only and other author comments expose copy without edit",
+      "catalog/components/store-application/NativeMessageActions.stories.svelte#Unknown edit retains original context and draft",
+      "catalog/components/store-application/NativeAgentMenus.stories.svelte#Native identifier menus preserve selection and exact values",
+      "catalog/components/store-application/StoreApplication.stories.svelte#Mobile details control stays at toolbar end",
+      "catalog/components/store-application/StoreCollaboration.stories.svelte#Agent response activity",
+      "catalog/components/store-work/StoreWork.stories.svelte#Native threaded discussion",
+      "catalog/components/store-work/ProjectsHub.stories.svelte#Landing tabs sidebar hierarchy reviews and icon empty state"
+    ]
   }
 ]
 ```

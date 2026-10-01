@@ -353,3 +353,17 @@
     await waitFor(() => expect(edge).toHaveAttribute("aria-expanded", "false"));
   }}
 />
+
+<Story
+  name="Mobile details control stays at toolbar end"
+  args={{ displayMode: "mobile", initialPage: "log" }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    const toggle = c.getByRole("button", { name: "Open details sidebar" });
+    const toolbar = toggle.closest("header")!;
+    const bounds = toolbar.getBoundingClientRect(),
+      button = toggle.getBoundingClientRect();
+    await expect(bounds.right - button.right).toBeLessThan(30);
+    await expect(button.left).toBeGreaterThan(bounds.left + bounds.width * 0.8);
+  }}
+/>

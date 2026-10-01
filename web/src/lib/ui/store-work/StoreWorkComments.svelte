@@ -1,10 +1,10 @@
 <script lang="ts">
   import StoreWorkEmpty from "./StoreWorkEmpty.svelte";
-  import StoreWorkMessageActions from "./StoreWorkMessageActions.svelte";
+  import StoreMessageActions from "../store-collaboration/StoreMessageActions.svelte";
   import { untrack } from "svelte";
   import type { Snippet } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import * as AlertDialog from "@lapismd/design-core/shadcn/alert-dialog";
+  import StoreWorkRemoveComment from "./StoreWorkRemoveComment.svelte";
   import { CommunityChatComposer } from "@lapismd/lapis-community/components/community-chat-composer";
   import { CommunityMessage } from "@lapismd/lapis-community/components";
   import {
@@ -22,11 +22,13 @@
   let {
     work,
     writable,
+    principal,
     busy = false,
     activity,
   }: {
     work: WorkController;
     writable: boolean;
+    principal?: string | undefined;
     busy?: boolean;
     activity?: Snippet;
   } = $props();
@@ -54,7 +56,7 @@
       ? {
           kind: "edit" as const,
           id: draft.edit,
-          label: view.comments.find((c) => c.id === draft.edit)?.body ?? "",
+          label: draft.editContext?.body ?? "",
         }
       : draft.reply
         ? {
@@ -80,13 +82,23 @@
     if (!view.task) return;
     draft.body = content;
     const comment = view.comments.find((row) => row.id === draft.edit);
+    if (
+      draft.edit &&
+      (!comment ||
+        !draft.editContext ||
+        comment.body === null ||
+        comment.actor.created_by !== principal)
+    )
+      throw new Error(
+        "The selected comment cannot be edited. Cancel this edit to start a new comment.",
+      );
     await work.submit(
       comment
         ? {
             command: "edit_comment",
             id: comment.id,
-            expected_version: comment.version,
-            expected_task_version: view.task.version,
+            expected_version: draft.editContext!.commentVersion,
+            expected_task_version: draft.editContext!.taskVersion,
             body: draft.body,
           }
         : {
@@ -102,23 +114,11 @@
       draft.body = "";
       draft.reply = null;
       draft.edit = null;
+      draft.editContext = undefined;
     } else
       throw new Error(
         view.error || "Outcome unknown. Check the retained task command.",
       );
-  }
-  async function remove() {
-    const comment = view.comments.find((row) => row.id === removing);
-    if (!view.task || !comment) return false;
-    await work.submit({
-      command: "tombstone_comment",
-      id: comment.id,
-      expected_version: comment.version,
-      expected_task_version: view.task.version,
-    });
-    if (view.error) return false;
-    removing = null;
-    return true;
   }
 </script>
 
@@ -191,21 +191,47 @@
                       title={comment.actor.updated_by}
                       >Last edited by {comment.actor.updated_by}</span
                     >{/if}
-                  {#if writable}<StoreWorkMessageActions
-                      {disabled}
-                      removed={comment.body === null}
-                      authorName={workMember(comment.actor.created_by).name}
-                      onReply={() => {
-                        draft.reply = comment.id;
-                        draft.edit = null;
-                      }}
-                      onEdit={() => {
-                        draft.edit = comment.id;
-                        draft.reply = null;
-                        draft.body = comment.body!;
-                      }}
-                      onRemove={() => (removing = comment.id)}
-                    />{/if}
+                  <StoreMessageActions
+                    {disabled}
+                    authorName={workMember(comment.actor.created_by).name}
+                    items={[
+                      { label: "Copy message", value: comment.body },
+                      { label: "Copy comment ID", value: comment.id },
+                      {
+                        label: "Copy author ID",
+                        value: comment.actor.created_by,
+                      },
+                      { label: "Copy task ID", value: comment.task },
+                      {
+                        label: "Copy parent comment ID",
+                        value: comment.reply_to,
+                      },
+                    ]}
+                    onReply={writable
+                      ? () => {
+                          draft.reply = comment.id;
+                          draft.edit = null;
+                          draft.editContext = undefined;
+                        }
+                      : undefined}
+                    onEdit={writable &&
+                    comment.body !== null &&
+                    comment.actor.created_by === principal
+                      ? () => {
+                          draft.edit = comment.id;
+                          draft.reply = null;
+                          draft.body = comment.body!;
+                          draft.editContext = {
+                            body: comment.body!,
+                            commentVersion: comment.version,
+                            taskVersion: view.task!.version,
+                          };
+                        }
+                      : undefined}
+                    onRemove={writable && comment.body !== null
+                      ? () => (removing = comment.id)
+                      : undefined}
+                  />
                 {/snippet}
               </CommunityMessage>
             </div>
@@ -234,45 +260,14 @@
           {context}
           {members}
           onCancelContext={() => {
+            if (draft.edit) draft.body = "";
             draft.edit = null;
             draft.reply = null;
+            draft.editContext = undefined;
           }}
           onSubmit={(submission) => save(submission.content)}
         />{/if}
     </Collapsible.Content>
   </Collapsible.Root>
 </section>
-<AlertDialog.Root
-  open={removing !== null}
-  onOpenChange={(open) => {
-    if (!open && !view.writing) removing = null;
-  }}
->
-  <AlertDialog.Content
-    preventScroll={false}
-    onEscapeKeydown={(event) => {
-      if (view.writing) event.preventDefault();
-    }}
-  >
-    <AlertDialog.Header>
-      <AlertDialog.Title>Remove comment?</AlertDialog.Title>
-      <AlertDialog.Description
-        >The comment body will be removed. Its replies and recorded history will
-        remain.</AlertDialog.Description
-      >
-    </AlertDialog.Header>
-    {#if view.error}<p role="alert">{view.error}</p>{/if}
-    <AlertDialog.Footer>
-      <Button
-        variant="outline"
-        disabled={view.writing}
-        onclick={() => (removing = null)}>Cancel</Button
-      >
-      <Button
-        variant="destructive"
-        disabled={view.writing || !!view.pending}
-        onclick={remove}>Remove comment</Button
-      >
-    </AlertDialog.Footer>
-  </AlertDialog.Content>
-</AlertDialog.Root>
+<StoreWorkRemoveComment {work} bind:commentId={removing} />

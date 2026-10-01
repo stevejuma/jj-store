@@ -22,7 +22,8 @@
   import CommunityRelativeTime from "../community-relative-time/CommunityRelativeTime.svelte";
   import StoreCollaborationSkeleton from "./StoreCollaborationSkeleton.svelte";
   import StoreAgentContext from "./StoreAgentContext.svelte";
-  import StoreIdentityCopy from "./StoreIdentityCopy.svelte";
+  import StoreRecordMenu from "./StoreRecordMenu.svelte";
+  import CommunityProjectsRevisionGraphIds from "../community-projects/CommunityProjectsRevisionGraphIds.svelte";
   import "./store-collaboration.css";
 
   let {
@@ -92,6 +93,13 @@
               {#snippet row(session)}
                 {@const agent = agentMember(session)}
                 {@const timing = agentSessionTiming(session)}
+                {@const association =
+                  state.agentSession?.session.session_id === session.session_id
+                    ? state.agentSession.code[0]
+                    : state.agentRelations.find(
+                        (row) =>
+                          row.association?.session_id === session.session_id,
+                      )?.association}
                 <div role="listitem">
                   <div
                     class="store-collaboration__row"
@@ -160,9 +168,29 @@
                       >
                     </span>
                     <span class="store-collaboration__row-actions">
-                      <StoreIdentityCopy
-                        value={session.session_id}
-                        label="agent session ID"
+                      {#if association}<CommunityProjectsRevisionGraphIds
+                          commitId={association.after_commits[0] ??
+                            association.before_commits[0] ??
+                            ""}
+                          changeId={association.changes[0]}
+                          placement="inline"
+                        />{/if}
+                      <StoreRecordMenu
+                        label="Agent session actions"
+                        items={[
+                          {
+                            label: "Copy session ID",
+                            value: session.session_id,
+                          },
+                          {
+                            label: "Copy snapshot ID",
+                            value: session.snapshot_id,
+                          },
+                          {
+                            label: "Copy parent session ID",
+                            value: session.parent_session_id,
+                          },
+                        ]}
                       />
                     </span>
                   </div>

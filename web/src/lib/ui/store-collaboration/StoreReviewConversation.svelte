@@ -1,7 +1,6 @@
 <script lang="ts">
   import { FileDiff } from "@lapismd/design-core/diff";
-  import { CommunityChatComposer } from "@lapismd/lapis-community/components/community-chat-composer";
-  import "../editor-focus.css";
+  import StoreReviewComposer from "./StoreReviewComposer.svelte";
   import { CommunityMessage } from "@lapismd/lapis-community/components/community-message";
   import type { StoreController } from "../../controller/contracts.js";
   import {
@@ -11,7 +10,8 @@
     reviewMessage,
   } from "../../collaboration/presentation.js";
   import CommunityProjectsVirtualRows from "../community-projects/CommunityProjectsVirtualRows.svelte";
-  import StoreIdentityCopy from "./StoreIdentityCopy.svelte";
+  import StoreMessageActions from "./StoreMessageActions.svelte";
+  import { reviewDraft } from "./review-drafts.svelte.js";
 
   let {
     controller,
@@ -52,12 +52,19 @@
         : view.detail?.patches[path]
       : undefined,
   );
-  let draft = $state("");
-
-  async function submit(content: string) {
-    await controller.actions.replyToReview(content);
-    if (controller.state.status.reviewAction === "ready") draft = "";
-  }
+  const draft = $derived(
+    reviewDraft(controller, detail?.thread.thread_id ?? ""),
+  );
+  const writable = $derived(
+    view.repository?.permission === "write" ||
+      view.repository?.permission === "admin",
+  );
+  const disabled = $derived(
+    !writable ||
+      view.status.reviewAction === "refreshing" ||
+      view.status.reviewAction === "loading" ||
+      !!view.reviewActionRequestId,
+  );
 </script>
 
 {#if detail}<div
@@ -102,22 +109,55 @@
                 aria-hidden="true"
               ></span>{/if}
             <div class="store-collaboration__message-content">
-              <div class="store-collaboration__message-identities">
-                <StoreIdentityCopy
-                  value={comment.author}
-                  label="review author ID"
-                />
-                <StoreIdentityCopy
-                  value={comment.comment_id}
-                  label="review comment ID"
-                />
-              </div>
               <CommunityMessage
                 message={reviewMessage(comment)}
                 {author}
                 {members}
                 density="compact"
-              />
+              >
+                {#snippet supplement()}<StoreMessageActions
+                    {disabled}
+                    authorName={author.name}
+                    items={[
+                      {
+                        label: "Copy message",
+                        value:
+                          comment.content.state === "visible"
+                            ? comment.content.text
+                            : null,
+                      },
+                      { label: "Copy comment ID", value: comment.comment_id },
+                      { label: "Copy revision ID", value: comment.revision_id },
+                      { label: "Copy author ID", value: comment.author },
+                      {
+                        label: "Copy thread ID",
+                        value: detail.thread.thread_id,
+                      },
+                      {
+                        label: "Copy parent comment ID",
+                        value: comment.parent_comment_id,
+                      },
+                    ]}
+                    onReply={writable && detail.thread.status === "open"
+                      ? () => {
+                          draft.reply = comment;
+                          draft.edit = null;
+                        }
+                      : undefined}
+                    onEdit={writable &&
+                    comment.content.state === "visible" &&
+                    comment.author === view.repository?.principal
+                      ? () => {
+                          draft.edit = comment;
+                          draft.reply = null;
+                          draft.body =
+                            comment.content.state === "visible"
+                              ? comment.content.text
+                              : "";
+                        }
+                      : undefined}
+                  />{/snippet}
+              </CommunityMessage>
             </div>
           </div>
         {/snippet}
@@ -138,23 +178,8 @@
             The exact text diff is unavailable for this anchored file.
           </p>{/if}
       </div>{/if}
-    {#if showComposer && detail.thread.status === "open"}
-      <div class="store-collaboration__composer">
-        <CommunityChatComposer
-          mode="form"
-          showSubmitButton
-          bind:value={draft}
-          {members}
-          disabled={view.status.reviewAction === "refreshing"}
-          busy={view.status.reviewAction === "refreshing"}
-          ariaLabel={inline
-            ? `Add a comment to ${path ?? "the selected diff"}`
-            : "Reply to review thread"}
-          submitLabel={inline ? "Comment" : "Reply"}
-          placeholder={inline ? "Add a review comment" : "Reply with Markdown"}
-          onSubmit={(submission) => submit(submission.content)}
-        />
-      </div>
+    {#if writable && ((showComposer && detail.thread.status === "open") || draft.reply || draft.edit)}
+      <StoreReviewComposer {controller} {inline} {path} />
     {/if}
   </div>{/if}
 

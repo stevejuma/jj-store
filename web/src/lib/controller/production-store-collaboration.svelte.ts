@@ -145,7 +145,9 @@ export function createProductionStoreCollaboration(context: Context) {
         if (!current()) return;
         data.reviewPatch = undefined;
       }
-      data.status.reviewAction = "ready";
+      data.status.reviewAction = data.reviewActionRequestId
+        ? "unavailable"
+        : "ready";
     } catch (cause) {
       if (!current()) return;
       data.status.reviewAction = "failed";
@@ -266,6 +268,7 @@ export function createProductionStoreCollaboration(context: Context) {
 
   const reviewActions = createProductionReviewActions({
     ...context,
+    selectedReviewId: () => history.route.reviewThreadId,
     reloadReviews: () => loadReviews(),
     reloadReview: loadReview,
     selectReview: (id) =>

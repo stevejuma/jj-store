@@ -515,6 +515,132 @@ test("review replies send exact workflow preconditions and refresh detail", asyn
   expect(data.reviewActionRequestId).toBeNull();
 });
 
+test("review edits preserve the edit-start revision and native body contract", async () => {
+  const { controller, data, commands, source } = harness();
+  const comment = {
+    comment_id: id16("44"),
+    revision_id: id32("45"),
+    parent_comment_id: null,
+    author: id16("20"),
+    actor: id16("20"),
+    created_at_millis: 1,
+    previous_revision_id: null,
+    superseded_revision_ids: [],
+    content: {
+      state: "visible" as const,
+      body_id: id32("46"),
+      format: "safe_markdown" as const,
+      text: "Original comment",
+      sanitizer_version: "review-markdown-v1",
+    },
+  };
+  source.reviewThread = async () => ({
+    ...reviewDetail(),
+    comments: [comment],
+  });
+  data.repositories = [
+    {
+      id: source.repository,
+      name: "Home",
+      permission: "write",
+      principal: comment.author,
+    },
+  ];
+  await controller.selectReviewThread(thread.thread_id);
+  data.reviewThread = {
+    ...reviewDetail(),
+    comments: [{ ...comment, revision_id: id32("47") }],
+  };
+  await controller.edit(
+    comment.comment_id,
+    comment.revision_id,
+    "Edited comment",
+  );
+  expect(commands[0]?.command).toEqual({
+    command: "edit_comment",
+    comment_id: comment.comment_id,
+    expected_revision_id: comment.revision_id,
+    replacement_body: {
+      schema_version: 1,
+      format: "safe_markdown",
+      text: "Edited comment",
+      sanitizer_version: "review-markdown-v1",
+    },
+  });
+});
+
+test("unknown review edits block replacement submissions and retain their request", async () => {
+  const { controller, data, commands, source } = harness("unknown");
+  const comment = {
+    comment_id: id16("44"),
+    revision_id: id32("45"),
+    parent_comment_id: null,
+    author: id16("20"),
+    actor: id16("20"),
+    created_at_millis: 1,
+    previous_revision_id: null,
+    superseded_revision_ids: [],
+    content: {
+      state: "visible" as const,
+      body_id: id32("46"),
+      format: "safe_markdown" as const,
+      text: "Original",
+      sanitizer_version: "review-markdown-v1",
+    },
+  };
+  source.reviewThread = async () => ({
+    ...reviewDetail(),
+    comments: [comment],
+  });
+  data.repositories = [
+    {
+      id: source.repository,
+      name: "Home",
+      permission: "write",
+      principal: comment.author,
+    },
+  ];
+  await controller.selectReviewThread(thread.thread_id);
+  await controller.edit(
+    comment.comment_id,
+    comment.revision_id,
+    "Retained draft",
+  );
+  await controller.reply("Must not replace the pending edit");
+  expect(commands).toHaveLength(1);
+  expect(data.reviewActionRequestId).toBe(id16("51"));
+  expect(data.status.reviewAction).toBe("unavailable");
+});
+
+test("late review receipts cannot restore a disconnected selection", async () => {
+  let active = true;
+  const { controller, data, source, history } = harness(
+    "committed",
+    () => active,
+  );
+  await controller.selectReviewThread(thread.thread_id);
+  const original = source.applyReviewCommand.bind(source);
+  let finish!: () => void;
+  source.applyReviewCommand = (request) =>
+    new Promise((resolve) => {
+      finish = () => {
+        void original(request).then(resolve);
+      };
+    });
+  const pending = controller.reply("Late reply");
+  active = false;
+  data.reviewThread = undefined;
+  data.reviewActionRequestId = null;
+  data.status.reviewAction = "idle";
+  history.replace({ ...history.route, reviewThreadId: null });
+  finish();
+  await pending;
+  expect(data.reviewThread).toBeUndefined();
+  expect(data.reviewActionRequestId).toBeNull();
+  expect(data.status.reviewAction).toBe("idle");
+  expect(history.route.reviewThreadId).toBeNull();
+});
+
 test("unknown review outcomes retain the durable request identity", async () => {
   const { controller, data } = harness("unknown");
   await controller.loadReviews();

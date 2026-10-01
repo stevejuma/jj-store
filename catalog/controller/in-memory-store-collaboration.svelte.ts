@@ -18,6 +18,10 @@ import {
   reviewPatch,
   reviewThreads,
 } from "../fixtures/collaboration.js";
+import {
+  appendFixtureReviewComment,
+  editFixtureReviewComment,
+} from "./fixture-review-edit.js";
 import { createFixtureLineReview } from "./in-memory-inline-review.js";
 import { nativeReviewContext } from "../fixtures/native-activity.js";
 
@@ -34,7 +38,9 @@ export function createInMemoryStoreCollaboration(options: {
   let reviewActionMessage = $state("");
   let reviewActionRequestId = $state<string | null>(null);
   let reviewActionStatus = $state<StoreLoadStatus>("ready");
+  let committedReviewRequestId = $state<string | null>(null);
   let pendingResolved = false;
+  let pendingEdit: (() => void) | null = null;
   function selectReviewDetail(
     thread: (typeof reviewThreads)[number] | undefined,
   ) {
@@ -68,39 +74,14 @@ export function createInMemoryStoreCollaboration(options: {
     selectReviewDetail(thread);
     return thread?.thread_id ?? null;
   }
-  async function appendReview(text: string) {
+  async function appendReview(text: string, parentCommentId?: string) {
     if (!text.trim()) return;
-    const index = selectedReview.comments.length + 1;
-    const byte = index.toString(16).padStart(2, "0");
-    selectedReview = {
-      ...selectedReview,
-      thread: {
-        ...selectedReview.thread,
-        comment_count: index,
-        content_version: Number(selectedReview.thread.content_version) + 1,
-        workflow_version: Number(selectedReview.thread.workflow_version) + 1,
-      },
-      comments: [
-        ...selectedReview.comments,
-        {
-          comment_id: byte.repeat(16),
-          revision_id: byte.repeat(32),
-          parent_comment_id: null,
-          author: "20".repeat(16),
-          actor: "20".repeat(16),
-          created_at_millis: options.now * 1000,
-          previous_revision_id: null,
-          superseded_revision_ids: [],
-          content: {
-            state: "visible",
-            body_id: "21".repeat(32),
-            format: "safe_markdown",
-            text: text.trim(),
-            sanitizer_version: "review-markdown-v1",
-          },
-        },
-      ],
-    };
+    selectedReview = appendFixtureReviewComment(
+      selectedReview,
+      text,
+      options.now,
+      parentCommentId,
+    );
     reviewActionMessage = "Review update committed.";
   }
   const actions: Pick<
@@ -108,6 +89,7 @@ export function createInMemoryStoreCollaboration(options: {
     | "selectAgentSession"
     | "selectReviewThread"
     | "replyToReview"
+    | "editReviewComment"
     | "commentOnDiffLine"
     | "commentOnAgentTool"
     | "setReviewResolved"
@@ -133,8 +115,35 @@ export function createInMemoryStoreCollaboration(options: {
       selectReviewDetail(thread);
       options.push({ ...options.route(), reviewThreadId: id });
     },
-    async replyToReview(text) {
-      await appendReview(text);
+    async replyToReview(text, parentCommentId) {
+      await appendReview(text, parentCommentId);
+    },
+    async editReviewComment(id, expectedRevisionId, text) {
+      const changed = editFixtureReviewComment(
+        selectedReview,
+        id,
+        expectedRevisionId,
+        text,
+      );
+      if (!changed) {
+        reviewActionStatus = "failed";
+        reviewActionMessage = "stale review";
+        return;
+      }
+      const update = () => {
+        selectedReview = changed;
+      };
+      if (options.outcome === "unknown") {
+        pendingEdit = update;
+        reviewActionStatus = "unavailable";
+        reviewActionRequestId = "31".repeat(16);
+        reviewActionMessage =
+          "The review outcome is unknown. Check the durable request status before retrying.";
+      } else {
+        update();
+        reviewActionStatus = "ready";
+        reviewActionMessage = "Review update committed.";
+      }
     },
     async commentOnDiffLine(line, text) {
       if (!text.trim() || line.lineNumber === null) return;
@@ -192,13 +201,18 @@ export function createInMemoryStoreCollaboration(options: {
       reviewActionMessage = "Review update committed.";
     },
     async checkReviewAction() {
-      selectedReview = {
-        ...selectedReview,
-        thread: {
-          ...selectedReview.thread,
-          status: pendingResolved ? "resolved" : "open",
-        },
-      };
+      if (pendingEdit) {
+        pendingEdit();
+        pendingEdit = null;
+      } else
+        selectedReview = {
+          ...selectedReview,
+          thread: {
+            ...selectedReview.thread,
+            status: pendingResolved ? "resolved" : "open",
+          },
+        };
+      committedReviewRequestId = reviewActionRequestId;
       reviewActionRequestId = null;
       reviewActionMessage = "Review update committed.";
       reviewActionStatus = "ready";
@@ -226,6 +240,7 @@ export function createInMemoryStoreCollaboration(options: {
             : undefined,
         reviewActionMessage,
         reviewActionRequestId,
+        committedReviewRequestId,
       };
     },
     get reviewActionStatus() {

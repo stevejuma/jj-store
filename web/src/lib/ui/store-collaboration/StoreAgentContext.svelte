@@ -14,7 +14,8 @@
   import CommunityProjectsRevisionGraphIds from "../community-projects/CommunityProjectsRevisionGraphIds.svelte";
   import CommunityProjectsVirtualRows from "../community-projects/CommunityProjectsVirtualRows.svelte";
   import StoreAgentTranscript from "./StoreAgentTranscript.svelte";
-  import StoreIdentityCopy from "./StoreIdentityCopy.svelte";
+  import StoreRecordMenu from "./StoreRecordMenu.svelte";
+  import StoreMessageActions from "./StoreMessageActions.svelte";
 
   let { controller }: { controller: StoreController } = $props();
   const state = $derived(controller.state);
@@ -29,14 +30,9 @@
           relation.association?.session_id === selected?.session.session_id,
       )?.association,
   );
-  const changeId = $derived(
-    association?.changes[0] ?? state.route.changeId ?? undefined,
-  );
+  const changeId = $derived(association?.changes[0]);
   const commitId = $derived(
-    association?.after_commits[0] ??
-      association?.before_commits[0] ??
-      state.route.commitId ??
-      undefined,
+    association?.after_commits[0] ?? association?.before_commits[0],
   );
   const changeHref = $derived(
     selected && changeId && commitId
@@ -71,9 +67,15 @@
           />
           <span class="store-collaboration__detail-title">{agent.name}</span>
         </span>
-        <StoreIdentityCopy
-          value={selected.session.session_id}
-          label="agent session ID"
+        <StoreRecordMenu
+          label="Agent details actions"
+          items={[
+            { label: "Copy session ID", value: selected.session.session_id },
+            { label: "Copy snapshot ID", value: selected.session.snapshot_id },
+            { label: "Copy agent root", value: selected.snapshot.agent_root },
+            { label: "Copy repository ID", value: selected.snapshot.repo_id },
+            { label: "Copy epoch ID", value: selected.snapshot.epoch },
+          ]}
         />
       </div>
       <div class="store-collaboration__detail-meta">
@@ -82,10 +84,7 @@
         >
           {selected.session.state}
         </CommunityChip>
-        <StoreIdentityCopy
-          value={selected.snapshot.agent_root}
-          label="agent root"
-        />
+
         {#if changeId || commitId}
           <CommunityProjectsRevisionGraphIds
             commitId={commitId ?? ""}
@@ -111,6 +110,7 @@
       <StoreAgentTranscript
         {controller}
         activity={selected.activity}
+        sessionId={selected.session.session_id}
         {agent}
         member={{
           ...state.member,
@@ -141,7 +141,22 @@
                 author={agent}
                 members={[agent]}
                 avatarShape="rounded"
-              />
+                >{#snippet supplement()}<StoreMessageActions
+                    authorName={agent.name}
+                    items={[
+                      { label: "Copy message", value: chunk.content },
+                      {
+                        label: "Copy session ID",
+                        value: selected.session.session_id,
+                      },
+                      {
+                        label: "Copy transcript ID",
+                        value: selected.transcripts[0]?.transcript_id,
+                      },
+                      { label: "Copy sequence", value: String(chunk.sequence) },
+                    ]}
+                  />{/snippet}</CommunityMessage
+              >
             </div>
           {/snippet}
         </CommunityProjectsVirtualRows>

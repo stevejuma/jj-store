@@ -23,6 +23,7 @@
     work,
     repositories,
     writable,
+    principal,
     busy = false,
     onEdit,
     onSubtask,
@@ -36,6 +37,7 @@
     work: WorkController;
     repositories: readonly StoreRepositorySummary[];
     writable: boolean;
+    principal?: string | undefined;
     busy?: boolean;
     onEdit: () => void;
     onSubtask?: () => void;
@@ -158,6 +160,7 @@
     {#key task.id}<StoreWorkComments
         {work}
         {writable}
+        {principal}
         {busy}
         {activity}
       />{/key}

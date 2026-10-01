@@ -95,6 +95,7 @@ export function productionStoreView(
     reviewContext: data.reviewContext,
     reviewActionMessage: data.reviewActionMessage,
     reviewActionRequestId: data.reviewActionRequestId,
+    committedReviewRequestId: data.committedReviewRequestId,
     authenticated:
       options.connected &&
       (data.status.connection === "connected" ||

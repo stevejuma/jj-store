@@ -78,7 +78,7 @@
   const tabs = $derived<ProjectsTab[]>(
     project
       ? ["tasks", "reviews", "repositories", "activity"]
-      : ["projects", "tasks", "reviews", "repositories", "activity"],
+      : ["activity", "projects", "tasks", "reviews", "repositories"],
   );
   const tab = $derived(
     route.workTab ?? (route.projectId ? "tasks" : "projects"),
@@ -215,6 +215,9 @@
           {:else if task}{#key task.id}<StoreWorkTaskDetail
                 {work}
                 repositories={controller.state.repositories}
+                principal={controller.state.repositories.find(
+                  (r) => r.id === route.repository,
+                )?.principal}
                 {writable}
                 busy={hub.loading}
                 onClose={() =>

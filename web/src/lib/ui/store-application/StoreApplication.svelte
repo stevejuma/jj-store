@@ -228,7 +228,11 @@
           {#if current.page === "projects" && controller.projects}<StoreProjectsBreadcrumb
               {controller}
             />{/if}
-          <AppShell.Sidebar.Toggle side="right" sidebarName="details" />
+          <div
+            style="margin-inline-start: auto; display: flex; flex: 0 0 auto;"
+          >
+            <AppShell.Sidebar.Toggle side="right" sidebarName="details" />
+          </div>
         </AppShell.Toolbar>
       {/if}
       <AppShell.Body

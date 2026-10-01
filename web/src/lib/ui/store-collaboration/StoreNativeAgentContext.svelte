@@ -92,6 +92,7 @@
               </p>{/if}
             <StoreAgentTranscript
               activity={session.activity}
+              sessionId={session.session.session_id}
               agent={agentMember(session.session)}
               member={{
                 ...controller.state.member,

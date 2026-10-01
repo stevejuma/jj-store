@@ -174,3 +174,12 @@ list-to-detail navigation, header return behavior, hidden tabs in detail,
 responsive body inset and vertically centered Back control. Route regressions
 qualify retired column links and reject invalid legacy mode fields. The reviews
 page exposes no column styling or sidebar layout controls.
+
+E-UI-046 qualifies far-end mobile details controls, Activity-first landing tabs,
+complete native identifier copy menus and Community hover/focus reply/edit
+composition. Production controller regressions pin edit-start revisions, retain
+unknown request identity, block replacement commands and reject late receipt
+completion after access invalidation. Native message stories prove own-author
+editing, read-only copy, exact parent replies and retained edit context. Agent
+menu stories prove full native clipboard values and unchanged selection.
+Captured transcripts stay immutable. Visual baselines remain pending.
