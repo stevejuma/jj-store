@@ -190,3 +190,48 @@ test("graph_rendering_bounds_nodes_and_edges_before_layout", () => {
   graph.data.nodes = [{ parents: [] }] as typeof graph.data.nodes;
   assert.equal(displayable(graph), true);
 });
+test("reaction_assets_keep_credentials_in_headers_and_admit_only_bounded_rasters", async () => {
+  let url = "",
+    headers = new Headers();
+  const client = new Client(
+    "11".repeat(16),
+    "fixture-memory-only",
+    () => {},
+    async (input, init) => {
+      url = String(input);
+      headers = new Headers(init?.headers);
+      return new Response(new Uint8Array([1, 2, 3]), {
+        headers: { "content-type": "image/png" },
+      });
+    },
+  );
+  const asset = await client.asset("22".repeat(32));
+  assert.equal(asset.type, "image/png");
+  assert.deepEqual([...asset.bytes], [1, 2, 3]);
+  assert.equal(url.includes("fixture-memory-only"), false);
+  assert.equal(headers.get("authorization"), "Bearer fixture-memory-only");
+  const svg = new Client(
+    "11".repeat(16),
+    null,
+    () => {},
+    async () =>
+      new Response("<svg/>", { headers: { "content-type": "image/svg+xml" } }),
+  );
+  await assert.rejects(
+    () => svg.asset("22".repeat(32)),
+    /unsupported reaction asset media/,
+  );
+  const huge = new Client(
+    "11".repeat(16),
+    null,
+    () => {},
+    async () =>
+      new Response(new Uint8Array(2 * 1024 * 1024 + 1), {
+        headers: { "content-type": "image/png" },
+      }),
+  );
+  await assert.rejects(() => huge.asset("22".repeat(32)), /response limit/);
+  client.close();
+  svg.close();
+  huge.close();
+});

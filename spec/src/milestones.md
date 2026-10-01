@@ -124,12 +124,12 @@ shared-package release qualification does not alter those original Git gates.
 | M14.5       | Planned     | M14.2                   | JST-UI-016,JST-PUB-005,JST-PUB-006                                                                                                                                       | Storage integrity and non-destructive checkpoints                                                                              | Add bounded authorized operations and uncertain-outcome recovery               | -                                                                                                                                                                                                                                                                                                                                                              |
 | M14.6       | In progress | M14.2,M10.7             | JST-UI-016,JST-REPL-012                                                                                                                                                  | Configured sync status and controls in Settings                                                                                | Expose existing controls without upstream configuration or credential editing  | E-M14-008,E-M14-010,E-M14-011,E-M14-012                                                                                                                                                                                                                                                                                                                        |
 | M14.7       | Planned     | M14.3,M14.4,M14.5,M14.6 | JST-UI-016,JST-SEC-006                                                                                                                                                   | Integrated local settings and cold persistent acceptance                                                                       | Qualify completed native flow and preserve unsupported M13 capabilities        | -                                                                                                                                                                                                                                                                                                                                                              |
-| M15         | In progress | M13.1                   | JST-COLLAB-008,JST-COLLAB-009,JST-COLLAB-010,JST-COLLAB-011,JST-COLLAB-012,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                   | Persistent Threads and rich Reactions                                                                                          | Qualify native/local publication                                               | E-M15-001,E-M15-005,E-M15-006,E-M15-007,E-M15-008,E-M15-009,E-M15-010,E-M15-011,E-M15-012,E-M15-013,E-M15-014,E-M15-015                                                                                                                                                                                                                                        |
-| M15.1       | In progress | M13.1                   | JST-COLLAB-008,JST-COLLAB-009,JST-COLLAB-010,JST-COLLAB-011,JST-COLLAB-012                                                                                               | Canonical domain, lifecycle, exact targets, conflict semantics and retained images                                             | Qualify command/provider membership                                            | E-M15-001,E-M15-005                                                                                                                                                                                                                                                                                                                                            |
-| M15.2       | In progress | M15.1                   | JST-COLLAB-013                                                                                                                                                           | Native format 5, local version 2, atomic roots, receipts, recovery and copy                                                    | Qualify native commands/capture and cold full flow                             | E-M15-002,E-M15-004,E-M15-005,E-M15-012,E-M15-014                                                                                                                                                                                                                                                                                                              |
-| M15.3       | In progress | M15.2                   | JST-COLLAB-014                                                                                                                                                           | Bounded authorized services, HTTP/RPC, CLI and capture binding                                                                 | Complete native/public command boundaries                                      | E-M15-004,E-M15-005,E-M15-006,E-M15-007,E-M15-008,E-M15-009,E-M15-010,E-M15-011,E-M15-012,E-M15-013,E-M15-014,E-M15-015                                                                                                                                                                                                                                        |
+| M15         | In progress | M13.1                   | JST-COLLAB-008,JST-COLLAB-009,JST-COLLAB-010,JST-COLLAB-011,JST-COLLAB-012,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                   | Persistent Threads and rich Reactions                                                                                          | Qualify native/local publication                                               | E-M15-001,E-M15-005,E-M15-006,E-M15-007,E-M15-008,E-M15-009,E-M15-010,E-M15-011,E-M15-012,E-M15-013,E-M15-014,E-M15-015,E-M15-016                                                                                                                                                                                                                              |
+| M15.1       | In progress | M13.1                   | JST-COLLAB-008,JST-COLLAB-009,JST-COLLAB-010,JST-COLLAB-011,JST-COLLAB-012                                                                                               | Canonical domain, lifecycle, exact targets, conflict semantics and retained images                                             | Qualify command/provider membership                                            | E-M15-001,E-M15-005,E-M15-016                                                                                                                                                                                                                                                                                                                                  |
+| M15.2       | In progress | M15.1                   | JST-COLLAB-013                                                                                                                                                           | Native format 5, local version 2, atomic roots, receipts, recovery and copy                                                    | Qualify native commands/capture and cold full flow                             | E-M15-002,E-M15-004,E-M15-005,E-M15-012,E-M15-014,E-M15-016                                                                                                                                                                                                                                                                                                    |
+| M15.3       | In progress | M15.2                   | JST-COLLAB-014                                                                                                                                                           | Bounded authorized services, HTTP/RPC, CLI and capture binding                                                                 | Complete native/public command boundaries                                      | E-M15-004,E-M15-005,E-M15-006,E-M15-007,E-M15-008,E-M15-009,E-M15-010,E-M15-011,E-M15-012,E-M15-013,E-M15-014,E-M15-015,E-M15-016                                                                                                                                                                                                                              |
 | M15.4       | Planned     | M15.2                   | JST-COLLAB-015                                                                                                                                                           | Reducer 3 data-only convergence and complete closure transfer                                                                  | Qualify reordered and duplicate origin sets                                    | -                                                                                                                                                                                                                                                                                                                                                              |
-| M15.5       | Planned     | M15.3                   | JST-COLLAB-016                                                                                                                                                           | Released Community channel template, Threads navigation and rich reactions                                                     | Qualify owners and cold consumer flow                                          | E-M15-011,E-M15-015                                                                                                                                                                                                                                                                                                                                            |
+| M15.5       | In progress | M15.3                   | JST-COLLAB-016                                                                                                                                                           | Released Community channel template, Threads navigation and rich reactions                                                     | Qualify owners and cold consumer flow                                          | E-M15-011,E-M15-015,E-M15-016                                                                                                                                                                                                                                                                                                                                  |
 | M15.6       | In progress | M15.3                   | JST-COLLAB-009,JST-COLLAB-010                                                                                                                                            | Derived canonical-source timeline/search and review integration                                                                | Qualify authorized joins                                                       | E-M15-006                                                                                                                                                                                                                                                                                                                                                      |
 | M15.7       | Planned     | M15.4,M15.5,M15.6       | JST-COLLAB-007,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                                                                               | Cold real-RustFS/local full flow and runner qualification                                                                      | Retain native/local/cold evidence                                              | -                                                                                                                                                                                                                                                                                                                                                              |
 
@@ -34806,6 +34806,486 @@ and named tests are checked by the progress gate.
       }
     ],
     "preservation_audit": "Final live audit retains all 212 latest-parent evidence entries exactly and all 14 Thread entries exactly apart from their M14-to-M15 namespace. Every rebased ancestor is conflict-free. Parent presentation sources are retained without new Thread UI implementation; manifest/companion formats and generated contracts remain unchanged by the latest UI-only parent overlay. Root aggregates, full Rust workspace, new Thread browser full-flow, real RustFS and runner qualification remain out of scope."
+  },
+  {
+    "id": "E-M15-016",
+    "tasks": ["M15", "M15.1", "M15.2", "M15.3", "M15.5"],
+    "date": "2026-10-01",
+    "kind": "community-thread-channel-ui",
+    "revision": "enclosing Jujutsu change xrkpynxm",
+    "versions": "JJ 0.45.1 domain baseline; installed local file snapshots @lapismd/lapis-community 0.1.0 and @lapismd/design-core 0.1.2 through the existing development hook and unchanged parent lockfile; Svelte 5.57.1, Vitest 4.1.11, Storybook 10.5.7. Development Cargo runs use CARGO_INCREMENTAL=0. Released-package qualification is not established.",
+    "formats": "Optional reply_to is omitted from legacy human revisions and commands when absent. Parent revisions become exact immutable closure dependencies and edits preserve parent identity. Native manifest 5/local companion 2 remain unchanged. HTTP contracts add authorized human timeline bodies, custom emoji definition refs and captured Agent message reaction witnesses. Image reads remain credential-bound and become revocable memory blob URLs.",
+    "files": [
+      "catalog/components/store-threads/StoreCapturedReactions.stories.svelte",
+      "catalog/components/store-threads/StoreThreads.stories.svelte",
+      "catalog/fixtures/StoreCapturedReactionsFixture.svelte",
+      "catalog/fixtures/StoreThreadsFixture.svelte",
+      "catalog/fixtures/thread-transport.ts",
+      "crates/jj-collab/src/commands.rs",
+      "crates/jj-collab/src/graph.rs",
+      "crates/jj-collab/src/objects.rs",
+      "crates/jj-collab/src/threads.rs",
+      "crates/jj-collab/tests/domain.rs",
+      "crates/jj-collab/tests/replies.rs",
+      "crates/jj-collab/tests/target_resolution.rs",
+      "crates/jj-store-cli/tests/local_collab_cli.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/http_threads_reactions.rs",
+      "crates/jj-store-rpc/tests/collab.rs",
+      "crates/jj-store-service/src/collab_pages.rs",
+      "crates/jj-store-service/src/collab_reads.rs",
+      "crates/jj-store-service/src/collaboration/agent_details.rs",
+      "crates/jj-store-service/src/collaboration/models.rs",
+      "crates/jj-store-service/tests/agent_sessions.rs",
+      "crates/jj-store-service/tests/local_collab.rs",
+      "crates/jj-store-service/tests/native_collab.rs",
+      "crates/jj-store-wal/tests/collab_commands.rs",
+      "crates/jj-store-wal/tests/collab_persistence.rs",
+      "schemas/openapi.json",
+      "spec/src/api.md",
+      "spec/src/cli.md",
+      "spec/src/collaboration.md",
+      "spec/src/compatibility.md",
+      "spec/src/jj-integration.md",
+      "spec/src/local-jj.md",
+      "spec/src/milestones.md",
+      "spec/src/mutations.md",
+      "spec/src/publication.md",
+      "spec/src/ui.md",
+      "web/src/lib/api/client.ts",
+      "web/src/lib/api/generated.ts",
+      "web/src/lib/api/reaction-asset.ts",
+      "web/src/lib/collaboration/thread-presentation.ts",
+      "web/src/lib/controller/collab-actions.svelte.ts",
+      "web/src/lib/controller/contracts.ts",
+      "web/src/lib/controller/http-store-data-source.ts",
+      "web/src/lib/controller/http-threads-data-source.ts",
+      "web/src/lib/controller/message-reactions.svelte.ts",
+      "web/src/lib/controller/native-data-source.ts",
+      "web/src/lib/controller/production-store-controller.svelte.ts",
+      "web/src/lib/controller/production-store-refresh.ts",
+      "web/src/lib/controller/production-threads-integration.ts",
+      "web/src/lib/controller/production-threads.svelte.ts",
+      "web/src/lib/controller/store-route-codec.ts",
+      "web/src/lib/controller/store-route-history.svelte.ts",
+      "web/src/lib/controller/thread-types.ts",
+      "web/src/lib/ui/community-navigation/icons.ts",
+      "web/src/lib/ui/community-navigation/model.ts",
+      "web/src/lib/ui/store-application/StoreApplication.svelte",
+      "web/src/lib/ui/store-application/StoreRepositoryApplication.svelte",
+      "web/src/lib/ui/store-application/store-navigation.ts",
+      "web/src/lib/ui/store-collaboration/StoreAgentTranscript.svelte",
+      "web/src/lib/ui/store-collaboration/StoreReviewConversation.svelte",
+      "web/src/lib/ui/store-threads/StoreMessageReactions.svelte",
+      "web/src/lib/ui/store-threads/StoreThreadCreate.svelte",
+      "web/src/lib/ui/store-threads/StoreThreadReplies.svelte",
+      "web/src/lib/ui/store-threads/StoreThreads.svelte",
+      "web/src/lib/ui/store-threads/store-threads.css",
+      "web/src/lib/ui/store-threads/thread-navigation.ts",
+      "web/tests/client.test.ts",
+      "web/tests/vite/production-threads.test.ts"
+    ],
+    "tests": [
+      "crates/jj-collab/tests/replies.rs#legacy_messages_keep_canonical_bytes_without_reply_field",
+      "crates/jj-collab/tests/replies.rs#replies_retain_exact_parent_and_reject_cross_thread_or_self_links",
+      "crates/jj-store-service/tests/local_collab.rs#local_reply_parent_and_receipt_survive_gc_and_cold_reopen"
+    ],
+    "runs": [
+      {
+        "command": "CARGO_INCREMENTAL=0 cargo test -p jj-collab --test replies --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "Initial reply regression could not compile before optional reply fields were added."
+      },
+      {
+        "command": "CARGO_INCREMENTAL=0 cargo test -p jj-collab --test replies --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial 1 reply regression passed."
+      },
+      {
+        "command": "CARGO_INCREMENTAL=0 pnpm contracts:generate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Ran twice while adding hydrated human timeline, exact custom versions and Agent message witnesses; generation succeeded."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "fail",
+        "failures": 7,
+        "note": "Initial composition errors: generated model, rune shadowing and Community props; corrected owners."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "fail",
+        "failures": 2,
+        "note": "Thread controller valid callback declared after use; changed to a function declaration."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "fail",
+        "failures": 2,
+        "note": "Client and production controller exceeded budgets; extracted binary admission, Thread integration and snapshot refresh owners."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "fail",
+        "failures": 2,
+        "note": "Reply details description/current member optionality corrected."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "0 errors and 0 warnings."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "472 modules passed before final fixture additions; latest check recorded separately."
+      },
+      {
+        "command": "CARGO_INCREMENTAL=0 cargo test -p jj-collab --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "25 tests pass including fixed legacy byte witness, exact parent identity and serialized cold closure."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-threads.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial 7 targeted controller tests pass."
+      },
+      {
+        "command": "CARGO_INCREMENTAL=0 cargo test -p jj-store-service --test native_collab --test local_collab --test agent_sessions --locked",
+        "result": "fail",
+        "failures": 2,
+        "note": "Agent witness assertions referenced an unavailable crate alias; switched to owned WAL reexports."
+      },
+      {
+        "command": "CARGO_INCREMENTAL=0 cargo test -p jj-store-service --test native_collab --test local_collab --test agent_sessions --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "22 selected service tests pass; later exact-target and cold-reply assertions require final rerun."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-threads/StoreThreads.stories.svelte",
+        "result": "fail",
+        "failures": 2,
+        "note": "Fixture initially rendered only the shell; switched to production StoreRepositoryApplication."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-threads/StoreThreads.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Message action hover readiness needed its real visibility boundary."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-threads/StoreThreads.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Interaction passed; axe found 2 ARIA labels on unroled reaction containers. Added group roles."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "fail",
+        "failures": 5,
+        "note": "Fixture model and story query types corrected."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "Catalog rejects imports of API client; fixture now consumes the public Thread model contract."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "0 errors/warnings; catalog boundary audit passes."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-threads/StoreThreads.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "2 interaction/a11y stories pass; pending action story had a duplicate text query."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-threads/StoreThreads.stories.svelte catalog/components/store-application/NativeAgentMenus.stories.svelte catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-application/RepositoryReview.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-work/NavigationPersistence.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "21 pass; the new pending story checked async status before completion. Its final assertion now waits for all confirmation controls to disappear; existing consumers all pass."
+      },
+      {
+        "command": "CARGO_INCREMENTAL=0 cargo test -p jj-store-wal --test collab_commands --test collab_persistence --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "21 command/persistence tests pass including checkpoint/copy, exact receipts and native code replication guard."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit",
+        "result": "pass",
+        "failures": 0,
+        "note": "168 tests in 30 files pass. Escalated because shared route/controller refresh owners affect repository and Projects consumers."
+      },
+      {
+        "command": "cargo fmt --all",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formatted after Rust additions."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/controller/thread-types.ts web/src/lib/ui/store-threads/StoreMessageReactions.svelte catalog/fixtures/thread-transport.ts catalog/components/store-threads/StoreThreads.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Applied focused formatting after each composition/controller slice."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-threads/StoreThreads.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Pending status fixture used the domain argument as request ID; corrected the local fixture and added an exact-domain/request regression."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-threads/StoreThreads.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "After receipt confirmation, retained draft and recorded message share text. Scoped assertion to the actual message list."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-threads/StoreThreads.stories.svelte catalog/components/store-application/NativeAgentMenus.stories.svelte catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-application/RepositoryReview.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-work/NavigationPersistence.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Fresh Chromium process: 22 stories pass interaction and accessibility. No visual baselines changed. /tmp/jj-thread-stories-qualified.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-threads/StoreCapturedReactions.stories.svelte",
+        "result": "fail",
+        "failures": 2,
+        "note": "Agent and Review exact-target custom reaction set and actor dialogs worked; clear clicks needed to wait for modal pointer ownership release."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-threads/StoreCapturedReactions.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "2 cold interaction/accessibility stories pass custom set/clear and authorized actor inspection on existing Agent/Review message components. /tmp/jj-thread-captured-stories-2.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-threads.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final 14 Thread tests are included in the final complete 172-test catalog-unit pass; intermediate 11 and 13 targeted tests passed after receipt and privacy assertions."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit",
+        "result": "pass",
+        "failures": 0,
+        "note": "172 tests in 30 files pass after final controller additions. Includes Projects-to-Threads navigation, exact parent edits, partial history, receipt identity, shared transactional emoji loading, lost outcomes and protected-cache disposal. /tmp/jj-thread-all-unit-final.log."
+      },
+      {
+        "command": "pnpm exec tsx --test web/tests/client.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "10 client regressions pass including private credential-header raster reads, SVG rejection and byte limits. /tmp/jj-thread-client.log."
+      },
+      {
+        "command": "CARGO_INCREMENTAL=0 cargo test -p jj-store-service --test native_collab --test local_collab --test agent_sessions --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final 23 service tests pass; exact Agent witnesses resolve through the authorized Reaction reader, human timeline hydration and version refs match, and persisted replies/receipts survive GC and cold reopen. /tmp/jj-thread-service-final.log."
+      },
+      {
+        "command": "CARGO_INCREMENTAL=0 cargo test -p jj-store-rpc --test collab --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "Existing receiver destructuring omitted the new custom definition version map; changed the consumer regression to assert exact refs."
+      },
+      {
+        "command": "CARGO_INCREMENTAL=0 cargo test -p jj-store-rpc --test collab --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "3 Unix RPC tests pass including reconstructed transports, exact emoji refs, source membership and permissions. /tmp/jj-thread-rpc-2.log."
+      },
+      {
+        "command": "CARGO_INCREMENTAL=0 cargo test -p jj-store-cli --test local_collab_cli --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "6 local CLI tests pass across Git layouts, cold reads, rich values, receipt retry and strict input rejection. /tmp/jj-thread-cli.log."
+      },
+      {
+        "command": "CARGO_INCREMENTAL=0 pnpm contracts:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "120 actual isolated HTTP/SSE responses conform; 7 contract tests and generated TypeScript fixture validation pass. /tmp/jj-thread-contracts-check.log."
+      },
+      {
+        "command": "CARGO_INCREMENTAL=0 cargo clippy -p jj-collab -p jj-store-service --lib --locked -- -D warnings",
+        "result": "pass",
+        "failures": 0,
+        "note": "Selected domain/service packages and direct dependency closure check without warnings. /tmp/jj-thread-clippy.log."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Production bundle and manifest pass. Existing large-chunk advisory remains. /tmp/jj-thread-web-build.log."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final check: 0 errors and 0 warnings. /tmp/jj-thread-web-check-last.log."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final check: 0 errors and 0 warnings; 119 catalog modules satisfy boundaries. /tmp/jj-thread-catalog-check-final.log."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "475 production/catalog modules pass line-budget and owner audit. /tmp/jj-thread-architecture-final.log."
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "16 package boundaries pass."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "4 validators, 21 chapters and 141 requirements pass."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "fail",
+        "failures": 1,
+        "note": "Generated schema changes require compatibility.md in the same change; added legacy-byte and additive-witness compatibility requirements."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "55 protected files mapped to 10 canonical chapters pass."
+      },
+      {
+        "command": "CARGO_INCREMENTAL=0 cargo test -p jj-store-cli --test native_lifecycle http_threads_reactions_acceptance --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "2 focused HTTP tests pass: exact targets, assets, signed roots, receipts, permission/input/media bounds and unknown request identity. /tmp/jj-thread-http.log."
+      },
+      {
+        "command": "cargo fmt --all -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final Rust formatting check passes."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final owner and line-budget audit passes for 477 modules."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final 4 validators, 21 chapters and 141 requirements pass."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final 57 protected files map to 10 canonical chapters."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final bookkeeping check passes for 119 tasks; remaining qualification stays explicit."
+      },
+      {
+        "command": "pnpm exec prettier --check catalog/components/store-threads/StoreCapturedReactions.stories.svelte catalog/components/store-threads/StoreThreads.stories.svelte catalog/fixtures/StoreCapturedReactionsFixture.svelte catalog/fixtures/StoreThreadsFixture.svelte catalog/fixtures/thread-transport.ts schemas/openapi.json spec/src/api.md spec/src/cli.md spec/src/collaboration.md spec/src/compatibility.md spec/src/jj-integration.md spec/src/local-jj.md spec/src/milestones.md spec/src/mutations.md spec/src/publication.md spec/src/ui.md web/src/lib/api/client.ts web/src/lib/api/generated.ts web/src/lib/api/reaction-asset.ts web/src/lib/collaboration/thread-presentation.ts web/src/lib/controller/collab-actions.svelte.ts web/src/lib/controller/contracts.ts web/src/lib/controller/http-store-data-source.ts web/src/lib/controller/http-threads-data-source.ts web/src/lib/controller/message-reactions.svelte.ts web/src/lib/controller/native-data-source.ts web/src/lib/controller/production-store-controller.svelte.ts web/src/lib/controller/production-store-refresh.ts web/src/lib/controller/production-threads-integration.ts web/src/lib/controller/production-threads.svelte.ts web/src/lib/controller/store-route-codec.ts web/src/lib/controller/store-route-history.svelte.ts web/src/lib/controller/thread-types.ts web/src/lib/ui/community-navigation/icons.ts web/src/lib/ui/community-navigation/model.ts web/src/lib/ui/store-application/StoreApplication.svelte web/src/lib/ui/store-application/StoreRepositoryApplication.svelte web/src/lib/ui/store-application/store-navigation.ts web/src/lib/ui/store-collaboration/StoreAgentTranscript.svelte web/src/lib/ui/store-collaboration/StoreReviewConversation.svelte web/src/lib/ui/store-threads/StoreMessageReactions.svelte web/src/lib/ui/store-threads/StoreThreadCreate.svelte web/src/lib/ui/store-threads/StoreThreadReplies.svelte web/src/lib/ui/store-threads/StoreThreads.svelte web/src/lib/ui/store-threads/store-threads.css web/src/lib/ui/store-threads/thread-navigation.ts web/tests/client.test.ts web/tests/vite/production-threads.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 48 changed supported files pass focused formatting; Rust is checked separately."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final production bundle and manifest pass after the hidden Review reaction control condition. Existing large-chunk advisory remains. /tmp/jj-thread-web-build-final.log."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formatted the evidence update; all previous entries are retained."
+      },
+      {
+        "command": "pnpm view @lapismd/design-core@0.2.0 version",
+        "result": "pass",
+        "failures": 0,
+        "note": "Registry reports 0.2.0; installed development snapshot is 0.1.2, so registry consumer parity remains unqualified."
+      },
+      {
+        "command": "pnpm view @lapismd/lapis-community@0.1.0 version",
+        "result": "fail",
+        "failures": 1,
+        "note": "Registry returns E404. Corrected the earlier released-package provenance claim; all UI evidence uses existing local file snapshots. No release or dependency-source patch was performed."
+      },
+      {
+        "command": "python3 (compare every parent evidence object and inspect installed package provenance)",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 227 previous evidence objects are unchanged; E-M15-016 is the sole new entry. Installed package paths are local file snapshots, as corrected in versions and remaining."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "M15.5 remains In progress: actual cold backend/browser full flow, retained reference/link/lifecycle presentation and visual approval remain separate qualification.",
+      "Reducer 3, Thread search, runner/JJ ACP dispatch and real RustFS full-flow remain deferred; code repository writes still reject unsupported replication.",
+      "Released Community dependency qualification remains pending: npm registry lookup for @lapismd/lapis-community@0.1.0 returned E404. UI type, unit, Storybook and build evidence used existing local file snapshots, not released registry packages. The parent lockfile already contains these development resolutions and is unchanged by this slice. No package publication is authorized."
+    ],
+    "next": "Commit the locally verified channel UI slice in the original isolated workspace. Main workspace and its dev server remain unchanged. Qualify released Community consumption, cold full flow and remaining M15 stages separately.",
+    "scope": "Production composes CommunityWorkspaceSurface, CommunityThreadPanel, CommunityDetails, CommunityMemberAvatarGroup, CommunityMessage and CommunityReactions. Sidebar channel selection, deep-linked replies, authorized actors, explicit refresh, observed exact reactions, shared custom loading, stale response rejection and identity-scoped stable pending requests are jj-store-owned adapters. The existing Agent Sessions screen is retained; no JJ ACP process integration exists. Pending intents are scoped to repository and authenticated principal, retained only across repository switches within one credential session, and erased with protected caches on disconnect/revocation. Late completions cannot restore cleared drafts. Hidden Review comments have no reaction controls.",
+    "verification_scope": "Public contract and UI/service crossing require selected domain, WAL, provider, RPC/HTTP/CLI and UI consumer evidence. No root aggregates, full Rust workspace, visual baseline changes, publication, installation, main restart or existing-repository migration.",
+    "stories": [
+      {
+        "file": "catalog/components/store-threads/StoreThreads.stories.svelte",
+        "name": "Channel navigation creation and members",
+        "result": "pass",
+        "scope": "cold interaction/accessibility; visual-pending"
+      },
+      {
+        "file": "catalog/components/store-threads/StoreThreads.stories.svelte",
+        "name": "Shared composer replies and exact reactions",
+        "result": "pass",
+        "scope": "cold interaction/accessibility; visual-pending"
+      },
+      {
+        "file": "catalog/components/store-threads/StoreThreads.stories.svelte",
+        "name": "Unknown action keeps its receipt identity",
+        "result": "pass",
+        "scope": "cold interaction/accessibility; visual-pending"
+      },
+      {
+        "file": "catalog/components/store-threads/StoreCapturedReactions.stories.svelte",
+        "name": "Captured agent messages",
+        "result": "pass",
+        "scope": "cold interaction/accessibility; visual-pending"
+      },
+      {
+        "file": "catalog/components/store-threads/StoreCapturedReactions.stories.svelte",
+        "name": "Exact review comments",
+        "result": "pass",
+        "scope": "cold interaction/accessibility; visual-pending"
+      }
+    ]
   }
 ]
 ```

@@ -153,6 +153,7 @@ impl Reader {
         self.graph
             .stage(CollabObjectV1::HumanMessageRevision(
                 HumanMessageRevisionV1 {
+                    reply_to: None,
                     schema_version: 1,
                     message_id: mid(),
                     thread_id: tid(),

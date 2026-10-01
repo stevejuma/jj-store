@@ -143,7 +143,7 @@ async fn load_activity(
                 truncated = true;
                 break;
             }
-            events.push(event);
+            events.push((*reference, event));
         }
         if truncated {
             break;
@@ -152,7 +152,7 @@ async fn load_activity(
 
     let observed_paths = events
         .iter()
-        .filter_map(|event| match event {
+        .filter_map(|(_, event)| match event {
             AgentEventV1::FileObserved { path, .. } => Some(path.clone()),
             _ => None,
         })
@@ -163,7 +163,7 @@ async fn load_activity(
     let mut output = Vec::new();
     let mut emitted_tools = BTreeSet::new();
     let mut edit_activity_indices = Vec::new();
-    for (index, event) in events.into_iter().enumerate() {
+    for (index, (batch, event)) in events.into_iter().enumerate() {
         let sequence = index as u64;
         let item = match event {
             AgentEventV1::SessionStateChanged {
@@ -187,6 +187,13 @@ async fn load_activity(
                 content,
             } => {
                 ensure_session(session_id, session.session_id)?;
+                let reaction_target = Some(jj_collab::ReactionTargetV1::AgentMessage {
+                    session_id,
+                    message_id,
+                    event_id,
+                    batch,
+                    content,
+                });
                 let content = load_content(pin, content).await?;
                 if bytes
                     .checked_add(content.content.len())
@@ -197,6 +204,7 @@ async fn load_activity(
                 }
                 bytes += content.content.len();
                 AgentActivity::Message {
+                    reaction_target,
                     sequence,
                     event_id,
                     turn_id,

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { FileDiff } from "@lapismd/design-core/diff";
+  import StoreMessageReactions from "../store-threads/StoreMessageReactions.svelte";
   import StoreReviewComposer from "./StoreReviewComposer.svelte";
   import { CommunityMessage } from "@lapismd/lapis-community/components/community-message";
   import type { StoreController } from "../../controller/contracts.js";
@@ -115,7 +116,19 @@
                 {members}
                 density="compact"
               >
-                {#snippet supplement()}<StoreMessageActions
+                {#snippet supplement()}{#if controller.threads && detail && comment.content.state === "visible"}<StoreMessageReactions
+                      threads={controller.threads}
+                      target={{
+                        type: "review_comment",
+                        thread_id: detail.thread.thread_id,
+                        comment_id: comment.comment_id,
+                        revision: {
+                          kind: "comment_revision",
+                          id: comment.revision_id,
+                        },
+                      }}
+                      {disabled}
+                    />{/if}<StoreMessageActions
                     {disabled}
                     authorName={author.name}
                     items={[

@@ -1,3 +1,5 @@
+import HashIcon from "@lucide/svelte/icons/hash";
+import MessagesSquareIcon from "@lucide/svelte/icons/messages-square";
 import BotIcon from "@lucide/svelte/icons/bot";
 import FolderGit2Icon from "@lucide/svelte/icons/folder-git-2";
 import GitBranchIcon from "@lucide/svelte/icons/git-branch";
@@ -10,6 +12,8 @@ import type { CommunityNavigationItemModel } from "./model.js";
 export function navigationItemIcon(
   item: CommunityNavigationItemModel,
 ): Component {
+  if (item.kind === "channel") return HashIcon;
+  if (item.kind === "threads") return MessagesSquareIcon;
   if (item.kind === "projects" || item.kind === "project")
     return FolderGit2Icon;
   if (item.kind === "branches") return GitBranchIcon;
@@ -20,5 +24,5 @@ export function navigationItemIcon(
   return FolderGit2Icon;
 }
 
-export const navigationSectionIcon = (_section?: string): Component =>
-  FolderGit2Icon;
+export const navigationSectionIcon = (section?: string): Component =>
+  section === "channels" ? HashIcon : FolderGit2Icon;

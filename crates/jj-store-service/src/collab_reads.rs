@@ -96,6 +96,7 @@ pub struct ThreadPageV1 {
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 pub struct ThreadEventItemV1 {
+    pub message: Option<HumanMessageRevisionV1>,
     pub reference: CollabObjectRef,
     pub value: ThreadEventV1,
 }
@@ -133,6 +134,7 @@ pub struct ReactionPageV1 {
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 pub struct EmojiPageV1 {
+    pub versions: BTreeMap<CustomEmojiId, CollabObjectRef>,
     pub snapshot: CollabReadSnapshotV1,
     pub definitions: Vec<CustomEmojiVersionV1>,
     pub next_id: Option<CustomEmojiId>,
@@ -354,7 +356,21 @@ impl PinnedCollabRead {
             if value.thread_id != id {
                 return Err(Error::Corrupt);
             }
+            let message = if let ThreadEventKindV1::Message { revision } = value.event {
+                let CollabObjectV1::HumanMessageRevision(message) =
+                    self.thread_graph.get(revision).map_err(model)?
+                else {
+                    return Err(Error::Corrupt);
+                };
+                if message.thread_id != id {
+                    return Err(Error::Corrupt);
+                }
+                Some(message.clone())
+            } else {
+                None
+            };
             events.push(ThreadEventItemV1 {
+                message,
                 reference,
                 value: value.clone(),
             });
@@ -521,7 +537,12 @@ impl PinnedCollabRead {
         }
         let more = definitions.len() > limit as usize;
         definitions.truncate(limit as usize);
+        let versions = definitions
+            .iter()
+            .map(|value| (value.emoji_id, self.reactions.emojis[&value.emoji_id]))
+            .collect();
         let page = EmojiPageV1 {
+            versions,
             snapshot: self.snapshot.clone(),
             next_id: more.then(|| definitions.last().expect("nonempty page").emoji_id),
             definitions,

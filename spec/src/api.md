@@ -1,5 +1,16 @@
 # Read APIs and browser
 
+Thread event pages include their own human revisions from the captured graph.
+Emoji pages include exact definition version references, and retained previews
+are fetched through the credential-bound client into revocable memory-only URLs.
+
+The browser composes public CommunityWorkspaceSurface, CommunityThreadPanel,
+CommunityDetails and CommunityReactions contracts. Threads have a channel
+section in the left sidebar, bounded history, exact persisted replies, visible
+actor-derived participants and reactions on existing review comments and
+supported Agent messages. It preserves explicit refresh and durable request
+identities for unknown outcomes.
+
 The rebased HTTP inventory retains all local workspace, Search and Sync
 management routes alongside Thread, Reaction and retained-image routes.
 Generated contracts and response captures qualify the combined 66-path inventory

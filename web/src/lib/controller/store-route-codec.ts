@@ -17,6 +17,7 @@ const pages = new Set<StorePage>([
   "agents",
   "reviews",
   "projects",
+  "threads",
 ]);
 const queryKeys = new Set([
   "at_op",
@@ -35,6 +36,8 @@ const queryKeys = new Set([
   "review_view",
   "project",
   "task",
+  "channel",
+  "reply",
 ]);
 
 export type StoreRouteHashResult =
@@ -89,6 +92,8 @@ export function storeRouteToHash(route: StoreRoute): string | null {
   if (route.path) query.set("file", route.path);
   if (route.directory) query.set("directory", route.directory);
   if (route.agentSessionId) query.set("session", route.agentSessionId);
+  if (route.threadId) query.set("channel", route.threadId);
+  if (route.replyId) query.set("reply", route.replyId);
   if (route.reviewThreadId) query.set("thread", route.reviewThreadId);
   if (route.projectId) query.set("project", route.projectId);
   if (route.taskId) query.set("task", route.taskId);
@@ -136,6 +141,8 @@ export function storeRouteFromHash(hash: string): StoreRouteHashResult {
   const directory = one(query, "directory");
   const agentSessionId = one(query, "session");
   const reviewThreadId = one(query, "thread");
+  const threadId = one(query, "channel");
+  const replyId = one(query, "reply");
   const reviewView = one(query, "review_view");
   const projectId = one(query, "project");
   const taskId = one(query, "task");
@@ -159,9 +166,13 @@ export function storeRouteFromHash(hash: string): StoreRouteHashResult {
     directory !== undefined &&
     (directory === null || safePath(directory)) &&
     validOptional(agentSessionId, stableId) &&
-    validOptional(reviewThreadId, stableId);
+    validOptional(reviewThreadId, stableId) &&
+    validOptional(threadId, stableId) &&
+    validOptional(replyId, stableId);
   if (!valid)
     return { kind: "invalid", message: "Invalid repository route value." };
+  if (((threadId || replyId) && page !== "threads") || (replyId && !threadId))
+    return { kind: "invalid", message: "Replies require a selected Thread." };
   if ((projectId || taskId) && page !== "projects")
     return { kind: "invalid", message: "Task selections require Projects." };
   if (taskId && !projectId)
@@ -235,7 +246,10 @@ export function storeRouteFromHash(hash: string): StoreRouteHashResult {
       message: "Review thread selections require the Reviews page.",
     };
   if (
-    (page === "agents" || page === "reviews" || page === "projects") &&
+    (page === "agents" ||
+      page === "reviews" ||
+      page === "projects" ||
+      page === "threads") &&
     (bookmark ||
       commitId ||
       change ||
@@ -267,6 +281,8 @@ export function storeRouteFromHash(hash: string): StoreRouteHashResult {
       directory: directory ?? "",
       agentSessionId,
       reviewThreadId,
+      ...(threadId ? { threadId } : {}),
+      ...(replyId ? { replyId } : {}),
       ...(page === "projects" ? { projectId, taskId } : {}),
     },
   };

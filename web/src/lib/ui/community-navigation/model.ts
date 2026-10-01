@@ -1,12 +1,25 @@
 export type StorePage =
-  "branches" | "log" | "oplog" | "files" | "agents" | "reviews" | "projects";
+  | "branches"
+  | "log"
+  | "oplog"
+  | "files"
+  | "agents"
+  | "reviews"
+  | "projects"
+  | "threads";
 export interface CommunityNavigationItemModel {
   id: string;
   label: string;
   kind:
-    StorePage | "repository" | "project" | "more-projects" | "retry-projects";
+    | StorePage
+    | "channel"
+    | "repository"
+    | "project"
+    | "more-projects"
+    | "retry-projects";
   home?: string;
   project?: string;
+  thread?: string;
   children?: readonly CommunityNavigationItemModel[];
   initiallyExpanded?: boolean;
 }
@@ -23,5 +36,9 @@ export interface CommunityNavigationModel {
 export function communityNavigationSectionKind(
   section: CommunityNavigationSectionModel,
 ) {
-  return section.id === "projects" ? "projects" : "repositories";
+  return section.id === "threads"
+    ? "channels"
+    : section.id === "projects"
+      ? "projects"
+      : "repositories";
 }

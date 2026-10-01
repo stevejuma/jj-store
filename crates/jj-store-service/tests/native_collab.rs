@@ -145,6 +145,7 @@ fn message(
         n,
         CollabCommandV1::Thread {
             intent: ThreadCommandV1::Message {
+                reply_to: None,
                 thread_id: version.thread_id,
                 expected_thread: version.version,
                 message_id: id,
@@ -446,6 +447,11 @@ async fn history_continuations_are_thread_members_and_revision_feedback_never_mo
         .await
         .unwrap();
     assert_eq!(page.events.len(), 1);
+    assert_eq!(page.events[0].message.as_ref().unwrap().message_id, id);
+    assert_eq!(
+        page.events[0].message.as_ref().unwrap().body.as_deref(),
+        Some("edited")
+    );
     let next = current
         .events(session.clone(), first.thread_id, page.next_event, 1)
         .await
@@ -517,6 +523,7 @@ async fn library_and_asset_reads_retain_original_versions_and_reject_unselected_
     };
     let old = f.read().await;
     let page = old.emojis(session.clone(), None, 1).await.unwrap();
+    assert_eq!(page.versions[&id], version);
     let emoji = &page.definitions[0];
     assert_eq!(
         old.image(session.clone(), emoji.asset).await.unwrap().bytes,

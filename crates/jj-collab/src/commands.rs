@@ -28,6 +28,8 @@ pub enum ThreadCommandV1 {
         expected_thread: CollabObjectRef,
         message_id: HumanMessageId,
         expected_revision: Option<CollabObjectRef>,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        reply_to: Option<CollabObjectRef>,
         body: Option<String>,
     },
     Link {
@@ -80,12 +82,16 @@ impl ThreadCommandV1 {
             Self::Message {
                 expected_thread,
                 expected_revision,
+                reply_to,
                 body,
                 ..
             } => {
                 expect(*expected_thread, CollabObjectKind::ThreadVersion)?;
                 if let Some(reference) = expected_revision {
                     expect(*reference, CollabObjectKind::HumanMessageRevision)?;
+                }
+                if let Some(parent) = reply_to {
+                    expect(*parent, CollabObjectKind::HumanMessageRevision)?;
                 }
                 if body.as_ref().is_some_and(|b| {
                     b.trim().is_empty() || b.len() > 256 * 1024 || b.contains('\0')
@@ -293,6 +299,7 @@ impl ThreadStateV1 {
                         message_id,
                         expected_revision,
                         body,
+                        reply_to,
                         ..
                     } => {
                         if matches!(
@@ -310,12 +317,30 @@ impl ThreadStateV1 {
                             else {
                                 return Err(Error::Invalid("message selection"));
                             };
-                            if old.thread_id != thread_id || old.actor != actor {
+                            if old.thread_id != thread_id
+                                || old.actor != actor
+                                || old.reply_to != *reply_to
+                            {
                                 return Err(Error::Invalid("message author or membership"));
+                            }
+                        }
+                        if let Some(parent) = reply_to {
+                            let CollabObjectV1::HumanMessageRevision(parent) =
+                                graph.get(*parent)?
+                            else {
+                                return Err(Error::Invalid("reply parent"));
+                            };
+                            if parent.thread_id != thread_id
+                                || parent.message_id == *message_id
+                                || parent.body.is_none()
+                                || !self.messages.contains_key(&parent.message_id)
+                            {
+                                return Err(Error::Invalid("reply parent membership"));
                             }
                         }
                         let reference = graph.stage(CollabObjectV1::HumanMessageRevision(
                             HumanMessageRevisionV1 {
+                                reply_to: *reply_to,
                                 schema_version: 1,
                                 message_id: *message_id,
                                 thread_id,

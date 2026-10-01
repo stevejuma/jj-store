@@ -1,5 +1,9 @@
 # Publication and recovery
 
+Human reply parent revisions are retained as collaboration closure dependencies
+through native publication, cold recovery and manifest-last copy; a UI reply
+never substitutes a display position for this reference.
+
 Native prepared capture requests may carry an explicit optional Thread binding
 and server-chosen acceptance time. The absent field is omitted, preserving the
 legacy intent encoding. Binding validates one session replacement selected by

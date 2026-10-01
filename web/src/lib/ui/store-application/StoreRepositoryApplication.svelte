@@ -5,6 +5,7 @@
   import StoreRepositoryProjects from "../store-work/StoreRepositoryProjects.svelte";
   import StoreProjects from "../store-work/StoreProjects.svelte";
   import StoreWork from "../store-work/StoreWork.svelte";
+  import StoreThreads from "../store-threads/StoreThreads.svelte";
   import StoreApplication from "./StoreApplication.svelte";
   import CommunityProjectsRepositoryLog from "../community-projects/CommunityProjectsRepositoryLog.svelte";
   import CommunityProjectsRepositoryFiles from "../community-projects/CommunityProjectsRepositoryFiles.svelte";
@@ -58,6 +59,7 @@
           state.repository.permission === "write" ||
           state.repository.permission === "admin"}
       />
+    {:else if page === "threads"}<StoreThreads {controller} />
     {:else if needsOperation}<section
         class="store-repository-application__state"
       >

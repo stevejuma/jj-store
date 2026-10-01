@@ -114,12 +114,28 @@ impl CollabGraphV1 {
                 }
             }
             CollabObjectV1::HumanMessageRevision(message) => {
+                if let Some(parent) = message.reply_to {
+                    let CollabObjectV1::HumanMessageRevision(parent) = self.get(parent)? else {
+                        return Err(Error::Invalid("reply parent"));
+                    };
+                    if parent.thread_id != message.thread_id
+                        || parent.message_id == message.message_id
+                        || parent.body.is_none()
+                    {
+                        return Err(Error::Invalid("reply parent identity"));
+                    }
+                }
                 if let Some(prior) = message.previous {
                     let CollabObjectV1::HumanMessageRevision(old) = self.get(prior)? else {
                         return Err(Error::Invalid("message history"));
                     };
-                    if (old.message_id, old.thread_id, old.actor)
-                        != (message.message_id, message.thread_id, message.actor)
+                    if (old.message_id, old.thread_id, old.actor, old.reply_to)
+                        != (
+                            message.message_id,
+                            message.thread_id,
+                            message.actor,
+                            message.reply_to,
+                        )
                     {
                         return Err(Error::Invalid("message history identity"));
                     }

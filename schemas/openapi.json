@@ -7990,6 +7990,34 @@
                             "additionalProperties": false,
                             "required": ["kind", "id"]
                           },
+                          "reply_to": {
+                            "type": ["object", "null"],
+                            "properties": {
+                              "kind": {
+                                "type": "string",
+                                "enum": [
+                                  "index_page",
+                                  "thread_version",
+                                  "thread_event",
+                                  "human_message_revision",
+                                  "thread_link",
+                                  "reaction",
+                                  "reaction_retraction",
+                                  "reaction_slot",
+                                  "custom_emoji_version",
+                                  "image_asset"
+                                ]
+                              },
+                              "id": {
+                                "type": "string",
+                                "pattern": "^[0-9a-f]{64}$",
+                                "minLength": 64,
+                                "maxLength": 64
+                              }
+                            },
+                            "additionalProperties": false,
+                            "required": ["kind", "id"]
+                          },
                           "body": { "type": ["string", "null"] },
                           "type": { "type": "string", "const": "message" }
                         },
@@ -22006,6 +22034,12 @@
           {
             "type": "object",
             "properties": {
+              "reaction_target": {
+                "anyOf": [
+                  { "$ref": "#/components/schemas/ReactionTargetV1" },
+                  { "type": "null" }
+                ]
+              },
               "sequence": {
                 "type": "integer",
                 "format": "uint64",
@@ -22124,13 +22158,236 @@
         "minLength": 32,
         "maxLength": 32
       },
-      "TurnId": {
+      "ReactionTargetV1": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "thread_id": { "$ref": "#/components/schemas/ThreadId" },
+              "type": { "type": "string", "const": "thread" }
+            },
+            "required": ["type", "thread_id"]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "thread_id": { "$ref": "#/components/schemas/ThreadId" },
+              "message_id": { "$ref": "#/components/schemas/HumanMessageId" },
+              "revision": { "$ref": "#/components/schemas/CollabObjectRef" },
+              "type": { "type": "string", "const": "human_message" }
+            },
+            "required": ["type", "thread_id", "message_id", "revision"]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "session_id": { "$ref": "#/components/schemas/AgentSessionId" },
+              "message_id": { "$ref": "#/components/schemas/MessageId" },
+              "event_id": { "$ref": "#/components/schemas/AgentEventId" },
+              "batch": { "$ref": "#/components/schemas/AgentObjectRef" },
+              "content": { "$ref": "#/components/schemas/AgentObjectRef" },
+              "type": { "type": "string", "const": "agent_message" }
+            },
+            "required": [
+              "type",
+              "session_id",
+              "message_id",
+              "event_id",
+              "batch",
+              "content"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "session_id": { "$ref": "#/components/schemas/AgentSessionId" },
+              "tool_id": { "$ref": "#/components/schemas/ToolCallId" },
+              "snapshot": { "$ref": "#/components/schemas/AgentObjectRef" },
+              "type": { "type": "string", "const": "tool_invocation" }
+            },
+            "required": ["type", "session_id", "tool_id", "snapshot"]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "session_id": { "$ref": "#/components/schemas/AgentSessionId" },
+              "tool_id": { "$ref": "#/components/schemas/ToolCallId" },
+              "snapshot": { "$ref": "#/components/schemas/AgentObjectRef" },
+              "content": { "$ref": "#/components/schemas/AgentObjectRef" },
+              "type": { "type": "string", "const": "tool_output" }
+            },
+            "required": ["type", "session_id", "tool_id", "snapshot", "content"]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "thread_id": { "$ref": "#/components/schemas/ReviewThreadId" },
+              "type": { "type": "string", "const": "review_thread" }
+            },
+            "required": ["type", "thread_id"]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "thread_id": { "$ref": "#/components/schemas/ReviewThreadId" },
+              "comment_id": { "$ref": "#/components/schemas/CommentId" },
+              "revision": { "$ref": "#/components/schemas/ReviewObjectRef" },
+              "type": { "type": "string", "const": "review_comment" }
+            },
+            "required": ["type", "thread_id", "comment_id", "revision"]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "session_id": { "$ref": "#/components/schemas/AgentSessionId" },
+              "checkpoint_id": {
+                "$ref": "#/components/schemas/AgentCheckpointId"
+              },
+              "version": { "$ref": "#/components/schemas/AgentObjectRef" },
+              "type": { "type": "string", "const": "agent_checkpoint" }
+            },
+            "required": ["type", "session_id", "checkpoint_id", "version"]
+          }
+        ],
+        "description": "Identity, immutable content and validation witnesses are explicit, never a UI position."
+      },
+      "ThreadId": {
         "type": "string",
         "pattern": "^[0-9a-f]{32}$",
         "minLength": 32,
         "maxLength": 32
       },
+      "HumanMessageId": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{32}$",
+        "minLength": 32,
+        "maxLength": 32
+      },
+      "CollabObjectRef": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kind": { "$ref": "#/components/schemas/CollabObjectKind" },
+          "id": { "$ref": "#/components/schemas/CollabObjectId" }
+        },
+        "required": ["kind", "id"]
+      },
+      "CollabObjectKind": {
+        "type": "string",
+        "enum": [
+          "index_page",
+          "thread_version",
+          "thread_event",
+          "human_message_revision",
+          "thread_link",
+          "reaction",
+          "reaction_retraction",
+          "reaction_slot",
+          "custom_emoji_version",
+          "image_asset"
+        ]
+      },
+      "CollabObjectId": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$",
+        "minLength": 64,
+        "maxLength": 64
+      },
       "MessageId": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{32}$",
+        "minLength": 32,
+        "maxLength": 32
+      },
+      "AgentObjectRef": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kind": { "$ref": "#/components/schemas/AgentObjectKind" },
+          "id": { "$ref": "#/components/schemas/AgentObjectId" }
+        },
+        "required": ["kind", "id"]
+      },
+      "AgentObjectKind": {
+        "type": "string",
+        "enum": [
+          "index_page",
+          "session_snapshot",
+          "turn_snapshot",
+          "message_snapshot",
+          "tool_snapshot",
+          "intent",
+          "observation_batch",
+          "event_batch",
+          "transcript_manifest",
+          "transcript_page",
+          "transcript_chunk",
+          "content",
+          "checkpoint_version",
+          "association",
+          "alias",
+          "relation_page",
+          "source_state",
+          "projection_catalog",
+          "catalog_conflict"
+        ]
+      },
+      "ReviewThreadId": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{32}$",
+        "minLength": 32,
+        "maxLength": 32
+      },
+      "CommentId": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{32}$",
+        "minLength": 32,
+        "maxLength": 32
+      },
+      "ReviewObjectRef": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kind": { "$ref": "#/components/schemas/ReviewObjectKind" },
+          "id": { "$ref": "#/components/schemas/ReviewObjectId" }
+        },
+        "required": ["kind", "id"]
+      },
+      "ReviewObjectKind": {
+        "type": "string",
+        "enum": [
+          "index_page",
+          "anchor",
+          "comment_body",
+          "comment_revision",
+          "thread_event",
+          "event_page",
+          "thread_snapshot",
+          "relation_page",
+          "status_page"
+        ]
+      },
+      "ReviewObjectId": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$",
+        "minLength": 64,
+        "maxLength": 64
+      },
+      "AgentCheckpointId": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{32}$",
+        "minLength": 32,
+        "maxLength": 32
+      },
+      "TurnId": {
         "type": "string",
         "pattern": "^[0-9a-f]{32}$",
         "minLength": 32,
@@ -22405,12 +22662,6 @@
             "required": ["subject", "checkpoint_id"]
           }
         ]
-      },
-      "AgentCheckpointId": {
-        "type": "string",
-        "pattern": "^[0-9a-f]{32}$",
-        "minLength": 32,
-        "maxLength": 32
       },
       "AgentRelationLink": {
         "type": "object",
@@ -22719,18 +22970,6 @@
           "comment_conflict_count",
           "last_event_sequence"
         ]
-      },
-      "ReviewThreadId": {
-        "type": "string",
-        "pattern": "^[0-9a-f]{32}$",
-        "minLength": 32,
-        "maxLength": 32
-      },
-      "ReviewObjectId": {
-        "type": "string",
-        "pattern": "^[0-9a-f]{64}$",
-        "minLength": 64,
-        "maxLength": 64
       },
       "ArtifactAnchorV1": {
         "type": "object",
@@ -23077,39 +23316,6 @@
           "text"
         ]
       },
-      "AgentObjectRef": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "kind": { "$ref": "#/components/schemas/AgentObjectKind" },
-          "id": { "$ref": "#/components/schemas/AgentObjectId" }
-        },
-        "required": ["kind", "id"]
-      },
-      "AgentObjectKind": {
-        "type": "string",
-        "enum": [
-          "index_page",
-          "session_snapshot",
-          "turn_snapshot",
-          "message_snapshot",
-          "tool_snapshot",
-          "intent",
-          "observation_batch",
-          "event_batch",
-          "transcript_manifest",
-          "transcript_page",
-          "transcript_chunk",
-          "content",
-          "checkpoint_version",
-          "association",
-          "alias",
-          "relation_page",
-          "source_state",
-          "projection_catalog",
-          "catalog_conflict"
-        ]
-      },
       "AgentContentOwnerV1": {
         "oneOf": [
           {
@@ -23299,12 +23505,6 @@
           "superseded_revision_ids",
           "content"
         ]
-      },
-      "CommentId": {
-        "type": "string",
-        "pattern": "^[0-9a-f]{32}$",
-        "minLength": 32,
-        "maxLength": 32
       },
       "ReviewCommentContent": {
         "oneOf": [
@@ -23633,29 +23833,6 @@
           "event"
         ]
       },
-      "ReviewObjectRef": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "kind": { "$ref": "#/components/schemas/ReviewObjectKind" },
-          "id": { "$ref": "#/components/schemas/ReviewObjectId" }
-        },
-        "required": ["kind", "id"]
-      },
-      "ReviewObjectKind": {
-        "type": "string",
-        "enum": [
-          "index_page",
-          "anchor",
-          "comment_body",
-          "comment_revision",
-          "thread_event",
-          "event_page",
-          "thread_snapshot",
-          "relation_page",
-          "status_page"
-        ]
-      },
       "ReviewCommandStatus": {
         "oneOf": [
           {
@@ -23821,13 +23998,22 @@
           {
             "type": "object",
             "properties": {
+              "versions": {
+                "type": "object",
+                "additionalProperties": false,
+                "patternProperties": {
+                  "^[0-9a-f]{32}$": {
+                    "$ref": "#/components/schemas/CollabObjectRef"
+                  }
+                }
+              },
               "definitions": {
                 "type": "array",
                 "items": { "$ref": "#/components/schemas/CustomEmojiVersionV1" }
               },
               "type": { "type": "string", "const": "emojis" }
             },
-            "required": ["type", "definitions"]
+            "required": ["type", "versions", "definitions"]
           }
         ]
       },
@@ -23838,36 +24024,6 @@
           "value": { "$ref": "#/components/schemas/ThreadVersionV1" }
         },
         "required": ["reference", "value"]
-      },
-      "CollabObjectRef": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "kind": { "$ref": "#/components/schemas/CollabObjectKind" },
-          "id": { "$ref": "#/components/schemas/CollabObjectId" }
-        },
-        "required": ["kind", "id"]
-      },
-      "CollabObjectKind": {
-        "type": "string",
-        "enum": [
-          "index_page",
-          "thread_version",
-          "thread_event",
-          "human_message_revision",
-          "thread_link",
-          "reaction",
-          "reaction_retraction",
-          "reaction_slot",
-          "custom_emoji_version",
-          "image_asset"
-        ]
-      },
-      "CollabObjectId": {
-        "type": "string",
-        "pattern": "^[0-9a-f]{64}$",
-        "minLength": 64,
-        "maxLength": 64
       },
       "ThreadVersionV1": {
         "type": "object",
@@ -23908,12 +24064,6 @@
           "event",
           "baseline"
         ]
-      },
-      "ThreadId": {
-        "type": "string",
-        "pattern": "^[0-9a-f]{32}$",
-        "minLength": 32,
-        "maxLength": 32
       },
       "ThreadStatusV12": {
         "type": "string",
@@ -24037,10 +24187,53 @@
       "ThreadEventItemV1": {
         "type": "object",
         "properties": {
+          "message": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/HumanMessageRevisionV1" },
+              { "type": "null" }
+            ]
+          },
           "reference": { "$ref": "#/components/schemas/CollabObjectRef" },
           "value": { "$ref": "#/components/schemas/ThreadEventV1" }
         },
-        "required": ["reference", "value"]
+        "required": ["message", "reference", "value"]
+      },
+      "HumanMessageRevisionV1": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "schema_version": {
+            "type": "integer",
+            "format": "uint32",
+            "minimum": 0
+          },
+          "message_id": { "$ref": "#/components/schemas/HumanMessageId" },
+          "thread_id": { "$ref": "#/components/schemas/ThreadId" },
+          "actor": { "$ref": "#/components/schemas/PrincipalId" },
+          "accepted_at_millis": { "type": "integer", "format": "int64" },
+          "previous": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/CollabObjectRef" },
+              { "type": "null" }
+            ]
+          },
+          "reply_to": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/CollabObjectRef" },
+              { "type": "null" }
+            ]
+          },
+          "body": { "type": ["string", "null"] }
+        },
+        "required": [
+          "schema_version",
+          "message_id",
+          "thread_id",
+          "actor",
+          "accepted_at_millis",
+          "previous",
+          "body"
+        ]
       },
       "ThreadEventV1": {
         "type": "object",
@@ -24131,113 +24324,6 @@
       "ThreadActionV1": {
         "type": "string",
         "enum": ["activate", "idle", "archive", "tombstone", "restore"]
-      },
-      "ReactionTargetV1": {
-        "oneOf": [
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "thread_id": { "$ref": "#/components/schemas/ThreadId" },
-              "type": { "type": "string", "const": "thread" }
-            },
-            "required": ["type", "thread_id"]
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "thread_id": { "$ref": "#/components/schemas/ThreadId" },
-              "message_id": { "$ref": "#/components/schemas/HumanMessageId" },
-              "revision": { "$ref": "#/components/schemas/CollabObjectRef" },
-              "type": { "type": "string", "const": "human_message" }
-            },
-            "required": ["type", "thread_id", "message_id", "revision"]
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "session_id": { "$ref": "#/components/schemas/AgentSessionId" },
-              "message_id": { "$ref": "#/components/schemas/MessageId" },
-              "event_id": { "$ref": "#/components/schemas/AgentEventId" },
-              "batch": { "$ref": "#/components/schemas/AgentObjectRef" },
-              "content": { "$ref": "#/components/schemas/AgentObjectRef" },
-              "type": { "type": "string", "const": "agent_message" }
-            },
-            "required": [
-              "type",
-              "session_id",
-              "message_id",
-              "event_id",
-              "batch",
-              "content"
-            ]
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "session_id": { "$ref": "#/components/schemas/AgentSessionId" },
-              "tool_id": { "$ref": "#/components/schemas/ToolCallId" },
-              "snapshot": { "$ref": "#/components/schemas/AgentObjectRef" },
-              "type": { "type": "string", "const": "tool_invocation" }
-            },
-            "required": ["type", "session_id", "tool_id", "snapshot"]
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "session_id": { "$ref": "#/components/schemas/AgentSessionId" },
-              "tool_id": { "$ref": "#/components/schemas/ToolCallId" },
-              "snapshot": { "$ref": "#/components/schemas/AgentObjectRef" },
-              "content": { "$ref": "#/components/schemas/AgentObjectRef" },
-              "type": { "type": "string", "const": "tool_output" }
-            },
-            "required": ["type", "session_id", "tool_id", "snapshot", "content"]
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "thread_id": { "$ref": "#/components/schemas/ReviewThreadId" },
-              "type": { "type": "string", "const": "review_thread" }
-            },
-            "required": ["type", "thread_id"]
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "thread_id": { "$ref": "#/components/schemas/ReviewThreadId" },
-              "comment_id": { "$ref": "#/components/schemas/CommentId" },
-              "revision": { "$ref": "#/components/schemas/ReviewObjectRef" },
-              "type": { "type": "string", "const": "review_comment" }
-            },
-            "required": ["type", "thread_id", "comment_id", "revision"]
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "session_id": { "$ref": "#/components/schemas/AgentSessionId" },
-              "checkpoint_id": {
-                "$ref": "#/components/schemas/AgentCheckpointId"
-              },
-              "version": { "$ref": "#/components/schemas/AgentObjectRef" },
-              "type": { "type": "string", "const": "agent_checkpoint" }
-            },
-            "required": ["type", "session_id", "checkpoint_id", "version"]
-          }
-        ],
-        "description": "Identity, immutable content and validation witnesses are explicit, never a UI position."
-      },
-      "HumanMessageId": {
-        "type": "string",
-        "pattern": "^[0-9a-f]{32}$",
-        "minLength": 32,
-        "maxLength": 32
       },
       "TargetRevisionV1": { "type": "string", "enum": ["current", "earlier"] },
       "ReactionAggregateV1": {
@@ -24362,37 +24448,6 @@
           "message": { "$ref": "#/components/schemas/HumanMessageRevisionV1" }
         },
         "required": ["snapshot", "target", "message"]
-      },
-      "HumanMessageRevisionV1": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "schema_version": {
-            "type": "integer",
-            "format": "uint32",
-            "minimum": 0
-          },
-          "message_id": { "$ref": "#/components/schemas/HumanMessageId" },
-          "thread_id": { "$ref": "#/components/schemas/ThreadId" },
-          "actor": { "$ref": "#/components/schemas/PrincipalId" },
-          "accepted_at_millis": { "type": "integer", "format": "int64" },
-          "previous": {
-            "anyOf": [
-              { "$ref": "#/components/schemas/CollabObjectRef" },
-              { "type": "null" }
-            ]
-          },
-          "body": { "type": ["string", "null"] }
-        },
-        "required": [
-          "schema_version",
-          "message_id",
-          "thread_id",
-          "actor",
-          "accepted_at_millis",
-          "previous",
-          "body"
-        ]
       },
       "CollabCommandOutcome": {
         "oneOf": [

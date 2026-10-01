@@ -1,3 +1,4 @@
+import { readReactionAsset } from "./reaction-asset.js";
 import { parse, stringify } from "lossless-json";
 import type { components } from "./generated";
 
@@ -135,6 +136,11 @@ export class Client {
       throw new ApiError("access_denied");
     }
     return response;
+  }
+  async asset(id: string): Promise<{ bytes: Uint8Array; type: string }> {
+    return readReactionAsset(
+      await this.#fetch(`reaction-assets/${fullId(id, 64)}`, {}, {}),
+    );
   }
   async request<T>(
     path: string,

@@ -1,5 +1,9 @@
 # Typed mutations
 
+Thread timeline pages hydrate only their own authorized human-message revisions
+from the same captured graph. Agent and review content remains in its canonical
+source; UI adapters never invent transcript bodies.
+
 Explicit local BoundCapture carries the exact observed Thread version and
 primary assignment with the original sanitized batch/profile. It requires one
 session replacement, stages the shared link without changing lifecycle and

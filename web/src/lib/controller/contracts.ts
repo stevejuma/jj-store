@@ -61,6 +61,8 @@ export interface StoreSearchState {
   readonly truncated: boolean;
 }
 export interface StoreRoute {
+  threadId?: string | null;
+  replyId?: string | null;
   projectsHub?: boolean;
   workTab?: import("./projects-hub-types.js").ProjectsTab;
   workQuery?: string;
@@ -199,6 +201,7 @@ export interface StoreControllerState {
 }
 /** Community's state/actions contract shape, scoped to local JJ presentation. */
 export interface StoreController {
+  readonly threads?: import("./thread-types.js").ThreadsController;
   readonly projects?: import("./projects-hub-types.js").ProjectsHubController;
   readonly work?: import("./work-types.js").WorkController;
   readonly state: StoreControllerState;
@@ -252,6 +255,7 @@ export interface StoreController {
     ): Promise<StoreConflictUpload>;
     setFileViewMode(mode: FileListingViewMode): void | Promise<void>;
     toggleDirectory(path: string): void | Promise<void>;
+    openThreads?(id?: string | null): Promise<void>;
     openReview?(repository: string, thread: string): Promise<void>;
     openRepository(id: string): void | Promise<void>;
     selectPage(page: StorePage): void | Promise<void>;

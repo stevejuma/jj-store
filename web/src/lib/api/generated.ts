@@ -1630,6 +1630,7 @@ export interface components {
           type: "session_state";
         }
       | {
+          reaction_target?: components["schemas"]["ReactionTargetV1"] | null;
           /** Format: uint64 */
           sequence: number;
           event_id: components["schemas"]["AgentEventId"];
@@ -1677,8 +1678,128 @@ export interface components {
           type: "capture_gap";
         };
     AgentEventId: string;
-    TurnId: string;
+    /** @description Identity, immutable content and validation witnesses are explicit, never a UI position. */
+    ReactionTargetV1:
+      | {
+          thread_id: components["schemas"]["ThreadId"];
+          /** @constant */
+          type: "thread";
+        }
+      | {
+          thread_id: components["schemas"]["ThreadId"];
+          message_id: components["schemas"]["HumanMessageId"];
+          revision: components["schemas"]["CollabObjectRef"];
+          /** @constant */
+          type: "human_message";
+        }
+      | {
+          session_id: components["schemas"]["AgentSessionId"];
+          message_id: components["schemas"]["MessageId"];
+          event_id: components["schemas"]["AgentEventId"];
+          batch: components["schemas"]["AgentObjectRef"];
+          content: components["schemas"]["AgentObjectRef"];
+          /** @constant */
+          type: "agent_message";
+        }
+      | {
+          session_id: components["schemas"]["AgentSessionId"];
+          tool_id: components["schemas"]["ToolCallId"];
+          snapshot: components["schemas"]["AgentObjectRef"];
+          /** @constant */
+          type: "tool_invocation";
+        }
+      | {
+          session_id: components["schemas"]["AgentSessionId"];
+          tool_id: components["schemas"]["ToolCallId"];
+          snapshot: components["schemas"]["AgentObjectRef"];
+          content: components["schemas"]["AgentObjectRef"];
+          /** @constant */
+          type: "tool_output";
+        }
+      | {
+          thread_id: components["schemas"]["ReviewThreadId"];
+          /** @constant */
+          type: "review_thread";
+        }
+      | {
+          thread_id: components["schemas"]["ReviewThreadId"];
+          comment_id: components["schemas"]["CommentId"];
+          revision: components["schemas"]["ReviewObjectRef"];
+          /** @constant */
+          type: "review_comment";
+        }
+      | {
+          session_id: components["schemas"]["AgentSessionId"];
+          checkpoint_id: components["schemas"]["AgentCheckpointId"];
+          version: components["schemas"]["AgentObjectRef"];
+          /** @constant */
+          type: "agent_checkpoint";
+        };
+    ThreadId: string;
+    HumanMessageId: string;
+    CollabObjectRef: {
+      kind: components["schemas"]["CollabObjectKind"];
+      id: components["schemas"]["CollabObjectId"];
+    };
+    /** @enum {string} */
+    CollabObjectKind:
+      | "index_page"
+      | "thread_version"
+      | "thread_event"
+      | "human_message_revision"
+      | "thread_link"
+      | "reaction"
+      | "reaction_retraction"
+      | "reaction_slot"
+      | "custom_emoji_version"
+      | "image_asset";
+    CollabObjectId: string;
     MessageId: string;
+    AgentObjectRef: {
+      kind: components["schemas"]["AgentObjectKind"];
+      id: components["schemas"]["AgentObjectId"];
+    };
+    /** @enum {string} */
+    AgentObjectKind:
+      | "index_page"
+      | "session_snapshot"
+      | "turn_snapshot"
+      | "message_snapshot"
+      | "tool_snapshot"
+      | "intent"
+      | "observation_batch"
+      | "event_batch"
+      | "transcript_manifest"
+      | "transcript_page"
+      | "transcript_chunk"
+      | "content"
+      | "checkpoint_version"
+      | "association"
+      | "alias"
+      | "relation_page"
+      | "source_state"
+      | "projection_catalog"
+      | "catalog_conflict";
+    ReviewThreadId: string;
+    CommentId: string;
+    ReviewObjectRef: {
+      kind: components["schemas"]["ReviewObjectKind"];
+      id: components["schemas"]["ReviewObjectId"];
+    };
+    /** @enum {string} */
+    ReviewObjectKind:
+      | "index_page"
+      | "anchor"
+      | "comment_body"
+      | "comment_revision"
+      | "thread_event"
+      | "event_page"
+      | "thread_snapshot"
+      | "relation_page"
+      | "status_page";
+    ReviewObjectId: string;
+    AgentCheckpointId: string;
+    TurnId: string;
     /** @enum {string} */
     MessageRole: "user" | "assistant" | "system" | "tool";
     AgentContent: {
@@ -1801,7 +1922,6 @@ export interface components {
           /** @constant */
           subject: "checkpoint";
         };
-    AgentCheckpointId: string;
     AgentRelationLink: {
       kind: components["schemas"]["AgentRelationKind"];
       object_id: components["schemas"]["AgentObjectId"];
@@ -1918,8 +2038,6 @@ export interface components {
       last_event_sequence: number;
       presentation?: components["schemas"]["ReviewSummaryPresentation"] | null;
     };
-    ReviewThreadId: string;
-    ReviewObjectId: string;
     ArtifactAnchorV1: {
       /** Format: uint32 */
       schema_version: number;
@@ -2074,31 +2192,6 @@ export interface components {
       source_coverage: components["schemas"]["SourceCoverageV1"];
       text: components["schemas"]["TextSelectionV1"];
     };
-    AgentObjectRef: {
-      kind: components["schemas"]["AgentObjectKind"];
-      id: components["schemas"]["AgentObjectId"];
-    };
-    /** @enum {string} */
-    AgentObjectKind:
-      | "index_page"
-      | "session_snapshot"
-      | "turn_snapshot"
-      | "message_snapshot"
-      | "tool_snapshot"
-      | "intent"
-      | "observation_batch"
-      | "event_batch"
-      | "transcript_manifest"
-      | "transcript_page"
-      | "transcript_chunk"
-      | "content"
-      | "checkpoint_version"
-      | "association"
-      | "alias"
-      | "relation_page"
-      | "source_state"
-      | "projection_catalog"
-      | "catalog_conflict";
     AgentContentOwnerV1:
       | {
           tool_call_id: components["schemas"]["ToolCallId"];
@@ -2178,7 +2271,6 @@ export interface components {
       superseded_revision_ids: components["schemas"]["ReviewObjectId"][];
       content: components["schemas"]["ReviewCommentContent"];
     };
-    CommentId: string;
     ReviewCommentContent:
       | {
           body_id: components["schemas"]["ReviewObjectId"];
@@ -2306,21 +2398,6 @@ export interface components {
       comment_revision: components["schemas"]["ReviewObjectRef"] | null;
       event: components["schemas"]["ReviewObjectRef"];
     };
-    ReviewObjectRef: {
-      kind: components["schemas"]["ReviewObjectKind"];
-      id: components["schemas"]["ReviewObjectId"];
-    };
-    /** @enum {string} */
-    ReviewObjectKind:
-      | "index_page"
-      | "anchor"
-      | "comment_body"
-      | "comment_revision"
-      | "thread_event"
-      | "event_page"
-      | "thread_snapshot"
-      | "relation_page"
-      | "status_page";
     ReviewCommandStatus:
       | {
           receipt: components["schemas"]["ReviewCommandReceipt"];
@@ -2384,6 +2461,9 @@ export interface components {
           type: "reactions";
         }
       | {
+          versions: {
+            [key: string]: components["schemas"]["CollabObjectRef"];
+          };
           definitions: components["schemas"]["CustomEmojiVersionV1"][];
           /** @constant */
           type: "emojis";
@@ -2392,23 +2472,6 @@ export interface components {
       reference: components["schemas"]["CollabObjectRef"];
       value: components["schemas"]["ThreadVersionV1"];
     };
-    CollabObjectRef: {
-      kind: components["schemas"]["CollabObjectKind"];
-      id: components["schemas"]["CollabObjectId"];
-    };
-    /** @enum {string} */
-    CollabObjectKind:
-      | "index_page"
-      | "thread_version"
-      | "thread_event"
-      | "human_message_revision"
-      | "thread_link"
-      | "reaction"
-      | "reaction_retraction"
-      | "reaction_slot"
-      | "custom_emoji_version"
-      | "image_asset";
-    CollabObjectId: string;
     ThreadVersionV1: {
       /** Format: uint32 */
       schema_version: number;
@@ -2422,7 +2485,6 @@ export interface components {
       event: components["schemas"]["CollabObjectRef"];
       baseline: components["schemas"]["ThreadCodeAnchorV1"] | null;
     };
-    ThreadId: string;
     /** @enum {string} */
     ThreadStatusV12: "created" | "active" | "idle" | "archived" | "tombstoned";
     /** @description Native IDs and portable evidence remain distinct; neither is a device path. */
@@ -2471,8 +2533,21 @@ export interface components {
         };
     GitSha1Id: string;
     ThreadEventItemV1: {
+      message: components["schemas"]["HumanMessageRevisionV1"] | null;
       reference: components["schemas"]["CollabObjectRef"];
       value: components["schemas"]["ThreadEventV1"];
+    };
+    HumanMessageRevisionV1: {
+      /** Format: uint32 */
+      schema_version: number;
+      message_id: components["schemas"]["HumanMessageId"];
+      thread_id: components["schemas"]["ThreadId"];
+      actor: components["schemas"]["PrincipalId"];
+      /** Format: int64 */
+      accepted_at_millis: number;
+      previous: components["schemas"]["CollabObjectRef"] | null;
+      reply_to?: components["schemas"]["CollabObjectRef"] | null;
+      body: string | null;
     };
     ThreadEventV1: {
       /** Format: uint32 */
@@ -2514,64 +2589,6 @@ export interface components {
         };
     /** @enum {string} */
     ThreadActionV1: "activate" | "idle" | "archive" | "tombstone" | "restore";
-    /** @description Identity, immutable content and validation witnesses are explicit, never a UI position. */
-    ReactionTargetV1:
-      | {
-          thread_id: components["schemas"]["ThreadId"];
-          /** @constant */
-          type: "thread";
-        }
-      | {
-          thread_id: components["schemas"]["ThreadId"];
-          message_id: components["schemas"]["HumanMessageId"];
-          revision: components["schemas"]["CollabObjectRef"];
-          /** @constant */
-          type: "human_message";
-        }
-      | {
-          session_id: components["schemas"]["AgentSessionId"];
-          message_id: components["schemas"]["MessageId"];
-          event_id: components["schemas"]["AgentEventId"];
-          batch: components["schemas"]["AgentObjectRef"];
-          content: components["schemas"]["AgentObjectRef"];
-          /** @constant */
-          type: "agent_message";
-        }
-      | {
-          session_id: components["schemas"]["AgentSessionId"];
-          tool_id: components["schemas"]["ToolCallId"];
-          snapshot: components["schemas"]["AgentObjectRef"];
-          /** @constant */
-          type: "tool_invocation";
-        }
-      | {
-          session_id: components["schemas"]["AgentSessionId"];
-          tool_id: components["schemas"]["ToolCallId"];
-          snapshot: components["schemas"]["AgentObjectRef"];
-          content: components["schemas"]["AgentObjectRef"];
-          /** @constant */
-          type: "tool_output";
-        }
-      | {
-          thread_id: components["schemas"]["ReviewThreadId"];
-          /** @constant */
-          type: "review_thread";
-        }
-      | {
-          thread_id: components["schemas"]["ReviewThreadId"];
-          comment_id: components["schemas"]["CommentId"];
-          revision: components["schemas"]["ReviewObjectRef"];
-          /** @constant */
-          type: "review_comment";
-        }
-      | {
-          session_id: components["schemas"]["AgentSessionId"];
-          checkpoint_id: components["schemas"]["AgentCheckpointId"];
-          version: components["schemas"]["AgentObjectRef"];
-          /** @constant */
-          type: "agent_checkpoint";
-        };
-    HumanMessageId: string;
     /** @enum {string} */
     TargetRevisionV1: "current" | "earlier";
     ReactionAggregateV1: {
@@ -2629,17 +2646,6 @@ export interface components {
       snapshot: components["schemas"]["CollabReadSnapshotV1"];
       target: components["schemas"]["ReactionTargetV1"];
       message: components["schemas"]["HumanMessageRevisionV1"];
-    };
-    HumanMessageRevisionV1: {
-      /** Format: uint32 */
-      schema_version: number;
-      message_id: components["schemas"]["HumanMessageId"];
-      thread_id: components["schemas"]["ThreadId"];
-      actor: components["schemas"]["PrincipalId"];
-      /** Format: int64 */
-      accepted_at_millis: number;
-      previous: components["schemas"]["CollabObjectRef"] | null;
-      body: string | null;
     };
     CollabCommandOutcome:
       | {
@@ -10549,6 +10555,21 @@ export interface operations {
                 };
                 message_id: string;
                 expected_revision?: {
+                  /** @enum {string} */
+                  kind:
+                    | "index_page"
+                    | "thread_version"
+                    | "thread_event"
+                    | "human_message_revision"
+                    | "thread_link"
+                    | "reaction"
+                    | "reaction_retraction"
+                    | "reaction_slot"
+                    | "custom_emoji_version"
+                    | "image_asset";
+                  id: string;
+                } | null;
+                reply_to?: {
                   /** @enum {string} */
                   kind:
                     | "index_page"

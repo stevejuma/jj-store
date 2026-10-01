@@ -1,5 +1,10 @@
 # Agent activity, repository reviews, Threads and Reactions
 
+Human messages optionally retain an exact same-Thread parent revision for
+replies. The parent is an immutable closure dependency; self-links, foreign
+Thread parents and changing reply identity during edits are rejected. An absent
+parent omits the field and preserves legacy canonical bytes.
+
 Explicit local BoundCapture carries the exact observed Thread version and
 primary assignment with the original sanitized batch/profile. It requires one
 session replacement, stages the shared link without changing lifecycle and

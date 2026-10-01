@@ -1,5 +1,8 @@
 # CLI and server commands
 
+Typed human-message commands accept an optional exact reply parent. Existing
+unlinked message commands preserve their encoding and behavior.
+
 The native capture worker consumes an explicit optional binding retained in the
 captured spool entry. Binding-aware preparation validates returned intent;
 unknown publication retains the exact prepared request across restart. Ordinary

@@ -19,6 +19,7 @@ import { storeQueryKeys, type StoreQueryScope } from "./store-query-keys.js";
 import { HttpCollaborationDataSource } from "./http-collaboration-data-source.js";
 import { HttpStoreWriteDataSource } from "./http-store-write-data-source.js";
 
+import { HttpThreadsDataSource } from "./http-threads-data-source.js";
 import { HttpWorkDataSource } from "./http-work-data-source.js";
 
 export class HttpStoreDataSource
@@ -30,6 +31,7 @@ export class HttpStoreDataSource
   readonly #collaboration: HttpCollaborationDataSource;
   readonly #writes: HttpStoreWriteDataSource;
   readonly work: HttpWorkDataSource;
+  readonly threads: HttpThreadsDataSource;
   #active = true;
 
   constructor(
@@ -44,6 +46,7 @@ export class HttpStoreDataSource
     super(client);
     this.#client = client;
     this.#scope = { repository, session };
+    this.threads = new HttpThreadsDataSource(client);
     this.work = new HttpWorkDataSource(this.#client, this);
     this.#writes = new HttpStoreWriteDataSource(this.#client);
     this.#collaboration = new HttpCollaborationDataSource(

@@ -82,6 +82,7 @@ async fn pinned_target_reader_hides_staged_objects_and_current_tombstoned_histor
         .unwrap()
         .apply(
             &ThreadCommandV1::Message {
+                reply_to: None,
                 thread_id: created.thread_id,
                 expected_thread: created.version,
                 message_id,
@@ -132,6 +133,7 @@ async fn pinned_target_reader_hides_staged_objects_and_current_tombstoned_histor
         .unwrap()
         .apply(
             &ThreadCommandV1::Message {
+                reply_to: None,
                 thread_id: created.thread_id,
                 expected_thread: message.version,
                 message_id,
@@ -188,6 +190,7 @@ async fn target_reader_closure_excludes_unselected_collab_and_agent_bytes() {
     let orphan = graph
         .stage(CollabObjectV1::HumanMessageRevision(
             HumanMessageRevisionV1 {
+                reply_to: None,
                 schema_version: 1,
                 message_id: HumanMessageId::new([9; 16]),
                 thread_id: ThreadId::new([4; 16]),
@@ -486,6 +489,7 @@ async fn cold_receipts_checkpoint_and_manifest_last_copy_retain_human_revision_r
     let (thread_root, message) = state
         .apply(
             &ThreadCommandV1::Message {
+                reply_to: None,
                 thread_id: created.thread_id,
                 expected_thread: created.version,
                 message_id: HumanMessageId::new([5; 16]),

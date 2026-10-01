@@ -267,7 +267,7 @@ async fn session_detail_resolves_bounded_messages_and_final_tool_snapshots() {
         AgentSessionPager::new(pagination::Limits::default(), Arc::new(SystemClock)).unwrap();
     let page = pager.begin(fixture.session.clone(), 10).await.unwrap();
     let detail = pager
-        .detail(fixture.session, page.sessions[0].session_id)
+        .detail(fixture.session.clone(), page.sessions[0].session_id)
         .await
         .unwrap();
 
@@ -290,6 +290,56 @@ async fn session_detail_resolves_bounded_messages_and_final_tool_snapshots() {
         AgentActivity::Message { role: MessageRole::Assistant, content, .. }
             if content.content == "Updated the parser."
     )));
+    let reactions = jj_store_service::collab_reads::PinnedCollabRead::open(
+        fixture.session.clone(),
+        Arc::new(jj_store_service::collab_reads::RepositoryReactionActors(
+            REPOSITORY,
+        )),
+    )
+    .await
+    .unwrap();
+    for item in &detail.activity {
+        if let AgentActivity::Message {
+            event_id,
+            message_id,
+            reaction_target,
+            ..
+        } = item
+        {
+            let Some(jj_collab::ReactionTargetV1::AgentMessage {
+                session_id,
+                event_id: target_event,
+                message_id: target_message,
+                batch,
+                content,
+            }) = reaction_target
+            else {
+                panic!("missing exact message witness")
+            };
+            let read = reactions
+                .reactions(
+                    fixture.session.clone(),
+                    reaction_target.as_ref().unwrap(),
+                    None,
+                    10,
+                )
+                .await
+                .unwrap();
+            assert_eq!(read.target, *reaction_target.as_ref().unwrap());
+            assert!(read.reactions.is_empty());
+            assert_eq!(*session_id, detail.session.session_id);
+            assert_eq!(target_event, event_id);
+            assert_eq!(target_message, message_id);
+            assert_eq!(
+                batch.kind,
+                jj_store_wal::publication::AgentObjectKind::EventBatch
+            );
+            assert_eq!(
+                content.kind,
+                jj_store_wal::publication::AgentObjectKind::Content
+            );
+        }
+    }
     let tool = detail
         .activity
         .iter()

@@ -1,5 +1,9 @@
 # Local Git-backed JJ collaboration
 
+The companion retains exact human reply parent revisions in the owned Git
+closure; absent reply fields preserve existing canonical message and intent
+bytes.
+
 Explicit local BoundCapture carries the exact observed Thread version and
 primary assignment with the original sanitized batch/profile. It requires one
 session replacement, stages the shared link without changing lifecycle and

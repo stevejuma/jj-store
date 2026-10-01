@@ -1,5 +1,12 @@
 # Storybook presentation catalog
 
+The Threads surface composes Community channel navigation, workspace
+header/conversation, reply panel, member details and rich reactions. Its
+adapters retain exact message revisions and authorized actors; page changes and
+disconnection discard stale responses. Interaction/accessibility and cold
+consumer qualification are required; visual baselines remain separately
+approved.
+
 The reviewed catalog application is the presentation authority for the served
 browser. Production browsing, search, typed mutations and conflict editing share
 the same components and asynchronous controller contract. Reusable components

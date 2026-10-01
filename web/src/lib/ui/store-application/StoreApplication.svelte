@@ -6,11 +6,12 @@
     createLocalStorageAppShellLayoutPersistence,
     type AppShellDisplayMode,
   } from "@lapismd/design-core/shell";
+  import { projectsSidebarModel } from "../store-work/projects-sidebar-model.js";
+  import { withThreadNavigation } from "../store-threads/thread-navigation.js";
   import {
-    projectsSidebarModel,
-    projectSidebarId,
-  } from "../store-work/projects-sidebar-model.js";
-  import { selectStoreNavigation } from "./store-navigation.js";
+    selectStoreNavigation,
+    activeStoreNavigation,
+  } from "./store-navigation.js";
   import StoreProjectsBreadcrumb from "../store-work/StoreProjectsBreadcrumb.svelte";
   import { isRepositoryProjects } from "../../controller/projects-view-cache.js";
   import StoreProjectsRail from "../store-work/StoreProjectsRail.svelte";
@@ -122,19 +123,16 @@
       !shell.left.previewed,
   );
   const navigation = $derived(
-    projectsSidebarModel(
-      controller.projects?.navigation.homes ?? [],
-      controller.state.repositories,
-      !!controller.projects,
+    withThreadNavigation(
+      controller,
+      projectsSidebarModel(
+        controller.projects?.navigation.homes ?? [],
+        controller.state.repositories,
+        !!controller.projects,
+      ),
     ),
   );
-  const activeNavigationItem = $derived(
-    current.page === "projects" && !isRepositoryProjects(current)
-      ? current.projectId
-        ? projectSidebarId(current.repository, current.projectId)
-        : "projects"
-      : current.repository,
-  );
+  const activeNavigationItem = $derived(activeStoreNavigation(current));
   const title = $derived(
     repositorySections.find((section) => section.page === current.page)
       ?.label ?? "Repository",
@@ -262,7 +260,7 @@
           : undefined}
       >
         <div class="store-application__body-frame">
-          {#if !(current.page === "projects" && controller.projects && !isRepositoryProjects(current))}
+          {#if !(current.page === "projects" && controller.projects && !isRepositoryProjects(current)) && current.page !== "threads"}
             {#if !(current.page === "reviews" && current.reviewThreadId)}<StoreRepositoryTabs
                 page={current.page}
                 onSelect={selectPage}

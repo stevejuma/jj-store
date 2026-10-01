@@ -1,5 +1,11 @@
 # Compatibility and release
 
+The channel UI consumes additive authorized timeline and reaction witnesses.
+Messages with no reply parent retain the original canonical bytes; replies
+retain exact parent revisions through edits, closure transfer and cold recovery.
+Generated contracts and selected CLI/transport consumers must qualify these
+additions without changing manifest or companion formats.
+
 M15 HTTP contract samples cover Thread commands/status/detail/events, exact
 human message revisions, Reaction queries/commands, custom
 definitions/retirement and retained raster reads. They validate actual isolated

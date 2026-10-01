@@ -137,11 +137,16 @@ pub struct HumanMessageRevisionV1 {
     pub actor: PrincipalId,
     pub accepted_at_millis: i64,
     pub previous: Option<CollabObjectRef>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub reply_to: Option<CollabObjectRef>,
     pub body: Option<String>,
 }
 impl HumanMessageRevisionV1 {
     pub fn validate(&self) -> Result<()> {
         schema(self.schema_version)?;
+        if let Some(parent) = self.reply_to {
+            expect(parent, CollabObjectKind::HumanMessageRevision)?;
+        }
         if self.accepted_at_millis < 0
             || self
                 .body

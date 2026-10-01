@@ -5,6 +5,7 @@
   import type { CommunityMessageModel } from "@lapismd/lapis-community/components/community-message";
   import type { Model } from "../../api/client.js";
   import type { StoreController } from "../../controller/contracts.js";
+  import StoreMessageReactions from "../store-threads/StoreMessageReactions.svelte";
   import StoreAgentToolReview from "./StoreAgentToolReview.svelte";
   import StoreMessageActions from "./StoreMessageActions.svelte";
   import CommunityProjectsVirtualRows from "../community-projects/CommunityProjectsVirtualRows.svelte";
@@ -70,7 +71,14 @@
           {author}
           {members}
           highlighted={entry.role === "user"}
-          >{#snippet supplement()}<StoreMessageActions
+          >{#snippet supplement()}{#if controller.threads && entry.reaction_target}<StoreMessageReactions
+                threads={controller.threads}
+                target={entry.reaction_target}
+                disabled={!interactive ||
+                  !["write", "admin"].includes(
+                    controller.state.repository.permission ?? "",
+                  )}
+              />{/if}<StoreMessageActions
               authorName={author.name}
               items={[
                 { label: "Copy message", value: entry.content.content },

@@ -187,6 +187,7 @@ fn message(
         n,
         CollabCommandV1::Thread {
             intent: ThreadCommandV1::Message {
+                reply_to: None,
                 thread_id: created.thread_id,
                 expected_thread: created.version,
                 message_id: id,

@@ -166,6 +166,8 @@ export function createStoreRouteHistory(
         reviewThreadId: null,
         projectId: null,
         taskId: null,
+        threadId: null,
+        replyId: null,
       });
     },
     page(page: StorePage) {
@@ -192,6 +194,8 @@ export function createStoreRouteHistory(
         reviewThreadId: null,
         projectId: null,
         taskId: null,
+        threadId: null,
+        replyId: null,
       });
     },
     navigate(delta: -1 | 1) {

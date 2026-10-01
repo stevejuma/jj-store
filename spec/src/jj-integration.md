@@ -1,5 +1,8 @@
 # Native JJ integration
 
+The collaboration transport carries optional immutable human reply parents
+without changing native operation or runner authority.
+
 Explicit local BoundCapture carries the exact observed Thread version and
 primary assignment with the original sanitized batch/profile. It requires one
 session replacement, stages the shared link without changing lifecycle and

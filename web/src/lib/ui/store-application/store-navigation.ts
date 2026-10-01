@@ -1,3 +1,6 @@
+import type { StoreRoute } from "../../controller/contracts.js";
+import { isRepositoryProjects } from "../../controller/projects-view-cache.js";
+import { projectSidebarId } from "../store-work/projects-sidebar-model.js";
 import type { StoreController } from "../../controller/contracts.js";
 import type {
   CommunityNavigationItemModel,
@@ -7,7 +10,11 @@ export function selectStoreNavigation(
   controller: StoreController,
   item: CommunityNavigationItemModel,
 ) {
-  if (item.kind === "repository") controller.actions.openRepository(item.id);
+  if (item.kind === "threads") void controller.actions.openThreads?.();
+  else if (item.kind === "channel")
+    void controller.actions.openThreads?.(item.thread);
+  else if (item.kind === "repository")
+    controller.actions.openRepository(item.id);
   else if (
     item.kind === "project" &&
     controller.projects &&
@@ -33,4 +40,16 @@ export function selectStoreNavigation(
     ].includes(item.kind)
   )
     controller.actions.selectPage(item.kind as StorePage);
+}
+
+export function activeStoreNavigation(route: StoreRoute) {
+  if (route.page === "threads")
+    return route.threadId
+      ? `thread:${route.repository}:${route.threadId}`
+      : "threads";
+  if (route.page === "projects" && !isRepositoryProjects(route))
+    return route.projectId
+      ? projectSidebarId(route.repository, route.projectId)
+      : "projects";
+  return route.repository;
 }

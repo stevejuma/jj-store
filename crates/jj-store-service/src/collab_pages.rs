@@ -112,6 +112,7 @@ pub enum Items {
         actors: Vec<ReactionActorRowV1>,
     },
     Emojis {
+        versions: std::collections::BTreeMap<CustomEmojiId, CollabObjectRef>,
         definitions: Vec<CustomEmojiVersionV1>,
     },
 }
@@ -283,6 +284,7 @@ async fn execute(
             let page = pin.emojis(session, after, *limit).await?;
             Ok((
                 Items::Emojis {
+                    versions: page.versions,
                     definitions: page.definitions,
                 },
                 page.next_id.map(|after| Position::Emoji { after }),

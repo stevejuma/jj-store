@@ -1,3 +1,5 @@
+import { createProductionRefresh } from "./production-store-refresh.js";
+import { createThreadsIntegration } from "./production-threads-integration.js";
 import { createProductionProjects } from "./production-projects-integration.js";
 import { createProductionConnect } from "./production-store-connect.js";
 import { connectionDeniedMessage, storeErrorMessage } from "./store-error.js";
@@ -71,7 +73,15 @@ export function createProductionStoreController(
     () => feed.abort(),
     options.fetcher,
   );
+  const threadsIntegration = createThreadsIntegration({
+    source: () => source,
+    data,
+    history,
+    connectRepository,
+  });
+  const { threads, openThreads } = threadsIntegration;
   async function restoreRoute() {
+    if (await threadsIntegration.restore()) return;
     if (history.route.page === "projects") {
       version += 1;
       await projects.restore();
@@ -106,6 +116,7 @@ export function createProductionStoreController(
     stopProjectEvents();
     discovery.abort();
     if (!preserveSession) clearProjects();
+    threads.clear(preserveSession);
     source?.close();
     source = null;
     settings.clear();
@@ -164,6 +175,7 @@ export function createProductionStoreController(
         data,
         feed.signal,
       );
+      await threadsIntegration.connected();
       if (history.route.page === "projects") await projects.restore();
       else if (history.route.snapshotOperationId) await reader.restorePage();
     } catch (cause) {
@@ -188,32 +200,28 @@ export function createProductionStoreController(
     },
     fetcher: options.fetcher,
   });
-  async function refresh() {
-    if (history.route.page === "projects") {
-      await projects.refresh();
-      data.status.refreshAvailable = false;
-      return;
-    }
-    const active = activeSource();
-    feed.abort();
-    const captured = await active.snapshot(true);
-    data.heads = [...captured.heads];
-    data.head = captured;
-    const selected = data.heads.length === 1 ? data.heads[0]! : null;
-    version += 1;
-    clearProductionStoreView(data);
-    search.clear();
-    history.refresh(selected);
-    data.status.refreshAvailable = false;
-    feed = new AbortController();
-    void followProductionStoreEvents(
-      active,
-      () => active === source,
-      data,
-      feed.signal,
-    );
-    if (selected) await reader.restorePage();
-  }
+  const { refresh, selectOperation } = createProductionRefresh({
+    data,
+    history,
+    source: activeSource,
+    projects,
+    threads: threadsIntegration,
+    search,
+    reader,
+    stopFeed: () => feed.abort(),
+    invalidate: () => {
+      version += 1;
+    },
+    follow: (active) => {
+      feed = new AbortController();
+      void followProductionStoreEvents(
+        active,
+        () => active === source,
+        data,
+        feed.signal,
+      );
+    },
+  });
   const mutations = createProductionStoreMutations({
     state: data.mutation,
     source: activeSource,
@@ -227,14 +235,6 @@ export function createProductionStoreController(
     current: (active) => active === source,
     uploadLimit: () => data.conflictUploadBytes,
   });
-  async function selectOperation(id: string) {
-    if (!data.heads.includes(id)) return;
-    version += 1;
-    clearProductionStoreView(data);
-    search.clear();
-    history.selectSnapshot(id);
-    await reader.restorePage();
-  }
   const selectRevision = createProductionRevisionSelector(
     data,
     history,
@@ -289,6 +289,7 @@ export function createProductionStoreController(
   });
 
   return {
+    threads,
     projects,
     get state() {
       return productionControllerView(
@@ -300,6 +301,6 @@ export function createProductionStoreController(
           (data.accessMode === "local_trusted" || sessionToken !== null),
       );
     },
-    actions,
+    actions: { ...actions, openThreads },
   };
 }

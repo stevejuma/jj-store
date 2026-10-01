@@ -117,7 +117,7 @@ impl CollabObjectV1 {
                     _ => None,
                 })
                 .collect(),
-            Self::HumanMessageRevision(v) => v.previous.into_iter().collect(),
+            Self::HumanMessageRevision(v) => v.previous.into_iter().chain(v.reply_to).collect(),
             Self::ThreadLink(v) => v.previous.into_iter().collect(),
             Self::Reaction(v) => v
                 .target

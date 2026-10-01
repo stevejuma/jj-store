@@ -108,6 +108,8 @@ pub enum AgentActivity {
         state: SessionState,
     },
     Message {
+        #[serde(skip_serializing_if = "Option::is_none")]
+        reaction_target: Option<jj_collab::ReactionTargetV1>,
         sequence: u64,
         event_id: AgentEventId,
         turn_id: Option<TurnId>,

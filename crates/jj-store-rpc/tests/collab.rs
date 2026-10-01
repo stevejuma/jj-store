@@ -328,6 +328,7 @@ async fn unix_rpc_keeps_exact_feedback_assets_pages_and_receipts_across_transpor
                 4,
                 CollabCommandV1::Thread {
                     intent: ThreadCommandV1::Message {
+                        reply_to: None,
                         thread_id: first.thread_id,
                         expected_thread: first.version,
                         message_id: HumanMessageId::new([4; 16]),
@@ -388,6 +389,7 @@ async fn unix_rpc_keeps_exact_feedback_assets_pages_and_receipts_across_transpor
                 6,
                 CollabCommandV1::Thread {
                     intent: ThreadCommandV1::Message {
+                        reply_to: None,
                         thread_id: first.thread_id,
                         expected_thread: message.version,
                         message_id: HumanMessageId::new([4; 16]),
@@ -446,7 +448,10 @@ async fn unix_rpc_keeps_exact_feedback_assets_pages_and_receipts_across_transpor
     let CollabCommandResultV1::Emoji { version } = receipt.result else {
         panic!()
     };
-    let Items::Emojis { definitions } = client
+    let Items::Emojis {
+        definitions,
+        versions,
+    } = client
         .collab_page(&Query::Emojis { limit: 10 }, None)
         .await
         .unwrap()
@@ -454,6 +459,7 @@ async fn unix_rpc_keeps_exact_feedback_assets_pages_and_receipts_across_transpor
     else {
         panic!()
     };
+    assert_eq!(versions[&emoji_id], version);
     let definition = &definitions[0];
     assert_eq!(
         client

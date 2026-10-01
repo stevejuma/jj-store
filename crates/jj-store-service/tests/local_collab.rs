@@ -356,6 +356,7 @@ async fn local_commands_keep_exact_history_preserve_siblings_and_replay_after_gc
         2,
         LocalCollabCommand::Thread {
             intent: ThreadCommandV1::Message {
+                reply_to: None,
                 thread_id: created_result.thread_id,
                 expected_thread: created_result.version,
                 message_id: HumanMessageId::new([2; 16]),
@@ -388,6 +389,7 @@ async fn local_commands_keep_exact_history_preserve_siblings_and_replay_after_gc
         4,
         LocalCollabCommand::Thread {
             intent: ThreadCommandV1::Message {
+                reply_to: None,
                 thread_id: first.thread_id,
                 expected_thread: first.version,
                 message_id: HumanMessageId::new([2; 16]),
@@ -871,4 +873,65 @@ async fn local_unknown_outcome_retains_request_and_replays_after_restart() {
             .collect::<Vec<_>>(),
         heads
     );
+}
+
+#[tokio::test]
+async fn local_reply_parent_and_receipt_survive_gc_and_cold_reopen() {
+    let (root, repo) = fixture();
+    let created = thread_result(receipt(
+        repo.apply_collab_command(&thread(91)).await.unwrap(),
+    ));
+    let parent = thread_result(receipt(
+        repo.apply_collab_command(&request(
+            92,
+            LocalCollabCommand::Thread {
+                intent: ThreadCommandV1::Message {
+                    thread_id: created.thread_id,
+                    expected_thread: created.version,
+                    message_id: HumanMessageId::new([92; 16]),
+                    expected_revision: None,
+                    reply_to: None,
+                    body: Some("Parent".into()),
+                },
+            },
+        ))
+        .await
+        .unwrap(),
+    ));
+    let command = request(
+        93,
+        LocalCollabCommand::Thread {
+            intent: ThreadCommandV1::Message {
+                thread_id: parent.thread_id,
+                expected_thread: parent.version,
+                message_id: HumanMessageId::new([93; 16]),
+                expected_revision: None,
+                reply_to: parent.message,
+                body: Some("Persisted reply".into()),
+            },
+        },
+    );
+    let accepted = receipt(repo.apply_collab_command(&command).await.unwrap());
+    let reply = thread_result(accepted.clone());
+    let path = root.path().join("repo");
+    drop(repo);
+    gc(&path);
+    let cold = reopen(&path);
+    assert_eq!(
+        receipt(cold.apply_collab_command(&command).await.unwrap()),
+        accepted
+    );
+    let store = cold.thread_store().await.unwrap();
+    let CollabObjectV1::HumanMessageRevision(message) =
+        store.object(reply.message.unwrap()).unwrap()
+    else {
+        panic!()
+    };
+    assert_eq!(message.reply_to, parent.message);
+    let CollabObjectV1::HumanMessageRevision(parent) =
+        store.object(parent.message.unwrap()).unwrap()
+    else {
+        panic!()
+    };
+    assert_eq!(parent.body.as_deref(), Some("Parent"));
 }
