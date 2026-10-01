@@ -22,6 +22,10 @@ Storage harness self-tests are part of normal validation. `pnpm test:rustfs`
 executes only isolated disposable Docker probes and writes a scratch report. An
 approved immutable report is retained with its exact image/topology.
 
+Development-only WorkStore samples live in the checkout-owned harness. Fresh
+fixture setup and `pnpm dev:seed:work` use the production HTTP command boundary;
+neither direct object persistence nor catalog fixtures become repository state.
+
 ## M0 extension qualification
 
 M0 introduces only CLI and JJ compatibility crates. The upstream example is a

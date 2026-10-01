@@ -490,6 +490,18 @@ fails closed and directs the operator to the explicit reset command. Cold
 browser acceptance supplies an isolated temporary root and cannot mutate the
 interactive fixture.
 
+Fresh development fixtures also publish three sample projects, nine tasks with
+all four states and same-project subtasks, active links to the demo repository,
+and six threaded comments through the production WorkStore HTTP command route.
+`pnpm dev:seed:work` adds these samples to an already running owned LocalTrusted
+fixture without replacing its repository or restarting the service. Stable
+repository-scoped sample identities make reruns additive: existing project/task
+edits, retired links and comment tombstones remain intact. An interrupted
+initial task state change can resume only while its original metadata and
+version one remain unchanged. Unknown outcomes stop the seed and retain its
+request identity; a rerun inspects selected native records before publishing
+missing samples. The UI loads newly seeded state only on explicit refresh.
+
 The existing native administration RPC and CLI clients retain the selected
 code-state version in snapshot preconditions. This prepares the command layer
 for `jj agent enable` and later review commands without treating agent/review

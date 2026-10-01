@@ -126,6 +126,16 @@ explicitly. The loopback-only harness may recognize an exact validated Gravatar
 request only to abort it locally; it MUST NOT permit an external response or
 widen general network access.
 
+The same fresh fixture includes native WorkStore samples through its authorized
+HTTP commands. The additive `dev:seed:work` command checks the matching owned
+runtime before publishing, uses repository-scoped stable entity identities,
+preserves existing edits and tombstones, and stops on an unknown command
+outcome. Focused seed regressions cover interruption and idempotence. Cold
+native browser acceptance proves the samples survive fixture preparation's
+physical restart; all direct native-browser fixture consumers are requalified
+when this shared seed changes. Interactive sample addition never invokes
+destructive reset.
+
 ## M0 extension qualification
 
 Native compatibility probes are normal Rust test targets. Their source/fixture

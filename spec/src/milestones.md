@@ -96,11 +96,11 @@ shared-package release qualification does not alter those original Git gates.
 | M10.6       | Done        | M10.5             | JST-REPL-004,JST-REPL-010,JST-REPL-011                                                                                                                                   | Complete snapshot-plus-tail bootstrap, format-2 seed upgrade and non-destructive existing-workspace migration                  | Retain bootstrap, migration and zero-upstream regressions                     | E-M10-008,E-M10-010,E-M10-013                                                                                                                                                                                                                                                                                                                                  |
 | M10.7       | Done        | M10.6             | JST-REPL-001,JST-REPL-006,JST-REPL-011,JST-REPL-012                                                                                                                      | Server-owned worker, one upstream, local outage readiness, controls, finite waits and SSE/search integration                   | Retain active profile; expanded hardening stays deferred to M10.8.            | E-M10-009,E-M10-010,E-M10-013,E-M10-014                                                                                                                                                                                                                                                                                                                        |
 | M10.8       | Deferred    | M10.7             | JST-REPL-011,JST-REPL-012                                                                                                                                                | Expanded pressure/fault soak, browser UI, cold two-instance RustFS, archive/export and topology qualification                  | Future replication hardening                                                  | -                                                                                                                                                                                                                                                                                                                                                              |
-| M11         | In progress | M9.6              | JST-WORK-001,JST-WORK-002,JST-WORK-003,JST-WORK-004,JST-WORK-005,JST-WORK-006,JST-WORK-007,JST-WORK-008                                                                  | Native project home, linked repositories, tasks and discussion                                                                 | Complete M11.4 package qualification and visual review                        | E-M11-001,E-M11-002,E-M11-003,E-M11-004,E-M11-006                                                                                                                                                                                                                                                                                                              |
+| M11         | In progress | M9.6              | JST-WORK-001,JST-WORK-002,JST-WORK-003,JST-WORK-004,JST-WORK-005,JST-WORK-006,JST-WORK-007,JST-WORK-008                                                                  | Native project home, linked repositories, tasks and discussion                                                                 | Complete M11.4 package qualification and visual review                        | E-M11-001,E-M11-002,E-M11-003,E-M11-004,E-M11-006,E-M11-007                                                                                                                                                                                                                                                                                                    |
 | M11.1       | Done        | M9.6              | JST-WORK-001,JST-WORK-002,JST-WORK-003,JST-WORK-004,JST-WORK-005,JST-WORK-007                                                                                            | Native model, publication, receipts, recovery and copy                                                                         | Retain native and real RustFS gates                                           | E-M11-001,E-M11-003                                                                                                                                                                                                                                                                                                                                            |
 | M11.2       | Done        | M11.1             | JST-WORK-005,JST-WORK-006,JST-WORK-008                                                                                                                                   | Authorized service, API, RPC and CLI                                                                                           | Retain local transport/CLI gates                                              | E-M11-002                                                                                                                                                                                                                                                                                                                                                      |
 | M11.3       | Done        | M11.2             | JST-WORK-008                                                                                                                                                             | Browser projects/tasks/comments and explicit refresh                                                                           | Retain cold browser gates; visual baselines pending                           | E-M11-003,E-M11-004                                                                                                                                                                                                                                                                                                                                            |
-| M11.4       | In progress | M11.3             | JST-WORK-005,JST-WORK-006,JST-WORK-008,JST-WORK-009,JST-UI-015                                                                                                           | Installation Projects hub, full-root browse and cold browser acceptance                                                        | Shared-package qualification; visual baselines pending                        | E-M11-005,E-M11-006                                                                                                                                                                                                                                                                                                                                            |
+| M11.4       | In progress | M11.3             | JST-WORK-005,JST-WORK-006,JST-WORK-008,JST-WORK-009,JST-UI-015                                                                                                           | Installation Projects hub, full-root browse and cold browser acceptance                                                        | Shared-package qualification; visual baselines pending                        | E-M11-005,E-M11-006,E-M11-007                                                                                                                                                                                                                                                                                                                                  |
 | M12         | Done        | M11.1,M11.2,M11.3 | JST-GIT-001,JST-GIT-002,JST-GIT-003,JST-GIT-004,JST-GIT-005,JST-GIT-006,JST-GIT-007,JST-GIT-008                                                                          | Native fetch/edit/push/external-merge cycle with cache-loss and fault qualification                                            | Maintain qualified bookmark bridge                                            | E-M12-001,E-M12-002,E-M12-003,E-M12-004,E-M12-005,E-M12-006,E-M12-007,E-M12-008,E-M12-009,E-M12-010                                                                                                                                                                                                                                                            |
 | M12.1       | Done        | M11.1,M11.2,M11.3 | JST-GIT-001                                                                                                                                                              | GB0: Parsed backend-aware dispatch and ordinary path regression                                                                | Complete staged bridge gate                                                   | E-M12-001                                                                                                                                                                                                                                                                                                                                                      |
 | M12.2       | Done        | M12.1             | JST-GIT-002,JST-GIT-003                                                                                                                                                  | GB1: Exact conversion and native retained cache-loss identity                                                                  | Complete staged bridge gate                                                   | E-M12-002                                                                                                                                                                                                                                                                                                                                                      |
@@ -25896,6 +25896,226 @@ and named tests are checked by the progress gate.
       "Shared Community source release qualification and registry publication remain pending as documented in E-M11-005; ignored local snapshot is only development validation.",
       "Changed stories remain visual-pending; human baseline approval is separate.",
       "Root aggregates, full Rust workspace, unrelated story/test suites and additional native fault qualification are out of scope for this integration."
+    ]
+  },
+  {
+    "id": "E-M11-007",
+    "tasks": ["M11", "M11.4"],
+    "date": "2026-10-01",
+    "kind": "native-development-project-task-seed",
+    "revision": "Enclosing Jujutsu change vqqlmmol.",
+    "before": "Main clean at zllovtln / bf5c6bfa. Interactive fixture has no projects/tasks. Fresh repository setup seeds code, agent activity and reviews only. Existing development fixture tests pass 8/8; the new exact work-seed target fails once because its seeder module is absent.",
+    "files": [
+      "package.json",
+      "scripts/dev-demo.mjs",
+      "scripts/dev-demo-work.mjs",
+      "scripts/dev-demo-work-samples.mjs",
+      "scripts/dev-demo-work.test.mjs",
+      "web/tests/real/work-seed.spec.ts",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/api.md",
+      "spec/src/spec-governance.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "scripts/dev-demo-work.test.mjs#work seed adds linked projects, all task states, subtasks and threaded discussion once",
+      "scripts/dev-demo-work.test.mjs#work seed preserves edited records, retired links and comment tombstones",
+      "scripts/dev-demo-work.test.mjs#work seed stops on an unknown outcome and resumes from committed records",
+      "scripts/dev-demo-work.test.mjs#work seed resumes an interrupted task creation before its initial state update"
+    ],
+    "runs": [
+      {
+        "command": "node --test scripts/dev-demo-repository.test.mjs scripts/dev-demo-state.test.mjs scripts/dev-demo-collaboration.test.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Before state: 8/8 existing fixture tests pass. .scratch/work-seed-before.log."
+      },
+      {
+        "command": "node --test scripts/dev-demo-work.test.mjs (before implementation)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Exact new target fails at missing seeder import; no native data modified. .scratch/work-seed-regression-before.log."
+      },
+      {
+        "command": "node --test scripts/dev-demo-work.test.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial three native command-seed regressions pass. Added interrupted task-creation regression before final focused rerun. .scratch/work-seed-regression-after.log and work-seed-unit.log."
+      },
+      {
+        "command": "pnpm exec prettier --write package.json scripts/dev-demo.mjs scripts/dev-demo-work.mjs scripts/dev-demo-work-samples.mjs scripts/dev-demo-work.test.mjs spec/src/cli.md spec/src/spec-governance.md spec/src/architecture.md web/tests/real/work-seed.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial changed-path formatting. .scratch/work-seed-format.log."
+      },
+      {
+        "command": "pnpm exec prettier --write scripts/dev-demo.mjs scripts/dev-demo-work.test.mjs web/tests/real/work-seed.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Interrupted creation and owned-process checks normalized. .scratch/work-seed-format2.log."
+      },
+      {
+        "command": "node --test scripts/dev-demo-*.test.mjs scripts/governance.test.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "35/35 initial direct development/governance tests pass; final 36/36 includes interrupted task creation. .scratch/work-seed-harness.log and work-seed-harness-final.log."
+      },
+      {
+        "command": "node --check scripts/dev-demo-work.mjs; node --check scripts/dev-demo-work-samples.mjs; node --check scripts/dev-demo.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "All three native harness modules parse."
+      },
+      {
+        "command": "node --test scripts/dev-demo-work.test.mjs (final focused target)",
+        "result": "pass",
+        "failures": 0,
+        "note": "4/4 pass, including interrupted task creation before initial state change. .scratch/work-seed-unit-final.log."
+      },
+      {
+        "command": "pnpm exec prettier --write web/tests/real/work-seed.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Native API reads use the production loopback Origin/Fetch Metadata headers. Seeded task heading binds its exact native short ID and task route binds the full ID. .scratch/work-seed-format3.log and work-seed-format4.log."
+      },
+      {
+        "command": "JJ_STORE_DEV_PORT=7482 JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs JJ_STORE_REAL_TEST=work-seed.spec.ts pnpm web:test:real",
+        "result": "pass",
+        "failures": 0,
+        "note": "1/1 cold real RustFS/browser seed test passes. Three native projects, nine tasks/all four states, three subtasks, six comments and three replies survive fixture preparation physical restart. Reseed publishes zero changes and leaves snapshot identical; production task thread opens with exact native route. Initial startup 1024 ms, prepared restart 870 ms, resident 171648 KiB; complete code/agent/review/work fixture preparation 382939 ms. Owned disposable service stopped and root removed. .scratch/work-seed-cold.log."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "4 validators, 20 chapters and 125 requirements pass. .scratch/work-seed-spec.log."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "6 protected files, 5 owning canonical chapters pass. .scratch/work-seed-spec-first.log."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "96 tasks pass evidence bookkeeping. .scratch/work-seed-progress.log."
+      },
+      {
+        "command": "Interactive native diagnostic GET with only protocol header",
+        "result": "fail",
+        "failures": 1,
+        "note": "403 from the existing LocalTrusted Origin/Fetch Metadata policy; diagnostic corrected to match production seeder headers. No mutation from that denied GET. The new cold read assertion uses the same required headers."
+      },
+      {
+        "command": "pnpm dev:seed:work",
+        "result": "pass",
+        "failures": 0,
+        "note": "Interactive owned main service adds 3 projects, 9 tasks and 6 comments in 28 native publications, with existing repository and live service retained. .scratch/work-seed-main.log."
+      },
+      {
+        "command": "Verify interactive native WorkStore records and retained identity files",
+        "result": "pass",
+        "failures": 0,
+        "note": "Native selected reads confirm all four states, 3 subtasks/3 replies and active home links. Exact fixture, installation and repository-registration SHA-256 bytes match pre-seed evidence; original PID 60331 retained. Work state version 28 at manifest/publication 101. .scratch/work-seed-main-verify.log and work-seed-main-snapshot.json."
+      },
+      {
+        "command": "pnpm dev:seed:work (interactive repeat)",
+        "result": "pass",
+        "failures": 0,
+        "note": "0 new publications; existing records preserved. .scratch/work-seed-main-repeat.log."
+      },
+      {
+        "command": "CUA live native sample project and task-thread verification",
+        "result": "pass",
+        "failures": 0,
+        "note": "All three projects render under Mine and Your projects with linked home, active/done counts and current timestamps. Native browser task shows In progress, two subtasks and three threaded comments. Exact native heading and full task route verified, runtime errors empty. Screenshots .scratch/work-seed-projects.png and work-seed-thread.png. Temporary tab closed; user tabs/routes preserved. Initial title-only heading probe had no match because native short ID is part of accessible name; final assertion includes it."
+      },
+      {
+        "command": "Cold diagnostic discovery probe after exact run completion",
+        "result": "fail",
+        "failures": 1,
+        "note": "Connection refused because the successful exact cold harness had already stopped its isolated service and removed its disposable root. This is expected cleanup, with no remaining service fault. .scratch/work-seed-cold.log retains 1/1 successful test and cleanup evidence."
+      },
+      {
+        "command": "JJ_STORE_DEV_PORT=7482 JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs pnpm web:test:real",
+        "result": "fail",
+        "failures": 1,
+        "note": "Seven of eight tests pass: all five native-repository cases, work-seed and work-store consumers pass against the physically restarted fixture. Cold startup 828 ms, prepared restart 871 ms, resident 171808 KiB, preparation 374722 ms. The unfiltered command additionally collects git-bridge.spec.ts, which fails at missing Native Git feature before fetch. That scenario does not consume dev-demo: crates/jj-store-cli/tests/server_executable/git_bridge.rs:323 supplies its separate Rust-owned Git history and JJ_STORE_GIT_CYCLE_WORKSPACE. The generic invocation lacks that fixture. Its independent GB6 gate and collector correction remain outside this seed change. No assertions weakened or required consumers skipped. Disposable service stopped and root removed. .scratch/work-seed-native-consumers.log."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final document gate: 4 validators, 20 chapters, 125 requirements. .scratch/work-seed-spec-final.log."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final protected-change gate: 6 protected files, 5 canonical chapters. .scratch/work-seed-spec-first-final.log."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final evidence bookkeeping passes for 96 tasks. M11/M11.4 remain In progress. .scratch/work-seed-progress-final.log."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Updated only E-M11-007 and M11 evidence references; final ledger formatting."
+      },
+      {
+        "command": "pnpm exec prettier --check package.json scripts/dev-demo.mjs scripts/dev-demo-work.mjs scripts/dev-demo-work-samples.mjs scripts/dev-demo-work.test.mjs web/tests/real/work-seed.spec.ts spec/src/api.md spec/src/architecture.md spec/src/cli.md spec/src/spec-governance.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 11 changed files conform. .scratch/work-seed-format-final.log."
+      },
+      {
+        "command": "lsof -nP -iTCP:7460 -sTCP:LISTEN -iTCP:6046 -sTCP:LISTEN",
+        "result": "fail",
+        "failures": 1,
+        "note": "Diagnostic option error: lsof rejects duplicate TCP LISTEN inclusion. Corrected to one -sTCP:LISTEN for both ports; no service mutation."
+      },
+      {
+        "command": "lsof -nP -iTCP:7460 -iTCP:6046 -sTCP:LISTEN",
+        "result": "pass",
+        "failures": 0,
+        "note": "Main PID 60331 still listens on 7460; Storybook PID 27372 still listens on 6046. Existing processes retained."
+      },
+      {
+        "command": "test ! -e /var/folders/_3/k1jv9rtn47s_0k5bm6qn_lk80000gn/T/jj-store-real-browser-uokN86",
+        "result": "pass",
+        "failures": 0,
+        "note": "Broader disposable fixture root removed after owned service cleanup."
+      },
+      {
+        "command": "curl -s -o /dev/null -w '%{http_code}\\n' http://127.0.0.1:7460/",
+        "result": "pass",
+        "failures": 0,
+        "note": "Current main development UI responds HTTP 200."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Svelte diagnostics: 0 errors and 0 warnings. .scratch/work-seed-web-check.log."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "versions": "macOS ARM64; JJ 0.45.1; Node 24.10.0; pnpm 10.32.1; Playwright 1.63.0; existing owned embedded RustFS and native development binaries.",
+    "formats": "Existing owned HTTP Work V1 requests and receipt-selected native WorkStore records. Three repository-scoped stable project IDs, nine task IDs and six comment IDs; all four task states, three subtasks, three threaded replies and active home links. Exact command bytes determine stable request identities. Interrupted initial task state changes resume only with unchanged original metadata at version one. Existing edits, retired links and tombstones are preserved.",
+    "scope": "The shared development seed changes the native-browser fixture, so its direct consumers native-repository.spec.ts, work-store.spec.ts and work-seed.spec.ts are requalified after exact seed regression and isolated cold acceptance. All seven direct-consumer cases pass within the broader eight-test invocation. The independently Rust-provisioned git-bridge scenario does not consume dev-demo and its missing-fixture failure is recorded separately. Backend implementations, public contracts and UI presentation are unchanged; root aggregates, full Rust workspace, unrelated Storybook and registry release qualification are out of scope. Cold fixtures are separate from interactive data; additive interactive seeding never resets it. Stories remain visual-pending; no baseline approval.",
+    "next": "Retain additive seed, interrupted creation and cold native fixture consumer regressions.",
+    "deferred": [
+      "Root aggregate and full Rust workspace lanes are out of scope.",
+      "Visual baseline approval and shared package release qualification remain separate.",
+      "The unfiltered real-browser command also collects the independently provisioned Git bridge scenario. Its fixture selection mismatch remains outside this seed slice; its Rust-owned GB6 gate was not rerun."
     ]
   }
 ]

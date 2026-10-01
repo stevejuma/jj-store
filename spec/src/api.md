@@ -913,6 +913,11 @@ preconditions and entity IDs. Status and retry share that identity, even after
 refresh. Linked repository navigation uses the normal target session and token
 checks, never the home metadata grant.
 
+The development seed exercises these same commands for linked sample projects,
+all task states, subtasks and threaded comments. Its cold browser gate reads the
+physically reopened native records, verifies zero publication on additive
+reseed, and opens the seeded task discussion through the production hub.
+
 The shared browser history independently restores Projects task identities and
 the JJ Log evolution anchor. Page changes clear incompatible selections while
 preserving the full code operation pin; Back, Forward and reload restore the
