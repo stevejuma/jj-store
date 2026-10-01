@@ -492,3 +492,8 @@ Local filesystem configuration is an additive format-2 storage variant. Local
 browser DTOs are separate schemas with real Git SHA-1 identities; no native
 codec, identifier width, endpoint or companion format is widened. Discovery adds
 source profile and availability with native defaults for existing clients.
+
+Local WorkStore browser responses use the companion profile, real metadata
+commit and independent WorkStore version. Native WorkStore receipts and
+snapshots keep their existing formats; both providers consume one shared browse
+projection and preserve the same typed command semantics.

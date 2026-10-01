@@ -1069,3 +1069,10 @@ Snapshot, capabilities, registration inspection/list/add/remove/status and
 installation folder picker endpoints use the same admission. Continuations bind
 repository, generation, operation and exact request, expire after five minutes
 and reset across process restart. Native ID schemas are unchanged.
+
+Local WorkStore POST `/work/page` and `/work/browse` under the local repository
+namespace require `metadata_commit` and a strict owned query. Their signed
+continuations bind that committed selection and complete filters. POST
+`/work/commands` and GET `/work/commands/{request_id}` reuse CLI device actor
+provenance, original request receipts and unknown outcomes. They do not require
+or fabricate a native code snapshot.

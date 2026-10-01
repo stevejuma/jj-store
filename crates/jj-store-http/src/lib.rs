@@ -149,6 +149,7 @@ impl Default for Config {
 struct State {
     host: Option<RepositoryHost>,
     local_reader: jj_store_service::local_browser::code::Executor,
+    local_jobs: Arc<Semaphore>,
     search: SearchRegistry,
     config: Config,
     slots: Arc<Semaphore>,
@@ -272,6 +273,7 @@ impl HttpApi {
             local_reader,
             search,
             slots: Arc::new(Semaphore::new(config.concurrency)),
+            local_jobs: Arc::new(Semaphore::new(config.workers)),
             event_slots: Arc::new(Semaphore::new(config.event_concurrency)),
             config,
             queries,

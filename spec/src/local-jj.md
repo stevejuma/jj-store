@@ -188,3 +188,23 @@ explicit operation replace native manifest positions in its code snapshot; there
 is no fabricated native epoch, WAL position or publication sequence.
 Content-filter revsets remain disabled until their bounded resource proofs are
 qualified. File text is bounded; binary/oversized content reports its status.
+
+### Pinned local WorkStore transport
+
+Local browser WorkStore pages require an explicit committed companion metadata
+selection, independently from the code operation. Initial pages and resumed
+queries validate that selection against bounded current committed history and
+reject staged or unrelated commits. Filtered summaries use the same complete
+root projection, ordering, counts and bounds as native WorkStore. Browser
+continuations bind repository, binding generation, metadata selection and exact
+query; changed filters or another repository fail closed.
+
+Local browser edits and status use the existing CLI device actor and original
+typed WorkStore request. Receipt replay precedes stale entity checks. Transport
+timeouts after dispatch retain the exact request as an unknown outcome; removal
+or replacement of a folder binding cannot grant access to a retained page.
+
+Admitted browser collaboration facades bind the original repository identity.
+Every write checks that identity before device actor initialization and on each
+publication retry; a replaced companion root is stale rather than another home
+to which the original command may be applied.

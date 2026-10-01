@@ -332,7 +332,10 @@ impl LocalRepositories for DeviceRepositories {
         Ok((folder, binding.generation))
     }
     fn open(&self, repository: RepositoryId) -> Result<LocalRepository> {
-        self.provider.open(&self.folder(repository)?.0)
+        Ok(self
+            .provider
+            .open(&self.folder(repository)?.0)?
+            .bound_to(repository))
     }
     async fn register(&self, request: RegisterFolder) -> Result<RegistrationOutcome> {
         let manager = self.clone();

@@ -1,5 +1,6 @@
 //! LocalTrusted installation management and strictly typed operation-pinned reads.
 use crate::*;
+mod work;
 use axum::{
     Json,
     extract::{Path, State as ExtractState},
@@ -45,6 +46,7 @@ pub(crate) struct Snapshot {
     #[serde(flatten)]
     pub code: local::Heads,
     pub metadata_commit: Option<m::GitSha1Id>,
+    pub actor: Option<m::PrincipalId>,
 }
 #[derive(Serialize, JsonSchema)]
 #[schemars(rename = "LocalRepositoryCapabilities")]
@@ -80,7 +82,7 @@ pub(super) fn router() -> Router<Arc<State>> {
             Router::new()$(.route($path,$method($handler)))*
         };
     }
-    endpoints!(register)
+    endpoints!(register).merge(work::router())
 }
 fn admit(state: &State) -> Result<()> {
     if !matches!(
@@ -119,11 +121,20 @@ fn map(error: management::Error) -> Error {
     }
 }
 async fn blocking<T: Send + 'static>(
+    state: &State,
     run: impl FnOnce() -> Result<T> + Send + 'static,
 ) -> Result<T> {
-    tokio::task::spawn_blocking(run)
-        .await
-        .map_err(|_| Error::unavailable())?
+    let permit = state
+        .local_jobs
+        .clone()
+        .try_acquire_owned()
+        .map_err(|_| Error::busy())?;
+    tokio::task::spawn_blocking(move || {
+        let _permit = permit;
+        run()
+    })
+    .await
+    .map_err(|_| Error::unavailable())?
 }
 async fn list(
     ExtractState(state): ExtractState<Arc<State>>,
@@ -131,7 +142,7 @@ async fn list(
 ) -> Result<Response> {
     routes::input(args)?;
     let manager = manager(&state)?;
-    state.json(&blocking(move || manager.list().map_err(map)).await?)
+    state.json(&blocking(&state, move || manager.list().map_err(map)).await?)
 }
 async fn inspect(
     ExtractState(state): ExtractState<Arc<State>>,
@@ -141,26 +152,43 @@ async fn inspect(
     routes::input(args)?;
     let request = decode_body(body)?;
     let manager = manager(&state)?;
-    state.json(&blocking(move || manager.inspect(&request.path).map_err(map)).await?)
+    state.json(&blocking(&state, move || manager.inspect(&request.path).map_err(map)).await?)
 }
 async fn register(
     ExtractState(state): ExtractState<Arc<State>>,
     args: routes::Input<routes::Empty>,
+    axum::Extension(pending): axum::Extension<mutations::Pending>,
     body: Body<management::RegisterFolder>,
 ) -> Result<Response> {
     routes::input(args)?;
     let request = decode_body(body)?;
     let manager = manager(&state)?;
-    state.json(&manager.register(request).await.map_err(map)?)
+    let id = request.request_id;
+    pending.set(id);
+    let runtime = tokio::runtime::Handle::current();
+    state.json(
+        &blocking(&state, move || {
+            runtime.block_on(manager.register(request)).map_err(map)
+        })
+        .await?,
+    )
 }
 async fn status(
     ExtractState(state): ExtractState<Arc<State>>,
     Path(request): Path<m::RequestId>,
     args: routes::Input<routes::Empty>,
+    axum::Extension(pending): axum::Extension<mutations::Pending>,
 ) -> Result<Response> {
     routes::input(args)?;
     let manager = manager(&state)?;
-    state.json(&manager.status(request).await.map_err(map)?)
+    pending.set(request);
+    let runtime = tokio::runtime::Handle::current();
+    state.json(
+        &blocking(&state, move || {
+            runtime.block_on(manager.status(request)).map_err(map)
+        })
+        .await?,
+    )
 }
 async fn remove(
     ExtractState(state): ExtractState<Arc<State>>,
@@ -171,7 +199,12 @@ async fn remove(
     routes::input(args)?;
     let request = decode_body(body)?;
     let manager = manager(&state)?;
-    state.json(&blocking(move || manager.remove(repository, request).map_err(map)).await?)
+    state.json(
+        &blocking(&state, move || {
+            manager.remove(repository, request).map_err(map)
+        })
+        .await?,
+    )
 }
 async fn pick(
     ExtractState(state): ExtractState<Arc<State>>,
@@ -231,7 +264,7 @@ impl local::Access for Binding {
 async fn binding(state: &State, repo: m::RepositoryId) -> Result<Arc<dyn local::Access>> {
     let manager = manager(state)?;
     let check = manager.clone();
-    let (folder, generation) = blocking(move || check.folder(repo).map_err(map)).await?;
+    let (folder, generation) = blocking(&state, move || check.folder(repo).map_err(map)).await?;
     Ok(Arc::new(Binding {
         manager,
         folder,
@@ -247,9 +280,10 @@ async fn snapshot(
     let access = binding(&state, repo).await?;
     let code = state.local_reader.heads(access).await?;
     let manager = manager(&state)?;
-    let metadata_commit = blocking(move || {
+    let (metadata_commit, actor) = blocking(&state, move || {
         let repo = manager.open(repo).map_err(map)?;
-        repo.metadata_store()
+        let commit = repo
+            .metadata_store()
             .read()
             .map_err(|_| Error::unavailable())?
             .map(|s| {
@@ -258,12 +292,14 @@ async fn snapshot(
                     .parse()
                     .map_err(|_| Error::unavailable())
             })
-            .transpose()
+            .transpose()?;
+        Ok((commit, repo.actor().map_err(|_| Error::unavailable())?))
     })
     .await?;
     state.json(&Snapshot {
         code,
         metadata_commit,
+        actor,
     })
 }
 async fn capabilities(
@@ -277,7 +313,7 @@ async fn capabilities(
         version: 1,
         profile: local::PROFILE,
         code_browse: true,
-        collaboration: false,
+        collaboration: true,
         agents: false,
         reviews: false,
         search: false,
@@ -479,4 +515,5 @@ pub(crate) fn document(document: &mut crate::contract::Document) {
         };
     }
     endpoints!(register);
+    work::document(document);
 }

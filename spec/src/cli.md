@@ -747,3 +747,8 @@ volume or RPC socket. The default remains native embedded storage. Filesystem
 mode requires literal-loopback LocalTrusted administration and rejects native
 backup/search/replication configuration. Native routes report unsupported
 authority rather than constructing a placeholder object store.
+
+Local browser WorkStore writes use the same shared-JJ device actor as
+`jj project`, `jj task` and `jj task comment`. The CLI can look up browser
+requests and returns their original committed receipts, independently of the
+code operation or later metadata publications.

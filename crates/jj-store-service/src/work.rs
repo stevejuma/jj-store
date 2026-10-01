@@ -1,5 +1,6 @@
 //! Home-authorized native project/task reads and receipt-backed commands.
 mod browse;
+pub(crate) use browse::browse_rows;
 mod browse_models;
 mod commands;
 pub use browse_models::*;

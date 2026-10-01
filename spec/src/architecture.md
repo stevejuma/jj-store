@@ -462,3 +462,8 @@ Filesystem-only composition omits native object storage, RPC, search and
 replication workers. The HTTP host is optional; native requests fail explicitly
 when absent. Installation-owned bindings and the Git-profile reader use the same
 HTTP admission and query-worker pool as native serving.
+
+Device-bound collaboration facades carry the admitted local repository identity
+into the existing WorkStore provider. Identity is rechecked on publication
+retries, while reads validate independently selected companion history. Native
+manifest authority and local Git ref authority remain separate.

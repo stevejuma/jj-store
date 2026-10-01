@@ -32624,6 +32624,152 @@ and named tests are checked by the progress gate.
       "M13.4 remains In progress. Local collaboration and agent capabilities remain false until routes are implemented.",
       "Indexed search, code writes, reviews, synchronization and conversion stay disabled."
     ]
+  },
+  {
+    "id": "E-M13-016",
+    "tasks": ["M13.4"],
+    "date": "2026-10-01",
+    "kind": "local-browser-workstore-transport",
+    "files": [
+      "crates/jj-store-cli/tests/local_browser.rs",
+      "crates/jj-store-http/src/contract/tests.rs",
+      "crates/jj-store-http/src/lib.rs",
+      "crates/jj-store-http/src/local_browser/work.rs",
+      "crates/jj-store-http/src/local_browser.rs",
+      "crates/jj-store-server/src/local_repositories.rs",
+      "crates/jj-store-service/src/local_repository/browser_work.rs",
+      "crates/jj-store-service/src/local_repository/selection.rs",
+      "crates/jj-store-service/src/local_repository/work.rs",
+      "crates/jj-store-service/src/local_repository/work_pages.rs",
+      "crates/jj-store-service/src/local_repository.rs",
+      "crates/jj-store-service/src/work/browse.rs",
+      "crates/jj-store-service/src/work.rs",
+      "crates/jj-store-service/tests/local_work.rs",
+      "schemas/openapi.json",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/compatibility.md",
+      "spec/src/local-jj.md",
+      "spec/src/milestones.md",
+      "spec/src/mutations.md",
+      "spec/src/projects.md",
+      "web/src/lib/api/generated.ts"
+    ],
+    "tests": [
+      "crates/jj-store-service/tests/local_work.rs#local_browser_browse_uses_complete_root_and_explicit_committed_pin",
+      "crates/jj-store-service/tests/local_work.rs#forged_continuations_cannot_read_staged_metadata_candidates",
+      "crates/jj-store-cli/tests/local_browser.rs#filesystem_runtime_registers_and_reads_without_native_storage",
+      "crates/jj-store-service/tests/local_work.rs#bound_local_browser_commands_cannot_follow_replaced_repository_identity"
+    ],
+    "runs": [
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo check -p jj-store-http --locked",
+        "result": "fail",
+        "failures": 5,
+        "note": "Mechanical blocking helper edit supplied state to two direct spawn_blocking calls; corrected both."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-service --test local_work --locked -- local_browser_browse_uses_complete_root_and_explicit_committed_pin --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "Complete root counts/filtering, pinned later publications, changed cursor query and unrelated history rejection pass."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-cli --test local_browser --locked -- filesystem_runtime_registers_and_reads_without_native_storage --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "HTTP/CLI actor and receipt parity, later metadata publication, explicit old pin, stale writes and signed filter binding pass."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-service --test local_work --test work_store --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 9 local and 4 native WorkStore tests passed, including shared complete-root browse and code authorization boundaries."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-http --lib --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 13 HTTP unit/contract tests pass with explicit retained native and additive local route inventories."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-cli --test local_browser --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 6 local browser fixtures passed."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target pnpm contracts:generate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Separate local WorkStore models and strict pin bodies generated."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero errors and warnings in generated contract consumer."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "fail",
+        "failures": 2,
+        "note": "CLI and mutation canonical chapters required by mapped tests/runtime; updated both."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "fail",
+        "failures": 1,
+        "note": "Generated public contracts also require compatibility chapter; updated it."
+      },
+      {
+        "command": "pnpm spec:first && pnpm check:progress && pnpm check:boundaries && pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "14 protected files, 7 canonical chapters, 111 tasks, 15 packages and 132 requirements validated."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target pnpm contracts:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "108 actual native/local HTTP/SSE responses conform; all 6 contract validation tests and contract TypeScript checks pass."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-service --test local_work --locked -- bound_local_browser_commands_cannot_follow_replaced_repository_identity --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "Wrong bound identity rejects a command, status and pinned browse without companion publication."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-service --test local_work --test work_store --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 10 local and 4 native WorkStore tests pass after identity binding."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "16 protected files and 8 owning canonical chapters pass."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-cli --test local_browser --locked -- filesystem_runtime_registers_and_reads_without_native_storage --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final filesystem HTTP/CLI receipt, actor, pin, replay and stale tests pass after admission and identity hardening."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "versions": "JJ 0.45.1, Git SHA-1, macOS ARM64.",
+    "formats": "Additive explicit local WorkStore pin bodies and jlw1 process-signed continuations; CLI cursor format and native snapshot codecs unchanged. Enclosing Jujutsu change xpovpkru.",
+    "next": "Implement independently pinned AgentStore presentation and local freshness, then the profile-aware frontend.",
+    "scope": "Cross-layer WorkStore transport. Escalation: the complete-root browse projection is shared by native and local providers, so qualify both service WorkStore test binaries; local admission and route inventory affect all HTTP routes, so run the HTTP library tests. Local runtime fixture captures new responses through the retained contract harness, so run the complete capture set. Root aggregates, RustFS and unrelated UI interaction lanes are out of scope for this slice.",
+    "deferred": [
+      "M13.4 remains In progress. Agent endpoints, frontend integration and final cold mixed qualification remain subsequent slices.",
+      "Code writes, search, reviews, conversion and synchronization stay disabled."
+    ]
   }
 ]
 ```

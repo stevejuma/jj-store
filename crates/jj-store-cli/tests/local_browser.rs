@@ -873,6 +873,175 @@ async fn filesystem_runtime_registers_and_reads_without_native_storage() {
         .await
         .unwrap();
     assert_eq!(replay["binding"]["repository"], id);
+    let work_command = json!({"version":1,"request_id":"13131313131313131313131313131313",
+        "command":{"command":"create_project","id":"14141414141414141414141414141414","title":"Browser home","body":"Shared CLI actor"}});
+    let work_url = format!("/local/repos/{id}/work/commands");
+    let work_outcome: Value = post(&work_url, work_command.clone())
+        .send()
+        .await
+        .unwrap()
+        .error_for_status()
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    assert_eq!(work_outcome["status"], "committed");
+    assert_eq!(work_outcome["receipt"]["actor"], snapshot["actor"]);
+    let cli_receipt: Value = serde_json::from_str(&jj(
+        &folder,
+        &[
+            "project",
+            "--format",
+            "json",
+            "status",
+            "13131313131313131313131313131313",
+        ],
+    ))
+    .unwrap();
+    assert_eq!(cli_receipt, work_outcome);
+    // A second CLI publication must not advance a previously selected browser root.
+    let _: Value = serde_json::from_str(&jj(
+        &folder,
+        &[
+            "project",
+            "--format",
+            "json",
+            "create",
+            "--request-id",
+            "15151515151515151515151515151515",
+            "--title",
+            "CLI home",
+        ],
+    ))
+    .unwrap();
+    let work_snapshot: Value = read(&format!("/local/repos/{id}/snapshot"))
+        .send()
+        .await
+        .unwrap()
+        .error_for_status()
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    let metadata = &work_snapshot["metadata_commit"];
+    let page_query = json!({"metadata_commit":metadata,"query":{"limit":1}});
+    let work_page: Value = post(&format!("/local/repos/{id}/work/page"), page_query.clone())
+        .send()
+        .await
+        .unwrap()
+        .error_for_status()
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    assert_eq!(work_page["projects"].as_array().unwrap().len(), 1);
+    assert!(
+        work_page["next_cursor"]
+            .as_str()
+            .unwrap()
+            .starts_with("jlw1_")
+    );
+    let browse_query =
+        json!({"metadata_commit":metadata,"query":{"kind":"projects","limit":1,"q":"home"}});
+    let work_browse: Value = post(
+        &format!("/local/repos/{id}/work/browse"),
+        browse_query.clone(),
+    )
+    .send()
+    .await
+    .unwrap()
+    .error_for_status()
+    .unwrap()
+    .json()
+    .await
+    .unwrap();
+    assert_eq!(work_browse["total_matches"], 2);
+    let _: Value = serde_json::from_str(&jj(
+        &folder,
+        &[
+            "project",
+            "--format",
+            "json",
+            "create",
+            "--request-id",
+            "16161616161616161616161616161616",
+            "--title",
+            "Later home",
+        ],
+    ))
+    .unwrap();
+    let mut resume_query = browse_query.clone();
+    resume_query["query"]["cursor"] = work_browse["next_cursor"].clone();
+    let resumed: Value = post(
+        &format!("/local/repos/{id}/work/browse"),
+        resume_query.clone(),
+    )
+    .send()
+    .await
+    .unwrap()
+    .error_for_status()
+    .unwrap()
+    .json()
+    .await
+    .unwrap();
+    assert_eq!(resumed["snapshot"], work_browse["snapshot"]);
+    assert_eq!(resumed["total_matches"], 2);
+    assert_eq!(resumed["projects"][0]["title"], "CLI home");
+    resume_query["query"]["q"] = json!("different");
+    assert_eq!(
+        post(&format!("/local/repos/{id}/work/browse"), resume_query)
+            .send()
+            .await
+            .unwrap()
+            .status(),
+        400
+    );
+    let empty_pin: Value = post(
+        &format!("/local/repos/{id}/work/page"),
+        json!({"metadata_commit":snapshot["metadata_commit"],"query":{}}),
+    )
+    .send()
+    .await
+    .unwrap()
+    .error_for_status()
+    .unwrap()
+    .json()
+    .await
+    .unwrap();
+    assert!(empty_pin["projects"].as_array().unwrap().is_empty());
+    let replay_work: Value = post(&work_url, work_command)
+        .send()
+        .await
+        .unwrap()
+        .error_for_status()
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    assert_eq!(replay_work, work_outcome);
+    let work_status: Value = read(&format!("{work_url}/13131313131313131313131313131313"))
+        .send()
+        .await
+        .unwrap()
+        .error_for_status()
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    assert_eq!(work_status, work_outcome);
+    let stale = json!({"version":1,"request_id":"17171717171717171717171717171717",
+        "command":{"command":"update_project","id":"14141414141414141414141414141414","expected_version":99,"title":"Stale","body":""}});
+    assert_eq!(post(&work_url, stale).send().await.unwrap().status(), 409);
+    let denied = post(&work_url, json!({}))
+        .header("Origin", "https://untrusted.invalid")
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(denied.status(), 403);
+    assert_eq!(
+        std::fs::read_to_string(folder.join("file.txt")).unwrap(),
+        "filesystem browser\n"
+    );
     if let Ok(path) = std::env::var("JJ_STORE_LOCAL_BROWSER_CONTRACT_CAPTURE") {
         let sample = |path: &str, method: &str, data: Value| json!({"path":path,"method":method,"status":200,"media":"application/json","data":data});
         fs::write(
@@ -884,6 +1053,14 @@ async fn filesystem_runtime_registers_and_reads_without_native_storage() {
                 sample("/v1/repositories", "get", repos),
                 sample("/v1/local/repos/{repo}/snapshot", "get", snapshot),
                 sample("/v1/local/repos/{repo}/query", "post", page),
+                sample("/v1/local/repos/{repo}/work/page", "post", work_page),
+                sample("/v1/local/repos/{repo}/work/browse", "post", work_browse),
+                sample("/v1/local/repos/{repo}/work/commands", "post", work_outcome),
+                sample(
+                    "/v1/local/repos/{repo}/work/commands/{request_id}",
+                    "get",
+                    work_status,
+                ),
             ])
             .unwrap(),
         )

@@ -26,6 +26,10 @@ pub use review_store::{LocalReviewSnapshot, LocalReviewStore};
 pub use review_types::{
     LocalReviewCommand, LocalReviewOutcome, LocalReviewReceipt, LocalReviewRequest,
 };
+mod browser_work;
+mod selection;
+pub use browser_work::LocalWorkBrowsePage;
+pub use jj_store_jj::local_metadata::GitOid as MetadataCommit;
 mod work;
 mod work_pages;
 pub use work::*;
@@ -45,13 +49,32 @@ use std::path::{Path, PathBuf};
 pub struct LocalRepository {
     pub(crate) metadata: MetadataStore,
     pub(crate) repo_path: PathBuf,
+    pub(crate) expected_repository: Option<m::RepositoryId>,
 }
 impl LocalRepository {
     pub fn new(repo_path: &Path, metadata: MetadataStore) -> Self {
         Self {
             repo_path: repo_path.to_path_buf(),
             metadata,
+            expected_repository: None,
         }
+    }
+    /// Bind an admitted device identity; CAS retries must never follow a replacement.
+    pub fn bound_to(mut self, repository: m::RepositoryId) -> Self {
+        self.expected_repository = Some(repository);
+        self
+    }
+    pub(crate) fn check_identity(
+        &self,
+        selected: Option<&metadata::Snapshot>,
+    ) -> crate::work::Result<()> {
+        if self
+            .expected_repository
+            .is_some_and(|id| selected.is_none_or(|s| s.repository() != id))
+        {
+            return Err(crate::work::Error::Stale);
+        }
+        Ok(())
     }
     pub fn metadata_store(&self) -> &MetadataStore {
         &self.metadata

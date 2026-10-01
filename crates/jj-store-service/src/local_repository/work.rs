@@ -130,6 +130,7 @@ impl LocalRepository {
             return Err(Error::Invalid);
         }
         request.command.validate().map_err(model)?;
+        self.check_identity(self.metadata.read().map_err(map_metadata)?.as_ref())?;
         let actor = self.ensure_actor()?;
         let digest = intent(actor, request)?;
         let proposed = Self::proposed_repository()?;
@@ -142,6 +143,7 @@ impl LocalRepository {
         .map_err(|_| Error::Limit)?;
         for _ in 0..8 {
             let base = self.metadata.read().map_err(map_metadata)?;
+            self.check_identity(base.as_ref())?;
             if let Some(value) = base
                 .as_ref()
                 .and_then(|s| s.receipt(actor, request.request_id))
@@ -194,6 +196,7 @@ impl LocalRepository {
     pub fn work_command_status(&self, request: m::RequestId) -> Result<LocalWorkOutcome> {
         let actor = self.actor()?;
         let base = self.metadata.read().map_err(map_metadata)?;
+        self.check_identity(base.as_ref())?;
         if let (Some(actor), Some(base)) = (actor, base)
             && let Some(value) = base.receipt(actor, request)
         {

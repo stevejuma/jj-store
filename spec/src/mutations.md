@@ -614,3 +614,8 @@ unavailable in this slice.
 Registration work and its blocking cross-process lease run on an isolated worker
 so concurrent in-process requests cannot block the async runtime that completes
 initialization. Typed read POST requests have no publication capability.
+
+Local browser WorkStore commands dispatch through the existing companion
+provider rather than native code mutation authority. They retain the original
+request identity in transport unknown outcomes, use CLI actor provenance and
+validate exact entity versions. Code commands remain disabled for this profile.
