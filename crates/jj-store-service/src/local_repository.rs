@@ -10,6 +10,10 @@ mod agent_provenance_pages;
 mod agent_store;
 mod errors;
 mod records;
+mod review_commands;
+mod review_io;
+mod review_store;
+mod review_types;
 pub use agent_commands::{
     LocalAgentCommand, LocalAgentOutcome, LocalAgentReceipt, LocalAgentRequest,
 };
@@ -18,6 +22,10 @@ pub use agent_pages::{LocalAgentPage, LocalAgentSessionRow};
 pub use agent_provenance_pages::{LocalAgentObjectPage, LocalAgentObjectRow};
 pub use agent_store::{LocalAgentSnapshot, LocalAgentStore};
 pub use errors::{LocalError, LocalResult};
+pub use review_store::{LocalReviewSnapshot, LocalReviewStore};
+pub use review_types::{
+    LocalReviewCommand, LocalReviewOutcome, LocalReviewReceipt, LocalReviewRequest,
+};
 mod work;
 mod work_pages;
 pub use work::*;

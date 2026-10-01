@@ -543,6 +543,12 @@ object returns stale. Catalog enumeration accepts at most 256 selections per
 call and uses the last returned stable catalog key for continuation. Old
 snapshots retain their original roots and selections after later COW updates.
 
+Local repository-wide ReviewStore threads use the same command projector and
+root-pinned reader. Their companion descriptor and receipt select the canonical
+root and complete retained record inventory in one review-domain publication.
+Local code/agent anchors remain unsupported until their external evidence and
+ownership have a qualified provider; repository threads do not qualify them.
+
 ## Conservative anchor placement
 
 `AnchorResolverV1` is a bounded read-only service over an original immutable

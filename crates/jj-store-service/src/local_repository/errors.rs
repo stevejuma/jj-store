@@ -18,8 +18,25 @@ pub enum LocalError {
     Busy,
     #[error("local collaboration representation is unsupported")]
     Unsupported,
+    #[error("review thread is resolved")]
+    ThreadResolved,
+    #[error("review thread is already open")]
+    ThreadOpen,
 }
 pub type LocalResult<T> = Result<T, LocalError>;
+impl From<jj_store_wal::publication::ReviewCommandError> for LocalError {
+    fn from(error: jj_store_wal::publication::ReviewCommandError) -> Self {
+        use jj_store_wal::publication::ReviewCommandError as E;
+        match error {
+            E::Publication(error) => error.into(),
+            E::Stale => Self::Stale,
+            E::ThreadResolved => Self::ThreadResolved,
+            E::ThreadOpen => Self::ThreadOpen,
+            E::NotFound(_) => Self::NotFound,
+            E::Invalid(_) => Self::Invalid,
+        }
+    }
+}
 impl From<jj_store_wal::Error> for LocalError {
     fn from(error: jj_store_wal::Error) -> Self {
         use jj_store_wal::Error as E;

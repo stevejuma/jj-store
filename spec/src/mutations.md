@@ -563,3 +563,10 @@ Receiver reduction uses the owned JJ conversion and frozen-view verifier. New
 normal origin intents prove source admission from accepted code publications; a
 first seed preserves receipt-selected baseline facts without reviving old code
 heads. WorkStore publication still freezes its origin ledger.
+
+Local Git-backed repository review commands use the owned review projector and
+companion receipt protocol. Local actor identity is device provenance, and
+filesystem admission supplies the access boundary. Exact immutable thread or
+comment selections and workflow counters retain native stale semantics. Unknown
+ref publication returns the original request identity; status/retry checks the
+selected receipt before reapplying any entity precondition.

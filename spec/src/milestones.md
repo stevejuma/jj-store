@@ -106,7 +106,7 @@ adds evidence here in its enclosing Jujutsu change.
 | M13         | In progress | M12         | JST-LOCAL-001,JST-LOCAL-002,JST-LOCAL-003,JST-LOCAL-004,JST-LOCAL-005,JST-LOCAL-006                                                                                      | Complete qualified local Git-backed collaboration profile                                                                      | Prove storage foundation before domain adapters                               | E-M13-001,E-M13-002                                                                                                                                                                                                                                                                                                                                            |
 | M13.1       | Done        | M12         | JST-LOCAL-001,JST-LOCAL-002                                                                                                                                              | Qualified metadata CAS/receipt/GC and stock JJ primitive compatibility                                                         | Implement M13.2 shared WorkStore/CLI                                          | E-M13-001                                                                                                                                                                                                                                                                                                                                                      |
 | M13.2       | Done        | M13.1       | JST-LOCAL-003                                                                                                                                                            | Shared WorkStore semantics and server-free CLI                                                                                 | Implement M13.3 portable anchors and capture                                  | E-M13-002                                                                                                                                                                                                                                                                                                                                                      |
-| M13.3       | In progress | M13.2       | JST-LOCAL-002,JST-LOCAL-003                                                                                                                                              | Portable agent/review anchors and exact retained evidence                                                                      | Qualify source evidence, then domain adapters                                 | E-M13-003,E-M13-004,E-M13-005,E-M13-006,E-M13-007,E-M13-008,E-M13-009,E-M13-010                                                                                                                                                                                                                                                                                |
+| M13.3       | In progress | M13.2       | JST-LOCAL-002,JST-LOCAL-003                                                                                                                                              | Portable agent/review anchors and exact retained evidence                                                                      | Qualify source evidence, then domain adapters                                 | E-M13-003,E-M13-004,E-M13-005,E-M13-006,E-M13-007,E-M13-008,E-M13-009,E-M13-010,E-M13-011                                                                                                                                                                                                                                                                      |
 | M13.4       | Planned     | M13.3       | JST-LOCAL-004,JST-LOCAL-005                                                                                                                                              | Filesystem-only server, local UI and recoverable code commands                                                                 | Implement registration, versioned contracts and cold browser gates            | -                                                                                                                                                                                                                                                                                                                                                              |
 | M13.5       | Planned     | M13.4       | JST-LOCAL-006                                                                                                                                                            | Independent local/native conversion with complete collaboration history                                                        | Implement bounded jobs and mapping reports                                    | -                                                                                                                                                                                                                                                                                                                                                              |
 | M13.6       | Planned     | M13.5       | JST-LOCAL-001,JST-LOCAL-002,JST-LOCAL-003,JST-LOCAL-004,JST-LOCAL-005,JST-LOCAL-006                                                                                      | Cold end-to-end and retained native regression qualification                                                                   | Qualify all accepted layouts and publish evidence                             | -                                                                                                                                                                                                                                                                                                                                                              |
@@ -25944,6 +25944,141 @@ and named tests are checked by the progress gate.
     "versions": "Rust 1.98.1; native owned ReviewStore V1; independent immutable Records provider in disposable MemoryStore.",
     "formats": "Native V1 root/object/command and receipt bytes unchanged. Shared ReviewProjector stages immutable records and returns a root value, typed delta and result; no publication capability. Native wrappers keep authorization, receipt-first replay, external code/AgentStore closure verification and manifest CAS.",
     "next": "Commit qualified shared projector, then integrate portable anchors and local ReviewStore publication."
+  },
+  {
+    "id": "E-M13-011",
+    "tasks": ["M13", "M13.3"],
+    "date": "2026-10-01",
+    "kind": "filesystem-git",
+    "revision": "qtxvrqqm",
+    "files": [
+      "crates/jj-store-service/src/local_repository/errors.rs",
+      "crates/jj-store-service/src/local_repository/review_commands.rs",
+      "crates/jj-store-service/src/local_repository/review_io.rs",
+      "crates/jj-store-service/src/local_repository/review_store.rs",
+      "crates/jj-store-service/src/local_repository/review_types.rs",
+      "crates/jj-store-service/src/local_repository.rs",
+      "crates/jj-store-service/tests/local_review.rs",
+      "spec/src/collaboration.md",
+      "spec/src/local-jj.md",
+      "spec/src/mutations.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "crates/jj-store-service/tests/local_review.rs#local_review_reads_leave_metadata_and_actor_absent",
+      "crates/jj-store-service/tests/local_review.rs#local_review_preserves_domains_replays_after_gc_and_pins_old_threads",
+      "crates/jj-store-service/tests/local_review.rs#local_review_unknown_outcome_retries_exact_request_after_restart",
+      "crates/jj-store-service/tests/local_review.rs#local_review_rejects_foreign_and_unqualified_anchors_without_publication",
+      "crates/jj-store-service/tests/local_review.rs#local_review_selected_inventory_must_contain_the_complete_root_closure"
+    ],
+    "runs": [
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-service --locked --test local_review",
+        "result": "fail",
+        "failures": 32,
+        "note": "Before implementation: local provider types/methods absent."
+      },
+      {
+        "command": "cargo fmt -p jj-store-service",
+        "result": "pass",
+        "failures": 0,
+        "note": "Owning crate and tests formatted; repeated after compilation fixes."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-service --locked --test local_review",
+        "result": "fail",
+        "failures": 10,
+        "note": "Initial draft: internal serde command tag collided with payload name; service uses WAL owned model reexports rather than a new production model dependency."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-service --locked --test local_review",
+        "result": "fail",
+        "failures": 1,
+        "note": "Draft test glob imports made Work Request ambiguous; fixed fixture imports."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-service --locked --test local_review",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial three provider regressions pass: no read initialization, domain preservation/pinned stale semantics/GC/restart receipts and unknown ref publication."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-service --locked --test local_review",
+        "result": "pass",
+        "failures": 0,
+        "note": "Five provider regressions pass, including foreign/unqualified anchor and missing selected record-closure rejection."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-service --locked --test local_review --test local_agent --test local_agent_pages --test local_work",
+        "result": "pass",
+        "failures": 0,
+        "note": "22 pass across review and directly shared local agent/work state."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo clippy -p jj-store-service --lib --test local_review --test local_agent --test local_agent_pages --test local_work --locked -- -D warnings",
+        "result": "pass",
+        "failures": 0,
+        "note": "Focused owning-package lint clean."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo check -p jj-store-cli --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Direct local facade/error consumer compiles."
+      },
+      {
+        "command": "cargo fmt -p jj-store-service -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final Rust formatting."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/local-jj.md spec/src/collaboration.md spec/src/mutations.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed canonical and evidence documents formatted."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "Seven protected files covered by same-change canonical chapters and ledger."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Four validators; 21 chapters and 129 requirements."
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "15 package boundaries."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final evidence bookkeeping."
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/local-jj.md spec/src/collaboration.md spec/src/mutations.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final changed-document formatting."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "deferred": [
+      "Only repository-wide anchors qualified in this provider; portable code/agent review anchors and review CLI remain unsupported/incomplete. M13.3 is not Done.",
+      "Filesystem server/UI, conversion, automatic agent code causality and native portable evidence carrier remain separate gaps.",
+      "Unrelated UI, real-RustFS and root aggregate lanes out of scope under targeted verification."
+    ],
+    "versions": "Rust 1.98.1; JJ 0.45.1; disposable colocated Git-backed JJ folders using explicit stock development fixture executable.",
+    "formats": "LocalReviewRootV1 descriptor selects canonical repository-bound ReviewRootV1 records and a retained record-to-Git-blob inventory. Local request/receipt V1 binds actor, stable request, canonical intent and typed native review results. Companion ref CAS selects state; native formats and code operation heads unchanged.",
+    "next": "Commit qualified repository-wide review provider, then integrate retained portable review anchors and backend-aware CLI."
   }
 ]
 ```

@@ -47,6 +47,15 @@ command projection MUST retain all native catalog, relation, comment ownership
 and linear/merged event reconstruction checks. External dependency verification
 and publication are qualified separately by each provider.
 
+Local ReviewStore publication uses canonical repository-bound records and a
+selected record-to-Git-blob inventory. Root reads audit selected retention and
+the complete shared review closure; staged objects remain unavailable through
+pinned reads. Command receipts precede entity preconditions, ref races reapply
+typed intent to the selected root, and review updates preserve other domains.
+Repository-wide threads can initialize metadata on first write. Until portable
+code and agent anchor validation/retention is qualified, those targets MUST fail
+closed rather than substitute repository or display-only identities.
+
 Local WorkStore pagination reuses the native record and four-MiB page limits.
 Continuations bind an immutable selected metadata commit, filters, page size and
 offset. A continuation can only name selected history, never a staged candidate;
