@@ -42,6 +42,8 @@ pub struct PendingCaptureV1 {
     pub cursor: CaptureCursorV1,
     pub batch: SanitizedObservationBatchV1,
     pub state: PendingCaptureStateV1,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub thread_binding: Option<jj_collab::ThreadBindingV1>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -113,6 +115,16 @@ impl AgentCaptureSpool {
         cursor: CaptureCursorV1,
         batch: SanitizedObservationBatchV1,
     ) -> AuthorityResult<DurableCaptureAck> {
+        self.enqueue_with_binding(repository, profile, cursor, batch, None)
+    }
+    pub fn enqueue_with_binding(
+        &mut self,
+        repository: RepositoryId,
+        profile: NormalizerProfileV1,
+        cursor: CaptureCursorV1,
+        batch: SanitizedObservationBatchV1,
+        thread_binding: Option<jj_collab::ThreadBindingV1>,
+    ) -> AuthorityResult<DurableCaptureAck> {
         let _lock = self.mutation_lock()?;
         let path = self.path(batch.batch_id);
         let candidate = PendingCaptureV1 {
@@ -122,6 +134,7 @@ impl AgentCaptureSpool {
             cursor,
             batch,
             state: PendingCaptureStateV1::Captured,
+            thread_binding,
         };
         candidate.validate()?;
         if path.exists() {
@@ -278,6 +291,7 @@ fn same_capture(left: &PendingCaptureV1, right: &PendingCaptureV1) -> bool {
         && left.profile == right.profile
         && left.cursor == right.cursor
         && left.batch == right.batch
+        && left.thread_binding == right.thread_binding
 }
 
 fn ack(entry: &PendingCaptureV1) -> DurableCaptureAck {

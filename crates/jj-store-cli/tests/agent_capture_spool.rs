@@ -90,6 +90,9 @@ fn sanitized_capture_and_prepared_publication_survive_restart() {
     assert_eq!(entries[0].profile, profile);
     assert_eq!(entries[0].batch, batch);
     assert_eq!(entries[0].cursor, cursor());
+    assert_eq!(entries[0].thread_binding, None);
+    let encoded = serde_json::to_value(&entries[0]).unwrap();
+    assert!(encoded.get("thread_binding").is_none());
     assert_eq!(
         entries[0].state,
         PendingCaptureStateV1::Prepared { request: request() }
@@ -326,9 +329,6 @@ fn prepared_thread_binding_survives_restart_and_invalid_binding_is_not_persisted
     let repository = RepositoryId::new([9; 16]);
     let profile = NormalizerProfileV1::codex_0_156_1();
     let mut spool = AgentCaptureSpool::open(directory.path(), 4 * 1024 * 1024).unwrap();
-    spool
-        .enqueue(repository, profile, cursor(), batch())
-        .unwrap();
     let bound = request()
         .with_thread_binding(
             ThreadBindingV1 {
@@ -342,7 +342,17 @@ fn prepared_thread_binding_survives_restart_and_invalid_binding_is_not_persisted
             123,
         )
         .unwrap();
+    spool
+        .enqueue_with_binding(
+            repository,
+            profile,
+            cursor(),
+            batch(),
+            Some(bound.thread_binding.as_ref().unwrap().binding.clone()),
+        )
+        .unwrap();
     let mut invalid = bound.clone();
+    assert!(spool.prepare(batch().batch_id, request()).is_err());
     invalid.thread_binding.as_mut().unwrap().accepted_at_millis = -1;
     assert!(spool.prepare(batch().batch_id, invalid).is_err());
     assert!(matches!(

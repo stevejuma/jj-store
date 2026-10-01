@@ -17,6 +17,31 @@ impl NativeSession {
         batch: &SanitizedObservationBatchV1,
         result: Vec<u8>,
     ) -> wal::Result<AgentDeltaRequest> {
+        self.prepare_agent_capture_with_binding(
+            request_id,
+            publication_id,
+            profile,
+            batch,
+            result,
+            None,
+        )
+        .await
+    }
+
+    pub async fn prepare_agent_capture_with_binding(
+        &self,
+        request_id: RequestId,
+        publication_id: PublicationId,
+        profile: &NormalizerProfileV1,
+        batch: &SanitizedObservationBatchV1,
+        result: Vec<u8>,
+        binding: Option<&jj_collab::ThreadBindingV1>,
+    ) -> wal::Result<AgentDeltaRequest> {
+        if let Some(binding) = binding {
+            binding
+                .validate()
+                .map_err(|_| wal::Error::Corrupt("capture Thread binding"))?;
+        }
         profile
             .validate()
             .map_err(|_| wal::Error::Corrupt("agent normalizer profile"))?;
@@ -43,7 +68,12 @@ impl NativeSession {
         if current.id() != principal.id() {
             return Err(wal::Error::Denied);
         }
-        AgentDeltaRequest::new(principal.id(), request_id, publication_id, delta, result)
+        let request =
+            AgentDeltaRequest::new(principal.id(), request_id, publication_id, delta, result)?;
+        match binding {
+            Some(binding) => request.with_thread_binding(binding.clone(), activated_at_millis),
+            None => Ok(request),
+        }
     }
 
     pub async fn publish_agent_delta(

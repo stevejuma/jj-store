@@ -129,6 +129,125 @@ async fn home(client: &NativeClient) {
         .await
         .unwrap();
 }
+
+#[tokio::test]
+async fn explicit_capture_binding_survives_preparation_publication_and_transport_reconstruction() {
+    use jj_agent::{
+        CaptureBatchId, IntegrationId, NormalizerProfileV1, ObservationId, SanitizedMediaType,
+        SanitizedObservationBatchV1, SanitizedObservationV1, SanitizedPayloadV1,
+        SanitizedRepresentation, SourceInstanceId, SourceKind, SourceTrust,
+    };
+    let root = tempfile::tempdir().unwrap();
+    let host = host();
+    let (client, shutdown, task) = serve(host.clone(), root.path(), ACTOR).await;
+    client
+        .create_repository_local(m::EpochId::new([72; 16]))
+        .await
+        .unwrap();
+    home(&client).await;
+    let first = thread(client.apply_collab_command(&create(20)).await.unwrap());
+    let binding = ThreadBindingV1 {
+        thread_id: first.thread_id,
+        observed_thread: first.version,
+        observed_assignment: None,
+    };
+    let batch = SanitizedObservationBatchV1 {
+        schema_version: 1,
+        batch_id: CaptureBatchId::new([21; 16]),
+        integration: IntegrationId::Codex,
+        source_instance_id: SourceInstanceId::new([22; 16]),
+        sanitizer_version: "mongodb-kingfisher@2.7.0/builtin-medium/v1".into(),
+        representation: SanitizedRepresentation::SanitizedNative,
+        observations: vec![SanitizedObservationV1 {
+            observation_id: ObservationId::new([23; 16]),
+            source_sequence: 1,
+            occurred_at_millis: Some(1_725_000_000_000),
+            source_kind: SourceKind::Hook,
+            source_trust: SourceTrust::LocalUserHook,
+            payload: SanitizedPayloadV1::new(
+                SanitizedMediaType::Json,
+                br#"{"hook_event_name":"SessionStart","session_id":"bound-rpc"}"#,
+            )
+            .unwrap(),
+        }],
+    };
+    let before = client.collab_thread(first.thread_id).await.unwrap();
+    let prepared = client
+        .prepare_agent_capture_with_binding(
+            m::RequestId::new([24; 16]),
+            m::PublicationId::new([25; 16]),
+            &NormalizerProfileV1::codex_0_156_1(),
+            &batch,
+            b"bound capture".to_vec(),
+            Some(&binding),
+        )
+        .await
+        .unwrap();
+    assert_eq!(prepared.principal, ACTOR);
+    assert_eq!(prepared.thread_binding.as_ref().unwrap().binding, binding);
+    assert!(prepared.thread_binding.as_ref().unwrap().accepted_at_millis > 0);
+    assert_eq!(client.collab_thread(first.thread_id).await.unwrap(), before);
+    let outcome = client.publish_agent_delta(&prepared).await.unwrap();
+    assert!(matches!(
+        outcome,
+        jj_store_wal::publication::PublishOutcome::Committed(_)
+    ));
+    let selected = client.collab_thread(first.thread_id).await.unwrap();
+    assert_ne!(selected.snapshot.agent_root, before.snapshot.agent_root);
+    assert_ne!(selected.snapshot.thread_root, before.snapshot.thread_root);
+    assert_eq!(selected.thread.value.status, before.thread.value.status);
+    let events = client
+        .collab_page(
+            &Query::Events {
+                thread_id: first.thread_id,
+                limit: 10,
+            },
+            None,
+        )
+        .await
+        .unwrap();
+    let Items::Events { events, .. } = events.items else {
+        panic!()
+    };
+    assert!(matches!(
+        events[0].value.event,
+        ThreadEventKindV1::Link { .. }
+    ));
+    let renamed = request(
+        26,
+        CollabCommandV1::Thread {
+            intent: ThreadCommandV1::Rename {
+                thread_id: first.thread_id,
+                expected: selected.thread.reference,
+                title: "After capture".into(),
+            },
+        },
+    );
+    client.apply_collab_command(&renamed).await.unwrap();
+    stop(shutdown, task).await;
+    let (client, shutdown, task) = serve(host, root.path(), ACTOR).await;
+    assert_eq!(
+        client.publish_agent_delta(&prepared).await.unwrap(),
+        outcome
+    );
+    let mut changed = prepared;
+    changed
+        .thread_binding
+        .as_mut()
+        .unwrap()
+        .binding
+        .observed_thread = first.version;
+    changed.thread_binding.as_mut().unwrap().accepted_at_millis += 1;
+    assert_eq!(
+        client
+            .publish_agent_delta(&changed)
+            .await
+            .unwrap_err()
+            .code(),
+        Code::Aborted
+    );
+    stop(shutdown, task).await;
+}
 fn thread(outcome: Outcome) -> ThreadCommandResultV1 {
     let Outcome::Committed { receipt } = outcome else {
         panic!()

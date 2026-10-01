@@ -99,6 +99,8 @@ message AgentCapturePrepareRequest {
   bytes profile_json = 4;
   bytes batch_json = 5;
   bytes result = 6;
+  // Empty for legacy unlinked capture; otherwise canonical ThreadBindingV1.
+  bytes thread_binding_json = 7;
 }
 message AgentCapturePrepared { bytes request_json = 1; }
 message AgentDeltaPublishRequest { bytes repository = 1; bytes request_json = 2; }

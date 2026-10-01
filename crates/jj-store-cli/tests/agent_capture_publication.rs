@@ -35,6 +35,7 @@ struct FakePublisher {
     replies: Mutex<VecDeque<Reply>>,
     prepared: Mutex<Vec<CaptureBatchId>>,
     published: Mutex<Vec<AgentDeltaRequest>>,
+    drop_binding: bool,
 }
 
 impl FakePublisher {
@@ -43,12 +44,31 @@ impl FakePublisher {
             replies: Mutex::new(replies.into_iter().collect()),
             prepared: Mutex::default(),
             published: Mutex::default(),
+            drop_binding: false,
         }
     }
 }
 
 #[async_trait::async_trait]
 impl AgentCapturePublisher for FakePublisher {
+    async fn prepare_bound_agent_capture(
+        &self,
+        request_id: RequestId,
+        publication_id: PublicationId,
+        profile: &NormalizerProfileV1,
+        batch: &SanitizedObservationBatchV1,
+        result: Vec<u8>,
+        binding: &jj_collab::ThreadBindingV1,
+    ) -> AuthorityResult<AgentDeltaRequest> {
+        let request = self
+            .prepare_agent_capture(request_id, publication_id, profile, batch, result)
+            .await?;
+        if self.drop_binding {
+            Ok(request)
+        } else {
+            Ok(request.with_thread_binding(binding.clone(), 123)?)
+        }
+    }
     async fn prepare_agent_capture(
         &self,
         request_id: RequestId,
@@ -92,6 +112,88 @@ impl AgentCapturePublisher for FakePublisher {
             Reply::Mismatched => PublishOutcome::Committed(receipt(request, b"wrong".to_vec())),
         })
     }
+}
+
+#[tokio::test]
+async fn bound_capture_journals_before_prepare_and_retries_exact_assignment_after_restart() {
+    use jj_collab::{CollabObjectId, CollabObjectKind, CollabObjectRef, ThreadBindingV1, ThreadId};
+    let directory = tempfile::tempdir().unwrap();
+    let pending = capture(7, 1, REPOSITORY);
+    let binding = ThreadBindingV1 {
+        thread_id: ThreadId::new([10; 16]),
+        observed_thread: CollabObjectRef {
+            kind: CollabObjectKind::ThreadVersion,
+            id: CollabObjectId::new([11; 32]),
+        },
+        observed_assignment: None,
+    };
+    let mut spool = AgentCaptureSpool::open(directory.path(), 4 * 1024 * 1024).unwrap();
+    spool
+        .enqueue_with_binding(
+            pending.repository,
+            pending.profile.clone(),
+            pending.cursor.clone(),
+            pending.batch.clone(),
+            Some(binding.clone()),
+        )
+        .unwrap();
+    assert!(
+        spool
+            .enqueue(
+                pending.repository,
+                pending.profile.clone(),
+                pending.cursor.clone(),
+                pending.batch.clone()
+            )
+            .is_err()
+    );
+    drop(spool);
+    let publisher = FakePublisher::new([Reply::Unknown, Reply::Committed]);
+    let mut spool = AgentCaptureSpool::open(directory.path(), 4 * 1024 * 1024).unwrap();
+    assert_eq!(
+        spool.pending().unwrap()[0].thread_binding,
+        Some(binding.clone())
+    );
+    let mut dropped = FakePublisher::new([]);
+    dropped.drop_binding = true;
+    assert!(
+        drain_capture_spool(&mut spool, REPOSITORY, &dropped)
+            .await
+            .is_err()
+    );
+    assert!(dropped.published.lock().unwrap().is_empty());
+    assert!(matches!(
+        spool.pending().unwrap()[0].state,
+        PendingCaptureStateV1::Captured
+    ));
+    assert!(
+        drain_capture_spool(&mut spool, REPOSITORY, &publisher)
+            .await
+            .unwrap()
+            .outcome_unknown
+    );
+    drop(spool);
+    let mut spool = AgentCaptureSpool::open(directory.path(), 4 * 1024 * 1024).unwrap();
+    let report = drain_capture_spool(&mut spool, REPOSITORY, &publisher)
+        .await
+        .unwrap();
+    assert_eq!(report.committed, 1);
+    assert!(spool.pending().unwrap().is_empty());
+    assert_eq!(publisher.prepared.lock().unwrap().len(), 1);
+    let requests = publisher.published.lock().unwrap();
+    assert_eq!(requests[0], requests[1]);
+    assert_eq!(
+        requests[0].thread_binding.as_ref().unwrap().binding,
+        binding
+    );
+    assert_eq!(
+        requests[0]
+            .thread_binding
+            .as_ref()
+            .unwrap()
+            .accepted_at_millis,
+        123
+    );
 }
 
 fn capture(batch: u8, sequence: u64, repository: RepositoryId) -> PendingCapture {

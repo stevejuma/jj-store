@@ -665,12 +665,13 @@ impl NativeStore for NativeRpc {
         let session = self.bind(&prepared.repository, access)?;
         self.bounded(async {
             let request = session
-                .prepare_agent_capture(
+                .prepare_agent_capture_with_binding(
                     prepared.request_id,
                     prepared.publication_id,
                     &prepared.profile,
                     &prepared.batch,
                     prepared.result,
+                    prepared.binding.as_ref(),
                 )
                 .await
                 .map_err(service_error)?;

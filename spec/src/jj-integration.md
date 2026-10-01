@@ -1,9 +1,17 @@
 # Native JJ integration
 
+Native RPC preserves optional capture bindings in both preparation and delta
+publication. The durable device spool stores the explicit observed assignment
+before source acknowledgment and the exact server-prepared acceptance time
+before publication. Retries after unknown outcomes do not refresh either
+precondition or identity. Empty optional fields preserve unlinked wire and spool
+encodings.
+
 Prepared Agent delta decoding retains and validates an optional explicit Thread
 binding; it must not reconstruct the legacy fields and silently drop that
-intent. Unlinked capture preparation rejects an unexpected returned binding. The
-additive publication primitive does not qualify a bound prepare RPC.
+intent. Unlinked capture preparation rejects an unexpected returned binding.
+Native bound preparation is explicit; local-provider and runner integrations
+remain separately gated.
 
 The companion metadata adapter provides bounded immutable blob staging and
 staging reads for the shared collaboration reducer. These operations cannot

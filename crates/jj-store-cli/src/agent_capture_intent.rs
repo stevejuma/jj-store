@@ -31,8 +31,17 @@ impl PendingCaptureV1 {
         }
         if let PendingCaptureStateV1::Prepared { request } = &self.state {
             request.validate()?;
+            if request.thread_binding.as_ref().map(|v| &v.binding) != self.thread_binding.as_ref() {
+                return Err("prepared capture Thread binding mismatch".into());
+            }
+        }
+        if let Some(binding) = &self.thread_binding {
+            binding.validate()?;
         }
         if let PendingCaptureStateV1::LocalPrepared { request } = &self.state {
+            if self.thread_binding.is_some() {
+                return Err("local bound capture is not supported".into());
+            }
             request.validate()?;
             match &request.command {
                 LocalAgentCommand::Capture { profile, batch }

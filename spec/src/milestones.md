@@ -124,10 +124,10 @@ shared-package release qualification does not alter those original Git gates.
 | M14.5       | Planned     | M14.2                   | JST-UI-016,JST-PUB-005,JST-PUB-006                                                                                                                                       | Storage integrity and non-destructive checkpoints                                                                              | Add bounded authorized operations and uncertain-outcome recovery               | -                                                                                                                                                                                                                                                                                                                                                              |
 | M14.6       | In progress | M14.2,M10.7             | JST-UI-016,JST-REPL-012                                                                                                                                                  | Configured sync status and controls in Settings                                                                                | Expose existing controls without upstream configuration or credential editing  | E-M14-008,E-M14-010,E-M14-011,E-M14-012                                                                                                                                                                                                                                                                                                                        |
 | M14.7       | Planned     | M14.3,M14.4,M14.5,M14.6 | JST-UI-016,JST-SEC-006                                                                                                                                                   | Integrated local settings and cold persistent acceptance                                                                       | Qualify completed native flow and preserve unsupported M13 capabilities        | -                                                                                                                                                                                                                                                                                                                                                              |
-| M15         | In progress | M13.1             | JST-COLLAB-008,JST-COLLAB-009,JST-COLLAB-010,JST-COLLAB-011,JST-COLLAB-012,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                   | Persistent Threads and rich Reactions                                                                                          | Qualify native/local publication                                               | E-M15-001,E-M15-005,E-M15-006,E-M15-007,E-M15-008,E-M15-009,E-M15-010,E-M15-011,E-M15-012                                                                                                                                                                                                                                                                      |
+| M15         | In progress | M13.1             | JST-COLLAB-008,JST-COLLAB-009,JST-COLLAB-010,JST-COLLAB-011,JST-COLLAB-012,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                   | Persistent Threads and rich Reactions                                                                                          | Qualify native/local publication                                               | E-M15-001,E-M15-005,E-M15-006,E-M15-007,E-M15-008,E-M15-009,E-M15-010,E-M15-011,E-M15-012,E-M15-013                                                                                                                                                                                                                                                            |
 | M15.1       | In progress | M13.1             | JST-COLLAB-008,JST-COLLAB-009,JST-COLLAB-010,JST-COLLAB-011,JST-COLLAB-012                                                                                               | Canonical domain, lifecycle, exact targets, conflict semantics and retained images                                             | Qualify command/provider membership                                            | E-M15-001,E-M15-005                                                                                                                                                                                                                                                                                                                                            |
 | M15.2       | In progress | M15.1             | JST-COLLAB-013                                                                                                                                                           | Native format 5, local version 2, atomic roots, receipts, recovery and copy                                                    | Qualify native commands/capture and cold full flow                             | E-M15-002,E-M15-004,E-M15-005,E-M15-012                                                                                                                                                                                                                                                                                                                        |
-| M15.3       | In progress | M15.2             | JST-COLLAB-014                                                                                                                                                           | Bounded authorized services, HTTP/RPC, CLI and capture binding                                                                 | Complete native/public command boundaries                                      | E-M15-004,E-M15-005,E-M15-006,E-M15-007,E-M15-008,E-M15-009,E-M15-010,E-M15-011,E-M15-012                                                                                                                                                                                                                                                                      |
+| M15.3       | In progress | M15.2             | JST-COLLAB-014                                                                                                                                                           | Bounded authorized services, HTTP/RPC, CLI and capture binding                                                                 | Complete native/public command boundaries                                      | E-M15-004,E-M15-005,E-M15-006,E-M15-007,E-M15-008,E-M15-009,E-M15-010,E-M15-011,E-M15-012,E-M15-013                                                                                                                                                                                                                                                            |
 | M15.4       | Planned     | M15.2             | JST-COLLAB-015                                                                                                                                                           | Reducer 3 data-only convergence and complete closure transfer                                                                  | Qualify reordered and duplicate origin sets                                    | -                                                                                                                                                                                                                                                                                                                                                              |
 | M15.5       | Planned     | M15.3             | JST-COLLAB-016                                                                                                                                                           | Released Community channel template, Threads navigation and rich reactions                                                     | Qualify owners and cold consumer flow                                          | E-M15-011                                                                                                                                                                                                                                                                                                                                                      |
 | M15.6       | In progress | M15.3             | JST-COLLAB-009,JST-COLLAB-010                                                                                                                                            | Derived canonical-source timeline/search and review integration                                                                | Qualify authorized joins                                                       | E-M15-006                                                                                                                                                                                                                                                                                                                                                      |
@@ -34875,6 +34875,187 @@ and named tests are checked by the progress gate.
       "Reducer 3, canonical cross-source timeline/search, released Community channel browser template, cold process/browser and real-RustFS full flow remain pending. WorkStore origin freeze and reducer-3 guard are unchanged."
     ],
     "next": "Connect optional explicit binding through native preparation RPC and durable captured spool entries before implementing local provider and runner integration."
+  },
+  {
+    "id": "E-M15-013",
+    "tasks": [
+      "M15",
+      "M15.3"
+    ],
+    "date": "2026-10-01",
+    "kind": "native-bound-capture-transport-worker",
+    "revision": "enclosing Jujutsu change vkzvsskr",
+    "before": "Clean isolated workspace at 5d09d9e5. Native capture preparation has no binding input; captured spool entries cannot carry bindings, and native drain rejects bound returned intent.",
+    "versions": "Rust 1.98.1; real Unix gRPC over disposable MemoryStore; filesystem spool reopen. No installed binary, live service or runner changed.",
+    "formats": "Additive canonical ThreadBindingV1 bytes on protobuf field 7, empty for legacy unlinked capture. Optional captured spool field omitted when absent. Returned actor/time and full AgentDeltaRequest are journaled without refreshing explicit observed Thread or assignment; existing WAL request and receipt bytes remain unchanged.",
+    "files": [
+      "crates/jj-store-cli/src/agent_capture.rs",
+      "crates/jj-store-cli/src/agent_capture_intent.rs",
+      "crates/jj-store-cli/src/agent_publication.rs",
+      "crates/jj-store-cli/tests/agent_capture_publication.rs",
+      "crates/jj-store-cli/tests/agent_capture_spool.rs",
+      "crates/jj-store-rpc/proto/native.proto",
+      "crates/jj-store-rpc/src/agent/binding_tests.rs",
+      "crates/jj-store-rpc/src/agent.rs",
+      "crates/jj-store-rpc/src/client.rs",
+      "crates/jj-store-rpc/src/server.rs",
+      "crates/jj-store-rpc/tests/collab.rs",
+      "crates/jj-store-service/src/native_agent.rs",
+      "crates/jj-store-service/src/transport.rs",
+      "spec/src/api.md",
+      "spec/src/cli.md",
+      "spec/src/collaboration.md",
+      "spec/src/jj-integration.md",
+      "spec/src/milestones.md",
+      "spec/src/mutations.md"
+    ],
+    "runs": [
+      {
+        "command": "CARGO_INCREMENTAL=0 cargo test -p jj-store-cli --test agent_capture_publication bound_capture_ --locked (before)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero tests matched; exact bound worker regression absent. This is before-state evidence, not acceptance; /tmp/jj-bound-transport-before.log."
+      },
+      {
+        "command": "CARGO_INCREMENTAL=0 cargo check -p jj-store-service -p jj-store-rpc -p jj-store-cli --all-targets --locked (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "NativeRequest forwarding wrapper was missing. Added binding-aware service forwarding; /tmp/jj-bound-transport-check.log."
+      },
+      {
+        "command": "CARGO_INCREMENTAL=0 cargo test -p jj-store-cli --test agent_capture_publication bound_capture_ --locked (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Same missing NativeRequest forwarding method; no assertions ran; /tmp/jj-bound-transport-drain.log."
+      },
+      {
+        "command": "CARGO_INCREMENTAL=0 cargo test -p jj-store-cli --test agent_capture_publication bound_capture_ --locked (fixed)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Bound captured spool survives reopen before preparation and unknown publication, then retries the complete original request; /tmp/jj-bound-transport-drain-fixed.log. Later direct-consumer run also checks dropped binding refusal."
+      },
+      {
+        "command": "CARGO_INCREMENTAL=0 cargo test -p jj-store-cli --test agent_capture_spool --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Four spool regressions including absent/prepared mismatch rejection and retained binding; /tmp/jj-bound-transport-spool.log."
+      },
+      {
+        "command": "CARGO_INCREMENTAL=0 cargo test -p jj-store-rpc --test collab explicit_capture_binding_ --locked (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Test used ThreadEventV1.kind instead of its event field; corrected to the canonical event field; /tmp/jj-bound-transport-rpc.log."
+      },
+      {
+        "command": "CARGO_INCREMENTAL=0 cargo test -p jj-store-rpc --test collab explicit_capture_binding_ --locked (fixed)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Real owner-admitted Unix gRPC preparation stages only, publication selects both roots, replay after rename and transport reconstruction keeps receipt, changed retry aborts; /tmp/jj-bound-transport-rpc-fixed.log."
+      },
+      {
+        "command": "CARGO_INCREMENTAL=0 cargo test -p jj-store-rpc --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Complete relevant RPC package: 18 tests, zero doctests; /tmp/jj-bound-transport-rpc-suite.log."
+      },
+      {
+        "command": "CARGO_INCREMENTAL=0 cargo test -p jj-store-service --test agent_sessions --test agent_checkpoints --test agent_relations --test native_collab --test collab_pagination --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "24 direct service read/capture/collaboration consumers; /tmp/jj-bound-transport-service-consumers.log."
+      },
+      {
+        "command": "cargo fmt -p jj-store-service -p jj-store-rpc -p jj-store-cli",
+        "result": "pass",
+        "failures": 0,
+        "note": "Focused Rust formatting, repeated after test additions and wrapper repair."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/api.md spec/src/cli.md spec/src/collaboration.md spec/src/jj-integration.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Canonical transport, capture and spool contracts formatted."
+      },
+      {
+        "command": "pnpm spec:first (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Service forwarding is mapped to mutations.md; added the explicit preparation/staging/authorization contract there. No policy exemption; /tmp/jj-bound-transport-spec-first.log."
+      },
+      {
+        "command": "CARGO_INCREMENTAL=0 cargo test -p jj-store-cli --test agent_capture_spool --test agent_capture_publication --test agent_hook --test agent_integrations --test agent_setup --test local_agent --test local_agent_recovery --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "26 direct CLI tests including cold sanitizer/hook/local capture and both profile drain/recovery paths; /tmp/jj-bound-transport-cli-consumers.log."
+      },
+      {
+        "command": "CARGO_INCREMENTAL=0 cargo test -p jj-store-cli --test native_lifecycle local_trusted_http_lists_root_pinned_agent_sessions_without_bearer_credentials --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Existing unlinked HTTP capture consumer passes; /tmp/jj-bound-transport-http-consumer.log."
+      },
+      {
+        "command": "pnpm spec:first (fixed)",
+        "result": "pass",
+        "failures": 0,
+        "note": "13 protected files; six canonical chapters."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Four validators; 21 chapters; 140 requirements."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "111 tasks; evidence bookkeeping only."
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "16 package boundaries."
+      },
+      {
+        "command": "cargo fmt -p jj-store-service -p jj-store-rpc -p jj-store-cli -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Focused Rust formatting passes."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/api.md spec/src/cli.md spec/src/collaboration.md spec/src/jj-integration.md spec/src/mutations.md spec/src/milestones.md && pnpm exec prettier --check spec/src/api.md spec/src/cli.md spec/src/collaboration.md spec/src/jj-integration.md spec/src/mutations.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Canonical chapters and ledger formatted; focused formatting passes."
+      },
+      {
+        "command": "CARGO_INCREMENTAL=0 cargo clippy -p jj-store-service -p jj-store-rpc -p jj-store-cli --all-targets --locked -- -D warnings",
+        "result": "pass",
+        "failures": 0,
+        "note": "Strict affected service/RPC/CLI lint passes; /tmp/jj-bound-transport-clippy.log."
+      },
+      {
+        "command": "CARGO_INCREMENTAL=0 cargo check -p jj-store-service -p jj-store-rpc -p jj-store-cli --all-targets --locked (fixed)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Original affected all-target check rerun after forwarding wrapper repair; /tmp/jj-bound-transport-check-fixed.log."
+      }
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/agent_capture_publication.rs#bound_capture_journals_before_prepare_and_retries_exact_assignment_after_restart",
+      "crates/jj-store-cli/tests/agent_capture_spool.rs#prepared_thread_binding_survives_restart_and_invalid_binding_is_not_persisted",
+      "crates/jj-store-rpc/tests/collab.rs#explicit_capture_binding_survives_preparation_publication_and_transport_reconstruction",
+      "crates/jj-store-rpc/src/agent/binding_tests.rs#delta_codec_retains_explicit_binding_and_unlinked_prepare_rejects_it"
+    ],
+    "escalation": "Shared native preparation/codec and capture spool touch the service facade, native RPC and both CLI capture providers. Before widening, select the complete RPC package suite, direct Agent/collaboration service consumers, all relevant spool/drain/hook/setup/local recovery CLI consumers, existing unlinked HTTP capture consumer, strict affected package lint and protobuf generation through package compilation. HTTP/OpenAPI schemas, UI and full Rust workspace/root aggregate lanes are out of scope.",
+    "result": "pending",
+    "remaining": [
+      "Native binding APIs and worker are explicit; ordinary hook/watch callers still enqueue unlinked captures. CLI/runner entry points and local bound capture remain pending.",
+      "Reducer 3, canonical cross-source timeline/search, released Community channel UI template, native real-RustFS and cold process/browser full flow remain pending. RPC transport reconstruction is not persistent service restart."
+    ],
+    "next": "Implement local atomic Agent/Thread bound capture and retain the complete new session closure through companion metadata ref publication."
   }
 ]
 ```

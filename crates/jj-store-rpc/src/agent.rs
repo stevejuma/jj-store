@@ -1,6 +1,7 @@
 //! Canonical AgentStore request codecs shared by native RPC peers.
 use crate::wire;
 use jj_store_model as m;
+use jj_store_service::collab_model::ThreadBindingV1;
 use jj_store_service::transport::{
     AgentDeltaRequest, NormalizerProfileV1, PublishOutcome, Receipt, SanitizedObservationBatchV1,
     Snapshot,
@@ -21,6 +22,7 @@ pub(crate) struct PreparedCapture {
     pub profile: NormalizerProfileV1,
     pub batch: SanitizedObservationBatchV1,
     pub result: Vec<u8>,
+    pub binding: Option<ThreadBindingV1>,
 }
 
 fn invalid() -> Status {
@@ -53,9 +55,13 @@ pub(crate) fn prepare_request(
     profile: &NormalizerProfileV1,
     batch: &SanitizedObservationBatchV1,
     result: Vec<u8>,
+    binding: Option<&ThreadBindingV1>,
 ) -> Result<wire::AgentCapturePrepareRequest, Status> {
     profile.validate().map_err(|_| invalid())?;
     batch.validate().map_err(|_| invalid())?;
+    if let Some(binding) = binding {
+        binding.validate().map_err(|_| invalid())?;
+    }
     if result.len() > RESULT_BYTES {
         return Err(Status::resource_exhausted("agent result byte limit"));
     }
@@ -66,6 +72,10 @@ pub(crate) fn prepare_request(
         profile_json: encode(profile, PROFILE_BYTES)?,
         batch_json: encode(batch, CAPTURE_BYTES)?,
         result,
+        thread_binding_json: binding
+            .map(|v| encode(v, PROFILE_BYTES))
+            .transpose()?
+            .unwrap_or_default(),
     })
 }
 
@@ -82,6 +92,13 @@ pub(crate) fn prepared_capture(
     if profile.integration != batch.integration {
         return Err(invalid());
     }
+    let binding: Option<ThreadBindingV1> = if value.thread_binding_json.is_empty() {
+        None
+    } else {
+        let binding: ThreadBindingV1 = decode(&value.thread_binding_json, PROFILE_BYTES)?;
+        binding.validate().map_err(|_| invalid())?;
+        Some(binding)
+    };
     Ok(PreparedCapture {
         repository: value.repository,
         request_id: m::RequestId::from_slice(&value.request_id).map_err(|_| invalid())?,
@@ -90,6 +107,7 @@ pub(crate) fn prepared_capture(
         profile,
         batch,
         result: value.result,
+        binding,
     })
 }
 
@@ -106,9 +124,10 @@ pub(crate) fn prepared(
     request_id: m::RequestId,
     publication_id: m::PublicationId,
     result: &[u8],
+    binding: Option<&ThreadBindingV1>,
 ) -> Result<AgentDeltaRequest, Status> {
     let request = delta_request(&value.request_json)?;
-    if request.thread_binding.is_some()
+    if request.thread_binding.as_ref().map(|v| &v.binding) != binding
         || request.request_id != request_id
         || request.publication_id != publication_id
         || request.result != result

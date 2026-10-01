@@ -25,6 +25,19 @@ pub trait AgentCapturePublisher: Send + Sync {
         result: Vec<u8>,
     ) -> AuthorityResult<AgentDeltaRequest>;
 
+    async fn prepare_bound_agent_capture(
+        &self,
+        request_id: RequestId,
+        publication_id: PublicationId,
+        profile: &NormalizerProfileV1,
+        batch: &SanitizedObservationBatchV1,
+        result: Vec<u8>,
+        binding: &jj_collab::ThreadBindingV1,
+    ) -> AuthorityResult<AgentDeltaRequest> {
+        let _ = (request_id, publication_id, profile, batch, result, binding);
+        Err("publisher does not support explicit capture binding".into())
+    }
+
     async fn publish_agent_delta(
         &self,
         request: &AgentDeltaRequest,
@@ -33,6 +46,26 @@ pub trait AgentCapturePublisher: Send + Sync {
 
 #[async_trait::async_trait]
 impl AgentCapturePublisher for NativeClient {
+    async fn prepare_bound_agent_capture(
+        &self,
+        request_id: RequestId,
+        publication_id: PublicationId,
+        profile: &NormalizerProfileV1,
+        batch: &SanitizedObservationBatchV1,
+        result: Vec<u8>,
+        binding: &jj_collab::ThreadBindingV1,
+    ) -> AuthorityResult<AgentDeltaRequest> {
+        Ok(self
+            .prepare_agent_capture_with_binding(
+                request_id,
+                publication_id,
+                profile,
+                batch,
+                result,
+                Some(binding),
+            )
+            .await?)
+    }
     async fn prepare_agent_capture(
         &self,
         request_id: RequestId,
@@ -75,16 +108,35 @@ pub async fn drain_capture_spool<P: AgentCapturePublisher>(
                 let request_id = request_id(repository, entry.batch.batch_id);
                 let publication_id = publication_id(repository, entry.batch.batch_id);
                 let result = capture_result(entry.batch.batch_id);
-                let request = publisher
-                    .prepare_agent_capture(
-                        request_id,
-                        publication_id,
-                        &entry.profile,
-                        &entry.batch,
-                        result.clone(),
-                    )
-                    .await?;
-                validate_prepared(&request, request_id, publication_id, &result)?;
+                let request = if let Some(binding) = &entry.thread_binding {
+                    publisher
+                        .prepare_bound_agent_capture(
+                            request_id,
+                            publication_id,
+                            &entry.profile,
+                            &entry.batch,
+                            result.clone(),
+                            binding,
+                        )
+                        .await?
+                } else {
+                    publisher
+                        .prepare_agent_capture(
+                            request_id,
+                            publication_id,
+                            &entry.profile,
+                            &entry.batch,
+                            result.clone(),
+                        )
+                        .await?
+                };
+                validate_prepared(
+                    &request,
+                    request_id,
+                    publication_id,
+                    &result,
+                    entry.thread_binding.as_ref(),
+                )?;
                 spool.prepare(entry.batch.batch_id, request.clone())?;
                 request
             }
@@ -187,9 +239,10 @@ fn validate_prepared(
     request_id: RequestId,
     publication_id: PublicationId,
     result: &[u8],
+    binding: Option<&jj_collab::ThreadBindingV1>,
 ) -> AuthorityResult<()> {
     request.validate()?;
-    if request.thread_binding.is_some()
+    if request.thread_binding.as_ref().map(|v| &v.binding) != binding
         || request.request_id != request_id
         || request.publication_id != publication_id
         || request.result != result

@@ -1,5 +1,14 @@
 # Typed mutations
 
+Native capture preparation forwards an explicit optional Thread binding through
+the owned service facade. It validates typed input, derives the current actor
+and acceptance time, and stages the exact Agent delta without selecting
+repository state. Bound publication authorizes both domains and atomically
+selects their roots; stale observed Thread/assignment preconditions select
+neither. Matching receipt replay retains the original result before entity
+preconditions. Empty bindings preserve unlinked capture behavior and do not
+launch a runner.
+
 M13 adds an in-process LocalRepository facade for admitted local Git-backed JJ
 folders. WorkStore commands use the same neutral domain reducer and exact entity
 preconditions. Local actor identity is established atomically in

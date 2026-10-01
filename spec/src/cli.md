@@ -1,9 +1,15 @@
 # CLI and server commands
 
+The native capture worker consumes an explicit optional binding retained in the
+captured spool entry. Binding-aware preparation validates returned intent;
+unknown publication retains the exact prepared request across restart. Ordinary
+owned hook/watch capture remains unlinked unless an explicit caller supplies a
+binding. This does not add jj-acp launch/continuation or local bound capture.
+
 The capture spool validates the complete prepared Agent request, including any
 explicit binding, instead of rebuilding only legacy fields. Existing unlinked
-preparation fails closed on an unexpected binding. Explicit bound enqueue and
-worker/runner entry points remain separately qualified.
+preparation fails closed on an unexpected binding. Explicit native bound enqueue
+and drain are qualified separately from future runner entry points.
 
 The native lifecycle HTTP acceptance fixture qualifies the Thread/Reaction
 transport and representative generated responses through isolated MemoryStore

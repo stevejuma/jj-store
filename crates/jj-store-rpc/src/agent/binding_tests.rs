@@ -41,12 +41,39 @@ fn delta_codec_retains_explicit_binding_and_unlinked_prepare_rejects_it() {
     .unwrap();
     let bytes = encode(&request, DELTA_BYTES).unwrap();
     assert_eq!(delta_request(&bytes).unwrap(), request);
+    let binding = &request.thread_binding.as_ref().unwrap().binding;
     assert_eq!(
         prepared(
             wire_prepared(&request).unwrap(),
             request.request_id,
             request.publication_id,
-            &request.result
+            &request.result,
+            Some(binding)
+        )
+        .unwrap(),
+        request
+    );
+    let mut unexpected = binding.clone();
+    unexpected.thread_id = ThreadId::new([9; 16]);
+    assert_eq!(
+        prepared(
+            wire_prepared(&request).unwrap(),
+            request.request_id,
+            request.publication_id,
+            &request.result,
+            Some(&unexpected)
+        )
+        .unwrap_err()
+        .code(),
+        tonic::Code::DataLoss
+    );
+    assert_eq!(
+        prepared(
+            wire_prepared(&request).unwrap(),
+            request.request_id,
+            request.publication_id,
+            &request.result,
+            None
         )
         .unwrap_err()
         .code(),
@@ -67,7 +94,20 @@ fn delta_codec_retains_explicit_binding_and_unlinked_prepare_rejects_it() {
             wire_prepared(&unlinked).unwrap(),
             unlinked.request_id,
             unlinked.publication_id,
-            &unlinked.result
+            &unlinked.result,
+            Some(&unexpected)
+        )
+        .unwrap_err()
+        .code(),
+        tonic::Code::DataLoss
+    );
+    assert_eq!(
+        prepared(
+            wire_prepared(&unlinked).unwrap(),
+            unlinked.request_id,
+            unlinked.publication_id,
+            &unlinked.result,
+            None
         )
         .unwrap(),
         unlinked

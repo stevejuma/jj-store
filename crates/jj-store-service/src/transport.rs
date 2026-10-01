@@ -176,9 +176,35 @@ impl NativeRequest {
         batch: &SanitizedObservationBatchV1,
         result: Vec<u8>,
     ) -> Result<AgentDeltaRequest> {
+        self.prepare_agent_capture_with_binding(
+            request_id,
+            publication_id,
+            profile,
+            batch,
+            result,
+            None,
+        )
+        .await
+    }
+    pub async fn prepare_agent_capture_with_binding(
+        &self,
+        request_id: m::RequestId,
+        publication_id: m::PublicationId,
+        profile: &NormalizerProfileV1,
+        batch: &SanitizedObservationBatchV1,
+        result: Vec<u8>,
+        binding: Option<&jj_collab::ThreadBindingV1>,
+    ) -> Result<AgentDeltaRequest> {
         Ok(self
             .session
-            .prepare_agent_capture(request_id, publication_id, profile, batch, result)
+            .prepare_agent_capture_with_binding(
+                request_id,
+                publication_id,
+                profile,
+                batch,
+                result,
+                binding,
+            )
             .await?)
     }
     pub async fn publish_agent_delta(&self, request: &AgentDeltaRequest) -> Result<PublishOutcome> {

@@ -1,5 +1,11 @@
 # Read APIs and browser
 
+Native Agent capture preparation adds optional canonical ThreadBindingV1 bytes
+on protobuf field 7. Empty bytes preserve legacy unlinked behavior. The server
+derives actor and acceptance time; the client checks the exact returned binding,
+request, publication and result identities. Publication retains the binding and
+selects Agent plus Thread roots atomically through the existing manifest.
+
 Persistent Threads use Community channels as their presentation template, with
 shared conversation/composer/message/reaction semantics. The browser adapter
 retains jj-store authorization, exact revisions, receipts and explicit refresh.

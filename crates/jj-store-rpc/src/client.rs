@@ -615,6 +615,25 @@ impl NativeClient {
         batch: &SanitizedObservationBatchV1,
         result: Vec<u8>,
     ) -> Result<AgentDeltaRequest, Status> {
+        self.prepare_agent_capture_with_binding(
+            request_id,
+            publication_id,
+            profile,
+            batch,
+            result,
+            None,
+        )
+        .await
+    }
+    pub async fn prepare_agent_capture_with_binding(
+        &self,
+        request_id: m::RequestId,
+        publication_id: m::PublicationId,
+        profile: &NormalizerProfileV1,
+        batch: &SanitizedObservationBatchV1,
+        result: Vec<u8>,
+        binding: Option<&jj_store_service::collab_model::ThreadBindingV1>,
+    ) -> Result<AgentDeltaRequest, Status> {
         let expected_result = result.clone();
         let body = agent::prepare_request(
             self.repository,
@@ -623,13 +642,20 @@ impl NativeClient {
             profile,
             batch,
             result,
+            binding,
         )?;
         let response = self
             .wire()
             .prepare_agent_capture(self.request(body))
             .await?
             .into_inner();
-        agent::prepared(response, request_id, publication_id, &expected_result)
+        agent::prepared(
+            response,
+            request_id,
+            publication_id,
+            &expected_result,
+            binding,
+        )
     }
     pub async fn publish_agent_delta(
         &self,
