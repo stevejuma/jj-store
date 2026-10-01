@@ -90,6 +90,23 @@ impl Config {
     pub fn validate(&self) -> Result<()> {
         self.validate_common()?;
         match &self.storage {
+            Storage::Filesystem => {
+                if !matches!(
+                    self.access,
+                    Access::LocalTrusted {
+                        permission: jj_store_service::auth::Permission::Admin,
+                        ..
+                    }
+                ) || !self.bind.ip().is_loopback()
+                    || !self.backup.is_empty()
+                    || !self.search.is_empty()
+                    || !self.replication.is_empty()
+                {
+                    return Err(Error::Config(
+                        "filesystem mode requires loopback LocalTrusted admin without native adapters",
+                    ));
+                }
+            }
             Storage::ExternalS3 {
                 endpoint,
                 bucket,

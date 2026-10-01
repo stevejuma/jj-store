@@ -8,6 +8,8 @@ use serde::Serialize;
 #[derive(Serialize, JsonSchema)]
 pub(crate) struct Capabilities {
     pub version: u32,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub native_authority: Option<bool>,
     pub native_profile: &'static str,
     pub authentication: &'static str,
     pub read_api: bool,
@@ -19,6 +21,8 @@ pub(crate) struct Capabilities {
     pub local_workspace_links: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub local_folder_picker: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub local_repository_management: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub local_search_management: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -73,6 +77,10 @@ impl From<&Config> for Bootstrap {
 
 #[derive(Serialize, JsonSchema)]
 pub(crate) struct RepositorySummary {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub profile: Option<jj_store_model::portable::CodeProfileV1>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub availability: Option<jj_store_service::local_browser::Availability>,
     pub id: RepositoryId,
     pub name: String,
     pub permission: EffectivePermission,
@@ -115,6 +123,7 @@ impl From<&Config> for Capabilities {
     fn from(config: &Config) -> Self {
         Self {
             version: 1,
+            native_authority: Some(config.native_authority),
             native_profile: reads::NATIVE_PROFILE,
             authentication: match config.access {
                 Access::Authenticated => "repository_bearer",
@@ -129,8 +138,7 @@ impl From<&Config> for Capabilities {
                     }
                 ))
             .then_some(true),
-            local_folder_picker: (config.local_workspaces.is_some()
-                && config.local_folder_picker.is_some()
+            local_folder_picker: (config.local_folder_picker.is_some()
                 && matches!(
                     config.access,
                     Access::LocalTrusted {
@@ -157,29 +165,50 @@ impl From<&Config> for Capabilities {
                     }
                 ))
             .then_some(true),
+            local_repository_management: (config.local_repositories.is_some()
+                && matches!(
+                    config.access,
+                    Access::LocalTrusted {
+                        permission: jj_store_service::auth::Permission::Admin,
+                        ..
+                    }
+                ))
+            .then_some(true),
             read_api: true,
             browsing_windows: true,
-            index_tasks: true,
-            events: true,
+            index_tasks: config.native_authority,
+            events: config.native_authority,
             search: false,
-            typed_mutations: [
-                "new",
-                "describe",
-                "bookmark_create",
-                "bookmark_move",
-                "bookmark_delete",
-                "reconcile_operations",
-                "abandon",
-                "resolve_conflicts",
-                "edit_file",
-            ]
-            .map(str::to_owned)
-            .to_vec(),
-            mutation_request_bytes: crate::mutations::MAX_REQUEST_BYTES,
-            conflict_upload_bytes: config.uploads.max_file_bytes,
-            conflict_resolution_actions: ["select_term", "delete", "uploaded_file"]
+            typed_mutations: if config.native_authority {
+                [
+                    "new",
+                    "describe",
+                    "bookmark_create",
+                    "bookmark_move",
+                    "bookmark_delete",
+                    "reconcile_operations",
+                    "abandon",
+                    "resolve_conflicts",
+                    "edit_file",
+                ]
                 .map(str::to_owned)
-                .to_vec(),
+                .to_vec()
+            } else {
+                vec![]
+            },
+            mutation_request_bytes: crate::mutations::MAX_REQUEST_BYTES,
+            conflict_upload_bytes: if config.native_authority {
+                config.uploads.max_file_bytes
+            } else {
+                0
+            },
+            conflict_resolution_actions: if config.native_authority {
+                ["select_term", "delete", "uploaded_file"]
+                    .map(str::to_owned)
+                    .to_vec()
+            } else {
+                vec![]
+            },
             event_limits: EventLimits {
                 streams: config.event_concurrency,
                 replay_window: config.events.replay_window,

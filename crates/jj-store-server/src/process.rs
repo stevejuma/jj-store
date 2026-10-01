@@ -31,12 +31,13 @@ pub struct PreparedServer {
     tls: Option<tokio_rustls::TlsAcceptor>,
     concurrent: usize,
     timeout: Duration,
-    search: crate::search::PreparedSearch,
-    replication: crate::replication::PreparedReplication,
-    storage: AuthoritativeStorage,
+    search: Option<crate::search::PreparedSearch>,
+    replication: Option<crate::replication::PreparedReplication>,
+    storage: Option<AuthoritativeStorage>,
     _state_lock: Option<File>,
 }
 enum PreparedRpc {
+    Disabled,
     Shared(NativeRpc),
     Local(LocalRpc),
 }
@@ -77,6 +78,24 @@ impl PreparedServer {
         picker: Option<Arc<dyn jj_store_service::local_management::FolderPicker>>,
         config_path: Option<&std::path::Path>,
     ) -> Result<Self> {
+        Self::prepare_with_browser(
+            config,
+            require_loopback,
+            verifier,
+            picker,
+            config_path,
+            None,
+        )
+        .await
+    }
+    pub async fn prepare_with_browser(
+        config: &Config,
+        require_loopback: bool,
+        verifier: Option<Arc<dyn jj_store_service::local_management::WorkspaceVerifier>>,
+        picker: Option<Arc<dyn jj_store_service::local_management::FolderPicker>>,
+        config_path: Option<&std::path::Path>,
+        folders: Option<Arc<dyn jj_store_service::local_browser::FolderProvider>>,
+    ) -> Result<Self> {
         config.validate()?;
         if require_loopback && !config.bind.ip().is_loopback() {
             return Err(Error::Config(
@@ -93,14 +112,15 @@ impl PreparedServer {
             None
         };
         let state = policy::outside_checkout(&config.state_dir)?;
-        let state_lock = if matches!(config.storage, crate::config::Storage::ExternalS3 { .. }) {
+        let state_lock = if matches!(
+            config.storage,
+            crate::config::Storage::ExternalS3 { .. } | crate::config::Storage::Filesystem
+        ) {
             fs::create_dir_all(&state)?;
             Some(policy::exclusive_lock(&state.join("server.lock"))?)
         } else {
             None
         };
-        let storage = AuthoritativeStorage::start(config).await?;
-        let host = config.host(storage.store())?;
         let (installation, catalog) = match &config.access {
             Access::Authenticated {
                 installation,
@@ -116,87 +136,113 @@ impl PreparedServer {
             catalog.clone(),
             Identity::load(installation)?,
         )?);
-        let rpc_limits = Limits {
-            concurrent: config.limits.concurrent_requests,
-            timeout: Duration::from_secs(config.limits.request_seconds),
-            object_bytes: config.limits.max_blob_bytes
-                + jj_store_model::envelope::HEADER_LEN as u64,
-        };
-        let timeout = Duration::from_secs(config.limits.request_seconds);
         let search_access = match &config.access {
             Access::Authenticated { .. } => crate::search::SearchAccess::Authenticated,
             Access::LocalTrusted { installation, .. } => crate::search::SearchAccess::LocalTrusted(
                 Identity::load(installation)?.principal(b"search-index"),
             ),
         };
-        let (search, indexes) = crate::search::PreparedSearch::new(
-            &host,
-            &state,
-            &config.search,
-            &config.limits,
-            search_access,
-            crate::search::environment,
-        )?;
-        let search_health = indexes
-            .iter()
-            .map(|(repository, index)| (*repository, index.health.clone()))
-            .collect();
-        let replication_principal = Identity::load(installation)?.principal(b"replication-worker");
-        let replication = crate::replication::PreparedReplication::new(
-            &host,
-            storage.store(),
-            &config.replication,
-            replication_principal,
-            search_health,
-        )?;
-        let rpc = match &config.access {
-            Access::Authenticated { .. } => PreparedRpc::Shared(
-                NativeRpc::hosted(host.clone(), rpc_limits)
-                    .map_err(|_| Error::Config("RPC limits"))?
-                    .with_registry(registry.clone())
-                    .with_replication_controls(replication.controls()),
-            ),
-            Access::LocalTrusted {
-                installation,
-                rpc_socket,
-                permission,
-                ..
-            } => {
-                #[cfg(unix)]
-                {
-                    use std::os::unix::fs::{
-                        FileTypeExt as _, MetadataExt as _, PermissionsExt as _,
-                    };
-                    let owner_uid = fs::metadata(&state)?.uid();
-                    let identity = Identity::load(installation)?;
-                    if let Ok(metadata) = fs::symlink_metadata(rpc_socket) {
-                        if !metadata.file_type().is_socket() {
-                            return Err(Error::Config("local RPC path must be a Unix socket"));
+        let timeout = Duration::from_secs(config.limits.request_seconds);
+        let (storage, host, search, indexes, replication, rpc) =
+            if matches!(config.storage, crate::config::Storage::Filesystem) {
+                (
+                    None,
+                    None,
+                    None,
+                    std::collections::BTreeMap::new(),
+                    None,
+                    PreparedRpc::Disabled,
+                )
+            } else {
+                let storage = AuthoritativeStorage::start(config).await?;
+                let host = config.host(storage.store())?;
+                let rpc_limits = Limits {
+                    concurrent: config.limits.concurrent_requests,
+                    timeout: Duration::from_secs(config.limits.request_seconds),
+                    object_bytes: config.limits.max_blob_bytes
+                        + jj_store_model::envelope::HEADER_LEN as u64,
+                };
+                let (search, indexes) = crate::search::PreparedSearch::new(
+                    &host,
+                    &state,
+                    &config.search,
+                    &config.limits,
+                    search_access,
+                    crate::search::environment,
+                )?;
+                let search_health = indexes
+                    .iter()
+                    .map(|(repository, index)| (*repository, index.health.clone()))
+                    .collect();
+                let replication_principal =
+                    Identity::load(installation)?.principal(b"replication-worker");
+                let replication = crate::replication::PreparedReplication::new(
+                    &host,
+                    storage.store(),
+                    &config.replication,
+                    replication_principal,
+                    search_health,
+                )?;
+                let rpc = match &config.access {
+                    Access::Authenticated { .. } => PreparedRpc::Shared(
+                        NativeRpc::hosted(host.clone(), rpc_limits)
+                            .map_err(|_| Error::Config("RPC limits"))?
+                            .with_registry(registry.clone())
+                            .with_replication_controls(replication.controls()),
+                    ),
+                    Access::LocalTrusted {
+                        installation,
+                        rpc_socket,
+                        permission,
+                        ..
+                    } => {
+                        #[cfg(unix)]
+                        {
+                            use std::os::unix::fs::{
+                                FileTypeExt as _, MetadataExt as _, PermissionsExt as _,
+                            };
+                            let owner_uid = fs::metadata(&state)?.uid();
+                            let identity = Identity::load(installation)?;
+                            if let Ok(metadata) = fs::symlink_metadata(rpc_socket) {
+                                if !metadata.file_type().is_socket() {
+                                    return Err(Error::Config(
+                                        "local RPC path must be a Unix socket",
+                                    ));
+                                }
+                                fs::remove_file(rpc_socket)?;
+                            }
+                            let listener = tokio::net::UnixListener::bind(rpc_socket)?;
+                            fs::set_permissions(rpc_socket, fs::Permissions::from_mode(0o600))?;
+                            let principal =
+                                identity.principal(format!("unix-uid:{owner_uid}").as_bytes());
+                            PreparedRpc::Local(LocalRpc {
+                                service: NativeRpc::hosted_local_trusted(
+                                    host.clone(),
+                                    rpc_limits,
+                                    principal,
+                                    *permission,
+                                    owner_uid,
+                                )
+                                .map_err(|_| Error::Config("local RPC access"))?
+                                .with_registry(registry.clone())
+                                .with_replication_controls(replication.controls()),
+                                listener,
+                                socket: SocketGuard(rpc_socket.clone()),
+                            })
                         }
-                        fs::remove_file(rpc_socket)?;
+                        #[cfg(not(unix))]
+                        return Err(Error::Config("local trusted RPC requires Unix"));
                     }
-                    let listener = tokio::net::UnixListener::bind(rpc_socket)?;
-                    fs::set_permissions(rpc_socket, fs::Permissions::from_mode(0o600))?;
-                    let principal = identity.principal(format!("unix-uid:{owner_uid}").as_bytes());
-                    PreparedRpc::Local(LocalRpc {
-                        service: NativeRpc::hosted_local_trusted(
-                            host.clone(),
-                            rpc_limits,
-                            principal,
-                            *permission,
-                            owner_uid,
-                        )
-                        .map_err(|_| Error::Config("local RPC access"))?
-                        .with_registry(registry.clone())
-                        .with_replication_controls(replication.controls()),
-                        listener,
-                        socket: SocketGuard(rpc_socket.clone()),
-                    })
-                }
-                #[cfg(not(unix))]
-                return Err(Error::Config("local trusted RPC requires Unix"));
-            }
-        };
+                };
+                (
+                    Some(storage),
+                    Some(host),
+                    Some(search),
+                    indexes,
+                    Some(replication),
+                    rpc,
+                )
+            };
         let http_access = match &config.access {
             Access::Authenticated { .. } => HttpAccess::Authenticated,
             Access::LocalTrusted {
@@ -227,7 +273,7 @@ impl PreparedServer {
                 last_verified_restore_point: None,
             })
             .collect();
-        let local_workspaces = match (&config.access, verifier) {
+        let local_workspaces = match (&config.access, verifier.filter(|_| host.is_some())) {
             (
                 Access::LocalTrusted {
                     permission: jj_store_service::auth::Permission::Admin,
@@ -248,20 +294,47 @@ impl PreparedServer {
                 permission: jj_store_service::auth::Permission::Admin,
                 ..
             }
-        ) {
+        ) && host.is_some()
+        {
             config_path
                 .map(|path| {
                     crate::search_management::Manager::new(
                         path,
                         config,
-                        host.clone(),
-                        search.control(),
+                        host.as_ref().expect("native authority").clone(),
+                        search.as_ref().expect("native search").control(),
                         search_access,
-                        replication.search_observer(),
+                        replication
+                            .as_ref()
+                            .expect("native replication")
+                            .search_observer(),
                     )
                 })
                 .transpose()?
                 .map(Arc::new)
+        } else {
+            None
+        };
+        let local_repositories = if matches!(
+            config.access,
+            Access::LocalTrusted {
+                permission: jj_store_service::auth::Permission::Admin,
+                ..
+            }
+        ) {
+            folders
+                .map(|provider| {
+                    crate::local_repositories::DeviceRepositories::new(
+                        state.clone(),
+                        Identity::load(installation)?,
+                        provider,
+                        registry.clone(),
+                    )
+                })
+                .transpose()?
+                .map(|manager| {
+                    Arc::new(manager) as Arc<dyn jj_store_service::local_browser::LocalRepositories>
+                })
         } else {
             None
         };
@@ -286,10 +359,14 @@ impl PreparedServer {
                     }
                 )
                 .then(|| {
-                    Arc::new(crate::sync_management::LocalSync(replication.controls()))
-                        as Arc<dyn jj_store_service::sync_management::SyncManager>
-                }),
-                local_folder_picker: local_workspaces.as_ref().and(picker),
+                    replication.as_ref().map(|r| {
+                        Arc::new(crate::sync_management::LocalSync(r.controls()))
+                            as Arc<dyn jj_store_service::sync_management::SyncManager>
+                    })
+                })
+                .flatten(),
+                local_folder_picker: picker,
+                local_repositories,
                 local_workspaces,
                 storage_ready: true,
                 backups,
@@ -346,10 +423,15 @@ impl PreparedServer {
         Ok(self.listener.local_addr()?)
     }
     pub async fn run(self, shutdown: impl Future<Output = ()> + Send + 'static) -> Result<()> {
-        let search = self.search.start().await;
-        let replication = self.replication.start();
+        let search = if let Some(search) = self.search {
+            Some(search.start().await)
+        } else {
+            None
+        };
+        let replication = self.replication.map(|r| r.start());
         let (tx, rx) = tokio::sync::oneshot::channel();
         let (mut router, local_rpc) = match self.rpc {
+            PreparedRpc::Disabled => (self.http.router().fallback(unknown_route), None),
             PreparedRpc::Shared(rpc) => (
                 Routes::new(rpc.service())
                     .into_axum_router()
@@ -393,9 +475,21 @@ impl PreparedServer {
                 }
             }
         };
-        let replication = replication.shutdown().await;
-        let stopped = search.shutdown().await;
-        let storage = self.storage.shutdown().await;
+        let replication = if let Some(replication) = replication {
+            replication.shutdown().await
+        } else {
+            Ok(())
+        };
+        let stopped = if let Some(search) = search {
+            search.shutdown().await
+        } else {
+            Ok(())
+        };
+        let storage = if let Some(storage) = self.storage {
+            storage.shutdown().await
+        } else {
+            Ok(())
+        };
         result.and(replication).and(stopped).and(storage)
     }
 }

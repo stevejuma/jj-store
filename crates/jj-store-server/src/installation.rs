@@ -125,6 +125,53 @@ pub fn initialize_registry(state_dir: &Path) -> Result<InitializedRegistry> {
     })
 }
 
+/// Create all configuration before atomic installation publication; no native credentials.
+pub fn initialize_filesystem(state_dir: &Path) -> Result<InitializedLocal> {
+    let state = policy::outside_checkout(state_dir)?;
+    if state.exists() {
+        return Err(Error::Config(
+            "local state directory must not already exist",
+        ));
+    }
+    let parent = state
+        .parent()
+        .ok_or(Error::Config("local state directory parent"))?;
+    private_directory(parent)?;
+    let staging = tempfile::Builder::new()
+        .prefix(".jj-store-filesystem-")
+        .tempdir_in(parent)?;
+    set_private_directory(staging.path())?;
+    let identity = Identity {
+        version: 1,
+        installation: random_hex::<16>()?,
+    };
+    write_json(staging.path().join(INSTALLATION_FILE), &identity)?;
+    write_json(
+        staging.path().join(CATALOG_FILE),
+        &Catalog::empty(&identity),
+    )?;
+    write_private(
+        &staging.path().join("operators.json"),
+        &TokenPolicy::new(Scope::Operator)
+            .encode()
+            .map_err(|_| Error::Config("operator policy"))?,
+    )?;
+    let config = local_config(&state, config::Storage::Filesystem);
+    let text = toml::to_string_pretty(&config)
+        .map_err(|_| Error::Config("filesystem configuration serialization"))?;
+    write_private(&staging.path().join(CONFIG_FILE), text.as_bytes())?;
+    sync_directory(staging.path())?;
+    fs::rename(staging.path(), &state)?;
+    let _moved = staging.keep();
+    sync_directory(parent)?;
+    Ok(InitializedLocal {
+        version: 1,
+        installation: identity.installation,
+        config: state.join(CONFIG_FILE),
+        state_dir: state,
+    })
+}
+
 pub fn initialize_local(state_dir: &Path, runtime_executable: &Path) -> Result<InitializedLocal> {
     let state_dir = policy::outside_checkout(state_dir)?;
     if state_dir.exists() {
@@ -181,7 +228,19 @@ pub fn initialize_local(state_dir: &Path, runtime_executable: &Path) -> Result<I
             .map_err(|_| Error::Config("local operator policy"))?,
     )?;
 
-    let config = local_config(&state_dir, &runtime_executable, &bucket);
+    let config = local_config(
+        &state_dir,
+        config::Storage::EmbeddedRustfs {
+            runtime_executable,
+            volume: state_dir.join(VOLUME_DIRECTORY),
+            installation: state_dir.join(INSTALLATION_FILE),
+            credentials: state_dir.join(CREDENTIALS_FILE),
+            ownership: state_dir.join(OWNERSHIP_FILE),
+            address: "127.0.0.1:0".into(),
+            bucket,
+            region: "us-east-1".into(),
+        },
+    );
     let text = toml::to_string_pretty(&config)
         .map_err(|_| Error::Config("local configuration serialization"))?;
     write_private(&staging.path().join(CONFIG_FILE), text.as_bytes())?;
@@ -198,7 +257,7 @@ pub fn initialize_local(state_dir: &Path, runtime_executable: &Path) -> Result<I
     })
 }
 
-fn local_config(state: &Path, runtime: &Path, bucket: &str) -> config::Config {
+fn local_config(state: &Path, storage: config::Storage) -> config::Config {
     config::Config {
         format: 2,
         bind: "127.0.0.1:7443".parse().expect("constant address"),
@@ -215,16 +274,7 @@ fn local_config(state: &Path, runtime: &Path, bucket: &str) -> config::Config {
             rpc_socket: state.join(RPC_SOCKET_FILE),
             permission: jj_store_service::auth::Permission::Admin,
         },
-        storage: config::Storage::EmbeddedRustfs {
-            runtime_executable: runtime.into(),
-            volume: state.join(VOLUME_DIRECTORY),
-            installation: state.join(INSTALLATION_FILE),
-            credentials: state.join(CREDENTIALS_FILE),
-            ownership: state.join(OWNERSHIP_FILE),
-            address: "127.0.0.1:0".into(),
-            bucket: bucket.into(),
-            region: "us-east-1".into(),
-        },
+        storage,
         backup: Vec::new(),
         limits: config::Limits::default(),
         protection: config::Protected::default(),

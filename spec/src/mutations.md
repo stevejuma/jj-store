@@ -610,3 +610,7 @@ request through unknown outcomes and adopts the existing selected identity.
 Removal affects only installation bindings. Local WorkStore browser commands
 reuse existing receipt-first provider semantics; code mutations remain
 unavailable in this slice.
+
+Registration work and its blocking cross-process lease run on an isolated worker
+so concurrent in-process requests cannot block the async runtime that completes
+initialization. Typed read POST requests have no publication capability.

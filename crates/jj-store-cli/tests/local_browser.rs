@@ -678,3 +678,217 @@ async fn local_code_reads_cover_graphs_diffs_roots_conflicts_and_multiple_heads(
         .unwrap();
     assert_eq!(reader.heads(access).await.unwrap().heads, before.heads);
 }
+
+#[tokio::test]
+async fn filesystem_runtime_registers_and_reads_without_native_storage() {
+    use jj_store_server::{config::Config, installation, process::PreparedServer};
+    use serde_json::{Value, json};
+    use std::sync::Arc;
+    let temp = tempfile::tempdir().unwrap();
+    let folder = temp.path().join("repo");
+    jj(
+        temp.path(),
+        &["git", "init", "--colocate", folder.to_str().unwrap()],
+    );
+    fs::write(folder.join("file.txt"), "filesystem browser\n").unwrap();
+    jj(&folder, &["describe", "-m", "Recorded code"]);
+    jj(&folder, &["bookmark", "create", "main"]);
+    let installed = installation::initialize_filesystem(&temp.path().join("state")).unwrap();
+    let mut config = Config::load(&installed.config).unwrap();
+    let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+    let address = listener.local_addr().unwrap();
+    drop(listener);
+    config.bind = address;
+    config.public_url = format!("http://{address}/");
+    let prepared = PreparedServer::prepare_with_browser(
+        &config,
+        true,
+        None,
+        None,
+        None,
+        Some(Arc::new(jj_store_cli::local_browser::LocalFolders)),
+    )
+    .await
+    .unwrap();
+    let (stop, stopped) = tokio::sync::oneshot::channel();
+    let server = tokio::spawn(async move {
+        prepared
+            .run(async {
+                let _ = stopped.await;
+            })
+            .await
+    });
+    let client = reqwest::Client::new();
+    let endpoint = format!("http://{address}/v1");
+    let read = |path: &str| {
+        client
+            .get(format!("{endpoint}{path}"))
+            .header("x-jj-store-protocol", "1")
+    };
+    let post = |path: &str, value: Value| {
+        client
+            .post(format!("{endpoint}{path}"))
+            .header("x-jj-store-protocol", "1")
+            .json(&value)
+    };
+    let bootstrap: Value = read("/bootstrap")
+        .send()
+        .await
+        .unwrap()
+        .error_for_status()
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    assert_eq!(
+        bootstrap["capabilities"]["local_repository_management"],
+        true
+    );
+    assert_eq!(bootstrap["capabilities"]["typed_mutations"], json!([]));
+    assert_eq!(
+        bootstrap["capabilities"]["conflict_resolution_actions"],
+        json!([])
+    );
+    let inspected: Value = post("/local/repositories/inspect", json!({"path":folder}))
+        .send()
+        .await
+        .unwrap()
+        .error_for_status()
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    assert!(inspected["repository"].is_null());
+    assert!(!folder.join(".jj/repo/lapis").exists());
+    let request = json!({"version":1,"request_id":"12121212121212121212121212121212","expected_revision":0,"path":folder,"name":"Filesystem demo"});
+    let result: Value = post("/local/repositories", request.clone())
+        .send()
+        .await
+        .unwrap()
+        .error_for_status()
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    assert_eq!(result["status"], "committed");
+    let id = result["binding"]["repository"].as_str().unwrap();
+    let repos: Value = read("/repositories")
+        .send()
+        .await
+        .unwrap()
+        .error_for_status()
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    assert_eq!(repos["repositories"][0]["id"], id);
+    assert_eq!(repos["repositories"][0]["profile"], "git_sha1_jj045");
+    assert_eq!(repos["repositories"][0]["availability"], "ready");
+    let snapshot: Value = read(&format!("/local/repos/{id}/snapshot"))
+        .send()
+        .await
+        .unwrap()
+        .error_for_status()
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    let operation = snapshot["heads"][0].as_str().unwrap();
+    assert!(!snapshot["metadata_commit"].is_null());
+    let query = json!({"operation":operation,"request":{"kind":"graph","query":[{"graph":"log","revset":"all()","workspace":null,"user_email":"","at_time_millis":1700000000000_i64},{"limit":1,"after":null}]},"cursor":null});
+    let page: Value = post(&format!("/local/repos/{id}/query"), query.clone())
+        .send()
+        .await
+        .unwrap()
+        .error_for_status()
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    assert_eq!(page["snapshot"]["profile"], "git_sha1_jj045");
+    assert_eq!(
+        page["data"]["data"]["data"]["nodes"][0]["commit"]["id"]
+            .as_str()
+            .unwrap()
+            .len(),
+        40
+    );
+    let cursor = page["next_cursor"].as_str().unwrap();
+    let mut next = query.clone();
+    next["cursor"] = json!(cursor);
+    post(&format!("/local/repos/{id}/query"), next.clone())
+        .send()
+        .await
+        .unwrap()
+        .error_for_status()
+        .unwrap();
+    next["request"]["query"][1]["limit"] = json!(2);
+    assert_eq!(
+        post(&format!("/local/repos/{id}/query"), next)
+            .send()
+            .await
+            .unwrap()
+            .status(),
+        400
+    );
+    let rejected = post(&format!("/local/repos/{id}/query"), query)
+        .header("Origin", "https://untrusted.invalid")
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(rejected.status(), 403);
+    assert_eq!(
+        read(&format!("/repos/{id}/snapshot"))
+            .send()
+            .await
+            .unwrap()
+            .status(),
+        501
+    );
+    assert!(
+        !installed
+            .state_dir
+            .join(installation::CREDENTIALS_FILE)
+            .exists()
+    );
+    assert!(
+        !installed
+            .state_dir
+            .join(installation::VOLUME_DIRECTORY)
+            .exists()
+    );
+    assert!(
+        !installed
+            .state_dir
+            .join(installation::RPC_SOCKET_FILE)
+            .exists()
+    );
+    let replay: Value = post("/local/repositories", request)
+        .send()
+        .await
+        .unwrap()
+        .error_for_status()
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    assert_eq!(replay["binding"]["repository"], id);
+    if let Ok(path) = std::env::var("JJ_STORE_LOCAL_BROWSER_CONTRACT_CAPTURE") {
+        let sample = |path: &str, method: &str, data: Value| json!({"path":path,"method":method,"status":200,"media":"application/json","data":data});
+        fs::write(
+            path,
+            serde_json::to_vec(&vec![
+                sample("/v1/bootstrap", "get", bootstrap),
+                sample("/v1/local/repositories/inspect", "post", inspected),
+                sample("/v1/local/repositories", "post", result),
+                sample("/v1/repositories", "get", repos),
+                sample("/v1/local/repos/{repo}/snapshot", "get", snapshot),
+                sample("/v1/local/repos/{repo}/query", "post", page),
+            ])
+            .unwrap(),
+        )
+        .unwrap();
+    }
+    stop.send(()).unwrap();
+    server.await.unwrap().unwrap();
+}

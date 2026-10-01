@@ -113,7 +113,14 @@ pub struct FileContent {
     pub too_large: bool,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Serialize, Deserialize, schemars::JsonSchema)]
+#[schemars(rename = "LocalCodeQuery")]
+#[serde(
+    tag = "kind",
+    content = "query",
+    rename_all = "snake_case",
+    deny_unknown_fields
+)]
 pub enum Request {
     Graph(GraphRequest, GraphWindow),
     Commit { commit: m::GitSha1Id },
@@ -127,7 +134,8 @@ pub enum Request {
     DiffPaths(diff_summary::Request),
     Conflicts(conflicts::Request),
 }
-#[derive(Serialize)]
+#[derive(Serialize, schemars::JsonSchema)]
+#[schemars(rename = "LocalCodeResponse")]
 #[serde(tag = "kind", content = "data", rename_all = "snake_case")]
 pub enum Response {
     Graph(GraphPage),
@@ -153,6 +161,9 @@ impl Executor {
             workers: crate::query::workers::Workers::new(concurrency)?,
             limits: Limits::default(),
         })
+    }
+    pub fn with_workers(workers: crate::query::workers::Workers, limits: Limits) -> Self {
+        Self { workers, limits }
     }
     pub async fn heads(&self, access: Arc<dyn Access>) -> Result<Heads> {
         self.worker(access, move |access, budget| {

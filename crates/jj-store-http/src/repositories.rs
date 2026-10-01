@@ -34,10 +34,43 @@ pub(crate) async fn list(
         Access::LocalTrusted { .. } => None,
     };
     let token_id = token.as_ref().map(BearerToken::id);
-    let snapshot = registry
+    let mut snapshot = registry
         .snapshot(token_id)
         .await
         .map_err(|_| Error::unavailable())?;
+    let local = if token.is_none() {
+        if let Some(manager) = &state.config.local_repositories {
+            let manager = manager.clone();
+            Some(
+                tokio::task::spawn_blocking(move || manager.list())
+                    .await
+                    .map_err(|_| Error::unavailable())?
+                    .map_err(|_| Error::unavailable())?,
+            )
+        } else {
+            None
+        }
+    } else {
+        None
+    };
+    if let Some(local) = &local {
+        snapshot.generation = snapshot
+            .generation
+            .checked_add(local.revision)
+            .ok_or_else(Error::limit)?;
+        snapshot
+            .repositories
+            .extend(local.bindings.iter().map(|binding| {
+                jj_store_service::registry::RepositoryEntry {
+                    id: binding.repository,
+                    name: binding.name.clone(),
+                }
+            }));
+        snapshot.repositories.sort_by_key(|r| r.id);
+        if snapshot.repositories.windows(2).any(|w| w[0].id == w[1].id) {
+            return Err(Error::unavailable());
+        }
+    }
     let after = cursor
         .map(|value| {
             decode_cursor(
@@ -73,6 +106,8 @@ pub(crate) async fn list(
             (Access::Authenticated, Some(token)) => {
                 let endpoint = state
                     .host
+                    .as_ref()
+                    .ok_or_else(Error::unavailable)?
                     .endpoint(entry.id)
                     .map_err(|_| Error::unavailable())?;
                 let session = endpoint
@@ -92,7 +127,20 @@ pub(crate) async fn list(
             }
             _ => return Err(Error::denied()),
         };
+        let binding = local
+            .as_ref()
+            .and_then(|l| l.bindings.iter().find(|b| b.repository == entry.id));
         repositories.push(RepositorySummary {
+            profile: Some(if binding.is_some() {
+                jj_store_model::portable::CodeProfileV1::GitSha1Jj045
+            } else {
+                jj_store_model::portable::CodeProfileV1::NativeV1
+            }),
+            availability: Some(
+                binding.map_or(jj_store_service::local_browser::Availability::Ready, |b| {
+                    b.availability.clone()
+                }),
+            ),
             id: entry.id,
             name: entry.name.clone(),
             permission,

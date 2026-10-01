@@ -58,6 +58,74 @@ impl DeviceRepositories {
             native,
         })
     }
+    async fn register_inner(&self, request: RegisterFolder) -> Result<RegistrationOutcome> {
+        if request.version != 1
+            || !valid_path(&request.path)
+            || !crate::registry::valid_name(&request.name)
+        {
+            return Err(Error::Invalid);
+        }
+        let _lock = policy::exclusive_lock(&self.path.with_extension("lock"))
+            .map_err(|_| Error::Unavailable)?;
+        let mut registry = self.read()?;
+        if let Some(index) = registry
+            .requests
+            .iter()
+            .position(|j| j.request.request_id == request.request_id)
+        {
+            if registry.requests[index].request != request {
+                return Err(Error::Conflict);
+            }
+            return self.apply(&mut registry, index).await;
+        }
+        if registry.revision != request.expected_revision {
+            return Err(Error::Stale);
+        }
+        if registry.bindings.len() >= 256 || registry.requests.len() >= 4096 {
+            return Err(Error::Limit);
+        }
+        let folder = self.provider.inspect(&request.path)?;
+        let native = self
+            .native
+            .snapshot(None)
+            .await
+            .map_err(|_| Error::Unavailable)?;
+        if native
+            .repositories
+            .iter()
+            .any(|r| r.name == request.name || Some(r.id) == folder.repository)
+            || registry.bindings.iter().any(|b| {
+                (b.name == request.name && b.folder.repository != folder.repository)
+                    || (b.folder.repository == folder.repository
+                        && b.folder.metadata != folder.metadata)
+            })
+        {
+            return Err(Error::Conflict);
+        }
+        registry.requests.push(Journal {
+            request,
+            folder,
+            result: None,
+        });
+        let index = registry.requests.len() - 1;
+        self.persist(&registry)?;
+        self.apply(&mut registry, index).await
+    }
+    async fn status_inner(&self, request: RequestId) -> Result<RegistrationOutcome> {
+        let _lock = policy::exclusive_lock(&self.path.with_extension("lock"))
+            .map_err(|_| Error::Unavailable)?;
+        let mut registry = self.read()?;
+        match registry
+            .requests
+            .iter()
+            .position(|j| j.request.request_id == request)
+        {
+            Some(index) => self.apply(&mut registry, index).await,
+            None => Ok(RegistrationOutcome::NotKnown {
+                request_id: request,
+            }),
+        }
+    }
     fn read(&self) -> Result<Registry> {
         match fs::symlink_metadata(&self.path) {
             Err(e) if e.kind() == std::io::ErrorKind::NotFound => {
@@ -267,72 +335,18 @@ impl LocalRepositories for DeviceRepositories {
         self.provider.open(&self.folder(repository)?.0)
     }
     async fn register(&self, request: RegisterFolder) -> Result<RegistrationOutcome> {
-        if request.version != 1
-            || !valid_path(&request.path)
-            || !crate::registry::valid_name(&request.name)
-        {
-            return Err(Error::Invalid);
-        }
-        let _lock = policy::exclusive_lock(&self.path.with_extension("lock"))
-            .map_err(|_| Error::Unavailable)?;
-        let mut registry = self.read()?;
-        if let Some(index) = registry
-            .requests
-            .iter()
-            .position(|j| j.request.request_id == request.request_id)
-        {
-            if registry.requests[index].request != request {
-                return Err(Error::Conflict);
-            }
-            return self.apply(&mut registry, index).await;
-        }
-        if registry.revision != request.expected_revision {
-            return Err(Error::Stale);
-        }
-        if registry.bindings.len() >= 256 || registry.requests.len() >= 4096 {
-            return Err(Error::Limit);
-        }
-        let folder = self.provider.inspect(&request.path)?;
-        let native = self
-            .native
-            .snapshot(None)
+        let manager = self.clone();
+        let runtime = tokio::runtime::Handle::current();
+        tokio::task::spawn_blocking(move || runtime.block_on(manager.register_inner(request)))
             .await
-            .map_err(|_| Error::Unavailable)?;
-        if native
-            .repositories
-            .iter()
-            .any(|r| r.name == request.name || Some(r.id) == folder.repository)
-            || registry.bindings.iter().any(|b| {
-                (b.name == request.name && b.folder.repository != folder.repository)
-                    || (b.folder.repository == folder.repository
-                        && b.folder.metadata != folder.metadata)
-            })
-        {
-            return Err(Error::Conflict);
-        }
-        registry.requests.push(Journal {
-            request,
-            folder,
-            result: None,
-        });
-        let index = registry.requests.len() - 1;
-        self.persist(&registry)?;
-        self.apply(&mut registry, index).await
+            .map_err(|_| Error::Unavailable)?
     }
     async fn status(&self, request: RequestId) -> Result<RegistrationOutcome> {
-        let _lock = policy::exclusive_lock(&self.path.with_extension("lock"))
-            .map_err(|_| Error::Unavailable)?;
-        let mut registry = self.read()?;
-        match registry
-            .requests
-            .iter()
-            .position(|j| j.request.request_id == request)
-        {
-            Some(index) => self.apply(&mut registry, index).await,
-            None => Ok(RegistrationOutcome::NotKnown {
-                request_id: request,
-            }),
-        }
+        let manager = self.clone();
+        let runtime = tokio::runtime::Handle::current();
+        tokio::task::spawn_blocking(move || runtime.block_on(manager.status_inner(request)))
+            .await
+            .map_err(|_| Error::Unavailable)?
     }
     fn remove(&self, repository: RepositoryId, request: RemoveBinding) -> Result<LocalBindings> {
         let _lock = policy::exclusive_lock(&self.path.with_extension("lock"))

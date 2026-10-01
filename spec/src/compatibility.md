@@ -487,3 +487,8 @@ Search management adds optional capability and strict V1 intent/report schemas.
 Configuration format 2 accepts an optional enabled field on Search entries,
 defaulting to true for existing configurations. Native identities and repository
 publication formats are unchanged.
+
+Local filesystem configuration is an additive format-2 storage variant. Local
+browser DTOs are separate schemas with real Git SHA-1 identities; no native
+codec, identifier width, endpoint or companion format is widened. Discovery adds
+source profile and availability with native defaults for existing clients.

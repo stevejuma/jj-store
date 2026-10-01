@@ -518,3 +518,8 @@ Agent seed setup, hooks and removal MUST run with the isolated physical fixture
 folder as their working directory, as well as an explicit repository argument.
 The harness must not temporarily install hook configuration in the source
 checkout. Cold acceptance verifies teardown in both locations.
+
+Contract qualification includes actual filesystem-browser responses from the
+isolated runtime fixture alongside the retained native fixtures. Generated
+contracts and request/response identity widths remain independently checked.
+Adding local transport capture does not substitute for native acceptance.

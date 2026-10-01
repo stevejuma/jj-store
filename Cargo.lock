@@ -3885,6 +3885,7 @@ dependencies = [
 name = "jj-store-http"
 version = "0.1.0"
 dependencies = [
+ "async-trait",
  "axum",
  "futures 0.3.34",
  "getrandom 0.4.3",

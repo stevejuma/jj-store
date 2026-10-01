@@ -740,3 +740,10 @@ against the explicit development binary. They retain dirty checkout files and
 verify graph, binary, conflict, root and multi-head behavior without invoking
 repository-configured programs or installing the CLI. Provider tests do not
 qualify filesystem server startup or browser integration.
+
+`jj-store init --local --storage filesystem --state-dir <new directory>` creates
+private installation/catalog/operator configuration without RustFS credentials,
+volume or RPC socket. The default remains native embedded storage. Filesystem
+mode requires literal-loopback LocalTrusted administration and rejects native
+backup/search/replication configuration. Native routes report unsupported
+authority rather than constructing a placeholder object store.

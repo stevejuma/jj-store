@@ -113,7 +113,7 @@ shared-package release qualification does not alter those original Git gates.
 | M13.1       | Done        | M12                     | JST-LOCAL-001,JST-LOCAL-002                                                                                                                                              | Qualified metadata CAS/receipt/GC and stock JJ primitive compatibility                                                         | Retain CAS, receipt, retention and stock-JJ regression gates                   | E-M13-001                                                                                                                                                                                                                                                                                                                                                      |
 | M13.2       | Done        | M13.1                   | JST-LOCAL-003                                                                                                                                                            | Shared WorkStore semantics and server-free CLI                                                                                 | Retain WorkStore/CLI parity while completing M13.3                             | E-M13-002,E-UI-050                                                                                                                                                                                                                                                                                                                                             |
 | M13.3       | In progress | M13.2                   | JST-LOCAL-002,JST-LOCAL-003                                                                                                                                              | Portable agent/review anchors and exact retained evidence                                                                      | Qualify portable review anchors/CLI, hook causality and native capsule carrier | E-M13-003,E-M13-004,E-M13-005,E-M13-006,E-M13-007,E-M13-008,E-M13-009,E-M13-010,E-M13-011,E-M13-012                                                                                                                                                                                                                                                            |
-| M13.4       | In progress | M13.2                   | JST-LOCAL-004,JST-LOCAL-005                                                                                                                                              | Filesystem-only server, local UI and recoverable code commands                                                                 | Implement device bindings/APIs, recoverable code commands and cold UI gates    | E-M13-013,E-M13-014                                                                                                                                                                                                                                                                                                                                            |
+| M13.4       | In progress | M13.2                   | JST-LOCAL-004,JST-LOCAL-005                                                                                                                                              | Filesystem-only server, local UI and recoverable code commands                                                                 | Implement device bindings/APIs, recoverable code commands and cold UI gates    | E-M13-013,E-M13-014,E-M13-015                                                                                                                                                                                                                                                                                                                                  |
 | M13.5       | Planned     | M13.4                   | JST-LOCAL-006                                                                                                                                                            | Independent local/native conversion with complete collaboration history                                                        | Implement bounded history/evidence conversion, mappings and source safety      | -                                                                                                                                                                                                                                                                                                                                                              |
 | M13.6       | Planned     | M13.5                   | JST-LOCAL-001,JST-LOCAL-002,JST-LOCAL-003,JST-LOCAL-004,JST-LOCAL-005,JST-LOCAL-006                                                                                      | Cold end-to-end and retained native regression qualification                                                                   | Qualify completed local flow cold and retain native regressions                | -                                                                                                                                                                                                                                                                                                                                                              |
 | M14         | In progress | M4.18                   | JST-UI-012,JST-UI-016                                                                                                                                                    | Local settings, profile-aware device links and safe maintenance                                                                | Implement M14.3 agent setup and automatic recovery                             | E-M14-001,E-M14-002,E-M14-003,E-M14-004,E-M14-005,E-M14-006,E-M14-007,E-M14-010,E-M14-011,E-M14-012                                                                                                                                                                                                                                                            |
@@ -25387,7 +25387,7 @@ and named tests are checked by the progress gate.
         "command": "pnpm test:governance",
         "result": "pass",
         "failures": 0,
-        "note": "jsh-directory-governance1.log: ✔ rejects_unchanged_ledger_for_code (0.628042ms); ✔ allows_documentation_without_execution_ledger (0.079ms); ℹ pass 34"
+        "note": "jsh-directory-governance1.log: \u2714 rejects_unchanged_ledger_for_code (0.628042ms); \u2714 allows_documentation_without_execution_ledger (0.079ms); \u2139 pass 34"
       },
       {
         "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7468 JJ_STORE_REAL_REPOSITORY=5ae8240e6d77fe8d0f6dd0b13f3d3874 JJ_STORE_REAL_RUNTIME=/tmp/jsh-cold-ijPU4c JJ_STORE_REAL_ROOT=/Users/stevejuma/code/lapismd/jj-store-projects-hub pnpm exec playwright test --config web/playwright.real.config.ts work-store.spec.ts",
@@ -32424,6 +32424,205 @@ and named tests are checked by the progress gate.
     "deferred": [
       "Content-predicate/cross-operation revsets, search and all local code writes remain disabled.",
       "M13.4 remains In progress; browser/runtime gates are not qualified by these provider tests."
+    ]
+  },
+  {
+    "id": "E-M13-015",
+    "tasks": ["M13.4"],
+    "date": "2026-10-01",
+    "kind": "local-browser-filesystem-runtime",
+    "files": [
+      "Cargo.lock",
+      "crates/jj-store-cli/src/server_commands.rs",
+      "crates/jj-store-cli/tests/local_browser.rs",
+      "crates/jj-store-http/Cargo.toml",
+      "crates/jj-store-http/src/contract/tests.rs",
+      "crates/jj-store-http/src/contract.rs",
+      "crates/jj-store-http/src/dto.rs",
+      "crates/jj-store-http/src/lib.rs",
+      "crates/jj-store-http/src/local_browser.rs",
+      "crates/jj-store-http/src/repositories.rs",
+      "crates/jj-store-jj/src/local_browser/mod.rs",
+      "crates/jj-store-server/src/config/types.rs",
+      "crates/jj-store-server/src/config.rs",
+      "crates/jj-store-server/src/installation.rs",
+      "crates/jj-store-server/src/local_repositories.rs",
+      "crates/jj-store-server/src/process.rs",
+      "crates/jj-store-server/src/storage.rs",
+      "crates/jj-store-server/tests/local_installation.rs",
+      "crates/jj-store-service/src/local_browser.rs",
+      "schemas/openapi.json",
+      "scripts/contracts.mjs",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/compatibility.md",
+      "spec/src/jj-integration.md",
+      "spec/src/mutations.md",
+      "spec/src/spec-governance.md",
+      "web/src/lib/api/generated.ts",
+      "spec/src/local-jj.md"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/local_browser.rs#filesystem_runtime_registers_and_reads_without_native_storage",
+      "crates/jj-store-http/src/contract/tests.rs#local_contracts_preserve_separate_profiles_and_strict_pinned_queries",
+      "crates/jj-store-server/tests/local_installation.rs#filesystem_initialization_is_private_and_rejects_nonlocal_authority"
+    ],
+    "runs": [
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo check -p jj-store-server -p jj-store-cli --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "New async-trait HTTP dependency requires lock inventory refresh."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo check -p jj-store-server -p jj-store-cli --offline",
+        "result": "fail",
+        "failures": 5,
+        "note": "Offline lock update succeeded; five shadowed body decoder diagnostics were corrected."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo check -p jj-store-server -p jj-store-cli --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Composes optional native runtime; one unused timeout warning was subsequently removed."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-cli --test local_browser --locked -- filesystem_runtime_registers_and_reads_without_native_storage --exact",
+        "result": "fail",
+        "failures": 1,
+        "note": "Fixture JSON timestamp literal needed explicit i64 suffix."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-cli --test local_browser --locked -- filesystem_runtime_registers_and_reads_without_native_storage --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "Filesystem-only listener, read-only inspection, registration/replay, mixed discovery schema and pinned graph read pass without native runtime material."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target pnpm contracts:generate",
+        "result": "fail",
+        "failures": 1,
+        "note": "Existing generator rejected multiple methods on one path; additive registration GET/POST exposed it."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-http --lib --locked -- contract::tests::local_contracts_preserve_separate_profiles_and_strict_pinned_queries --exact",
+        "result": "fail",
+        "failures": 1,
+        "note": "Reproduced duplicate path failure at exact contract boundary."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-http --lib --locked -- contract::tests::local_contracts_preserve_separate_profiles_and_strict_pinned_queries --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "Generator now merges distinct methods and rejects repeated methods."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target pnpm contracts:generate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Separate local schemas and query union generated."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-http --lib --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "Existing inventory test expected 40 paths despite committed default schema already containing 52; new local routes bring total to 60."
+      },
+      {
+        "command": "jj file show -r 2994c626 schemas/openapi.json | python3 -c path-count",
+        "result": "pass",
+        "failures": 0,
+        "note": "Confirmed committed default contains exactly 52 native paths; kept explicit native/local counts and strengthened local admission assertions."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-http --lib --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 13 HTTP unit/contract tests pass, including existing native security and identity assertions."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-server --test configuration --test local_installation --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "12 configuration and 6 existing installation tests pass; dedicated filesystem configuration test added afterward."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-server --test local_installation --locked -- filesystem_initialization_is_private_and_rejects_nonlocal_authority --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "Dedicated filesystem initialization, private installation material and non-local rejection pass."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target pnpm contracts:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "104 actual native/local HTTP/SSE responses conform; 6 contract validation tests and contract TypeScript checks pass."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero errors or warnings in generated contract consumer."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "fail",
+        "failures": 1,
+        "note": "Mapped local-JJ chapter missing in runtime slice; explicit filesystem contract added."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "22 protected files and 9 canonical chapters passed after mapped chapter update."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "fail",
+        "failures": 1,
+        "note": "Temporary partial result is not a ledger enum; corrected to pending during verification."
+      },
+      {
+        "command": "pnpm check:progress && pnpm check:boundaries && pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "111 tasks, 15 package boundaries and 132 requirements validated."
+      },
+      {
+        "command": "cargo fmt --all -- --check",
+        "result": "fail",
+        "failures": 1,
+        "note": "Service re-export ordering corrected with cargo fmt."
+      },
+      {
+        "command": "cargo fmt --all",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rust formatting applied."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/local-jj.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Mapped canonical chapter formatting checked."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-cli --test local_browser --locked && CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo check -p jj-store-server -p jj-store-cli --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All six local browser fixtures pass; server and CLI package checks pass after final bootstrap gating."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "versions": "JJ 0.45.1, Git SHA-1, macOS ARM64.",
+    "formats": "Additive format-2 filesystem storage and CLI selection; separate Git-profile schemas and signed process-scoped jlb1 cursors. Native codecs and widths unchanged. Enclosing Jujutsu change mmqntqzp.",
+    "next": "Expose pinned WorkStore/AgentStore and freshness, then profile-aware frontend integration and cold mixed acceptance.",
+    "scope": "Filesystem-only initialization and HTTP composition, registration/discovery/code query transport. Escalation: optional native host and shared generation/discovery affect native and local consumers, so run all HTTP unit contracts and server configuration/installation binaries. Shared contract capture harness adds filesystem responses, so qualify its complete retained native capture set. UI integration and final real-RustFS mixed/cold browser qualification remain subsequent stages.",
+    "deferred": [
+      "M13.4 remains In progress. Local collaboration and agent capabilities remain false until routes are implemented.",
+      "Indexed search, code writes, reviews, synchronization and conversion stay disabled."
     ]
   }
 ]

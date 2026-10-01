@@ -557,3 +557,7 @@ cancelable workers with limits on metadata, work, bytes and time. Repository
 aliases, executable settings and content-predicate revsets are not loaded.
 Missing, unrelated and ambiguous selections fail explicitly. Reads may rebuild
 derived JJ indexes but cannot publish heads, refs or checkout snapshots.
+
+The local query transport serializes the same owned request variants and output
+records used by the qualified reader. Server composition shares query workers
+with native reads; transport continuations cannot supply unchecked raw anchors.

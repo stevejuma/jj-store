@@ -173,6 +173,15 @@ notifications announce changed operation heads or companion refs; only explicit
 refresh advances displayed snapshots. An unavailable folder, changed identity or
 unsupported capability is distinguished from denied access.
 
+Format-2 server configuration selects filesystem storage explicitly; native
+storage remains the default. Filesystem startup requires literal-loopback
+LocalTrusted administration and rejects native backup, search and replication
+configuration. Bootstrap and discovery identify the available authority.
+Installation management and operation-pinned code APIs use the separate
+`/v1/local` namespace, with process-bound cursors that bind repository, binding
+generation, operation and query. Native URLs and native identity widths retain
+their existing contracts.
+
 The browsing stage provides owned Git-profile graph, content, references,
 operation-difference and conflict descriptors. A local binding generation and
 explicit operation replace native manifest positions in its code snapshot; there

@@ -1062,3 +1062,10 @@ semantics. Native repository endpoints and native identities retain their
 contracts. Discovery includes profile and availability without filesystem paths.
 All local routes reuse the existing origin, protocol, media-type and
 literal-loopback admission checks.
+
+Local code reads use a strictly typed, non-publishing POST
+`/v1/local/repos/{repo}/query` with explicit operation and owned query variant.
+Snapshot, capabilities, registration inspection/list/add/remove/status and
+installation folder picker endpoints use the same admission. Continuations bind
+repository, generation, operation and exact request, expire after five minutes
+and reset across process restart. Native ID schemas are unchanged.

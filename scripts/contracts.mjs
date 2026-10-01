@@ -57,7 +57,12 @@ if (mode === "--check") {
   const directory = await mkdtemp(join(tmpdir(), "jj-store-contract-"));
   try {
     const samples = [];
-    for (const [fixture, variable] of [
+    for (const [fixture, variable, binary = "native_lifecycle"] of [
+      [
+        "filesystem_runtime_registers_and_reads_without_native_storage",
+        "JJ_STORE_LOCAL_BROWSER_CONTRACT_CAPTURE",
+        "local_browser",
+      ],
       [
         "content_acceptance::http_acceptance::local_management::local_workspace_management_requires_local_admin_and_captures_contracts",
         "JJ_STORE_LOCAL_MANAGEMENT_CONTRACT_CAPTURE",
@@ -117,7 +122,7 @@ if (mode === "--check") {
           "-p",
           "jj-store-cli",
           "--test",
-          "native_lifecycle",
+          binary,
           fixture,
           "--",
           "--exact",
