@@ -171,6 +171,14 @@ canonical source documents with authorized Thread joins and source explanations.
 Counts remain ReactionStore-derived. SSE announces freshness; refresh changes
 captured displayed roots. UI release/baseline gates remain separate.
 
+The local Git CLI uses the same typed provider without probing or initializing
+agent integrations. Separate executable processes preserve receipt replay, exact
+human-message revision feedback, observed-set preconditions, retained custom
+definition versions, bounded input/output and explicit metadata-commit
+continuations. These commands leave code operation heads and unsnapshotted files
+unchanged. Native CLI transport and jj-acp process execution remain independent
+qualification gates; local command acceptance does not establish either.
+
 Reducer 3 transports Thread/Reaction facts and complete retained closures.
 Equivalent accepted origin sets converge. Replay/import only reconstructs data.
 Native WorkStore homes retain their origin freeze. Normal Git push/fetch remains

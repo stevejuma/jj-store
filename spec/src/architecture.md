@@ -19,6 +19,12 @@ in WAL. The service's Git record carrier preserves the existing repository-bound
 envelope bytes, while companion ref publication remains in JJ integration.
 Neither the shared reducer nor the object interface can select repository state.
 
+The custom CLI consumes jj-collab's owned typed Thread, Reaction and
+custom-emoji contracts directly. Its filesystem commands select the existing
+local companion provider without runner, server, Git transport or storage
+dependencies in the model. This dependency adds no external package version or
+persistence format.
+
 `jj-collab` owns persistent Thread/human-message and Reaction/custom-emoji
 models with independent root types. It depends only on owned model, AgentStore
 and ReviewStore types plus bounded canonical/Unicode/raster libraries. It has no

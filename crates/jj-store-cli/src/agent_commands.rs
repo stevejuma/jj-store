@@ -12,9 +12,11 @@ use jj_cli::{cli_util::CommandHelper, command_error::CommandError, ui::Ui};
 use sha2::{Digest as _, Sha256};
 use std::path::{Path, PathBuf};
 mod backend;
+mod collab;
 mod provenance;
 mod types;
 use backend::{Backend, default_state, workspace_root};
+pub use collab::{ReactionCliCommand, ThreadCliCommand};
 pub use types::{AgentArgs, AgentCommand, AgentName};
 
 pub async fn run(ui: &mut Ui, helper: &CommandHelper, args: AgentArgs) -> Result<(), CommandError> {
@@ -23,6 +25,10 @@ pub async fn run(ui: &mut Ui, helper: &CommandHelper, args: AgentArgs) -> Result
     };
     let backend = Backend::open(helper)?;
     let workspace = workspace_root(helper.cwd()).map_err(error)?;
+    if let Some(value) = backend.collab_action(&command).await? {
+        let text = format!("{}\n", serde_json::to_string_pretty(&value).map_err(error)?);
+        return presentation::result(ui, helper, args.format, &value, &text);
+    }
     if backend.repository()?.is_none()
         && matches!(command, AgentCommand::Status | AgentCommand::Enable { .. })
     {
@@ -166,6 +172,9 @@ pub async fn run(ui: &mut Ui, helper: &CommandHelper, args: AgentArgs) -> Result
             );
         }
         AgentCommand::Hook { .. } => return Err(error("agent hook dispatch failed")),
+        AgentCommand::Thread { .. } | AgentCommand::Reaction { .. } => {
+            return Err(error("collaboration command dispatch failed"));
+        }
         AgentCommand::Initialize { .. }
         | AgentCommand::Sessions { .. }
         | AgentCommand::Receipt { .. }

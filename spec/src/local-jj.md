@@ -56,6 +56,14 @@ Repository-wide threads can initialize metadata on first write. Until portable
 code and agent anchor validation/retention is qualified, those targets MUST fail
 closed rather than substitute repository or display-only identities.
 
+The server-free custom CLI uses the same local typed provider for Thread and
+rich reaction commands, including original custom raster bytes and retained
+previews. Explicit request IDs, exact observed reaction sets and expected emoji
+versions are passed unchanged. Read-only CLI commands leave absent metadata and
+actor state absent. Cross-process pages bind the named current metadata commit;
+changed state returns stale and requires explicit refresh. Native RPC support is
+qualified independently rather than silently opening a local Git profile.
+
 Local Thread/Reaction commands and results use the shared jj-collab typed domain
 variants. Existing local names remain public aliases and preserve exact JSON
 tags, field order and receipt framing. Filesystem admission, actor derivation,

@@ -1,5 +1,17 @@
 # CLI and server commands
 
+Local `jj agent thread` exposes list/show/create, bounded typed apply/message
+intents and durable status. `jj agent reaction` exposes exact-target query,
+set/clear/resolve, custom definition/retirement, bounded library pages and
+status. Typed target/value/observed documents retain complete immutable
+identities; actors are filesystem-provider derived and explicit request IDs
+survive process loss. Input reads stop at their byte limit instead of loading
+unbounded files. Read and result JSON stays within four MiB. Continuations
+require an explicit metadata commit and reject changed snapshots; reads do not
+initialize metadata, actor state or the agent registry. Native CLI transport
+remains a separate gate. These commands neither launch nor continue jj-acp or
+another agent process.
+
 M13 local agent commands resolve the admitted GitBackend without a native
 connection. Status and session reads do not initialize companion metadata;
 explicit initialization and supported enablement are metadata writes. Existing

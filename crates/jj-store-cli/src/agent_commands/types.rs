@@ -17,6 +17,16 @@ pub struct AgentArgs {
 
 #[derive(Clone, Debug, Subcommand)]
 pub enum AgentCommand {
+    /// Persistent repository Threads; execution remains separate
+    Thread {
+        #[command(subcommand)]
+        command: super::collab::ThreadCliCommand,
+    },
+    /// Exact-target rich reactions and the retained custom emoji library
+    Reaction {
+        #[command(subcommand)]
+        command: super::collab::ReactionCliCommand,
+    },
     /// Inspect exact source evidence for one explicit Git-backed JJ operation
     CodeEvidence {
         #[arg(long)]

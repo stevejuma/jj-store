@@ -3936,6 +3936,7 @@ dependencies = [
  "hex",
  "jj-agent",
  "jj-cli",
+ "jj-collab",
  "jj-lib",
  "jj-review",
  "jj-store-adapters",
