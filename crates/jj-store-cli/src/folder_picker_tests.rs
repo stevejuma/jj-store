@@ -84,10 +84,10 @@ async fn busy_timeout_and_cancellation_hold_ownership_until_reaped() {
     let request = tokio::spawn(async move { copy.run(command, Duration::from_secs(25)).await });
     let pid = tokio::time::timeout(Duration::from_secs(2), async {
         loop {
-            if let Ok(pid) = std::fs::read_to_string(&pid_file) {
-                if !pid.trim().is_empty() {
-                    break pid.trim().to_owned();
-                }
+            if let Ok(pid) = std::fs::read_to_string(&pid_file)
+                && !pid.trim().is_empty()
+            {
+                break pid.trim().to_owned();
             }
             tokio::time::sleep(Duration::from_millis(5)).await;
         }

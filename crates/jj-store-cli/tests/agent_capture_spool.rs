@@ -323,6 +323,97 @@ fn capture_lock_and_pending_symlinks_fail_closed() {
 }
 
 #[test]
+fn bound_enqueue_obeys_shared_mutation_lock_and_preserves_queue_budget() {
+    use jj_collab::{CollabObjectId, CollabObjectKind, CollabObjectRef, ThreadBindingV1, ThreadId};
+    let directory = tempfile::tempdir().unwrap();
+    let repository = RepositoryId::new([9; 16]);
+    let profile = NormalizerProfileV1::codex_0_156_1();
+    let binding = ThreadBindingV1 {
+        thread_id: ThreadId::new([10; 16]),
+        observed_thread: CollabObjectRef {
+            kind: CollabObjectKind::ThreadVersion,
+            id: CollabObjectId::new([11; 32]),
+        },
+        observed_assignment: None,
+    };
+    let mut first = AgentCaptureSpool::open(directory.path(), 4 * 1024 * 1024).unwrap();
+    let lock =
+        jj_store_server::policy::exclusive_lock(&directory.path().join("mutation.lock")).unwrap();
+    assert!(
+        first
+            .enqueue_with_binding(
+                repository,
+                profile.clone(),
+                cursor(),
+                batch(),
+                Some(binding.clone())
+            )
+            .is_err()
+    );
+    assert_eq!(
+        std::fs::read_dir(directory.path().join("pending"))
+            .unwrap()
+            .count(),
+        0
+    );
+    drop(lock);
+    let ack = first
+        .enqueue_with_binding(
+            repository,
+            profile.clone(),
+            cursor(),
+            batch(),
+            Some(binding.clone()),
+        )
+        .unwrap();
+    let bytes = std::fs::metadata(
+        directory
+            .path()
+            .join("pending")
+            .join(format!("{}.json", batch().batch_id)),
+    )
+    .unwrap()
+    .len();
+    let mut peer = AgentCaptureSpool::open(directory.path(), bytes).unwrap();
+    assert_eq!(
+        peer.enqueue_with_binding(
+            repository,
+            profile.clone(),
+            cursor(),
+            batch(),
+            Some(binding.clone())
+        )
+        .unwrap(),
+        ack
+    );
+    let mut changed = binding.clone();
+    changed.thread_id = ThreadId::new([12; 16]);
+    assert!(
+        peer.enqueue_with_binding(
+            repository,
+            profile.clone(),
+            cursor(),
+            batch(),
+            Some(changed)
+        )
+        .is_err()
+    );
+    assert!(
+        peer.enqueue(repository, profile.clone(), cursor(), batch())
+            .is_err()
+    );
+    let mut next = batch();
+    next.batch_id = CaptureBatchId::new([20; 16]);
+    assert!(
+        peer.enqueue_with_binding(repository, profile, cursor(), next, Some(binding.clone()))
+            .is_err()
+    );
+    let entries = first.pending().unwrap();
+    assert_eq!(entries.len(), 1);
+    assert_eq!(entries[0].thread_binding, Some(binding));
+}
+
+#[test]
 fn prepared_thread_binding_survives_restart_and_invalid_binding_is_not_persisted() {
     use jj_collab::{CollabObjectId, CollabObjectKind, CollabObjectRef, ThreadBindingV1, ThreadId};
     let directory = tempfile::tempdir().unwrap();

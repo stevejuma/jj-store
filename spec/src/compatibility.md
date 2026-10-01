@@ -1,6 +1,6 @@
 # Compatibility and release
 
-M14 HTTP contract samples cover Thread commands/status/detail/events, exact
+M15 HTTP contract samples cover Thread commands/status/detail/events, exact
 human message revisions, Reaction queries/commands, custom
 definitions/retirement and retained raster reads. They validate actual isolated
 MemoryStore transport responses against generated OpenAPI; this is distinct from

@@ -185,15 +185,27 @@ publication is acknowledged; resuming never snapshots or overwrites source
 files.
 
 Agent capture uses a separate bounded journal under the same CLI ownership
-rules. It exclusively locks a user-restricted path outside checkouts, atomically
+rules. It keeps a compatibility lease on a user-restricted path outside
+checkouts, serializes each mutation with a short-lived lock, and atomically
 persists a validated sanitized batch before acknowledging reader progress, and
 then atomically records the exact principal, request ID, publication ID and
 typed AgentStore delta before publication. Restart validates pending entries; it
 removes only unacknowledged atomic temporary files. Changed retries, corrupt,
-symlink or unexpected entries and concurrent ownership fail closed. Completion
+symlink or unexpected entries and concurrent mutations fail closed. Bound and
+unbound enqueue use the same mutation lock and queue admission limits. Native
+and local drainers hold a separate exclusive lease across publication waits,
+allowing independent hooks to enqueue while preventing competing drains. Capture
+leases explicitly unlock before closing their handles, so a child's temporarily
+inherited file description cannot prolong a released lease. This applies to
+compatibility, mutation and drain leases; abrupt process loss still uses
+operating-system lock recovery and retains durable pending intent. Completion
 requires the matching prepared request/publication identity, so unprepared or
 unknown-outcome captures remain recoverable. The journal is implemented as an
 internal boundary.
+
+Repository and operator credential provisioning use the same owned lease helper
+to preserve exclusive creation while releasing the lock after the callback,
+including failed callbacks. Credential storage and admission stay unchanged.
 
 `jj agent status` refreshes the device-local integration registry with bounded
 PATH probes for exactly Codex 0.156.1, Cursor 3.22.7 and OpenCode 1.18.30. It

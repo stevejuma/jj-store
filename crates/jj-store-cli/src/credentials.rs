@@ -124,7 +124,8 @@ fn with_operator_lock<T>(
     }
     builder.create(&directory)?;
     let digest = hex::encode(Sha256::digest(endpoint.as_bytes()));
-    let _lock = jj_store_server::policy::exclusive_lock(&directory.join(format!("{digest}.lock")))?;
+    let _lock =
+        crate::state_lease::StateLease::exclusive(&directory.join(format!("{digest}.lock")))?;
     provision()
 }
 fn provision_operator_account(endpoint: &str) -> AuthorityResult<BearerToken> {

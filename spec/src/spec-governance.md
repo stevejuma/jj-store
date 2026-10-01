@@ -1,6 +1,13 @@
 # Specification governance
 
-M14 route additions register executable handlers and OpenAPI together. The
+Parent-workspace integration preserves the local-settings M14 tasks and
+evidence. Persistent Threads and Reactions use M15 after rebasing to avoid
+colliding task and evidence IDs. Renumbering does not change their requirements
+or acceptance gates. Rebase qualification records capture coordination, combined
+route generation and direct browser contract consumption separately from future
+Thread UI acceptance.
+
+M15 route additions register executable handlers and OpenAPI together. The
 contract lane validates actual Thread/Reaction responses, including raster media
 and strict actor-free command bodies, and rechecks all existing route captures
 because the route inventory and generated contract infrastructure are shared.
@@ -524,7 +531,7 @@ folder as their working directory, as well as an explicit repository argument.
 The harness must not temporarily install hook configuration in the source
 checkout. Cold acceptance verifies teardown in both locations.
 
-## M14 Thread/Reaction authority changes
+## M15 Thread/Reaction authority changes
 
 The jj-collab domain is governed by collaboration.md. Native root records,
 manifest/WAL versions, atomic root publication, cold recovery and manifest-last

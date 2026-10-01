@@ -487,7 +487,7 @@ replaying each stable request produces one domain increment and a stable
 receipt. This memory fault evidence does not substitute for real RustFS
 qualification.
 
-## M14 additive collaboration publication
+## M15 additive collaboration publication
 
 Threads and Reactions use independently selected canonical roots and immutable
 complete-closure inventories. Native manifest format 5 adds optional roots and

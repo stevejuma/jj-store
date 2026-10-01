@@ -1,5 +1,10 @@
 # Read APIs and browser
 
+The rebased HTTP inventory retains all local workspace, Search and Sync
+management routes alongside Thread, Reaction and retained-image routes.
+Generated contracts and response captures qualify the combined 66-path inventory
+before UI composition.
+
 Native Agent capture preparation adds optional canonical ThreadBindingV1 bytes
 on protobuf field 7. Empty bytes preserve legacy unlinked behavior. The server
 derives actor and acceptance time; the client checks the exact returned binding,

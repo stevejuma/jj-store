@@ -576,7 +576,7 @@ apply. A later observation cannot be rolled back by repairing an older attempt.
 The Git stage fault fixture exercises before/after manifest-write uncertainty
 for activation, intent, started, result and applied facts through cold replay.
 
-## M14 companion envelope extension
+## M15 companion envelope extension
 
 The owned local ref retains its existing name. Version 2 adds Thread and
 Reaction domain selections and typed batch updates. A batch checks every exact

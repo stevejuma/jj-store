@@ -80,7 +80,7 @@ reading a comment never dispatches an agent.
 
 ## Thread presentation template
 
-A persistent Thread is presented as a Community channel. M14.5 MUST use
+A persistent Thread is presented as a Community channel. M15.5 MUST use
 Community channel navigation and room-selection semantics, the channel header,
 conversation timeline, shared composer, message actions, reply affordances,
 reactions, history loading and responsive behavior as its template. The public
@@ -95,7 +95,7 @@ registry version. Native Thread identity/lifecycle and receipt semantics remain
 the persistence contract; matching channel presentation does not imply running
 an agent or importing Nostr membership.
 
-## Persistent Threads and Reactions (M14)
+## Persistent Threads and Reactions (M15)
 
 `jj-collab` owns the Thread, human-message, reaction and custom-emoji domain.
 ThreadStore and ReactionStore have separate root catalogs and state versions.
@@ -1087,7 +1087,7 @@ replacement submissions until status proves commitment. Draft and edit/reply
 context remain present on failure or unknown outcome. Late command completions
 from an invalidated connection cannot repopulate or navigate the active view.
 
-M14's first persistence slice retains canonical content identities separately
+M15's first persistence slice retains canonical content identities separately
 from repository-bound envelope digests. Each selected domain root carries a
 bounded canonical-object-to-record catalog, so providers can audit exact closure
 without bucket listing. Native code anchors reuse full operation/commit IDs;

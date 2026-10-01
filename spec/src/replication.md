@@ -273,7 +273,7 @@ Local Search replacement updates the configured sync report to the current
 worker health receiver; disabling Search reports an unconfigured projection.
 Replication progress and transfer ownership remain unchanged.
 
-## M14 collaboration format boundary
+## M15 collaboration format boundary
 
 Thread/Reaction format-5 repositories require a qualified semantic reducer 3
 before seeding, importing or authoring new collaboration origins. The initial

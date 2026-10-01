@@ -1,6 +1,5 @@
 //! Durable local capture intent. A reader cursor is acknowledged only after
-//! sanitized evidence reaches this journal; publication starts only after the
-//! same entry records the exact delta and request identities.
+//! sanitized evidence reaches this journal; publication requires exact durable intent.
 use jj_agent::{
     CaptureBatchId, CaptureCursorV1, NormalizerProfileV1, SanitizedObservationBatchV1,
     SourcePositionV1,
@@ -56,7 +55,7 @@ pub struct AgentCaptureSpool {
     root: PathBuf,
     pending: PathBuf,
     max_pending_bytes: u64,
-    _compatibility_lock: File,
+    _compatibility_lock: crate::state_lease::StateLease,
 }
 
 impl AgentCaptureSpool {
@@ -71,7 +70,7 @@ impl AgentCaptureSpool {
         fs::create_dir_all(&root)?;
         restrict_directory(&root)?;
         let compatibility = compatibility_lock(&root.join("capture.lock"))?;
-        let lock = jj_store_server::policy::exclusive_lock(&root.join("mutation.lock"))?;
+        let lock = crate::state_lease::StateLease::exclusive(&root.join("mutation.lock"))?;
         let pending = root.join("pending");
         if fs::symlink_metadata(&pending).is_ok_and(|value| !value.is_dir()) {
             return Err("capture spool pending path must be a directory".into());
@@ -91,15 +90,13 @@ impl AgentCaptureSpool {
     }
 
     // Drainers hold this lease across awaits, but never the mutation lock.
-    // Returning an owned guard lets independent handles enqueue during a drain.
-    pub(crate) fn drain_lease(&self) -> AuthorityResult<File> {
-        Ok(jj_store_server::policy::exclusive_lock(
-            &self.root.join("drain.lock"),
-        )?)
+    // Independent handles can enqueue during a drain.
+    pub(crate) fn drain_lease(&self) -> AuthorityResult<crate::state_lease::StateLease> {
+        crate::state_lease::StateLease::exclusive(&self.root.join("drain.lock"))
     }
 
-    pub(crate) fn mutation_lock(&self) -> AuthorityResult<File> {
-        let lock = jj_store_server::policy::exclusive_lock(&self.root.join("mutation.lock"))?;
+    pub(crate) fn mutation_lock(&self) -> AuthorityResult<crate::state_lease::StateLease> {
+        let lock = crate::state_lease::StateLease::exclusive(&self.root.join("mutation.lock"))?;
         if !fs::symlink_metadata(&self.pending)?.is_dir() {
             return Err("capture spool pending path must be a directory".into());
         }
