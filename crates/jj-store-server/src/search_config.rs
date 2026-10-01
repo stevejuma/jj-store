@@ -11,6 +11,8 @@ use zeroize::Zeroizing;
 #[serde(deny_unknown_fields)]
 pub struct Repository {
     pub repository: m::RepositoryId,
+    #[serde(default = "enabled")]
+    pub enabled: bool,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub token_environment: Option<String>,
     #[serde(default)]
@@ -23,6 +25,9 @@ pub struct Repository {
     pub index_bytes: u64,
     #[serde(default = "snapshot_every")]
     pub snapshot_every: u64,
+}
+fn enabled() -> bool {
+    true
 }
 fn poll_millis() -> u64 {
     1000

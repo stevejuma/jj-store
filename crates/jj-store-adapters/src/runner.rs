@@ -65,6 +65,7 @@ pub struct Runner<P> {
     slots: Arc<Semaphore>,
     health: watch::Sender<Health>,
     snapshot_checked: bool,
+    restore_snapshots: bool,
     snapshot_pending: Option<Checkpoint>,
     snapshot_error: Option<Error>,
 }
@@ -92,6 +93,7 @@ impl<P: Projection> Runner<P> {
             slots: Arc::new(Semaphore::new(1)),
             health: watch::channel(Health::default()).0,
             snapshot_checked: false,
+            restore_snapshots: true,
             snapshot_pending: None,
             snapshot_error: None,
         })
@@ -101,6 +103,10 @@ impl<P: Projection> Runner<P> {
     pub async fn wait_idle(&self) -> Result<()> {
         let _permit = self.slots.acquire().await.map_err(|_| Error::Unavailable)?;
         Ok(())
+    }
+    /// Rebuild from selected native data instead of restoring an adapter snapshot.
+    pub fn skip_snapshot_restore(&mut self) {
+        self.restore_snapshots = false;
     }
     pub fn subscribe(&self) -> watch::Receiver<Health> {
         self.health.subscribe()
@@ -158,7 +164,7 @@ impl<P: Projection> Runner<P> {
                 local = Some(checkpoint);
             }
         }
-        if local.is_none() && self.limits.snapshot_every > 0 {
+        if local.is_none() && self.limits.snapshot_every > 0 && self.restore_snapshots {
             let snapshot = source.bootstrap().await?;
             if let Some(checkpoint) = self
                 .projection

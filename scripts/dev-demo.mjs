@@ -181,9 +181,11 @@ async function restart({ reset = false } = {}) {
   let server = startServer(layout.serverConfig, logHandle);
   let restartStartupMillis;
   let fixturePreparationMillis = 0;
+  let searchConfigured = true;
   try {
     await waitForServer(origin);
-    await waitForSearch(origin, fixture.repositoryId);
+    searchConfigured =
+      (await waitForSearch(origin, fixture.repositoryId)).configured !== false;
     restartStartupMillis = Math.round(performance.now() - started);
     if (references) {
       await seedAgentActivity({
@@ -239,7 +241,7 @@ async function restart({ reset = false } = {}) {
   });
   await chmod(layout.runtimeRoot, 0o700);
   console.log(
-    `JJ Store LocalTrusted development demo is ready.\n\nURL: ${origin}\nRepository ID: ${fixture.repositoryId}\nCredentials: none (local loopback access)\nRuntime: ${layout.runtimeRoot}\nStorage: embedded RustFS\nFixture: ${reset ? "reset and seeded" : "reused or initialized"}\nSearch: ready\nStartup: ${fixture.firstStartupMillis} ms cold, ${restartStartupMillis} ms restart\nResident memory: ${processes.totalRssKiB} KiB server plus storage\n\nThe repository, installation identity and RustFS volume persist across restart and stop. Run pnpm dev:reset to replace them with a deterministic sample fixture.`,
+    `JJ Store LocalTrusted development demo is ready.\n\nURL: ${origin}\nRepository ID: ${fixture.repositoryId}\nCredentials: none (local loopback access)\nRuntime: ${layout.runtimeRoot}\nStorage: embedded RustFS\nFixture: ${reset ? "reset and seeded" : "reused or initialized"}\nSearch: ${searchConfigured ? "ready" : "disabled"}\nStartup: ${fixture.firstStartupMillis} ms cold, ${restartStartupMillis} ms restart\nResident memory: ${processes.totalRssKiB} KiB server plus storage\n\nThe repository, installation identity and RustFS volume persist across restart and stop. Run pnpm dev:reset to replace them with a deterministic sample fixture.`,
   );
 }
 

@@ -124,7 +124,7 @@ async fn server_search_runs_recovers_and_restores_after_cache_loss() {
                 get(&router, &f.reader, "search/status").await.1["indexed_position"],
                 Value::Null
             );
-            let running = prepared.start();
+            let running = prepared.start().await;
             let initial = wait_index(&router, &f.reader, 1).await;
             assert_eq!(before, *f.session.snapshot().await.unwrap().manifest());
             publish_text_scope(&f, first, 2, &[("code.rs", b"updated signal")]).await;
@@ -163,7 +163,7 @@ async fn server_search_runs_recovers_and_restores_after_cache_loss() {
             running.shutdown().await.unwrap();
             drop(router);
             let (prepared, router) = prepare(&f, root.path());
-            let running = prepared.start();
+            let running = prepared.start().await;
             let recovered = wait_index(&router, &f.reader, 2).await;
             assert_eq!(second["index_generation"], recovered["index_generation"]);
             assert_eq!(second["results"], recovered["results"]);
@@ -171,7 +171,7 @@ async fn server_search_runs_recovers_and_restores_after_cache_loss() {
             drop(router);
             std::fs::remove_dir_all(root.path().join("search")).unwrap();
             let (prepared, router) = prepare(&f, root.path());
-            let running = prepared.start();
+            let running = prepared.start().await;
             let restored = wait_index(&router, &f.reader, 2).await;
             assert_eq!(restored["index_generation"], recovered["index_generation"]);
             // Remote restore retains the exact committed generation and page
@@ -198,7 +198,7 @@ async fn server_search_revoked_worker_degrades_without_revoking_other_readers() 
             publish_text_scope(&f, roots::ROOT_COMMIT, 1, &[]).await;
             let root = tempfile::tempdir().unwrap();
             let (prepared, router) = prepare(&f, root.path());
-            let running = prepared.start();
+            let running = prepared.start().await;
             wait_index(&router, &f.reader, 1).await;
             f.session
                 .change_token(&jj_store_service::administration::TokenRequest {
@@ -256,7 +256,7 @@ async fn server_search_diagnostics_use_authorized_live_status_and_handle_unavail
                     ..Default::default()
                 },
             );
-            let running = prepared.start();
+            let running = prepared.start().await;
             let server = Listener(tokio::spawn(async move {
                 axum::serve(listener, router).await.unwrap();
             }));
@@ -310,7 +310,7 @@ async fn server_search_drop_cancels_workers_and_releases_owned_state() {
             publish_text_scope(&f, roots::ROOT_COMMIT, 1, &[]).await;
             let root = tempfile::tempdir().unwrap();
             let (prepared, router) = prepare(&f, root.path());
-            let running = prepared.start();
+            let running = prepared.start().await;
             wait_index(&router, &f.reader, 1).await;
             drop(running);
             let deadline = tokio::time::Instant::now() + Duration::from_secs(5);
@@ -385,3 +385,6 @@ async fn server_search_rejects_state_symlink_escape_and_invalid_programmatic_lim
     );
     assert!(std::fs::read_dir(root.path()).unwrap().next().is_none());
 }
+
+#[path = "search_settings.rs"]
+mod settings;

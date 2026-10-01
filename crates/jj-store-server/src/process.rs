@@ -68,6 +68,15 @@ impl PreparedServer {
         verifier: Option<Arc<dyn jj_store_service::local_management::WorkspaceVerifier>>,
         picker: Option<Arc<dyn jj_store_service::local_management::FolderPicker>>,
     ) -> Result<Self> {
+        Self::prepare_with_settings(config, require_loopback, verifier, picker, None).await
+    }
+    pub async fn prepare_with_settings(
+        config: &Config,
+        require_loopback: bool,
+        verifier: Option<Arc<dyn jj_store_service::local_management::WorkspaceVerifier>>,
+        picker: Option<Arc<dyn jj_store_service::local_management::FolderPicker>>,
+        config_path: Option<&std::path::Path>,
+    ) -> Result<Self> {
         config.validate()?;
         if require_loopback && !config.bind.ip().is_loopback() {
             return Err(Error::Config(
@@ -233,6 +242,29 @@ impl PreparedServer {
                 as Arc<dyn jj_store_service::local_management::WorkspaceManager>),
             _ => None,
         };
+        let local_search = if matches!(
+            config.access,
+            Access::LocalTrusted {
+                permission: jj_store_service::auth::Permission::Admin,
+                ..
+            }
+        ) {
+            config_path
+                .map(|path| {
+                    crate::search_management::Manager::new(
+                        path,
+                        config,
+                        host.clone(),
+                        search.control(),
+                        search_access,
+                        replication.search_observer(),
+                    )
+                })
+                .transpose()?
+                .map(Arc::new)
+        } else {
+            None
+        };
         let http = HttpApi::with_search(
             host,
             state.join("native-reads"),
@@ -243,6 +275,9 @@ impl PreparedServer {
                     .ascii_serialization(),
                 access: http_access,
                 registry: Some(registry as Arc<dyn jj_store_service::registry::RepositoryRegistry>),
+                local_search: local_search
+                    .clone()
+                    .map(|m| m as Arc<dyn jj_store_service::search_management::SearchManager>),
                 local_sync: matches!(
                     config.access,
                     Access::LocalTrusted {
@@ -282,6 +317,9 @@ impl PreparedServer {
             indexes,
         )
         .map_err(Error::Config)?;
+        if let Some(manager) = local_search {
+            manager.bind(http.search_registry());
+        }
         let browser = config
             .web_root
             .as_deref()
@@ -308,7 +346,7 @@ impl PreparedServer {
         Ok(self.listener.local_addr()?)
     }
     pub async fn run(self, shutdown: impl Future<Output = ()> + Send + 'static) -> Result<()> {
-        let search = self.search.start();
+        let search = self.search.start().await;
         let replication = self.replication.start();
         let (tx, rx) = tokio::sync::oneshot::channel();
         let (mut router, local_rpc) = match self.rpc {

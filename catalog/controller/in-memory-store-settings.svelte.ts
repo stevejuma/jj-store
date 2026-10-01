@@ -1,3 +1,4 @@
+import { emptySearchSettings } from "../../web/src/lib/controller/search-settings.js";
 import { emptySyncSettings } from "../../web/src/lib/controller/sync-settings.js";
 import { emptyWorkspaceLinks } from "../../web/src/lib/controller/workspace-link-types.js";
 import type {
@@ -86,6 +87,7 @@ export function createInMemoryStoreSettings(options: {
       const search = mode !== "unavailable";
       return {
         ...emptyWorkspaceLinks(),
+        searchSettings: emptySearchSettings(),
         syncSettings: emptySyncSettings(),
         capabilities: capabilities(search),
         snapshot: {
@@ -121,3 +123,17 @@ export function createInMemoryStoreSettings(options: {
     },
   };
 }
+
+export const unavailableManagementActions = {
+  async refreshWorkspaceLinks() {},
+  setWorkspacePath() {},
+  async linkWorkspace() {},
+  async pickWorkspaceFolder() {},
+  async refreshSyncSettings() {},
+  async controlSync() {},
+  setSearchDraft() {},
+  cancelSearchDraft() {},
+  async refreshSearchSettings() {},
+  async saveSearchSettings() {},
+  async controlSearch() {},
+};

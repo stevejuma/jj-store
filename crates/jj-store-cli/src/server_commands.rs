@@ -287,11 +287,12 @@ pub async fn serve(
         ),
         _ => None,
     };
-    let server = PreparedServer::prepare_with_local_management(
+    let server = PreparedServer::prepare_with_settings(
         &config,
         local,
         verifier,
         crate::folder_picker::native_picker(),
+        Some(path),
     )
     .await?;
     let address = server.address()?;

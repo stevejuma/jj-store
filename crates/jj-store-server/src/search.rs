@@ -1,8 +1,9 @@
 //! Explicit, bounded search workers owned by the foreground server lifecycle.
 pub use crate::search_config::{Repository, SearchAccess};
 pub(crate) use crate::search_config::{environment, validate};
+pub use crate::search_worker::{Control, RunningSearch};
 use crate::{Error, Result, config, policy};
-use jj_store_adapters::{self as a, CancellationToken};
+use jj_store_adapters::{self as a};
 use jj_store_http::SearchIndex;
 use jj_store_model as m;
 use jj_store_service::{
@@ -11,14 +12,12 @@ use jj_store_service::{
 };
 use jj_store_tantivy::{self as t, native};
 use serde::Serialize;
+use std::sync::Arc;
 use std::{collections::BTreeMap, path::Path, time::Duration};
-use tokio::{
-    task::JoinHandle,
-    time::{Instant, timeout_at},
-};
-type Runner = a::Runner<t::TantivyProjection<native::NativeExtractor>>;
+pub(crate) type Runner = a::Runner<t::TantivyProjection<native::NativeExtractor>>;
 pub struct PreparedSearch {
-    runners: Vec<Runner>,
+    pub(crate) runners: Vec<(m::RepositoryId, Runner)>,
+    control: Arc<Control>,
 }
 impl PreparedSearch {
     /// Resolves only configured credential names; performs no authoritative I/O.
@@ -30,6 +29,25 @@ impl PreparedSearch {
         access: SearchAccess,
         mut credential: impl FnMut(&str) -> Result<BearerToken>,
     ) -> Result<(Self, BTreeMap<m::RepositoryId, SearchIndex>)> {
+        Self::build(
+            host,
+            root,
+            entries,
+            server_limits,
+            access,
+            &mut credential,
+            false,
+        )
+    }
+    pub(crate) fn build(
+        host: &RepositoryHost,
+        root: &Path,
+        entries: &[Repository],
+        server_limits: &config::Limits,
+        access: SearchAccess,
+        mut credential: impl FnMut(&str) -> Result<BearerToken>,
+        temporary: bool,
+    ) -> Result<(Self, BTreeMap<m::RepositoryId, SearchIndex>)> {
         validate(entries, matches!(access, SearchAccess::Authenticated))?;
         let root = policy::outside_checkout(root)?;
         if !(1..=300).contains(&server_limits.request_seconds)
@@ -39,7 +57,7 @@ impl PreparedSearch {
         }
         let mut runners = Vec::new();
         let mut indexes = BTreeMap::new();
-        for entry in entries {
+        for entry in entries.iter().filter(|entry| entry.enabled) {
             let endpoint = host
                 .endpoint(entry.repository)
                 .map_err(|_| Error::Config("search repository endpoint"))?;
@@ -71,15 +89,32 @@ impl PreparedSearch {
             if !index_root.starts_with(&root) || !owner_path.starts_with(&root) {
                 return Err(Error::Config("search state escapes the server directory"));
             }
-            let (projection, search) = t::TantivyProjection::open(
-                index_root,
-                native::NativeExtractor::new(entry.source.clone())
-                    .map_err(|_| Error::Config("search extractor"))?,
-                t::Limits {
-                    index_bytes: entry.index_bytes,
-                    ..Default::default()
-                },
-            )
+            let temp = if temporary {
+                let staging = root.join("search-replacements");
+                std::fs::create_dir_all(&staging)?;
+                Some(
+                    tempfile::Builder::new()
+                        .prefix("search-")
+                        .tempdir_in(staging)?,
+                )
+            } else {
+                None
+            };
+            let runner_root = temp
+                .as_ref()
+                .map_or(root.clone(), |dir| dir.path().to_owned());
+            let extractor = native::NativeExtractor::new(entry.source.clone())
+                .map_err(|_| Error::Config("search extractor"))?;
+            let projection_limits = t::Limits {
+                index_bytes: entry.index_bytes,
+                ..Default::default()
+            };
+            let (projection, search) = match temp {
+                Some(temp) => {
+                    t::TantivyProjection::open_temporary(temp, extractor, projection_limits)
+                }
+                None => t::TantivyProjection::open(index_root, extractor, projection_limits),
+            }
             .map_err(|_| Error::Config("search index ownership or local state"))?;
             let poll = Duration::from_millis(entry.poll_millis);
             let transfer_bytes = entry
@@ -90,7 +125,7 @@ impl PreparedSearch {
                 session.adapter_source(),
                 identity,
                 projection,
-                &root,
+                &runner_root,
                 a::Limits {
                     poll,
                     max_backoff: poll.max(Duration::from_secs(30)),
@@ -125,53 +160,24 @@ impl PreparedSearch {
                     limits,
                 },
             );
-            runners.push(runner);
+            runners.push((entry.repository, runner));
         }
-        Ok((Self { runners }, indexes))
+        Ok((
+            Self {
+                runners,
+                control: Arc::new(Control::default()),
+            },
+            indexes,
+        ))
     }
-    pub fn start(self) -> RunningSearch {
-        let cancel = CancellationToken::new();
-        let tasks = self
-            .runners
-            .into_iter()
-            .map(|mut runner| {
-                let cancel = cancel.clone();
-                tokio::spawn(async move {
-                    let result = runner.run(cancel).await;
-                    let drained = runner.wait_idle().await;
-                    result.and(drained)
-                })
-            })
-            .collect();
-        RunningSearch { cancel, tasks }
+    pub fn control(&self) -> Arc<Control> {
+        self.control.clone()
     }
-}
-pub struct RunningSearch {
-    cancel: CancellationToken,
-    tasks: Vec<JoinHandle<a::Result<()>>>,
-}
-impl RunningSearch {
-    pub async fn shutdown(mut self) -> Result<()> {
-        self.cancel.cancel();
-        let deadline = Instant::now() + Duration::from_secs(5);
-        let mut result = Ok(());
-        for task in &mut self.tasks {
-            match timeout_at(deadline, task).await {
-                Ok(Ok(Ok(()))) => {}
-                Ok(_) => result = Err(Error::Service("search runner failed during shutdown")),
-                Err(_) => return Err(Error::Service("search shutdown exceeded five seconds")),
-            }
+    pub async fn start(self) -> RunningSearch {
+        for (repo, runner) in self.runners {
+            self.control.start(repo, runner).await;
         }
-        self.tasks.clear();
-        result
-    }
-}
-impl Drop for RunningSearch {
-    fn drop(&mut self) {
-        self.cancel.cancel();
-        for task in &self.tasks {
-            task.abort();
-        }
+        RunningSearch(self.control)
     }
 }
 
@@ -214,7 +220,7 @@ async fn diagnose_with_token(
     if !config
         .search
         .iter()
-        .any(|entry| entry.repository == repository)
+        .any(|entry| entry.repository == repository && entry.enabled)
     {
         return Diagnosis::state(false, "not_configured");
     }

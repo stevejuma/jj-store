@@ -77,6 +77,11 @@ export function createProductionStoreActions(options: {
     linkWorkspace: options.settings.linkWorkspace,
     pickWorkspaceFolder: options.settings.pickWorkspaceFolder,
     refreshSyncSettings: options.settings.refreshSyncSettings,
+    setSearchDraft: options.settings.setSearchDraft,
+    cancelSearchDraft: options.settings.cancelSearchDraft,
+    refreshSearchSettings: options.settings.refreshSearchSettings,
+    saveSearchSettings: options.settings.saveSearchSettings,
+    controlSearch: options.settings.controlSearch,
     controlSync: options.settings.controlSync,
     prepareIndex: options.settings.prepareIndex,
     async loadMore(collection) {

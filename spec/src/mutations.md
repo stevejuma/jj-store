@@ -596,3 +596,8 @@ Owned local Sync management contracts describe credential-free
 configured/local-only status and typed pause/resume/retry commands. The server
 adapter reuses existing control-plane operations rather than publishing
 repository mutations.
+
+Local Search configuration and operation reports use owned service types. These
+settings affect rebuildable adapters only and cannot publish repository state.
+The server owns file revisions, persistence, worker draining and activation;
+transport admission independently verifies local administrative access.

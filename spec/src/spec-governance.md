@@ -501,3 +501,7 @@ existing captures. M14 records device-registry and JJ-discovery tests separately
 from cold real-RustFS lifecycle and browser acceptance. CLI composition may
 inject the owned workspace-verifier interface into the server; this does not
 permit a server dependency on CLI or upstream JJ.
+
+The owned development restart helper honors explicitly disabled Search settings:
+it checks the repository capability before waiting for an index and reports
+disabled rather than timing out. It preserves the saved Search configuration.

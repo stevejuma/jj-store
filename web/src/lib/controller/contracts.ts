@@ -130,6 +130,7 @@ export interface StoreRepositorySummary {
   readonly principal?: string;
 }
 export interface StoreSettingsState extends WorkspaceLinkSettings {
+  readonly searchSettings: import("./search-settings.js").SearchSettings;
   readonly syncSettings: import("./sync-settings.js").SyncSettings;
   readonly capabilities: Model<"Capabilities"> | null;
   readonly snapshot: Head | null;
@@ -214,6 +215,15 @@ export interface StoreController {
     linkWorkspace(): Promise<void>;
     pickWorkspaceFolder(): Promise<void>;
     prepareIndex(): Promise<void>;
+    setSearchDraft(
+      patch: Partial<import("./search-settings.js").SearchDraft>,
+    ): void;
+    cancelSearchDraft(): void;
+    refreshSearchSettings(): Promise<void>;
+    saveSearchSettings(): Promise<void>;
+    controlSearch(
+      action: import("./search-settings.js").SearchAction,
+    ): Promise<void>;
     refreshSyncSettings(): Promise<void>;
     controlSync(action: import("./sync-settings.js").SyncAction): Promise<void>;
     loadMore(

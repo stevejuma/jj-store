@@ -12,9 +12,10 @@ mod repositories;
 mod review_mutations;
 mod routes;
 mod search;
+mod search_management;
 mod sync_management;
 mod work;
-pub use search::SearchIndex;
+pub use search::{SearchIndex, SearchRegistry};
 mod uploads;
 use axum::{
     Router,
@@ -94,6 +95,7 @@ pub struct Config {
     pub origin: String,
     pub access: Access,
     pub registry: Option<Arc<dyn RepositoryRegistry>>,
+    pub local_search: Option<Arc<dyn jj_store_service::search_management::SearchManager>>,
     pub local_sync: Option<Arc<dyn jj_store_service::sync_management::SyncManager>>,
     pub local_workspaces: Option<Arc<dyn jj_store_service::local_management::WorkspaceManager>>,
     pub local_folder_picker: Option<Arc<dyn jj_store_service::local_management::FolderPicker>>,
@@ -120,6 +122,7 @@ impl Default for Config {
             registry: None,
             local_workspaces: None,
             local_sync: None,
+            local_search: None,
             local_folder_picker: None,
             storage_ready: true,
             backups: Vec::new(),
@@ -140,7 +143,7 @@ impl Default for Config {
 }
 struct State {
     host: RepositoryHost,
-    search: BTreeMap<m::RepositoryId, jj_store_tantivy::paging::Pager>,
+    search: SearchRegistry,
     config: Config,
     slots: Arc<Semaphore>,
     event_slots: Arc<Semaphore>,
@@ -212,8 +215,9 @@ impl HttpApi {
                 Arc::new(SystemClock),
             )
             .map_err(|_| "HTTP search limits")?;
-            search.insert(repo, pager);
+            search.insert(repo, Arc::new(pager));
         }
+        let search = SearchRegistry::new(search, queries.content().clone(), config.max_json_bytes);
         let paging_limits = pagination::Limits {
             concurrency: config.concurrency,
             read: config.read,
@@ -270,6 +274,9 @@ impl HttpApi {
             uploads,
             repository_cursor_key,
         })))
+    }
+    pub fn search_registry(&self) -> SearchRegistry {
+        self.0.search.clone()
     }
     pub fn router(&self) -> Router {
         Router::new().nest(

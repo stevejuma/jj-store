@@ -1,3 +1,5 @@
+#[path = "http_search_management.rs"]
+mod search_cases;
 #[path = "http_sync_management.rs"]
 mod sync_cases;
 use super::*;
@@ -220,6 +222,7 @@ async fn local_workspace_management_requires_local_admin_and_captures_contracts(
     }
     assert_eq!(picker.0.load(Ordering::SeqCst), 6);
     assert_eq!(verifier.0.load(Ordering::SeqCst), calls);
+    search_cases::capture(&f, cache.path(), &mut samples).await;
     sync_cases::capture(&f, cache.path(), &mut samples).await;
     assert_eq!(f.f.session.snapshot().await.unwrap().manifest(), &before);
     if let Ok(path) = std::env::var("JJ_STORE_LOCAL_MANAGEMENT_CONTRACT_CAPTURE") {

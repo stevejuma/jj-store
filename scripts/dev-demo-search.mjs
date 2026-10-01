@@ -42,13 +42,28 @@ export async function repositoryPosition(origin, repositoryId) {
   return (await response.json()).published_seq;
 }
 
-export async function waitForSearch(origin, repositoryId, minimumPosition = 0) {
+export async function waitForSearch(
+  origin,
+  repositoryId,
+  minimumPosition = 0,
+  fetcher = fetch,
+) {
+  const capabilities = await fetcher(
+    `${origin}v1/repos/${repositoryId}/capabilities`,
+    { headers: apiHeaders(origin) },
+  );
+  if (!capabilities.ok)
+    throw new Error(
+      `could not read development search capabilities: ${capabilities.status}`,
+    );
+  if ((await capabilities.json()).search === false)
+    return { configured: false };
   const deadline = performance.now() + 300_000;
   const url = `${origin}v1/repos/${repositoryId}/search/status`;
   let lastResponse = "no response";
   while (performance.now() < deadline) {
     try {
-      const response = await fetch(url, { headers: apiHeaders(origin) });
+      const response = await fetcher(url, { headers: apiHeaders(origin) });
       const searchState = await response.json();
       lastResponse = `${response.status} ${JSON.stringify(searchState)}`;
       if (

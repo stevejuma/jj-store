@@ -94,6 +94,7 @@
     await userEvent.click(canvas.getByRole("tab", { name: "Advanced" }));
     await expect(canvas.getByText("jj-store-native-v1")).toBeVisible();
     await userEvent.click(canvas.getByRole("button", { name: "Search" }));
+    await userEvent.click(canvas.getByRole("tab", { name: "Health" }));
     await expect(canvas.getByText("Fresh")).toBeVisible();
     await expect(canvas.getAllByText("18", { exact: true })).toHaveLength(3);
     await userEvent.click(
@@ -162,6 +163,7 @@
     );
     await canvas.findByRole("heading", { name: "Local service", level: 1 });
     await userEvent.click(canvas.getByRole("button", { name: "Search" }));
+    await userEvent.click(canvas.getByRole("tab", { name: "Health" }));
     await expect(canvas.getByText("Degraded")).toBeVisible();
     await expect(
       canvas.queryByRole("button", { name: "Prepare graph index" }),
@@ -175,6 +177,7 @@
       canvas.getByText("Graph index preparation completed."),
     ).toBeVisible();
     await userEvent.click(canvas.getByRole("button", { name: "Search" }));
+    await userEvent.click(canvas.getByRole("tab", { name: "Health" }));
     await expect(canvas.getByText("Degraded")).toBeVisible();
   }}
 />
@@ -193,6 +196,7 @@
     );
     await canvas.findByRole("heading", { name: "Local service", level: 1 });
     await userEvent.click(canvas.getByRole("button", { name: "Search" }));
+    await userEvent.click(canvas.getByRole("tab", { name: "Health" }));
     await expect(
       canvas.getByText("Search is not configured for this repository."),
     ).toBeVisible();
@@ -224,6 +228,7 @@
     );
     await canvas.findByRole("heading", { name: "Local service", level: 1 });
     await userEvent.click(canvas.getByRole("button", { name: "Search" }));
+    await userEvent.click(canvas.getByRole("tab", { name: "Health" }));
     await expect(
       canvas.getByText("Search status could not be loaded."),
     ).toBeVisible();
@@ -340,6 +345,7 @@
       canvas.getByRole("button", { name: "Open settings sidebar" }),
     );
     await userEvent.click(canvas.getByRole("button", { name: "Search" }));
+    await userEvent.click(canvas.getByRole("tab", { name: "Health" }));
     await expect(
       await canvas.findByRole("heading", { name: "Search", level: 1 }),
     ).toBeVisible();

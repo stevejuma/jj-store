@@ -1,3 +1,4 @@
+import { createProductionSearchSettings } from "./production-search-settings.js";
 import { createProductionSyncSettings } from "./production-sync-settings.js";
 import { createProductionWorkspaceLinks } from "./production-workspace-links.js";
 import type { StoreDataSource } from "./native-data-source.js";
@@ -13,12 +14,14 @@ export function createProductionStoreSettings(options: {
   restore: () => Promise<void>;
 }) {
   const { data } = options;
+  const search = createProductionSearchSettings(options);
   const sync = createProductionSyncSettings(options);
   const workspaces = createProductionWorkspaceLinks(options);
 
   function clear() {
     workspaces.clear();
     sync.clear();
+    search.clear();
     data.capabilities = null;
     data.neededIndex = null;
     data.searchStatus = null;
@@ -98,7 +101,8 @@ export function createProductionStoreSettings(options: {
       refreshSearch(),
       workspaces.refreshWorkspaceLinks(),
       sync.refreshSyncSettings(),
+      search.refreshSearchSettings(),
     ]);
   }
-  return { ...workspaces, ...sync, clear, refresh, prepareIndex };
+  return { ...workspaces, ...sync, ...search, clear, refresh, prepareIndex };
 }

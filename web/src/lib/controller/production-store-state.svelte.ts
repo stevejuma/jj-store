@@ -1,3 +1,4 @@
+import { emptySearchSettings } from "./search-settings.js";
 import { emptySyncSettings } from "./sync-settings.js";
 import {
   emptyWorkspaceLinks,
@@ -35,6 +36,7 @@ type MutableStatus = {
 };
 
 export interface ProductionStoreState extends WorkspaceLinkSettings {
+  searchSettings: import("./search-settings.js").SearchSettings;
   syncSettings: import("./sync-settings.js").SyncSettings;
   accessMode: "bootstrapping" | "authenticated" | "local_trusted";
   storageReady: boolean;
@@ -132,6 +134,7 @@ export const initialStatus = (): MutableStatus => ({
 export function createProductionStoreState(): ProductionStoreState {
   const state: ProductionStoreState = $state({
     ...emptyWorkspaceLinks(),
+    searchSettings: emptySearchSettings(),
     syncSettings: emptySyncSettings(),
     accessMode: "bootstrapping",
     storageReady: false,

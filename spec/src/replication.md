@@ -268,3 +268,7 @@ frontiers, pending counts and faults; no changes to reconciliation, authority,
 WorkStore support or worker semantics are introduced. Pause/Resume is idempotent
 process-lifetime control. Browser finite-frontier waits remain a subsequent UI
 slice.
+
+Local Search replacement updates the configured sync report to the current
+worker health receiver; disabling Search reports an unconfigured projection.
+Replication progress and transfer ownership remain unchanged.

@@ -696,3 +696,10 @@ manual path entry usable. No installed binary or service is changed by picking.
 The LocalTrusted admin server composes a browser Sync manager over the same
 replication controls used by the CLI/RPC. It starts no additional worker and
 modifies no upstream configuration. Paused state remains process-local.
+
+Local Search management is composed only when the foreground CLI supplies its
+startup-selected configuration path and LocalTrusted Admin access. Revision
+checks cover the bounded file bytes; atomic replacement preserves unrelated TOML
+values, credential references, source extraction limits and worker timing.
+Disabled entries retain their desired configuration. Save alone leaves the
+running worker unchanged; Apply changes only its repository projection.

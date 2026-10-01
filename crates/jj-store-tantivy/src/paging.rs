@@ -13,7 +13,11 @@ use jj_store_service::{
     },
 };
 use serde::{Deserialize, Serialize};
-use std::{collections::BTreeMap, sync::Arc, time::Duration};
+use std::{
+    collections::BTreeMap,
+    sync::{Arc, RwLock},
+    time::Duration,
+};
 use tokio::{
     sync::{Semaphore, watch},
     time::{Instant, timeout_at},
@@ -148,9 +152,13 @@ pub struct Page {
     pub next_cursor: Option<String>,
     pub truncated: bool,
 }
+#[derive(Clone)]
+pub struct Backend {
+    pub search: Search,
+    pub health: watch::Receiver<a::Health>,
+}
 pub struct Pager {
-    search: Search,
-    health: watch::Receiver<a::Health>,
+    active: RwLock<Option<Backend>>,
     reader: ContentReader,
     limits: Limits,
     cursors: cursors::Cursors,
@@ -187,13 +195,23 @@ impl Pager {
             return Err(Error::Limit);
         }
         Ok(Self {
-            search,
-            health,
+            active: RwLock::new(Some(Backend { search, health })),
             reader,
             limits,
             cursors: cursors::Cursors::new(limits, clock)?,
             slots: Semaphore::new(limits.concurrency),
         })
+    }
+    pub fn replace(&self, backend: Option<Backend>) -> Result<()> {
+        self.cursors.prune()?;
+        *self.active.write().unwrap() = backend;
+        Ok(())
+    }
+    pub fn configured(&self) -> bool {
+        self.active.read().unwrap().is_some()
+    }
+    fn backend(&self) -> Result<Backend> {
+        self.active.read().unwrap().clone().ok_or(Error::NotReady)
     }
     fn validate(&self, request: &Request) -> Result<()> {
         if request.q.trim().is_empty()
@@ -220,9 +238,16 @@ impl Pager {
         Ok(snapshot.manifest().into())
     }
     async fn status_inner(&self, session: &Arc<NativeSession>) -> Result<Status> {
+        self.status_backend(session, &self.backend()?).await
+    }
+    async fn status_backend(
+        &self,
+        session: &Arc<NativeSession>,
+        backend: &Backend,
+    ) -> Result<Status> {
         let access = session.adapter_source();
-        let state = self.search.status(&access).await?;
-        let health = self.health.borrow().clone();
+        let state = backend.search.status(&access).await?;
+        let health = backend.health.borrow().clone();
         let current = self.current(session).await?;
         for position in [
             state.durable.as_ref().map(|c| &c.source),
@@ -253,7 +278,7 @@ impl Pager {
             indexed_position,
             index_generation: state.visible.as_ref().map(|c| c.artifact),
             is_stale: indexed_position != Some(current.published_seq),
-            degraded: state.degraded || health.degraded || self.health.has_changed().is_err(),
+            degraded: state.degraded || health.degraded || backend.health.has_changed().is_err(),
         })
     }
     pub async fn status(&self, session: Arc<NativeSession>) -> Result<Status> {
@@ -271,12 +296,13 @@ impl Pager {
     ) -> Result<PinnedReader> {
         let deadline = Instant::now() + Duration::from_millis(request.wait_millis);
         loop {
-            let status = self.status_inner(session).await?;
+            let backend = self.backend()?;
+            let status = self.status_backend(session, &backend).await?;
             if status
                 .indexed_position
                 .is_some_and(|p| request.minimum_position.is_none_or(|min| p.0 >= min.0))
             {
-                let pin = self.search.pin(&session.adapter_source()).await?;
+                let pin = backend.search.pin(&session.adapter_source()).await?;
                 // A concurrent restore/config switch may have replaced the generation.
                 if request
                     .minimum_position
@@ -398,28 +424,35 @@ impl Pager {
         page: crate::Page,
         truncated: bool,
     ) -> Result<Page> {
-        let status = self.status_inner(session).await?;
-        if status.repository != page.checkpoint.source.repository {
+        // Continuations authorize against native state, even after disable/replacement.
+        let current = self.current(session).await?;
+        let degraded = self
+            .active
+            .read()
+            .unwrap()
+            .as_ref()
+            .is_some_and(|backend| backend.health.borrow().degraded);
+        if current.repo_id != page.checkpoint.source.repository {
             return Err(a::Error::Denied.into());
         }
-        if status.epoch != page.checkpoint.source.epoch {
+        if current.epoch != page.checkpoint.source.epoch {
             return Err(Error::EpochChanged);
         }
-        if page.checkpoint.source.position.0 > status.repository_position.0 {
+        if page.checkpoint.source.position.0 > current.published_seq.0 {
             return Err(Error::Unavailable);
         }
         Ok(Page {
             version: 1,
-            repository: status.repository,
-            epoch: status.epoch,
-            repository_position: status.repository_position,
+            repository: current.repo_id,
+            epoch: current.epoch,
+            repository_position: current.published_seq,
             indexed_position: page.checkpoint.source.position,
             index_generation: page.checkpoint.artifact,
             selected_view: page.selected_view,
             scope_snapshots: page.scopes,
             results: page.hits,
-            is_stale: page.checkpoint.source.position != status.repository_position,
-            degraded: status.degraded,
+            is_stale: page.checkpoint.source.position != current.published_seq,
+            degraded,
             next_cursor: None,
             truncated,
         })

@@ -298,3 +298,9 @@ Sync browser management requires exact LocalTrusted admin admission and fresh
 repository authorization, including for status. Typed commands delegate to the
 existing owned worker; no remote endpoint, credential, configuration path or
 shell execution is accepted.
+
+Search settings reauthorize LocalTrusted Admin access before reading or changing
+configuration. Writes are bounded, revision checked, locked and atomically
+replaced outside checkout content. No browser-supplied filesystem path, token or
+command is accepted. An unacknowledged save requires status refresh; lifecycle
+operations have owned completion independent of the HTTP request lifetime.

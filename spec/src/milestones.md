@@ -120,7 +120,7 @@ shared-package release qualification does not alter those original Git gates.
 | M14.1       | Done        | M4.18                   | JST-UI-012                                                                                                                                                               | Graph preparation independent of text-search health                                                                            | Retain independent graph/search regressions; proceed to M14.2                  | E-M14-001                                                                                                                                                                                                                                                                                                                                                      |
 | M14.2       | Done        | M14.1                   | JST-UI-016,JST-SEC-005,JST-SEC-006                                                                                                                                       | Typed local management and profile-aware workspace links                                                                       | Retain folder-link regressions and proceed to M14.3                            | E-M14-002,E-M14-003,E-M14-005,E-M14-006,E-M14-007                                                                                                                                                                                                                                                                                                              |
 | M14.3       | In progress | M14.2                   | JST-UI-016,JST-COLLAB-002,JST-COLLAB-006                                                                                                                                 | Agent setup, queue inspection and automatic recovery                                                                           | Add agent management and worker lifecycle on the shared drain foundation       | E-M14-004,E-M14-005                                                                                                                                                                                                                                                                                                                                            |
-| M14.4       | Planned     | M14.2                   | JST-UI-016,JST-ADAPT-003,JST-ADAPT-004                                                                                                                                   | Editable Search and isolated worker replacement                                                                                | Add desired/effective configuration and safe text-search rebuild               | -                                                                                                                                                                                                                                                                                                                                                              |
+| M14.4       | Done        | M14.2                   | JST-UI-016,JST-ADAPT-003,JST-ADAPT-004                                                                                                                                   | Editable Search and isolated worker replacement                                                                                | Add desired/effective configuration and safe text-search rebuild               | E-M14-009                                                                                                                                                                                                                                                                                                                                                      |
 | M14.5       | Planned     | M14.2                   | JST-UI-016,JST-PUB-005,JST-PUB-006                                                                                                                                       | Storage integrity and non-destructive checkpoints                                                                              | Add bounded authorized operations and uncertain-outcome recovery               | -                                                                                                                                                                                                                                                                                                                                                              |
 | M14.6       | In progress | M14.2,M10.7             | JST-UI-016,JST-REPL-012                                                                                                                                                  | Configured sync status and controls in Settings                                                                                | Expose existing controls without upstream configuration or credential editing  | E-M14-008                                                                                                                                                                                                                                                                                                                                                      |
 | M14.7       | Planned     | M14.3,M14.4,M14.5,M14.6 | JST-UI-016,JST-SEC-006                                                                                                                                                   | Integrated local settings and cold persistent acceptance                                                                       | Qualify completed native flow and preserve unsupported M13 capabilities        | -                                                                                                                                                                                                                                                                                                                                                              |
@@ -25387,7 +25387,7 @@ and named tests are checked by the progress gate.
         "command": "pnpm test:governance",
         "result": "pass",
         "failures": 0,
-        "note": "jsh-directory-governance1.log: \u2714 rejects_unchanged_ledger_for_code (0.628042ms); \u2714 allows_documentation_without_execution_ledger (0.079ms); \u2139 pass 34"
+        "note": "jsh-directory-governance1.log: ✔ rejects_unchanged_ledger_for_code (0.628042ms); ✔ allows_documentation_without_execution_ledger (0.079ms); ℹ pass 34"
       },
       {
         "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7468 JJ_STORE_REAL_REPOSITORY=5ae8240e6d77fe8d0f6dd0b13f3d3874 JJ_STORE_REAL_RUNTIME=/tmp/jsh-cold-ijPU4c JJ_STORE_REAL_ROOT=/Users/stevejuma/code/lapismd/jj-store-projects-hub pnpm exec playwright test --config web/playwright.real.config.ts work-store.spec.ts",
@@ -30608,6 +30608,202 @@ and named tests are checked by the progress gate.
       "Finite-frontier wait UI and integrated persistent settings qualification remain pending.",
       "Visual baselines remain visual-pending."
     ]
+  },
+  {
+    "id": "E-M14-009",
+    "tasks": ["M14", "M14.4"],
+    "date": "2026-10-01",
+    "kind": "editable-search-management",
+    "files": [
+      "catalog/components/store-application/StoreApplication.stories.svelte",
+      "catalog/components/store-application/StoreSearchSettings.stories.svelte",
+      "catalog/controller/in-memory-store-controller.svelte.ts",
+      "catalog/controller/in-memory-store-settings.svelte.ts",
+      "catalog/fixtures/SearchSettingsFixture.svelte",
+      "catalog/fixtures/search-settings.ts",
+      "crates/jj-store-adapters/src/runner.rs",
+      "crates/jj-store-cli/src/server_commands.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/http_local_management.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/http_search_management.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/search_settings.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/server_search.rs",
+      "crates/jj-store-http/src/dto.rs",
+      "crates/jj-store-http/src/lib.rs",
+      "crates/jj-store-http/src/routes.rs",
+      "crates/jj-store-http/src/search.rs",
+      "crates/jj-store-http/src/search_management.rs",
+      "crates/jj-store-server/src/config.rs",
+      "crates/jj-store-server/src/lib.rs",
+      "crates/jj-store-server/src/process.rs",
+      "crates/jj-store-server/src/replication.rs",
+      "crates/jj-store-server/src/search.rs",
+      "crates/jj-store-server/src/search_config.rs",
+      "crates/jj-store-server/src/search_management/file.rs",
+      "crates/jj-store-server/src/search_management/mod.rs",
+      "crates/jj-store-server/src/search_worker.rs",
+      "crates/jj-store-service/src/lib.rs",
+      "crates/jj-store-service/src/search_management.rs",
+      "crates/jj-store-tantivy/src/disk.rs",
+      "crates/jj-store-tantivy/src/paging.rs",
+      "crates/jj-store-tantivy/src/projection.rs",
+      "schemas/openapi.json",
+      "scripts/dev-demo-search.mjs",
+      "scripts/dev-demo-search.test.mjs",
+      "scripts/dev-demo.mjs",
+      "spec/src/adapters.md",
+      "spec/src/api.md",
+      "spec/src/cli.md",
+      "spec/src/compatibility.md",
+      "spec/src/milestones.md",
+      "spec/src/mutations.md",
+      "spec/src/replication.md",
+      "spec/src/security.md",
+      "spec/src/spec-governance.md",
+      "spec/src/ui.md",
+      "web/src/lib/api/generated.ts",
+      "web/src/lib/controller/contracts.ts",
+      "web/src/lib/controller/http-repository-transports.ts",
+      "web/src/lib/controller/native-data-source.ts",
+      "web/src/lib/controller/production-search-settings.ts",
+      "web/src/lib/controller/production-store-actions.ts",
+      "web/src/lib/controller/production-store-index.ts",
+      "web/src/lib/controller/production-store-state.svelte.ts",
+      "web/src/lib/controller/production-store-view.ts",
+      "web/src/lib/controller/search-settings.ts",
+      "web/src/lib/ui/store-settings/StoreSearchConfiguration.svelte",
+      "web/src/lib/ui/store-settings/StoreSearchHealth.svelte",
+      "web/src/lib/ui/store-settings/StoreSearchSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreSettings.svelte",
+      "web/tests/browser/local-search-settings.spec.ts",
+      "web/tests/vite/production-search-settings.test.ts"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/native_lifecycle/search_settings.rs#local_search_save_apply_rebuild_disable_and_restart_preserve_authority_and_pins",
+      "web/tests/browser/local-search-settings.spec.ts#Search tabs preserve drafts and separate Save from Apply"
+    ],
+    "runs": [
+      {
+        "command": "cargo check --locked -p jj-store-server -p jj-store-cli",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial additive capability construction duplicated five fields; corrected, then check passed."
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test native_lifecycle local_search_save_apply_rebuild_disable_and_restart_preserve_authority_and_pins",
+        "result": "pass",
+        "failures": 0,
+        "note": "Actual native storage with server manager: stale revisions, preserved unrelated values, Save without Apply, exclusions, failed replacement rollback, Retry/Rebuild, disable, pinned old and temporary readers, cleanup, disabled and enabled cold owner reopen, unchanged manifest. Initial fixture referenced unavailable toml crate; replaced with public Config::load. First cursor assertion omitted original freshness parameters; restored identical query binding."
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test native_lifecycle content_acceptance::http_acceptance::local_management::local_workspace_management_requires_local_admin_and_captures_contracts -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "LocalTrusted Admin capability, read/save/control, strict version/unknown intent/extra field denial, bearer/read-only/origin denial and response capture. Mock manager tests transport admission; separate native test qualifies actual lifecycle."
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test native_lifecycle search",
+        "result": "pass",
+        "failures": 0,
+        "note": "24 native search identity, authorization, paging, HTTP and server lifecycle tests pass."
+      },
+      {
+        "command": "cargo test --locked -p jj-store-adapters -p jj-store-tantivy",
+        "result": "pass",
+        "failures": 0,
+        "note": "34 package tests pass: 22 adapter and 12 Tantivy tests; doc targets have no tests."
+      },
+      {
+        "command": "cargo test --locked -p jj-store-server --test configuration search; cargo test --locked -p jj-store-server --lib replication",
+        "result": "pass",
+        "failures": 0,
+        "note": "One explicit/bounded configuration test and one configured sync outage/control test pass. Replaced search health receiver preserves independent sync ownership."
+      },
+      {
+        "command": "cargo test --locked -p jj-store-cli --test native_lifecycle server_search",
+        "result": "pass",
+        "failures": 0,
+        "note": "6 pass after final lifecycle review: process cancellation cascades to repository tokens, drained join failures are removed safely, temporary cursor owners survive disable and release roots, saved enablement/scopes survive restart."
+      },
+      {
+        "command": "cargo clippy --locked -p jj-store-service -p jj-store-adapters -p jj-store-tantivy -p jj-store-http -p jj-store-server --lib -- -D warnings; cargo clippy --locked -p jj-store-server --lib -- -D warnings",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected library boundaries pass; final server-specific rerun after lifetime review."
+      },
+      {
+        "command": "pnpm contracts:generate; pnpm contracts:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "98 captured actual HTTP/SSE responses and 6 contract tests pass. Initial generator panic was a request-body path missing /v1; corrected."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-search-settings.test.ts web/tests/vite/production-store-settings.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "10 tests pass for scope parsing, independent Save/Apply, stale-save drafts, explicit refresh, single flight and late replies; final exact Search rerun has 4 tests."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero errors/warnings; 107 catalog modules. Initial web run raced contract generation, then exposed bigint budget conversion and missing optional data-source property; corrected."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreSearchSettings.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "15 interaction/axe stories pass. Initial 2 failures found an invalid status role on dd; placed status in a span. Final shell-only rerun covers active-tab-only forms."
+      },
+      {
+        "command": "pnpm web:build; pnpm exec playwright test --config web/playwright.config.ts web/tests/browser/local-search-settings.spec.ts web/tests/browser/local-workspaces.spec.ts web/tests/browser/local-sync.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "3 cold browser tests pass including mobile overflow and axe. Final fresh bundle and exact Search rerun passes after adding File scopes. Initial three-tab test exposed duplicate form IDs in retained hidden panels; render only the active form while keeping drafts in controller state."
+      },
+      {
+        "command": "node --test scripts/dev-demo-search.test.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "2 tests: explicitly disabled Search bypasses index wait; configured Search still requires a fresh ready index."
+      },
+      {
+        "command": "cargo fmt -p jj-store-service -p jj-store-server -p jj-store-http -p jj-store-cli -p jj-store-adapters -p jj-store-tantivy; pnpm exec prettier --write <changed TS/Svelte/Markdown/MJS>; pnpm check:architecture; pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "439 web modules, 15 packages. Extracted unavailable catalog management actions after the controller reached 301 counted lines."
+      },
+      {
+        "command": "pnpm dev:restart",
+        "result": "pass",
+        "failures": 0,
+        "note": "Main-owned demo rebuilt with persisted repository/identity/data retained at http://127.0.0.1:7460/. Initial live review led to a separate File scopes tab; final restart includes that layout."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial pending ledger failed missing actual runs; populated exact evidence before final gate. 132 requirements and 111 tasks."
+      },
+      {
+        "command": "cua_repl: reload owned demo tab; profile Settings; Search; getAXState and screenshot",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final live main demo shows Configuration/File scopes/Health tabs, 512 MiB current budget, enabled desired/effective state, Save/Apply/Retry/Rebuild controls. No live settings changed. Tab retained for review. Final shell-only story rerun passes 12 stories."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "Search changes affect the adapter runner and shared pager plus its server/HTTP/UI consumers. Escalate to the full Tantivy/adapters package tests and native lifecycle search family, plus server search configuration/replication tests; no unrelated root aggregates.",
+    "before": "Search was read-only, with a fixed process-lifetime worker/pager and no browser configuration owner.",
+    "formats": "Optional local_search_management and V1 Search settings/save/control schemas; optional enabled field in existing configuration format 2. Native repository authority unchanged. Enclosing Jujutsu change is revision reference.",
+    "versions": "Rust 1.98.1; JJ 0.45.1; pnpm 10.32.1; locked Svelte/Vitest/Storybook.",
+    "next": "Review the main local app. Continue remaining Agent setup/recovery, Storage maintenance, Sync finite-frontier UI and integrated settings acceptance as separately tracked M14 work.",
+    "deferred": [
+      "Visual baselines remain visual-pending.",
+      "Integrated native settings persistent browser qualification is M14.7; no milestone-wide or real-RustFS fault qualification claim.",
+      "Unclean process termination can leave disposable replacement directories; normal owner retirement is verified."
+    ],
+    "artifacts": "Ignored .scratch/search-*.log, .scratch/settings-dev-restart*.log and web/test-results. Test services remain isolated and are shut down."
   }
 ]
 ```

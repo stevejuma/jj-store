@@ -74,6 +74,7 @@ export function productionStoreView(
       truncated: data.searchTruncated,
     },
     settings: {
+      searchSettings: data.searchSettings,
       syncSettings: data.syncSettings,
       workspaceLinks: data.workspaceLinks,
       workspaceLinksState: data.workspaceLinksState,

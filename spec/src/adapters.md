@@ -177,8 +177,10 @@ from repository content. Configuring no source scopes indexes metadata only.
 Authenticated runners hold their repository token only in memory and reauthorize
 on every batch. LocalTrusted runners use a stable installation-derived read-only
 principal and share the same repository, snapshot and resource checks.
-Configuration reload is an explicit server restart. Local cache loss rebuilds
-from selected history regardless of an advanced remote adapter cursor.
+Shared-mode configuration reload requires an explicit server restart.
+LocalTrusted Admin Search settings additionally support the isolated Apply
+operation described below. Local cache loss rebuilds from selected history
+regardless of an advanced remote adapter cursor.
 
 A graceful runner shutdown waits until retained callback contexts release native
 and blocking work before releasing writer ownership. A forced task drop still
@@ -233,3 +235,14 @@ digest and search results to return. Its recorded cold rebuild was 5.436 seconds
 and exact restore was 2.007 seconds, both within the published 30-second test
 budget. This measured fixture proves the restore path avoided a rebuild for its
 bounded repository; it is not a general throughput claim.
+
+Local Search Apply drains only the selected repository worker. Replacement
+projections are built and verified in owner-held temporary roots before the
+serving backend changes. Failed replacements resume the previous worker and
+retain its effective configuration. Search cursors keep their original readers
+across apply or disable; new queries use the active backend. Temporary roots
+live until the last projection or reader owner releases them. Replacement
+concurrency is bounded and uses the existing runner recovery path. Retry
+restarts the effective runner; Rebuild bypasses cached adapter snapshots and
+reconstructs selected native data. Startup reopens the saved desired
+configuration.

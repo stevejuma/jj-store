@@ -26,3 +26,6 @@ pub type Result<T> = std::result::Result<T, Error>;
 pub mod workspaces;
 
 pub mod sync_management;
+
+pub mod search_management;
+mod search_worker;

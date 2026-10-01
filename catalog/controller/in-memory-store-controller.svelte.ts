@@ -16,7 +16,10 @@ import { createInMemoryStoreCollaboration } from "./in-memory-store-collaboratio
 import { inMemoryStoreStatus } from "./in-memory-store-status.js";
 import { inMemoryStoreDetail } from "./in-memory-store-history.js";
 import type { InMemoryStoreControllerOptions } from "./in-memory-store-options.js";
-import { createInMemoryStoreSettings } from "./in-memory-store-settings.svelte.js";
+import {
+  createInMemoryStoreSettings,
+  unavailableManagementActions,
+} from "./in-memory-store-settings.svelte.js";
 import { createInMemoryStoreSession } from "./in-memory-store-session.svelte.js";
 import { inMemoryStoreEvolution } from "./in-memory-store-evolution.js";
 
@@ -107,12 +110,7 @@ export function createInMemoryStoreController(
     async selectOperation() {},
     async selectComparisonParent() {},
     refreshSettings: settings.refresh,
-    async refreshWorkspaceLinks() {},
-    setWorkspacePath() {},
-    async linkWorkspace() {},
-    async pickWorkspaceFolder() {},
-    async refreshSyncSettings() {},
-    async controlSync() {},
+    ...unavailableManagementActions,
     prepareIndex: settings.prepareIndex,
     async loadMore() {},
     search: search.search,

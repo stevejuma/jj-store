@@ -14,9 +14,16 @@ use tantivy::{Index, IndexReader, IndexWriter, ReloadPolicy, Term};
 pub(crate) struct Owner {
     pub root: PathBuf,
     _lock: File,
+    _temporary: Option<tempfile::TempDir>,
 }
 impl Owner {
     pub fn acquire(root: PathBuf) -> Result<Arc<Self>> {
+        Self::acquire_owned(root, None)
+    }
+    pub fn temporary(root: tempfile::TempDir) -> Result<Arc<Self>> {
+        Self::acquire_owned(root.path().to_owned(), Some(root))
+    }
+    fn acquire_owned(root: PathBuf, temporary: Option<tempfile::TempDir>) -> Result<Arc<Self>> {
         if !root.is_absolute() {
             return Err(Error::Invalid);
         }
@@ -38,7 +45,11 @@ impl Owner {
         }
         let lock = io(options.open(root.join("owner.lock")))?;
         lock.try_lock().map_err(|_| Error::Busy)?;
-        let owner = Arc::new(Self { root, _lock: lock });
+        let owner = Arc::new(Self {
+            root,
+            _lock: lock,
+            _temporary: temporary,
+        });
         // Acquiring the exclusive root lock proves no reader in any surviving
         // process owns these crash leftovers. Never remove the selected one.
         if let Ok(Some(selected)) = active(&owner) {

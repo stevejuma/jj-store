@@ -885,3 +885,11 @@ freshness. No upstream shows local-only guidance without action buttons;
 unsupported services expose no controls. Requests are single flight and late
 replies cannot populate another repository. Pause is process-lifetime state and
 does not persist across restart.
+
+Search groups enablement, budget and maintenance under Configuration, source
+selection and prefix fields under File scopes, and projection status under
+Health. Drafts survive tab/section switches and failed saves. Save and Apply are
+separate explicit actions; desired/effective state and operation progress remain
+visible. Pending or failed requests cannot silently retry a save or apply a
+stale configuration. Refresh recovers the current revision before another
+action.

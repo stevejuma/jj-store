@@ -29,7 +29,7 @@
         ? "Identity, snapshot, graph preparation and capabilities for the selected repository."
         : section === "sync"
           ? "Local readiness and controls for the configured upstream."
-          : "Text-search projection health for the selected repository.",
+          : "Configuration, file scopes and text-search health for the selected repository.",
   );
 </script>
 

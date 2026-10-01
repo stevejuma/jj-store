@@ -59,6 +59,18 @@ impl<E: Extractor> TantivyProjection<E> {
     pub fn open(root: PathBuf, extractor: E, limits: Limits) -> Result<(Self, Search)> {
         limits.validate()?;
         let owner = Owner::acquire(root)?;
+        Self::with_owner(owner, extractor, limits)
+    }
+    /// Temporary projection storage is retained by every pinned generation.
+    pub fn open_temporary(
+        root: tempfile::TempDir,
+        extractor: E,
+        limits: Limits,
+    ) -> Result<(Self, Search)> {
+        limits.validate()?;
+        Self::with_owner(Owner::temporary(root)?, extractor, limits)
+    }
+    fn with_owner(owner: Arc<Owner>, extractor: E, limits: Limits) -> Result<(Self, Search)> {
         let serving = Arc::new(RwLock::new(Serving::default()));
         let search = Search::new(serving.clone(), owner.clone());
         Ok((

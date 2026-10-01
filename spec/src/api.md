@@ -1014,3 +1014,11 @@ Repository GET `/local/sync` returns a V1 local-only or configured-worker
 report; POST `/local/sync/control` accepts only V1 pause, resume or retry
 intent. Both reauthorize before accessing the worker. No upstream URL, token or
 environment variable is exposed or editable.
+
+LocalTrusted Admin `local_search_management` adds GET `/local/search`, POST
+`/local/search/save` and POST `/local/search/control`. V1 reports contain a
+configuration-byte revision, desired/effective enablement, explicit source
+scopes/prefixes/index budget and operation state. Save and Apply carry the
+observed revision. Control intents are apply, retry and rebuild. Browser
+requests cannot select configuration paths or credentials. Accepted lifecycle
+operations continue after HTTP disconnect and remain queryable through status.

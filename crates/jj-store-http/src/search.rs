@@ -29,10 +29,10 @@ pub(crate) struct Query {
 fn page_size() -> usize {
     50
 }
-fn pager<'a>(state: &'a State, context: &Context) -> Result<&'a paging::Pager> {
+fn pager(state: &State, context: &Context) -> Result<Arc<paging::Pager>> {
     state
         .search
-        .get(&context.id("repo")?)
+        .get(context.id("repo")?)
         .ok_or_else(|| Error::new(StatusCode::NOT_IMPLEMENTED, "search_not_configured"))
 }
 pub(crate) async fn search(
@@ -66,4 +66,62 @@ pub(crate) async fn search_status(
     input(args)?;
     let status = pager(&state, &context)?.status(context.session).await?;
     state.json(&status)
+}
+
+#[derive(Clone)]
+pub struct SearchRegistry {
+    pagers: Arc<std::sync::RwLock<std::collections::BTreeMap<m::RepositoryId, Arc<paging::Pager>>>>,
+    reader: q::content::ContentReader,
+    max_json_bytes: usize,
+}
+impl SearchRegistry {
+    pub(crate) fn new(
+        pagers: std::collections::BTreeMap<m::RepositoryId, Arc<paging::Pager>>,
+        reader: q::content::ContentReader,
+        max_json_bytes: usize,
+    ) -> Self {
+        Self {
+            pagers: Arc::new(std::sync::RwLock::new(pagers)),
+            reader,
+            max_json_bytes,
+        }
+    }
+    fn get(&self, repo: m::RepositoryId) -> Option<Arc<paging::Pager>> {
+        self.pagers.read().unwrap().get(&repo).cloned()
+    }
+    pub(crate) fn contains_key(&self, repo: &m::RepositoryId) -> bool {
+        self.get(*repo).is_some_and(|p| p.configured())
+    }
+    /// Reuse the pager and its credential-free cursor pins across replacements.
+    pub fn replace(
+        &self,
+        repo: m::RepositoryId,
+        index: Option<SearchIndex>,
+    ) -> std::result::Result<(), &'static str> {
+        let mut pagers = self.pagers.write().unwrap();
+        if let Some(pager) = pagers.get(&repo) {
+            pager
+                .replace(index.map(|i| paging::Backend {
+                    search: i.search,
+                    health: i.health,
+                }))
+                .map_err(|_| "search cursor state")?;
+        } else if let Some(mut index) = index {
+            if pagers.len() >= 128 {
+                return Err("search repository limit");
+            }
+            index.limits.query.output_bytes =
+                index.limits.query.output_bytes.min(self.max_json_bytes);
+            let pager = paging::Pager::new(
+                index.search,
+                index.health,
+                self.reader.clone(),
+                index.limits,
+                Arc::new(SystemClock),
+            )
+            .map_err(|_| "search limits")?;
+            pagers.insert(repo, Arc::new(pager));
+        }
+        Ok(())
+    }
 }

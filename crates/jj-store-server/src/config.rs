@@ -36,7 +36,7 @@ impl Config {
         Ok(config)
     }
 
-    fn resolve_paths(&mut self, base: &Path) -> Result<()> {
+    pub(crate) fn resolve_paths(&mut self, base: &Path) -> Result<()> {
         self.state_dir = policy::outside_checkout(&base.join(&self.state_dir))?;
         self.operator_policy = policy::outside_checkout(&base.join(&self.operator_policy))?;
         if let Some(tls) = &mut self.tls {

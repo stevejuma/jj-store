@@ -482,3 +482,8 @@ deferred.
 Sync management adds an optional local capability and V1 browser report/command
 schemas. Existing replication RPC DTO bytes and persisted checkpoints remain
 unchanged; clients treat absent capability as unsupported.
+
+Search management adds optional capability and strict V1 intent/report schemas.
+Configuration format 2 accepts an optional enabled field on Search entries,
+defaulting to true for existing configurations. Native identities and repository
+publication formats are unchanged.

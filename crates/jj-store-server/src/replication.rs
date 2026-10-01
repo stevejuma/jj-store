@@ -356,7 +356,7 @@ struct Entry {
     paused: AtomicBool,
     wake: Notify,
     state: Mutex<RuntimeState>,
-    search: Option<watch::Receiver<SearchHealth>>,
+    search: Mutex<Option<watch::Receiver<SearchHealth>>>,
 }
 
 pub struct PreparedReplication {
@@ -403,7 +403,7 @@ impl PreparedReplication {
                     local: None,
                     peer: None,
                 }),
-                search: search.get(&config.repository).cloned(),
+                search: Mutex::new(search.get(&config.repository).cloned()),
             });
             if entries.insert(config.repository, entry).is_some() {
                 return Err(Error::Config("duplicate replication repository"));
@@ -414,6 +414,14 @@ impl PreparedReplication {
         })
     }
 
+    pub(crate) fn search_observer(&self) -> crate::search_management::Observer {
+        let controls = self.controls.clone();
+        Arc::new(move |repo, health| {
+            if let Some(entry) = controls.entries.get(&repo) {
+                *entry.search.lock().unwrap() = health;
+            }
+        })
+    }
     pub fn controls(&self) -> Arc<dyn ReplicationControls> {
         self.controls.clone()
     }
@@ -668,7 +676,7 @@ async fn status(
     });
     let peer_pending_positions =
         pulled.map(|value| value.observed_upper_bound.0.saturating_sub(value.through.0));
-    let search = entry.search.as_ref().map_or(
+    let search = entry.search.lock().unwrap().as_ref().map_or(
         control::SearchStatusV1 {
             configured: false,
             repository_position: None,
@@ -950,7 +958,7 @@ mod tests {
                 local: None,
                 peer: None,
             }),
-            search: None,
+            search: Mutex::new(None),
         });
         let controls = ControlPlane {
             entries: BTreeMap::from([(repository, entry.clone())]),
