@@ -48,6 +48,15 @@ Actor identities are device state under the shared JJ repository, so physical
 workspaces and the local UI use the same actor. They carry no access grants and
 are excluded from portable transfer.
 
+Portable evidence uses an explicit source profile and SHA-256 capsule identity.
+The Git profile records the complete selected operation and view, including
+predecessor maps, and the complete backend commit metadata needed by their
+bounded ancestry/evolution closure. Operations and views retain their exact
+upstream content identities. Git commit/tree/blob identities remain SHA-1; the
+all-zero upstream root sentinel is never treated as a physical Git object. This
+archives source context without installing or replaying an old operation graph.
+Native V1 envelopes and codecs remain unchanged.
+
 M13.1 proves versioned publication, receipt replay, initialization races and Git
 reachability before dependent implementation. M13.2 adds WorkStore and direct
 CLI access. M13.3 adds portable AgentStore/ReviewStore evidence. M13.4 adds

@@ -6,6 +6,14 @@ The local repository resolver loads only the pinned GitBackend to obtain its
 object database; it does not load or reconcile operation heads or snapshot
 files.
 
+Source evidence capture pins one explicit operation with `RepoLoader::load_at`
+and archives complete owned operation/view and GitBackend commit records. Its
+bounded closure follows ancestry and evolution dependencies, preserves ordered
+merge terms and extra metadata, and stages immutable blobs without publishing JJ
+heads or editing a checkout. Selected capsule reads reconstruct and verify
+source operation/view identities without requiring the source operation store or
+derived index. Capsule selection remains a domain publication concern.
+
 Search visibility uses the same bounded native commit-parent traversal as
 operation differences. It starts at the explicitly selected operation's view
 heads and does not follow predecessor links or reconcile operation heads.

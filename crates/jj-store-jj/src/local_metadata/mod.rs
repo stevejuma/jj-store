@@ -1,5 +1,6 @@
 //! Companion metadata publication for an existing SHA-1 Git object database.
 //! This store neither replaces GitBackend nor publishes JJ operation heads.
+mod blobs;
 mod objects;
 mod prepare;
 mod types;

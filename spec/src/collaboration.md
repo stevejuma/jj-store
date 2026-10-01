@@ -5,6 +5,12 @@ the existing object envelopes, WAL, receipts and manifest publication service,
 but retain independent models, authorization and state versions. They are not
 upstream JJ traits, Tantivy indexes, Nostr projections or agent executors.
 
+The separately governed local Git profile uses the M13 companion publication
+store and the same domain models. New versioned portable anchors distinguish
+source native and Git identities and name immutable evidence capsules. Existing
+native V1 anchor bytes and their interpretation remain unchanged. An evidence
+reference is not a device binding or permission to open a local path.
+
 The first release is LocalTrusted. It captures Codex, Cursor and OpenCode
 through qualified integrations, stores sanitized evidence before normalized
 views and supports exact discussions on immutable code, diff and agent

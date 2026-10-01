@@ -11,6 +11,9 @@ repo is colocated for development. Native product storage has no Git carrier;
 the separate local Git-backed companion profile is governed by local-jj.md. Its
 WorkStore facade uses existing service/domain dependencies; disposable
 filesystem qualification uses a test-only temporary-directory dependency.
+Portable source identity types stay in the neutral model layer; their pinned
+upstream conversions and Git evidence capsule framing stay in JJ integration.
+The adapter uses the existing SHA-256 primitive directly for capsule integrity.
 
 ## Requirements
 
