@@ -86,7 +86,7 @@ test("Search tabs preserve drafts and separate Save from Apply", async ({
     .getByRole("heading", { name: "Search", level: 1 })
     .boundingBox())!;
   expect(tabBounds.y - contentBounds.y).toBeLessThan(16);
-  expect(headingBounds.x + headingBounds.width).toBeLessThan(tabBounds.x);
+  expect(tabBounds.x + tabBounds.width).toBeLessThan(headingBounds.x);
   await expect(navigation.locator("h1 svg[aria-hidden='true']")).toBeVisible();
   await expect(page.locator(".store-settings h1")).toHaveCount(0);
   await page.getByRole("tab", { name: "Configuration", exact: true }).focus();

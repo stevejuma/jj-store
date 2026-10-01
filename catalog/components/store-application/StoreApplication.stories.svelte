@@ -94,8 +94,8 @@
         name: "Settings page navigation",
       }),
     ).getByRole("heading", { level: 1 });
-    await expect(heading.getBoundingClientRect().right).toBeLessThan(
-      tablist.getBoundingClientRect().left,
+    await expect(tablist.getBoundingClientRect().right).toBeLessThan(
+      heading.getBoundingClientRect().left,
     );
     await expect(canvas.getByText("admin")).toBeVisible();
     await expect(

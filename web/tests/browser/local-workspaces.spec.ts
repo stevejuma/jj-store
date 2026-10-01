@@ -103,12 +103,34 @@ test("local folder settings preserve drafts and link without changing repository
     .getByRole("heading", { name: "Repository", level: 1 })
     .boundingBox())!;
   expect(tabBounds.y - contentBounds.y).toBeLessThan(16);
-  expect(headingBounds.x + headingBounds.width).toBeLessThan(tabBounds.x);
+  expect(tabBounds.x + tabBounds.width).toBeLessThan(headingBounds.x);
+  const navigationBounds = (await navigation.boundingBox())!;
+  expect(
+    navigationBounds.x +
+      navigationBounds.width -
+      headingBounds.x -
+      headingBounds.width,
+  ).toBeLessThan(24);
+  const back = navigation.getByRole("button", { name: "Back to app" });
+  await expect(back).toHaveText("");
+  const backBounds = (await back.boundingBox())!;
+  expect(backBounds.width).toBe(backBounds.height);
+  expect(
+    await back.evaluate((button) =>
+      Number.parseFloat(getComputedStyle(button).borderRadius),
+    ),
+  ).toBeGreaterThanOrEqual(backBounds.width / 2);
   await expect(navigation.locator("h1 svg[aria-hidden='true']")).toBeVisible();
   await expect(page.locator(".store-settings h1")).toHaveCount(0);
   expect(
     (await page.locator(".store-settings").boundingBox())!.width,
   ).toBeCloseTo(contentBounds.width, 0);
+  const settingsBounds = (await page.locator(".store-settings").boundingBox())!;
+  const firstSectionHeading = (await page
+    .getByRole("heading", { name: "Identity and snapshot", exact: true })
+    .boundingBox())!;
+  expect(firstSectionHeading.y - settingsBounds.y).toBeLessThan(24);
+  expect(firstSectionHeading.x - settingsBounds.x).toBeLessThan(24);
   await page.getByRole("tab", { name: "Local folders", exact: true }).click();
   const input = page.getByRole("textbox", { name: "Folder path" });
   await expect(page.getByText("No local folders linked.")).toBeVisible();

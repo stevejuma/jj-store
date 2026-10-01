@@ -35,6 +35,19 @@ export async function playMobileSettings({
   await expect(navigation.querySelector("button")).toHaveAccessibleName(
     "Back to app",
   );
+  const back = within(navigation).getByRole("button", { name: "Back to app" });
+  await expect(back.textContent?.trim()).toBe("");
+  const bounds = back.getBoundingClientRect();
+  await expect(bounds.width).toBe(bounds.height);
+  await expect(
+    Number.parseFloat(getComputedStyle(back).borderRadius),
+  ).toBeGreaterThanOrEqual(bounds.width / 2);
+  const titleBounds = within(navigation)
+    .getByRole("heading", { level: 1 })
+    .getBoundingClientRect();
+  await expect(
+    navigation.getBoundingClientRect().right - titleBounds.right,
+  ).toBeLessThan(24);
   await expect(
     canvas.queryByText(
       "Connection and storage state for this jj-store installation.",

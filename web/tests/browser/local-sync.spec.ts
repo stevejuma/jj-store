@@ -59,7 +59,7 @@ test("local sync controls and grouped progress preserve repository context", asy
     .getByRole("heading", { name: "Sync", level: 1 })
     .boundingBox())!;
   expect(tabBounds.y - contentBounds.y).toBeLessThan(16);
-  expect(headingBounds.x + headingBounds.width).toBeLessThan(tabBounds.x);
+  expect(tabBounds.x + tabBounds.width).toBeLessThan(headingBounds.x);
   await expect(navigation.locator("h1 svg[aria-hidden='true']")).toBeVisible();
   await expect(page.locator(".store-settings h1")).toHaveCount(0);
   await page.getByRole("button", { name: "Pause sync", exact: true }).click();

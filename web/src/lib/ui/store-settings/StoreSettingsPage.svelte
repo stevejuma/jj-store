@@ -55,19 +55,14 @@
   <nav class="store-settings__tab-bar" aria-label="Settings page navigation">
     {#if onClose}<Button
         variant="ghost"
-        size="sm"
+        size="icon"
         class="store-settings__back"
+        style="--ui-button-radius: 9999px"
         aria-label="Back to app"
+        title="Back to app"
         onclick={onClose}
-        ><ArrowLeftIcon
-          data-icon="inline-start"
-          aria-hidden="true"
-        />Back</Button
+        ><ArrowLeftIcon data-icon="inline-start" aria-hidden="true" /></Button
       >{/if}
-    <h1 id="store-settings-title" class="store-settings__page-title">
-      <PageIcon aria-hidden="true" />
-      <span>{title}</span>
-    </h1>
     {#if tabs.length}
       <ScrollArea
         orientation="horizontal"
@@ -86,6 +81,10 @@
         </Tabs.List>
       </ScrollArea>
     {/if}
+    <h1 id="store-settings-title" class="store-settings__page-title">
+      <PageIcon aria-hidden="true" />
+      <span>{title}</span>
+    </h1>
   </nav>
 {/snippet}
 
@@ -103,15 +102,19 @@
   .store-settings {
     width: 100%;
     min-width: 0;
-    padding: 2rem clamp(1rem, 4vw, 3rem) 4rem;
+    padding: 1rem 1rem 4rem;
     box-sizing: border-box;
+  }
+  .store-settings :global(.store-settings__section:first-child) {
+    margin-block-start: 0;
   }
   .store-settings__page-title {
     display: flex;
     flex: none;
     align-items: center;
     gap: 0.4rem;
-    margin: 0 0.35rem 0 0;
+    margin: 0;
+    margin-inline-start: auto;
     font-size: var(--community-text-body);
     font-weight: 600;
     white-space: nowrap;
@@ -122,7 +125,7 @@
   }
   @media (max-width: 40rem) {
     .store-settings {
-      padding: 1.25rem 1rem 3rem;
+      padding-block-end: 3rem;
     }
   }
 </style>
