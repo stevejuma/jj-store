@@ -7,99 +7,15 @@ use crate::{
     commands::{Format, error},
     presentation,
 };
-use clap::{Args, Subcommand, ValueEnum};
 use jj_agent::IntegrationId;
 use jj_cli::{cli_util::CommandHelper, command_error::CommandError, ui::Ui};
 use sha2::{Digest as _, Sha256};
 use std::path::{Path, PathBuf};
 mod backend;
+mod provenance;
+mod types;
 use backend::{Backend, default_state, workspace_root};
-
-#[derive(Clone, Debug, Args)]
-#[command(disable_help_subcommand = true)]
-pub struct AgentArgs {
-    #[arg(long, global = true, value_enum, default_value_t=Format::Text)]
-    pub format: Format,
-    /// Override device-local state; intended for isolated qualification
-    #[arg(long, global = true)]
-    pub state_dir: Option<PathBuf>,
-    #[command(subcommand)]
-    pub command: Option<AgentCommand>,
-}
-
-#[derive(Clone, Debug, Subcommand)]
-pub enum AgentCommand {
-    /// Initialize companion AgentStore metadata in a local Git-backed JJ repository
-    Initialize {
-        #[arg(long)]
-        request_id: jj_store_model::RequestId,
-    },
-    /// List one pinned page of local Git-backed AgentStore sessions
-    Sessions {
-        #[arg(long, default_value_t = 50)]
-        limit: usize,
-        #[arg(long)]
-        cursor: Option<String>,
-    },
-    /// Read a local capture's original durable receipt
-    Receipt {
-        request_id: jj_store_model::RequestId,
-    },
-    /// Retry pending sanitized captures in source order
-    Drain,
-    /// Probe integrations and report desired versus installed state
-    Status,
-    /// Enable explicit supported integrations in the device registry
-    Enable {
-        #[arg(long = "agent", required = true, value_enum)]
-        agents: Vec<AgentName>,
-        /// Preview the durable registry result without writing it
-        #[arg(long)]
-        dry_run: bool,
-        /// Confirm that no interactive integration selection is requested
-        #[arg(long)]
-        non_interactive: bool,
-    },
-    /// Install one owned project hook or plugin without replacing unrelated configuration
-    Setup {
-        #[arg(value_enum)]
-        agent: AgentName,
-        /// Preview the target change without writing configuration or ownership state
-        #[arg(long)]
-        dry_run: bool,
-    },
-    /// Remove one exact jj-store-owned project hook or plugin
-    Remove {
-        #[arg(value_enum)]
-        agent: AgentName,
-        /// Preview exact restoration without changing project or registry state
-        #[arg(long)]
-        dry_run: bool,
-    },
-    /// Receive one bounded project hook event
-    #[command(hide = true)]
-    Hook {
-        #[arg(value_enum)]
-        agent: AgentName,
-    },
-}
-
-#[derive(Clone, Copy, Debug, PartialEq, Eq, ValueEnum)]
-pub enum AgentName {
-    Codex,
-    Cursor,
-    Opencode,
-}
-
-impl From<AgentName> for IntegrationId {
-    fn from(value: AgentName) -> Self {
-        match value {
-            AgentName::Codex => Self::Codex,
-            AgentName::Cursor => Self::Cursor,
-            AgentName::Opencode => Self::OpenCode,
-        }
-    }
-}
+pub use types::{AgentArgs, AgentCommand, AgentName};
 
 pub async fn run(ui: &mut Ui, helper: &CommandHelper, args: AgentArgs) -> Result<(), CommandError> {
     let Some(command) = args.command else {
@@ -150,6 +66,10 @@ pub async fn run(ui: &mut Ui, helper: &CommandHelper, args: AgentArgs) -> Result
         .state_dir
         .map(|path| helper.cwd().join(path))
         .unwrap_or_else(|| default_state(&workspace, selected_repository));
+    if let Some(value) = backend.provenance_action(helper, &command, &state).await? {
+        let text = format!("{}\n", serde_json::to_string_pretty(&value).map_err(error)?);
+        return presentation::result(ui, helper, args.format, &value, &text);
+    }
     if let Some(value) = backend.local_action(&command, &state).await? {
         let text = format!("{}\n", serde_json::to_string_pretty(&value).map_err(error)?);
         return presentation::result(ui, helper, args.format, &value, &text);
@@ -250,6 +170,14 @@ pub async fn run(ui: &mut Ui, helper: &CommandHelper, args: AgentArgs) -> Result
         | AgentCommand::Sessions { .. }
         | AgentCommand::Receipt { .. }
         | AgentCommand::Drain => return Err(error("agent local command dispatch failed")),
+        AgentCommand::CodeEvidence { .. }
+        | AgentCommand::Associate { .. }
+        | AgentCommand::Checkpoint { .. }
+        | AgentCommand::RetryProvenance { .. }
+        | AgentCommand::Associations { .. }
+        | AgentCommand::Checkpoints { .. } => {
+            return Err(error("agent provenance dispatch failed"));
+        }
     };
     present(ui, helper, args.format, &status, action)
 }

@@ -209,7 +209,7 @@ fn local_agent_reads_and_initialization_accept_all_git_layouts_and_workspaces() 
             &["store", "--format", "json", "capabilities"],
         );
         assert_eq!(capabilities["collaboration"]["agents"], true);
-        assert_eq!(capabilities["collaboration"]["agent_code_anchors"], false);
+        assert_eq!(capabilities["collaboration"]["agent_code_anchors"], true);
     }
 }
 #[cfg(unix)]

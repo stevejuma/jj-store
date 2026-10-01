@@ -21,6 +21,11 @@ retain the selected previous version. A ref race reapplies disjoint edits and
 reports same-key changes as stale. Record and capsule inventories are selected
 together; staging alone exposes neither.
 
+Local checkpoint and association pages bind the catalog kind, page size, last
+key and selected metadata commit. Cross-catalog cursor reuse and staged metadata
+commits fail stale or invalid. Pages share the session page count and byte
+ceilings and leave metadata and device actor state absent on ordinary reads.
+
 The local session pager binds continuations to selected metadata history, page
 size and the last catalog key. Staged candidates cannot be selected through a
 cursor; later publications and process restart do not replace the pinned root.

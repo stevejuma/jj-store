@@ -7,6 +7,7 @@ pub mod agent_commands;
 pub mod agent_hook;
 pub mod agent_integrations;
 mod agent_probe;
+mod agent_provenance_journal;
 pub mod agent_publication;
 mod agent_removal;
 pub mod agent_sanitization;

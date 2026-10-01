@@ -20,7 +20,7 @@ pub(crate) fn report(helper: &CommandHelper) -> Result<Option<(Value, String)>, 
         "repository":selected.as_ref().map(|s| s.repository()),
         "metadata_commit":selected.as_ref().map(|s| s.commit()),
         "metadata_initialized":selected.is_some(), "actor_initialized":repository.actor().map_err(error)?.is_some(),
-        "collaboration":{"projects":true,"tasks":true,"comments":true,"agents":true,"agent_code_anchors":false,"reviews":false},
+        "collaboration":{"projects":true,"tasks":true,"comments":true,"agents":true,"agent_code_anchors":true,"reviews":false},
     });
     let text = format!(
         "Local Git-backed JJ repository\nMetadata: {}\nProjects, tasks and comments use direct local storage.\n",

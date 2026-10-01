@@ -6,6 +6,7 @@ mod agent_descriptor;
 mod agent_evidence;
 mod agent_io;
 mod agent_pages;
+mod agent_provenance_pages;
 mod agent_store;
 mod errors;
 mod records;
@@ -14,6 +15,7 @@ pub use agent_commands::{
 };
 pub use agent_evidence::LocalCodeEvidenceV1;
 pub use agent_pages::{LocalAgentPage, LocalAgentSessionRow};
+pub use agent_provenance_pages::{LocalAgentObjectPage, LocalAgentObjectRow};
 pub use agent_store::{LocalAgentSnapshot, LocalAgentStore};
 pub use errors::{LocalError, LocalResult};
 mod work;

@@ -11,8 +11,13 @@ session-page output identify their metadata profile and snapshot explicitly.
 
 The CLI-owned upstream boundary additionally qualifies direct local provenance
 publication against exact GitBackend capsules and stock JJ/Git. This fixture
-proves the service provider; user-facing provenance commands and automatic hook
-code association remain separately gated.
+proves the service provider. Local provenance commands inspect
+explicit-operation evidence, accept bounded typed association/checkpoint
+documents and expose selected-history pages. Before publication a private
+repository/actor-bound journal retains the exact record, expected version and
+capsule bytes. Explicit retry uses that original request without reopening the
+source operation store; a matching selected receipt is required before journal
+removal. Automatic hook code association remains separately gated.
 
 Native search acceptance compares selected-view commit visibility with retained
 historical metadata, including invisible predecessors and pagination after

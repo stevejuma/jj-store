@@ -65,6 +65,12 @@ inventory alongside the AgentStore root. Missing, mismatched or unselected
 capsules fail closed. Corrections retain prior versions and require exact stale
 preconditions; receipt replay precedes those checks.
 
+CLI provenance publication synchronizes its complete typed request in private
+device state before companion ref CAS. The journal binds repository and actor;
+retry cannot recapture evidence or substitute another record under the same
+request identity. Explicit-operation evidence inspection stages only immutable
+objects and does not select metadata or alter JJ operation heads.
+
 CLI hook ingestion retains the existing sanitizer-before-durability boundary.
 Its shared private spool persists the complete local typed request before a
 companion ref publication, checks the receipt's repository, actor, request,

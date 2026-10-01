@@ -13,6 +13,32 @@ local capture or initialization receipt. These two commands currently target the
 local Git profile. Native repository collaboration reads remain available
 through the existing local API.
 
+`jj agent code-evidence --operation <full-operation-id>` inspects one explicitly
+selected code operation. Its JSON output includes a typed source reference and
+the exact capsule. It stages immutable Git objects without selecting metadata.
+Initialize metadata first to establish the source repository identity.
+
+`jj agent associate --request-id <id> --record <association.json>` and
+`jj agent checkpoint --request-id <id> --record <checkpoint.json>` accept
+complete `CodeAssociationV2` and `AgentCheckpointVersionV2` documents. Use the
+source reference from code evidence in each operation anchor; commit anchors
+pair that reference with a profile-tagged commit from the capsule. Agent facts
+name exact selected sessions and immutable dependencies. Corrections include the
+prior version in the record and pass its object ID through `--expected-version`.
+
+Before publication the CLI privately journals the complete request, including
+exact capsule bytes. Unknown outcomes retain it.
+`jj agent retry-provenance <id>` retries that original request without requiring
+the input document or source operation store. A matching durable receipt
+completes the journal entry; `jj agent receipt <id>` inspects a completed
+request.
+
+`jj agent associations` and `jj agent checkpoints` read bounded local pages with
+`--limit` and `--cursor`. Continuations keep one selected metadata snapshot and
+cannot move between those catalogs. Reads do not initialize metadata or device
+state. Code associations are explicit assertions; hooks currently capture agent
+activity without automatically asserting code causality.
+
 `jj agent drain` retries the private sanitized spool in source order using the
 repository's backend. Local requests are synchronized before ref publication;
 native requests retain their prepared RPC delta. A prepared request cannot move
