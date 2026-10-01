@@ -195,6 +195,12 @@ is implicit in Thread/Reaction publication.
 
 ## Initial delivery boundaries
 
+Native RPC is a thin typed service boundary for commands/status, all four signed
+page kinds, Thread detail, exact human-message revisions and retained source or
+preview images. Binary image fields preserve the domain's encoded-byte limit.
+Inline/binary ambiguity, unknown request fields, kind or content-ID substitution
+fail closed. It invokes no runner and retains the native code reducer gate.
+
 Review summary presentation is derived from the same selected ReviewStore root
 as the page, including resumed pages. It records the immutable creation actor
 and time, last accepted event time and a bounded excerpt of the selected initial

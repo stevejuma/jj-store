@@ -21,6 +21,12 @@ service NativeStore {
   rpc ReviewThread(ReviewThreadRequest) returns (JsonReply);
   rpc ApplyReviewCommand(ReviewCommandRequest) returns (JsonReply);
   rpc ReviewCommandStatus(ReviewCommandStatusRequest) returns (JsonReply);
+  rpc CollabPage(CollabPageRequest) returns (JsonReply);
+  rpc CollabThread(CollabThreadRequest) returns (JsonReply);
+  rpc CollabMessage(CollabMessageRequest) returns (JsonReply);
+  rpc CollabAsset(CollabAssetRequest) returns (CollabAssetReply);
+  rpc ApplyCollabCommand(CollabCommandRequest) returns (JsonReply);
+  rpc CollabCommandStatus(CollabCommandStatusRequest) returns (JsonReply);
   rpc GitBridgeState(Repository) returns (JsonReply);
   rpc AcceptGitBridge(GitBridgeRequest) returns (JsonReply);
   rpc GitBridgeStatus(GitBridgeStatusRequest) returns (JsonReply);
@@ -114,6 +120,15 @@ message ReviewThreadsRequest { bytes repository = 1; uint32 limit = 2; string cu
 message ReviewThreadRequest { bytes repository = 1; bytes thread_id = 2; }
 message ReviewCommandRequest { bytes repository = 1; bytes request_json = 2; }
 message ReviewCommandStatusRequest { bytes repository = 1; bytes request_id = 2; }
+// Typed service JSON is bounded independently of retained raster byte fields.
+// The peer supplies no actor/publication identity. Inline asset bytes are refused.
+message CollabPageRequest { bytes repository = 1; bytes query_json = 2; string cursor = 3; }
+message CollabThreadRequest { bytes repository = 1; bytes thread_id = 2; }
+message CollabMessageRequest { bytes repository = 1; bytes target_json = 2; }
+message CollabAssetRequest { bytes repository = 1; bytes object_id = 2; }
+message CollabAssetReply { bytes metadata_json = 1; bytes image = 2; bytes snapshot_json = 3; }
+message CollabCommandRequest { bytes repository = 1; bytes request_json = 2; bytes image = 3; }
+message CollabCommandStatusRequest { bytes repository = 1; bytes request_id = 2; }
 message JsonReply { bytes json = 1; }
 // Replication DTOs use bounded canonical JSON and never carry a principal. The
 // server derives the publication actor from the authenticated request.

@@ -123,6 +123,14 @@ continuations to transport requests is owned by the service pagination layer.
 
 ## Graph and directory continuations
 
+Native RPC exposes the same typed collaboration command, durable status, page,
+Thread detail, exact human-message and retained-image reads. Request actors and
+publication identities remain service-derived. JSON is bounded to four MiB;
+custom raster bytes travel in separate two-MiB protobuf fields to avoid JSON
+array expansion. Image metadata, bytes and requested content identity must
+agree. Current peer/token admission applies to every call; replicated code
+writes stay gated on reducer 3 and WorkStore homes retain their frozen origin.
+
 Thread, Thread-event, exact-target Reaction and custom-emoji pages use a
 separate bounded credential-free collaboration registry. Signed tokens bind
 every captured source root, repository, viewer, query and page size. Object

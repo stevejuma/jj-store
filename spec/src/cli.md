@@ -1,5 +1,10 @@
 # CLI and server commands
 
+The native RPC client exposes typed Thread/Reaction commands, status, signed
+pages and exact detail/asset reads. Native CLI dispatch remains a dependent
+gate; the existence of an RPC client does not establish executable CLI
+acceptance.
+
 Local `jj agent thread` exposes list/show/create, bounded typed apply/message
 intents and durable status. `jj agent reaction` exposes exact-target query,
 set/clear/resolve, custom definition/retirement, bounded library pages and

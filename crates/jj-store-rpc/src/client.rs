@@ -1,6 +1,6 @@
 use crate::{
     CHUNK_BYTES, MAX_IDS, REQUEST_BYTES, RESPONSE_BYTES, administration as admin, agent,
-    application, review,
+    application, collab, review,
     wire::{self, native_store_client::NativeStoreClient},
     wire_object, wire_record,
 };
@@ -704,6 +704,97 @@ impl NativeClient {
             .await?
             .into_inner();
         review::response(reply)
+    }
+    pub async fn collab_page(
+        &self,
+        query: &jj_store_service::collab_pages::Query,
+        cursor: Option<&str>,
+    ) -> Result<jj_store_service::collab_pages::Page, Status> {
+        let reply = self
+            .wire()
+            .collab_page(self.request(wire::CollabPageRequest {
+                repository: self.repository.as_bytes().to_vec(),
+                query_json: collab::encode(query)?,
+                cursor: cursor.unwrap_or_default().to_owned(),
+            }))
+            .await?
+            .into_inner();
+        collab::response(reply)
+    }
+    pub async fn collab_thread(
+        &self,
+        thread: jj_store_service::collab_model::ThreadId,
+    ) -> Result<jj_store_service::collab_reads::ThreadDetailV1, Status> {
+        let reply = self
+            .wire()
+            .collab_thread(self.request(wire::CollabThreadRequest {
+                repository: self.repository.as_bytes().to_vec(),
+                thread_id: thread.as_bytes().to_vec(),
+            }))
+            .await?
+            .into_inner();
+        collab::response(reply)
+    }
+    pub async fn collab_message(
+        &self,
+        target: &jj_store_service::collab_model::ReactionTargetV1,
+    ) -> Result<jj_store_service::collab_reads::HumanMessageDetailV1, Status> {
+        let reply = self
+            .wire()
+            .collab_message(self.request(wire::CollabMessageRequest {
+                repository: self.repository.as_bytes().to_vec(),
+                target_json: collab::encode(target)?,
+            }))
+            .await?
+            .into_inner();
+        collab::response(reply)
+    }
+    pub async fn collab_image(
+        &self,
+        reference: jj_store_service::collab_model::CollabObjectRef,
+    ) -> Result<jj_store_service::collab_reads::ImageDetailV1, Status> {
+        if reference.kind != jj_store_service::collab_model::CollabObjectKind::ImageAsset {
+            return Err(Status::invalid_argument("collaboration image kind"));
+        }
+        let reply = self
+            .wire()
+            .collab_asset(self.request(wire::CollabAssetRequest {
+                repository: self.repository.as_bytes().to_vec(),
+                object_id: reference.id.as_bytes().to_vec(),
+            }))
+            .await?
+            .into_inner();
+        let image = collab::asset_response(reference, reply)?;
+        if image.snapshot.repo_id != self.repository {
+            return Err(Status::data_loss("collaboration raster repository"));
+        }
+        Ok(image)
+    }
+    pub async fn apply_collab_command(
+        &self,
+        request: &jj_store_service::collab_mutations::Request,
+    ) -> Result<jj_store_service::collab_mutations::Outcome, Status> {
+        let body = collab::command_wire(self.repository, request)?;
+        let reply = self
+            .wire()
+            .apply_collab_command(self.request(body))
+            .await?
+            .into_inner();
+        collab::response(reply)
+    }
+    pub async fn collab_command_status(
+        &self,
+        id: m::RequestId,
+    ) -> Result<jj_store_service::collab_mutations::Status, Status> {
+        let reply = self
+            .wire()
+            .collab_command_status(self.request(wire::CollabCommandStatusRequest {
+                repository: self.repository.as_bytes().to_vec(),
+                request_id: id.as_bytes().to_vec(),
+            }))
+            .await?
+            .into_inner();
+        collab::response(reply)
     }
     pub async fn git_bridge_state(&self) -> Result<jj_store_service::git_bridge::State, Status> {
         let reply = self

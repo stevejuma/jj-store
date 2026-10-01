@@ -30,6 +30,14 @@ pub trait ReactionActorVisibility: Send + Sync {
 }
 /// The initial repository-scoped policy has no private actor subresources. A
 /// caller must first hold current repository Read access; another repo is denied.
+/// The current repository access profile has no private actor subresources.
+/// Pinned reads reauthorize repository admission before consulting this policy.
+pub struct RepositoryMemberReactionActors;
+impl ReactionActorVisibility for RepositoryMemberReactionActors {
+    fn can_disclose(&self, _: m::RepositoryId, _: m::PrincipalId, _: m::PrincipalId) -> bool {
+        true
+    }
+}
 pub struct RepositoryReactionActors(pub m::RepositoryId);
 impl ReactionActorVisibility for RepositoryReactionActors {
     fn can_disclose(
@@ -62,6 +70,23 @@ pub struct CollabReadSnapshotV1 {
 pub struct ThreadSummaryV1 {
     pub reference: CollabObjectRef,
     pub value: ThreadVersionV1,
+}
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
+pub struct ThreadDetailV1 {
+    pub snapshot: CollabReadSnapshotV1,
+    pub thread: ThreadSummaryV1,
+}
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
+pub struct HumanMessageDetailV1 {
+    pub snapshot: CollabReadSnapshotV1,
+    pub target: ReactionTargetV1,
+    pub message: HumanMessageRevisionV1,
+}
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ImageDetailV1 {
+    pub snapshot: CollabReadSnapshotV1,
+    pub reference: CollabObjectRef,
+    pub asset: ImageAssetV1,
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 pub struct ThreadPageV1 {

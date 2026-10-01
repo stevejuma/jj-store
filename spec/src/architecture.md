@@ -25,6 +25,12 @@ local companion provider without runner, server, Git transport or storage
 dependencies in the model. This dependency adds no external package version or
 persistence format.
 
+Native RPC consumes the service facade's owned collaboration-model reexport. Its
+codec keeps raster uploads and downloads in bounded protobuf byte fields, while
+commands and pages use typed service JSON. No transport codec owns actor
+admission, root selection or publication, and no upstream JJ dependency is
+added.
+
 `jj-collab` owns persistent Thread/human-message and Reaction/custom-emoji
 models with independent root types. It depends only on owned model, AgentStore
 and ReviewStore types plus bounded canonical/Unicode/raster libraries. It has no

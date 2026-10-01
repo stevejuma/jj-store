@@ -19,6 +19,8 @@ pub mod reads;
 pub mod review_mutations;
 
 pub mod collab_mutations;
+/// Owned domain contracts reexported for typed application transports.
+pub use jj_collab as collab_model;
 pub mod collab_pages;
 pub mod collab_reads;
 pub mod collaboration;

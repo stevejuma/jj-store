@@ -107,6 +107,12 @@ classified; status returning `not_known` is never treated as rejection.
 
 ## Native publication policy
 
+Native RPC collaboration requests carry only version, stable request identity
+and typed intent. Custom definition uploads have one binary source field and
+must not also supply inline JSON bytes. The codec reconstructs the same intent
+before authenticated service admission; transport failure preserves the original
+request identity and never authorizes automatic execution or publication retry.
+
 Native publications must descend from every removed committed operation. Strict
 publications must retain operation ancestry for all prior heads. Newly
 introduced operation graphs are bounded and anchored in committed operations;

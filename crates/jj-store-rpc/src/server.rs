@@ -1,6 +1,6 @@
 use crate::{
     CHUNK_BYTES, MAX_IDS, REQUEST_BYTES, RESPONSE_BYTES, administration as admin, agent,
-    application, object, record, review, service_error,
+    application, collab, object, record, review, service_error,
     wire::{
         self,
         native_store_server::{NativeStore, NativeStoreServer},
@@ -127,6 +127,7 @@ pub struct NativeRpc {
     access: RpcAccess,
     registry: Option<Arc<dyn RepositoryRegistry>>,
     review_threads: Arc<ReviewThreadPager>,
+    collab: Arc<jj_store_service::collab_pages::CollabPager>,
     work: Arc<jj_store_service::work::WorkPager>,
     commands: CommandService,
     replication_controls: Option<Arc<dyn ReplicationControls>>,
@@ -179,6 +180,18 @@ impl NativeRpc {
             review_threads: Arc::new(
                 ReviewThreadPager::new(pagination::Limits::default(), Arc::new(SystemClock))
                     .map_err(review::read_error)?,
+            ),
+            collab: Arc::new(
+                jj_store_service::collab_pages::CollabPager::new(
+                    jj_store_service::collab_pages::Limits {
+                        concurrency: limits.concurrent.min(64),
+                        timeout: limits.timeout.min(Duration::from_secs(300)),
+                        ..Default::default()
+                    },
+                    Arc::new(SystemClock),
+                    Arc::new(jj_store_service::collab_reads::RepositoryMemberReactionActors),
+                )
+                .map_err(collab::read_error)?,
             ),
             commands: CommandService::new(executor),
             work: Arc::new(jj_store_service::work::WorkPager::new(Arc::new(
@@ -756,6 +769,142 @@ impl NativeStore for NativeRpc {
                 .await
                 .map_err(review::command_error)?;
             review::reply(&status)
+        })
+        .await
+    }
+    async fn collab_page(
+        &self,
+        request: Request<wire::CollabPageRequest>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        let access = self.request_access(&request)?;
+        let body = request.into_inner();
+        let query = collab::decode(&body.query_json)?;
+        let session = self.bind(&body.repository, access)?.into_session();
+        let pager = self.collab.clone();
+        self.bounded(async move {
+            let cursor = (!body.cursor.is_empty()).then_some(body.cursor.as_str());
+            let page = pager
+                .page(session, query, cursor)
+                .await
+                .map_err(collab::read_error)?;
+            collab::reply(&page)
+        })
+        .await
+    }
+    async fn collab_thread(
+        &self,
+        request: Request<wire::CollabThreadRequest>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        let access = self.request_access(&request)?;
+        let body = request.into_inner();
+        let id = jj_store_service::collab_model::ThreadId::from_slice(&body.thread_id)
+            .map_err(|_| Status::invalid_argument("Thread ID"))?;
+        let session = self.bind(&body.repository, access)?.into_session();
+        self.bounded(async move {
+            let pin = jj_store_service::collab_reads::PinnedCollabRead::open(
+                session.clone(),
+                Arc::new(jj_store_service::collab_reads::RepositoryMemberReactionActors),
+            )
+            .await
+            .map_err(collab::command_error)?;
+            let thread = pin
+                .thread(session, id)
+                .await
+                .map_err(collab::command_error)?;
+            collab::reply(&jj_store_service::collab_reads::ThreadDetailV1 {
+                snapshot: pin.snapshot().clone(),
+                thread,
+            })
+        })
+        .await
+    }
+    async fn collab_message(
+        &self,
+        request: Request<wire::CollabMessageRequest>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        let access = self.request_access(&request)?;
+        let body = request.into_inner();
+        let target = collab::decode(&body.target_json)?;
+        let session = self.bind(&body.repository, access)?.into_session();
+        self.bounded(async move {
+            let pin = jj_store_service::collab_reads::PinnedCollabRead::open(
+                session.clone(),
+                Arc::new(jj_store_service::collab_reads::RepositoryMemberReactionActors),
+            )
+            .await
+            .map_err(collab::command_error)?;
+            let message = pin
+                .message(session, &target)
+                .await
+                .map_err(collab::command_error)?;
+            collab::reply(&jj_store_service::collab_reads::HumanMessageDetailV1 {
+                snapshot: pin.snapshot().clone(),
+                target,
+                message,
+            })
+        })
+        .await
+    }
+    async fn collab_asset(
+        &self,
+        request: Request<wire::CollabAssetRequest>,
+    ) -> Result<Response<wire::CollabAssetReply>, Status> {
+        let access = self.request_access(&request)?;
+        let body = request.into_inner();
+        let id = jj_store_service::collab_model::CollabObjectId::from_slice(&body.object_id)
+            .map_err(|_| Status::invalid_argument("collaboration asset ID"))?;
+        let reference = jj_store_service::collab_model::CollabObjectRef {
+            kind: jj_store_service::collab_model::CollabObjectKind::ImageAsset,
+            id,
+        };
+        let session = self.bind(&body.repository, access)?.into_session();
+        self.bounded(async move {
+            let pin = jj_store_service::collab_reads::PinnedCollabRead::open(
+                session.clone(),
+                Arc::new(jj_store_service::collab_reads::RepositoryMemberReactionActors),
+            )
+            .await
+            .map_err(collab::command_error)?;
+            let asset = pin
+                .image(session, reference)
+                .await
+                .map_err(collab::command_error)?;
+            collab::asset_reply(&pin, asset)
+        })
+        .await
+    }
+    async fn apply_collab_command(
+        &self,
+        request: Request<wire::CollabCommandRequest>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        let access = self.request_access(&request)?;
+        let body = request.into_inner();
+        let command = collab::command(&body)?;
+        let session = self.bind(&body.repository, access)?.into_session();
+        self.bounded(async move {
+            let outcome = jj_store_service::collab_mutations::CollabCommandService
+                .apply(session, &command)
+                .await
+                .map_err(collab::command_error)?;
+            collab::reply(&outcome)
+        })
+        .await
+    }
+    async fn collab_command_status(
+        &self,
+        request: Request<wire::CollabCommandStatusRequest>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        let access = self.request_access(&request)?;
+        let body = request.into_inner();
+        let id = m::RequestId::from_slice(&body.request_id)
+            .map_err(|_| Status::invalid_argument("collaboration request ID"))?;
+        let session = self.bind(&body.repository, access)?.into_session();
+        self.bounded(async move {
+            let status = jj_store_service::collab_mutations::CollabCommandService
+                .status(session, id)
+                .await
+                .map_err(collab::command_error)?;
+            collab::reply(&status)
         })
         .await
     }
