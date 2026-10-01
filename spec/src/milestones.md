@@ -38703,6 +38703,48 @@ and named tests are checked by the progress gate.
     "escalation": "Rebase combines shared profile-aware connection/route/surface contracts with Thread/global search and changed HTTP schema consumers. Full relevant catalog/controller units, direct consumer Storybook, contract captures, production build and isolated native/filesystem cold browser checks are required. Root aggregates, full Rust workspace, publication and installed-service changes remain outside this integration scope.",
     "next": "Land this verified descendant of main c347df2d into the clean default workspace, recording separate landing evidence. Keep M15/M15.5 In progress and preserve the running main dev server.",
     "scope": " Rebase qualification is complete. Visual baseline approval remains separate; M15.7 real RustFS full-flow and JJ ACP runner gates and registry-only Design Core foundation qualification remain outside this integration and unchanged."
+  },
+  {
+    "id": "E-M15-023",
+    "tasks": ["M15", "M15.5", "M15.6"],
+    "date": "2026-10-01",
+    "kind": "main-workspace-landing",
+    "revision": "enclosing Jujutsu change yqsrnpmp",
+    "before": "Main default workspace is clean at ozomqkpp / 2a6ce3ef with parent vkutkopr / c347df2d. Rebased Threads msszrzpn / 02f94c13 has completed integration qualification in E-M15-022 and includes that main parent. Main development service PID 23243 remains running independently.",
+    "versions": "JJ 0.45.1; same owned UI provenance, local development foundation snapshot, generated contracts and binaries qualified in E-M15-022. No package install, publication or installed binary replacement.",
+    "formats": "Fast-forward main checkout to the verified descendant msszrzpn / 02f94c13; no redundant merge parent. Production files and native/local contracts are identical to the qualified isolated tree. Only this landing evidence is new.",
+    "files": ["spec/src/milestones.md"],
+    "tests": [],
+    "runs": [
+      {
+        "command": "jj new msszrzpn -m \"Record Threads alignment landing in main workspace\"",
+        "result": "pass",
+        "failures": 0,
+        "note": "Preflight confirms clean main, exact c347df2d parent, main ancestor in msszrzpn and no conflicts; switched default checkout to verified tree. Preserved original threads-reactions workspace."
+      },
+      {
+        "command": "jj --no-pager diff --from msszrzpn --to @ --summary",
+        "result": "pass",
+        "failures": 0,
+        "note": "Immediately after checkout landing, trees match exactly."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md; pnpm check:progress; pnpm spec:validate; pnpm spec:first; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "Documentation-only landing formatting, progress/specification/ownership checks. Product verification is the unchanged tree qualified in E-M15-022; no redundant product suites."
+      },
+      {
+        "command": "python3 compare ledger and production tree using jj file show -r msszrzpn and jj diff --from msszrzpn --to @ --name-only",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 244 preceding evidence objects remain identical, with this entry appended; only milestones.md differs from the qualified Threads tree."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "User-authorized local rebase, conflict resolution and main landing only. Main development service remains untouched. M15/M15.5 remain In progress; visual baselines, M15.7 real RustFS/runner gates and registry-only Design Core foundations remain separately unqualified. Root aggregates and full Rust workspace are out of scope under targeted verification policy.",
+    "next": "Continue from the landed main source tree. Rebuild/restart the existing main development server only on explicit user request; preserve the isolated Threads workspace and independent qualification gates."
   }
 ]
 ```
