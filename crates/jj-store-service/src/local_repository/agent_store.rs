@@ -1,23 +1,16 @@
 use super::{
     LocalError, LocalProfile, LocalRepository, LocalResult, agent_io::AgentIo, records::GitRecords,
 };
+use super::{agent_descriptor::LocalAgentRootV2, agent_evidence::EvidenceIo};
 use jj_store_jj::local_metadata::{Domain, GitOid, Snapshot};
 use jj_store_model as m;
-use jj_store_wal::{self as wal, publication::*, records::RecordRef};
+use jj_store_wal::{self as wal, publication::*};
 use serde::{Deserialize, Serialize};
 use std::{
     collections::{BTreeMap, BTreeSet},
     sync::Arc,
 };
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub(crate) struct LocalAgentRootV1 {
-    pub version: u32,
-    pub repository: m::RepositoryId,
-    pub root: RecordRef,
-    pub records: BTreeMap<String, GitOid>,
-}
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 pub struct LocalAgentSnapshot {
     pub profile: LocalProfile,
@@ -31,6 +24,7 @@ pub struct LocalAgentStore {
     pub(crate) io: Arc<AgentIo>,
     root: AgentRootV1,
     objects: BTreeSet<AgentObjectRef>,
+    evidence: BTreeSet<m::portable::CodeEvidenceRefV1>,
 }
 impl LocalAgentStore {
     pub fn reads(&self) -> AgentReader<'_> {
@@ -38,6 +32,15 @@ impl LocalAgentStore {
     }
     pub async fn object(&self, reference: AgentObjectRef) -> LocalResult<AgentObjectV1> {
         Ok(self.read_object(reference).await?)
+    }
+    pub fn code_evidence(
+        &self,
+        reference: &m::portable::CodeEvidenceRefV1,
+    ) -> LocalResult<jj_store_jj::local_evidence::GitEvidenceCapsuleV1> {
+        if !self.evidence.contains(reference) {
+            return Err(LocalError::Stale);
+        }
+        self.io.evidence.read(reference)
     }
 }
 #[async_trait::async_trait]
@@ -89,33 +92,34 @@ impl LocalRepository {
             .map(|s| self.metadata.read_domain(s, Domain::Agent))
             .transpose()?
             .flatten();
-        let (records, reference) = if let Some(bytes) = bytes {
-            let value: LocalAgentRootV1 =
-                serde_json::from_slice(&bytes).map_err(|_| LocalError::Corrupt)?;
-            if value.version != 1
-                || value.repository != repository
-                || serde_json::to_vec(&value).map_err(|_| LocalError::Corrupt)? != bytes
-            {
-                return Err(LocalError::Corrupt);
-            }
+        let (records, reference, entries) = if let Some(bytes) = bytes {
+            let value = LocalAgentRootV2::decode(&bytes, repository)?;
             for blob in value.records.values() {
                 self.metadata
                     .read_retained_blob(selected.ok_or(LocalError::Corrupt)?, *blob)?;
             }
-            (value.records, Some(value.root))
+            (value.records, Some(value.root), value.evidence)
         } else {
-            (BTreeMap::new(), None)
+            (BTreeMap::new(), None, Vec::new())
         };
-        let io = Arc::new(AgentIo::new(Arc::new(GitRecords::new(
-            repository,
-            self.metadata.clone(),
-            records,
-        )?)));
+        let io = Arc::new(AgentIo::new(
+            Arc::new(GitRecords::new(repository, self.metadata.clone(), records)?),
+            EvidenceIo::new(self.metadata.clone(), selected, entries)?,
+        ));
         let root = match reference {
             Some(reference) => io.root(reference).await?,
             None => AgentRootV1::empty(),
         };
         let objects = io.audit(&root).await?;
+        let mut evidence = BTreeSet::new();
+        for reference in &objects {
+            evidence.extend(
+                io.read_agent_object(*reference)
+                    .await?
+                    .code_evidence()
+                    .map_err(|_| LocalError::Corrupt)?,
+            );
+        }
         Ok(LocalAgentStore {
             snapshot: LocalAgentSnapshot {
                 profile: LocalProfile::LocalJjGit,
@@ -129,6 +133,7 @@ impl LocalRepository {
             io,
             root,
             objects,
+            evidence,
         })
     }
 }

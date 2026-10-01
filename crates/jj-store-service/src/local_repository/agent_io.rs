@@ -1,3 +1,4 @@
+use super::agent_evidence::EvidenceIo;
 use super::records::GitRecords;
 use jj_store_wal::{
     self as wal,
@@ -9,12 +10,14 @@ use std::{collections::BTreeSet, sync::Arc};
 pub(crate) struct AgentIo {
     pub store: Arc<GitRecords>,
     pub records: Records,
+    pub evidence: EvidenceIo,
 }
 impl AgentIo {
-    pub fn new(store: Arc<GitRecords>) -> Self {
+    pub fn new(store: Arc<GitRecords>, evidence: EvidenceIo) -> Self {
         Self {
             records: Records::new(store.clone(), store.repository),
             store,
+            evidence,
         }
     }
     pub async fn audit(&self, root: &AgentRootV1) -> wal::Result<BTreeSet<AgentObjectRef>> {
@@ -71,6 +74,7 @@ impl AgentObjectIo for AgentIo {
         value
             .validate()
             .map_err(|_| wal::Error::Corrupt("local agent object"))?;
+        self.evidence.audit(&value)?;
         if !value
             .native_dependencies()
             .map_err(|_| wal::Error::Corrupt("local agent dependencies"))?
@@ -86,6 +90,7 @@ impl AgentObjectIo for AgentIo {
         object
             .validate()
             .map_err(|_| wal::Error::Corrupt("local agent object"))?;
+        self.evidence.audit(object)?;
         if !object
             .native_dependencies()
             .map_err(|_| wal::Error::Corrupt("local agent dependencies"))?

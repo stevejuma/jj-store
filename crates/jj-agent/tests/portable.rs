@@ -75,6 +75,17 @@ fn portable_provenance_retains_typed_source_evidence_and_native_v1_bytes() {
         include_bytes!("fixtures/native-association-v1.json")
     );
     let value = association();
+    let object = AgentObjectV1::PortableAssociation(value.clone());
+    assert_eq!(
+        decode_object(&encode_object(&object).unwrap()).unwrap(),
+        object
+    );
+    assert_eq!(object.kind(), AgentObjectKind::Association);
+    assert!(object.native_dependencies().unwrap().is_empty());
+    assert_eq!(
+        object.code_evidence().unwrap(),
+        value.code_evidence().unwrap()
+    );
     assert_eq!(value.facts, legacy.facts());
     assert_eq!(
         CodeAssociationV2::decode(&value.encode().unwrap()).unwrap(),
@@ -149,6 +160,12 @@ fn portable_associations_share_paths_trust_correction_and_evidence_policy() {
 #[test]
 fn portable_checkpoint_keeps_code_capture_and_execution_outcomes_independent() {
     let mut value = checkpoint();
+    let object = AgentObjectV1::PortableCheckpointVersion(value.clone());
+    assert_eq!(
+        decode_object(&encode_object(&object).unwrap()).unwrap(),
+        object
+    );
+    assert_eq!(object.kind(), AgentObjectKind::CheckpointVersion);
     value.validate().unwrap();
     assert_eq!(
         AgentCheckpointVersionV2::decode(&value.encode().unwrap()).unwrap(),

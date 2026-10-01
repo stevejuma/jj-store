@@ -21,6 +21,12 @@ heads or editing a checkout. Selected capsule reads reconstruct and verify
 source operation/view identities without requiring the source operation store or
 derived index. Capsule selection remains a domain publication concern.
 
+Capsule retention derives every non-root physical commit and backend tree from
+the exact archive. Selected reads require those entries in the selected metadata
+retention inventory, even when a blob was retained for another domain. An anchor
+additionally verifies its operation/profile and exact commit membership against
+that capsule.
+
 Search visibility uses the same bounded native commit-parent traversal as
 operation differences. It starts at the explicitly selected operation's view
 heads and does not follow predecessor links or reconcile operation heads.

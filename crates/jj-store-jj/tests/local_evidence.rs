@@ -77,6 +77,21 @@ fn select(store: &MetadataStore, evidence: &CapturedEvidence) -> Snapshot {
 }
 
 #[tokio::test]
+async fn retained_capsule_blob_without_its_code_closure_is_rejected() {
+    let (root, store, op) = fixture();
+    let mut evidence = capture(&settings(), &root.path().join(".jj/repo"), REPO, op, &store)
+        .await
+        .unwrap();
+    evidence.retained = BTreeMap::from([(evidence.blob, RetainedKind::Blob)]);
+    let selected = select(&store, &evidence);
+    assert!(
+        store
+            .read_evidence(&selected, REPO, evidence.capsule, evidence.blob)
+            .is_err()
+    );
+}
+
+#[tokio::test]
 async fn capsule_retains_full_source_context_after_op_store_loss_and_git_gc() {
     let (root, store, op) = fixture();
     let repo_path = root.path().join(".jj/repo");

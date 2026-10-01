@@ -14,6 +14,13 @@ version and canonical record inventory are selected only by companion ref CAS.
 Unknown outcomes preserve the original request for retry; no code operation,
 checkout or native manifest is changed by this domain command.
 
+Local provenance commands retain the exact portable record, expected selection
+and bounded canonical source capsule bytes as their intent. Shared projection
+requires existing session identity and root-pinned dependency reads; corrections
+retain the selected previous version. A ref race reapplies disjoint edits and
+reports same-key changes as stale. Record and capsule inventories are selected
+together; staging alone exposes neither.
+
 The local session pager binds continuations to selected metadata history, page
 size and the last catalog key. Staged candidates cannot be selected through a
 cursor; later publications and process restart do not replace the pinned root.

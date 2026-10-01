@@ -2,6 +2,8 @@
 //! admission; filesystem permissions remain the local access boundary.
 mod actor;
 mod agent_commands;
+mod agent_descriptor;
+mod agent_evidence;
 mod agent_io;
 mod agent_pages;
 mod agent_store;
@@ -10,6 +12,7 @@ mod records;
 pub use agent_commands::{
     LocalAgentCommand, LocalAgentOutcome, LocalAgentReceipt, LocalAgentRequest,
 };
+pub use agent_evidence::LocalCodeEvidenceV1;
 pub use agent_pages::{LocalAgentPage, LocalAgentSessionRow};
 pub use agent_store::{LocalAgentSnapshot, LocalAgentStore};
 pub use errors::{LocalError, LocalResult};

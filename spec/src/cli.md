@@ -9,6 +9,11 @@ native prepared delta before publication, rejects cross-profile delivery and
 stops ordered progress on unknown outcomes. Local receipt and pinned
 session-page output identify their metadata profile and snapshot explicitly.
 
+The CLI-owned upstream boundary additionally qualifies direct local provenance
+publication against exact GitBackend capsules and stock JJ/Git. This fixture
+proves the service provider; user-facing provenance commands and automatic hook
+code association remain separately gated.
+
 Native search acceptance compares selected-view commit visibility with retained
 historical metadata, including invisible predecessors and pagination after
 hidden-hit filtering. These fixtures do not introduce CLI search commands.

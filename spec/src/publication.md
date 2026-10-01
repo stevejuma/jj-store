@@ -13,6 +13,13 @@ adapter admits only immutable domain records and publishes through its separate
 expected-old-value ref protocol. Record framing and native authority are
 unchanged.
 
+Portable agent objects expose capsule dependencies separately from native
+retention roots. Native staging and recovery reject unsupported portable
+evidence. Local descriptor V2 selects a canonical capsule inventory with the
+root and retains every declared Git commit and nonstandard tree dependency;
+descriptor V1 remains readable. The shared provenance reducer can stage records
+and relation pages but cannot publish either provider's state.
+
 ## Requirements
 
 | ID          | Requirement                                                                                                                                                                              |

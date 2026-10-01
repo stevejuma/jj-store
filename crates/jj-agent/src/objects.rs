@@ -83,6 +83,8 @@ pub enum AgentObjectV1 {
     Content(AgentContentV1),
     CheckpointVersion(AgentCheckpointVersionV1),
     Association(CodeAssociationV1),
+    PortableCheckpointVersion(crate::AgentCheckpointVersionV2),
+    PortableAssociation(crate::CodeAssociationV2),
     Alias(AgentAliasV1),
     RelationPage(AgentRelationPageV1),
     SourceState(CaptureSourceStateV1),
@@ -103,6 +105,8 @@ impl AgentObjectV1 {
             Self::Content(_) => AgentObjectKind::Content,
             Self::CheckpointVersion(_) => AgentObjectKind::CheckpointVersion,
             Self::Association(_) => AgentObjectKind::Association,
+            Self::PortableCheckpointVersion(_) => AgentObjectKind::CheckpointVersion,
+            Self::PortableAssociation(_) => AgentObjectKind::Association,
             Self::Alias(_) => AgentObjectKind::Alias,
             Self::RelationPage(_) => AgentObjectKind::RelationPage,
             Self::SourceState(_) => AgentObjectKind::SourceState,
@@ -123,6 +127,8 @@ impl AgentObjectV1 {
             Self::Content(value) => value.validate(),
             Self::CheckpointVersion(value) => value.validate(),
             Self::Association(value) => value.validate(),
+            Self::PortableCheckpointVersion(value) => value.validate(),
+            Self::PortableAssociation(value) => value.validate(),
             Self::Alias(value) => value.validate(),
             Self::RelationPage(value) => value.validate(),
             Self::SourceState(value) => value.validate(),
@@ -142,6 +148,8 @@ impl AgentObjectV1 {
             Self::TranscriptPage(value) => value.dependencies()?.into_iter().collect(),
             Self::CheckpointVersion(value) => value.dependencies()?.into_iter().collect(),
             Self::Association(value) => value.dependencies()?.into_iter().collect(),
+            Self::PortableCheckpointVersion(value) => value.dependencies()?.into_iter().collect(),
+            Self::PortableAssociation(value) => value.dependencies()?.into_iter().collect(),
             Self::Alias(_) | Self::SourceState(_) => Vec::new(),
             Self::RelationPage(value) => value.dependencies()?.into_iter().collect(),
             Self::ProjectionCatalog(value) => value.dependencies()?.into_iter().collect(),
@@ -154,6 +162,21 @@ impl AgentObjectV1 {
             Self::CheckpointVersion(value) => value.native_dependencies(),
             Self::Association(value) => value.native_dependencies(),
             Self::CatalogConflict(_) => Ok(BTreeSet::new()),
+            _ => Ok(BTreeSet::new()),
+        }
+    }
+    pub fn code_evidence(&self) -> Result<BTreeSet<jj_store_model::portable::CodeEvidenceRefV1>> {
+        self.validate()?;
+        match self {
+            Self::PortableCheckpointVersion(value) => value.code_evidence(),
+            Self::PortableAssociation(value) => value.code_evidence(),
+            Self::RelationPage(value) => match &value.subject {
+                crate::AgentRelationSubjectV1::PortableOperation { evidence }
+                | crate::AgentRelationSubjectV1::PortableRevision { evidence, .. } => {
+                    Ok(BTreeSet::from([evidence.clone()]))
+                }
+                _ => Ok(BTreeSet::new()),
+            },
             _ => Ok(BTreeSet::new()),
         }
     }

@@ -8,6 +8,7 @@ mod agent_catalog;
 mod agent_catalog_engine;
 mod agent_delta;
 mod agent_io;
+mod agent_provenance;
 mod agent_read_engine;
 mod agent_reads;
 mod application;

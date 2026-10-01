@@ -57,7 +57,13 @@ so receipt replay precedes overlap checks and generated object identities do not
 alter intent. A ref race retries against the selected root; source overlap still
 fails stale. Publishing AgentStore preserves WorkStore and other domains. Native
 V1 code associations require native evidence and are rejected by this provider
-until the portable association/checkpoint gate is qualified.
+unless a native evidence provider is available. Portable association/checkpoint
+commands bind original records, exact capsule bytes and expected immutable
+selections. The provider validates source identity, operation/profile and commit
+membership, retains the complete physical Git closure and selects the evidence
+inventory alongside the AgentStore root. Missing, mismatched or unselected
+capsules fail closed. Corrections retain prior versions and require exact stale
+preconditions; receipt replay precedes those checks.
 
 CLI hook ingestion retains the existing sanitizer-before-durability boundary.
 Its shared private spool persists the complete local typed request before a

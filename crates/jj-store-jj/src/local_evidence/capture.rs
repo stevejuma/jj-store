@@ -97,20 +97,28 @@ async fn capture_inner(
     let bytes = capsule.encode()?;
     let id = m::CodeCapsuleId::new(Sha256::digest(&bytes).into());
     let blob = metadata.stage_blob(&bytes)?;
-    let mut retained = BTreeMap::from([(blob, RetainedKind::Blob)]);
-    for (id, commit) in &capsule.commits {
-        if *id != m::GitSha1Id::new([0; 20]) {
-            retained.insert(id.to_string().parse()?, RetainedKind::Commit);
-        }
-        for tree in &commit.root_tree {
-            retained.insert(tree.to_string().parse()?, RetainedKind::Tree);
-        }
-    }
+    let retained = capsule.retention(blob)?;
     Ok(CapturedEvidence {
         capsule: id,
         blob,
         retained,
     })
+}
+
+impl GitEvidenceCapsuleV1 {
+    pub fn retention(&self, blob: GitOid) -> Result<BTreeMap<GitOid, RetainedKind>> {
+        self.validate()?;
+        let mut retained = BTreeMap::from([(blob, RetainedKind::Blob)]);
+        for (id, commit) in &self.commits {
+            if *id != m::GitSha1Id::new([0; 20]) {
+                retained.insert(id.to_string().parse()?, RetainedKind::Commit);
+            }
+            for tree in &commit.root_tree {
+                retained.insert(tree.to_string().parse()?, RetainedKind::Tree);
+            }
+        }
+        Ok(retained)
+    }
 }
 
 impl MetadataStore {
@@ -126,6 +134,11 @@ impl MetadataStore {
             GitEvidenceCapsuleV1::decode(capsule, &self.read_retained_blob(selected, blob)?)?;
         if value.repository != source {
             return Err(Error::Invalid("capsule source repository"));
+        }
+        for (id, kind) in value.retention(blob)? {
+            if selected.root.retained.get(&id) != Some(&kind) {
+                return Err(Error::Invalid("incomplete retained capsule closure"));
+            }
         }
         Ok(value)
     }

@@ -1,11 +1,12 @@
 use super::{
-    LocalError, LocalProfile, LocalRepository, LocalResult, agent_store::LocalAgentRootV1,
+    LocalCodeEvidenceV1, LocalError, LocalProfile, LocalRepository, LocalResult,
+    agent_descriptor::LocalAgentRootV2,
 };
 use jj_store_jj::local_metadata::{Domain, Preparation, PublishOutcome, Receipt, Update};
 use jj_store_model as m;
 use jj_store_wal::publication::{
-    AgentCatalogEditor, AgentProjector, CaptureBatchId, NormalizerProfileV1,
-    SanitizedObservationBatchV1,
+    AgentCatalogEditor, AgentObjectRef, AgentObjectV1, AgentProjector, CaptureBatchId,
+    NormalizerProfileV1, SanitizedObservationBatchV1,
 };
 use serde::{Deserialize, Serialize};
 use sha2::{Digest as _, Sha256};
@@ -17,6 +18,11 @@ pub enum LocalAgentCommand {
     Capture {
         profile: NormalizerProfileV1,
         batch: Box<SanitizedObservationBatchV1>,
+    },
+    Provenance {
+        expected: Option<AgentObjectRef>,
+        object: Box<AgentObjectV1>,
+        evidence: Vec<LocalCodeEvidenceV1>,
     },
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -34,6 +40,41 @@ impl LocalAgentRequest {
         if let LocalAgentCommand::Capture { profile, batch } = &self.command {
             batch.validate().map_err(|_| LocalError::Invalid)?;
             profile.validate().map_err(|_| LocalError::Unsupported)?;
+        }
+        if let LocalAgentCommand::Provenance {
+            expected,
+            object,
+            evidence,
+        } = &self.command
+        {
+            if !matches!(
+                object.as_ref(),
+                AgentObjectV1::PortableAssociation(_) | AgentObjectV1::PortableCheckpointVersion(_)
+            ) {
+                return Err(LocalError::Unsupported);
+            }
+            if expected.is_some_and(|v| v.kind != object.kind()) {
+                return Err(LocalError::Invalid);
+            }
+            object.validate().map_err(|_| LocalError::Invalid)?;
+            let required = object.code_evidence().map_err(|_| LocalError::Invalid)?;
+            let mut seen = std::collections::BTreeSet::new();
+            let mut bytes = 0usize;
+            if evidence.len() > 1024 {
+                return Err(LocalError::Limit);
+            }
+            for value in evidence {
+                bytes = bytes
+                    .checked_add(value.bytes.len())
+                    .ok_or(LocalError::Limit)?;
+                if bytes > 16 * 1024 * 1024 {
+                    return Err(LocalError::Limit);
+                }
+                if !required.contains(&value.reference) || !seen.insert(&value.reference) {
+                    return Err(LocalError::Invalid);
+                }
+                value.validate()?;
+            }
         }
         Ok(())
     }
@@ -137,6 +178,19 @@ impl LocalRepository {
                         .apply_delta(&base, &delta)
                         .await?
                 }
+                LocalAgentCommand::Provenance {
+                    expected,
+                    object,
+                    evidence,
+                } => {
+                    base.io.evidence.stage(evidence)?;
+                    let delta = AgentProjector::new(base.io.as_ref())
+                        .stage_agent_provenance(&base, *expected, object)
+                        .await?;
+                    AgentCatalogEditor::new(base.io.as_ref())
+                        .apply_delta(&base, &delta)
+                        .await?
+                }
             };
             let reference = base.io.stage_root(&root).await?;
             let result = AgentResult {
@@ -158,15 +212,20 @@ impl LocalRepository {
                     .as_ref()
                     .and_then(|s| s.selection(Domain::Agent))
                     .cloned(),
-                bytes: serde_json::to_vec(&LocalAgentRootV1 {
-                    version: 1,
+                bytes: serde_json::to_vec(&LocalAgentRootV2 {
+                    version: 2,
                     repository,
                     root: reference,
                     records: base.io.store.inventory(),
+                    evidence: base.io.evidence.inventory(),
                 })
                 .map_err(|_| LocalError::Corrupt)?,
                 result: serde_json::to_vec(&result).map_err(|_| LocalError::Corrupt)?,
-                retained: base.io.store.retained(),
+                retained: {
+                    let mut retained = base.io.store.retained();
+                    retained.extend(base.io.evidence.retained());
+                    retained
+                },
             };
             let candidate = match self.metadata.prepare(selected.as_ref(), &update)? {
                 Preparation::Committed(value) => return receipt(&value),

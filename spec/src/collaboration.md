@@ -110,6 +110,14 @@ decoders reject unknown versions, fields and noncanonical bytes. Native V1 field
 order and serialization remain frozen; these additive models do not by
 themselves enable a persistence provider or CLI command.
 
+Portable object variants retain the existing repository-bound AgentObject record
+framing and semantic catalog kinds. Shared provenance projection validates the
+selected session and pinned checkpoint dependencies, exact correction selection
+and stable identities, then adds typed session/tool/checkpoint/code relation
+pages. Git relation subjects carry source-profile evidence rather than native
+commit IDs. Native storage rejects portable evidence until its own capsule
+carrier is implemented; it cannot silently discard those retention edges.
+
 An AgentStore read is pinned to one selected `AgentRootV1`. Stable session,
 checkpoint and association keys resolve through bounded persistent radix pages;
 immutable object reads succeed only for references in that root's audited
