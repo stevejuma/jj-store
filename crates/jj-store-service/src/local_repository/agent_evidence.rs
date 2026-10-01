@@ -168,7 +168,11 @@ impl EvidenceIo {
         }
         Ok(())
     }
-    fn commit(&self, evidence: &CodeEvidenceRefV1, commit: &CodeCommitIdV1) -> wal::Result<()> {
+    pub(crate) fn commit(
+        &self,
+        evidence: &CodeEvidenceRefV1,
+        commit: &CodeCommitIdV1,
+    ) -> wal::Result<()> {
         let capsule = self
             .read(evidence)
             .map_err(|_| wal::Error::Corrupt("agent capsule evidence"))?;

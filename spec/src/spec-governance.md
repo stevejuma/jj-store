@@ -529,3 +529,9 @@ and reducer qualification require replication.md. The milestone ledger keeps
 native memory-store, local filesystem, direct-consumer compilation and real
 RustFS/cold acceptance as distinct evidence. Shared authority infrastructure
 justifies the full relevant WAL suite; it does not justify unrelated UI lanes.
+The boundary checker permits the local service's direct jj-collab dependency for
+shared pure command and target policy. A local descriptor/provider slice runs
+its exact filesystem regressions, shared domain tests, direct local Agent/Review
+consumer tests and crate checks. Public transport generation is required when
+HTTP/RPC schemas change, separately from these Rust provider types. Root
+aggregate and unrelated presentation lanes remain out of scope.

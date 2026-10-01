@@ -26,7 +26,10 @@ pub trait ReactionTargetRead: Send + Sync {
     async fn review_object(&self, reference: ReviewObjectRef) -> Result<Option<ReviewObjectV1>>;
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(
+    Clone, Copy, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize, schemars::JsonSchema,
+)]
+#[serde(rename_all = "snake_case")]
 pub enum TargetRevisionV1 {
     Current,
     Earlier,

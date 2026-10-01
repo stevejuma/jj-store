@@ -601,3 +601,14 @@ Local Search configuration and operation reports use owned service types. These
 settings affect rebuildable adapters only and cannot publish repository state.
 The server owns file revisions, persistence, worker draining and activation;
 transport admission independently verifies local administrative access.
+
+Local Thread, Reaction and emoji-library commands share the jj-collab projector
+and retain a typed result in the companion receipt. Callers cannot supply an
+actor. Reaction targets and explicit session/review links are validated against
+the same captured metadata commit used for expected-old-ref publication; a race
+reloads every source selection before retry. Human edits retain exact revisions,
+primary session reassignment preserves historical links, and custom image
+definitions use exact version preconditions. Reads neither initialize metadata
+nor establish an actor. Local query pages suppress current hidden/tombstoned
+targets and preserve earlier-version distinctions. Native command adapters,
+HTTP/RPC/CLI exposure and atomic capture binding remain pending qualification.

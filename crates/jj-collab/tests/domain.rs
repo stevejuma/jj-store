@@ -11,6 +11,97 @@ fn slot() -> ReactionSlotV1 {
         },
     )
 }
+
+#[test]
+fn shared_reaction_projector_retains_conflicts_until_exact_explicit_resolution() {
+    use jj_store_model::RequestId;
+    let mut graph = CollabGraphV1::default();
+    let base = slot();
+    let empty = ReactionStateV1::empty();
+    let set = |value| ReactionCommandV1::Set {
+        target: base.target.clone(),
+        value,
+        observed: BTreeSet::new(),
+    };
+    let (_, a) = empty
+        .apply(
+            &set(ReactionValueV1::Like),
+            base.repository,
+            base.actor,
+            RequestId::new([1; 16]),
+            10,
+            &mut graph,
+        )
+        .unwrap();
+    let (_, b) = empty
+        .apply(
+            &set(ReactionValueV1::Dislike),
+            base.repository,
+            base.actor,
+            RequestId::new([2; 16]),
+            10,
+            &mut graph,
+        )
+        .unwrap();
+    let (CollabObjectV1::ReactionSlot(a), CollabObjectV1::ReactionSlot(b)) =
+        (graph.get(a.slot).unwrap(), graph.get(b.slot).unwrap())
+    else {
+        panic!()
+    };
+    let union = a.merge(b).unwrap();
+    let key = union.key().unwrap();
+    let selected = graph.stage(CollabObjectV1::ReactionSlot(union)).unwrap();
+    let mut root = ReactionRootV1::empty();
+    root.slots = graph
+        .catalog_update(None, BTreeMap::from([(key, selected)]))
+        .unwrap();
+    let state = ReactionStateV1::read(base.repository, root, &graph).unwrap();
+    let CollabObjectV1::ReactionSlot(slot) = graph.get(selected).unwrap() else {
+        panic!()
+    };
+    let observed = slot.resolve(&graph.objects).unwrap().active;
+    let implicit = ReactionCommandV1::Set {
+        target: base.target.clone(),
+        value: ReactionValueV1::Like,
+        observed: observed.clone(),
+    };
+    assert!(
+        state
+            .apply(
+                &implicit,
+                base.repository,
+                base.actor,
+                RequestId::new([3; 16]),
+                11,
+                &mut graph
+            )
+            .is_err()
+    );
+    let explicit = ReactionCommandV1::ResolveConflict {
+        target: base.target,
+        value: Some(ReactionValueV1::Like),
+        observed,
+    };
+    let (root, result) = state
+        .apply(
+            &explicit,
+            base.repository,
+            base.actor,
+            RequestId::new([4; 16]),
+            11,
+            &mut graph,
+        )
+        .unwrap();
+    assert!(!result.conflict);
+    assert_eq!(result.value, Some(ReactionValueV1::Like));
+    assert_eq!(result.active.len(), 1);
+    ReactionStateV1::read(base.repository, root, &graph).unwrap();
+    let CollabObjectV1::ReactionSlot(slot) = graph.get(result.slot).unwrap() else {
+        panic!()
+    };
+    assert_eq!(slot.additions.len(), 3);
+    assert_eq!(slot.retractions.len(), 1);
+}
 fn add(
     base: &ReactionSlotV1,
     value: ReactionValueV1,

@@ -106,6 +106,13 @@ Limits are 2 MiB encoded, 512 by 512 pixels, 100 frames and 64 MiB aggregate
 decoded pixels. SVG/executable content and external URL dependencies are
 rejected.
 
+Custom library commands use an exact observed definition version. A new reaction
+selects the current non-retired definition; editing or retiring a definition
+does not rewrite historical reactions or discard their source/preview bytes.
+Shortcodes are unique among current non-retired definitions. Thread and reaction
+projectors derive immutable event identities from the authenticated actor and
+stable request ID, and retain exact command results in the provider receipt.
+
 The slot key is repository, authenticated actor and exact target. Set, Clear and
 ResolveConflict name exactly observed active records. Replacement atomically
 retracts observed records and adds the new immutable value. Duplicate same-value

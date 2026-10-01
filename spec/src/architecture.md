@@ -27,7 +27,11 @@ projectors stage graphs; persistence providers authorize and select roots. The
 async target-reader contract supports both storage profiles without an execution
 runtime dependency. WAL composes existing immutable read facades; the domain
 checks membership and visibility while owning providers verify repository
-envelopes and retain authorization and publication authority.
+envelopes and retain authorization and publication authority. The local service
+consumes jj-collab directly for the same pure commands and uses independent
+canonical Git-blob descriptors plus existing source record and capsule carriers.
+Source closure validation and physical retention remain adapter concerns; the
+domain cannot publish a Git ref or repository manifest.
 
 ## Requirements
 

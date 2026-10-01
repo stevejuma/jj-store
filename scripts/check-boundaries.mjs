@@ -30,6 +30,7 @@ export function dependencyErrors(packages) {
     ],
     "jj-store-jj": ["jj-store-model", "jj-store-object", "jj-store-wal"],
     "jj-store-service": [
+      "jj-collab",
       "jj-store-adapters",
       "jj-store-model",
       "jj-store-jj",

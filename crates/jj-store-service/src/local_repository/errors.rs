@@ -24,6 +24,17 @@ pub enum LocalError {
     ThreadOpen,
 }
 pub type LocalResult<T> = Result<T, LocalError>;
+impl From<jj_collab::Error> for LocalError {
+    fn from(error: jj_collab::Error) -> Self {
+        match error {
+            jj_collab::Error::Stale => Self::Stale,
+            jj_collab::Error::TargetUnavailable => Self::NotFound,
+            jj_collab::Error::ReadUnavailable => Self::Unavailable,
+            jj_collab::Error::Limit => Self::Limit,
+            _ => Self::Invalid,
+        }
+    }
+}
 impl From<jj_store_wal::publication::ReviewCommandError> for LocalError {
     fn from(error: jj_store_wal::publication::ReviewCommandError) -> Self {
         use jj_store_wal::publication::ReviewCommandError as E;

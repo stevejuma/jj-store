@@ -8,6 +8,11 @@ mod agent_io;
 mod agent_pages;
 mod agent_provenance_pages;
 mod agent_store;
+mod collab_commands;
+mod collab_external;
+mod collab_graph;
+mod collab_store;
+mod collab_types;
 mod errors;
 mod records;
 mod review_commands;
@@ -21,6 +26,11 @@ pub use agent_evidence::LocalCodeEvidenceV1;
 pub use agent_pages::{LocalAgentPage, LocalAgentSessionRow};
 pub use agent_provenance_pages::{LocalAgentObjectPage, LocalAgentObjectRow};
 pub use agent_store::{LocalAgentSnapshot, LocalAgentStore};
+pub use collab_store::{
+    LocalCollabSnapshot, LocalEmojiPageV1, LocalReactionPageV1, LocalReactionRowV1,
+    LocalReactionStore, LocalThreadStore,
+};
+pub use collab_types::*;
 pub use errors::{LocalError, LocalResult};
 pub use review_store::{LocalReviewSnapshot, LocalReviewStore};
 pub use review_types::{
