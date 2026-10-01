@@ -36,6 +36,26 @@
         ),
       ).toHaveTextContent("Awaiting reaction confirmation"),
     );
+    const status = within(message).getByRole("status");
+    const metadataRow = status.closest(".community-message__metadata");
+    await expect(metadataRow).not.toBeNull();
+    await expect(
+      status.querySelector('[data-ui-component="spinner"]'),
+    ).not.toBeNull();
+    if (!reply) {
+      const replies = within(message).getByRole("button", { name: "1 reply" });
+      await expect(metadataRow).toContainElement(replies);
+      await expect(
+        replies.compareDocumentPosition(status) &
+          Node.DOCUMENT_POSITION_FOLLOWING,
+      ).toBeTruthy();
+      const time = metadataRow!.querySelector('[data-ui-part="timestamp"]')!;
+      await expect(
+        Math.abs(
+          time.getBoundingClientRect().top - status.getBoundingClientRect().top,
+        ),
+      ).toBeLessThan(8);
+    }
     await expect(
       canvasElement.querySelector(
         '.store-threads > [data-ui-component="alert"]',
@@ -229,7 +249,7 @@
 
 <Story
   name="Unknown reaction stays in main message metadata"
-  args={{ selected: true, unknownFirst: true }}
+  args={{ selected: true, unknownFirst: true, withReply: true }}
   play={(context) => pendingReaction(context)}
 />
 <Story
@@ -260,8 +280,24 @@
         message.querySelector(
           '[data-ui-component="ai-chat-message-metadata"] [role="alert"]',
         ),
-      ).toHaveTextContent("access denied"),
+      ).toHaveTextContent("Failed"),
     );
+    const retry = within(message).getByRole("button", {
+      name: "Retry reactions",
+    });
+    const metadataRow = retry.closest(".community-message__metadata");
+    await expect(metadataRow).not.toBeNull();
+    await expect(retry.textContent?.trim()).toBe("");
+    await expect(metadataRow).toContainElement(
+      within(message).getByRole("alert"),
+    );
+    within(message).getByRole("button", { name: "Reaction failed" }).focus();
+    await expect(
+      await body.findByText(/access denied/, {
+        selector: '[data-ui-part="tooltip-content"]',
+      }),
+    ).toBeVisible();
+    within(message).getByRole("button", { name: "Reaction failed" }).blur();
     await expect(
       canvasElement.querySelector(
         '.store-threads > [data-ui-component="alert"]',

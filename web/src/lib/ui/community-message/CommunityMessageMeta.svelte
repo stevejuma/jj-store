@@ -1,5 +1,6 @@
 <script lang="ts">
   import { MessageMetadata } from "@lapismd/design-core/ai/chat";
+  import type { Snippet } from "svelte";
 
   import type {
     CommunityMemberModel,
@@ -23,10 +24,12 @@
     onMessageMember,
     onWaveMember,
     onViewMemberActivity,
+    supplement,
   }: {
     message: CommunityMessageModel;
     members?: readonly CommunityMemberModel[];
     isContinuation?: boolean;
+    supplement?: Snippet;
     replyParticipants?: readonly CommunityMemberModel[];
     onOpenThread?: ((messageId: string) => void) | undefined;
     onOpenProfile?: ((member: CommunityMemberModel) => void) | undefined;
@@ -82,17 +85,33 @@
       {onViewMemberActivity}
     />
   {/if}
+  {#if supplement}
+    <div
+      class="community-message__metadata-supplement"
+      data-ui-part="metadata-supplement"
+    >
+      {@render supplement()}
+    </div>
+  {/if}
 </div>
 
 <style>
   .community-message__metadata {
     display: flex;
+    flex-wrap: wrap;
     min-height: 1.5rem;
     align-items: center;
     gap: 0.4rem;
     color: var(--muted-foreground);
     font-size: var(--community-text-secondary);
     line-height: 1;
+  }
+  .community-message__metadata-supplement {
+    display: inline-flex;
+    align-items: center;
+    min-width: 0;
+    gap: 0.4rem;
+    flex-wrap: wrap;
   }
 
   .community-message__metadata

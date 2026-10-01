@@ -74,7 +74,7 @@
     ? undefined
     : (id, text) => threads.send(text, undefined, id)}
 >
-  {#snippet messageSupplement(message)}
+  {#snippet messageMetadata(message)}
     {#if threads.projection.targets[message.id]}<StoreMessageReactions
         {threads}
         target={threads.projection.targets[message.id]!}

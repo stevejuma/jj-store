@@ -3,6 +3,12 @@
   import { targetKey } from "../../collaboration/thread-presentation.js";
   import CommunityReactions from "../community-reactions/CommunityReactions.svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
+  import { Spinner } from "@lapismd/design-core/shadcn/spinner";
+  import * as Tooltip from "@lapismd/design-core/shadcn/tooltip";
+  import RotateCwIcon from "@lucide/svelte/icons/rotate-cw";
+  import ListCheckIcon from "@lucide/svelte/icons/list-check";
+  import CircleXIcon from "@lucide/svelte/icons/circle-x";
+  import CircleAlertIcon from "@lucide/svelte/icons/circle-alert";
   import { untrack } from "svelte";
   import type {
     ReactionTarget,
@@ -13,15 +19,18 @@
     target,
     disabled = false,
     showControls = true,
+    showFeedback = true,
   }: {
     threads: ThreadsController;
     target: ReactionTarget;
     disabled?: boolean;
     showControls?: boolean;
+    showFeedback?: boolean;
   } = $props();
   let error = $state("");
   const actionError = $derived(threads.reactionError(target));
   const items = $derived(threads.getReaction(target));
+  const failure = $derived(error || actionError);
   const pending = $derived(
     threads.pending?.kind === "reactions" &&
       (threads.pending.request.command.type === "set" ||
@@ -72,38 +81,70 @@
       onSelect={(emoji, custom) => select(emoji, custom)}
     />{/if}
   {#snippet feedback()}
-    {#if pending}<span role="status">Awaiting reaction confirmation.</span>
-      <Button
-        variant="outline"
-        size="sm"
-        disabled={threads.busy}
-        onclick={threads.checkPending}>Check action status</Button
-      >
-      <Button
-        variant="ghost"
-        size="sm"
-        disabled={threads.busy}
-        onclick={() => threads.retryPending().catch((e) => (error = String(e)))}
-        >Retry same action</Button
-      >
-    {/if}
-    {#if items?.conflict_count}<span role="status"
-        >Reaction conflict. Refresh and resolve before changing it.</span
-      >{/if}
-    {#if !pending && (error || actionError)}<span role="alert"
-        >{error || actionError}</span
-      ><Button
-        variant="ghost"
-        size="sm"
-        onclick={() => {
-          error = "";
-          void threads
-            .loadReactions(target, true)
-            .catch((e) => (error = String(e)));
-        }}>Retry reactions</Button
-      >{/if}
+    <Tooltip.Provider delayDuration={0}>
+      <span class="store-reaction-feedback">
+        {#if pending}
+          {#if !threads.busy}
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              aria-label="Check action status"
+              title="Check action status"
+              onclick={threads.checkPending}
+              ><ListCheckIcon aria-hidden="true" /></Button
+            >
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              aria-label="Retry same action"
+              title="Retry same action"
+              onclick={() =>
+                threads.retryPending().catch((e) => (error = String(e)))}
+              ><RotateCwIcon aria-hidden="true" /></Button
+            >
+          {/if}
+          <span role="status">
+            <Spinner aria-hidden="true" role="presentation" />
+            <span class="sr-only">Awaiting reaction confirmation.</span>
+          </span>
+        {:else if failure}
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            aria-label="Retry reactions"
+            title="Retry reactions"
+            onclick={() => {
+              error = "";
+              void threads
+                .loadReactions(target, true)
+                .catch((e) => (error = String(e)));
+            }}><RotateCwIcon aria-hidden="true" /></Button
+          >
+          <span data-ui-part="separator" aria-hidden="true">·</span>
+          <Tooltip.Root>
+            <Tooltip.Trigger aria-label="Reaction failed">
+              <span data-ui-part="status" data-status="error" role="alert"
+                ><CircleXIcon aria-hidden="true" />Failed</span
+              >
+            </Tooltip.Trigger>
+            <Tooltip.Content>Reaction failed: {failure}</Tooltip.Content>
+          </Tooltip.Root>
+        {:else if items?.conflict_count}
+          <Tooltip.Root>
+            <Tooltip.Trigger aria-label="Reaction conflict">
+              <span data-ui-part="status" role="status">
+                <CircleAlertIcon aria-hidden="true" />Conflict
+              </span>
+            </Tooltip.Trigger>
+            <Tooltip.Content
+              >Reaction conflict. Refresh and resolve before changing it.</Tooltip.Content
+            >
+          </Tooltip.Root>
+        {/if}
+      </span>
+    </Tooltip.Provider>
   {/snippet}
-  {#if pending || items?.conflict_count || error || actionError}<MessageMetadata
+  {#if showFeedback && (pending || items?.conflict_count || error || actionError)}<MessageMetadata
       footer={feedback}
     />{/if}
 </div>
@@ -113,6 +154,11 @@
     display: flex;
     align-items: center;
     flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+  .store-reaction-feedback {
+    display: inline-flex;
+    align-items: center;
     gap: 0.35rem;
   }
 </style>

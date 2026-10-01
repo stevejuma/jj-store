@@ -43,6 +43,7 @@
     onLoadOlder,
     composerStatus,
     messageSupplement,
+    messageMetadata,
     footer,
   }: {
     room: CommunityRoomModel;
@@ -72,6 +73,7 @@
     onLoadOlder?: () => Promise<void>;
     composerStatus?: ComposerStatus;
     messageSupplement?: Snippet<[CommunityMessageModel]>;
+    messageMetadata?: Snippet<[CommunityMessageModel]>;
     footer?: Snippet;
   } = $props();
   import { useAppearance } from "../../appearance/store.svelte.js";
@@ -159,6 +161,9 @@
         {#snippet supplement()}{#if messageSupplement}{@render messageSupplement(
               message,
             )}{/if}{/snippet}
+        {#snippet metadataSupplement()}{#if messageMetadata}{@render messageMetadata(
+              message,
+            )}{/if}{/snippet}
         <CommunityMessage
           {message}
           author={memberById(members, message.authorId)}
@@ -189,6 +194,7 @@
             ? () => startEditing(message)
             : undefined}
           supplement={messageSupplement ? supplement : undefined}
+          metadataSupplement={messageMetadata ? metadataSupplement : undefined}
         />
       {/each}
     </MessageList>

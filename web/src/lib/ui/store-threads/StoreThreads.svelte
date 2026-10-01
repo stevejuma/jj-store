@@ -145,7 +145,7 @@
             },
           }}
         >
-          {#snippet messageSupplement(
+          {#snippet messageMetadata(
             message,
           )}{#if projection.targets[message.id]}<StoreMessageReactions
                 {threads}

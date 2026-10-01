@@ -26,7 +26,11 @@ authorized actors, exclude conflicts and group only values represented by the
 selected message revision's displayed chip. Pending/error UI is scoped to the
 exact reaction target in message metadata, including replies; unknown outcomes
 keep the same request ID and status/retry semantics, while non-reaction failures
-retain page feedback.
+retain page feedback. The metadata row shows a spinner while that target's
+command is in flight or awaiting confirmation, after timestamp and reply
+information. Compact retry controls retain the existing request/status
+semantics; error details remain available from the failure indicator without
+changing message content.
 
 The rebased HTTP inventory retains all local workspace, Search and Sync
 management routes alongside Thread, Reaction and retained-image routes. The

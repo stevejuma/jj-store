@@ -60,6 +60,7 @@
     currentMemberId,
     replyActionLabel = "Reply in thread",
     supplement,
+    metadataSupplement,
     avatarShape,
   }: CommunityMessageProps = $props();
   const resolvedAvatarShape = $derived(
@@ -259,7 +260,6 @@
         {@render supplement()}
       </div>
     {/if}
-
     <CommunityMessageMeta
       {message}
       {members}
@@ -270,6 +270,7 @@
       {onMessageMember}
       {onWaveMember}
       {onViewMemberActivity}
+      supplement={metadataSupplement}
     />
   {/snippet}
 </Message>

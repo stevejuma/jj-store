@@ -124,12 +124,12 @@ shared-package release qualification does not alter those original Git gates.
 | M14.5       | Planned     | M14.2                   | JST-UI-016,JST-PUB-005,JST-PUB-006                                                                                                                                                      | Storage integrity and non-destructive checkpoints                                                                              | Add bounded authorized operations and uncertain-outcome recovery                               | -                                                                                                                                                                                                                                                                                                                                                              |
 | M14.6       | In progress | M14.2,M10.7             | JST-UI-016,JST-REPL-012                                                                                                                                                                 | Configured sync status and controls in Settings                                                                                | Expose existing controls without upstream configuration or credential editing                  | E-M14-008,E-M14-010,E-M14-011,E-M14-012                                                                                                                                                                                                                                                                                                                        |
 | M14.7       | Planned     | M14.3,M14.4,M14.5,M14.6 | JST-UI-016,JST-SEC-006                                                                                                                                                                  | Integrated local settings and cold persistent acceptance                                                                       | Qualify completed native flow and preserve unsupported M13 capabilities                        | -                                                                                                                                                                                                                                                                                                                                                              |
-| M15         | In progress | M13.1                   | JST-COLLAB-008,JST-COLLAB-009,JST-COLLAB-010,JST-COLLAB-011,JST-COLLAB-012,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016,JST-GOV-008,JST-UI-017,JST-API-009,JST-ADAPT-007 | Persistent Threads and rich Reactions                                                                                          | Qualify native/local publication                                                               | E-M15-001,E-M15-005,E-M15-006,E-M15-007,E-M15-008,E-M15-009,E-M15-010,E-M15-011,E-M15-012,E-M15-013,E-M15-014,E-M15-015,E-M15-016,E-M15-017,E-M15-018,E-M15-019,E-M15-020,E-M15-021,E-M15-022,E-M15-025                                                                                                                                                        |
+| M15         | In progress | M13.1                   | JST-COLLAB-008,JST-COLLAB-009,JST-COLLAB-010,JST-COLLAB-011,JST-COLLAB-012,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016,JST-GOV-008,JST-UI-017,JST-API-009,JST-ADAPT-007 | Persistent Threads and rich Reactions                                                                                          | Qualify native/local publication                                                               | E-M15-001,E-M15-005,E-M15-006,E-M15-007,E-M15-008,E-M15-009,E-M15-010,E-M15-011,E-M15-012,E-M15-013,E-M15-014,E-M15-015,E-M15-016,E-M15-017,E-M15-018,E-M15-019,E-M15-020,E-M15-021,E-M15-022,E-M15-025,E-M15-030                                                                                                                                              |
 | M15.1       | In progress | M13.1                   | JST-COLLAB-008,JST-COLLAB-009,JST-COLLAB-010,JST-COLLAB-011,JST-COLLAB-012                                                                                                              | Canonical domain, lifecycle, exact targets, conflict semantics and retained images                                             | Qualify command/provider membership                                                            | E-M15-001,E-M15-005,E-M15-016                                                                                                                                                                                                                                                                                                                                  |
 | M15.2       | In progress | M15.1                   | JST-COLLAB-013                                                                                                                                                                          | Native format 5, local version 2, atomic roots, receipts, recovery and copy                                                    | Qualify native commands/capture and cold full flow                                             | E-M15-002,E-M15-004,E-M15-005,E-M15-012,E-M15-014,E-M15-016                                                                                                                                                                                                                                                                                                    |
 | M15.3       | In progress | M15.2                   | JST-COLLAB-014                                                                                                                                                                          | Bounded authorized services, HTTP/RPC, CLI and capture binding                                                                 | Complete native/public command boundaries                                                      | E-M15-004,E-M15-005,E-M15-006,E-M15-007,E-M15-008,E-M15-009,E-M15-010,E-M15-011,E-M15-012,E-M15-013,E-M15-014,E-M15-015,E-M15-016,E-M15-022                                                                                                                                                                                                                    |
 | M15.4       | Planned     | M15.2                   | JST-COLLAB-015                                                                                                                                                                          | Reducer 3 data-only convergence and complete closure transfer                                                                  | Qualify reordered and duplicate origin sets                                                    | -                                                                                                                                                                                                                                                                                                                                                              |
-| M15.5       | In progress | M15.3                   | JST-COLLAB-016,JST-GOV-008,JST-UI-017                                                                                                                                                   | Owned Community channel/forum templates, Threads navigation and native workspace search                                        | Retain interaction/cold UI and qualify remaining full flow                                     | E-M15-011,E-M15-015,E-M15-016,E-M15-017,E-M15-018,E-M15-019,E-M15-021,E-M15-022,E-M15-025                                                                                                                                                                                                                                                                      |
+| M15.5       | In progress | M15.3                   | JST-COLLAB-016,JST-GOV-008,JST-UI-017                                                                                                                                                   | Owned Community channel/forum templates, Threads navigation and native workspace search                                        | Retain interaction/cold UI and qualify remaining full flow                                     | E-M15-011,E-M15-015,E-M15-016,E-M15-017,E-M15-018,E-M15-019,E-M15-021,E-M15-022,E-M15-025,E-M15-030                                                                                                                                                                                                                                                            |
 | M15.6       | In progress | M15.3                   | JST-COLLAB-009,JST-COLLAB-010,JST-API-009,JST-ADAPT-007                                                                                                                                 | Derived canonical-source timeline/search and review integration                                                                | Qualify authorized joins                                                                       | E-M15-006,E-M15-020,E-M15-021,E-M15-022,E-M15-025                                                                                                                                                                                                                                                                                                              |
 | M15.7       | Planned     | M15.4,M15.5,M15.6       | JST-COLLAB-007,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                                                                                              | Cold real-RustFS/local full flow and runner qualification                                                                      | Retain native/local/cold evidence                                                              | -                                                                                                                                                                                                                                                                                                                                                              |
 | M16         | Partial     | M15.5                   | JST-UI-018                                                                                                                                                                              | Complete device Appearance and cold consumer qualification                                                                     | Complete source release and registry-only consumer qualification                               | E-UI-052,E-UI-053,E-UI-054,E-UI-055                                                                                                                                                                                                                                                                                                                            |
@@ -40330,6 +40330,172 @@ and named tests are checked by the progress gate.
     "versions": "Buzz ef2aa1ae38fadcc0bc22b8bf6ed96b35933146be; Design Core registry0.2.0 default theme (identical to existing installed0.1.2/yovkqwtu source via ignored hook); Mira0.0.2; Shiki4.0.2; pnpm10.32.1; JJ0.45.1; Svelte5.57.1; Bits UI2.18.1.",
     "next": "Use Original in Appearance for direct comparison. Retain M16 Partial and independently resolve its qualification gates.",
     "artifacts": "Logs /tmp/jj-composer-*.log, /tmp/jj-modal-*.log, /tmp/jj-original-*.log and /tmp/jj-theme-alignment-*.log. Private restart state evidence /tmp/jj-thread-theme-alignment-main-{before,ready}.json; screenshots /tmp/jj-store-{composer-fixed,modal-fixed,original-theme-picker}.jpg. Temporary diagnostic Storybook PID44833 and tab4 closed; temporary tab3 closed after final live proof; user tab1 refreshed in place and retained."
+  },
+  {
+    "id": "E-M15-030",
+    "tasks": ["M15", "M15.5"],
+    "date": "2026-10-02",
+    "kind": "reaction-feedback-in-shared-metadata-row",
+    "revision": "enclosing Jujutsu change pkxqztqp",
+    "before": "Clean main pkxqztqp on lwqssrow/2852a3e3. The owned message supplement precedes timestamp/replies and occupies the full width; feedback uses visible text buttons and no spinner. Exact new row/error regressions fail 3/3 before implementation. Initial display-name filter skipped all seven stories; rerun uses exported-name regex. /tmp/jj-reaction-row-before{,2}.log.",
+    "files": [
+      "catalog/components/store-threads/StoreThreads.stories.svelte",
+      "catalog/fixtures/StoreThreadsFixture.svelte",
+      "spec/src/api.md",
+      "spec/src/milestones.md",
+      "spec/src/ui.md",
+      "web/src/lib/ui/community-conversation/CommunityConversation.svelte",
+      "web/src/lib/ui/community-message/CommunityMessage.svelte",
+      "web/src/lib/ui/community-message/CommunityMessageMeta.svelte",
+      "web/src/lib/ui/community-message/props.ts",
+      "web/src/lib/ui/community-thread-panel/CommunityThreadMessage.svelte",
+      "web/src/lib/ui/community-thread-panel/props.ts",
+      "web/src/lib/ui/community-workspace/CommunityWorkspaceSurface.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentTranscript.svelte",
+      "web/src/lib/ui/store-collaboration/StoreReviewConversation.svelte",
+      "web/src/lib/ui/store-threads/StoreMessageReactions.svelte",
+      "web/src/lib/ui/store-threads/StoreThreadReplies.svelte",
+      "web/src/lib/ui/store-threads/StoreThreads.svelte",
+      "web/tests/browser/reaction-metadata.spec.ts"
+    ],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-threads/StoreThreads.stories.svelte -t 'Unknown reaction stays|Unknown reply reaction stays|Rejected reaction stays'",
+        "result": "pass",
+        "failures": 0,
+        "note": "Setup filter skipped 7/7; not acceptance. /tmp/jj-reaction-row-before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-threads/StoreThreads.stories.svelte -t 'Unknown.*[Rr]eaction|Rejected.*[Rr]eaction'",
+        "result": "fail",
+        "failures": 3,
+        "note": "Before2: 3 exact regression failures. After: 2 failures plus one Bits derived_inert diagnostic; fixture reply flag was corrected to the intended main story and error tooltip tested with its actual content selector. After2: 1 tooltip assertion failure, 2 passed. After3: 3/3 pass. After4 failed parsing one missing closing token during simplification; corrected. Before/after logs retained."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-threads/StoreThreads.stories.svelte -t 'Unknown.*[Rr]eaction|Rejected.*[Rr]eaction'",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final after5: 3/3 pass, 4 skipped; no runtime diagnostics. Main and reply pending feedback, timestamp/reply ordering, icon-only retries, destructive failure status and accessible error details. /tmp/jj-reaction-row-after5.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-threads catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-application/NativeMessageActions.stories.svelte catalog/components/store-application/AppearanceDiscussions.stories.svelte catalog/components/store-work/StoreWork.stories.svelte",
+        "result": "fail",
+        "failures": 2,
+        "note": "Intermediate 31/31 assertions but two transient recovery-tooltip teardown diagnostics. Replaced the disappearing recovery tooltips with ordinary titled icon buttons, retaining shadcn reaction/error tooltips. Next run: 30 passed/1 failed, no diagnostics; AppearanceDiscussions missed Appearance synchronously after switching settings. /tmp/jj-reaction-row-consumers{,-final}.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/AppearanceDiscussions.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact rerun of combined Appearance failure: 1/1 passes without changes; /tmp/jj-reaction-row-appearance-retry.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/reaction-feedback.test.ts web/tests/vite/production-threads.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "25/25, including retained uncertain request/retry identity. /tmp/jj-reaction-row-controller.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final checks zero errors/warnings. Intermediate web check had three noninteractive-tabindex warnings; changed statuses to semantic tooltip triggers. Catalog boundaries 129 modules. /tmp/jj-reaction-row-{web-check-final,catalog-check-final}.log."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial build pass. Intermediate final failed one missing closing token during icon-button simplification; final2 rebuilt successfully after correction. Existing large-chunk advisory retained. /tmp/jj-reaction-row-build{,-final,-final2}.log."
+      },
+      {
+        "command": "pnpm exec playwright test --config /tmp/jj-thread-main-slices-playwright.config.mjs reaction-metadata.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Cold final built bundle: 2/2. Held command verifies actual in-flight spinner, then unknown-outcome spinner with icon-only status/retry controls. Timestamp, reply avatars/count and feedback centers align within 2px, status last. Original request status and message body unchanged. /tmp/jj-reaction-row-cold{,-final}.log."
+      },
+      {
+        "command": "pnpm check:architecture; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "Owned-source budgets and no Community dependencies pass; no new copied files or provenance removals. /tmp/jj-reaction-row-{architecture-final,ownership}.log."
+      },
+      {
+        "command": "JJ_THREAD_SLICE_EVIDENCE_PREFIX=/tmp/jj-thread-reaction-row-main node /tmp/jj-thread-main-slice-restart.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Reuses inspected owned restart helpers and explicit native binary. Main PID46157->52603/storage52604,1333ms. Repository snapshots, selected thread/timeline, directory, fixture and installation unchanged; search ready/HTTP200. Served index matches rebuilt SHA256d348a8c941d04924bfcde2e43d4208fd70f1b9d5ec713875bfae950a3469f37d. /tmp/jj-reaction-row-restart.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-threads catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-application/NativeMessageActions.stories.svelte catalog/components/store-application/AppearanceDiscussions.stories.svelte catalog/components/store-work/StoreWork.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Second combined run 30/31 assertions, no diagnostics; NativeCopyReplyAndOwnAuthorEdit could not find its Copy comment ID submenu. /tmp/jj-reaction-row-consumers-qualified.log. Exact isolated retry also fails, proving it is not solely a combined-run timing issue."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/NativeMessageActions.stories.svelte -t NativeCopyReplyAndOwnAuthorEdit",
+        "result": "fail",
+        "failures": 1,
+        "note": "Current isolated story fails opening Copy comment ID. Read-only parent-source comparison temporarily selected all changed web source bytes from @-, ran identical target and then restored every current source byte in finally, checking for concurrent edits before restore. Unchanged parent also fails at Copy comment ID. /tmp/jj-reaction-row-native-{actions-retry,parent}.log. Owning existing NativeMessageActions submenu acceptance remains separate; no test weakened."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-threads/StoreThreads.stories.svelte catalog/components/store-application/NativeMessageActions.stories.svelte -t 'Unknown.*[Rr]eaction|Rejected.*[Rr]eaction|NativeCopyReplyAndOwnAuthorEdit'",
+        "result": "fail",
+        "failures": 1,
+        "note": "Dedicated metadata-slot implementation: all three exact reaction regressions pass; the existing copy-submenu failure remains. This motivated parent-source qualification above rather than another unqualified rerun. /tmp/jj-reaction-row-slots-exact.log."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress",
+        "result": "fail",
+        "failures": 1,
+        "note": "Initial spec-first requires the mapped api.md chapter for protected web source; updated its UI/request semantics explicitly. Spec validate and progress pass. Final document checks follow."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm web:build; pnpm check:architecture; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final dedicated-slot source: both Svelte checks report zero errors/warnings, catalog boundaries pass, built assets/manifest pass, architecture budgets and owned Community-source independence pass. Existing build chunk advisory retained. /tmp/jj-reaction-row-slots-{web-check,catalog-check,build,architecture,ownership}.log."
+      },
+      {
+        "command": "pnpm exec playwright test --config /tmp/jj-thread-main-slices-playwright.config.mjs reaction-metadata.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final dedicated-slot built bundle: 2/2 cold main/reply tests, including actual in-flight spinner and subsequent uncertain-outcome recovery, same-row geometry and original request identity/body preservation. /tmp/jj-reaction-row-slots-cold.log. Isolated preview process cleaned up."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-threads catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-application/NativeMessageActions.stories.svelte catalog/components/store-application/AppearanceDiscussions.stories.svelte catalog/components/store-work/StoreWork.stories.svelte",
+        "result": "fail",
+        "failures": 2,
+        "note": "Final dedicated-slot direct consumers: 29/31 pass, no runtime diagnostics. NativeCopyReplyAndOwnAuthorEdit retains the parent-proven Copy comment ID failure. FocusAndSplitPreserveToolDiscussionDrafts again misses its synchronous Appearance query after switching Settings; its prior isolated rerun passed without source changes. These existing qualification gaps remain explicit; no assertions or shared helpers changed. /tmp/jj-reaction-row-slots-consumers.log."
+      },
+      {
+        "command": "JJ_THREAD_SLICE_EVIDENCE_PREFIX=/tmp/jj-thread-reaction-row-slots-main node /tmp/jj-thread-main-slice-restart.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final dedicated-slot main rebuild/restart: PID52603->58258/storage58259,1564ms. Repository snapshots, selected thread/messages, thread directory, fixture and installed binaries unchanged; search ready/content HTTP200. Served index matches rebuilt SHA25695a71cd6b70804f45e57eac9d80bdfcb451d3b985db645039d0d4a04c4b400e9. /tmp/jj-reaction-row-slots-restart.log."
+      },
+      {
+        "command": "CUA main-tab reload and read-only verification; CUA rejected-reaction Storybook screenshot",
+        "result": "pass",
+        "failures": 0,
+        "note": "Main tab8 restores selected test thread, unchanged message, timestamp/Edited, reply avatar/count and empty composer after reload. Storybook tab10 visibly shows timestamp, icon-only retry and destructive Failed on one row. No real message/reaction mutation. Storybook6046 and main7460 retained. /tmp/jj-store-reaction-metadata-row-final.png."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress; pnpm exec prettier --check spec/src/api.md spec/src/ui.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Canonical UI/API and ledger consumers pass; final pre-ledger verification counted15 protected files/3 chapters,5 validators/21 chapters/146 requirements and120 tasks. All18 changed files also passed targeted formatting. /tmp/jj-reaction-row-{spec-first-final,spec-validate-final,progress-final,format-final}.log. Retained document checks after ledger finalization: /tmp/jj-reaction-row-ledger-{spec-first,spec-validate,progress,format}.log."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Requested metadata slice is implemented and its3 exact regressions,25 controller tests,2 cold browser tests, source/build/ownership and live restart checks pass. Broader direct-consumer acceptance remains29/31 because the existing Native copy-submenu and intermittent Appearance-story failures remain unresolved.",
+      "Visual baseline approval remains separate; stories remain visual-pending."
+    ],
+    "scope": "UI-only owned message row/reaction presentation. Shared CommunityMessage composition justifies complete direct Thread/Agent/Review/WorkStore message families and Appearance discussion; no shared test infrastructure changes. Rust checks/builds/tests, wire generation, root aggregates and unrelated full-suite lanes are out of scope. Native binaries reused without fixture reset/reseed, installed CLI replacement, package publication or unrelated service restart.",
+    "formats": "Reaction feedback uses a dedicated owned metadataSupplement/messageMetadata slot after timestamp/edited marker and reply avatars/count. General supplements retain their original placement, preserving copy/action presentation. Controls and feedback share controller caches/deduplicated loads. Recovery is icon-only; targeted pending action uses standard Spinner; error uses destructive CircleX/Failed and keyboard-accessible shadcn details. Transient recovery controls use native titles. Request/receipt, native/WAL, snapshot, wire and persistence formats unchanged.",
+    "versions": "JJ0.45.1; pnpm10.32.1; Svelte5.57.1; BitsUI2.18.1; installed DesignCore0.1.2 through existing ignored local validation hook, manifest registry range^0.2.0. No dependency changes.",
+    "next": "Retain focused metadata acceptance and original status request identity. Independently qualify the existing NativeMessageActions copy submenu and Appearance discussion story synchronization before claiming complete direct-consumer acceptance; retain M15/M15.5 In progress and visual-pending.",
+    "artifacts": "/tmp/jj-reaction-row-*.log; private restart proof /tmp/jj-thread-reaction-row{,-slots}-main-{before,ready}.json; /tmp/jj-store-reaction-metadata-row-final.png and /tmp/jj-thread-metadata-{main,reply}.png. Isolated browser_preview process stopped after acceptance; rebuilt main development service and user-facing Storybook error tab remain running."
   }
 ]
 ```

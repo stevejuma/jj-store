@@ -117,6 +117,7 @@
               >
                 {#snippet supplement()}{#if controller.threads && detail && comment.content.state === "visible"}<StoreMessageReactions
                       threads={controller.threads}
+                      showFeedback={false}
                       target={{
                         type: "review_comment",
                         thread_id: detail.thread.thread_id,
@@ -169,6 +170,19 @@
                         }
                       : undefined}
                   />{/snippet}
+                {#snippet metadataSupplement()}{#if controller.threads && detail && comment.content.state === "visible"}<StoreMessageReactions
+                      threads={controller.threads}
+                      target={{
+                        type: "review_comment",
+                        thread_id: detail.thread.thread_id,
+                        comment_id: comment.comment_id,
+                        revision: {
+                          kind: "comment_revision",
+                          id: comment.revision_id,
+                        },
+                      }}
+                      showControls={false}
+                    />{/if}{/snippet}
               </CommunityMessage>
             </div>
           </div>

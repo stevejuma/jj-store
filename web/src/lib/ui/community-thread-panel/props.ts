@@ -19,6 +19,7 @@ import type {
 
 export type ThreadPanelProps = {
   messageSupplement?: Snippet<[CommunityMessageModel]>;
+  messageMetadata?: Snippet<[CommunityMessageModel]>;
   virtualize?: boolean;
   history?: CommunityHistoryState;
   presentation?: CommunityTimelinePresentation;

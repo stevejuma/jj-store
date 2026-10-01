@@ -76,6 +76,7 @@
           >{#snippet supplement()}{#if controller.threads && entry.reaction_target}<StoreMessageReactions
                 threads={controller.threads}
                 target={entry.reaction_target}
+                showFeedback={false}
                 disabled={!interactive ||
                   !["write", "admin"].includes(
                     controller.state.repository.permission ?? "",
@@ -89,7 +90,12 @@
                 { label: "Copy session ID", value: sessionId },
                 { label: "Copy sequence", value: String(entry.sequence) },
               ]}
-            />{/snippet}</CommunityMessage
+            />{/snippet}
+          {#snippet metadataSupplement()}{#if controller.threads && entry.reaction_target}<StoreMessageReactions
+                threads={controller.threads}
+                target={entry.reaction_target}
+                showControls={false}
+              />{/if}{/snippet}</CommunityMessage
         >
       {:else if entry.type === "tool"}
         <StoreAgentToolReview

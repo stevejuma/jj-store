@@ -13,12 +13,14 @@
     selected = false,
     readOnly = false,
     replySelected = false,
+    withReply = false,
     rejectReaction = false,
   }: {
     unknownFirst?: boolean;
     selected?: boolean;
     readOnly?: boolean;
     replySelected?: boolean;
+    withReply?: boolean;
     rejectReaction?: boolean;
   } = $props();
   const transport = untrack(() => createThreadTransport({ unknownFirst }));
@@ -31,7 +33,7 @@
         return command(kind, request);
       };
     }
-    if (replySelected) {
+    if (replySelected || withReply) {
       const root = transport.history.get(THREAD_IDS.thread)![0]!;
       transport.addMessage(
         THREAD_IDS.thread,

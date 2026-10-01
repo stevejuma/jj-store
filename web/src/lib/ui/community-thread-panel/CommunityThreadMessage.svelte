@@ -30,6 +30,7 @@
     )}{/if}{/snippet}
 
 <CommunityMessage
+  metadataSupplement={panel.messageMetadata ? metadataSupplement : undefined}
   supplement={panel.messageSupplement ? supplement : undefined}
   {message}
   highlighted={message.id === focused}
@@ -85,3 +86,7 @@
         replyActionLabel: "Reply",
       }}
 />
+
+{#snippet metadataSupplement()}{#if panel.messageMetadata}{@render panel.messageMetadata(
+      message,
+    )}{/if}{/snippet}

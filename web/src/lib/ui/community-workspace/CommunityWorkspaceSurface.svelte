@@ -16,6 +16,7 @@
     onLoadOlder,
     handlers = {},
     messageSupplement,
+    messageMetadata,
   }: {
     model: CommunityWorkspaceModel;
     communityEmojis?: readonly CommunityCustomEmoji[];
@@ -31,6 +32,7 @@
     onLoadOlder?: () => Promise<void>;
     handlers?: CommunityWorkspaceHandlers;
     messageSupplement?: Snippet<[CommunityMessageModel]>;
+    messageMetadata?: Snippet<[CommunityMessageModel]>;
   } = $props();
   const rooms = $derived(
     model.navigationSections.flatMap((section) => section.rooms),
@@ -50,6 +52,7 @@
     {history}
     {onLoadOlder}
     {messageSupplement}
+    {messageMetadata}
     onSend={(content) => handlers.onSendMessage?.(room!.id, content)}
     onReply={handlers.onReply}
     onOpenThread={handlers.onOpenThread}

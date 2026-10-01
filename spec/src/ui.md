@@ -69,8 +69,16 @@ actors. Click retains exact-value toggling; hover never opens a modal popover.
 Edited labels and reaction confirmation/error feedback use Chat Message Metadata
 in the exact targeted main or reply message. Reaction unknown outcomes retain
 Check action status and Retry same action there, without a page banner or a
-modified Markdown body. Reply panels reserve clearance for the first row's hover
-actions.
+modified Markdown body. Reaction feedback follows timestamp, edited marker,
+reply avatars and reply count in the same metadata row. Pending actions show an
+accessible spinner at the end of that row; status-check and retry controls are
+icon-only with tooltips. Errors show an icon-only retry followed by a
+destructive-colour failure icon and Failed label, with exact error details in a
+keyboard-accessible tooltip. Reply panels reserve clearance for the first row's
+hover actions. The owned message metadata slot carries reaction feedback
+independently of general message supplements, so copy/action menus and other
+content retain their existing presentation. Reaction controls and feedback share
+the same target-keyed controller cache and deduplicated loads.
 
 ## Requirements
 

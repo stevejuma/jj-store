@@ -52,5 +52,6 @@ export type CommunityMessageProps = {
   currentMemberId?: string;
   replyActionLabel?: string;
   supplement?: Snippet;
+  metadataSupplement?: Snippet;
   avatarShape?: "circle" | "rounded";
 };
