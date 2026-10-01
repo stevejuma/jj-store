@@ -34,6 +34,13 @@ Vectorscan fork at the same revision. Qualification covers bounded in-memory
 redaction, fail-closed omission and fresh-process compiled-cache startup; it
 does not enable Kingfisher validation or network access.
 
+Capture spool coordination retains the V1 pending record format. New handles
+share the former lifetime-exclusive `capture.lock`, excluding old writers while
+using separate short mutation and single-publisher drain locks. An older binary
+that already owns the spool blocks new handles before queue access. New hooks
+and drainers can share state only when both follow the new lock protocol; this
+does not upgrade installed binaries or install a background recovery worker.
+
 Focused authenticated compatibility now covers private registry initialization,
 case-sensitive slash-separated aliases, one manual token with independent
 repository permissions and revocation, forged-secret rejection, cursor reset,

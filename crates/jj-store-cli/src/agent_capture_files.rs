@@ -1,9 +1,30 @@
 use jj_store_jj::operation_stores::AuthorityResult;
 use std::{
     ffi::OsStr,
-    fs::{self, File},
+    fs::{self, File, OpenOptions},
     path::Path,
 };
+
+// Older binaries hold capture.lock exclusively for their entire spool handle.
+// New handles share that legacy gate, then use independent mutation/drain locks.
+// This prevents an older writer bypassing the new short-lock protocol.
+pub(crate) fn compatibility_lock(path: &Path) -> AuthorityResult<File> {
+    let path = jj_store_server::policy::outside_checkout(path)?;
+    if fs::symlink_metadata(&path).is_ok_and(|metadata| !metadata.is_file()) {
+        return Err("capture coordination lock must be a regular file".into());
+    }
+    let mut options = OpenOptions::new();
+    options.read(true).write(true).create(true).truncate(false);
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::OpenOptionsExt as _;
+        options.mode(0o600);
+    }
+    let file = options.open(path)?;
+    file.try_lock_shared()
+        .map_err(|_| "capture spool is held by an incompatible writer")?;
+    Ok(file)
+}
 
 pub(crate) fn recover_pending(path: &Path) -> AuthorityResult<()> {
     let mut removed = false;

@@ -15,7 +15,9 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use crate::agent_capture_files::{recover_pending, restrict_directory, sync_dir};
+use crate::agent_capture_files::{
+    compatibility_lock, recover_pending, restrict_directory, sync_dir,
+};
 
 const MAX_ENTRIES: usize = 4096;
 
@@ -49,9 +51,10 @@ pub struct DurableCaptureAck {
 }
 
 pub struct AgentCaptureSpool {
+    root: PathBuf,
     pending: PathBuf,
     max_pending_bytes: u64,
-    _lock: File,
+    _compatibility_lock: File,
 }
 
 impl AgentCaptureSpool {
@@ -65,18 +68,42 @@ impl AgentCaptureSpool {
         }
         fs::create_dir_all(&root)?;
         restrict_directory(&root)?;
+        let compatibility = compatibility_lock(&root.join("capture.lock"))?;
+        let lock = jj_store_server::policy::exclusive_lock(&root.join("mutation.lock"))?;
         let pending = root.join("pending");
+        if fs::symlink_metadata(&pending).is_ok_and(|value| !value.is_dir()) {
+            return Err("capture spool pending path must be a directory".into());
+        }
         fs::create_dir_all(&pending)?;
         restrict_directory(&pending)?;
-        let lock = jj_store_server::policy::exclusive_lock(&root.join("capture.lock"))?;
         recover_pending(&pending)?;
         let spool = Self {
+            root,
             pending,
             max_pending_bytes,
-            _lock: lock,
+            _compatibility_lock: compatibility,
         };
-        spool.pending()?;
+        spool.pending_locked()?;
+        drop(lock);
         Ok(spool)
+    }
+
+    // Drainers hold this lease across awaits, but never the mutation lock.
+    // Returning an owned guard lets independent handles enqueue during a drain.
+    pub(crate) fn drain_lease(&self) -> AuthorityResult<File> {
+        Ok(jj_store_server::policy::exclusive_lock(
+            &self.root.join("drain.lock"),
+        )?)
+    }
+
+    pub(crate) fn mutation_lock(&self) -> AuthorityResult<File> {
+        let lock = jj_store_server::policy::exclusive_lock(&self.root.join("mutation.lock"))?;
+        if !fs::symlink_metadata(&self.pending)?.is_dir() {
+            return Err("capture spool pending path must be a directory".into());
+        }
+        // A crashed writer may have left a temporary file since this handle opened.
+        recover_pending(&self.pending)?;
+        Ok(lock)
     }
 
     pub fn enqueue(
@@ -86,6 +113,7 @@ impl AgentCaptureSpool {
         cursor: CaptureCursorV1,
         batch: SanitizedObservationBatchV1,
     ) -> AuthorityResult<DurableCaptureAck> {
+        let _lock = self.mutation_lock()?;
         let path = self.path(batch.batch_id);
         let candidate = PendingCaptureV1 {
             schema_version: 1,
@@ -112,6 +140,7 @@ impl AgentCaptureSpool {
         batch_id: CaptureBatchId,
         request: AgentDeltaRequest,
     ) -> AuthorityResult<()> {
+        let _lock = self.mutation_lock()?;
         let path = self.path(batch_id);
         let mut entry = self.read(&path)?;
         match &entry.state {
@@ -130,6 +159,11 @@ impl AgentCaptureSpool {
     }
 
     pub fn pending(&self) -> AuthorityResult<Vec<PendingCaptureV1>> {
+        let _lock = self.mutation_lock()?;
+        self.pending_locked()
+    }
+
+    fn pending_locked(&self) -> AuthorityResult<Vec<PendingCaptureV1>> {
         let mut paths = fs::read_dir(&self.pending)?
             .map(|entry| entry.map(|value| value.path()))
             .collect::<Result<Vec<_>, _>>()?;
@@ -152,6 +186,7 @@ impl AgentCaptureSpool {
         request_id: RequestId,
         publication_id: PublicationId,
     ) -> AuthorityResult<()> {
+        let _lock = self.mutation_lock()?;
         let path = self.path(batch_id);
         if path.exists() {
             let entry = self.read(&path)?;
@@ -210,6 +245,7 @@ impl AgentCaptureSpool {
 
     fn check_total(&self, replacement: u64, replaced: Option<&Path>) -> AuthorityResult<()> {
         let mut total = replacement;
+        let mut count = usize::from(replaced.is_some());
         for entry in fs::read_dir(&self.pending)? {
             let path = entry?.path();
             if replaced.is_some_and(|value| value == path) {
@@ -221,6 +257,10 @@ impl AgentCaptureSpool {
             let metadata = fs::symlink_metadata(path)?;
             if !metadata.is_file() || metadata.file_type().is_symlink() {
                 return Err("capture spool entry must be a regular file".into());
+            }
+            count += 1;
+            if count > MAX_ENTRIES {
+                return Err("capture spool entry limit exceeded".into());
             }
             total = total
                 .checked_add(metadata.len())

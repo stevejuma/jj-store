@@ -255,3 +255,236 @@ async fn repository_mismatch_fails_before_any_publication() {
     assert!(publisher.prepared.lock().unwrap().is_empty());
     assert_eq!(spool.pending().unwrap().len(), 2);
 }
+
+struct PausedPublisher {
+    inner: FakePublisher,
+    preparing: tokio::sync::Notify,
+    prepare_ready: tokio::sync::Notify,
+    publishing: tokio::sync::Notify,
+}
+
+#[async_trait::async_trait]
+impl AgentCapturePublisher for PausedPublisher {
+    async fn prepare_agent_capture(
+        &self,
+        request_id: RequestId,
+        publication_id: PublicationId,
+        profile: &NormalizerProfileV1,
+        batch: &SanitizedObservationBatchV1,
+        result: Vec<u8>,
+    ) -> AuthorityResult<AgentDeltaRequest> {
+        self.preparing.notify_one();
+        self.prepare_ready.notified().await;
+        self.inner
+            .prepare_agent_capture(request_id, publication_id, profile, batch, result)
+            .await
+    }
+
+    async fn publish_agent_delta(
+        &self,
+        request: &AgentDeltaRequest,
+    ) -> AuthorityResult<PublishOutcome> {
+        self.inner.published.lock().unwrap().push(request.clone());
+        self.publishing.notify_one();
+        std::future::pending().await
+    }
+}
+
+#[test]
+#[ignore = "subprocess fixture invoked by publication_wait_allows_capture_from_another_process"]
+fn enqueue_from_other_process() {
+    let path = std::env::var_os("JJ_STORE_CAPTURE_TEST_SPOOL").expect("test spool");
+    let id: u8 = std::env::var("JJ_STORE_CAPTURE_TEST_BATCH")
+        .unwrap()
+        .parse()
+        .unwrap();
+    let mut spool = AgentCaptureSpool::open(std::path::Path::new(&path), 4 * 1024 * 1024)
+        .expect("publication must not hold the enqueue lock");
+    enqueue(&mut spool, capture(id, u64::from(id), REPOSITORY));
+}
+
+async fn enqueue_child(path: &std::path::Path, id: u8) {
+    let output = tokio::process::Command::new(std::env::current_exe().unwrap())
+        .args(["--exact", "enqueue_from_other_process", "--ignored"])
+        .env("JJ_STORE_CAPTURE_TEST_SPOOL", path)
+        .env("JJ_STORE_CAPTURE_TEST_BATCH", id.to_string())
+        .kill_on_drop(true)
+        .output();
+    let output = tokio::time::timeout(std::time::Duration::from_secs(10), output)
+        .await
+        .expect("enqueue child must finish without waiting for publication")
+        .unwrap();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stdout)
+    );
+}
+
+#[tokio::test]
+async fn publication_wait_allows_capture_from_another_process() {
+    let directory = tempfile::tempdir().unwrap();
+    let mut spool = AgentCaptureSpool::open(directory.path(), 4 * 1024 * 1024).unwrap();
+    enqueue(&mut spool, capture(1, 1, REPOSITORY));
+    let publisher = std::sync::Arc::new(PausedPublisher {
+        inner: FakePublisher::new([]),
+        preparing: tokio::sync::Notify::new(),
+        prepare_ready: tokio::sync::Notify::new(),
+        publishing: tokio::sync::Notify::new(),
+    });
+    let worker = {
+        let publisher = publisher.clone();
+        tokio::spawn(async move {
+            drain_capture_spool(&mut spool, REPOSITORY, publisher.as_ref()).await
+        })
+    };
+    tokio::time::timeout(
+        std::time::Duration::from_secs(10),
+        publisher.preparing.notified(),
+    )
+    .await
+    .unwrap();
+    enqueue_child(directory.path(), 2).await;
+    let mut observer = AgentCaptureSpool::open(directory.path(), 4 * 1024 * 1024).unwrap();
+    assert_eq!(observer.pending().unwrap().len(), 2);
+    let competing = FakePublisher::new([]);
+    assert!(
+        drain_capture_spool(&mut observer, REPOSITORY, &competing)
+            .await
+            .is_err()
+    );
+    assert!(competing.prepared.lock().unwrap().is_empty());
+    assert!(competing.published.lock().unwrap().is_empty());
+
+    publisher.prepare_ready.notify_one();
+    tokio::time::timeout(
+        std::time::Duration::from_secs(10),
+        publisher.publishing.notified(),
+    )
+    .await
+    .unwrap();
+    enqueue_child(directory.path(), 3).await;
+    let prepared = observer
+        .pending()
+        .unwrap()
+        .into_iter()
+        .find(|e| e.batch.batch_id == CaptureBatchId::new([1; 16]))
+        .unwrap();
+    let PendingCaptureStateV1::Prepared { request } = prepared.state else {
+        panic!("publication must use durable prepared intent")
+    };
+    worker.abort();
+    assert!(worker.await.unwrap_err().is_cancelled());
+    drop(observer);
+
+    // A cold handle retries the exact request after cancellation released the lease.
+    let mut restarted = AgentCaptureSpool::open(directory.path(), 4 * 1024 * 1024).unwrap();
+    let recovery = FakePublisher::new([Reply::Committed, Reply::Committed, Reply::Committed]);
+    let report = drain_capture_spool(&mut restarted, REPOSITORY, &recovery)
+        .await
+        .unwrap();
+    assert_eq!((report.committed, report.remaining), (3, 0));
+    assert_eq!(recovery.published.lock().unwrap()[0], request);
+    assert_eq!(
+        *recovery.prepared.lock().unwrap(),
+        vec![CaptureBatchId::new([2; 16]), CaptureBatchId::new([3; 16])]
+    );
+}
+
+struct ProcessPausedPublisher {
+    signal: std::path::PathBuf,
+}
+#[async_trait::async_trait]
+impl AgentCapturePublisher for ProcessPausedPublisher {
+    async fn prepare_agent_capture(
+        &self,
+        request_id: RequestId,
+        publication_id: PublicationId,
+        profile: &NormalizerProfileV1,
+        batch: &SanitizedObservationBatchV1,
+        result: Vec<u8>,
+    ) -> AuthorityResult<AgentDeltaRequest> {
+        FakePublisher::new([])
+            .prepare_agent_capture(request_id, publication_id, profile, batch, result)
+            .await
+    }
+    async fn publish_agent_delta(&self, _: &AgentDeltaRequest) -> AuthorityResult<PublishOutcome> {
+        std::fs::write(&self.signal, b"prepared")?;
+        std::future::pending().await
+    }
+}
+
+#[tokio::test]
+#[ignore = "subprocess fixture invoked by killed_drainer_preserves_prepared_capture_and_releases_lease"]
+async fn hold_drain_in_other_process() {
+    let path = std::path::PathBuf::from(
+        std::env::var_os("JJ_STORE_CAPTURE_TEST_SPOOL").expect("test spool"),
+    );
+    let mut spool = AgentCaptureSpool::open(&path, 4 * 1024 * 1024).unwrap();
+    drain_capture_spool(
+        &mut spool,
+        REPOSITORY,
+        &ProcessPausedPublisher {
+            signal: path.join("test-publishing"),
+        },
+    )
+    .await
+    .unwrap();
+}
+
+#[tokio::test]
+async fn killed_drainer_preserves_prepared_capture_and_releases_lease() {
+    let directory = tempfile::tempdir().unwrap();
+    let mut spool = AgentCaptureSpool::open(directory.path(), 4 * 1024 * 1024).unwrap();
+    enqueue(&mut spool, capture(1, 1, REPOSITORY));
+    drop(spool);
+    let mut child = tokio::process::Command::new(std::env::current_exe().unwrap())
+        .args(["--exact", "hold_drain_in_other_process", "--ignored"])
+        .env("JJ_STORE_CAPTURE_TEST_SPOOL", directory.path())
+        .stdout(std::process::Stdio::null())
+        .kill_on_drop(true)
+        .spawn()
+        .unwrap();
+    tokio::time::timeout(std::time::Duration::from_secs(10), async {
+        while !directory.path().join("test-publishing").exists() {
+            assert!(
+                child.try_wait().unwrap().is_none(),
+                "drainer exited before publication"
+            );
+            tokio::time::sleep(std::time::Duration::from_millis(20)).await;
+        }
+    })
+    .await
+    .unwrap();
+    enqueue_child(directory.path(), 2).await;
+    let mut observer = AgentCaptureSpool::open(directory.path(), 4 * 1024 * 1024).unwrap();
+    assert!(
+        drain_capture_spool(&mut observer, REPOSITORY, &FakePublisher::new([]))
+            .await
+            .is_err()
+    );
+    let entry = observer
+        .pending()
+        .unwrap()
+        .into_iter()
+        .find(|e| e.batch.batch_id == CaptureBatchId::new([1; 16]))
+        .unwrap();
+    let PendingCaptureStateV1::Prepared { request } = entry.state else {
+        panic!("prepared request required")
+    };
+    drop(observer);
+    child.kill().await.unwrap();
+    assert!(!child.wait().await.unwrap().success());
+
+    let mut restarted = AgentCaptureSpool::open(directory.path(), 4 * 1024 * 1024).unwrap();
+    let publisher = FakePublisher::new([Reply::Committed, Reply::Committed]);
+    let report = drain_capture_spool(&mut restarted, REPOSITORY, &publisher)
+        .await
+        .unwrap();
+    assert_eq!((report.committed, report.remaining), (2, 0));
+    assert_eq!(publisher.published.lock().unwrap()[0], request);
+    assert_eq!(
+        *publisher.prepared.lock().unwrap(),
+        vec![CaptureBatchId::new([2; 16])]
+    );
+}

@@ -1,5 +1,14 @@
 # Verification
 
+M14 capture-coordination evidence separates durable queue behavior from live
+publication qualification. Native publisher fixtures pause preparation and
+publication while fresh child processes enqueue; an abruptly killed drainer
+releases its lease and preserves its exact prepared request. The local provider
+fixture covers the same enqueue/cancellation boundary and matching receipt
+replay. Legacy exclusion, byte/count limits and symlink failures remain explicit
+regressions. These tests qualify the shared drain foundation, not the future
+service-owned recovery worker or agent Settings controls.
+
 Planned rows name a gate, not completed evidence. Mark Implemented only after
 passing concrete tests linked from the progress ledger.
 

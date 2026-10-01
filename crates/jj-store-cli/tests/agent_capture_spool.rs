@@ -117,7 +117,22 @@ fn sanitized_capture_and_prepared_publication_survive_restart() {
 fn capture_spool_rejects_concurrent_owners_and_changed_retries() {
     let directory = tempfile::tempdir().unwrap();
     let mut spool = AgentCaptureSpool::open(directory.path(), 4 * 1024 * 1024).unwrap();
+    let peer = AgentCaptureSpool::open(directory.path(), 4 * 1024 * 1024).unwrap();
+    let lock =
+        jj_store_server::policy::exclusive_lock(&directory.path().join("mutation.lock")).unwrap();
     assert!(AgentCaptureSpool::open(directory.path(), 4 * 1024 * 1024).is_err());
+    assert!(peer.pending().is_err());
+    assert!(
+        spool
+            .enqueue(
+                RepositoryId::new([9; 16]),
+                NormalizerProfileV1::codex_0_156_1(),
+                cursor(),
+                batch()
+            )
+            .is_err()
+    );
+    drop(lock);
 
     spool
         .enqueue(
@@ -127,6 +142,7 @@ fn capture_spool_rejects_concurrent_owners_and_changed_retries() {
             batch(),
         )
         .unwrap();
+    assert_eq!(peer.pending().unwrap().len(), 1);
     assert!(
         spool
             .complete(
@@ -177,4 +193,128 @@ fn capture_spool_enforces_byte_bounds_and_rejects_corruption() {
         .join(format!("{}.json", batch().batch_id));
     std::fs::write(corrupt, b"not json").unwrap();
     assert!(spool.pending().is_err());
+}
+
+#[test]
+fn capture_lock_protocol_excludes_legacy_writers_in_both_directions() {
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("capture.lock");
+    let legacy = jj_store_server::policy::exclusive_lock(&path).unwrap();
+    assert!(AgentCaptureSpool::open(directory.path(), 4 * 1024 * 1024).is_err());
+    assert!(!directory.path().join("pending").exists());
+    drop(legacy);
+    let first = AgentCaptureSpool::open(directory.path(), 4 * 1024 * 1024).unwrap();
+    let second = AgentCaptureSpool::open(directory.path(), 4 * 1024 * 1024).unwrap();
+    assert!(jj_store_server::policy::exclusive_lock(&path).is_err());
+    drop(first);
+    assert!(jj_store_server::policy::exclusive_lock(&path).is_err());
+    drop(second);
+    assert!(jj_store_server::policy::exclusive_lock(&path).is_ok());
+}
+
+#[test]
+fn concurrent_handles_preserve_queue_byte_budget_and_prepared_identity() {
+    let directory = tempfile::tempdir().unwrap();
+    let mut first = AgentCaptureSpool::open(directory.path(), 4 * 1024 * 1024).unwrap();
+    let repository = RepositoryId::new([9; 16]);
+    first
+        .enqueue(
+            repository,
+            NormalizerProfileV1::codex_0_156_1(),
+            cursor(),
+            batch(),
+        )
+        .unwrap();
+    first.prepare(batch().batch_id, request()).unwrap();
+    let original = first.pending().unwrap();
+    let bytes = std::fs::metadata(
+        directory
+            .path()
+            .join("pending")
+            .join(format!("{}.json", batch().batch_id)),
+    )
+    .unwrap()
+    .len();
+    let mut second = AgentCaptureSpool::open(directory.path(), bytes).unwrap();
+    second
+        .enqueue(
+            repository,
+            NormalizerProfileV1::codex_0_156_1(),
+            cursor(),
+            batch(),
+        )
+        .unwrap();
+    let mut next = batch();
+    next.batch_id = CaptureBatchId::new([20; 16]);
+    assert!(
+        second
+            .enqueue(
+                repository,
+                NormalizerProfileV1::codex_0_156_1(),
+                cursor(),
+                next
+            )
+            .is_err()
+    );
+    let mut changed = request();
+    changed.request_id = RequestId::new([20; 16]);
+    assert!(second.prepare(batch().batch_id, changed).is_err());
+    assert_eq!(first.pending().unwrap(), original);
+}
+
+#[test]
+fn enqueue_enforces_entry_limit_before_acknowledging() {
+    let directory = tempfile::tempdir().unwrap();
+    let mut spool = AgentCaptureSpool::open(directory.path(), 64 * 1024 * 1024).unwrap();
+    let repository = RepositoryId::new([9; 16]);
+    let profile = NormalizerProfileV1::codex_0_156_1();
+    spool
+        .enqueue(repository, profile.clone(), cursor(), batch())
+        .unwrap();
+    let template = spool.pending().unwrap().remove(0);
+    // Seed already durable valid records, avoiding 4096 redundant fsyncs in the fixture.
+    for id in 2_u64..=4096 {
+        let mut entry = template.clone();
+        entry.batch.batch_id = CaptureBatchId::new(u128::from(id).to_le_bytes());
+        std::fs::write(
+            directory
+                .path()
+                .join("pending")
+                .join(format!("{}.json", entry.batch.batch_id)),
+            serde_json::to_vec(&entry).unwrap(),
+        )
+        .unwrap();
+    }
+    assert_eq!(spool.pending().unwrap().len(), 4096);
+    let mut excess = batch();
+    excess.batch_id = CaptureBatchId::new([20; 16]);
+    assert!(
+        spool
+            .enqueue(repository, profile, cursor(), excess)
+            .is_err()
+    );
+    assert_eq!(spool.pending().unwrap().len(), 4096);
+}
+
+#[cfg(unix)]
+#[test]
+fn capture_lock_and_pending_symlinks_fail_closed() {
+    let directory = tempfile::tempdir().unwrap();
+    let foreign = tempfile::tempdir().unwrap();
+    std::os::unix::fs::symlink(foreign.path(), directory.path().join("pending")).unwrap();
+    assert!(AgentCaptureSpool::open(directory.path(), 4 * 1024 * 1024).is_err());
+    assert!(std::fs::read_dir(foreign.path()).unwrap().next().is_none());
+    std::fs::remove_file(directory.path().join("pending")).unwrap();
+    std::fs::remove_file(directory.path().join("capture.lock")).unwrap();
+    std::fs::write(foreign.path().join("lock"), b"unchanged").unwrap();
+    std::os::unix::fs::symlink(
+        foreign.path().join("lock"),
+        directory.path().join("capture.lock"),
+    )
+    .unwrap();
+    assert!(AgentCaptureSpool::open(directory.path(), 4 * 1024 * 1024).is_err());
+    assert_eq!(
+        std::fs::read(foreign.path().join("lock")).unwrap(),
+        b"unchanged"
+    );
 }

@@ -31,6 +31,7 @@ pub async fn drain_local_capture_spool<P: LocalAgentCapturePublisher>(
     spool: &mut AgentCaptureSpool,
     publisher: &P,
 ) -> AuthorityResult<CaptureDrainReport> {
+    let _lease = spool.drain_lease()?;
     let (repository, actor) = publisher.binding()?;
     let mut pending = spool.pending()?;
     if pending.iter().any(|entry| {

@@ -57,6 +57,7 @@ impl AgentCaptureSpool {
         batch: CaptureBatchId,
         request: LocalAgentRequest,
     ) -> AuthorityResult<()> {
+        let _lock = self.mutation_lock()?;
         let path = self.path(batch);
         let mut entry = self.read(&path)?;
         match &entry.state {
@@ -75,6 +76,7 @@ impl AgentCaptureSpool {
         batch: CaptureBatchId,
         request_id: RequestId,
     ) -> AuthorityResult<()> {
+        let _lock = self.mutation_lock()?;
         let path = self.path(batch);
         if path.exists() {
             let entry = self.read(&path)?;

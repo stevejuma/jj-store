@@ -164,3 +164,77 @@ async fn mismatched_receipts_and_repository_binding_never_complete_local_capture
     );
     assert_eq!(publisher.requests.lock().unwrap().len(), count);
 }
+
+struct PausedLocalPublisher {
+    publishing: tokio::sync::Notify,
+}
+#[async_trait::async_trait]
+impl LocalAgentCapturePublisher for PausedLocalPublisher {
+    fn binding(&self) -> AuthorityResult<(RepositoryId, PrincipalId)> {
+        Ok((REPO, ACTOR))
+    }
+    async fn apply(&self, _: &LocalAgentRequest) -> AuthorityResult<LocalAgentOutcome> {
+        self.publishing.notify_one();
+        std::future::pending().await
+    }
+}
+struct ContendingPublisher;
+#[async_trait::async_trait]
+impl LocalAgentCapturePublisher for ContendingPublisher {
+    fn binding(&self) -> AuthorityResult<(RepositoryId, PrincipalId)> {
+        panic!("a competing drain must not bind or initialize its publisher")
+    }
+    async fn apply(&self, _: &LocalAgentRequest) -> AuthorityResult<LocalAgentOutcome> {
+        panic!("a competing drain must not publish")
+    }
+}
+
+#[tokio::test]
+async fn local_publication_releases_enqueue_lock_and_cancellation_preserves_intent() {
+    let root = tempfile::tempdir().unwrap();
+    let mut spool = AgentCaptureSpool::open(root.path(), 4 * 1024 * 1024).unwrap();
+    enqueue(&mut spool, 1, 1, REPO);
+    let publisher = std::sync::Arc::new(PausedLocalPublisher {
+        publishing: tokio::sync::Notify::new(),
+    });
+    let worker = {
+        let publisher = publisher.clone();
+        tokio::spawn(async move { drain_local_capture_spool(&mut spool, publisher.as_ref()).await })
+    };
+    tokio::time::timeout(
+        std::time::Duration::from_secs(10),
+        publisher.publishing.notified(),
+    )
+    .await
+    .unwrap();
+    let mut hook = AgentCaptureSpool::open(root.path(), 4 * 1024 * 1024).unwrap();
+    enqueue(&mut hook, 2, 2, REPO);
+    assert!(
+        drain_local_capture_spool(&mut hook, &ContendingPublisher)
+            .await
+            .is_err()
+    );
+    let prepared = hook
+        .pending()
+        .unwrap()
+        .into_iter()
+        .find(|e| e.batch.batch_id == CaptureBatchId::new([1; 16]))
+        .unwrap();
+    let PendingCaptureStateV1::LocalPrepared { request } = prepared.state else {
+        panic!("exact local intent required")
+    };
+    worker.abort();
+    assert!(worker.await.unwrap_err().is_cancelled());
+    drop(hook);
+    let mut reopened = AgentCaptureSpool::open(root.path(), 4 * 1024 * 1024).unwrap();
+    let recovery = Publisher {
+        replies: Mutex::new([true, true].into()),
+        requests: Mutex::default(),
+        mismatch: false,
+    };
+    let report = drain_local_capture_spool(&mut reopened, &recovery)
+        .await
+        .unwrap();
+    assert_eq!((report.committed, report.remaining), (2, 0));
+    assert_eq!(recovery.requests.lock().unwrap()[0], request);
+}

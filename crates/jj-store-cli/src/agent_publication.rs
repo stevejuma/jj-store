@@ -59,6 +59,7 @@ pub async fn drain_capture_spool<P: AgentCapturePublisher>(
     repository: RepositoryId,
     publisher: &P,
 ) -> AuthorityResult<CaptureDrainReport> {
+    let _lease = spool.drain_lease()?;
     let mut pending = spool.pending()?;
     if pending.iter().any(|entry| {
         entry.repository != repository

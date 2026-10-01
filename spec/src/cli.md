@@ -211,6 +211,12 @@ through the native AgentStore RPC. Transport failure, rejection, timeout or an
 unknown outcome never fails the already successful hook capture and never
 removes its spool entry; a later hook retries the oldest exact prepared request.
 
+The native and local `jj agent drain` paths hold one shared drain lease per
+spool. The separate mutation lock covers only queue reads and atomic mutations.
+A publication wait cannot prevent another hook process from durably enqueueing;
+a competing drain fails before contacting its publisher. Cancellation releases
+drain ownership while retaining captured or exact prepared entries for retry.
+
 `store init` provisions a new repository using a separate operator credential,
 durably retaining generated repository/epoch IDs before contacting the server.
 The initial admin credential is saved to the OS facility or provided explicitly

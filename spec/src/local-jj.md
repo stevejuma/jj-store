@@ -96,6 +96,11 @@ later source batches. Native prepared deltas and local prepared requests cannot
 be delivered through each other's provider. Local session continuations bind
 selected metadata history and stay usable across CLI processes.
 
+Local recovery uses the same per-spool drain lease as native recovery and takes
+the capture mutation lock only for bounded local journal I/O. Companion
+publication never holds the enqueue lock. Cancellation and unknown outcomes
+release the drain lease without discarding the exact prepared local request.
+
 Portable evidence uses an explicit source profile and SHA-256 capsule identity.
 The Git profile records the complete selected operation and view, including
 predecessor maps, and the complete backend commit metadata needed by their
