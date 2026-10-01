@@ -12,6 +12,7 @@ const fields = [
   "repository",
   "scope",
   "at_op",
+  "activity",
 ];
 export function projectsRouteToHash(route: StoreRoute): string | null {
   const query = new URLSearchParams();
@@ -24,6 +25,7 @@ export function projectsRouteToHash(route: StoreRoute): string | null {
     state: route.workState,
     repository: route.workRepository,
     scope: route.workHome,
+    activity: route.workActivity === "all" ? undefined : route.workActivity,
     at_op: route.projectId ? route.snapshotOperationId : undefined,
   };
   for (const [key, value] of Object.entries(pairs))
@@ -48,10 +50,12 @@ export function projectsRouteFromHash(hash: string): StoreRoute | null {
     (!query.has("home") || !/^[0-9a-f]{128}$/.test(query.get("at_op")!))
   )
     return null;
+  const activity = query.get("activity");
   const tab = query.get("tab"),
     state = query.get("state"),
     q = query.get("q") ?? "";
   if (
+    (activity !== null && !["all", "agent", "unassisted"].includes(activity)) ||
     (tab && !tabs.includes(tab)) ||
     (query.has("project") && tab === "projects") ||
     (query.has("task") && tab && tab !== "tasks") ||
@@ -75,6 +79,7 @@ export function projectsRouteFromHash(hash: string): StoreRoute | null {
       (query.has("project") ? "tasks" : "projects")) as StoreRoute["workTab"],
     workState: (state ?? "active") as StoreRoute["workState"],
     workQuery: q,
+    workActivity: (activity ?? "all") as StoreRoute["workActivity"],
     workRepository: query.get("repository") ?? "",
     workHome: query.get("scope") ?? "",
     bookmark: "",

@@ -1,3 +1,4 @@
+import { isRepositoryProjects } from "./projects-view-cache.js";
 import {
   clearProductionStoreView,
   initialStatus,
@@ -74,7 +75,11 @@ export function followProductionExternalRoutes(options: {
       options.data.status.error = result.message;
       return;
     }
-    if (result.kind === "route" && result.route.page === "projects") {
+    if (
+      result.kind === "route" &&
+      result.route.page === "projects" &&
+      !isRepositoryProjects(result.route)
+    ) {
       void options.restore();
       return;
     }

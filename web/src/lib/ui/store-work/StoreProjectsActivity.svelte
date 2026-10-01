@@ -1,6 +1,8 @@
 <script lang="ts">
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { CommunitySkeleton } from "@lapismd/lapis-community/components";
+  import { filterNativeActivity } from "../../controller/native-activity-filter.js";
+  import type { NativeActivityCommit } from "../../controller/native-activity-types.js";
   import StoreRepositoryActivity from "../store-collaboration/StoreRepositoryActivity.svelte";
   import StoreWorkEmpty from "./StoreWorkEmpty.svelte";
   import type { StoreController } from "../../controller/contracts.js";
@@ -14,6 +16,28 @@
       .flatMap((home) => home.page?.commits ?? [])
       .sort((a, b) => b.revision.createdAt - a.revision.createdAt),
   );
+  let filtered = $state<NativeActivityCommit[]>([]),
+    filtering = $state(false),
+    unavailable = $state(0);
+  const category = $derived(task ? "all" : (hub.route.workActivity ?? "all"));
+  $effect(() => {
+    const loaded = rows,
+      choice = category;
+    let active = true;
+    filtering = choice !== "all" && loaded.length > 0;
+    filtered = choice === "all" ? loaded : [];
+    unavailable = 0;
+    if (choice !== "all")
+      void filterNativeActivity(loaded, choice, () => active).then((result) => {
+        if (!active) return;
+        filtered = result.rows;
+        unavailable = result.unavailable;
+        filtering = false;
+      });
+    return () => {
+      active = false;
+    };
+  });
 </script>
 
 <section
@@ -23,8 +47,18 @@
   {#if task}<p class="store-projects__activity-scope">
       Repository activity from this task’s target or project links.
     </p>{/if}
-  {#if rows.length}<StoreRepositoryActivity
-      commits={rows}
+  {#if filtering}<div class="store-projects__loading">
+      <CommunitySkeleton
+        layout="timeline"
+        label="Checking recorded agent associations"
+      />
+    </div>{/if}
+  {#if unavailable}<p role="alert">
+      Agent context unavailable for {unavailable} commits. Filtered results are incomplete.
+      Refresh activity to retry.
+    </p>{/if}
+  {#if rows.length && !filtering}<StoreRepositoryActivity
+      commits={filtered}
       {controller}
       query={hub.route.workQuery ?? ""}
       loading={hub.activity.homes.some((home) => home.loading)}

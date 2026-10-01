@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreActivityFilter from "./StoreActivityFilter.svelte";
   import StoreRepositoryPicker from "../store-application/StoreRepositoryPicker.svelte";
   import StoreWorkStateFilter from "./StoreWorkStateFilter.svelte";
   import * as Field from "@lapismd/design-core/shadcn/field";
@@ -71,6 +72,12 @@
           onChange={(value) => void hub.filter({ workHome: value })}
         />
       </StoreWorkField>{/if}
+    {#if tab === "activity"}<StoreWorkField label="Activity type" compact
+        ><StoreActivityFilter
+          value={route.workActivity ?? "all"}
+          onChange={(workActivity) => void hub.filter({ workActivity })}
+        /></StoreWorkField
+      >{/if}
     {#if tab === "tasks"}<StoreWorkField
         label="Task state"
         id={`${fieldId}-state`}

@@ -167,7 +167,11 @@
         level: 1,
       }),
     ).toBeVisible();
-    await expect(readmePreview).toHaveTextContent(SOURCE_TEXT);
+    // Shared safe Markdown omits executable HTML; Source below retains the bytes.
+    await expect(readmePreview).not.toHaveTextContent(SOURCE_TEXT);
+    await expect(
+      readmePreview.querySelector(".mira-markdown-preview"),
+    ).not.toBeNull();
     await expect(readmePreview.querySelector("script")).toBeNull();
     await userEvent.click(canvas.getByRole("button", { name: "README.md" }));
     const selectedMarkdownPreview = await canvas.findByRole("region", {
@@ -176,7 +180,7 @@
     await expect(selectedMarkdownPreview).toHaveTextContent(
       "Native JJ snapshot",
     );
-    await expect(selectedMarkdownPreview).toHaveTextContent(SOURCE_TEXT);
+    await expect(selectedMarkdownPreview).not.toHaveTextContent(SOURCE_TEXT);
     await expect(selectedMarkdownPreview.querySelector("script")).toBeNull();
     await expect(
       canvas.getByRole("button", { name: "Preview" }),

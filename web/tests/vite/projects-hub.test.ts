@@ -15,7 +15,7 @@ const snapshot = (home: string): Model<"WorkReadSnapshot"> => ({
   work_state_version: 1,
 });
 function fixture(fail = false, discover?: () => Promise<void>) {
-  let route = {
+  let route: import("../../src/lib/controller/contracts.js").StoreRoute = {
     ...initialStoreRoute(),
     page: "projects" as const,
     projectsHub: true,
@@ -255,5 +255,50 @@ test("missing project never broadens reviews to unrelated repositories", async (
   await hub.filter({ workTab: "reviews" });
   expect(reads).toBe(0);
   expect(hub.reviews.homes).toEqual([]);
+  expect(hub.error).toContain("Project unavailable");
+});
+
+test("repository Projects browses linked projects across homes and keeps a separate cache", async () => {
+  const { hub, calls, route, setRoute } = fixture();
+  await hub.openHub();
+  const landing = route();
+  const local = {
+    ...initialStoreRoute(),
+    page: "projects" as const,
+    repository: a,
+    projectsHub: false,
+  };
+  setRoute(local);
+  await hub.restore();
+  expect(route()).toEqual(local);
+  expect(calls.slice(-2)).toEqual([
+    { home: a, query: { kind: "projects", repository: a, limit: 50 } },
+    { home: b, query: { kind: "projects", repository: a, limit: 50 } },
+  ]);
+  const reads = calls.length;
+  setRoute({ ...local, repository: b });
+  await hub.restore();
+  expect(calls.length).toBe(reads + 2);
+  expect(calls.at(-1)!.query).toMatchObject({ repository: b });
+  setRoute(landing);
+  await hub.restore();
+  expect(calls.length).toBe(reads + 2);
+  setRoute(local);
+  await hub.restore();
+  expect(calls.length).toBe(reads + 2);
+});
+
+test("missing project never broadens Activity to unrelated repositories", async () => {
+  const { hub, sources } = fixture();
+  await hub.openProject(a, id);
+  let reads = 0;
+  for (const source of sources.values())
+    source.activity = async () => {
+      reads++;
+      throw new Error("Must not read");
+    };
+  await hub.filter({ workTab: "activity", workActivity: "agent" });
+  expect(reads).toBe(0);
+  expect(hub.activity.homes).toEqual([]);
   expect(hub.error).toContain("Project unavailable");
 });

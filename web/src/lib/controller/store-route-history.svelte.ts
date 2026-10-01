@@ -126,7 +126,7 @@ export function createStoreRouteHistory(
               snapshotOperationId: operation,
             };
       if (
-        route.page === "projects" ||
+        (route.page === "projects" && route.projectsHub) ||
         (route.repository && route.repository !== repository)
       )
         push({
@@ -173,6 +173,12 @@ export function createStoreRouteHistory(
         ...route,
         page,
         projectsHub: false,
+        workTab: undefined,
+        workQuery: undefined,
+        workState: undefined,
+        workRepository: undefined,
+        workHome: undefined,
+        workActivity: undefined,
         bookmark: "",
         inspectedOperationId: null,
         commitId: null,

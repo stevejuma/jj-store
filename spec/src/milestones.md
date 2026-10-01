@@ -100,7 +100,7 @@ shared-package release qualification does not alter those original Git gates.
 | M11.1       | Done        | M9.6              | JST-WORK-001,JST-WORK-002,JST-WORK-003,JST-WORK-004,JST-WORK-005,JST-WORK-007                                                                                            | Native model, publication, receipts, recovery and copy                                                                         | Retain native and real RustFS gates                                            | E-M11-001,E-M11-003                                                                                                                                                                                                                                                                                                                                            |
 | M11.2       | Done        | M11.1             | JST-WORK-005,JST-WORK-006,JST-WORK-008                                                                                                                                   | Authorized service, API, RPC and CLI                                                                                           | Retain local transport/CLI gates                                               | E-M11-002                                                                                                                                                                                                                                                                                                                                                      |
 | M11.3       | Done        | M11.2             | JST-WORK-008                                                                                                                                                             | Browser projects/tasks/comments and explicit refresh                                                                           | Retain cold browser gates; visual baselines pending                            | E-M11-003,E-M11-004                                                                                                                                                                                                                                                                                                                                            |
-| M11.4       | In progress | M11.3             | JST-WORK-005,JST-WORK-006,JST-WORK-008,JST-WORK-009,JST-UI-015                                                                                                           | Installation Projects hub, full-root browse and cold browser acceptance                                                        | Shared-package qualification; visual baselines pending                         | E-M11-005,E-M11-006,E-M11-007,E-UI-045                                                                                                                                                                                                                                                                                                                         |
+| M11.4       | In progress | M11.3             | JST-WORK-005,JST-WORK-006,JST-WORK-008,JST-WORK-009,JST-UI-015                                                                                                           | Installation Projects hub, full-root browse and cold browser acceptance                                                        | Shared-package qualification; visual baselines pending                         | E-M11-005,E-M11-006,E-M11-007,E-UI-045,E-UI-046,E-UI-047                                                                                                                                                                                                                                                                                                       |
 | M12         | Done        | M11.1,M11.2,M11.3 | JST-GIT-001,JST-GIT-002,JST-GIT-003,JST-GIT-004,JST-GIT-005,JST-GIT-006,JST-GIT-007,JST-GIT-008                                                                          | Native fetch/edit/push/external-merge cycle with cache-loss and fault qualification                                            | Maintain qualified bookmark bridge                                             | E-M12-001,E-M12-002,E-M12-003,E-M12-004,E-M12-005,E-M12-006,E-M12-007,E-M12-008,E-M12-009,E-M12-010                                                                                                                                                                                                                                                            |
 | M12.1       | Done        | M11.1,M11.2,M11.3 | JST-GIT-001                                                                                                                                                              | GB0: Parsed backend-aware dispatch and ordinary path regression                                                                | Complete staged bridge gate                                                    | E-M12-001                                                                                                                                                                                                                                                                                                                                                      |
 | M12.2       | Done        | M12.1             | JST-GIT-002,JST-GIT-003                                                                                                                                                  | GB1: Exact conversion and native retained cache-loss identity                                                                  | Complete staged bridge gate                                                    | E-M12-002                                                                                                                                                                                                                                                                                                                                                      |
@@ -29297,6 +29297,258 @@ and named tests are checked by the progress gate.
       "catalog/components/store-application/StoreCollaboration.stories.svelte#Agent response activity",
       "catalog/components/store-work/StoreWork.stories.svelte#Native threaded discussion",
       "catalog/components/store-work/ProjectsHub.stories.svelte#Landing tabs sidebar hierarchy reviews and icon empty state"
+    ]
+  },
+  {
+    "id": "E-UI-047",
+    "tasks": ["M11.4"],
+    "date": "2026-10-01",
+    "kind": "community-projects-repository-scope-markdown-and-activity-filters",
+    "revision": "Enclosing Jujutsu change lvpkolvw.",
+    "before": "Main change follows verified soynnsrx / 74186666. Repository Projects treated as the hub, custom Markdown left backticks literal, project Activity followed Tasks and no native context filter existed. Exact document regression fails once and repository route/browse regressions fail twice. Settings workspace excluded.",
+    "files": [
+      "catalog/components/community-projects/RepositoryDocuments.stories.svelte",
+      "catalog/components/store-application/StoreRepositoryApplication.stories.svelte",
+      "catalog/components/store-work/ProjectsActivityControls.stories.svelte",
+      "catalog/fixtures/ProjectsHubFixture.svelte",
+      "spec/src/api.md",
+      "spec/src/milestones.md",
+      "spec/src/ui.md",
+      "spec/src/verification.md",
+      "web/src/lib/controller/contracts.ts",
+      "web/src/lib/controller/native-activity-filter.ts",
+      "web/src/lib/controller/production-store-connect.ts",
+      "web/src/lib/controller/production-store-controller.svelte.ts",
+      "web/src/lib/controller/production-store-lifecycle.svelte.ts",
+      "web/src/lib/controller/projects-hub-types.ts",
+      "web/src/lib/controller/projects-route-codec.ts",
+      "web/src/lib/controller/projects-view-cache.ts",
+      "web/src/lib/controller/store-route-history.svelte.ts",
+      "web/src/lib/ui/community-projects/CommunityProjectsMarkdownPreview.svelte",
+      "web/src/lib/ui/community-projects/repository-documents.css",
+      "web/src/lib/ui/store-application/StoreApplication.svelte",
+      "web/src/lib/ui/store-application/StoreRepositoryApplication.svelte",
+      "web/src/lib/ui/store-work/StoreActivityFilter.svelte",
+      "web/src/lib/ui/store-work/StoreProjects.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsActivity.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsFilters.svelte",
+      "web/src/lib/ui/store-work/StoreRepositoryProjects.svelte",
+      "web/tests/real/project-polish.spec.ts",
+      "web/tests/store-route-codec.test.ts",
+      "web/tests/vite/native-activity-filter.test.ts",
+      "web/tests/vite/projects-code-navigation.test.ts",
+      "web/tests/vite/projects-hub.test.ts",
+      "web/tests/vite/store-route-history.test.ts"
+    ],
+    "tests": [
+      "web/tests/vite/projects-hub.test.ts#repository Projects browses linked projects across homes and keeps a separate cache",
+      "web/tests/vite/projects-hub.test.ts#missing project never broadens Activity to unrelated repositories",
+      "web/tests/vite/store-route-history.test.ts#repository Projects reload retains its repository destination and code pin",
+      "web/tests/vite/projects-code-navigation.test.ts#repository Projects external routes authorize their separate code connection",
+      "web/tests/vite/native-activity-filter.test.ts#all activity keeps discovery lazy and agent filters never load session bodies",
+      "web/tests/vite/native-activity-filter.test.ts#association classification bounds readers and excludes unknown facts from both categories",
+      "web/tests/vite/native-activity-filter.test.ts#cancelled activity classification stops queued reads and discards delayed results",
+      "web/tests/store-route-codec.test.ts#activity filters round trip and reject invalid or repeated classifications",
+      "web/tests/real/project-polish.spec.ts#repository documents linked projects and Activity filters retain native scope"
+    ],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-projects/RepositoryDocuments.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before: shared Markdown preview absent. .scratch/project-polish-documents-before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/projects-hub.test.ts web/tests/vite/store-route-history.test.ts -t 'repository Projects'",
+        "result": "fail",
+        "failures": 2,
+        "note": "Before: repository browse lacks target scope and reload redirects to Files. .scratch/project-polish-repository-before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-projects/RepositoryDocuments.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Five document tabs, inline code, emphasis, link and three-pixel indicator. 1 case. .scratch/project-polish-documents-after.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/native-activity-filter.test.ts web/tests/vite/projects-hub.test.ts web/tests/vite/store-route-history.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "22 tests. .scratch/project-polish-unit.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsActivityControls.stories.svelte",
+        "result": "fail",
+        "failures": 3,
+        "note": "New story assumes visible right rail and a Files tab label. Actual controls require Toggle details and tab is Overview. Repaired fixture navigation, no product assertion removed. .scratch/project-polish-activity-stories.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsActivityControls.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "3 filter/scope cases. .scratch/project-polish-activity-stories-final.log."
+      },
+      {
+        "command": "pnpm exec tsx --test web/tests/store-route-codec.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "10 route tests; invalid, repeated and empty activity values fail closed. .scratch/project-polish-route.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/projects-hub.test.ts web/tests/vite/projects-directories.test.ts web/tests/vite/projects-repositories.test.ts web/tests/vite/projects-code-navigation.test.ts web/tests/vite/native-activity.test.ts web/tests/vite/native-activity-filter.test.ts web/tests/vite/store-route-history.test.ts web/tests/vite/production-store-bootstrap.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "54 direct boundary tests before the two extra scope regressions. .scratch/project-polish-direct-units.log."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial and final zero errors/warnings. .scratch/project-polish-web-{check,final}.log."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "fail",
+        "failures": 6,
+        "note": "Five new story ByRole exact options are unsupported and initial fixture prop captures without untrack warns once. Fixed types and explicit initial capture. .scratch/project-polish-catalog-check.log."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero errors/warnings; 98 catalog modules. .scratch/project-polish-catalog-final.log."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "415 production modules, published exports and budgets. .scratch/project-polish-architecture{,-final}.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-projects/RepositoryDocuments.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte catalog/components/store-application/StoreFileEditor.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-work/ProjectsDirectory.stories.svelte catalog/components/store-work/ProjectsActivity.stories.svelte catalog/components/store-work/ProjectsActivityControls.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "25 pass; existing preview assertion expects literal script markup from the old parser. Shared safe renderer omits executable HTML. Corrected expected policy while retaining source-byte and no-script checks. .scratch/project-polish-direct-stories.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreRepositoryApplication.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Repaired direct source/preview boundary: 6 pass, no script execution, original Source bytes retained. Together with the 20 other passing direct cases, all 26 covered. .scratch/project-polish-file-story-final.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/projects-code-navigation.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "7 navigation tests, including separate authorized code connection for repository Projects. .scratch/project-polish-route-consumer-final.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/projects-hub.test.ts -t 'missing project never broadens Activity'",
+        "result": "pass",
+        "failures": 0,
+        "note": "Existing fail-closed project scope also holds under the new filter. 1 pass / 9 skipped. .scratch/project-polish-missing-project-before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-file-reader.test.ts web/tests/vite/production-store-collaboration.test.ts web/tests/vite/production-store-evolution.test.ts web/tests/vite/store-workspaces.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "31 direct history consumers. .scratch/project-polish-history-consumers.log."
+      },
+      {
+        "command": "JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs pnpm dev:restart",
+        "result": "pass",
+        "failures": 0,
+        "note": "Owned demo only; builds web output and explicit development CLI binary (cargo build -p jj-store-cli --bins --locked). Existing native fixture retained; ready at 7460, 4763ms restart. .scratch/project-polish-restart.log."
+      },
+      {
+        "command": "node .scratch/review-activity-main-state.mjs before",
+        "result": "pass",
+        "failures": 0,
+        "note": "Three projects plus WorkStore pages, code snapshot and configuration fingerprints captured."
+      },
+      {
+        "command": "node .scratch/review-activity-main-state.mjs after",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact native state and configuration equality after restart; no reset, seed or repository writes."
+      },
+      {
+        "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7460 JJ_STORE_REAL_REPOSITORY=1bdb89c409c1b891ac7f180c01a265d5 pnpm exec playwright test --config web/playwright.real.config.ts web/tests/real/project-polish.spec.ts web/tests/real/projects-activity.spec.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "Existing Activity/review test passes; new linked-project count ran before async rows arrived. Added wait for first project before counting. .scratch/project-polish-live.log."
+      },
+      {
+        "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7460 JJ_STORE_REAL_REPOSITORY=1bdb89c409c1b891ac7f180c01a265d5 pnpm exec playwright test --config web/playwright.real.config.ts web/tests/real/project-polish.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Cold page/reload: five shared document tabs, inline code, indicator; repository tabs and linked-project detail; Activity-first order, searchable native filter, pinned commit Back/reload, honest empty state and axe. .scratch/project-polish-live-final.log."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "Protected scope/canonical chapters passed. .scratch/project-polish-spec-first.log."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "4 validators / 21 chapters / 131 requirements. .scratch/project-polish-spec-validate.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/projects-hub.test.ts web/tests/vite/projects-directories.test.ts web/tests/vite/projects-repositories.test.ts web/tests/vite/projects-code-navigation.test.ts web/tests/vite/native-activity.test.ts web/tests/vite/native-activity-filter.test.ts web/tests/vite/store-route-history.test.ts web/tests/vite/production-store-bootstrap.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final 56 direct tests including both added repository/scope regressions. .scratch/project-polish-direct-units-final.log."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final after repaired safe-rendering assertions: zero errors/warnings and 98 modules. .scratch/project-polish-catalog-complete.log."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final 28 protected files / 3 canonical chapters. .scratch/project-polish-spec-first-final.log."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final four validators / 21 chapters / 131 requirements. .scratch/project-polish-spec-validate-final.log."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "103 tasks, evidence bookkeeping. .scratch/project-polish-progress.log."
+      },
+      {
+        "command": "python3 - <<'PY'\nimport subprocess\nfiles=subprocess.check_output(['jj','--no-pager','diff','--name-only'],text=True).splitlines()\nsubprocess.run(['pnpm','exec','prettier','--check',*files],check=True)\nPY",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 32 changed files formatted. Targeted Prettier writes and follow-ups logged in .scratch/project-polish-{format,format-followup,preview-format,live-format,live-format-final,scope-format,ledger-format,ledger-format-final}.log. .scratch/project-polish-format-check.log."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "One UI/controller integration surface with direct Markdown, repository-project, activity, route/history and bootstrap consumers. Focused units, direct stories/accessibility, type/architecture/spec checks and cold owned-demo browser acceptance. Root aggregates, full Storybook and unrelated Rust test suites are out of scope under targeted policy. CLI rebuild is part of the explicitly authorized dev restart, not Rust acceptance. Settings workspace untouched.",
+    "formats": "No Rust, API schema, WAL, manifest or persistent model change. Native V1 snapshots, IDs and comment semantics unchanged. Browser-only activity enum all/agent/unassisted is validated and retained in Projects routes. Metadata classification never invents associations or reads session bodies. Public Community Markdown safe policy omits executable HTML while Source retains bytes.",
+    "versions": "macOS ARM64; JJ 0.45.1; Node 24.10.0; pnpm 10.32.1; existing pinned Community and Design Core public exports, Svelte and Chromium.",
+    "next": "Retain focused regressions. M11.4 shared-release qualification and visual baseline approval remain separate.",
+    "deferred": [
+      "Visual baseline approval remains pending.",
+      "Shared release and independent deployment qualification remain deferred."
+    ],
+    "artifacts": "Ignored .scratch/project-polish-*.log and native-state captures; web/test-results-real/project-polish-repository--39f01-filters-retain-native-scope/{repository-markdown,project-activity-filter}.png inspected. Fresh Storybook/Vitest processes and freshly built served bundle; no baselines changed.",
+    "stories": [
+      "catalog/components/community-projects/RepositoryDocuments.stories.svelte#All document tabs use the shared Markdown preview",
+      "catalog/components/store-work/ProjectsActivityControls.stories.svelte#Hub activity filters recorded native context",
+      "catalog/components/store-work/ProjectsActivityControls.stories.svelte#Project activity starts before tasks and filters linked repositories",
+      "catalog/components/store-work/ProjectsActivityControls.stories.svelte#Repository projects retain repository tabs and reuse Community rows"
     ]
   }
 ]

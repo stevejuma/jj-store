@@ -637,10 +637,17 @@ comparisons; related agent context comes only from root-pinned associations and
 sanitized session details. Project/task activity reads independently authorized
 linked repositories at explicit code operations, preserves bounded continuation
 snapshots, and treats missing capture or read failures as unavailable context.
-Activity tab routes survive hash/history restoration. Native commit links from
-Projects authorize a code connection even when no code source is active, retain
-the exact operation and restore the Projects scope with Back. Task sections
-initially expand only Description and main-tab skeletons use a page inset.
+Activity tab routes and the validated all/agent/unassisted classification
+survive hash/history restoration. Classification uses bounded root-pinned
+association metadata and does not load sanitized session bodies; unresolved
+metadata remains unavailable, not evidence of an unassisted commit. The
+repository Projects route browses authorized metadata homes with an explicit
+linked-repository query while retaining its independent code operation and
+repository navigation. Cache scope includes the target repository. Activity tab
+routes survive hash/history restoration. Native commit links from Projects
+authorize a code connection even when no code source is active, retain the exact
+operation and restore the Projects scope with Back. Task sections initially
+expand only Description and main-tab skeletons use a page inset.
 
 A selected JJ Log or Branches change exposes a read-only Evo Log action in the
 right-rail Actions section. Its separate resizable column reads the existing

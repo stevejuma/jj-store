@@ -75,7 +75,12 @@ export interface ProjectsHubController {
     fields: Partial<
       Pick<
         StoreRoute,
-        "workTab" | "workQuery" | "workState" | "workRepository" | "workHome"
+        | "workTab"
+        | "workQuery"
+        | "workState"
+        | "workRepository"
+        | "workHome"
+        | "workActivity"
       >
     >,
   ): Promise<void>;

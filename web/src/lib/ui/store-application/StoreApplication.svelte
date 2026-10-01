@@ -12,6 +12,7 @@
   } from "../store-work/projects-sidebar-model.js";
   import { selectStoreNavigation } from "./store-navigation.js";
   import StoreProjectsBreadcrumb from "../store-work/StoreProjectsBreadcrumb.svelte";
+  import { isRepositoryProjects } from "../../controller/projects-view-cache.js";
   import StoreProjectsRail from "../store-work/StoreProjectsRail.svelte";
   import StoreRepositoryTabs from "./StoreRepositoryTabs.svelte";
   import StoreRepositoryNavigation from "./StoreRepositoryNavigation.svelte";
@@ -118,7 +119,7 @@
     ),
   );
   const activeNavigationItem = $derived(
-    current.page === "projects"
+    current.page === "projects" && !isRepositoryProjects(current)
       ? current.projectId
         ? projectSidebarId(current.repository, current.projectId)
         : "projects"
@@ -167,7 +168,7 @@
   onNavigateBack={() => navigate(-1)}
   onNavigateForward={() => navigate(1)}
 >
-  {#snippet headerCenter()}{#if !settingsOpen && current.page === "projects" && controller.projects}<StoreProjectsBreadcrumb
+  {#snippet headerCenter()}{#if !settingsOpen && current.page === "projects" && controller.projects && !isRepositoryProjects(current)}<StoreProjectsBreadcrumb
         {controller}
       />{/if}{/snippet}
   {#snippet headerEnd()}{#if !settingsOpen}<StoreApplicationHeaderActions
@@ -225,7 +226,7 @@
           <CommunityApplicationMobileNavigation
             model={{ canNavigateBack, canNavigateForward, navigate }}
           />
-          {#if current.page === "projects" && controller.projects}<StoreProjectsBreadcrumb
+          {#if current.page === "projects" && controller.projects && !isRepositoryProjects(current)}<StoreProjectsBreadcrumb
               {controller}
             />{/if}
           <div
@@ -245,7 +246,7 @@
           : undefined}
       >
         <div class="store-application__body-frame">
-          {#if !(current.page === "projects" && controller.projects)}
+          {#if !(current.page === "projects" && controller.projects && !isRepositoryProjects(current))}
             {#if !(current.page === "reviews" && current.reviewThreadId)}<StoreRepositoryTabs
                 page={current.page}
                 onSelect={selectPage}
@@ -278,7 +279,7 @@
       closeable
     >
       <AppShell.Sidebar.Body>
-        {#if current.page === "projects" && controller.projects}<StoreProjectsRail
+        {#if current.page === "projects" && controller.projects && !isRepositoryProjects(current)}<StoreProjectsRail
             {controller}
           />{:else}<StoreRepositoryDetails {controller} />
           <StoreRepositoryNavigation

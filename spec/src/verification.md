@@ -183,3 +183,15 @@ completion after access invalidation. Native message stories prove own-author
 editing, read-only copy, exact parent replies and retained edit context. Agent
 menu stories prove full native clipboard values and unchanged selection.
 Captured transcripts stay immutable. Visual baselines remain pending.
+
+E-UI-047 covers Activity-first project and hub navigation, the Community-style
+recorded-agent filter in the right rail, root-pinned metadata-only
+classification, two-reader bounds, unavailable context and cancellation.
+Repository Projects regressions retain repository tabs, authorization, code
+operation and separate linked-project cache across metadata homes. Five document
+tabs and existing file and edit-preview consumers use Community's public safe
+Markdown renderer; source retains original bytes. Cold owned-demo checks
+preserve native state, prove document formatting and three-pixel indicators,
+project filters across Back/reload, virtual Activity and exact review anchors.
+Visual approval remains pending and no native service contract or persistence
+format changed.

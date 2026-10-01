@@ -22,6 +22,7 @@
     mobile = false,
     sharedRepository = false,
     loading = false,
+    repositoryProjects = false,
   }: {
     detail?: boolean;
     failedHome?: boolean;
@@ -29,6 +30,7 @@
     mobile?: boolean;
     sharedRepository?: boolean;
     loading?: boolean;
+    repositoryProjects?: boolean;
   } = $props();
   const base = untrack(() => createInMemoryStoreController("projects"));
   let route = $state<StoreRoute>({
@@ -36,6 +38,9 @@
     page: "projects",
     projectsHub: true,
     workTab: "projects",
+    ...untrack(() =>
+      repositoryProjects ? { projectsHub: false, repository: homeA } : {},
+    ),
   });
   const repositories = $derived([
     {
@@ -81,7 +86,11 @@
   $effect(() => {
     void untrack(() => hub.navigation.load());
     void untrack(() =>
-      detail ? hub.openProject(homeA, projectId, childId) : hub.openHub(),
+      repositoryProjects
+        ? hub.restore()
+        : detail
+          ? hub.openProject(homeA, projectId, childId)
+          : hub.openHub(),
     );
   });
   onDestroy(() => hub.reset());

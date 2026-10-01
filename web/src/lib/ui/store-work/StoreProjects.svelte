@@ -77,7 +77,7 @@
     initialParent = $state("");
   const tabs = $derived<ProjectsTab[]>(
     project
-      ? ["tasks", "reviews", "repositories", "activity"]
+      ? ["activity", "tasks", "reviews", "repositories"]
       : ["activity", "projects", "tasks", "reviews", "repositories"],
   );
   const tab = $derived(

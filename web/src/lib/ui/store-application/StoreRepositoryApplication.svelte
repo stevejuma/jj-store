@@ -1,6 +1,8 @@
 <script lang="ts">
   import type { AppShellDisplayMode } from "@lapismd/design-core/shell";
   import type { StoreController } from "../../controller/contracts.js";
+  import { isRepositoryProjects } from "../../controller/projects-view-cache.js";
+  import StoreRepositoryProjects from "../store-work/StoreRepositoryProjects.svelte";
   import StoreProjects from "../store-work/StoreProjects.svelte";
   import StoreWork from "../store-work/StoreWork.svelte";
   import StoreApplication from "./StoreApplication.svelte";
@@ -41,7 +43,10 @@
   {layoutStorage}
 >
   {#snippet children(page)}
-    {#if page === "projects" && controller.projects}<StoreProjects
+    {#if isRepositoryProjects(state.route) && controller.projects}<StoreRepositoryProjects
+        {controller}
+      />
+    {:else if page === "projects" && controller.projects}<StoreProjects
         {controller}
       />
     {:else if page === "projects" && controller.work}<StoreWork

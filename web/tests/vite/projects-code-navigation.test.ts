@@ -168,3 +168,38 @@ test("native activity links authorize a code connection when Projects has no act
   expect(connected).toEqual([code]);
   expect(denied).toEqual(["Reconnect to open the requested repository."]);
 });
+
+test("repository Projects external routes authorize their separate code connection", () => {
+  const data = createProductionStoreState();
+  data.repositories = [{ id: code, name: "Linked code", permission: "read" }];
+  const connected: string[] = [];
+  let external!: Parameters<
+    ReturnType<typeof createStoreRouteHistory>["onExternalRoute"]
+  >[0];
+  followProductionExternalRoutes({
+    data,
+    history: {
+      onExternalRoute: (listener: typeof external) => {
+        external = listener;
+      },
+    } as ReturnType<typeof createStoreRouteHistory>,
+    source: () => null,
+    connect: async (repository) => {
+      connected.push(repository);
+    },
+    disconnect: () => {},
+    restore: async () => {
+      throw new Error("No active code source");
+    },
+  });
+  external({
+    kind: "route",
+    route: {
+      ...initialStoreRoute(),
+      repository: code,
+      page: "projects",
+      snapshotOperationId: "44".repeat(64),
+    },
+  });
+  expect(connected).toEqual([code]);
+});

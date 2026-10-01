@@ -249,3 +249,14 @@ test("retired review column links restore the Community list or selected detail"
   );
   history.destroy();
 });
+
+test("repository Projects reload retains its repository destination and code pin", () => {
+  const hash = `#/repos/${repository}/projects?at_op=${operation}`;
+  const navigation = fakeBrowser(hash);
+  const history = createStoreRouteHistory(navigation.browser);
+  history.connect(repository, operation);
+  expect(storeRouteToHash(history.route)).toBe(hash);
+  expect(history.route.projectsHub).not.toBe(true);
+  expect(history.canBack).toBe(false);
+  history.destroy();
+});

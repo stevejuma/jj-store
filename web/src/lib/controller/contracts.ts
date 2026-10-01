@@ -63,6 +63,7 @@ export interface StoreRoute {
   projectsHub?: boolean;
   workTab?: import("./projects-hub-types.js").ProjectsTab;
   workQuery?: string;
+  workActivity?: import("./native-activity-filter.js").NativeActivityFilter;
   workState?: "active" | "all" | "open" | "in_progress" | "blocked" | "done";
   workRepository?: string;
   workHome?: string;

@@ -164,11 +164,8 @@ export function createProductionStoreController(
         data,
         feed.signal,
       );
-      if (
-        history.route.snapshotOperationId ||
-        history.route.page === "projects"
-      )
-        await reader.restorePage();
+      if (history.route.page === "projects") await projects.restore();
+      else if (history.route.snapshotOperationId) await reader.restorePage();
     } catch (cause) {
       if (!current(ticket, active)) return;
       const message = storeErrorMessage(cause);

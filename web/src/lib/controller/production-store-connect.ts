@@ -23,7 +23,8 @@ export function createProductionConnect(context: {
     if (data.accessMode === "local_trusted") void projects.navigation.load();
     if (
       data.accessMode === "local_trusted" &&
-      (context.route().page === "projects" || !repository)
+      ((context.route().page === "projects" && context.route().projectsHub) ||
+        !repository)
     ) {
       if (context.route().page === "projects") await projects.restore();
       else await projects.openHub();
@@ -56,7 +57,10 @@ export function createProductionConnect(context: {
       const selected =
         requested ??
         (data.repositories.length === 1 ? data.repositories[0] : undefined);
-      if (context.route().page === "projects" || !selected) {
+      if (
+        (context.route().page === "projects" && context.route().projectsHub) ||
+        !selected
+      ) {
         if (context.route().page === "projects") await projects.restore();
         else await projects.openHub();
         data.status.connection = "disconnected";

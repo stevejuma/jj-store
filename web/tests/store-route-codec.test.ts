@@ -257,3 +257,28 @@ test("Projects hub carries a legacy home code operation independently of WorkSto
     "invalid",
   );
 });
+
+test("activity filters round trip and reject invalid or repeated classifications", () => {
+  for (const activity of ["all", "agent", "unassisted"]) {
+    const hash = `#/projects?tab=activity&activity=${activity}`;
+    const parsed = storeRouteFromHash(hash);
+    assert.equal(parsed.kind, "route");
+    if (parsed.kind === "route") {
+      assert.equal(parsed.route.workActivity, activity);
+      const restored = storeRouteFromHash(storeRouteToHash(parsed.route)!);
+      assert.equal(restored.kind, "route");
+      if (restored.kind === "route")
+        assert.equal(restored.route.workActivity, activity);
+    }
+  }
+  for (const query of [
+    "activity=missing",
+    "activity=agent&activity=unassisted",
+    "activity=",
+  ]) {
+    assert.equal(
+      storeRouteFromHash(`#/projects?tab=activity&${query}`).kind,
+      "invalid",
+    );
+  }
+});

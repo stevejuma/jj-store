@@ -1,8 +1,10 @@
 import type { StoreRoute } from "./contracts.js";
 import type { ProjectHome, WorkBrowseQuery } from "./projects-hub-types.js";
+export const isRepositoryProjects = (r: StoreRoute) =>
+  r.page === "projects" && !r.projectsHub && !r.projectId;
 export const projectsViewKey = (r: StoreRoute) =>
   JSON.stringify([
-    r.projectId ? r.repository : "",
+    r.projectId || isRepositoryProjects(r) ? r.repository : "",
     r.projectId ?? null,
     r.taskId ?? null,
     r.workTab ?? (r.projectId ? "tasks" : "projects"),
@@ -10,6 +12,7 @@ export const projectsViewKey = (r: StoreRoute) =>
     r.workState ?? "active",
     r.workRepository ?? "",
     r.workHome ?? "",
+    r.workActivity ?? "all",
   ]);
 
 export function createProjectsViewCache() {
@@ -34,11 +37,18 @@ export function createProjectsViewCache() {
 
 export function projectsBrowseQuery(route: StoreRoute): WorkBrowseQuery {
   const kind =
-    route.projectId || route.workTab === "tasks" ? "tasks" : "projects";
+    !isRepositoryProjects(route) &&
+    (route.projectId || route.workTab === "tasks")
+      ? "tasks"
+      : "projects";
   return {
     kind,
     ...(route.projectId ? { project: route.projectId } : {}),
-    ...(route.workRepository ? { repository: route.workRepository } : {}),
+    ...(isRepositoryProjects(route)
+      ? { repository: route.repository }
+      : route.workRepository
+        ? { repository: route.workRepository }
+        : {}),
     ...(route.workQuery ? { q: route.workQuery } : {}),
     ...(kind === "tasks" && route.workState !== "all"
       ? { state: route.workState ?? "active" }
