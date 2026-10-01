@@ -587,3 +587,12 @@ facts. Device bindings are still explicit and local. The bridge capability
 reports qualified native fact replication separately from remaining fault,
 selector, credential and cold end-to-end gates; ordinary upstream dispatch is
 unchanged.
+
+Native Git bookmark selection supports patterns, --revision, --all, --tracked,
+--deleted, --change and --named under the bookmark-only capability profile.
+Generated bookmark preparation is a separate accepted native operation before
+intent preparation, and dry-run performs no such publication. Multiple selected
+updates use atomic transport with exact leases for every full ref. Remote rename
+and removal change owned alias/tracking metadata while preserving durable facts.
+Unsupported tag publication, signing/conflict profiles and push options still
+reject before external writes; ordinary backend command semantics are unchanged.

@@ -100,7 +100,7 @@ adds evidence here in its enclosing Jujutsu change.
 | M12.3       | Done        | M12.2       | JST-GIT-004,JST-GIT-008                                                                                                                                                  | GB2: Bounded fetch with native tracking and concurrent ref merge                                                               | Complete staged bridge gate                                                   | E-M12-003,E-M12-004,E-M12-006                                                                                                                                                                                                                                                                                                                                  |
 | M12.4       | Done        | M12.3       | JST-GIT-005,JST-GIT-006                                                                                                                                                  | GB3: Selected single-ref push with leases and durable recovery                                                                 | Complete staged bridge gate                                                   | E-M12-005,E-M12-006                                                                                                                                                                                                                                                                                                                                            |
 | M12.5       | In progress | M12.4       | JST-GIT-007                                                                                                                                                              | GB4: Fault/concurrency and qualified data-only native replication                                                              | Complete staged bridge gate                                                   | E-M12-006                                                                                                                                                                                                                                                                                                                                                      |
-| M12.6       | Planned     | M12.5       | JST-GIT-001,JST-GIT-005                                                                                                                                                  | GB5: Bookmark selectors safe remote lifecycle and atomic multi-ref parity                                                      | Complete staged bridge gate                                                   | -                                                                                                                                                                                                                                                                                                                                                              |
+| M12.6       | In progress | M12.5       | JST-GIT-001,JST-GIT-005                                                                                                                                                  | GB5: Bookmark selectors safe remote lifecycle and atomic multi-ref parity                                                      | Complete staged bridge gate                                                   | E-M12-007                                                                                                                                                                                                                                                                                                                                                      |
 | M12.7       | Planned     | M12.6       | JST-GIT-002,JST-GIT-007,JST-GIT-008                                                                                                                                      | GB6: Cold real-RustFS external merge credentials resources and UI freshness                                                    | Complete staged bridge gate                                                   | -                                                                                                                                                                                                                                                                                                                                                              |
 
 The user reopened production browsing integration on 27 September 2026 after
@@ -24227,6 +24227,74 @@ and named tests are checked by the progress gate.
     "result": "pass",
     "remaining": [],
     "next": "GB4 data-only reducer slice is qualified and enables code Git activation. Remaining M12.5 fault/cancellation matrix and GB5 bookmark selectors, remote lifecycle and atomic multi-ref parity, then GB6 real RustFS external merge, approved credentials, hard process lifetime and cold browser freshness. No complete-bridge or real-RustFS claim from this slice."
+  },
+  {
+    "id": "E-M12-007",
+    "tasks": [
+      "M12",
+      "M12.6"
+    ],
+    "date": "2026-10-01",
+    "kind": "native-git-bookmark-selection-and-remote-lifecycle",
+    "revision": "Enclosing Jujutsu change szlvumzz.",
+    "before": "Exact new selector fixture failed at the single-ref capability gate after two fixture compile errors (nonexistent endpoint/permit API). Implementation checkpoint compiled only.",
+    "versions": "JJ 0.45.1;gix 0.87.1;Git 2.55.0;Rust 1.98.1",
+    "formats": "Manifest 4;Git records V1;conversion profile jj-git-sha1-0.45.1-v1;no schema change.",
+    "files": [
+      "crates/jj-store-cli/src/git_bridge.rs",
+      "crates/jj-store-cli/src/git_bridge/device.rs",
+      "crates/jj-store-cli/src/git_bridge/push.rs",
+      "crates/jj-store-cli/src/commands.rs",
+      "crates/jj-store-cli/tests/executable_native.rs",
+      "spec/src/git-interop.md",
+      "spec/src/cli.md",
+      "docs/cli/commands.md"
+    ],
+    "runs": [
+      {
+        "command": "cargo fmt --all && cargo check -p jj-store-cli --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Inherited checkpoint compile only."
+      },
+      {
+        "command": "cargo fmt --all && cargo test -p jj-store-cli --locked --test executable_native native_git_bookmark_selectors_remote_lifecycle_and_atomic_push_preserve_scope -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "First executable run passes multi-ref lease rollback, selectors, generated dry-run/native source proof, tag retention, rename identity and remove/recreate. Expanded negative cases rerun pending."
+      },
+      {
+        "command": "cargo fmt --all && cargo test -p jj-store-cli --locked --test executable_native native_git_bookmark_selectors_remote_lifecycle_and_atomic_push_preserve_scope -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "Expanded remote atomic-capability refusal, unsupported tag/options/colliding generated name and removed-remote no-contact recovery pass."
+      },
+      {
+        "command": "cargo fmt --all && cargo test -p jj-store-cli --locked --lib --test executable_native --test native_rpc --test workspace_migration && cargo clippy -p jj-store-cli --all-targets --locked -- -D warnings",
+        "result": "pass",
+        "failures": 0,
+        "note": "6 library, 17 executable, 7 RPC and 1 migration cases pass; 3 OS credential tests ignored. CLI-only relevant suites; unrelated Rust/UI lanes out of scope."
+      },
+      {
+        "command": "cargo fmt --all && cargo test -p jj-store-cli --locked --test executable_native native_git_bookmark_publication_matches_pinned_upstream_scope -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "Native versus pinned ordinary JJ path agrees on selected/named/deleted refs, dry-run and rename/remove preservation."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/git-interop.md spec/src/cli.md spec/src/milestones.md docs/cli/commands.md && pnpm spec:validate && pnpm check:progress && pnpm spec:first && pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "123 requirements,94 tasks,6 protected files/3 chapters and15 package boundaries pass."
+      }
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/executable_native.rs#native_git_bookmark_selectors_remote_lifecycle_and_atomic_push_preserve_scope",
+      "crates/jj-store-cli/tests/executable_native.rs#native_git_bookmark_publication_matches_pinned_upstream_scope"
+    ],
+    "result": "pass",
+    "remaining": [],
+    "next": "GB5 behavior qualified; M12.6 stays In progress until dependency M12.5 fault/cancellation gate completes. Continue owned transport lifetime and GB6 credentials/resource/cold real-RustFS/browser cycle."
   }
 ]
 ```

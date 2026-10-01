@@ -35,12 +35,12 @@
 
 The milestone ledger records remaining command parity and release gates.
 
-Native Git bridge supports explicit approved remote add/list/set-url and scoped
-fetch. Selected single-bookmark push and default tracked bookmark selection use
-exact destination leases; `--dry-run` plans without publication. Fetched commit
-tags are retained; tag publication, multi-ref updates and other push selectors
-remain gated. Code repositories with native origins await the Git reducer;
-WorkStore homes preserve their frozen origin ledger.
+Native Git bridge supports approved remote add/list/set-url/rename/remove and
+scoped fetch. Bookmark publication supports patterns, revisions, generated
+change and named bookmarks, all/tracked/deleted selection and default tracked
+selection. Each update uses an exact destination lease; multiple updates require
+remote atomic capability. `--dry-run` plans without publication. Fetched commit
+tags are retained; tag publication and push options remain unsupported.
 
 After interrupted publication, use `jj store git status [attempt]` (also
 `--format=json`) and `jj store git recover <attempt>`. Recovery inspects the
@@ -50,5 +50,5 @@ not push again or prove who authored a currently observed desired ref.
 Native Git code repositories carry immutable Git facts through reducer-2 origin
 replication. Peers receive logical aliases and exact evidence; endpoint bindings
 and credentials remain device-local. WorkStore homes retain local Git support
-and their frozen origin ledger. Remaining selectors, atomic multi-ref push and
-cold credential/resource qualification stay gated.
+and their frozen origin ledger. Cold credential/resource and end-to-end
+qualification remain explicit gates.

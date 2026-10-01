@@ -177,7 +177,7 @@ pub async fn run(
     }
     if name == "remote" {
         let (name, args) = args.subcommand().unwrap();
-        if !matches!(name, "add" | "list" | "set-url") {
+        if !matches!(name, "add" | "list" | "set-url" | "rename" | "remove") {
             return Err(unavailable(operation));
         }
         if string(args, "push_url").is_some() || string(args, "push").is_some() {
@@ -213,6 +213,62 @@ pub async fn run(
         context.client.authorize(true).await.map_err(error)?;
         if name == "add" && !state.activation_available {
             return Err(unavailable("code repository origin activation"));
+        }
+        if matches!(name, "rename" | "remove") {
+            let old = string(args, if name == "rename" { "old" } else { "remote" })
+                .ok_or_else(|| user_error("Git remote name required"))?;
+            let id = *remotes
+                .get(&old)
+                .ok_or_else(|| user_error("Git logical remote not found"))?;
+            let new = if name == "rename" {
+                let new = string(args, "new")
+                    .ok_or_else(|| user_error("New Git remote name required"))?;
+                if !valid_remote_name(&new) || remotes.contains_key(&new) {
+                    return Err(user_error("New Git remote name invalid or already exists"));
+                }
+                new
+            } else {
+                old.clone()
+            };
+            let event = device::id().map_err(error)?;
+            let predecessors = state
+                .git
+                .as_ref()
+                .unwrap()
+                .remote_versions(id)
+                .iter()
+                .map(|v| v.event)
+                .collect();
+            let mut workspace = helper.workspace_helper(ui).await?;
+            let mut tx = workspace.start_transaction();
+            if name == "rename" {
+                tx.repo_mut()
+                    .rename_remote(RemoteName::new(&old), RemoteName::new(&new));
+            } else {
+                tx.repo_mut().remove_remote(RemoteName::new(&old));
+            }
+            accept(
+                tx,
+                ui,
+                &context,
+                vec![GitRecordV1::Remote(GitRemoteV1 {
+                    remote: id,
+                    event,
+                    predecessors,
+                    name: new.clone(),
+                    active: name == "rename",
+                })],
+                event,
+                format!("{name} native Git remote {old}"),
+            )
+            .await?;
+            // Device approval is keyed by stable logical ID. Retain removed
+            // bindings for historical diagnostics; the selected tombstone gates
+            // every future contact. Rename must not rotate destination leases.
+            if name == "rename" {
+                device.rename(id, &new).map_err(error)?;
+            }
+            return Ok(());
         }
         let remote_name =
             string(args, "remote").ok_or_else(|| user_error("Git remote name required"))?;

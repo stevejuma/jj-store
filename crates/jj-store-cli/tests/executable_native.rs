@@ -1669,3 +1669,296 @@ async fn native_git_push_uses_exact_leases_retains_parent_and_recovers_without_r
             .values
     );
 }
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn native_git_bookmark_selectors_remote_lifecycle_and_atomic_push_preserve_scope() {
+    let f = Fixture::new().await;
+    f.attach("git-selectors");
+    let work = f.root.path().join("git-selectors");
+    let device = f.root.path().join("selector-device");
+    let run = |args: &[&str]| {
+        success(
+            f.command(&work, args)
+                .env("JJ_STORE_GIT_HOME", &device)
+                .output()
+                .unwrap(),
+        )
+    };
+    let bare = f.root.path().join("selector-source.git");
+    let git = gix::init_bare(&bare).unwrap();
+    use gix::objs::Write as _;
+    let tree = git.write_object(gix::objs::Tree::empty()).unwrap();
+    let base = git.objects.write_buf(gix::objs::Kind::Commit,format!("tree {tree}\nauthor Test <test@example.invalid> 1000 +0000\ncommitter Test <test@example.invalid> 1000 +0000\n\nBase\n").as_bytes()).unwrap();
+    git.reference(
+        "refs/heads/main",
+        base,
+        gix::refs::transaction::PreviousValue::MustNotExist,
+        "fixture",
+    )
+    .unwrap();
+    git.reference(
+        "refs/tags/release",
+        base,
+        gix::refs::transaction::PreviousValue::MustNotExist,
+        "fixture",
+    )
+    .unwrap();
+    run(&["git", "remote", "add", "origin", bare.to_str().unwrap()]);
+    run(&["git", "fetch"]);
+    run(&["new", "main@origin", "-m", "Selected feature"]);
+    run(&["bookmark", "create", "feature-one", "-r", "@"]);
+    run(&["bookmark", "create", "feature-two", "-r", "@"]);
+    let before = f.snapshot().await;
+    assert!(run(&["git", "push", "--bookmark", "glob:feature-*", "--dry-run"]).contains("Dry-run"));
+    assert_eq!(f.snapshot().await, before);
+    let config = fs::read_to_string(bare.join("config")).unwrap();
+    fs::write(
+        bare.join("config"),
+        format!("{config}\n[receive]\n advertiseAtomic = false\n"),
+    )
+    .unwrap();
+    let unavailable = f
+        .command(&work, &["git", "push", "--bookmark", "glob:feature-*"])
+        .env("JJ_STORE_GIT_HOME", &device)
+        .output()
+        .unwrap();
+    assert!(!unavailable.status.success());
+    assert!(git.find_reference("refs/heads/feature-one").is_err());
+    assert!(git.find_reference("refs/heads/feature-two").is_err());
+    fs::write(bare.join("config"), config).unwrap();
+    run(&["git", "push", "--bookmark", "glob:feature-*"]);
+    let first = git
+        .find_reference("refs/heads/feature-one")
+        .unwrap()
+        .target()
+        .try_id()
+        .unwrap()
+        .to_owned();
+    assert_eq!(
+        git.find_reference("refs/heads/feature-two")
+            .unwrap()
+            .target()
+            .try_id()
+            .unwrap()
+            .to_owned(),
+        first
+    );
+    run(&["new", "feature-one", "-m", "Next selected feature"]);
+    run(&["bookmark", "set", "feature-one", "-r", "@"]);
+    run(&["bookmark", "set", "feature-two", "-r", "@"]);
+    let external = git.objects.write_buf(gix::objs::Kind::Commit,format!("tree {tree}\nparent {base}\nauthor Test <test@example.invalid> 1000 +0000\ncommitter Test <test@example.invalid> 1000 +0000\n\nExternal race\n").as_bytes()).unwrap();
+    git.reference(
+        "refs/heads/feature-one",
+        external,
+        gix::refs::transaction::PreviousValue::Any,
+        "race",
+    )
+    .unwrap();
+    let failed = f
+        .command(&work, &["git", "push", "--bookmark", "glob:feature-*"])
+        .env("JJ_STORE_GIT_HOME", &device)
+        .output()
+        .unwrap();
+    assert!(!failed.status.success());
+    assert_eq!(
+        git.find_reference("refs/heads/feature-one")
+            .unwrap()
+            .target()
+            .try_id()
+            .unwrap()
+            .to_owned(),
+        external
+    );
+    assert_eq!(
+        git.find_reference("refs/heads/feature-two")
+            .unwrap()
+            .target()
+            .try_id()
+            .unwrap()
+            .to_owned(),
+        first,
+        "atomic lease failure must leave every other ref unchanged"
+    );
+    run(&["git", "fetch"]);
+    run(&["bookmark", "set", "feature-one", "-r", "@"]);
+    run(&["git", "push", "--tracked"]);
+    assert_ne!(
+        git.find_reference("refs/heads/feature-two")
+            .unwrap()
+            .target()
+            .try_id()
+            .unwrap()
+            .to_owned(),
+        first
+    );
+    run(&["new", "@", "-m", "Generated publication"]);
+    let before = f.snapshot().await;
+    run(&["git", "push", "--named", "named=@", "--dry-run"]);
+    assert_eq!(f.snapshot().await, before);
+    assert!(git.find_reference("refs/heads/named").is_err());
+    run(&["git", "push", "--named", "named=@"]);
+    let before = f.snapshot().await;
+    for args in [
+        vec!["git", "push", "--named", "named=@"],
+        vec!["git", "push", "--tag", "release"],
+        vec!["git", "push", "--option", "unsafe"],
+    ] {
+        let failed = f
+            .command(&work, &args)
+            .env("JJ_STORE_GIT_HOME", &device)
+            .output()
+            .unwrap();
+        assert!(!failed.status.success());
+        assert_eq!(
+            f.snapshot().await,
+            before,
+            "unsupported selection must not prepare any publication"
+        );
+    }
+    run(&["git", "push", "--change", "@"]);
+    let bookmarks = run(&["bookmark", "list", "-T", "name ++ \"\\n\""]);
+    let generated = bookmarks.lines().find(|v| v.starts_with("push-")).unwrap();
+    assert!(
+        git.find_reference(format!("refs/heads/{generated}").as_str())
+            .is_ok()
+    );
+    run(&["new", "@", "-m", "Revision selection"]);
+    run(&["bookmark", "set", "feature-one", "-r", "@"]);
+    run(&["git", "push", "--revision", "@"]);
+    run(&["bookmark", "delete", "feature-two"]);
+    run(&["git", "push", "--deleted"]);
+    assert!(git.find_reference("refs/heads/feature-two").is_err());
+    assert_eq!(
+        git.find_reference("refs/tags/release")
+            .unwrap()
+            .target()
+            .try_id()
+            .unwrap()
+            .to_owned(),
+        base
+    );
+    run(&["bookmark", "create", "all-new", "-r", "@"]);
+    run(&["git", "push", "--all"]);
+    assert!(git.find_reference("refs/heads/all-new").is_ok());
+    let binding_path = device.join(REPO.to_string()).join("bindings.json");
+    let before_binding: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(&binding_path).unwrap()).unwrap();
+    run(&["git", "remote", "rename", "origin", "renamed"]);
+    let after_binding: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(&binding_path).unwrap()).unwrap();
+    let before_endpoint = before_binding["endpoints"]
+        .as_object()
+        .unwrap()
+        .values()
+        .next()
+        .unwrap();
+    let after_endpoint = after_binding["endpoints"]
+        .as_object()
+        .unwrap()
+        .values()
+        .next()
+        .unwrap();
+    assert_eq!(
+        before_endpoint["fingerprint"],
+        after_endpoint["fingerprint"]
+    );
+    assert!(run(&["bookmark", "list", "--all-remotes"]).contains("@renamed"));
+    let original_id = before_binding["endpoints"]
+        .as_object()
+        .unwrap()
+        .keys()
+        .next()
+        .unwrap()
+        .clone();
+    run(&["git", "remote", "remove", "renamed"]);
+    assert!(!run(&["git", "remote", "list"]).contains("renamed"));
+    assert!(run(&["bookmark", "list"]).contains("all-new"));
+    let status: serde_json::Value =
+        serde_json::from_str(&run(&["store", "git", "status", "--format", "json"])).unwrap();
+    assert!(!status["attempts"].as_array().unwrap().is_empty());
+    let unknown = status["attempts"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|v| v["status"] != "applied")
+        .unwrap()["intent"]["id"]
+        .as_str()
+        .unwrap();
+    let recovered = f
+        .command(&work, &["store", "git", "recover", unknown])
+        .env("JJ_STORE_GIT_HOME", &device)
+        .output()
+        .unwrap();
+    assert!(!recovered.status.success());
+    assert!(String::from_utf8_lossy(&recovered.stderr).contains("removed or conflicted"));
+    run(&["git", "remote", "add", "renamed", bare.to_str().unwrap()]);
+    let binding: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(&binding_path).unwrap()).unwrap();
+    assert!(
+        binding["endpoints"]
+            .as_object()
+            .unwrap()
+            .keys()
+            .any(|id| id != &original_id)
+    );
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn native_git_bookmark_publication_matches_pinned_upstream_scope() {
+    let f = Fixture::new().await;
+    let pair = SemanticPair::new(&f);
+    let device = f.root.path().join("parity-device");
+    let mut remotes = Vec::new();
+    for (index, root) in pair.roots().into_iter().enumerate() {
+        let bare = f.root.path().join(format!("parity-{index}.git"));
+        let git = gix::init_bare(&bare).unwrap();
+        let tree = git.write_object(gix::objs::Tree::empty()).unwrap();
+        use gix::objs::Write as _;
+        let base = git.objects.write_buf(gix::objs::Kind::Commit, format!("tree {tree}\nauthor Test <test@example.invalid> 1000 +0000\ncommitter Test <test@example.invalid> 1000 +0000\n\nBase\n").as_bytes()).unwrap();
+        git.reference(
+            "refs/heads/main",
+            base,
+            gix::refs::transaction::PreviousValue::MustNotExist,
+            "fixture",
+        )
+        .unwrap();
+        let run = |args: &[&str]| {
+            success(
+                f.command(root, args)
+                    .env("JJ_STORE_GIT_HOME", &device)
+                    .output()
+                    .unwrap(),
+            )
+        };
+        run(&["git", "remote", "add", "origin", bare.to_str().unwrap()]);
+        run(&["git", "fetch"]);
+        run(&["new", "main@origin", "-m", "Published feature"]);
+        run(&["bookmark", "create", "selected", "-r", "@"]);
+        run(&["bookmark", "create", "unselected", "-r", "@"]);
+        run(&["git", "push", "--bookmark", "selected", "--dry-run"]);
+        assert!(git.find_reference("refs/heads/selected").is_err());
+        run(&["git", "push", "--bookmark", "selected"]);
+        assert!(git.find_reference("refs/heads/unselected").is_err());
+        run(&["git", "push", "--named", "named=@"]);
+        run(&["bookmark", "delete", "selected"]);
+        run(&["git", "push", "--deleted"]);
+        assert!(git.find_reference("refs/heads/selected").is_err());
+        run(&["git", "remote", "rename", "origin", "renamed"]);
+        let names: Vec<_> = git
+            .references()
+            .unwrap()
+            .all()
+            .unwrap()
+            .map(|v| v.unwrap().name().as_bstr().to_string())
+            .collect();
+        let commit = git
+            .find_reference("refs/heads/named")
+            .unwrap()
+            .peel_to_commit()
+            .unwrap();
+        remotes.push((names, commit.decode().unwrap().message.to_vec()));
+        run(&["git", "remote", "remove", "renamed"]);
+        assert!(run(&["bookmark", "list"]).contains("named"));
+    }
+    assert_eq!(remotes[0], remotes[1]);
+}

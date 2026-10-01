@@ -242,6 +242,16 @@ impl Device {
         self.save()?;
         Ok(endpoint)
     }
+    pub fn rename(&mut self, remote: m::RequestId, name: &str) -> Result<()> {
+        if !valid_remote_name(name) {
+            return Err("Git endpoint name".into());
+        }
+        if let Some(endpoint) = self.bindings.endpoints.get_mut(&remote) {
+            endpoint.name = name.into();
+            self.save()?;
+        }
+        Ok(())
+    }
     fn save(&self) -> Result<()> {
         let bytes = serde_json::to_vec(&self.bindings)?;
         if bytes.len() > 1024 * 1024 {
