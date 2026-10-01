@@ -306,14 +306,38 @@
     const trigger = c.getByRole("button", { name: "Your projects" });
     await userEvent.click(trigger);
     const search = await body.findByPlaceholderText("Search your projects");
+    const options = within(body.getByRole("listbox"));
+    await expect(
+      options.getByRole("option", { name: "Native release" }),
+    ).toBeVisible();
+    await expect(
+      options.getByRole("option", { name: "Shared code project" }),
+    ).toBeVisible();
+    await expect(
+      options.queryByRole("option", { name: "Parser repository" }),
+    ).toBeNull();
     await userEvent.type(search, "Parser repository");
+    await expect(body.getByText("No matching your projects")).toBeVisible();
+    await userEvent.clear(search);
+    await userEvent.type(search, "Shared code project");
     await expect(
       within(body.getByRole("listbox")).getAllByRole("option", {
-        name: "Parser repository",
+        name: "Shared code project",
       }),
     ).toHaveLength(1);
     await userEvent.keyboard("{Escape}");
     await waitFor(() => expect(trigger).toHaveFocus());
+    await userEvent.click(
+      within(
+        c.getByRole("navigation", { name: "Repository navigation" }),
+      ).getByRole("button", { name: "Repositories" }),
+    );
+    await expect(
+      within(body.getByRole("listbox")).getByRole("option", {
+        name: "Parser repository",
+      }),
+    ).toBeVisible();
+    await userEvent.keyboard("{Escape}");
   }}
 />
 

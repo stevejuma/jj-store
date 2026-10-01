@@ -857,14 +857,20 @@ independent. A code pin requires an explicit home/project route; opening another
 linked repository selects that repository's own authorized code operation.
 
 The left sidebar includes a primary Projects destination and expandable project
-rows with active linked repositories underneath. Its independently paged,
-unfiltered home snapshots survive main-view filters and advance on explicit
-refresh. Missing code permissions remain visible and cannot authorize
-navigation. Native review directories read separate ReviewStore snapshots only
-in accessible repositories; project views scope these to the project's links.
-Failed project reads cannot fall back to installation-wide reviews. Reviews
-retain pinned continuations, show failures and use the existing review workspace
-for detail.
+rows with active linked repositories underneath. Project destinations, project
+rows and the collapsed project-section trigger use Lucide Folder Kanban;
+collapsed Threads uses Messages Square, and repository entries and their group
+retain Folder Git. The collapsed Projects Command View lists project rows
+without flattening their linked repositories into options; project search,
+pagination/retry controls and focus restoration remain available. Repositories
+are selected from their own Command View, while expanded project rows retain
+linked repository children. Its independently paged, unfiltered home snapshots
+survive main-view filters and advance on explicit refresh. Missing code
+permissions remain visible and cannot authorize navigation. Native review
+directories read separate ReviewStore snapshots only in accessible repositories;
+project views scope these to the project's links. Failed project reads cannot
+fall back to installation-wide reviews. Reviews retain pinned continuations,
+show failures and use the existing review workspace for detail.
 
 Repository lists and cards follow Community's name/description, contributor,
 commit/review/task activity bar and date layout. Native repositories use their

@@ -54,7 +54,13 @@ rendering does not decide ancestry. Message presentation recognizes both native
 commit widths and Git SHA-1 commit widths without remapping either identity.
 Compact inline controls copy full IDs; message prose retains its existing
 operation-selection behavior. The route inventory in the archived attachment
-section 10 is implemented under /v1/repos/{repo}.
+section 10 is implemented under /v1/repos/{repo}. Browser navigation
+distinguishes project entries and compact project groups with Lucide Folder
+Kanban, collapsed Threads with Messages Square, and repository entries with
+Folder Git; labels and identities stay unchanged. The collapsed Projects Command
+View contains project entries rather than linked repository children. Its
+choices keep exact home/project identities, and the separate Repositories
+Command View retains repository access and selection.
 
 ## Requirements
 

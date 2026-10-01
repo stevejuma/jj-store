@@ -71,6 +71,7 @@
   function compactItems(
     section: CommunityNavigationSectionModel,
   ): readonly CommunityNavigationItemModel[] {
+    if (section.id === "projects") return section.items;
     return [
       ...new Map(
         section.items
