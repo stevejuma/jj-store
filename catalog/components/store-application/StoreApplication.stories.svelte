@@ -88,6 +88,10 @@
     ).not.toBeInTheDocument();
     await userEvent.click(canvas.getByRole("button", { name: "Repository" }));
     await expect(canvas.getByText("admin")).toBeVisible();
+    await expect(
+      canvas.getByRole("textbox", { name: "Repository ID" }),
+    ).toHaveAttribute("readonly");
+    await userEvent.click(canvas.getByRole("tab", { name: "Advanced" }));
     await expect(canvas.getByText("jj-store-native-v1")).toBeVisible();
     await userEvent.click(canvas.getByRole("button", { name: "Search" }));
     await expect(canvas.getByText("Fresh")).toBeVisible();
@@ -163,6 +167,7 @@
       canvas.queryByRole("button", { name: "Prepare graph index" }),
     ).not.toBeInTheDocument();
     await userEvent.click(canvas.getByRole("button", { name: "Repository" }));
+    await userEvent.click(canvas.getByRole("tab", { name: "Advanced" }));
     await userEvent.click(
       canvas.getByRole("button", { name: "Prepare graph index" }),
     );
@@ -195,6 +200,7 @@
       canvas.queryByRole("button", { name: "Prepare graph index" }),
     ).not.toBeInTheDocument();
     await userEvent.click(canvas.getByRole("button", { name: "Repository" }));
+    await userEvent.click(canvas.getByRole("tab", { name: "Advanced" }));
     await userEvent.click(
       canvas.getByRole("button", { name: "Prepare graph index" }),
     );

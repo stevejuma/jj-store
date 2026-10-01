@@ -116,9 +116,9 @@ shared-package release qualification does not alter those original Git gates.
 | M13.4       | Planned     | M13.3                   | JST-LOCAL-004,JST-LOCAL-005                                                                                                                                              | Filesystem-only server, local UI and recoverable code commands                                                                 | Implement device bindings/APIs, recoverable code commands and cold UI gates    | -                                                                                                                                                                                                                                                                                                                                                              |
 | M13.5       | Planned     | M13.4                   | JST-LOCAL-006                                                                                                                                                            | Independent local/native conversion with complete collaboration history                                                        | Implement bounded history/evidence conversion, mappings and source safety      | -                                                                                                                                                                                                                                                                                                                                                              |
 | M13.6       | Planned     | M13.5                   | JST-LOCAL-001,JST-LOCAL-002,JST-LOCAL-003,JST-LOCAL-004,JST-LOCAL-005,JST-LOCAL-006                                                                                      | Cold end-to-end and retained native regression qualification                                                                   | Qualify completed local flow cold and retain native regressions                | -                                                                                                                                                                                                                                                                                                                                                              |
-| M14         | In progress | M4.18                   | JST-UI-012,JST-UI-016                                                                                                                                                    | Local settings, profile-aware device links and safe maintenance                                                                | Implement M14.3 agent setup and automatic recovery                             | E-M14-001,E-M14-002,E-M14-003,E-M14-004,E-M14-005,E-M14-006                                                                                                                                                                                                                                                                                                    |
+| M14         | In progress | M4.18                   | JST-UI-012,JST-UI-016                                                                                                                                                    | Local settings, profile-aware device links and safe maintenance                                                                | Implement M14.3 agent setup and automatic recovery                             | E-M14-001,E-M14-002,E-M14-003,E-M14-004,E-M14-005,E-M14-006,E-M14-007                                                                                                                                                                                                                                                                                          |
 | M14.1       | Done        | M4.18                   | JST-UI-012                                                                                                                                                               | Graph preparation independent of text-search health                                                                            | Retain independent graph/search regressions; proceed to M14.2                  | E-M14-001                                                                                                                                                                                                                                                                                                                                                      |
-| M14.2       | Done        | M14.1                   | JST-UI-016,JST-SEC-005,JST-SEC-006                                                                                                                                       | Typed local management and profile-aware workspace links                                                                       | Retain folder-link regressions and proceed to M14.3                            | E-M14-002,E-M14-003,E-M14-005,E-M14-006                                                                                                                                                                                                                                                                                                                        |
+| M14.2       | Done        | M14.1                   | JST-UI-016,JST-SEC-005,JST-SEC-006                                                                                                                                       | Typed local management and profile-aware workspace links                                                                       | Retain folder-link regressions and proceed to M14.3                            | E-M14-002,E-M14-003,E-M14-005,E-M14-006,E-M14-007                                                                                                                                                                                                                                                                                                              |
 | M14.3       | In progress | M14.2                   | JST-UI-016,JST-COLLAB-002,JST-COLLAB-006                                                                                                                                 | Agent setup, queue inspection and automatic recovery                                                                           | Add agent management and worker lifecycle on the shared drain foundation       | E-M14-004,E-M14-005                                                                                                                                                                                                                                                                                                                                            |
 | M14.4       | Planned     | M14.2                   | JST-UI-016,JST-ADAPT-003,JST-ADAPT-004                                                                                                                                   | Editable Search and isolated worker replacement                                                                                | Add desired/effective configuration and safe text-search rebuild               | -                                                                                                                                                                                                                                                                                                                                                              |
 | M14.5       | Planned     | M14.2                   | JST-UI-016,JST-PUB-005,JST-PUB-006                                                                                                                                       | Storage integrity and non-destructive checkpoints                                                                              | Add bounded authorized operations and uncertain-outcome recovery               | -                                                                                                                                                                                                                                                                                                                                                              |
@@ -30435,6 +30435,64 @@ and named tests are checked by the progress gate.
       "M14.3-M14.7 remain unfinished."
     ],
     "artifacts": "Ignored .scratch/folder-picker-*.log and web/test-results; disposable process fixtures cleaned up."
+  },
+  {
+    "id": "E-M14-007",
+    "tasks": ["M14", "M14.2"],
+    "date": "2026-10-01",
+    "kind": "presentation",
+    "files": [
+      "catalog/components/store-application/StoreApplication.stories.svelte",
+      "catalog/components/store-application/StoreSettingsIdentifier.stories.svelte",
+      "spec/src/api.md",
+      "spec/src/ui.md",
+      "web/src/lib/ui/store-settings/StoreRepositorySettings.svelte",
+      "web/src/lib/ui/store-settings/StoreSearchSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreSettings.css",
+      "web/src/lib/ui/store-settings/StoreSettingsIdentifier.svelte",
+      "web/src/lib/ui/store-settings/StoreWorkspaceSettings.svelte",
+      "web/tests/browser/local-workspaces.spec.ts",
+      "spec/src/milestones.md"
+    ],
+    "tests": [],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreWorkspaceSettings.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "17 passed; existing Settings story expected capabilities visible in General. Updated it to explicitly open Advanced before the same assertion."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreWorkspaceSettings.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/StoreSettingsIdentifier.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "19 interaction/accessibility stories pass; full ID copied, clipboard failure retains selectable readonly input, joined geometry and tab navigation verified."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check",
+        "result": "fail",
+        "failures": 2,
+        "note": "Web check passed. Catalog check found Playwright-only exact options in two Storybook ByRole queries. Removed these options; names already match exactly as strings."
+      },
+      {
+        "command": "pnpm web:build; pnpm exec playwright test --config web/playwright.config.ts web/tests/browser/local-workspaces.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Fresh bundle and one cold browser acceptance pass: folder selection/save and draft retention across global sections and nested tabs, mobile overflow and axe. Existing bundle-size warning remains."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "before": "Separate Folder path/Browse controls and a long single Repository settings page; long IDs rendered as wrapping code.",
+    "scope": "Settings UI and its direct shell/story/browser consumers only; no Rust changes or root aggregate lanes.",
+    "formats": "No wire or persistence format change; full identifiers preserved in readonly fields and clipboard. Enclosing Jujutsu change is the revision reference.",
+    "versions": "pnpm 10.32.1; Svelte 5; Vitest 4.1.11; Storybook 10.5.7; Playwright Chromium; existing Community/Design Core resolution.",
+    "validation": "Final pnpm catalog:check passes with zero errors/warnings and 101 catalog modules. pnpm spec:first, pnpm spec:validate and pnpm check:progress pass: 132 requirements, 111 tasks.",
+    "next": "Add configured Sync controls, then editable Search Configuration/Health tabs.",
+    "deferred": [
+      "Visual baselines remain visual-pending.",
+      "Search and Sync management are separate following slices."
+    ]
   }
 ]
 ```

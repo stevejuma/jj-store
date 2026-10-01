@@ -1,4 +1,6 @@
 <script lang="ts">
+  import * as Tabs from "@lapismd/design-core/shadcn/tabs";
+  import StoreSettingsIdentifier from "./StoreSettingsIdentifier.svelte";
   import type { Model } from "../../api/client.js";
   import type { StoreController } from "../../controller/contracts.js";
   import StoreWorkspaceSettings from "./StoreWorkspaceSettings.svelte";
@@ -28,154 +30,189 @@
       .join(", ");
 </script>
 
-<section class="store-settings__section" aria-labelledby="repository-identity">
-  <header><h2 id="repository-identity">Identity and snapshot</h2></header>
-  <dl class="store-settings__rows">
-    <div>
-      <dt>Name</dt>
-      <dd>{state.repository.name}</dd>
-    </div>
-    <div>
-      <dt>Repository ID</dt>
-      <dd><code>{state.repository.id}</code></dd>
-    </div>
-    <div>
-      <dt>Permission</dt>
-      <dd>{state.repository.permission ?? "Unavailable"}</dd>
-    </div>
-    <div>
-      <dt>Selected operation</dt>
-      <dd>
-        <code
-          >{state.route.snapshotOperationId ?? "Choose an operation head"}</code
-        >
-      </dd>
-    </div>
-    <div>
-      <dt>Operation heads</dt>
-      <dd class="store-settings__stack">
-        {#each state.operationHeads as head (head)}<code>{head}</code>{/each}
-      </dd>
-    </div>
-    <div>
-      <dt>Conflicts</dt>
-      <dd>{state.conflictCount ?? "Not loaded"}</dd>
-    </div>
-    <div>
-      <dt>Epoch</dt>
-      <dd><code>{settings.snapshot?.epoch ?? "Unavailable"}</code></dd>
-    </div>
-    <div>
-      <dt>Published position</dt>
-      <dd>{number(settings.snapshot?.published_seq)}</dd>
-    </div>
-    <div>
-      <dt>Manifest revision</dt>
-      <dd>{number(settings.snapshot?.manifest_revision)}</dd>
-    </div>
-    <div>
-      <dt>Code state version</dt>
-      <dd>{number(settings.snapshot?.code_state_version)}</dd>
-    </div>
-  </dl>
-</section>
-
-<StoreWorkspaceSettings
-  {settings}
-  supported={Boolean(settings.capabilities?.local_workspace_links)}
-  onRefresh={controller.actions.refreshWorkspaceLinks}
-  onPath={controller.actions.setWorkspacePath}
-  onLink={controller.actions.linkWorkspace}
-  pickerSupported={Boolean(settings.capabilities?.local_folder_picker)}
-  onBrowse={controller.actions.pickWorkspaceFolder}
-/>
-
-<StoreGraphIndexSettings {controller} />
-
-{#if capabilities}
-  <section
-    class="store-settings__section"
-    aria-labelledby="repository-capabilities"
+<Tabs.Root value="general" class="store-settings__tabs">
+  <Tabs.List
+    aria-label="Repository settings sections"
+    class="store-settings__tab-list"
   >
-    <header><h2 id="repository-capabilities">Capabilities</h2></header>
-    <dl class="store-settings__rows">
-      <div>
-        <dt>Native profile</dt>
-        <dd>{capabilities.native_profile}</dd>
-      </div>
-      <div>
-        <dt>Authentication</dt>
-        <dd>{capabilities.authentication.replaceAll("_", " ")}</dd>
-      </div>
-      <div>
-        <dt>Supported APIs</dt>
-        <dd>{featureList(capabilities)}</dd>
-      </div>
-      <div>
-        <dt>Typed mutations</dt>
-        <dd>{words(capabilities.typed_mutations)}</dd>
-      </div>
-      <div>
-        <dt>Conflict actions</dt>
-        <dd>{words(capabilities.conflict_resolution_actions)}</dd>
-      </div>
-      <div>
-        <dt>Mutation request limit</dt>
-        <dd>{number(capabilities.mutation_request_bytes)} bytes</dd>
-      </div>
-      <div>
-        <dt>Conflict upload limit</dt>
-        <dd>{number(capabilities.conflict_upload_bytes)} bytes</dd>
-      </div>
-    </dl>
-  </section>
-  <section class="store-settings__section" aria-labelledby="repository-limits">
-    <header><h2 id="repository-limits">Read and event limits</h2></header>
-    <dl class="store-settings__rows">
-      <div>
-        <dt>Requests / workers</dt>
-        <dd>
-          {number(capabilities.limits.requests)} / {number(
-            capabilities.limits.workers,
-          )}
-        </dd>
-      </div>
-      <div>
-        <dt>Deadline</dt>
-        <dd>{number(capabilities.limits.deadline_millis)} ms</dd>
-      </div>
-      <div>
-        <dt>Page / index commits</dt>
-        <dd>
-          {number(capabilities.limits.page)} / {number(
-            capabilities.limits.index_commits,
-          )}
-        </dd>
-      </div>
-      <div>
-        <dt>JSON / file limits</dt>
-        <dd>
-          {number(capabilities.limits.json_bytes)} / {number(
-            capabilities.limits.file_bytes,
-          )} bytes
-        </dd>
-      </div>
-      <div>
-        <dt>Event streams / replay</dt>
-        <dd>
-          {number(capabilities.event_limits.streams)} / {number(
-            capabilities.event_limits.replay_window,
-          )}
-        </dd>
-      </div>
-      <div>
-        <dt>Event page / polling</dt>
-        <dd>
-          {number(capabilities.event_limits.page)} / {number(
-            capabilities.event_limits.poll_millis,
-          )} ms
-        </dd>
-      </div>
-    </dl>
-  </section>
-{/if}
+    <Tabs.Trigger value="general">General</Tabs.Trigger>
+    <Tabs.Trigger value="folders">Local folders</Tabs.Trigger>
+    <Tabs.Trigger value="advanced">Advanced</Tabs.Trigger>
+  </Tabs.List>
+  <Tabs.Content value="general">
+    <section
+      class="store-settings__section"
+      aria-labelledby="repository-identity"
+    >
+      <header><h2 id="repository-identity">Identity and snapshot</h2></header>
+      <dl class="store-settings__rows">
+        <div>
+          <dt>Name</dt>
+          <dd>{state.repository.name}</dd>
+        </div>
+        <div>
+          <dt>Repository ID</dt>
+          <dd>
+            <StoreSettingsIdentifier
+              label="Repository ID"
+              value={state.repository.id}
+            />
+          </dd>
+        </div>
+        <div>
+          <dt>Permission</dt>
+          <dd>{state.repository.permission ?? "Unavailable"}</dd>
+        </div>
+        <div>
+          <dt>Selected operation</dt>
+          <dd>
+            <StoreSettingsIdentifier
+              label="Selected operation"
+              value={state.route.snapshotOperationId}
+              emptyLabel="Choose an operation head"
+            />
+          </dd>
+        </div>
+        <div>
+          <dt>Operation heads</dt>
+          <dd class="store-settings__stack">
+            {#each state.operationHeads as head, index (head)}<StoreSettingsIdentifier
+                label={`Operation head ${index + 1}`}
+                value={head}
+              />{/each}
+          </dd>
+        </div>
+        <div>
+          <dt>Conflicts</dt>
+          <dd>{state.conflictCount ?? "Not loaded"}</dd>
+        </div>
+        <div>
+          <dt>Epoch</dt>
+          <dd>
+            <StoreSettingsIdentifier
+              label="Epoch"
+              value={settings.snapshot?.epoch}
+            />
+          </dd>
+        </div>
+        <div>
+          <dt>Published position</dt>
+          <dd>{number(settings.snapshot?.published_seq)}</dd>
+        </div>
+        <div>
+          <dt>Manifest revision</dt>
+          <dd>{number(settings.snapshot?.manifest_revision)}</dd>
+        </div>
+        <div>
+          <dt>Code state version</dt>
+          <dd>{number(settings.snapshot?.code_state_version)}</dd>
+        </div>
+      </dl>
+    </section>
+  </Tabs.Content>
+  <Tabs.Content value="folders">
+    <StoreWorkspaceSettings
+      {settings}
+      supported={Boolean(settings.capabilities?.local_workspace_links)}
+      onRefresh={controller.actions.refreshWorkspaceLinks}
+      onPath={controller.actions.setWorkspacePath}
+      onLink={controller.actions.linkWorkspace}
+      pickerSupported={Boolean(settings.capabilities?.local_folder_picker)}
+      onBrowse={controller.actions.pickWorkspaceFolder}
+    />
+  </Tabs.Content>
+  <Tabs.Content value="advanced">
+    <StoreGraphIndexSettings {controller} />
+
+    {#if capabilities}
+      <section
+        class="store-settings__section"
+        aria-labelledby="repository-capabilities"
+      >
+        <header><h2 id="repository-capabilities">Capabilities</h2></header>
+        <dl class="store-settings__rows">
+          <div>
+            <dt>Native profile</dt>
+            <dd>{capabilities.native_profile}</dd>
+          </div>
+          <div>
+            <dt>Authentication</dt>
+            <dd>{capabilities.authentication.replaceAll("_", " ")}</dd>
+          </div>
+          <div>
+            <dt>Supported APIs</dt>
+            <dd>{featureList(capabilities)}</dd>
+          </div>
+          <div>
+            <dt>Typed mutations</dt>
+            <dd>{words(capabilities.typed_mutations)}</dd>
+          </div>
+          <div>
+            <dt>Conflict actions</dt>
+            <dd>{words(capabilities.conflict_resolution_actions)}</dd>
+          </div>
+          <div>
+            <dt>Mutation request limit</dt>
+            <dd>{number(capabilities.mutation_request_bytes)} bytes</dd>
+          </div>
+          <div>
+            <dt>Conflict upload limit</dt>
+            <dd>{number(capabilities.conflict_upload_bytes)} bytes</dd>
+          </div>
+        </dl>
+      </section>
+      <section
+        class="store-settings__section"
+        aria-labelledby="repository-limits"
+      >
+        <header><h2 id="repository-limits">Read and event limits</h2></header>
+        <dl class="store-settings__rows">
+          <div>
+            <dt>Requests / workers</dt>
+            <dd>
+              {number(capabilities.limits.requests)} / {number(
+                capabilities.limits.workers,
+              )}
+            </dd>
+          </div>
+          <div>
+            <dt>Deadline</dt>
+            <dd>{number(capabilities.limits.deadline_millis)} ms</dd>
+          </div>
+          <div>
+            <dt>Page / index commits</dt>
+            <dd>
+              {number(capabilities.limits.page)} / {number(
+                capabilities.limits.index_commits,
+              )}
+            </dd>
+          </div>
+          <div>
+            <dt>JSON / file limits</dt>
+            <dd>
+              {number(capabilities.limits.json_bytes)} / {number(
+                capabilities.limits.file_bytes,
+              )} bytes
+            </dd>
+          </div>
+          <div>
+            <dt>Event streams / replay</dt>
+            <dd>
+              {number(capabilities.event_limits.streams)} / {number(
+                capabilities.event_limits.replay_window,
+              )}
+            </dd>
+          </div>
+          <div>
+            <dt>Event page / polling</dt>
+            <dd>
+              {number(capabilities.event_limits.page)} / {number(
+                capabilities.event_limits.poll_millis,
+              )} ms
+            </dd>
+          </div>
+        </dl>
+      </section>
+    {/if}
+  </Tabs.Content>
+</Tabs.Root>

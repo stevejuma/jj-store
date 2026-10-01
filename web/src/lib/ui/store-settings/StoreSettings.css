@@ -145,21 +145,26 @@
   }
 }
 
-.store-settings__folder-input {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+.store-settings__field-action {
+  width: 100%;
   min-width: 0;
 }
-.store-settings__folder-input input {
+.store-settings__field-action input {
   flex: 1;
   min-width: 0;
 }
-.store-settings__folder-input button {
+.store-settings__field-action button {
   flex-shrink: 0;
 }
-@media (max-width: 480px) {
-  .store-settings__folder-input {
-    flex-wrap: wrap;
-  }
+.store-settings__identifier input {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.78rem;
+}
+.store-settings__tabs {
+  min-width: 0;
+}
+.store-settings__tab-list {
+  max-width: 100%;
+  flex-wrap: wrap;
+  height: auto;
 }

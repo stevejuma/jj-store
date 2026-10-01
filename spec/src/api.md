@@ -1004,3 +1004,7 @@ linking. It neither links nor validates a workspace. Failures distinguish busy,
 timeout, invalid helper output and unavailable picker. No executable, prompt or
 initial path is accepted from a caller. Existing HTTP request deadlines still
 apply.
+
+Settings grouping and joined ID Copy controls preserve full wire identities and
+existing explicit actions. Tabs and clipboard feedback are local presentation
+state and never publish or change the selected repository snapshot.

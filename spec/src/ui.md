@@ -88,9 +88,14 @@ expose no link action. Repository switching/disconnection clears drafts and
 ignores late requests. Folder paths wrap on mobile, and form actions remain
 keyboard accessible.
 
-The optional native folder picker adds Browse beside Folder path. Only an
-explicit click opens the dialog on the local-service machine. Selection fills
-the draft; Link folder remains the separate validation/save action. Cancel
+Repository settings groups General, Local folders and Advanced values in
+keyboard-accessible tabs that wrap on narrow screens. Tab changes do not discard
+folder drafts. Long Settings identifiers use joined readonly input and Copy
+actions; full values remain selectable and copy success/failure is announced.
+
+The optional native folder picker joins Folder path to a Git-icon Browse button.
+Only an explicit click opens the dialog on the local-service machine. Selection
+fills the draft; Link folder remains the separate validation/save action. Cancel
 preserves the draft; failures retain manual entry and explain the fallback.
 While picking, repeated browse and link actions are disabled. Repository changes
 discard late selections. Unsupported platforms keep the manual form.

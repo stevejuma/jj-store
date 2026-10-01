@@ -1,5 +1,7 @@
 <script lang="ts">
   import * as Alert from "@lapismd/design-core/shadcn/alert";
+  import * as ButtonGroup from "@lapismd/design-core/shadcn/button-group";
+  import GitBranchIcon from "@lucide/svelte/icons/git-branch";
   import * as Field from "@lapismd/design-core/shadcn/field";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { Input } from "@lapismd/design-core/shadcn/input";
@@ -81,7 +83,11 @@
       <Field.Group>
         <Field.Field data-disabled={busy}>
           <Field.Label for="workspace-folder-path">Folder path</Field.Label>
-          <div class="store-settings__folder-input">
+          <ButtonGroup.Root
+            class="store-settings__field-action"
+            style="width: 100%"
+            aria-label="Choose local folder"
+          >
             <Input
               id="workspace-folder-path"
               value={settings.workspacePath}
@@ -98,10 +104,14 @@
                 type="button"
                 variant="outline"
                 disabled={busy}
-                onclick={() => void onBrowse()}>Browse…</Button
+                onclick={() => void onBrowse()}
+                ><GitBranchIcon
+                  data-icon="inline-start"
+                  aria-hidden="true"
+                />Browse…</Button
               >
             {/if}
-          </div>
+          </ButtonGroup.Root>
           <Field.Description id="workspace-folder-help"
             >Enter the absolute path of an existing native JJ workspace
             connected to this local service. {#if pickerSupported}Browse opens a

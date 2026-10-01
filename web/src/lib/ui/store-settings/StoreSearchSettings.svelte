@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreSettingsIdentifier from "./StoreSettingsIdentifier.svelte";
   import * as Alert from "@lapismd/design-core/shadcn/alert";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import type { StoreController } from "../../controller/contracts.js";
@@ -74,7 +75,13 @@
       </div>
       <div>
         <dt>Index generation</dt>
-        <dd><code>{search?.index_generation ?? "Not available"}</code></dd>
+        <dd>
+          <StoreSettingsIdentifier
+            label="Index generation"
+            value={search?.index_generation}
+            emptyLabel="Not available"
+          />
+        </dd>
       </div>
     </dl>
   {/if}

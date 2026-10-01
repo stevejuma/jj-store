@@ -70,6 +70,7 @@ test("local folder settings preserve drafts and link without changing repository
     .click();
   await page.getByRole("menuitem", { name: "Settings" }).click();
   await page.getByRole("button", { name: "Repository", exact: true }).click();
+  await page.getByRole("tab", { name: "Local folders", exact: true }).click();
   const input = page.getByRole("textbox", { name: "Folder path" });
   await expect(page.getByText("No local folders linked.")).toBeVisible();
   await page.getByRole("button", { name: "Browse…" }).click();
@@ -79,6 +80,7 @@ test("local folder settings preserve drafts and link without changing repository
   await expect(input).toHaveValue("/workspaces/example with spaces");
   await page.getByRole("button", { name: "Search", exact: true }).click();
   await page.getByRole("button", { name: "Repository", exact: true }).click();
+  await page.getByRole("tab", { name: "Local folders", exact: true }).click();
   await expect(input).toHaveValue("/workspaces/example with spaces");
   await input.press("Enter");
   await expect(page.getByText(/workspace links changed/)).toBeVisible();
