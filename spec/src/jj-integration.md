@@ -511,3 +511,10 @@ bytes, mappings and frozen bookmark targets. A new imported push intent proves
 its source against accepted published code history; the replica inventory alone
 cannot authorize it. Verification uses isolated conversion scratch state and
 never invokes Git transport or reconciles native heads.
+
+Git recovery consumers merge the frozen native remote-ref base, current target
+and confirmed result with the pinned `merge_ref_targets` algorithm. The frozen
+base must match the durable Git lease; missing or ambiguous evidence refuses
+apply. A later observation cannot be rolled back by repairing an older attempt.
+The Git stage fault fixture exercises before/after manifest-write uncertainty
+for activation, intent, started, result and applied facts through cold replay.

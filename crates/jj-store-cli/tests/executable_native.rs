@@ -1968,3 +1968,306 @@ async fn native_git_bookmark_publication_matches_pinned_upstream_scope() {
     }
     assert_eq!(remotes[0], remotes[1]);
 }
+
+#[cfg(unix)]
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn native_git_push_apply_preserves_a_concurrent_fetched_remote_advance() {
+    use std::os::unix::fs::PermissionsExt as _;
+    let f = Fixture::new().await;
+    f.attach("remote-race");
+    let work = f.root.path().join("remote-race");
+    let device = f.root.path().join("push-device");
+    let other = f.root.path().join("fetch-device");
+    let run = |args: &[&str]| {
+        success(
+            f.command(&work, args)
+                .env("JJ_STORE_GIT_HOME", &device)
+                .output()
+                .unwrap(),
+        )
+    };
+    let bare = f.root.path().join("remote-race.git");
+    let git = gix::init_bare(&bare).unwrap();
+    use gix::objs::Write as _;
+    let tree = git.write_object(gix::objs::Tree::empty()).unwrap();
+    let base = git.objects.write_buf(gix::objs::Kind::Commit, format!("tree {tree}\nauthor Test <test@example.invalid> 1000 +0000\ncommitter Test <test@example.invalid> 1000 +0000\n\nBase\n").as_bytes()).unwrap();
+    git.reference(
+        "refs/heads/main",
+        base,
+        gix::refs::transaction::PreviousValue::MustNotExist,
+        "fixture",
+    )
+    .unwrap();
+    run(&["git", "remote", "add", "origin", bare.to_str().unwrap()]);
+    run(&["git", "fetch"]);
+    run(&["new", "main@origin", "-m", "First feature"]);
+    run(&["bookmark", "create", "feature", "-r", "@"]);
+    run(&["git", "push", "--bookmark", "feature"]);
+    run(&["new", "feature", "-m", "Second feature"]);
+    run(&["bookmark", "set", "feature", "-r", "@"]);
+    let ready = f.root.path().join("race-ready");
+    let release = f.root.path().join("race-release");
+    let hook = bare.join("hooks/post-receive");
+    fs::create_dir_all(hook.parent().unwrap()).unwrap();
+    fs::write(
+        &hook,
+        format!(
+            "#!/bin/sh\ntouch '{}'\nwhile test ! -f '{}'; do sleep 0.02; done\n",
+            ready.display(),
+            release.display()
+        ),
+    )
+    .unwrap();
+    fs::set_permissions(&hook, fs::Permissions::from_mode(0o700)).unwrap();
+    struct Pending(std::process::Child);
+    impl Drop for Pending {
+        fn drop(&mut self) {
+            let _ = self.0.kill();
+            let _ = self.0.wait();
+        }
+    }
+    let mut pending = Pending(
+        f.command(&work, &["git", "push", "--bookmark", "feature"])
+            .env("JJ_STORE_GIT_HOME", &device)
+            .stdout(std::process::Stdio::piped())
+            .stderr(std::process::Stdio::piped())
+            .spawn()
+            .unwrap(),
+    );
+    let deadline = std::time::Instant::now() + Duration::from_secs(15);
+    while !ready.exists() {
+        assert!(std::time::Instant::now() < deadline);
+        assert!(pending.0.try_wait().unwrap().is_none());
+        tokio::time::sleep(Duration::from_millis(20)).await;
+    }
+    let pushed = git
+        .find_reference("refs/heads/feature")
+        .unwrap()
+        .target()
+        .try_id()
+        .unwrap()
+        .to_owned();
+    let advanced = git.objects.write_buf(gix::objs::Kind::Commit, format!("tree {tree}\nparent {pushed}\nauthor Test <test@example.invalid> 1000 +0000\ncommitter Test <test@example.invalid> 1000 +0000\n\nExternal advance\n").as_bytes()).unwrap();
+    git.reference(
+        "refs/heads/feature",
+        advanced,
+        gix::refs::transaction::PreviousValue::Any,
+        "external",
+    )
+    .unwrap();
+    for args in [
+        vec!["git", "remote", "set-url", "origin", bare.to_str().unwrap()],
+        vec!["git", "fetch"],
+    ] {
+        success(
+            f.command(&work, &args)
+                .env("JJ_STORE_GIT_HOME", &other)
+                .output()
+                .unwrap(),
+        );
+    }
+    assert_eq!(
+        run(&[
+            "log",
+            "--no-graph",
+            "-r",
+            "feature@origin",
+            "-T",
+            "description.trim_end()"
+        ]),
+        "External advance"
+    );
+    fs::write(&release, "release").unwrap();
+    let deadline = std::time::Instant::now() + Duration::from_secs(10);
+    loop {
+        if let Some(status) = pending.0.try_wait().unwrap() {
+            assert!(status.success());
+            break;
+        }
+        assert!(std::time::Instant::now() < deadline);
+        tokio::time::sleep(Duration::from_millis(20)).await;
+    }
+    assert_eq!(
+        run(&[
+            "log",
+            "--no-graph",
+            "-r",
+            "feature@origin",
+            "-T",
+            "description.trim_end()"
+        ]),
+        "External advance",
+        "push apply must merge its frozen ref delta with concurrent native observations"
+    );
+    assert_eq!(
+        git.find_reference("refs/heads/feature")
+            .unwrap()
+            .target()
+            .try_id(),
+        Some(advanced.as_ref())
+    );
+}
+
+#[cfg(unix)]
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn native_git_recovery_preserves_a_later_observation_from_another_binding() {
+    use std::os::unix::fs::PermissionsExt as _;
+    let f = Fixture::new().await;
+    f.attach("remote-race");
+    let work = f.root.path().join("remote-race");
+    let device = f.root.path().join("push-device");
+    let other = f.root.path().join("fetch-device");
+    let run = |args: &[&str]| {
+        success(
+            f.command(&work, args)
+                .env("JJ_STORE_GIT_HOME", &device)
+                .output()
+                .unwrap(),
+        )
+    };
+    let bare = f.root.path().join("remote-race.git");
+    let git = gix::init_bare(&bare).unwrap();
+    use gix::objs::Write as _;
+    let tree = git.write_object(gix::objs::Tree::empty()).unwrap();
+    let base = git.objects.write_buf(gix::objs::Kind::Commit, format!("tree {tree}\nauthor Test <test@example.invalid> 1000 +0000\ncommitter Test <test@example.invalid> 1000 +0000\n\nBase\n").as_bytes()).unwrap();
+    git.reference(
+        "refs/heads/main",
+        base,
+        gix::refs::transaction::PreviousValue::MustNotExist,
+        "fixture",
+    )
+    .unwrap();
+    run(&["git", "remote", "add", "origin", bare.to_str().unwrap()]);
+    run(&["git", "fetch"]);
+    run(&["new", "main@origin", "-m", "First feature"]);
+    run(&["bookmark", "create", "feature", "-r", "@"]);
+    run(&["git", "push", "--bookmark", "feature"]);
+    run(&["new", "feature", "-m", "Second feature"]);
+    run(&["bookmark", "set", "feature", "-r", "@"]);
+    let ready = f.root.path().join("race-ready");
+    let release = f.root.path().join("race-release");
+    let hook = bare.join("hooks/post-receive");
+    fs::create_dir_all(hook.parent().unwrap()).unwrap();
+    fs::write(
+        &hook,
+        format!(
+            "#!/bin/sh\ntouch '{}'\nwhile test ! -f '{}'; do sleep 0.02; done\n",
+            ready.display(),
+            release.display()
+        ),
+    )
+    .unwrap();
+    fs::set_permissions(&hook, fs::Permissions::from_mode(0o700)).unwrap();
+    struct Pending(std::process::Child);
+    impl Drop for Pending {
+        fn drop(&mut self) {
+            let _ = self.0.kill();
+            let _ = self.0.wait();
+        }
+    }
+    let mut pending = Pending(
+        f.command(&work, &["git", "push", "--bookmark", "feature"])
+            .env("JJ_STORE_GIT_HOME", &device)
+            .stdout(std::process::Stdio::piped())
+            .stderr(std::process::Stdio::piped())
+            .spawn()
+            .unwrap(),
+    );
+    let deadline = std::time::Instant::now() + Duration::from_secs(15);
+    while !ready.exists() {
+        assert!(std::time::Instant::now() < deadline);
+        assert!(pending.0.try_wait().unwrap().is_none());
+        tokio::time::sleep(Duration::from_millis(20)).await;
+    }
+    let pushed = git
+        .find_reference("refs/heads/feature")
+        .unwrap()
+        .target()
+        .try_id()
+        .unwrap()
+        .to_owned();
+    let advanced = git.objects.write_buf(gix::objs::Kind::Commit, format!("tree {tree}\nparent {pushed}\nauthor Test <test@example.invalid> 1000 +0000\ncommitter Test <test@example.invalid> 1000 +0000\n\nExternal advance\n").as_bytes()).unwrap();
+    let mirror = f.root.path().join("later-binding.git");
+    let later = gix::init_bare(&mirror).unwrap();
+    fn copy_objects(source: &Path, target: &Path) {
+        fs::create_dir_all(target).unwrap();
+        for entry in fs::read_dir(source).unwrap() {
+            let entry = entry.unwrap();
+            let target = target.join(entry.file_name());
+            if entry.file_type().unwrap().is_dir() {
+                copy_objects(&entry.path(), &target);
+            } else {
+                fs::copy(entry.path(), target).unwrap();
+            }
+        }
+    }
+    copy_objects(&bare.join("objects"), &mirror.join("objects"));
+    later
+        .reference(
+            "refs/heads/feature",
+            advanced,
+            gix::refs::transaction::PreviousValue::MustNotExist,
+            "later binding",
+        )
+        .unwrap();
+    for args in [
+        vec![
+            "git",
+            "remote",
+            "set-url",
+            "origin",
+            mirror.to_str().unwrap(),
+        ],
+        vec!["git", "fetch"],
+    ] {
+        success(
+            f.command(&work, &args)
+                .env("JJ_STORE_GIT_HOME", &other)
+                .output()
+                .unwrap(),
+        );
+    }
+    assert_eq!(
+        run(&[
+            "log",
+            "--no-graph",
+            "-r",
+            "feature@origin",
+            "-T",
+            "description.trim_end()"
+        ]),
+        "External advance"
+    );
+    pending.0.kill().unwrap();
+    pending.0.wait().unwrap();
+    let status: serde_json::Value =
+        serde_json::from_str(&run(&["store", "git", "status", "--format", "json"])).unwrap();
+    let attempt = status["attempts"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|v| v["status"] == "unknown")
+        .unwrap()["intent"]["id"]
+        .as_str()
+        .unwrap();
+    run(&["store", "git", "recover", attempt]);
+    assert_eq!(
+        run(&[
+            "log",
+            "--no-graph",
+            "-r",
+            "feature@origin",
+            "-T",
+            "description.trim_end()"
+        ]),
+        "External advance",
+        "push apply must merge its frozen ref delta with concurrent native observations"
+    );
+    assert_eq!(
+        git.find_reference("refs/heads/feature")
+            .unwrap()
+            .target()
+            .try_id(),
+        Some(pushed.as_ref())
+    );
+}

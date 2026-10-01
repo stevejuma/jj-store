@@ -437,3 +437,10 @@ introduce its intent or event predecessors in the same CAS. Cumulative origins
 consume those stages in causal order; explicit first-origin baseline hydration
 preserves historical facts. A non-code origin cannot name published code
 operations or use inventory membership to create source authority.
+
+Git stage acceptance qualifies unknown manifest outcomes both before and after
+write at activation, prepared, transport-started, result-recorded and applied
+boundaries. Cold recovery exposes the old or wholly selected next catalog;
+replaying each stable request produces one domain increment and a stable
+receipt. This memory fault evidence does not substitute for real RustFS
+qualification.

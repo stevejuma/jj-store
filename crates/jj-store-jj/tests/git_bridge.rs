@@ -1566,3 +1566,6 @@ mod git_origin_tests {
         );
     }
 }
+
+#[path = "git_bridge/faults.rs"]
+mod git_fault_tests;

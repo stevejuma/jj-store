@@ -601,3 +601,8 @@ The Git transport supervisor uses an internal executable entry point before
 CliRunner and native credential loading. It accepts invocation-owned argv and a
 lifetime pipe; replicated Git facts cannot launch it. Hard cancellation closes
 the pipe and terminates the owned Git group without changing native evidence.
+
+Git apply/recovery reads the frozen native operation's remote-ref base and
+merges its result into current tracking state, including renamed aliases. An
+attempt cache starts with owner-only directory permissions and remains safely
+removable after a hard-killed invocation.
