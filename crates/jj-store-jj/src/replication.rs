@@ -38,6 +38,33 @@ impl NativeOperationHeadReducer {
 
 #[async_trait::async_trait]
 impl OperationHeadReducer for NativeOperationHeadReducer {
+    async fn verify_git(
+        &self,
+        staged: &wal::publication::GitStoreSnapshot,
+        previous: Option<&wal::publication::GitStoreSnapshot>,
+        accepted_code: Option<&BTreeSet<OperationId>>,
+    ) -> wal::Result<()> {
+        if accepted_code.is_some()
+            && let Some(previous) = previous
+        {
+            staged.verify_event_admission(previous)?;
+        }
+        for (key, record) in &staged.values {
+            if previous.is_some_and(|old| old.values.contains_key(key)) {
+                continue;
+            }
+            if let wal::publication::GitRecordV1::PushIntent(intent) = record
+                && let Some(accepted_code) = accepted_code
+            {
+                crate::git_bridge::verify_push_source(self.objects.clone(), accepted_code, intent)
+                    .await
+                    .map_err(|_| wal::Error::Corrupt("imported Git push source"))?;
+            }
+        }
+        crate::git_bridge::verify_delta(self.objects.clone(), staged, previous)
+            .await
+            .map_err(|_| wal::Error::Corrupt("imported Git representation"))
+    }
     async fn maximal_heads(
         &self,
         candidates: BTreeSet<OperationId>,

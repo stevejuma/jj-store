@@ -432,3 +432,10 @@ Git bridge production modules and their direct tests additionally map to
 `git-interop.md`, alongside their existing owning layer chapters. M12 tracks GB0
 through GB6; every slice retains exact targeted evidence and explicit
 unimplemented gates. Attached sketches never satisfy product acceptance.
+
+The tracked execution guide reports the qualified native Git fact reducer and
+keeps M12 selector, fault, credential and cold end-to-end gates explicit.
+Reducer negotiation is versioned independently of legacy origin serialization;
+protected transfer and receiver changes include publication, replication, JJ
+integration, CLI and mutation contracts with focused regression evidence in the
+same change.

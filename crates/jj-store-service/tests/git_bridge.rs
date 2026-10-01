@@ -208,6 +208,40 @@ async fn git_push_executor_cannot_be_spoofed_or_changed_by_another_writer() {
     jj_store_service::git_bridge::accept(writer.clone(), &request)
         .await
         .unwrap();
+    let before = writer.snapshot().await.unwrap();
+    let start = m::RequestId::new([58; 16]);
+    let result = m::RequestId::new([59; 16]);
+    let bundled = jj_store_service::git_bridge::Request {
+        version: 1,
+        request_id: m::RequestId::new([60; 16]),
+        transition: None,
+        records: vec![
+            GitRecordV1::PushEvent(GitPushEventV1 {
+                id: start,
+                attempt,
+                predecessors: BTreeSet::new(),
+                kind: GitPushEventKindV1::TransportStarted,
+            }),
+            GitRecordV1::PushEvent(GitPushEventV1 {
+                id: result,
+                attempt,
+                predecessors: BTreeSet::from([start]),
+                kind: GitPushEventKindV1::ResultRecorded {
+                    refs: BTreeMap::from([(
+                        "refs/heads/missing".into(),
+                        GitPushRefOutcomeV1::Acknowledged,
+                    )]),
+                },
+            }),
+        ],
+    };
+    assert!(
+        jj_store_service::git_bridge::accept(writer.clone(), &bundled)
+            .await
+            .is_err(),
+        "push stages require previously selected predecessor evidence"
+    );
+    assert_eq!(writer.snapshot().await.unwrap().digest(), before.digest());
     let event = m::RequestId::new([56; 16]);
     let mut unselected = jj_store_jj::roots::operation();
     unselected.metadata.description = "unselected source".into();

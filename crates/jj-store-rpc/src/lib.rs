@@ -43,6 +43,8 @@ fn record(id: Option<wire::ControlRecordId>) -> Result<RecordRef, Status> {
         8 => RecordKind::AgentObject,
         9 => RecordKind::ReviewRoot,
         10 => RecordKind::ReviewObject,
+        13 => RecordKind::GitRoot,
+        14 => RecordKind::GitObject,
         _ => return Err(Status::invalid_argument("control record kind")),
     };
     let digest = m::RecordDigest::from_slice(&id.digest)
@@ -61,6 +63,8 @@ fn wire_record(reference: RecordRef) -> wire::ControlRecordId {
         RecordKind::AgentObject => 8,
         RecordKind::ReviewRoot => 9,
         RecordKind::ReviewObject => 10,
+        RecordKind::GitRoot => 13,
+        RecordKind::GitObject => 14,
         _ => 0,
     };
     wire::ControlRecordId {

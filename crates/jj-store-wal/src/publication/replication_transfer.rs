@@ -99,6 +99,7 @@ impl Coordinator {
             review_root: publication
                 .review_root
                 .ok_or(Error::Corrupt("bootstrap review root"))?,
+            git_root: publication.git_root,
         }))
     }
 
@@ -298,6 +299,9 @@ impl Coordinator {
             .await?;
         let mut control = pages;
         control.extend(entries.into_values());
+        if let Some(root) = publication.git_root {
+            control.extend(self.git_store(root).await?.records);
+        }
         if publication.changed_domains.contains(&OriginDomainV1::Agent) {
             let root = publication
                 .agent_root

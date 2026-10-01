@@ -175,6 +175,12 @@ impl Coordinator {
             let mut after_domains = before_domains;
             let mut agent_changed = false;
             let mut review_changed = false;
+            let mut git_changed = false;
+            let mut accepted_code = if ordered.iter().any(|e| e.publication.git_root.is_some()) {
+                self.accepted_code_operations(&base).await?
+            } else {
+                BTreeSet::new()
+            };
             for envelope in &ordered {
                 for (key, reference) in inventories
                     .get(&envelope.publication.origin_key)
@@ -196,8 +202,40 @@ impl Coordinator {
                     .contains(&OriginDomainV1::Code)
                 {
                     heads.extend(envelope.publication.published_operations.iter().copied());
+                    accepted_code.extend(envelope.publication.published_operations.iter().copied());
                     published_operations
                         .extend(envelope.publication.published_operations.iter().copied());
+                }
+                if let Some(authored) = envelope.publication.git_root {
+                    let domains = after_domains
+                        .as_mut()
+                        .ok_or(Error::Corrupt("Git domain unavailable"))?;
+                    let previous = match domains.git {
+                        Some(state) => self.git_store(state.root).await?,
+                        None => self.empty_git_store().await?,
+                    };
+                    let source = self.git_store(authored).await?;
+                    let values: Vec<_> = source.values.into_values().collect();
+                    let reduced = self.stage_git_records(&previous, &values).await?;
+                    self.operation_heads
+                        .verify_git(
+                            &reduced,
+                            Some(&previous),
+                            if envelope.publication.is_seed_baseline() {
+                                None
+                            } else {
+                                Some(&accepted_code)
+                            },
+                        )
+                        .await?;
+                    let changed = domains.git.is_none() || reduced.reference != previous.reference;
+                    git_changed |= changed;
+                    if changed || domains.git.is_some() {
+                        domains.git = Some(DomainState {
+                            root: reduced.reference,
+                            version: domains.git.map_or(0, |s| s.version),
+                        });
+                    }
                 }
                 if envelope
                     .publication
@@ -282,6 +320,16 @@ impl Coordinator {
                         .version
                         .checked_add(1)
                         .ok_or(Error::Limit("review state version"))?;
+                }
+                if git_changed {
+                    let git = domains
+                        .git
+                        .as_mut()
+                        .ok_or(Error::Corrupt("Git domain reduction"))?;
+                    git.version = git
+                        .version
+                        .checked_add(1)
+                        .ok_or(Error::Limit("Git state version"))?;
                 }
             }
             let candidates = heads;
@@ -408,6 +456,13 @@ impl Coordinator {
                 )
                 .await?;
             let manifest = Manifest {
+                format: if after_domains.and_then(|d| d.git).is_some() {
+                    4
+                } else {
+                    base.manifest.format
+                },
+                git_root: after_domains.and_then(|d| d.git).map(|s| s.root),
+                git_state_version: after_domains.and_then(|d| d.git).map_or(0, |s| s.version),
                 revision: base
                     .manifest
                     .revision
@@ -508,7 +563,53 @@ impl Coordinator {
                 return Err(Error::Corrupt("imported review native dependency"));
             }
         }
+        if let Some(root) = publication.git_root
+            && !self.git_store(root).await?.native.is_subset(&native)
+        {
+            return Err(Error::Corrupt("imported Git native dependency"));
+        }
         Ok(entries)
+    }
+
+    pub(super) async fn accepted_code_operations(
+        &self,
+        snapshot: &ManifestSnapshot,
+    ) -> Result<BTreeSet<OperationId>> {
+        let mut code = snapshot.manifest.heads.clone();
+        let mut after = WalPosition(0);
+        while after < snapshot.manifest.published {
+            let entries = self.committed(snapshot, after, 1024).await?;
+            if entries.is_empty() {
+                return Err(Error::Corrupt("accepted code history gap"));
+            }
+            for entry in entries {
+                code.extend(entry.published_operations);
+                after = entry.after.position;
+            }
+            if code.len() > self.limits.inventory.max_nodes {
+                return Err(Error::Limit("accepted code history"));
+            }
+        }
+        if let Some(reference) = snapshot.manifest.replication_root {
+            let root = self.read_replication_root(reference).await?;
+            for reference in self
+                .catalog
+                .entries(root.accepted_origins, self.limits.inventory.max_nodes)
+                .await?
+                .into_values()
+            {
+                let receipt: OriginReceiptV1 = self
+                    .records
+                    .get(reference, RecordKind::OriginReceipt)
+                    .await?;
+                let origin = self.origin_publication(receipt).await?;
+                code.extend(origin.published_operations);
+                if code.len() > self.limits.inventory.max_nodes {
+                    return Err(Error::Limit("accepted code origins"));
+                }
+            }
+        }
+        Ok(code)
     }
 
     async fn accepted_origin_digests(

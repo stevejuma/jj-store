@@ -97,7 +97,7 @@ impl Coordinator {
             if base.manifest.work_root.is_some() {
                 return Err(Error::Unsupported("WorkStore origin replication"));
             }
-            if base.manifest.format != 2 || base.manifest.replication_root.is_some() {
+            if !matches!(base.manifest.format, 2 | 4) || base.manifest.replication_root.is_some() {
                 return Err(Error::AlreadyExists);
             }
             let domains = base
@@ -108,6 +108,13 @@ impl Coordinator {
                 .await?;
             self.agent_store(domains.agent.root).await?;
             self.review_store(domains.review.root).await?;
+            if let Some(git) = domains.git {
+                let staged = self.git_store(git.root).await?;
+                let accepted = self.accepted_code_operations(&base).await?;
+                self.operation_heads
+                    .verify_git(&staged, None, Some(&accepted))
+                    .await?;
+            }
 
             let position = WalPosition(
                 base.manifest
@@ -130,7 +137,7 @@ impl Coordinator {
                 origin_key,
                 previous_origin_digest: None,
                 causal_frontier: Vec::new(),
-                semantic_format_version: 1,
+                semantic_format_version: if domains.git.is_some() { 2 } else { 1 },
                 principal: request.principal,
                 request_id: request.request_id,
                 publication_id: request.publication_id,
@@ -138,16 +145,20 @@ impl Coordinator {
                 published_operations: base.manifest.heads.clone(),
                 agent_root: Some(domains.agent.root),
                 review_root: Some(domains.review.root),
+                git_root: domains.git.map(|s| s.root),
                 required_inventory_root: base
                     .manifest
                     .inventory
                     .ok_or(Error::Corrupt("replication seed inventory"))?,
-                changed_domains: BTreeSet::from([
+                changed_domains: [
                     OriginDomainV1::Repository,
                     OriginDomainV1::Code,
                     OriginDomainV1::Agent,
                     OriginDomainV1::Review,
-                ]),
+                ]
+                .into_iter()
+                .chain(domains.git.map(|_| OriginDomainV1::Git))
+                .collect(),
                 domain_facts: None,
             };
             publication.validate(self.records.repository)?;

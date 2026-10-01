@@ -581,3 +581,9 @@ durable attempts; `jj store git recover` inspects the original approved endpoint
 and repairs local bookkeeping without retransmitting. Capability gates remain
 explicit for selectors, multi-ref transport, conflicts, tag publication and
 sign-on-push until their focused acceptance passes.
+
+Native Git code repositories use reducer-2 origin negotiation for data-only
+facts. Device bindings are still explicit and local. The bridge capability
+reports qualified native fact replication separately from remaining fault,
+selector, credential and cold end-to-end gates; ordinary upstream dispatch is
+unchanged.

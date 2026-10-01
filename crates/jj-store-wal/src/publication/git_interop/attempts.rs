@@ -108,6 +108,42 @@ impl GitPushEventV1 {
     }
 }
 impl GitStoreSnapshot {
+    /// Event stages consume facts selected by an earlier acceptance. A seed
+    /// may hydrate already accepted history; ordinary authored/imported deltas
+    /// cannot invent preparation or causal event predecessors in the same CAS.
+    pub fn verify_event_admission(&self, previous: &Self) -> Result<()> {
+        let intents: BTreeSet<_> = previous
+            .values
+            .values()
+            .filter_map(|v| match v {
+                GitRecordV1::PushIntent(v) => Some(v.id),
+                _ => None,
+            })
+            .collect();
+        let events: BTreeMap<_, _> = previous
+            .values
+            .values()
+            .filter_map(|v| match v {
+                GitRecordV1::PushEvent(v) => Some((v.id, v.attempt)),
+                _ => None,
+            })
+            .collect();
+        for (key, value) in &self.values {
+            if previous.values.contains_key(key) {
+                continue;
+            }
+            if let GitRecordV1::PushEvent(event) = value
+                && (!intents.contains(&event.attempt)
+                    || event
+                        .predecessors
+                        .iter()
+                        .any(|id| events.get(id) != Some(&event.attempt)))
+            {
+                return Err(Error::Corrupt("Git event predecessor not selected"));
+            }
+        }
+        Ok(())
+    }
     pub fn push_intent(&self, id: RequestId) -> Option<&GitPushIntentV1> {
         self.values.values().find_map(|v| match v {
             GitRecordV1::PushIntent(v) if v.id == id => Some(v),

@@ -550,6 +550,17 @@ pub trait PublicationGuard: Send + Sync {
 /// local closure; it never infers operation ancestry from commit graphs.
 #[async_trait::async_trait]
 pub trait OperationHeadReducer: Send + Sync {
+    /// A normal origin proves admission against accepted code history. A seed
+    /// is an authenticated accepted-state baseline: None keeps its immutable
+    /// view proof without reconstructing pre-seed code causality.
+    async fn verify_git(
+        &self,
+        _staged: &GitStoreSnapshot,
+        _previous: Option<&GitStoreSnapshot>,
+        _accepted_code: Option<&BTreeSet<OperationId>>,
+    ) -> Result<()> {
+        Err(Error::Unsupported("Git native validator unavailable"))
+    }
     async fn maximal_heads(
         &self,
         candidates: BTreeSet<OperationId>,
@@ -800,14 +811,17 @@ impl Coordinator {
             let mut after_domains = base.manifest.domains();
             let mut extra_roots = BTreeSet::new();
             if let Some(records) = git {
-                if base.manifest.work_root.is_none() && base.manifest.replication_root.is_some() {
-                    return Err(Error::Unsupported("Git origin reducer not qualified"));
-                }
                 let current = match base.manifest.git_root {
                     Some(root) => self.git_store(root).await?,
                     None => self.empty_git_store().await?,
                 };
                 let staged = self.stage_git_records(&current, records).await?;
+                if base.manifest.work_root.is_none() && base.manifest.replication_root.is_some() {
+                    let accepted = self.accepted_code_operations(&base).await?;
+                    self.operation_heads
+                        .verify_git(&staged, Some(&current), Some(&accepted))
+                        .await?;
+                }
                 extra_roots = staged.native;
                 let domains = after_domains
                     .as_mut()
@@ -930,11 +944,15 @@ impl Coordinator {
                 }
                 None => BTreeSet::new(),
             };
-            let changed_domains = BTreeSet::from([if request.transition.is_some() {
+            let mut changed_domains = BTreeSet::from([if request.transition.is_some() {
                 OriginDomainV1::Code
             } else {
                 OriginDomainV1::Repository
             }]);
+            if git.is_some() {
+                changed_domains.remove(&OriginDomainV1::Repository);
+                changed_domains.insert(OriginDomainV1::Git);
+            }
             let origin = self
                 .author_origin(
                     &base,

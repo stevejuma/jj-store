@@ -505,3 +505,9 @@ causally incomparable remote observations remain durable conflicts. Native undo
 can change its code view while retaining external attempt evidence in the Git
 root. Private conversion rebuilds the selected closure from retained mappings
 and original bodies before any transport-started event.
+
+The native operation reducer also owns data-only verification of imported Git
+bytes, mappings and frozen bookmark targets. A new imported push intent proves
+its source against accepted published code history; the replica inventory alone
+cannot authorize it. Verification uses isolated conversion scratch state and
+never invokes Git transport or reconciles native heads.

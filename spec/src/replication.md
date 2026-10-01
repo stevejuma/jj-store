@@ -148,7 +148,7 @@ extend an in-flight scan. A changed epoch or issuer fails the scan instead of
 silently reinterpreting its cursor.
 
 Replication control-record streaming accepts only immutable catalog, inventory,
-AgentStore and ReviewStore data records. Both peers verify the exact record
+AgentStore, ReviewStore and Git data records. Both peers verify the exact record
 digest and repository/kind envelope. Manifests, WAL candidates, settings,
 checkpoints, receipts, replication roots and origin receipts cannot enter this
 upload path. Native object streaming retains its existing typed object
@@ -249,3 +249,15 @@ origins; protocol negotiation, feed, offer, closure, import and seed routes
 reject the unsupported profile explicitly. The local WAL and native copy retain
 complete WorkStore authority. Existing configured replication becomes
 unavailable for a WorkStore home; WorkStore does not claim remote convergence.
+
+## Native Git facts
+
+Reducer 2 accepts semantic-format-2 Git origins as immutable catalog unions.
+Optional Git fields are omitted on legacy envelopes so their digests remain
+unchanged. The receiver verifies the complete native closure, raw Git object
+bytes, mappings, causal facts and frozen push source before manifest
+publication. Combined code/Git acceptance and seed hydration retain one atomic
+visibility boundary. Native operation ancestry belongs to the JJ integration;
+unsupported validators fail closed. Peer arrival never grants endpoint authority
+or executes Git, credentials, helpers or hooks. WorkStore's origin freeze still
+applies.

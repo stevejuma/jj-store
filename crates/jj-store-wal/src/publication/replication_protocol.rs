@@ -12,7 +12,7 @@ use std::collections::BTreeSet;
 
 pub const NATIVE_PROFILE: &str = "jj-native-0.45.1-v1";
 pub const ORIGIN_SCHEMA: u32 = 1;
-pub const SEMANTIC_REDUCER: u32 = 1;
+pub const SEMANTIC_REDUCER: u32 = 2;
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -80,6 +80,8 @@ pub struct BootstrapCheckpointV1 {
     pub code_heads: BTreeSet<OperationId>,
     pub agent_root: RecordRef,
     pub review_root: RecordRef,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub git_root: Option<RecordRef>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]

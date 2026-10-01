@@ -20,6 +20,13 @@ const ACTOR: m::PrincipalId = m::PrincipalId::new([72; 16]);
 struct Permit;
 #[async_trait::async_trait]
 impl PublicationGuard for Permit {
+    async fn authorize_replication(
+        &self,
+        _: &ManifestSnapshot,
+        _: &ApplyOriginsRequestV1,
+    ) -> wal::Result<()> {
+        Ok(())
+    }
     async fn authorize_replication_seed(
         &self,
         _: &ManifestSnapshot,
@@ -41,6 +48,66 @@ impl PublicationGuard for Permit {
     async fn authorize_domain(&self, _: &ManifestSnapshot, _: &DomainRequest) -> wal::Result<()> {
         Ok(())
     }
+}
+
+#[tokio::test]
+async fn git_origin_activation_requires_owned_validation_and_retains_selected_facts() {
+    let store = Arc::new(MemoryStore::default());
+    let objects = native(store.clone());
+    let c = Coordinator::new_with_head_reducer(
+        store,
+        REPO,
+        objects.clone(),
+        Arc::new(Permit),
+        Arc::new(jj_store_jj::replication::NativeOperationHeadReducer::new(
+            objects,
+        )),
+        Limits::default(),
+    )
+    .unwrap();
+    c.initialize_replica(
+        m::EpochId::new([101; 16]),
+        Vec::new(),
+        m::ReplicaId::new([101; 16]),
+        m::WriterEpoch::new([101; 16]),
+    )
+    .await
+    .unwrap();
+    let id = m::RequestId::new([102; 16]);
+    let records = vec![GitRecordV1::Remote(GitRemoteV1 {
+        remote: id,
+        event: id,
+        predecessors: BTreeSet::new(),
+        name: "origin".into(),
+        active: true,
+    })];
+    let request = Request {
+        principal: ACTOR,
+        request_id: id,
+        publication_id: m::PublicationId::new([102; 16]),
+        transition: None,
+        settings: None,
+        result: Vec::new(),
+        kind: SemanticKind::GitStateChanged,
+    };
+    assert!(matches!(
+        c.publish_git(&request, &records).await.unwrap(),
+        PublishOutcome::Committed(_)
+    ));
+    let state = c.recover(4096).await.unwrap();
+    assert_eq!(
+        c.git_store(state.manifest().git_root.unwrap())
+            .await
+            .unwrap()
+            .values
+            .len(),
+        1
+    );
+    let feed = c
+        .committed_origin_feed(&state, m::WalPosition(0), 16)
+        .await
+        .unwrap();
+    assert_eq!(feed.origins.len(), 1);
 }
 fn coordinator(store: Arc<MemoryStore>, native: Arc<NativeObjects>) -> Coordinator {
     Coordinator::new(store, REPO, native, Arc::new(Permit), Limits::default()).unwrap()
@@ -857,4 +924,645 @@ async fn git_verification_rejects_forged_dependency_and_import_identity_claims()
             .await
             .is_err()
     );
+}
+
+mod git_origin_tests {
+    use super::*;
+    use jj_store_object::{Condition, ObjectStore as _, StagedUpload, WriteOutcome};
+    use jj_store_wal::inventory::Representation;
+    use std::collections::BTreeMap;
+
+    async fn replica(byte: u8) -> (Arc<MemoryStore>, Arc<NativeObjects>, Coordinator) {
+        let store = Arc::new(MemoryStore::default());
+        let objects = native(store.clone());
+        let c = Coordinator::new_with_head_reducer(
+            store.clone(),
+            REPO,
+            objects.clone(),
+            Arc::new(Permit),
+            Arc::new(jj_store_jj::replication::NativeOperationHeadReducer::new(
+                objects.clone(),
+            )),
+            Limits::default(),
+        )
+        .unwrap();
+        c.initialize_replica(
+            m::EpochId::new([byte; 16]),
+            Vec::new(),
+            m::ReplicaId::new([byte; 16]),
+            m::WriterEpoch::new([byte; 16]),
+        )
+        .await
+        .unwrap();
+        (store, objects, c)
+    }
+    async fn publish(c: &Coordinator, records: &[GitRecordV1], byte: u8) {
+        assert!(matches!(
+            c.publish_git(
+                &Request {
+                    principal: ACTOR,
+                    request_id: m::RequestId::new([byte; 16]),
+                    publication_id: m::PublicationId::new([byte; 16]),
+                    transition: None,
+                    settings: None,
+                    result: Vec::new(),
+                    kind: SemanticKind::GitStateChanged,
+                },
+                records
+            )
+            .await
+            .unwrap(),
+            PublishOutcome::Committed(_)
+        ));
+    }
+    async fn transfer(
+        source: &Coordinator,
+        source_store: &MemoryStore,
+        destination: &Coordinator,
+        destination_store: &MemoryStore,
+    ) -> Vec<OriginEnvelopeV1> {
+        let state = source.read().await.unwrap();
+        let feed = source
+            .committed_origin_feed(&state, m::WalPosition(0), 128)
+            .await
+            .unwrap();
+        let mut origins = Vec::new();
+        for item in feed.origins {
+            let closure = source
+                .origin_closure(&state, item.envelope.publication.origin_key, 4096)
+                .await
+                .unwrap();
+            for reference in closure.control {
+                assert!(reference.kind.replication_transferable());
+                let bytes = source.read_replication_record(reference).await.unwrap();
+                assert!(matches!(
+                    destination
+                        .write_replication_record(reference, &bytes)
+                        .await
+                        .unwrap(),
+                    WriteOutcome::Applied(_) | WriteOutcome::PreconditionFailed
+                ));
+            }
+            for node in closure.native {
+                if let Representation::Stored { bytes, .. } = node.representation {
+                    let key = jj_store_object::Key::new(node.key.storage_path(REPO)).unwrap();
+                    let data = source_store
+                        .get(&key, None)
+                        .await
+                        .unwrap()
+                        .read_bounded(bytes)
+                        .await
+                        .unwrap();
+                    let upload = StagedUpload::from_bytes(&data, bytes).await.unwrap();
+                    assert!(matches!(
+                        destination_store
+                            .put(&key, Condition::Absent, &upload)
+                            .await
+                            .unwrap(),
+                        WriteOutcome::Applied(_) | WriteOutcome::PreconditionFailed
+                    ));
+                }
+            }
+            origins.push(closure.envelope);
+        }
+        origins
+    }
+    async fn apply(
+        c: &Coordinator,
+        origins: Vec<OriginEnvelopeV1>,
+        byte: u8,
+    ) -> ApplyOriginsOutcomeV1 {
+        c.apply_origins(&ApplyOriginsRequestV1 {
+            schema_version: 1,
+            principal: ACTOR,
+            request_id: m::RequestId::new([byte; 16]),
+            publication_id: m::PublicationId::new([byte; 16]),
+            origins,
+        })
+        .await
+        .unwrap()
+    }
+    async fn observe(c: &Coordinator, objects: Arc<NativeObjects>, remote: m::RequestId, byte: u8) {
+        let state = c.read().await.unwrap();
+        let accepted = c
+            .git_store(state.manifest().git_root.unwrap())
+            .await
+            .unwrap();
+        let root = tempfile::tempdir().unwrap();
+        let mut convert = converter(root.path(), objects, Some(&accepted));
+        let repo = gix::open(root.path().join("objects.git")).unwrap();
+        let oid = raw_commit(&repo, None, "", format!("peer {byte}\n").as_bytes());
+        let commit = convert.import_commit(oid.clone()).await.unwrap();
+        let mut records = convert
+            .records
+            .into_values()
+            .filter(|v| !accepted.values.contains_key(&v.key().unwrap()))
+            .collect::<Vec<_>>();
+        records.push(GitRecordV1::Observation(GitObservationV1 {
+            id: m::RequestId::new([byte; 16]),
+            remote,
+            binding: m::RecordDigest::new([7; 32]),
+            predecessors: BTreeSet::from([m::RequestId::new([111; 16])]),
+            operation: jj_store_jj::roots::ROOT_OPERATION,
+            complete_heads: true,
+            refs: BTreeMap::from([(
+                "refs/heads/main".into(),
+                GitRefV1 {
+                    oid: Some(oid.clone()),
+                    commit_oid: Some(oid),
+                    native: Some(commit),
+                },
+            )]),
+        }));
+        publish(c, &records, byte).await;
+    }
+
+    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+    async fn git_origins_keep_causal_conflicts_replay_and_cold_copy_without_transport() {
+        let (a_store, a_objects, a) = replica(110).await;
+        let (b_store, b_objects, b) = replica(112).await;
+        let remote = m::RequestId::new([111; 16]);
+        publish(
+            &a,
+            &[
+                GitRecordV1::Remote(GitRemoteV1 {
+                    remote,
+                    event: remote,
+                    predecessors: BTreeSet::new(),
+                    name: "origin".into(),
+                    active: true,
+                }),
+                GitRecordV1::Observation(GitObservationV1 {
+                    id: remote,
+                    remote,
+                    binding: m::RecordDigest::new([7; 32]),
+                    predecessors: BTreeSet::new(),
+                    operation: jj_store_jj::roots::ROOT_OPERATION,
+                    complete_heads: true,
+                    refs: BTreeMap::new(),
+                }),
+            ],
+            111,
+        )
+        .await;
+        apply(&b, transfer(&a, &a_store, &b, &b_store).await, 113).await;
+        observe(&a, a_objects, remote, 114).await;
+        observe(&b, b_objects, remote, 115).await;
+        let attempt = m::RequestId::new([158; 16]);
+        publish(
+            &a,
+            &[GitRecordV1::PushIntent(GitPushIntentV1 {
+                id: attempt,
+                executor: ACTOR,
+                remote,
+                binding: m::RecordDigest::new([7; 32]),
+                operation: jj_store_jj::roots::ROOT_OPERATION,
+                observations: BTreeSet::from([m::RequestId::new([114; 16])]),
+                refs: BTreeMap::from([(
+                    "refs/heads/missing".into(),
+                    GitPushRefV1 {
+                        expected: None,
+                        desired: GitRefV1 {
+                            oid: None,
+                            commit_oid: None,
+                            native: None,
+                        },
+                    },
+                )]),
+            })],
+            158,
+        )
+        .await;
+        publish(
+            &a,
+            &[GitRecordV1::PushEvent(GitPushEventV1 {
+                id: m::RequestId::new([159; 16]),
+                attempt,
+                predecessors: BTreeSet::new(),
+                kind: GitPushEventKindV1::TransportStarted,
+            })],
+            159,
+        )
+        .await;
+        publish(
+            &a,
+            &[GitRecordV1::PushEvent(GitPushEventV1 {
+                id: m::RequestId::new([160; 16]),
+                attempt,
+                predecessors: BTreeSet::from([m::RequestId::new([159; 16])]),
+                kind: GitPushEventKindV1::ResultRecorded {
+                    refs: BTreeMap::from([(
+                        "refs/heads/missing".into(),
+                        GitPushRefOutcomeV1::Unknown,
+                    )]),
+                },
+            })],
+            160,
+        )
+        .await;
+        let mut roots = Vec::new();
+        for (index, reverse) in [false, true].into_iter().enumerate() {
+            let byte = 116 + index as u8;
+            let (store, _, receiver) = replica(byte).await;
+            let mut origins = BTreeMap::new();
+            for origin in transfer(&a, &a_store, &receiver, &store)
+                .await
+                .into_iter()
+                .chain(transfer(&b, &b_store, &receiver, &store).await)
+            {
+                origins.insert(origin.publication.origin_key, origin);
+            }
+            let mut origins: Vec<_> = origins.into_values().collect();
+            if reverse {
+                origins.reverse();
+            }
+            let outcome = apply(&receiver, origins.clone(), 120).await;
+            assert!(matches!(outcome, ApplyOriginsOutcomeV1::Applied(_)));
+            let state = receiver.recover(4096).await.unwrap();
+            let git = receiver
+                .git_store(state.manifest().git_root.unwrap())
+                .await
+                .unwrap();
+            assert_eq!(
+                git.expectation(remote, m::RecordDigest::new([7; 32]), "refs/heads/main"),
+                None
+            );
+            assert_eq!(git.push_status(attempt), "unknown");
+            roots.push(git.reference);
+            apply(&receiver, origins, 121).await;
+            assert_eq!(receiver.read().await.unwrap().digest(), state.digest());
+            receiver.checkpoint().await.unwrap();
+            let copied = Arc::new(MemoryStore::default());
+            receiver
+                .copy_native_to(copied.clone(), native(copied.clone()), 4096)
+                .await
+                .unwrap();
+            let cold = coordinator(copied.clone(), native(copied));
+            let restored = cold.recover(4096).await.unwrap();
+            assert_eq!(
+                cold.git_store(restored.manifest().git_root.unwrap())
+                    .await
+                    .unwrap()
+                    .values,
+                git.values
+            );
+        }
+        assert_eq!(roots[0], roots[1]);
+        let old = ReplicaCapabilitiesV1 {
+            semantic_reducer: 1,
+            ..ReplicaCapabilitiesV1::default()
+        };
+        assert!(!ReplicaCapabilitiesV1::default().compatible_with(&old));
+    }
+    #[tokio::test]
+    async fn git_origin_rejects_forged_mapping_and_frozen_bookmark_claims() {
+        let (source_store, objects, source) = replica(130).await;
+        let remote = m::RequestId::new([111; 16]);
+        publish(
+            &source,
+            &[
+                GitRecordV1::Remote(GitRemoteV1 {
+                    remote,
+                    event: remote,
+                    predecessors: BTreeSet::new(),
+                    name: "origin".into(),
+                    active: true,
+                }),
+                GitRecordV1::Observation(GitObservationV1 {
+                    id: remote,
+                    remote,
+                    binding: m::RecordDigest::new([7; 32]),
+                    predecessors: BTreeSet::new(),
+                    operation: jj_store_jj::roots::ROOT_OPERATION,
+                    complete_heads: true,
+                    refs: BTreeMap::new(),
+                }),
+            ],
+            111,
+        )
+        .await;
+        observe(&source, objects.clone(), remote, 131).await;
+        let mut unselected = jj_store_jj::roots::operation();
+        unselected.metadata.description = "staged source, inventory only".into();
+        let (m::ObjectKey::Operation(unselected), _) = objects.put(&unselected).await.unwrap()
+        else {
+            panic!()
+        };
+        publish(
+            &source,
+            &[GitRecordV1::Observation(GitObservationV1 {
+                id: m::RequestId::new([137; 16]),
+                remote,
+                binding: m::RecordDigest::new([7; 32]),
+                predecessors: BTreeSet::from([m::RequestId::new([131; 16])]),
+                operation: unselected,
+                complete_heads: false,
+                refs: BTreeMap::new(),
+            })],
+            137,
+        )
+        .await;
+        for mode in 0..3 {
+            let (store, _, receiver) = replica(132 + mode).await;
+            let mut origins = transfer(&source, &source_store, &receiver, &store).await;
+            let common = origins.remove(0);
+            apply(&receiver, vec![common], 134).await;
+            let mut forged = if mode == 2 {
+                apply(&receiver, vec![origins.remove(0)], 138).await;
+                origins.remove(0)
+            } else {
+                origins.remove(0)
+            };
+            let mut smuggled = forged.publication.clone();
+            smuggled.published_operations.insert(unselected);
+            assert!(smuggled.digest().is_err());
+            let git = receiver
+                .git_store(forged.publication.git_root.unwrap())
+                .await
+                .unwrap();
+            let mut records: Vec<_> = git.values.into_values().collect();
+            if mode == 0 {
+                let GitRecordV1::Representation(map) = records
+                    .iter_mut()
+                    .find(|v| matches!(v, GitRecordV1::Representation(_)))
+                    .unwrap()
+                else {
+                    panic!()
+                };
+                map.imported_exact = false;
+            } else if mode == 1 {
+                let target = records
+                    .iter()
+                    .find_map(|v| match v {
+                        GitRecordV1::Observation(v) if v.id == m::RequestId::new([131; 16]) => {
+                            v.refs.get("refs/heads/main").cloned()
+                        }
+                        _ => None,
+                    })
+                    .unwrap();
+                records.push(GitRecordV1::PushIntent(GitPushIntentV1 {
+                    id: m::RequestId::new([135; 16]),
+                    executor: ACTOR,
+                    remote,
+                    binding: m::RecordDigest::new([7; 32]),
+                    operation: jj_store_jj::roots::ROOT_OPERATION,
+                    observations: BTreeSet::from([m::RequestId::new([131; 16])]),
+                    refs: BTreeMap::from([(
+                        "refs/heads/missing".into(),
+                        GitPushRefV1 {
+                            expected: None,
+                            desired: target,
+                        },
+                    )]),
+                }));
+            }
+            if mode == 2 {
+                records.push(GitRecordV1::PushIntent(GitPushIntentV1 {
+                    id: m::RequestId::new([139; 16]),
+                    executor: ACTOR,
+                    remote,
+                    binding: m::RecordDigest::new([7; 32]),
+                    operation: unselected,
+                    observations: BTreeSet::from([m::RequestId::new([137; 16])]),
+                    refs: BTreeMap::from([(
+                        "refs/heads/missing".into(),
+                        GitPushRefV1 {
+                            expected: None,
+                            desired: GitRefV1 {
+                                oid: None,
+                                commit_oid: None,
+                                native: None,
+                            },
+                        },
+                    )]),
+                }));
+            }
+            let empty = receiver.empty_git_store().await.unwrap();
+            let staged = receiver.stage_git_records(&empty, &records).await.unwrap();
+            forged.publication.git_root = Some(staged.reference);
+            forged.origin_digest = forged.publication.digest().unwrap();
+            let before = receiver.read().await.unwrap();
+            assert!(
+                receiver
+                    .apply_origins(&ApplyOriginsRequestV1 {
+                        schema_version: 1,
+                        principal: ACTOR,
+                        request_id: m::RequestId::new([136; 16]),
+                        publication_id: m::PublicationId::new([136; 16]),
+                        origins: vec![forged],
+                    })
+                    .await
+                    .is_err()
+            );
+            assert_eq!(receiver.read().await.unwrap().digest(), before.digest());
+        }
+    }
+
+    #[tokio::test]
+    async fn format_four_seed_retains_git_and_legacy_origin_digest_shape() {
+        let store = Arc::new(MemoryStore::default());
+        let objects = native(store.clone());
+        let source_objects = objects.clone();
+        let source = Coordinator::new_with_head_reducer(
+            store.clone(),
+            REPO,
+            objects.clone(),
+            Arc::new(Permit),
+            Arc::new(jj_store_jj::replication::NativeOperationHeadReducer::new(
+                objects,
+            )),
+            Limits::default(),
+        )
+        .unwrap();
+        source
+            .initialize(m::EpochId::new([140; 16]), Vec::new())
+            .await
+            .unwrap();
+        let remote = m::RequestId::new([141; 16]);
+        publish(
+            &source,
+            &[GitRecordV1::Remote(GitRemoteV1 {
+                remote,
+                event: remote,
+                predecessors: BTreeSet::new(),
+                name: "origin".into(),
+                active: true,
+            })],
+            141,
+        )
+        .await;
+        let mut source_operation = jj_store_jj::roots::operation();
+        source_operation.parents = vec![jj_lib::op_store::OperationId::from_bytes(
+            jj_store_jj::roots::ROOT_OPERATION.as_bytes(),
+        )];
+        source_operation.metadata.description = "accepted source before native undo".into();
+        let (m::ObjectKey::Operation(source_operation), _) =
+            source_objects.put(&source_operation).await.unwrap()
+        else {
+            panic!()
+        };
+        for (byte, remove, add) in [(147, jj_store_jj::roots::ROOT_OPERATION, source_operation)] {
+            source
+                .publish(&Request {
+                    principal: ACTOR,
+                    request_id: m::RequestId::new([byte; 16]),
+                    publication_id: m::PublicationId::new([byte; 16]),
+                    transition: Some(Transition::Native {
+                        remove: BTreeSet::from([remove]),
+                        add,
+                    }),
+                    settings: None,
+                    result: Vec::new(),
+                    kind: SemanticKind::OperationPublished,
+                })
+                .await
+                .unwrap();
+        }
+        let attempt = m::RequestId::new([150; 16]);
+        publish(
+            &source,
+            &[
+                GitRecordV1::Observation(GitObservationV1 {
+                    id: m::RequestId::new([149; 16]),
+                    remote,
+                    binding: m::RecordDigest::new([7; 32]),
+                    predecessors: BTreeSet::new(),
+                    operation: source_operation,
+                    complete_heads: true,
+                    refs: BTreeMap::new(),
+                }),
+                GitRecordV1::PushIntent(GitPushIntentV1 {
+                    id: attempt,
+                    executor: ACTOR,
+                    remote,
+                    binding: m::RecordDigest::new([7; 32]),
+                    operation: source_operation,
+                    observations: BTreeSet::from([m::RequestId::new([149; 16])]),
+                    refs: BTreeMap::from([(
+                        "refs/heads/missing".into(),
+                        GitPushRefV1 {
+                            expected: None,
+                            desired: GitRefV1 {
+                                oid: None,
+                                commit_oid: None,
+                                native: None,
+                            },
+                        },
+                    )]),
+                }),
+            ],
+            148,
+        )
+        .await;
+        publish(
+            &source,
+            &[GitRecordV1::PushEvent(GitPushEventV1 {
+                id: m::RequestId::new([151; 16]),
+                attempt,
+                predecessors: BTreeSet::new(),
+                kind: GitPushEventKindV1::TransportStarted,
+            })],
+            151,
+        )
+        .await;
+        publish(
+            &source,
+            &[GitRecordV1::PushEvent(GitPushEventV1 {
+                id: m::RequestId::new([152; 16]),
+                attempt,
+                predecessors: BTreeSet::from([m::RequestId::new([151; 16])]),
+                kind: GitPushEventKindV1::ResultRecorded {
+                    refs: BTreeMap::from([(
+                        "refs/heads/missing".into(),
+                        GitPushRefOutcomeV1::Unknown,
+                    )]),
+                },
+            })],
+            152,
+        )
+        .await;
+        source
+            .publish(&Request {
+                principal: ACTOR,
+                request_id: m::RequestId::new([153; 16]),
+                publication_id: m::PublicationId::new([153; 16]),
+                transition: Some(Transition::Native {
+                    remove: BTreeSet::from([source_operation]),
+                    add: jj_store_jj::roots::ROOT_OPERATION,
+                }),
+                settings: None,
+                result: Vec::new(),
+                kind: SemanticKind::OperationPublished,
+            })
+            .await
+            .unwrap();
+        source
+            .seed_replication(&SeedReplicationRequestV1 {
+                schema_version: 1,
+                principal: ACTOR,
+                request_id: m::RequestId::new([142; 16]),
+                publication_id: m::PublicationId::new([142; 16]),
+                replica: m::ReplicaId::new([140; 16]),
+                writer_epoch: m::WriterEpoch::new([140; 16]),
+            })
+            .await
+            .unwrap();
+        let state = source.read().await.unwrap();
+        let checkpoint = source.bootstrap_checkpoint(&state).await.unwrap().unwrap();
+        assert_eq!(checkpoint.git_root, state.manifest().git_root);
+        let (destination_store, _, destination) = replica(143).await;
+        let origins = transfer(&source, &store, &destination, &destination_store).await;
+        assert!(origins[0].publication.is_seed_baseline());
+        assert_eq!(origins[0].publication.semantic_format_version, 2);
+        apply(&destination, origins, 144).await;
+        let restored = destination.recover(4096).await.unwrap();
+        assert_eq!(restored.manifest().git_root, state.manifest().git_root);
+        assert_eq!(
+            restored.manifest().heads,
+            BTreeSet::from([jj_store_jj::roots::ROOT_OPERATION])
+        );
+        let git = destination
+            .git_store(restored.manifest().git_root.unwrap())
+            .await
+            .unwrap();
+        assert_eq!(
+            git.push_intent(attempt).unwrap().operation,
+            source_operation
+        );
+        assert_eq!(git.push_status(attempt), "unknown");
+        let (_, _, legacy) = replica(145).await;
+        let legacy_state = legacy.read().await.unwrap();
+        let request = Request {
+            principal: ACTOR,
+            request_id: m::RequestId::new([146; 16]),
+            publication_id: m::PublicationId::new([146; 16]),
+            transition: Some(Transition::Strict {
+                expected: legacy_state.manifest().snapshot(),
+                heads: legacy_state.manifest().heads.clone(),
+            }),
+            settings: None,
+            result: Vec::new(),
+            kind: SemanticKind::HeadsNormalized,
+        };
+        legacy.publish(&request).await.unwrap();
+        let state = legacy.read().await.unwrap();
+        let origin = legacy
+            .committed_origin_feed(&state, m::WalPosition(0), 16)
+            .await
+            .unwrap()
+            .origins
+            .remove(0)
+            .envelope
+            .publication;
+        let value = serde_json::to_value(&origin).unwrap();
+        assert!(value.get("git_root").is_none());
+        assert_eq!(origin.semantic_format_version, 1);
+        assert_eq!(
+            serde_json::from_value::<OriginPublicationV1>(value)
+                .unwrap()
+                .digest()
+                .unwrap(),
+            origin.digest().unwrap()
+        );
+    }
 }

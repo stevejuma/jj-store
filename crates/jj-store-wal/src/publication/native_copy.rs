@@ -249,6 +249,9 @@ impl Coordinator {
                 .get(reference, RecordKind::OriginReceipt)
                 .await?;
             records.insert(receipt.envelope);
+            if let Some(root) = self.origin_publication(receipt).await?.git_root {
+                records.extend(self.git_store(root).await?.records);
+            }
         }
         Ok(())
     }
@@ -266,6 +269,7 @@ fn include_manifest_records(manifest: &Manifest, records: &mut BTreeSet<RecordRe
     records.extend(manifest.review_root);
     records.extend(manifest.replication_root);
     records.extend(manifest.work_root);
+    records.extend(manifest.git_root);
 }
 
 async fn copy_exact(

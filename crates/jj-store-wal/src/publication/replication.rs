@@ -33,6 +33,7 @@ pub enum OriginDomainV1 {
     Code,
     Agent,
     Review,
+    Git,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -50,6 +51,8 @@ pub struct OriginPublicationV1 {
     pub published_operations: BTreeSet<OperationId>,
     pub agent_root: Option<RecordRef>,
     pub review_root: Option<RecordRef>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub git_root: Option<RecordRef>,
     pub required_inventory_root: RecordRef,
     pub changed_domains: BTreeSet<OriginDomainV1>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -59,7 +62,7 @@ pub struct OriginPublicationV1 {
 impl OriginPublicationV1 {
     pub(super) fn validate(&self, repository: RepositoryId) -> Result<()> {
         if self.schema_version != 1
-            || self.semantic_format_version != 1
+            || self.semantic_format_version != if self.git_root.is_some() { 2 } else { 1 }
             || self.origin_key.stream.repository != repository
             || self.origin_key.sequence == 0
             || self.published_operations.len() > MAX_HEADS
@@ -72,6 +75,12 @@ impl OriginPublicationV1 {
                 .review_root
                 .is_some_and(|r| r.kind != RecordKind::ReviewRoot || r.attempt.is_some())
             || self.changed_domains.is_empty()
+            || (!self.published_operations.is_empty()
+                && !self.changed_domains.contains(&OriginDomainV1::Code))
+            || self.git_root.is_some() != self.changed_domains.contains(&OriginDomainV1::Git)
+            || self
+                .git_root
+                .is_some_and(|r| r.kind != RecordKind::GitRoot || r.attempt.is_some())
         {
             return Err(Error::Corrupt("origin publication"));
         }
@@ -114,8 +123,18 @@ impl OriginPublicationV1 {
     }
 
     /// A legacy baseline is recognizable without a mutable manifest flag or a
-    /// synthetic history. Only a first origin may cover all four domains.
+    /// synthetic history. A first origin covers the complete baseline, with
+    /// optional Git facts alongside the original four-domain shape.
     pub fn is_seed_baseline(&self) -> bool {
+        let mut domains = BTreeSet::from([
+            OriginDomainV1::Repository,
+            OriginDomainV1::Code,
+            OriginDomainV1::Agent,
+            OriginDomainV1::Review,
+        ]);
+        if self.git_root.is_some() {
+            domains.insert(OriginDomainV1::Git);
+        }
         self.origin_key.sequence == 1
             && self.previous_origin_digest.is_none()
             && self.causal_frontier.is_empty()
@@ -123,13 +142,7 @@ impl OriginPublicationV1 {
             && self.agent_root.is_some()
             && self.review_root.is_some()
             && self.domain_facts.is_none()
-            && self.changed_domains
-                == BTreeSet::from([
-                    OriginDomainV1::Repository,
-                    OriginDomainV1::Code,
-                    OriginDomainV1::Agent,
-                    OriginDomainV1::Review,
-                ])
+            && self.changed_domains == domains
     }
 
     pub fn digest(&self) -> Result<OriginDigest> {
@@ -272,12 +285,22 @@ impl Coordinator {
             stream: root.local_stream,
             sequence,
         };
+        let git_root = if changed_domains.contains(&OriginDomainV1::Git) {
+            Some(
+                after_domains
+                    .and_then(|d| d.git)
+                    .ok_or(Error::Corrupt("origin Git root"))?
+                    .root,
+            )
+        } else {
+            None
+        };
         let publication = OriginPublicationV1 {
             schema_version: 1,
             origin_key,
             previous_origin_digest: root.local_terminal_digest,
             causal_frontier: root.prefixes.clone(),
-            semantic_format_version: 1,
+            semantic_format_version: if git_root.is_some() { 2 } else { 1 },
             principal,
             request_id,
             publication_id,
@@ -285,6 +308,7 @@ impl Coordinator {
             published_operations,
             agent_root: after_domains.map(|domains| domains.agent.root),
             review_root: after_domains.map(|domains| domains.review.root),
+            git_root,
             required_inventory_root: inventory.ok_or(Error::Corrupt("origin inventory root"))?,
             changed_domains,
             domain_facts,
@@ -392,6 +416,7 @@ impl Coordinator {
             .entries(root.accepted_origins, max_entries)
             .await?;
         let mut observed = BTreeMap::<OriginStreamV1, BTreeMap<u64, OriginDigest>>::new();
+        let mut git_roots = BTreeSet::new();
         for (key, reference) in entries {
             if reference.kind != RecordKind::OriginReceipt || reference.attempt.is_some() {
                 return Err(Error::Corrupt("origin receipt reference"));
@@ -409,6 +434,11 @@ impl Coordinator {
                 return Err(Error::Corrupt("origin receipt delivery"));
             }
             let origin = self.origin_publication(receipt).await?;
+            if let Some(root) = origin.git_root
+                && git_roots.insert(root)
+            {
+                self.git_store(root).await?;
+            }
             for prefix in &origin.causal_frontier {
                 let dependency_key = OriginKeyV1 {
                     stream: prefix.stream,

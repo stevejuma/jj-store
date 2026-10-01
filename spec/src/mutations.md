@@ -523,3 +523,10 @@ New Git push intents prove accepted source-operation ancestry and immutable
 bookmark selection through the owned JJ validator before publication. An
 otherwise well-formed staged source operation cannot authorize external Git
 publication. Receipt replay retains the already accepted source proof.
+
+Code-repository Git acceptance selects its immutable Git root, native
+transition, complete inventory and semantic-format-2 origin in the same CAS.
+Receiver reduction uses the owned JJ conversion and frozen-view verifier. New
+normal origin intents prove source admission from accepted code publications; a
+first seed preserves receipt-selected baseline facts without reviving old code
+heads. WorkStore publication still freezes its origin ledger.

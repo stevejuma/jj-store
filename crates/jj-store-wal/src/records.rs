@@ -63,6 +63,8 @@ impl RecordKind {
                 | Self::AgentObject
                 | Self::ReviewRoot
                 | Self::ReviewObject
+                | Self::GitRoot
+                | Self::GitObject
         )
     }
 }

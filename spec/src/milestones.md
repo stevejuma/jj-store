@@ -97,9 +97,9 @@ adds evidence here in its enclosing Jujutsu change.
 | M12         | In progress | M11         | JST-GIT-001,JST-GIT-002,JST-GIT-003,JST-GIT-004,JST-GIT-005,JST-GIT-006,JST-GIT-007,JST-GIT-008                                                                          | Native fetch/edit/push/external-merge cycle with cache-loss and fault qualification                                            | Complete staged GB0 through GB6                                               | E-M12-001                                                                                                                                                                                                                                                                                                                                                      |
 | M12.1       | Done        | M11         | JST-GIT-001                                                                                                                                                              | GB0: Parsed backend-aware dispatch and ordinary path regression                                                                | Complete staged bridge gate                                                   | E-M12-001                                                                                                                                                                                                                                                                                                                                                      |
 | M12.2       | Done        | M12.1       | JST-GIT-002,JST-GIT-003                                                                                                                                                  | GB1: Exact conversion and native retained cache-loss identity                                                                  | Complete staged bridge gate                                                   | E-M12-002                                                                                                                                                                                                                                                                                                                                                      |
-| M12.3       | In progress | M12.2       | JST-GIT-004,JST-GIT-008                                                                                                                                                  | GB2: Bounded fetch with native tracking and concurrent ref merge                                                               | Complete staged bridge gate                                                   | E-M12-003,E-M12-004                                                                                                                                                                                                                                                                                                                                            |
-| M12.4       | In progress | M12.3       | JST-GIT-005,JST-GIT-006                                                                                                                                                  | GB3: Selected single-ref push with leases and durable recovery                                                                 | Complete staged bridge gate                                                   | E-M12-005                                                                                                                                                                                                                                                                                                                                                      |
-| M12.5       | Planned     | M12.4       | JST-GIT-007                                                                                                                                                              | GB4: Fault/concurrency and qualified data-only native replication                                                              | Complete staged bridge gate                                                   | -                                                                                                                                                                                                                                                                                                                                                              |
+| M12.3       | Done        | M12.2       | JST-GIT-004,JST-GIT-008                                                                                                                                                  | GB2: Bounded fetch with native tracking and concurrent ref merge                                                               | Complete staged bridge gate                                                   | E-M12-003,E-M12-004,E-M12-006                                                                                                                                                                                                                                                                                                                                  |
+| M12.4       | Done        | M12.3       | JST-GIT-005,JST-GIT-006                                                                                                                                                  | GB3: Selected single-ref push with leases and durable recovery                                                                 | Complete staged bridge gate                                                   | E-M12-005,E-M12-006                                                                                                                                                                                                                                                                                                                                            |
+| M12.5       | In progress | M12.4       | JST-GIT-007                                                                                                                                                              | GB4: Fault/concurrency and qualified data-only native replication                                                              | Complete staged bridge gate                                                   | E-M12-006                                                                                                                                                                                                                                                                                                                                                      |
 | M12.6       | Planned     | M12.5       | JST-GIT-001,JST-GIT-005                                                                                                                                                  | GB5: Bookmark selectors safe remote lifecycle and atomic multi-ref parity                                                      | Complete staged bridge gate                                                   | -                                                                                                                                                                                                                                                                                                                                                              |
 | M12.7       | Planned     | M12.6       | JST-GIT-002,JST-GIT-007,JST-GIT-008                                                                                                                                      | GB6: Cold real-RustFS external merge credentials resources and UI freshness                                                    | Complete staged bridge gate                                                   | -                                                                                                                                                                                                                                                                                                                                                              |
 
@@ -24037,6 +24037,196 @@ and named tests are checked by the progress gate.
     "result": "pass",
     "remaining": [],
     "next": "GB4 data-only Git origins and code activation; then GB5 selector/remote/multi-ref parity and GB6 real RustFS, credentials, process lifetime and browser freshness. All remain required before M12 completion."
+  },
+  {
+    "id": "E-M12-006",
+    "tasks": [
+      "M12",
+      "M12.3",
+      "M12.4",
+      "M12.5"
+    ],
+    "date": "2026-10-01",
+    "kind": "native-git-origin-reduction",
+    "revision": "Enclosing Jujutsu change uxpxtwyo.",
+    "before": "GB3 bdb77b8c; code activation refused. Exact native activation regression failed once at existing Git reducer gate after correcting one fixture method-name compile error. New impact surface spans WAL publication/recovery, owned JJ validation, replication transfer/bootstrap and service/RPC/CLI consumers.",
+    "versions": "JJ 0.45.1;gix 0.87.1;Git 2.55.0;Rust 1.98.1",
+    "formats": "Manifest 4;origin optional Git root omitted from legacy envelopes;Git origins semantic format 2;negotiated reducer 2.",
+    "files": [
+      "spec/src/git-interop.md",
+      "spec/src/replication.md",
+      "spec/src/publication.md",
+      "spec/src/jj-integration.md",
+      "crates/jj-store-wal/src/publication.rs",
+      "crates/jj-store-wal/src/publication/domains.rs",
+      "crates/jj-store-wal/src/publication/replication.rs",
+      "crates/jj-store-wal/src/publication/replication_import.rs",
+      "crates/jj-store-wal/src/publication/replication_protocol.rs",
+      "crates/jj-store-wal/src/publication/replication_seed.rs",
+      "crates/jj-store-wal/src/publication/replication_transfer.rs",
+      "crates/jj-store-wal/src/publication/native_copy.rs",
+      "crates/jj-store-wal/src/records.rs",
+      "crates/jj-store-jj/src/replication.rs",
+      "crates/jj-store-jj/tests/git_bridge.rs",
+      "crates/jj-store-service/src/git_bridge.rs",
+      "crates/jj-store-rpc/src/lib.rs",
+      "crates/jj-store-replication/src/worker.rs",
+      "crates/jj-store-cli/tests/executable_native.rs",
+      "AGENTS.md",
+      "crates/jj-store-cli/src/commands.rs",
+      "crates/jj-store-rpc/tests/replication.rs",
+      "crates/jj-store-service/tests/git_bridge.rs",
+      "crates/jj-store-wal/src/publication/git_interop/attempts.rs",
+      "spec/src/cli.md",
+      "spec/src/mutations.md",
+      "docs/cli/commands.md",
+      "spec/src/spec-governance.md"
+    ],
+    "runs": [
+      {
+        "command": "cargo fmt --all && cargo test -p jj-store-jj --locked --test git_bridge git_origin_activation_requires_owned_validation_and_retains_selected_facts -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact gate regression passes with owned validator; default WAL validator still fails closed."
+      },
+      {
+        "command": "cargo fmt --all && cargo test -p jj-store-jj --locked --test git_bridge git_origins_keep_causal_conflicts_replay_and_cold_copy_without_transport -- --exact",
+        "result": "fail",
+        "failures": 3,
+        "note": "New fixture adapted expectation return type/binding and checkpoint signature; corrected qualified module path before running actual target."
+      },
+      {
+        "command": "cargo fmt --all && cargo test -p jj-store-jj --locked --test git_bridge git_origin_tests::git_origins_keep_causal_conflicts_replay_and_cold_copy_without_transport -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "Causal conflicts, reversed batch delivery, duplicate replay, checkpoint/cold-copy and reducer negotiation pass with no transport."
+      },
+      {
+        "command": "cargo fmt --all && cargo test -p jj-store-cli --locked --test executable_native native_git_push_uses_exact_leases_retains_parent_and_recovers_without_repush -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "Converted fixture to a code repository with active origin ledger; real Git fetch/edit/push, leases, interruption and recovery pass."
+      },
+      {
+        "command": "cargo fmt --all && cargo test -p jj-store-jj --locked --test git_bridge git_origin_tests -- --nocapture",
+        "result": "fail",
+        "failures": 1,
+        "note": "New legacy-origin fixture used nonexistent TokenChanged variant; changed to existing HeadsNormalized kind."
+      },
+      {
+        "command": "cargo fmt --all && cargo test -p jj-store-jj --locked --test git_bridge git_origin_tests -- --nocapture",
+        "result": "fail",
+        "failures": 1,
+        "note": "Format-4 seed hydration passed; legacy-envelope fixture used HeadsNormalized without its required transition. Corrected fixture to an explicit exact-code-state transition."
+      },
+      {
+        "command": "cargo fmt --all && cargo test -p jj-store-jj --locked --test git_bridge git_origin_tests -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "3 origin scenarios passed: causal/duplicate/cold-copy, malicious mapping/frozen targets/staged sources, format-4 seed/legacy digest shape."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --locked --test git_bridge && cargo test -p jj-store-wal -p jj-store-replication -p jj-store-service -p jj-store-rpc --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All owning/shared suites passed (12 JJ Git tests plus WAL, replication, service and RPC). Concrete escalation rationale recorded before execution."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/git-interop.md spec/src/publication.md spec/src/jj-integration.md spec/src/replication.md spec/src/milestones.md && pnpm spec:validate && pnpm check:progress && pnpm spec:first && pnpm check:boundaries",
+        "result": "fail",
+        "failures": 2,
+        "note": "Spec/progress passed; protected consumer test/RPC changes also require cli.md and mutations.md, now amended. Boundary check did not run."
+      },
+      {
+        "command": "cargo fmt --all && cargo test -p jj-store-rpc --locked --test replication authenticated_git_origin_transfer_is_data_only_and_emits_committed_freshness -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "Actual authenticated RPC Git control-record transfer, receipt replay, no code movement, committed SSE hint and adapter cursor passed."
+      },
+      {
+        "command": "cargo fmt --all && cargo test -p jj-store-cli --locked --test executable_native --test native_rpc --test workspace_migration && cargo test -p jj-store-rpc --locked --test replication",
+        "result": "pass",
+        "failures": 0,
+        "note": "16 executable native, 7 native RPC, migration and all 3 replication RPC scenarios passed; 3 OS-credential tests ignored."
+      },
+      {
+        "command": "cargo fmt --all && cargo clippy -p jj-store-wal -p jj-store-jj -p jj-store-replication -p jj-store-service -p jj-store-rpc -p jj-store-cli --all-targets --locked -- -D warnings",
+        "result": "fail",
+        "failures": 1,
+        "note": "Collapsible nested Git dependency check; corrected to a let chain."
+      },
+      {
+        "command": "pnpm contracts:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Generated contracts unchanged; 78 actual HTTP/SSE responses, 6 schema regressions and TypeScript pass."
+      },
+      {
+        "command": "cargo fmt --all && cargo test -p jj-store-service --locked --test git_bridge git_push_executor_cannot_be_spoofed_or_changed_by_another_writer -- --exact",
+        "result": "fail",
+        "failures": 1,
+        "note": "New review regression proved bundled started/acknowledged events bypassed previously selected predecessor ordering. Added service and owned normal-origin event admission."
+      },
+      {
+        "command": "cargo fmt --all && cargo test -p jj-store-service --locked --test git_bridge git_push_executor_cannot_be_spoofed_or_changed_by_another_writer -- --exact && cargo test -p jj-store-jj --locked --test git_bridge git_origin_tests -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact ordering regression and all origin scenarios pass after admission fix."
+      },
+      {
+        "command": "cargo fmt --all && cargo test -p jj-store-jj --locked --test git_bridge git_origin_tests::format_four_seed_retains_git_and_legacy_origin_digest_shape -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "Expanded seed retains unknown attempt and its source after native undo, without resurrecting the old code head."
+      },
+      {
+        "command": "cargo fmt --all && cargo test -p jj-store-jj --locked --test git_bridge git_origin_tests -- --nocapture && cargo test -p jj-store-cli --locked --test executable_native native_git_push_uses_exact_leases_retains_parent_and_recovers_without_repush -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "Normal causal prepare/start/unknown-result origins survive reversed delivery and cold copy. Code push interrupted recovery still passes with event admission."
+      },
+      {
+        "command": "cargo fmt --all && cargo clippy -p jj-store-wal -p jj-store-jj -p jj-store-replication -p jj-store-service -p jj-store-rpc -p jj-store-cli --all-targets --locked -- -D warnings",
+        "result": "fail",
+        "failures": 1,
+        "note": "Default capability fixture field reassignment rejected; corrected to explicit initializer."
+      },
+      {
+        "command": "cargo fmt --all && cargo clippy -p jj-store-wal -p jj-store-jj -p jj-store-replication -p jj-store-service -p jj-store-rpc -p jj-store-cli --all-targets --locked -- -D warnings",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "pnpm exec prettier --write AGENTS.md docs/cli/commands.md spec/src/cli.md spec/src/git-interop.md spec/src/publication.md spec/src/jj-integration.md spec/src/mutations.md spec/src/replication.md spec/src/milestones.md && pnpm spec:validate && pnpm check:progress && pnpm spec:first && pnpm check:boundaries",
+        "result": "fail",
+        "failures": 1,
+        "note": "Tracked guide scope update also owns spec-governance.md; added explicit qualified scope and remaining gates."
+      },
+      {
+        "command": "cargo test -p jj-store-wal -p jj-store-jj -p jj-store-service -p jj-store-rpc --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Post-admission relevant owning and direct receiver suites passed; 2 real RustFS tests ignored. Native CLI exact gate already rerun. No unrelated UI or full workspace aggregate lanes."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/spec-governance.md spec/src/milestones.md && pnpm spec:validate && pnpm check:progress && pnpm spec:first && pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "21 protected files/8 owning chapters; 20 chapters/123 requirements;94 tasks;15 package boundaries."
+      }
+    ],
+    "tests": [
+      "crates/jj-store-jj/tests/git_bridge.rs#git_origin_activation_requires_owned_validation_and_retains_selected_facts",
+      "crates/jj-store-jj/tests/git_bridge.rs#git_origins_keep_causal_conflicts_replay_and_cold_copy_without_transport",
+      "crates/jj-store-jj/tests/git_bridge.rs#git_origin_rejects_forged_mapping_and_frozen_bookmark_claims",
+      "crates/jj-store-jj/tests/git_bridge.rs#format_four_seed_retains_git_and_legacy_origin_digest_shape",
+      "crates/jj-store-cli/tests/executable_native.rs#native_git_push_uses_exact_leases_retains_parent_and_recovers_without_repush",
+      "crates/jj-store-rpc/tests/replication.rs#authenticated_git_origin_transfer_is_data_only_and_emits_committed_freshness",
+      "crates/jj-store-service/tests/git_bridge.rs#git_push_executor_cannot_be_spoofed_or_changed_by_another_writer"
+    ],
+    "result": "pass",
+    "remaining": [],
+    "next": "GB4 data-only reducer slice is qualified and enables code Git activation. Remaining M12.5 fault/cancellation matrix and GB5 bookmark selectors, remote lifecycle and atomic multi-ref parity, then GB6 real RustFS external merge, approved credentials, hard process lifetime and cold browser freshness. No complete-bridge or real-RustFS claim from this slice."
   }
 ]
 ```

@@ -109,8 +109,13 @@ hierarchy, threaded comments, authorized service/API/RPC/CLI access and browser
 presentation. A home owns metadata; linked code requires separate access.
 WorkStore homes preserve and freeze any existing M10 origin ledger until a
 qualified WorkStore reducer exists. Native creation does not require an
-upstream, but the CLI requires the native local service. Git refs and
-server-free storage remain deferred.
+upstream, but the CLI requires the native local service. Explicit native Git
+bookmark fetch and selected push use the private disposable CLI cache and
+manifest-selected Git facts. Code repositories use the owned reducer-2 data-only
+origin path; WorkStore homes keep their existing origin freeze. Endpoint
+approval stays device-local. Remaining M12 selectors, process lifetime,
+credential and cold end-to-end gates remain explicit in the ledger. Server-free
+storage remains deferred.
 
 Production components live under `web/src/lib`; catalog fixtures and harnesses
 may import them, while production MUST remain independent of catalog state.
@@ -123,8 +128,8 @@ and accessibility acceptance. Manual-token authenticated repository discovery is
 implemented. Expanded replication pressure/fault qualification, its browser UI,
 cold two-instance real-RustFS qualification, archive/export tooling, additional
 deployment topologies, shared release qualification, controller dispatch,
-backup/restore, stock-JJ filesystem mirroring, Git/Nostr export, other harnesses
-and CRDT semantics remain deferred.
+backup/restore, stock-JJ filesystem mirroring, continuous Git mirroring, Nostr
+export, other harnesses and CRDT semantics remain deferred.
 
 ## Local execution
 

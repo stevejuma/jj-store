@@ -657,6 +657,7 @@ impl<L: ReplicationEndpoint, P: ReplicationEndpoint> ReplicationWorker<L, P> {
                 || seed.published_operations != checkpoint.code_heads
                 || seed.agent_root != Some(checkpoint.agent_root)
                 || seed.review_root != Some(checkpoint.review_root)
+                || seed.git_root != checkpoint.git_root
             {
                 return Err(Error::Integrity("replication bootstrap closure"));
             }
@@ -843,6 +844,7 @@ impl<L: ReplicationEndpoint, P: ReplicationEndpoint> ReplicationWorker<L, P> {
                     || publication.published_operations != checkpoint.code_heads
                     || publication.agent_root != Some(checkpoint.agent_root)
                     || publication.review_root != Some(checkpoint.review_root)
+                    || publication.git_root != checkpoint.git_root
                 {
                     return Err(Error::Integrity("replication bootstrap closure"));
                 }

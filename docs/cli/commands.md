@@ -46,3 +46,9 @@ After interrupted publication, use `jj store git status [attempt]` (also
 `--format=json`) and `jj store git recover <attempt>`. Recovery inspects the
 original approved destination and repairs satisfied local bookkeeping. It does
 not push again or prove who authored a currently observed desired ref.
+
+Native Git code repositories carry immutable Git facts through reducer-2 origin
+replication. Peers receive logical aliases and exact evidence; endpoint bindings
+and credentials remain device-local. WorkStore homes retain local Git support
+and their frozen origin ledger. Remaining selectors, atomic multi-ref push and
+cold credential/resource qualification stay gated.

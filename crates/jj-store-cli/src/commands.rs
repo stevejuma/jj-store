@@ -313,7 +313,7 @@ pub async fn run(
             helper,
             args.format,
             &capabilities(),
-            "Native history: commit, operation and evolution graphs.\nUse --format json for command qualification and limits.\nGit transport and destructive GC are unsupported on native repositories.\n",
+            "Native history: commit, operation and evolution graphs.\nUse --format json for command qualification and limits.\nExplicit Git bridge support is reported per command; destructive GC is unsupported.\n",
         ),
         StoreCommand::Version => {
             let result = json!({"client":{"name":"jj-store custom jj","version":env!("CARGO_PKG_VERSION"),"upstream_jj":"0.45.1","source_revision":env!("JJ_STORE_REVISION"),"build_target":env!("JJ_STORE_TARGET"),"build_profile":env!("JJ_STORE_PROFILE")}});
@@ -348,5 +348,5 @@ pub fn capabilities() -> serde_json::Value {
         "abandon":"verified","rebase":"verified","squash":"verified","split":"verified","undo":"verified",
         "resolve --list":"verified","file show":"verified","file list":"verified","file chmod":"verified",
         "sign":"verified (SSH)","unsign":"verified (SSH)","operation reconciliation":"verified",
-        "git remote add/list/set-url":"verified local bridge","git fetch":"verified local bounded scope","git push":"verified single bookmark/default tracked selection and dry-run","store git status/recover":"verified data-only status and no-repush recovery","git import/export":"unsupported","util gc":"unsupported"},"git_bridge":{"stage":"GB3 local push slice","dispatch":"native backend-aware hook","native_transport":"approved device-local Git 2.55.0; code origin activation gated until GB4","fetch":"one named remote; simple bookmark filters; commit tags retained","publication":"one bookmark with exact lease; tag/multi-ref/other selectors deferred","attempts":"durable prepare/start/result/apply; cache-loss and lost-ack repair; no exactly-once external claim"},"creation":"jj store init with durable retries","physical_state":"client-local","ordinary_commands":"upstream jj 0.45.1"})
+        "git remote add/list/set-url":"verified local bridge","git fetch":"verified local bounded scope","git push":"verified single bookmark/default tracked selection and dry-run","store git status/recover":"verified data-only status and no-repush recovery","git import/export":"unsupported","util gc":"unsupported"},"git_bridge":{"stage":"GB4 native Git facts slice","dispatch":"native backend-aware hook","native_transport":"approved device-local Git 2.55.0; data-only code origins with reducer 2","fetch":"one named remote; simple bookmark filters; commit tags retained","publication":"one bookmark with exact lease; tag/multi-ref/other selectors deferred","attempts":"durable prepare/start/result/apply; cache-loss and lost-ack repair; no exactly-once external claim"},"creation":"jj store init with durable retries","physical_state":"client-local","ordinary_commands":"upstream jj 0.45.1"})
 }

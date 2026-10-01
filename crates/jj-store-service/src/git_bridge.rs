@@ -61,8 +61,7 @@ pub async fn read(session: Arc<NativeSession>) -> wal::Result<State> {
         version: 1,
         code: before.manifest().snapshot(),
         principal,
-        activation_available: before.manifest().work_root.is_some()
-            || before.manifest().replication_root.is_none(),
+        activation_available: true,
         git,
     })
 }
@@ -86,6 +85,7 @@ pub async fn accept(session: Arc<NativeSession>, request: &Request) -> wal::Resu
         .coordinator
         .stage_git_records(&current, &request.records)
         .await?;
+    staged.verify_event_admission(&current)?;
     // An authenticated caller can prepare or report only its own attempts.
     // Peer replay has a separate data-only origin path and cannot execute Git.
     for record in &request.records {

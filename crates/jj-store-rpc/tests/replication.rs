@@ -805,3 +805,176 @@ async fn bounded_worker_retries_with_stable_identity_and_converges_both_directio
     local.stop().await;
     peer.stop().await;
 }
+
+#[tokio::test]
+async fn authenticated_git_origin_transfer_is_data_only_and_emits_committed_freshness() {
+    use wal::publication::{GitRecordV1, GitRemoteV1};
+    let source_store: Arc<dyn ObjectStore> = Arc::new(MemoryStore::default());
+    let destination_store: Arc<dyn ObjectStore> = Arc::new(MemoryStore::default());
+    let actor = m::PrincipalId::new([151; 16]);
+    let (token, objects) = initialize(
+        source_store.clone(),
+        m::EpochId::new([152; 16]),
+        m::ReplicaId::new([152; 16]),
+        m::WriterEpoch::new([152; 16]),
+        actor,
+    )
+    .await;
+    let source = start(source_store, objects, token).await;
+    let (token, objects) = initialize(
+        destination_store.clone(),
+        m::EpochId::new([153; 16]),
+        m::ReplicaId::new([153; 16]),
+        m::WriterEpoch::new([153; 16]),
+        actor,
+    )
+    .await;
+    let destination = start(destination_store, objects, token).await;
+    let mut events = Subscription::open(destination.session.clone(), None, EventLimits::default())
+        .await
+        .unwrap();
+    assert!(matches!(
+        events.next().await.unwrap().unwrap().kind,
+        EventKind::Ready { .. }
+    ));
+    let request_id = m::RequestId::new([154; 16]);
+    source
+        .client
+        .accept_git_bridge(&jj_store_service::git_bridge::Request {
+            version: 1,
+            request_id,
+            transition: None,
+            records: vec![GitRecordV1::Remote(GitRemoteV1 {
+                remote: request_id,
+                event: request_id,
+                predecessors: Default::default(),
+                name: "unbound-peer-alias".into(),
+                active: true,
+            })],
+        })
+        .await
+        .unwrap();
+    let negotiation = source
+        .client
+        .negotiate_replica(&NegotiateReplicaV1 {
+            schema_version: 1,
+            repository: REPOSITORY,
+            peer: m::ReplicaId::new([153; 16]),
+            capabilities: ReplicaCapabilitiesV1::default(),
+        })
+        .await
+        .unwrap();
+    assert_eq!(negotiation.capabilities.semantic_reducer, 2);
+    let feed = source
+        .client
+        .committed_feed(&FeedRequestV1 {
+            schema_version: 1,
+            source_replica: negotiation.replica,
+            log_epoch: negotiation.log_epoch,
+            after: m::WalPosition(0),
+            upper_bound: negotiation.feed_upper_bound,
+            limit: 16,
+        })
+        .await
+        .unwrap()
+        .page;
+    assert_eq!(feed.origins.len(), 1);
+    let closure = source
+        .client
+        .origin_closure(&OriginClosureRequestV1 {
+            schema_version: 1,
+            origin_key: feed.origins[0].envelope.publication.origin_key,
+            max_entries: 4096,
+        })
+        .await
+        .unwrap()
+        .closure;
+    assert!(
+        closure
+            .control
+            .iter()
+            .any(|r| r.kind == wal::records::RecordKind::GitRoot)
+    );
+    assert!(
+        closure
+            .control
+            .iter()
+            .any(|r| r.kind == wal::records::RecordKind::GitObject)
+    );
+    for reference in closure.control {
+        let data = source.client.read_control_record(reference).await.unwrap();
+        destination
+            .client
+            .write_control_record(reference, data)
+            .await
+            .unwrap();
+    }
+    let before = destination.client.snapshot().await.unwrap();
+    let request = ApplyOriginsTransportRequestV1 {
+        schema_version: 1,
+        request_id: m::RequestId::new([155; 16]),
+        publication_id: m::PublicationId::new([155; 16]),
+        origins: vec![closure.envelope],
+    };
+    let outcome = destination.client.apply_origins(&request).await.unwrap();
+    let changed = tokio::time::timeout(Duration::from_secs(1), events.next())
+        .await
+        .unwrap()
+        .unwrap()
+        .unwrap();
+    assert!(matches!(changed.kind, EventKind::Changed));
+    let state = destination.client.git_bridge_state().await.unwrap();
+    assert_eq!(state.code.heads, before.heads);
+    assert_eq!(state.code.code_state_version, before.code_state_version);
+    assert_eq!(
+        state
+            .git
+            .unwrap()
+            .remotes()
+            .unwrap()
+            .get("unbound-peer-alias"),
+        Some(&request_id)
+    );
+    assert_eq!(
+        destination.client.apply_origins(&request).await.unwrap(),
+        outcome
+    );
+    let selected = destination.client.snapshot().await.unwrap();
+    assert_eq!(selected.position, m::WalPosition(1));
+    let mut changed_identity = request;
+    changed_identity.request_id = m::RequestId::new([156; 16]);
+    changed_identity.publication_id = m::PublicationId::new([156; 16]);
+    destination
+        .client
+        .apply_origins(&changed_identity)
+        .await
+        .unwrap();
+    assert_eq!(destination.client.snapshot().await.unwrap(), selected);
+    let projection_root = tempfile::tempdir().unwrap();
+    let mut projection = jj_store_adapters::Runner::new(
+        destination.session.adapter_source(),
+        jj_store_adapters::Identity {
+            name: "git-import".into(),
+            implementation: "test".into(),
+            schema: 1,
+            config: m::RecordDigest::new([157; 32]),
+        },
+        RecordingProjection(ProjectionState::default()),
+        projection_root.path(),
+        jj_store_adapters::Limits::default(),
+    )
+    .unwrap();
+    assert_eq!(
+        projection
+            .step(jj_store_adapters::CancellationToken::new())
+            .await
+            .unwrap()
+            .applied
+            .unwrap()
+            .source
+            .position,
+        m::WalPosition(1)
+    );
+    source.stop().await;
+    destination.stop().await;
+}

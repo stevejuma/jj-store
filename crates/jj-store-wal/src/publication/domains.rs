@@ -181,9 +181,6 @@ impl Coordinator {
                 });
             }
             if request.domain == Domain::Git && current.is_none() {
-                if base.manifest.work_root.is_none() && base.manifest.replication_root.is_some() {
-                    return Err(Error::Unsupported("Git origin reducer not qualified"));
-                }
                 current = Some(DomainState {
                     root: self.empty_git_store().await?.reference,
                     version: 0,
@@ -191,6 +188,23 @@ impl Coordinator {
             }
             if current != Some(request.expected) {
                 return Err(Error::Stale);
+            }
+            if request.domain == Domain::Git {
+                let previous = self.git_store(request.expected.root).await?;
+                let staged = self.git_store(request.root).await?;
+                if previous
+                    .values
+                    .iter()
+                    .any(|(key, value)| staged.values.get(key) != Some(value))
+                {
+                    return Err(Error::Corrupt("Git facts cannot be removed"));
+                }
+                if base.manifest.work_root.is_none() && base.manifest.replication_root.is_some() {
+                    let accepted = self.accepted_code_operations(&base).await?;
+                    self.operation_heads
+                        .verify_git(&staged, Some(&previous), Some(&accepted))
+                        .await?;
+                }
             }
             let inventory = if native_roots.is_empty() {
                 base.manifest.inventory
@@ -260,7 +274,8 @@ impl Coordinator {
             let changed_domain = match request.domain {
                 Domain::Agent => OriginDomainV1::Agent,
                 Domain::Review => OriginDomainV1::Review,
-                Domain::Work | Domain::Git => OriginDomainV1::Repository,
+                Domain::Work => OriginDomainV1::Repository,
+                Domain::Git => OriginDomainV1::Git,
             };
             let origin = self
                 .author_origin(

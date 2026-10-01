@@ -1370,14 +1370,6 @@ async fn native_git_push_uses_exact_leases_retains_parent_and_recovers_without_r
                 .unwrap(),
         )
     };
-    run(&[
-        "project",
-        "create",
-        "--request-id",
-        &m::RequestId::new([150; 16]).to_string(),
-        "--title",
-        "Local push home",
-    ]);
     let bare = f.root.path().join("push-source.git");
     let git = gix::init_bare(&bare).unwrap();
     use gix::objs::Write as _;
