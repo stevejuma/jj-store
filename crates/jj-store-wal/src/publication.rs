@@ -46,8 +46,9 @@ pub use application::ApplicationIntent;
 pub use collaboration::{CollaborationOutcome, CollaborationRequest};
 pub use domains::{Domain, DomainFactsV1, DomainRequest, DomainState, RepositoryDomains};
 pub use git_interop::{
-    GIT_PROFILE, GitObjectKind, GitObjectV1, GitRecordV1, GitRepresentationV1, GitRootV1,
-    GitStoreSnapshot, valid_git_oid,
+    GIT_PROFILE, GitObjectKind, GitObjectV1, GitObservationV1, GitRecordV1, GitRefV1, GitRemoteV1,
+    GitRepresentationV1, GitRootV1, GitStoreSnapshot, valid_git_oid, valid_git_ref,
+    valid_remote_name,
 };
 pub use jj_agent::{
     AgentAliasV1, AgentCatalogConflictV1, AgentCatalogEditV1, AgentCatalogKey, AgentCatalogKind,
@@ -409,7 +410,9 @@ impl Request {
             return Err(Error::Limit("request payload"));
         }
         if self.settings.is_some() != (self.kind == SemanticKind::SettingsChanged)
-            || (self.transition.is_none() && self.settings.is_none())
+            || (self.transition.is_none()
+                && self.settings.is_none()
+                && self.kind != SemanticKind::GitStateChanged)
         {
             return Err(Error::Corrupt("publication kind"));
         }
@@ -725,6 +728,42 @@ impl Coordinator {
         request.validate()?;
         self.publish_with_intent(request, request.intent()?).await
     }
+    pub async fn publish_git(
+        &self,
+        request: &Request,
+        git: &[GitRecordV1],
+    ) -> Result<PublishOutcome> {
+        request.validate()?;
+        if request.kind != SemanticKind::GitStateChanged
+            || request.settings.is_some()
+            || git.len() > 100_000
+        {
+            return Err(Error::Corrupt("Git publication request"));
+        }
+        let mut canonical = BTreeMap::new();
+        for value in git {
+            let key = value.key()?;
+            if canonical.insert(key, value).is_some() {
+                return Err(Error::Corrupt("duplicate Git records"));
+            }
+        }
+        let intent = IntentDigest::new(
+            Sha256::digest(records::encode(&(request, canonical), 16 * 1024 * 1024)?).into(),
+        );
+        match tokio::time::timeout(
+            self.limits.timeout,
+            self.publish_inner(request, intent, Some(git)),
+        )
+        .await
+        {
+            Ok(Ok(receipt)) => Ok(PublishOutcome::Committed(receipt)),
+            Ok(Err(Error::OutcomeUnknown)) | Err(_) => Ok(PublishOutcome::OutcomeUnknown {
+                request_id: request.request_id,
+                publication_id: request.publication_id,
+            }),
+            Ok(Err(error)) => Err(error),
+        }
+    }
     async fn publish_with_intent(
         &self,
         request: &Request,
@@ -734,18 +773,52 @@ impl Coordinator {
             request_id: request.request_id,
             publication_id: request.publication_id,
         };
-        match tokio::time::timeout(self.limits.timeout, self.publish_inner(request, intent)).await {
+        match tokio::time::timeout(
+            self.limits.timeout,
+            self.publish_inner(request, intent, None),
+        )
+        .await
+        {
             Ok(Ok(receipt)) => Ok(PublishOutcome::Committed(receipt)),
             Ok(Err(Error::OutcomeUnknown)) | Err(_) => Ok(unknown()),
             Ok(Err(err)) => Err(err),
         }
     }
-    async fn publish_inner(&self, request: &Request, intent: IntentDigest) -> Result<Receipt> {
+    async fn publish_inner(
+        &self,
+        request: &Request,
+        intent: IntentDigest,
+        git: Option<&[GitRecordV1]>,
+    ) -> Result<Receipt> {
         for _ in 0..self.limits.cas_attempts {
             let base = self.read().await?;
             self.guard.authorize(&base, request).await?;
             if let Some(receipt) = self.lookup(&base.manifest, request, intent).await? {
                 return Ok(receipt);
+            }
+            let mut after_domains = base.manifest.domains();
+            let mut extra_roots = BTreeSet::new();
+            if let Some(records) = git {
+                if base.manifest.work_root.is_none() && base.manifest.replication_root.is_some() {
+                    return Err(Error::Unsupported("Git origin reducer not qualified"));
+                }
+                let current = match base.manifest.git_root {
+                    Some(root) => self.git_store(root).await?,
+                    None => self.empty_git_store().await?,
+                };
+                let staged = self.stage_git_records(&current, records).await?;
+                extra_roots = staged.native;
+                let domains = after_domains
+                    .as_mut()
+                    .ok_or(Error::Unsupported("Git requires collaboration domains"))?;
+                domains.git = Some(DomainState {
+                    root: staged.reference,
+                    version: base
+                        .manifest
+                        .git_state_version
+                        .checked_add(1)
+                        .ok_or(Error::Limit("Git state version"))?,
+                });
             }
             let heads = match &request.transition {
                 None => base.manifest.heads.clone(),
@@ -795,7 +868,11 @@ impl Coordinator {
             let delta = self
                 .verify_delta(
                     base.manifest.inventory,
-                    heads.iter().copied().map(ObjectKey::Operation),
+                    heads
+                        .iter()
+                        .copied()
+                        .map(ObjectKey::Operation)
+                        .chain(extra_roots),
                 )
                 .await?;
             let inventory = self
@@ -866,7 +943,7 @@ impl Coordinator {
                     request.publication_id,
                     intent,
                     origin_operations,
-                    base.manifest.domains(),
+                    after_domains,
                     inventory,
                     changed_domains,
                     None,
@@ -900,7 +977,7 @@ impl Coordinator {
                     })
                     .collect(),
                 before_domains: base.manifest.domains(),
-                after_domains: base.manifest.domains(),
+                after_domains,
                 origins,
             };
             let tail = self
@@ -915,6 +992,13 @@ impl Coordinator {
                 )
                 .await?;
             let manifest = Manifest {
+                format: if after_domains.is_some_and(|d| d.git.is_some()) {
+                    4
+                } else {
+                    base.manifest.format
+                },
+                git_root: after_domains.and_then(|d| d.git).map(|d| d.root),
+                git_state_version: after_domains.and_then(|d| d.git).map_or(0, |d| d.version),
                 revision: base
                     .manifest
                     .revision

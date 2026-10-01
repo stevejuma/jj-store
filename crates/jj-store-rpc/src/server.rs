@@ -759,6 +759,58 @@ impl NativeStore for NativeRpc {
         })
         .await
     }
+    async fn git_bridge_state(
+        &self,
+        request: Request<wire::Repository>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        let access = self.request_access(&request)?;
+        let session = self
+            .bind(&request.into_inner().repository, access)?
+            .into_session();
+        self.bounded(async move {
+            work::reply(
+                &jj_store_service::git_bridge::read(session)
+                    .await
+                    .map_err(|e| service_error(e.into()))?,
+            )
+        })
+        .await
+    }
+    async fn accept_git_bridge(
+        &self,
+        request: Request<wire::GitBridgeRequest>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        let access = self.request_access(&request)?;
+        let body = request.into_inner();
+        let command = work::request(&body.request_json)?;
+        let session = self.bind(&body.repository, access)?.into_session();
+        self.bounded(async move {
+            work::reply(
+                &jj_store_service::git_bridge::accept(session, &command)
+                    .await
+                    .map_err(|e| service_error(e.into()))?,
+            )
+        })
+        .await
+    }
+    async fn git_bridge_status(
+        &self,
+        request: Request<wire::GitBridgeStatusRequest>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        let access = self.request_access(&request)?;
+        let body = request.into_inner();
+        let id = m::RequestId::from_slice(&body.request_id)
+            .map_err(|_| Status::invalid_argument("Git request ID"))?;
+        let session = self.bind(&body.repository, access)?.into_session();
+        self.bounded(async move {
+            work::reply(
+                &jj_store_service::git_bridge::status(session, id)
+                    .await
+                    .map_err(|e| service_error(e.into()))?,
+            )
+        })
+        .await
+    }
     async fn work_page(
         &self,
         request: Request<wire::WorkRequest>,

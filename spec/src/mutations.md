@@ -497,3 +497,11 @@ WorkStore typed commands derive authenticated actors and repository-bound
 publication IDs, validate entity/project versions and retain durable status
 semantics. Home writers control task/comment metadata. Shared service requests
 accept only version, request ID and the implemented command union.
+
+Git bridge acceptance is a typed application mutation over the same native
+session permission and semantic guard as CLI head publication. It binds exact
+immutable facts and optional code heads, derives the actor from admitted
+transport identity, verifies representation bytes/mappings before acceptance,
+and preserves stable request identity through unknown outcomes. Freshness hints
+fire only for committed acceptance. Reads and receipt lookup reauthorize current
+repository access and never perform Git transport.

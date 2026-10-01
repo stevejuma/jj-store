@@ -26,3 +26,5 @@ pub mod uploads;
 pub mod adapter;
 
 pub mod work;
+
+pub mod git_bridge;

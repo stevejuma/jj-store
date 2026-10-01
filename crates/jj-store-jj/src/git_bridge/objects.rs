@@ -51,7 +51,10 @@ impl GitConverter {
         }
         .boxed()
     }
-    fn read_raw(&mut self, oid: &str) -> Result<(Vec<u8>, GitObjectKind, BTreeSet<String>)> {
+    pub(super) fn read_raw(
+        &mut self,
+        oid: &str,
+    ) -> Result<(Vec<u8>, GitObjectKind, BTreeSet<String>)> {
         if !jj_store_wal::publication::valid_git_oid(oid) {
             return Err("unsupported Git OID".into());
         }

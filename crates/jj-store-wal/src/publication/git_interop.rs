@@ -1,6 +1,8 @@
 //! Transport-independent exact Git representation catalog and strong edges.
 use super::*;
 use jj_store_model::{CommitId, FileId};
+mod facts;
+pub use facts::*;
 
 pub const GIT_PROFILE: &str = "jj-git-sha1-0.45.1-v1";
 const MAX_GIT_RECORDS: usize = 100_000;
@@ -38,11 +40,15 @@ pub struct GitRepresentationV1 {
 pub enum GitRecordV1 {
     Object(GitObjectV1),
     Representation(GitRepresentationV1),
+    Remote(GitRemoteV1),
+    Observation(GitObservationV1),
 }
 impl GitRecordV1 {
     pub fn key(&self) -> Result<RecordDigest> {
         self.validate()?;
         let identity = match self {
+            Self::Remote(v) => format!("remote:{}", v.event),
+            Self::Observation(v) => format!("observation:{}", v.id),
             Self::Object(v) => format!("object:{}", v.oid),
             Self::Representation(v) => format!(
                 "representation:{}:{}:{}",
@@ -55,6 +61,8 @@ impl GitRecordV1 {
     }
     pub fn validate(&self) -> Result<()> {
         match self {
+            Self::Remote(v) => v.validate(),
+            Self::Observation(v) => v.validate(),
             Self::Object(v)
                 if valid_git_oid(&v.oid)
                     && v.dependencies.len() <= MAX_GIT_RECORDS
@@ -84,7 +92,8 @@ pub struct GitRootV1 {
     pub profile: String,
     pub records: Option<RecordRef>,
 }
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct GitStoreSnapshot {
     pub repository: RepositoryId,
     pub reference: RecordRef,
@@ -122,6 +131,16 @@ impl Coordinator {
                 return Err(Error::Corrupt("Git catalog key"));
             }
             match &value {
+                GitRecordV1::Remote(_) => {}
+                GitRecordV1::Observation(v) => {
+                    native.insert(ObjectKey::Operation(v.operation));
+                    native.extend(
+                        v.refs
+                            .values()
+                            .filter_map(|r| r.native)
+                            .map(ObjectKey::Commit),
+                    );
+                }
                 GitRecordV1::Object(v) => {
                     native.insert(ObjectKey::File(v.body));
                     objects.insert(v.oid.clone(), v.clone());
@@ -133,6 +152,7 @@ impl Coordinator {
             records.insert(reference);
             values.insert(key, value);
         }
+        facts::validate_closure(&values)?;
         for value in values.values() {
             match value {
                 GitRecordV1::Object(v)

@@ -97,7 +97,7 @@ adds evidence here in its enclosing Jujutsu change.
 | M12         | In progress | M11         | JST-GIT-001,JST-GIT-002,JST-GIT-003,JST-GIT-004,JST-GIT-005,JST-GIT-006,JST-GIT-007,JST-GIT-008                                                                          | Native fetch/edit/push/external-merge cycle with cache-loss and fault qualification                                            | Complete staged GB0 through GB6                                               | E-M12-001                                                                                                                                                                                                                                                                                                                                                      |
 | M12.1       | Done        | M11         | JST-GIT-001                                                                                                                                                              | GB0: Parsed backend-aware dispatch and ordinary path regression                                                                | Complete staged bridge gate                                                   | E-M12-001                                                                                                                                                                                                                                                                                                                                                      |
 | M12.2       | Done        | M12.1       | JST-GIT-002,JST-GIT-003                                                                                                                                                  | GB1: Exact conversion and native retained cache-loss identity                                                                  | Complete staged bridge gate                                                   | E-M12-002                                                                                                                                                                                                                                                                                                                                                      |
-| M12.3       | Planned     | M12.2       | JST-GIT-004,JST-GIT-008                                                                                                                                                  | GB2: Bounded fetch with native tracking and concurrent ref merge                                                               | Complete staged bridge gate                                                   | -                                                                                                                                                                                                                                                                                                                                                              |
+| M12.3       | In progress | M12.2       | JST-GIT-004,JST-GIT-008                                                                                                                                                  | GB2: Bounded fetch with native tracking and concurrent ref merge                                                               | Complete staged bridge gate                                                   | E-M12-003                                                                                                                                                                                                                                                                                                                                                      |
 | M12.4       | Planned     | M12.3       | JST-GIT-005,JST-GIT-006                                                                                                                                                  | GB3: Selected single-ref push with leases and durable recovery                                                                 | Complete staged bridge gate                                                   | -                                                                                                                                                                                                                                                                                                                                                              |
 | M12.5       | Planned     | M12.4       | JST-GIT-007                                                                                                                                                              | GB4: Fault/concurrency and qualified data-only native replication                                                              | Complete staged bridge gate                                                   | -                                                                                                                                                                                                                                                                                                                                                              |
 | M12.6       | Planned     | M12.5       | JST-GIT-001,JST-GIT-005                                                                                                                                                  | GB5: Bookmark selectors safe remote lifecycle and atomic multi-ref parity                                                      | Complete staged bridge gate                                                   | -                                                                                                                                                                                                                                                                                                                                                              |
@@ -23570,6 +23570,124 @@ and named tests are checked by the progress gate.
     "result": "pass",
     "remaining": [],
     "next": "GB2 authorized service/RPC, local bindings/private cache and atomic fetch. GB4 must qualify the reducer before code repositories with origin ledgers activate Git; WorkStore homes remain local. Real RustFS and transport not qualified by GB1."
+  },
+  {
+    "id": "E-M12-003",
+    "tasks": [
+      "M12",
+      "M12.3"
+    ],
+    "date": "2026-10-01",
+    "kind": "authorized-git-publication",
+    "revision": "Enclosing Jujutsu change vltktsqs.",
+    "before": "GB1 a11cdb45: exact representations retained; no logical remotes, observations or typed Git API/RPC. New acceptance/regression target is atomic Git acceptance with authorization, replay, stale code siblings and cold recovery.",
+    "versions": "JJ 0.45.1; gix 0.87.1; Git 2.55.0; Rust 1.98.1",
+    "formats": "Manifest 4; Git immutable record schema 1; typed acceptance V1; native codec unchanged.",
+    "files": [
+      "spec/src/git-interop.md",
+      "spec/src/publication.md",
+      "spec/src/jj-integration.md",
+      "spec/src/mutations.md",
+      "crates/jj-store-wal/src/publication.rs",
+      "crates/jj-store-wal/src/publication/git_interop.rs",
+      "crates/jj-store-wal/src/publication/git_interop/facts.rs",
+      "crates/jj-store-jj/src/git_bridge/mod.rs",
+      "crates/jj-store-jj/src/git_bridge/objects.rs",
+      "crates/jj-store-jj/tests/git_bridge.rs",
+      "crates/jj-store-service/src/lib.rs",
+      "crates/jj-store-service/src/git_bridge.rs",
+      "crates/jj-store-service/tests/git_bridge.rs",
+      "crates/jj-store-rpc/proto/native.proto",
+      "crates/jj-store-rpc/src/client.rs",
+      "crates/jj-store-rpc/src/server.rs",
+      "crates/jj-store-rpc/tests/git_bridge.rs"
+    ],
+    "runs": [
+      {
+        "command": "cargo check -p jj-store-wal --locked",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "cargo check -p jj-store-service --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "Raw object decoder method visibility; fixed."
+      },
+      {
+        "command": "cargo check -p jj-store-rpc --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "NativeObjects constructor error needs explicit WAL error mapping; fixed."
+      },
+      {
+        "command": "cargo check -p jj-store-rpc --locked",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "cargo test -p jj-store-jj --locked --test git_bridge git_acceptance_atomically_keeps_code_evidence_siblings_and_replay_after_checkpoint -- --exact",
+        "result": "fail",
+        "failures": 3,
+        "note": "New fact types not re-exported; corrected public owned boundary."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --locked --test git_bridge git_acceptance_atomically_keeps_code_evidence_siblings_and_replay_after_checkpoint -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "Atomic code/evidence, concurrent sibling preservation, checkpoint/cold recovery and changed-intent rejection."
+      },
+      {
+        "command": "cargo test -p jj-store-rpc --locked --test git_bridge",
+        "result": "pass",
+        "failures": 0,
+        "note": "Local admitted peer, typed logical remote, code-unchanged acceptance and durable replay/status."
+      },
+      {
+        "command": "cargo test -p jj-store-service --locked --test git_bridge",
+        "result": "pass",
+        "failures": 0,
+        "note": "Read/write authorization and frozen WorkStore origin/metadata/code invariants."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --locked --test git_bridge",
+        "result": "pass",
+        "failures": 0,
+        "note": "8/8; filtered observations retain scope-safe expectations, incomparable destination facts conflict, forged edges/import identities rejected."
+      },
+      {
+        "command": "cargo test -p jj-store-wal -p jj-store-jj -p jj-store-service -p jj-store-rpc --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All relevant suites passed; 2 JJ real RustFS tests ignored. Memory storage and loopback/Unix RPC, not real RustFS."
+      },
+      {
+        "command": "cargo clippy -p jj-store-wal -p jj-store-jj -p jj-store-service -p jj-store-rpc --all-targets --locked -- -D warnings",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/git-interop.md spec/src/milestones.md spec/src/publication.md spec/src/jj-integration.md spec/src/mutations.md && pnpm spec:validate && pnpm check:progress && pnpm spec:first && pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "cargo fmt --all --check; pnpm exec prettier --write spec/src/milestones.md && pnpm check:progress",
+        "result": "fail",
+        "failures": 1,
+        "note": "Rust formatting passed; progress requires passing evidence entries to have no slice gaps. Later CLI/reducer scope is already recorded in next, so removed it from the completed acceptance slice gaps."
+      }
+    ],
+    "tests": [
+      "crates/jj-store-jj/tests/git_bridge.rs#git_acceptance_atomically_keeps_code_evidence_siblings_and_replay_after_checkpoint",
+      "crates/jj-store-service/tests/git_bridge.rs#git_acceptance_reauthorizes_write_and_preserves_home_origins",
+      "crates/jj-store-rpc/tests/git_bridge.rs#local_peer_reads_and_replays_typed_git_acceptance_without_code_changes",
+      "crates/jj-store-jj/tests/git_bridge.rs#git_observations_keep_filtered_history_and_concurrent_destination_expectations",
+      "crates/jj-store-jj/tests/git_bridge.rs#git_verification_rejects_forged_dependency_and_import_identity_claims"
+    ],
+    "result": "pass",
+    "remaining": [],
+    "next": "Continue GB2 device-local bindings, private cache, bounded transport and native ref fetch. Code origin activation is still gated until GB4 reducer qualification; this entry completes the typed acceptance slice only."
   }
 ]
 ```

@@ -705,6 +705,49 @@ impl NativeClient {
             .into_inner();
         review::response(reply)
     }
+    pub async fn git_bridge_state(&self) -> Result<jj_store_service::git_bridge::State, Status> {
+        let reply = self
+            .wire()
+            .git_bridge_state(self.request(wire::Repository {
+                repository: self.repository.as_bytes().to_vec(),
+            }))
+            .await?
+            .into_inner();
+        self.replication_response(reply)
+    }
+    pub async fn accept_git_bridge(
+        &self,
+        request: &jj_store_service::git_bridge::Request,
+    ) -> Result<jj_store_service::git_bridge::Outcome, Status> {
+        let request_json = serde_json::to_vec(request)
+            .map_err(|_| Status::invalid_argument("Git acceptance request"))?;
+        if request_json.len() > REQUEST_BYTES {
+            return Err(Status::resource_exhausted("Git acceptance request limit"));
+        }
+        let reply = self
+            .wire()
+            .accept_git_bridge(self.request(wire::GitBridgeRequest {
+                repository: self.repository.as_bytes().to_vec(),
+                request_json,
+            }))
+            .await?
+            .into_inner();
+        self.replication_response(reply)
+    }
+    pub async fn git_bridge_status(
+        &self,
+        request_id: m::RequestId,
+    ) -> Result<Option<jj_store_service::git_bridge::Receipt>, Status> {
+        let reply = self
+            .wire()
+            .git_bridge_status(self.request(wire::GitBridgeStatusRequest {
+                repository: self.repository.as_bytes().to_vec(),
+                request_id: request_id.as_bytes().to_vec(),
+            }))
+            .await?
+            .into_inner();
+        self.replication_response(reply)
+    }
     pub async fn work_page(
         &self,
         query: &jj_store_service::work::WorkQuery,

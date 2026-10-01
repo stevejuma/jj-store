@@ -248,3 +248,82 @@ fn acknowledged(status: UploadStatus) -> Result<()> {
         Ok(())
     }
 }
+
+/// Verify newly accepted interchange evidence using only native immutable data.
+/// This conversion tool never contacts a Git endpoint or publishes native heads.
+pub async fn verify_delta(
+    native: Arc<NativeObjects>,
+    staged: &GitStoreSnapshot,
+    previous: Option<&GitStoreSnapshot>,
+) -> Result<()> {
+    let scratch = tempfile::tempdir()?;
+    let bare = scratch.path().join("verified.git");
+    gix::init_bare(&bare)?;
+    let settings = UserSettings::from_config(jj_lib::config::StackedConfig::with_defaults())?;
+    let mut converter = GitConverter::open(
+        &settings,
+        &scratch.path().join("conversion"),
+        &bare,
+        native,
+        Limits::default(),
+        Some(staged),
+    )?;
+    let added: Vec<_> = staged
+        .values
+        .iter()
+        .filter(|(key, _)| previous.is_none_or(|v| !v.values.contains_key(key)))
+        .map(|(_, v)| v.clone())
+        .collect();
+    for value in &added {
+        if let GitRecordV1::Object(value) = value {
+            converter.restore(value.oid.clone(), 0).await?;
+            // Restore checks bytes/OID; decoding also proves the declared edges.
+            let (_, kind, dependencies) = converter.read_raw(&value.oid)?;
+            if kind != value.kind || dependencies != value.dependencies {
+                return Err("Git object declared dependencies differ from original bytes".into());
+            }
+        }
+    }
+    for value in &added {
+        if let GitRecordV1::Representation(value) = value {
+            let mut probe = GitConverter::open(
+                &settings,
+                &scratch.path().join(format!("map-{}", value.native_commit)),
+                &bare,
+                converter.native.clone(),
+                Limits::default(),
+                Some(staged),
+            )?;
+            probe.records.retain(|_, v| {
+                !matches!(v, GitRecordV1::Representation(v) if
+                v.native_commit == value.native_commit || v.git_commit == value.git_commit)
+            });
+            if value.imported_exact {
+                converter.restore(value.git_commit.clone(), 0).await?;
+                if probe.import_commit(value.git_commit.clone()).await? != value.native_commit {
+                    return Err("Git imported native identity mismatch".into());
+                }
+            } else if probe.export_commit(value.native_commit).await? != value.git_commit {
+                return Err("Git encoded native identity mismatch".into());
+            }
+        }
+    }
+    for value in &added {
+        if let GitRecordV1::Observation(value) = value {
+            for target in value.refs.values().filter(|v| v.oid.is_some()) {
+                let oid = target.oid.as_ref().unwrap();
+                converter.restore(oid.clone(), 0).await?;
+                let repo = gix::open(&bare)?;
+                let commit = repo
+                    .find_object(gix::ObjectId::from_hex(oid.as_bytes())?)?
+                    .peel_to_kind(gix::objs::Kind::Commit)?
+                    .id
+                    .to_string();
+                if target.commit_oid.as_ref() != Some(&commit) {
+                    return Err("Git observed tag peeling mismatch".into());
+                }
+            }
+        }
+    }
+    Ok(())
+}

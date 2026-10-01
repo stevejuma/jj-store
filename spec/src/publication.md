@@ -408,3 +408,11 @@ these selected records and every retained historical domain root. Activation
 uses format 4 without changing native identities or existing domain versions.
 Until the Git origin reducer is qualified, bridge enablement is unavailable on
 replication-enabled code repositories; WorkStore retains its frozen ledger.
+
+Git acceptance uses the native guarded publication path with a typed immutable
+record delta. Its digest binds both the native transition and Git facts, and one
+manifest CAS selects the code heads, Git root, retained inventory and receipt.
+The immutable delta is re-applied to current Git facts after CAS contention;
+conflicting record identities fail without overwriting evidence. Git-only
+acceptance leaves code freshness unchanged. Origin activation for code
+repositories stays gated until the Git reducer is qualified.

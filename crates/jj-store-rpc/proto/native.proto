@@ -21,6 +21,9 @@ service NativeStore {
   rpc ReviewThread(ReviewThreadRequest) returns (JsonReply);
   rpc ApplyReviewCommand(ReviewCommandRequest) returns (JsonReply);
   rpc ReviewCommandStatus(ReviewCommandStatusRequest) returns (JsonReply);
+  rpc GitBridgeState(Repository) returns (JsonReply);
+  rpc AcceptGitBridge(GitBridgeRequest) returns (JsonReply);
+  rpc GitBridgeStatus(GitBridgeStatusRequest) returns (JsonReply);
   rpc WorkPage(WorkRequest) returns (JsonReply);
   rpc ApplyWorkCommand(WorkRequest) returns (JsonReply);
   rpc WorkCommandStatus(WorkCommandStatusRequest) returns (JsonReply);
@@ -142,3 +145,6 @@ message UploadResult {
 
 message WorkRequest { bytes repository = 1; bytes request_json = 2; }
 message WorkCommandStatusRequest { bytes repository = 1; bytes request_id = 2; }
+
+message GitBridgeRequest { bytes repository = 1; bytes request_json = 2; }
+message GitBridgeStatusRequest { bytes repository = 1; bytes request_id = 2; }

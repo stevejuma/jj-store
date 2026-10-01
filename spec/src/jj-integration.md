@@ -483,3 +483,10 @@ into native identities. Original raw bytes and required conversion evidence
 remain native durable dependencies. Imported metadata is validated before the
 pinned decoder can normalize or replace it. Cache removal must not reidentify
 accepted imported commits or their exported children.
+
+The native Git RPC accepts typed records and optional native head transitions,
+never an arbitrary Git command, endpoint, selected principal or raw manifest.
+The service verifies conversion evidence using the pinned integration crate and
+rechecks repository write access before publication. The CLI may bind a pending
+Git delta to its existing request-scoped OpHeadsStore publication so normal JJ
+transaction/rebase/workspace finishing performs only one acceptance.

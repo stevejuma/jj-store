@@ -582,3 +582,279 @@ async fn git_catalog_rejects_changed_mappings_missing_closure_and_cross_reposito
         .is_err()
     );
 }
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn git_acceptance_atomically_keeps_code_evidence_siblings_and_replay_after_checkpoint() {
+    use jj_store_jj::roots;
+    let store = Arc::new(MemoryStore::default());
+    let objects = native(store.clone());
+    let c = coordinator(store.clone(), objects.clone());
+    c.initialize(m::EpochId::new([110; 16]), Vec::new())
+        .await
+        .unwrap();
+    let base = c.read().await.unwrap().manifest().heads.clone();
+    let cache = tempfile::tempdir().unwrap();
+    let mut bridge = converter(cache.path(), objects.clone(), None);
+    let git = gix::open(cache.path().join("objects.git")).unwrap();
+    let oid = raw_commit(&git, None, "", b"fetched\n");
+    let id = bridge.import_commit(oid.clone()).await.unwrap();
+    let mut view = roots::view();
+    view.head_ids.insert(b::CommitId::from_bytes(id.as_bytes()));
+    let (m::ObjectKey::View(view), _) = objects.put(&view).await.unwrap() else {
+        panic!()
+    };
+    let mut operation = roots::operation();
+    operation.view_id = jj_lib::op_store::ViewId::from_bytes(view.as_bytes());
+    operation.parents = vec![jj_lib::op_store::OperationId::from_bytes(
+        roots::ROOT_OPERATION.as_bytes(),
+    )];
+    operation.metadata.description = "fetch origin".into();
+    let (m::ObjectKey::Operation(op), _) = objects.put(&operation).await.unwrap() else {
+        panic!()
+    };
+    operation.metadata.description = "independent concurrent work".into();
+    let (m::ObjectKey::Operation(sibling), _) = objects.put(&operation).await.unwrap() else {
+        panic!()
+    };
+    let unrelated = Request {
+        principal: ACTOR,
+        request_id: m::RequestId::new([111; 16]),
+        publication_id: m::PublicationId::new([111; 16]),
+        transition: Some(Transition::Native {
+            remove: base.clone(),
+            add: sibling,
+        }),
+        settings: None,
+        result: Vec::new(),
+        kind: SemanticKind::OperationPublished,
+    };
+    c.publish(&unrelated).await.unwrap();
+    let remote = m::RequestId::new([112; 16]);
+    let binding = m::RecordDigest::new([113; 32]);
+    let mut records = bridge.records.values().cloned().collect::<Vec<_>>();
+    records.push(GitRecordV1::Remote(GitRemoteV1 {
+        remote,
+        event: remote,
+        predecessors: BTreeSet::new(),
+        name: "origin".into(),
+        active: true,
+    }));
+    records.push(GitRecordV1::Observation(GitObservationV1 {
+        id: m::RequestId::new([114; 16]),
+        remote,
+        binding,
+        predecessors: BTreeSet::new(),
+        operation: op,
+        complete_heads: true,
+        refs: std::collections::BTreeMap::from([(
+            "refs/heads/main".into(),
+            GitRefV1 {
+                oid: Some(oid.clone()),
+                commit_oid: Some(oid.clone()),
+                native: Some(id),
+            },
+        )]),
+    }));
+    let request = Request {
+        principal: ACTOR,
+        request_id: m::RequestId::new([115; 16]),
+        publication_id: m::PublicationId::new([115; 16]),
+        transition: Some(Transition::Native {
+            remove: base,
+            add: op,
+        }),
+        settings: None,
+        result: Vec::new(),
+        kind: SemanticKind::GitStateChanged,
+    };
+    let receipt = c.publish_git(&request, &records).await.unwrap();
+    assert!(matches!(receipt, PublishOutcome::Committed(_)));
+    let accepted = c.read().await.unwrap();
+    assert_eq!(accepted.manifest().heads, BTreeSet::from([sibling, op]));
+    assert_eq!(accepted.manifest().code_state_version, 2);
+    assert_eq!(accepted.manifest().git_state_version, 1);
+    let catalog = c
+        .git_store(accepted.manifest().git_root.unwrap())
+        .await
+        .unwrap();
+    assert_eq!(
+        catalog.expectation(remote, binding, "refs/heads/main"),
+        Some(Some(oid))
+    );
+    assert_eq!(
+        catalog.expectation(remote, binding, "refs/heads/new"),
+        Some(None)
+    );
+    jj_store_jj::git_bridge::verify_delta(objects.clone(), &catalog, None)
+        .await
+        .unwrap();
+    c.checkpoint().await.unwrap();
+    let cold = coordinator(store, objects);
+    cold.recover(4096).await.unwrap();
+    assert_eq!(cold.publish_git(&request, &records).await.unwrap(), receipt);
+    let mut changed = records;
+    let GitRecordV1::Remote(v) = &mut changed[bridge.records.len()] else {
+        panic!()
+    };
+    v.name = "changed".into();
+    assert!(matches!(
+        cold.publish_git(&request, &changed).await,
+        Err(wal::Error::IntentConflict)
+    ));
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn git_observations_keep_filtered_history_and_concurrent_destination_expectations() {
+    let store = Arc::new(MemoryStore::default());
+    let objects = native(store.clone());
+    let c = coordinator(store, objects.clone());
+    c.initialize(m::EpochId::new([120; 16]), Vec::new())
+        .await
+        .unwrap();
+    let cache = tempfile::tempdir().unwrap();
+    let mut converter = converter(cache.path(), objects, None);
+    let repo = gix::open(cache.path().join("objects.git")).unwrap();
+    let a = raw_commit(&repo, None, "", b"a\n");
+    let b = raw_commit(&repo, Some(&a), "", b"b\n");
+    let native_a = converter.import_commit(a.clone()).await.unwrap();
+    let native_b = converter.import_commit(b.clone()).await.unwrap();
+    let remote = m::RequestId::new([121; 16]);
+    let binding = m::RecordDigest::new([122; 32]);
+    let mut records = converter.records.values().cloned().collect::<Vec<_>>();
+    records.push(GitRecordV1::Remote(GitRemoteV1 {
+        remote,
+        event: remote,
+        predecessors: BTreeSet::new(),
+        name: "origin".into(),
+        active: true,
+    }));
+    let observed =
+        |byte, predecessors, complete, reference: Option<(&str, String, m::CommitId)>| {
+            GitRecordV1::Observation(GitObservationV1 {
+                id: m::RequestId::new([byte; 16]),
+                remote,
+                binding,
+                predecessors,
+                operation: jj_store_jj::roots::ROOT_OPERATION,
+                complete_heads: complete,
+                refs: reference
+                    .map(|(name, oid, native)| {
+                        std::collections::BTreeMap::from([(
+                            name.into(),
+                            GitRefV1 {
+                                oid: Some(oid.clone()),
+                                commit_oid: Some(oid),
+                                native: Some(native),
+                            },
+                        )])
+                    })
+                    .unwrap_or_default(),
+            })
+        };
+    records.push(observed(
+        123,
+        BTreeSet::new(),
+        true,
+        Some(("refs/heads/main", a.clone(), native_a)),
+    ));
+    records.push(observed(
+        124,
+        BTreeSet::from([m::RequestId::new([123; 16])]),
+        false,
+        Some(("refs/heads/feature", b.clone(), native_b)),
+    ));
+    let empty = c.empty_git_store().await.unwrap();
+    let staged = c.stage_git_records(&empty, &records).await.unwrap();
+    assert_eq!(
+        staged.expectation(remote, binding, "refs/heads/main"),
+        Some(Some(a.clone()))
+    );
+    assert_eq!(
+        staged.expectation(remote, binding, "refs/heads/new"),
+        Some(None)
+    );
+    let incoming = observed(
+        125,
+        BTreeSet::from([m::RequestId::new([123; 16])]),
+        false,
+        Some(("refs/heads/main", b.clone(), native_b)),
+    );
+    let staged = c.stage_git_records(&staged, &[incoming]).await.unwrap();
+    assert_eq!(
+        staged.expectation(remote, binding, "refs/heads/main"),
+        Some(Some(b.clone()))
+    );
+    let incoming = observed(
+        126,
+        BTreeSet::from([m::RequestId::new([123; 16])]),
+        false,
+        Some(("refs/heads/main", a, native_a)),
+    );
+    let staged = c.stage_git_records(&staged, &[incoming]).await.unwrap();
+    assert_eq!(staged.expectation(remote, binding, "refs/heads/main"), None);
+    assert_eq!(
+        staged.expectation(remote, m::RecordDigest::new([127; 32]), "refs/heads/main"),
+        None
+    );
+    let reconcile = observed(
+        128,
+        BTreeSet::from([
+            m::RequestId::new([124; 16]),
+            m::RequestId::new([125; 16]),
+            m::RequestId::new([126; 16]),
+        ]),
+        true,
+        Some(("refs/heads/main", b.clone(), native_b)),
+    );
+    let staged = c.stage_git_records(&staged, &[reconcile]).await.unwrap();
+    assert_eq!(
+        staged.expectation(remote, binding, "refs/heads/main"),
+        Some(Some(b))
+    );
+    assert_eq!(
+        staged.expectation(remote, binding, "refs/heads/feature"),
+        Some(None)
+    );
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn git_verification_rejects_forged_dependency_and_import_identity_claims() {
+    let store = Arc::new(MemoryStore::default());
+    let objects = native(store.clone());
+    let c = coordinator(store, objects.clone());
+    c.initialize(m::EpochId::new([130; 16]), Vec::new())
+        .await
+        .unwrap();
+    let cache = tempfile::tempdir().unwrap();
+    let mut converter = converter(cache.path(), objects.clone(), None);
+    let repo = gix::open(cache.path().join("objects.git")).unwrap();
+    let oid = raw_commit(&repo, None, "", b"verified\n");
+    converter.import_commit(oid.clone()).await.unwrap();
+    let empty = c.empty_git_store().await.unwrap();
+    let mut forged = converter.records.values().cloned().collect::<Vec<_>>();
+    for value in &mut forged {
+        if let GitRecordV1::Object(v) = value
+            && v.oid == oid
+        {
+            v.dependencies.clear();
+        }
+    }
+    let staged = c.stage_git_records(&empty, &forged).await.unwrap();
+    assert!(
+        jj_store_jj::git_bridge::verify_delta(objects.clone(), &staged, Some(&empty))
+            .await
+            .is_err()
+    );
+    let mut forged = converter.records.values().cloned().collect::<Vec<_>>();
+    for value in &mut forged {
+        if let GitRecordV1::Representation(v) = value {
+            v.native_commit = m::CommitId::new([131; 64]);
+        }
+    }
+    let staged = c.stage_git_records(&empty, &forged).await.unwrap();
+    assert!(
+        jj_store_jj::git_bridge::verify_delta(objects, &staged, Some(&empty))
+            .await
+            .is_err()
+    );
+}
