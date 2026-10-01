@@ -11,6 +11,7 @@ export function dependencyErrors(packages) {
     "jj-work": ["jj-store-model"],
     "jj-agent": ["jj-store-model"],
     "jj-review": ["jj-agent", "jj-store-model"],
+    "jj-collab": ["jj-agent", "jj-review", "jj-store-model"],
     "jj-store-object": ["jj-store-model"],
     "jj-store-wal": [
       "jj-work",
@@ -69,7 +70,9 @@ export function dependencyErrors(packages) {
         errors.push(`${pkg.name}: excluded core dependency ${dep.name}`);
       if (
         (dep.name.startsWith("jj-store-") ||
-          ["jj-agent", "jj-review", "jj-work"].includes(dep.name)) &&
+          ["jj-agent", "jj-review", "jj-work", "jj-collab"].includes(
+            dep.name,
+          )) &&
         layers[pkg.name] &&
         !layers[pkg.name].includes(dep.name) &&
         dep.kind !== "dev"

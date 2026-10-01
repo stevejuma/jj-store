@@ -1,0 +1,663 @@
+use crate::*;
+use jj_agent::{AgentSessionId, CodeAnchorV2};
+use jj_store_model::{PrincipalId, RequestId};
+use serde::{Deserialize, Serialize};
+use sha2::{Digest as _, Sha256};
+use std::collections::BTreeMap;
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
+#[serde(tag = "type", rename_all = "snake_case", deny_unknown_fields)]
+pub enum ThreadCommandV1 {
+    Create {
+        thread_id: ThreadId,
+        title: String,
+        baseline: Option<CodeAnchorV2>,
+    },
+    Rename {
+        thread_id: ThreadId,
+        expected: CollabObjectRef,
+        title: String,
+    },
+    Lifecycle {
+        thread_id: ThreadId,
+        expected: CollabObjectRef,
+        action: ThreadActionV1,
+    },
+    Message {
+        thread_id: ThreadId,
+        expected_thread: CollabObjectRef,
+        message_id: HumanMessageId,
+        expected_revision: Option<CollabObjectRef>,
+        body: Option<String>,
+    },
+    Link {
+        thread_id: ThreadId,
+        expected_thread: CollabObjectRef,
+        link_id: ThreadLinkId,
+        target: ThreadLinkTargetV1,
+        observed_primary: Option<CollabObjectRef>,
+    },
+    Detach {
+        thread_id: ThreadId,
+        expected_thread: CollabObjectRef,
+        expected_link: CollabObjectRef,
+    },
+}
+impl ThreadCommandV1 {
+    pub fn thread_id(&self) -> ThreadId {
+        match self {
+            Self::Create { thread_id, .. }
+            | Self::Rename { thread_id, .. }
+            | Self::Lifecycle { thread_id, .. }
+            | Self::Message { thread_id, .. }
+            | Self::Link { thread_id, .. }
+            | Self::Detach { thread_id, .. } => *thread_id,
+        }
+    }
+    pub fn validate(&self) -> Result<()> {
+        match self {
+            Self::Create {
+                title, baseline, ..
+            } => {
+                if !label(title, 1024) {
+                    return Err(Error::Invalid("Thread title"));
+                }
+                if let Some(anchor) = baseline {
+                    anchor
+                        .validate()
+                        .map_err(|_| Error::Invalid("Thread baseline"))?;
+                }
+            }
+            Self::Rename {
+                expected, title, ..
+            } => {
+                expect(*expected, CollabObjectKind::ThreadVersion)?;
+                if !label(title, 1024) {
+                    return Err(Error::Invalid("Thread title"));
+                }
+            }
+            Self::Lifecycle { expected, .. } => expect(*expected, CollabObjectKind::ThreadVersion)?,
+            Self::Message {
+                expected_thread,
+                expected_revision,
+                body,
+                ..
+            } => {
+                expect(*expected_thread, CollabObjectKind::ThreadVersion)?;
+                if let Some(reference) = expected_revision {
+                    expect(*reference, CollabObjectKind::HumanMessageRevision)?;
+                }
+                if body.as_ref().is_some_and(|b| {
+                    b.trim().is_empty() || b.len() > 256 * 1024 || b.contains('\0')
+                }) {
+                    return Err(Error::Invalid("human message body"));
+                }
+                if body.is_none() && expected_revision.is_none() {
+                    return Err(Error::Invalid("new tombstoned message"));
+                }
+            }
+            Self::Link {
+                expected_thread,
+                observed_primary,
+                ..
+            } => {
+                expect(*expected_thread, CollabObjectKind::ThreadVersion)?;
+                if let Some(reference) = observed_primary {
+                    expect(*reference, CollabObjectKind::ThreadLink)?;
+                }
+            }
+            Self::Detach {
+                expected_thread,
+                expected_link,
+                ..
+            } => {
+                expect(*expected_thread, CollabObjectKind::ThreadVersion)?;
+                expect(*expected_link, CollabObjectKind::ThreadLink)?;
+            }
+        }
+        Ok(())
+    }
+}
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct ThreadCommandResultV1 {
+    pub thread_id: ThreadId,
+    pub version: CollabObjectRef,
+    pub event: CollabObjectRef,
+    pub message: Option<CollabObjectRef>,
+    pub link: Option<CollabObjectRef>,
+    pub reassigned_from: Option<ThreadId>,
+}
+#[derive(Clone, Debug)]
+pub struct ThreadStateV1 {
+    pub root: ThreadRootV1,
+    pub threads: BTreeMap<ThreadId, CollabObjectRef>,
+    pub messages: BTreeMap<HumanMessageId, CollabObjectRef>,
+    pub links: BTreeMap<ThreadLinkId, CollabObjectRef>,
+    pub assignments: BTreeMap<AgentSessionId, CollabObjectRef>,
+}
+impl ThreadStateV1 {
+    pub fn read(root: ThreadRootV1, graph: &CollabGraphV1) -> Result<Self> {
+        root.validate()?;
+        graph.closure(root.dependencies())?;
+        let mut result = Self {
+            root: root.clone(),
+            threads: BTreeMap::new(),
+            messages: BTreeMap::new(),
+            links: BTreeMap::new(),
+            assignments: BTreeMap::new(),
+        };
+        for (key, reference) in graph.catalog(root.threads)? {
+            let CollabObjectV1::ThreadVersion(v) = graph.get(reference)? else {
+                return Err(Error::Invalid("Thread catalog kind"));
+            };
+            if key != entity_key("thread", v.thread_id.as_bytes())? {
+                return Err(Error::Invalid("Thread catalog key"));
+            }
+            result.threads.insert(v.thread_id, reference);
+        }
+        for (key, reference) in graph.catalog(root.messages)? {
+            let CollabObjectV1::HumanMessageRevision(v) = graph.get(reference)? else {
+                return Err(Error::Invalid("message catalog kind"));
+            };
+            if key != entity_key("message", v.message_id.as_bytes())?
+                || !result.threads.contains_key(&v.thread_id)
+            {
+                return Err(Error::Invalid("message catalog membership"));
+            }
+            result.messages.insert(v.message_id, reference);
+        }
+        for (key, reference) in graph.catalog(root.links)? {
+            let CollabObjectV1::ThreadLink(v) = graph.get(reference)? else {
+                return Err(Error::Invalid("link catalog kind"));
+            };
+            if key != entity_key("link", v.id.as_bytes())?
+                || !result.threads.contains_key(&v.thread_id)
+            {
+                return Err(Error::Invalid("link catalog membership"));
+            }
+            result.links.insert(v.id, reference);
+        }
+        for (key, reference) in graph.catalog(root.assignments)? {
+            let CollabObjectV1::ThreadLink(v) = graph.get(reference)? else {
+                return Err(Error::Invalid("assignment catalog kind"));
+            };
+            let ThreadLinkTargetV1::Session {
+                session_id,
+                primary: true,
+                ..
+            } = v.target
+            else {
+                return Err(Error::Invalid("assignment target"));
+            };
+            if key != entity_key("assignment", session_id.as_bytes())?
+                || result.links.get(&v.id) != Some(&reference)
+            {
+                return Err(Error::Invalid("assignment catalog membership"));
+            }
+            if v.active {
+                result.assignments.insert(session_id, reference);
+            }
+        }
+        for reference in result.links.values() {
+            let CollabObjectV1::ThreadLink(v) = graph.get(*reference)? else {
+                unreachable!()
+            };
+            if let ThreadLinkTargetV1::Session {
+                session_id,
+                primary: true,
+                ..
+            } = v.target
+                && v.active
+                && result.assignments.get(&session_id) != Some(reference)
+            {
+                return Err(Error::Invalid("multiple primary Thread assignments"));
+            }
+        }
+        Ok(result)
+    }
+    pub fn empty() -> Self {
+        Self {
+            root: ThreadRootV1::empty(),
+            threads: BTreeMap::new(),
+            messages: BTreeMap::new(),
+            links: BTreeMap::new(),
+            assignments: BTreeMap::new(),
+        }
+    }
+    /// Pure staging. A provider must authorize all referenced targets and publish the selected root atomically.
+    pub fn apply(
+        &self,
+        command: &ThreadCommandV1,
+        actor: PrincipalId,
+        request: RequestId,
+        at: i64,
+        graph: &mut CollabGraphV1,
+    ) -> Result<(ThreadRootV1, ThreadCommandResultV1)> {
+        command.validate()?;
+        let thread_id = command.thread_id();
+        let mut root = self.root.clone();
+        let old = self.threads.get(&thread_id).copied();
+        let expected = match command {
+            ThreadCommandV1::Create { .. } => None,
+            ThreadCommandV1::Rename { expected, .. }
+            | ThreadCommandV1::Lifecycle { expected, .. } => Some(*expected),
+            ThreadCommandV1::Message {
+                expected_thread, ..
+            }
+            | ThreadCommandV1::Link {
+                expected_thread, ..
+            }
+            | ThreadCommandV1::Detach {
+                expected_thread, ..
+            } => Some(*expected_thread),
+        };
+        if old != expected {
+            return Err(Error::Stale);
+        }
+        let mut message = None;
+        let mut link = None;
+        let mut reassigned_from = None;
+        let (title, status, baseline, event_kind) = match command {
+            ThreadCommandV1::Create {
+                title, baseline, ..
+            } => (
+                title.clone(),
+                ThreadStatusV1::Created,
+                baseline.clone(),
+                ThreadEventKindV1::Created,
+            ),
+            _ => {
+                let CollabObjectV1::ThreadVersion(previous) =
+                    graph.get(old.ok_or(Error::Stale)?)?.clone()
+                else {
+                    return Err(Error::Invalid("Thread selection"));
+                };
+                let mut title = previous.title.clone();
+                let mut status = previous.status;
+                let event_kind = match command {
+                    ThreadCommandV1::Rename { title: new, .. } => {
+                        title = new.clone();
+                        ThreadEventKindV1::Renamed {
+                            previous_title: previous.title,
+                        }
+                    }
+                    ThreadCommandV1::Lifecycle { action, .. } => {
+                        status = status.transition(*action)?;
+                        ThreadEventKindV1::Lifecycle {
+                            previous_status: previous.status,
+                            action: *action,
+                        }
+                    }
+                    ThreadCommandV1::Message {
+                        message_id,
+                        expected_revision,
+                        body,
+                        ..
+                    } => {
+                        if matches!(
+                            status,
+                            ThreadStatusV1::Archived | ThreadStatusV1::Tombstoned
+                        ) {
+                            return Err(Error::Invalid("Thread is closed for human messages"));
+                        }
+                        if self.messages.get(message_id).copied() != *expected_revision {
+                            return Err(Error::Stale);
+                        }
+                        if let Some(reference) = expected_revision {
+                            let CollabObjectV1::HumanMessageRevision(old) =
+                                graph.get(*reference)?
+                            else {
+                                return Err(Error::Invalid("message selection"));
+                            };
+                            if old.thread_id != thread_id || old.actor != actor {
+                                return Err(Error::Invalid("message author or membership"));
+                            }
+                        }
+                        let reference = graph.stage(CollabObjectV1::HumanMessageRevision(
+                            HumanMessageRevisionV1 {
+                                schema_version: 1,
+                                message_id: *message_id,
+                                thread_id,
+                                actor,
+                                accepted_at_millis: at,
+                                previous: *expected_revision,
+                                body: body.clone(),
+                            },
+                        ))?;
+                        root.messages = graph.catalog_update(
+                            root.messages,
+                            BTreeMap::from([(
+                                entity_key("message", message_id.as_bytes())?,
+                                reference,
+                            )]),
+                        )?;
+                        message = Some(reference);
+                        ThreadEventKindV1::Message {
+                            revision: reference,
+                        }
+                    }
+                    ThreadCommandV1::Link {
+                        link_id,
+                        target,
+                        observed_primary,
+                        ..
+                    } => {
+                        if self.links.contains_key(link_id) {
+                            return Err(Error::Stale);
+                        }
+                        if let ThreadLinkTargetV1::Session {
+                            session_id,
+                            primary: true,
+                            ..
+                        } = target
+                        {
+                            if self.assignments.get(session_id).copied() != *observed_primary {
+                                return Err(Error::Stale);
+                            }
+                            if let Some(reference) = observed_primary {
+                                let CollabObjectV1::ThreadLink(mut old_link) =
+                                    graph.get(*reference)?.clone()
+                                else {
+                                    return Err(Error::Invalid("primary assignment"));
+                                };
+                                old_link.active = false;
+                                old_link.previous = Some(*reference);
+                                old_link.actor = actor;
+                                old_link.accepted_at_millis = at;
+                                let prior_thread = old_link.thread_id;
+                                let old_id = old_link.id;
+                                let inactive = graph.stage(CollabObjectV1::ThreadLink(old_link))?;
+                                root.links = graph.catalog_update(
+                                    root.links,
+                                    BTreeMap::from([(
+                                        entity_key("link", old_id.as_bytes())?,
+                                        inactive,
+                                    )]),
+                                )?;
+                                if prior_thread != thread_id {
+                                    let prior = self
+                                        .threads
+                                        .get(&prior_thread)
+                                        .copied()
+                                        .ok_or(Error::Invalid("assignment Thread"))?;
+                                    let CollabObjectV1::ThreadVersion(mut other) =
+                                        graph.get(prior)?.clone()
+                                    else {
+                                        return Err(Error::Invalid("assignment Thread selection"));
+                                    };
+                                    let event = stage_event(
+                                        graph,
+                                        prior_thread,
+                                        actor,
+                                        request,
+                                        at,
+                                        Some(other.event),
+                                        ThreadEventKindV1::Link { version: inactive },
+                                    )?;
+                                    other.previous = Some(prior);
+                                    other.event = event;
+                                    other.actor = actor;
+                                    other.accepted_at_millis = at;
+                                    let other =
+                                        graph.stage(CollabObjectV1::ThreadVersion(other))?;
+                                    root.threads = graph.catalog_update(
+                                        root.threads,
+                                        BTreeMap::from([(
+                                            entity_key("thread", prior_thread.as_bytes())?,
+                                            other,
+                                        )]),
+                                    )?;
+                                    reassigned_from = Some(prior_thread);
+                                }
+                            }
+                        } else if observed_primary.is_some() {
+                            return Err(Error::Invalid("non-primary link assignment precondition"));
+                        }
+                        let reference = graph.stage(CollabObjectV1::ThreadLink(ThreadLinkV1 {
+                            schema_version: 1,
+                            id: *link_id,
+                            thread_id,
+                            actor,
+                            accepted_at_millis: at,
+                            previous: None,
+                            active: true,
+                            target: target.clone(),
+                        }))?;
+                        root.links = graph.catalog_update(
+                            root.links,
+                            BTreeMap::from([(entity_key("link", link_id.as_bytes())?, reference)]),
+                        )?;
+                        if let ThreadLinkTargetV1::Session {
+                            session_id,
+                            primary: true,
+                            ..
+                        } = target
+                        {
+                            root.assignments = graph.catalog_update(
+                                root.assignments,
+                                BTreeMap::from([(
+                                    entity_key("assignment", session_id.as_bytes())?,
+                                    reference,
+                                )]),
+                            )?;
+                        }
+                        link = Some(reference);
+                        ThreadEventKindV1::Link { version: reference }
+                    }
+                    ThreadCommandV1::Detach { expected_link, .. } => {
+                        let CollabObjectV1::ThreadLink(mut old_link) =
+                            graph.get(*expected_link)?.clone()
+                        else {
+                            return Err(Error::Invalid("detach selection"));
+                        };
+                        if old_link.thread_id != thread_id
+                            || !old_link.active
+                            || self.links.get(&old_link.id) != Some(expected_link)
+                        {
+                            return Err(Error::Stale);
+                        }
+                        old_link.active = false;
+                        old_link.previous = Some(*expected_link);
+                        old_link.actor = actor;
+                        old_link.accepted_at_millis = at;
+                        let id = old_link.id;
+                        let target = old_link.target.clone();
+                        let reference = graph.stage(CollabObjectV1::ThreadLink(old_link))?;
+                        root.links = graph.catalog_update(
+                            root.links,
+                            BTreeMap::from([(entity_key("link", id.as_bytes())?, reference)]),
+                        )?;
+                        if let ThreadLinkTargetV1::Session {
+                            session_id,
+                            primary: true,
+                            ..
+                        } = target
+                        {
+                            root.assignments = graph.catalog_update(
+                                root.assignments,
+                                BTreeMap::from([(
+                                    entity_key("assignment", session_id.as_bytes())?,
+                                    reference,
+                                )]),
+                            )?;
+                        }
+                        link = Some(reference);
+                        ThreadEventKindV1::Link { version: reference }
+                    }
+                    _ => unreachable!(),
+                };
+                (title, status, previous.baseline, event_kind)
+            }
+        };
+        let prior_event = old
+            .map(|reference| match graph.get(reference) {
+                Ok(CollabObjectV1::ThreadVersion(v)) => Ok(v.event),
+                _ => Err(Error::Invalid("Thread selection")),
+            })
+            .transpose()?;
+        let event = stage_event(
+            graph,
+            thread_id,
+            actor,
+            request,
+            at,
+            prior_event,
+            event_kind,
+        )?;
+        let version = graph.stage(CollabObjectV1::ThreadVersion(ThreadVersionV1 {
+            schema_version: 1,
+            thread_id,
+            title,
+            status,
+            actor,
+            accepted_at_millis: at,
+            previous: old,
+            event,
+            baseline,
+        }))?;
+        root.threads = graph.catalog_update(
+            root.threads,
+            BTreeMap::from([(entity_key("thread", thread_id.as_bytes())?, version)]),
+        )?;
+        Self::read(root.clone(), graph)?;
+        Ok((
+            root,
+            ThreadCommandResultV1 {
+                thread_id,
+                version,
+                event,
+                message,
+                link,
+                reassigned_from,
+            },
+        ))
+    }
+}
+pub fn entity_key(namespace: &str, id: &[u8; 16]) -> Result<CollabCatalogKey> {
+    CollabCatalogKey::derive(namespace, id)
+}
+fn stage_event(
+    graph: &mut CollabGraphV1,
+    thread_id: ThreadId,
+    actor: PrincipalId,
+    request: RequestId,
+    at: i64,
+    previous: Option<CollabObjectRef>,
+    event: ThreadEventKindV1,
+) -> Result<CollabObjectRef> {
+    let mut hash = Sha256::new_with_prefix(b"jj-store/thread-event/v1\0");
+    hash.update(actor.as_bytes());
+    hash.update(request.as_bytes());
+    hash.update(thread_id.as_bytes());
+    let digest: [u8; 32] = hash.finalize().into();
+    let mut id = [0; 16];
+    id.copy_from_slice(&digest[..16]);
+    graph.stage(CollabObjectV1::ThreadEvent(ThreadEventV1 {
+        schema_version: 1,
+        id: ThreadEventId::new(id),
+        thread_id,
+        actor,
+        accepted_at_millis: at,
+        previous,
+        event,
+    }))
+}
+/// A typed reaction command never accepts an actor from an API caller.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
+#[serde(tag = "type", rename_all = "snake_case", deny_unknown_fields)]
+pub enum ReactionCommandV1 {
+    Set {
+        target: ReactionTargetV1,
+        value: ReactionValueV1,
+        observed: std::collections::BTreeSet<CollabObjectRef>,
+    },
+    Clear {
+        target: ReactionTargetV1,
+        observed: std::collections::BTreeSet<CollabObjectRef>,
+    },
+    ResolveConflict {
+        target: ReactionTargetV1,
+        value: Option<ReactionValueV1>,
+        observed: std::collections::BTreeSet<CollabObjectRef>,
+    },
+}
+impl ReactionCommandV1 {
+    pub fn target(&self) -> &ReactionTargetV1 {
+        match self {
+            Self::Set { target, .. }
+            | Self::Clear { target, .. }
+            | Self::ResolveConflict { target, .. } => target,
+        }
+    }
+    pub fn validate(&self) -> Result<()> {
+        self.target().validate()?;
+        let observed = match self {
+            Self::Set {
+                value, observed, ..
+            } => {
+                value.validate()?;
+                observed
+            }
+            Self::Clear { observed, .. } => observed,
+            Self::ResolveConflict {
+                value, observed, ..
+            } => {
+                if let Some(value) = value {
+                    value.validate()?;
+                }
+                observed
+            }
+        };
+        if observed.len() > MAX_SLOT_RECORDS {
+            return Err(Error::Limit);
+        }
+        for reference in observed {
+            expect(*reference, CollabObjectKind::Reaction)?;
+        }
+        Ok(())
+    }
+    pub fn apply(
+        &self,
+        slot: &ReactionSlotV1,
+        reaction: ReactionId,
+        retraction: RetractionId,
+        at: i64,
+        graph: &CollabGraphV1,
+    ) -> Result<ReactionTransitionV1> {
+        self.validate()?;
+        if self.target().exact_key()? != slot.target.exact_key()? {
+            return Err(Error::Invalid("reaction command target"));
+        }
+        match self {
+            Self::Set {
+                value, observed, ..
+            } => slot.apply(
+                observed,
+                Some(value.clone()),
+                false,
+                (reaction, retraction),
+                at,
+                &graph.objects,
+            ),
+            Self::Clear { observed, .. } => slot.apply(
+                observed,
+                None,
+                false,
+                (reaction, retraction),
+                at,
+                &graph.objects,
+            ),
+            Self::ResolveConflict {
+                value, observed, ..
+            } => slot.apply(
+                observed,
+                value.clone(),
+                true,
+                (reaction, retraction),
+                at,
+                &graph.objects,
+            ),
+        }
+    }
+}

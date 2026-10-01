@@ -1,0 +1,48 @@
+//! Repository-owned persistent Threads and rich Reactions. No publication or runner authority.
+#![forbid(unsafe_code)]
+mod assets;
+mod catalog;
+mod codec;
+mod commands;
+mod graph;
+mod ids;
+mod objects;
+mod reactions;
+mod targets;
+mod threads;
+
+pub use assets::*;
+pub use catalog::*;
+pub use codec::*;
+pub use commands::*;
+pub use graph::*;
+pub use ids::*;
+pub use objects::*;
+pub use reactions::*;
+pub use targets::*;
+pub use threads::*;
+
+pub type Result<T> = std::result::Result<T, Error>;
+#[derive(Debug, thiserror::Error)]
+pub enum Error {
+    #[error("invalid collaboration model: {0}")]
+    Invalid(&'static str),
+    #[error("collaboration model exceeds its size limit")]
+    Limit,
+    #[error("observed collaboration state is stale")]
+    Stale,
+    #[error("invalid canonical collaboration encoding")]
+    Encoding(#[from] serde_json::Error),
+    #[error("invalid reaction image")]
+    Image(#[from] image::ImageError),
+}
+pub(crate) fn label(value: &str, max: usize) -> bool {
+    !value.trim().is_empty() && value.len() <= max && !value.chars().any(char::is_control)
+}
+pub(crate) fn schema(version: u32) -> Result<()> {
+    if version == 1 {
+        Ok(())
+    } else {
+        Err(Error::Invalid("schema version"))
+    }
+}

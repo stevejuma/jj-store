@@ -124,6 +124,14 @@ shared-package release qualification does not alter those original Git gates.
 | M14.5       | Planned     | M14.2                   | JST-UI-016,JST-PUB-005,JST-PUB-006                                                                                                                                       | Storage integrity and non-destructive checkpoints                                                                              | Add bounded authorized operations and uncertain-outcome recovery               | -                                                                                                                                                                                                                                                                                                                                                              |
 | M14.6       | In progress | M14.2,M10.7             | JST-UI-016,JST-REPL-012                                                                                                                                                  | Configured sync status and controls in Settings                                                                                | Expose existing controls without upstream configuration or credential editing  | E-M14-008,E-M14-010,E-M14-011,E-M14-012                                                                                                                                                                                                                                                                                                                        |
 | M14.7       | Planned     | M14.3,M14.4,M14.5,M14.6 | JST-UI-016,JST-SEC-006                                                                                                                                                   | Integrated local settings and cold persistent acceptance                                                                       | Qualify completed native flow and preserve unsupported M13 capabilities        | -                                                                                                                                                                                                                                                                                                                                                              |
+| M15         | In progress | M13.1             | JST-COLLAB-008,JST-COLLAB-009,JST-COLLAB-010,JST-COLLAB-011,JST-COLLAB-012,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                   | Persistent Threads and rich Reactions                                                                                          | Qualify native/local publication                                               | E-M15-001                                                                                                                                                                                                                                                                                                                                                      |
+| M15.1       | In progress | M13.1             | JST-COLLAB-008,JST-COLLAB-009,JST-COLLAB-010,JST-COLLAB-011,JST-COLLAB-012                                                                                               | Canonical domain, lifecycle, exact targets, conflict semantics and retained images                                             | Complete target resolution/provider membership                                 | E-M15-001                                                                                                                                                                                                                                                                                                                                                      |
+| M15.2       | Planned     | M15.1             | JST-COLLAB-013                                                                                                                                                           | Native format 5, local version 2, atomic roots, receipts, recovery and copy                                                    | Qualify both persistence providers                                             | -                                                                                                                                                                                                                                                                                                                                                              |
+| M15.3       | Planned     | M15.2             | JST-COLLAB-014                                                                                                                                                           | Bounded authorized services, HTTP/RPC, CLI and capture binding                                                                 | Qualify public contracts                                                       | -                                                                                                                                                                                                                                                                                                                                                              |
+| M15.4       | Planned     | M15.2             | JST-COLLAB-015                                                                                                                                                           | Reducer 3 data-only convergence and complete closure transfer                                                                  | Qualify reordered and duplicate origin sets                                    | -                                                                                                                                                                                                                                                                                                                                                              |
+| M15.5       | Planned     | M15.3             | JST-COLLAB-016                                                                                                                                                           | Released shared UI, Threads navigation and rich reactions                                                                      | Qualify owners and cold consumer flow                                          | -                                                                                                                                                                                                                                                                                                                                                              |
+| M15.6       | Planned     | M15.3             | JST-COLLAB-009,JST-COLLAB-010                                                                                                                                            | Derived canonical-source timeline/search and review integration                                                                | Qualify authorized joins                                                       | -                                                                                                                                                                                                                                                                                                                                                              |
+| M15.7       | Planned     | M15.4,M15.5,M15.6 | JST-COLLAB-007,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                                                                               | Cold real-RustFS/local full flow and runner qualification                                                                      | Retain native/local/cold evidence                                              | -                                                                                                                                                                                                                                                                                                                                                              |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -187,7 +195,10 @@ and named tests are checked by the progress gate.
 [
   {
     "id": "E-BOOT-001",
-    "tasks": ["Bootstrap", "Bootstrap.1"],
+    "tasks": [
+      "Bootstrap",
+      "Bootstrap.1"
+    ],
     "date": "2026-09-26",
     "kind": "governance",
     "files": [
@@ -252,7 +263,11 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M0-001",
-    "tasks": ["M0", "M0.1", "M0.3"],
+    "tasks": [
+      "M0",
+      "M0.1",
+      "M0.3"
+    ],
     "date": "2026-09-26",
     "kind": "real-rustfs",
     "files": [
@@ -315,7 +330,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M0-002",
-    "tasks": ["M0", "M0.2"],
+    "tasks": [
+      "M0",
+      "M0.2"
+    ],
     "date": "2026-09-26",
     "kind": "compiled-native-integration",
     "files": [
@@ -405,7 +423,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M1-001",
-    "tasks": ["M1", "M1.1"],
+    "tasks": [
+      "M1",
+      "M1.1"
+    ],
     "date": "2026-09-28",
     "kind": "native-codec",
     "files": [
@@ -495,7 +516,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M1-002",
-    "tasks": ["M1", "M1.2"],
+    "tasks": [
+      "M1",
+      "M1.2"
+    ],
     "date": "2026-09-27",
     "kind": "real-rustfs",
     "files": [
@@ -593,7 +617,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M2-001",
-    "tasks": ["M2", "M2.1"],
+    "tasks": [
+      "M2",
+      "M2.1"
+    ],
     "date": "2026-09-27",
     "kind": "native-dependency-inventory",
     "files": [
@@ -678,7 +705,12 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M2-002",
-    "tasks": ["M2", "M2.1", "M2.2", "M2.3"],
+    "tasks": [
+      "M2",
+      "M2.1",
+      "M2.2",
+      "M2.3"
+    ],
     "date": "2026-09-27",
     "kind": "manifest-publication-recovery",
     "files": [
@@ -795,7 +827,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M3-001",
-    "tasks": ["M3", "M3.1"],
+    "tasks": [
+      "M3",
+      "M3.1"
+    ],
     "date": "2026-09-27",
     "kind": "authentication-foundation",
     "files": [
@@ -890,7 +925,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M3-002",
-    "tasks": ["M3", "M3.2"],
+    "tasks": [
+      "M3",
+      "M3.2"
+    ],
     "date": "2026-09-27",
     "kind": "native-operation-traits",
     "files": [
@@ -969,7 +1007,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-BOOT-002",
-    "tasks": ["Bootstrap", "Bootstrap.1"],
+    "tasks": [
+      "Bootstrap",
+      "Bootstrap.1"
+    ],
     "date": "2026-09-27",
     "kind": "rustfmt-governance",
     "files": [
@@ -1042,7 +1083,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M3-003",
-    "tasks": ["M3", "M3.2"],
+    "tasks": [
+      "M3",
+      "M3.2"
+    ],
     "date": "2026-09-27",
     "kind": "native-commit-backend",
     "files": [
@@ -1171,7 +1215,11 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M3-004",
-    "tasks": ["M3", "M3.1", "M3.2"],
+    "tasks": [
+      "M3",
+      "M3.1",
+      "M3.2"
+    ],
     "date": "2026-09-27",
     "kind": "authenticated-native-lifecycle",
     "files": [
@@ -1408,7 +1456,11 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M3-005",
-    "tasks": ["M3", "M3.1", "M3.2"],
+    "tasks": [
+      "M3",
+      "M3.1",
+      "M3.2"
+    ],
     "date": "2026-09-27",
     "kind": "native-rpc",
     "files": [
@@ -1505,7 +1557,12 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M3-006",
-    "tasks": ["M3", "M3.1", "M3.2", "M3.3"],
+    "tasks": [
+      "M3",
+      "M3.1",
+      "M3.2",
+      "M3.3"
+    ],
     "date": "2026-09-27",
     "kind": "executable-native-cli",
     "files": [
@@ -1659,7 +1716,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M3-007",
-    "tasks": ["M3", "M3.1"],
+    "tasks": [
+      "M3",
+      "M3.1"
+    ],
     "date": "2026-09-27",
     "kind": "typed-administration",
     "files": [
@@ -1756,7 +1816,11 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M3-008",
-    "tasks": ["M3", "M3.1", "M3.2"],
+    "tasks": [
+      "M3",
+      "M3.1",
+      "M3.2"
+    ],
     "date": "2026-09-27",
     "kind": "typed-administration-rpc",
     "files": [
@@ -1858,7 +1922,12 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M3-009",
-    "tasks": ["M3", "M3.1", "M3.2", "M3.3"],
+    "tasks": [
+      "M3",
+      "M3.1",
+      "M3.2",
+      "M3.3"
+    ],
     "date": "2026-09-27",
     "kind": "standalone-native-server",
     "files": [
@@ -2087,7 +2156,11 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M3-010",
-    "tasks": ["M3", "M3.2", "M3.3"],
+    "tasks": [
+      "M3",
+      "M3.2",
+      "M3.3"
+    ],
     "date": "2026-09-27",
     "kind": "resumable-native-attachment",
     "files": [
@@ -2211,7 +2284,12 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M3-011",
-    "tasks": ["M3", "M3.1", "M3.2", "M3.3"],
+    "tasks": [
+      "M3",
+      "M3.1",
+      "M3.2",
+      "M3.3"
+    ],
     "date": "2026-09-27",
     "kind": "durable-cli-initialization",
     "files": [
@@ -2317,7 +2395,11 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M3-012",
-    "tasks": ["M3", "M3.1", "M3.3"],
+    "tasks": [
+      "M3",
+      "M3.1",
+      "M3.3"
+    ],
     "date": "2026-09-27",
     "kind": "typed-token-cli",
     "files": [
@@ -2419,7 +2501,11 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M3-013",
-    "tasks": ["M3", "M3.2", "M3.3"],
+    "tasks": [
+      "M3",
+      "M3.2",
+      "M3.3"
+    ],
     "date": "2026-09-27",
     "kind": "upstream-executable-semantic-parity",
     "files": [
@@ -2528,7 +2614,12 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M3-014",
-    "tasks": ["M3", "M3.1", "M3.2", "M3.3"],
+    "tasks": [
+      "M3",
+      "M3.1",
+      "M3.2",
+      "M3.3"
+    ],
     "date": "2026-09-27",
     "kind": "standalone-tls-deployment",
     "files": [
@@ -2638,7 +2729,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M4-001",
-    "tasks": ["M4", "M4.1"],
+    "tasks": [
+      "M4",
+      "M4.1"
+    ],
     "date": "2026-09-27",
     "kind": "committed-read-snapshot-foundation",
     "files": [
@@ -2729,7 +2823,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M4-002",
-    "tasks": ["M4", "M4.1"],
+    "tasks": [
+      "M4",
+      "M4.1"
+    ],
     "date": "2026-09-27",
     "kind": "native-three-graph-query-foundation",
     "files": [
@@ -2841,7 +2938,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M4-003",
-    "tasks": ["M4", "M4.1"],
+    "tasks": [
+      "M4",
+      "M4.1"
+    ],
     "date": "2026-09-27",
     "kind": "signed-snapshot-bound-graph-continuations",
     "files": [
@@ -2941,7 +3041,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M4-004",
-    "tasks": ["M4", "M4.1"],
+    "tasks": [
+      "M4",
+      "M4.1"
+    ],
     "date": "2026-09-27",
     "kind": "native-object-tree-and-verified-content-reads",
     "files": [
@@ -3080,7 +3183,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M4-005",
-    "tasks": ["M4", "M4.1"],
+    "tasks": [
+      "M4",
+      "M4.1"
+    ],
     "date": "2026-09-27",
     "kind": "signed-directory-snapshot-pagination",
     "files": [
@@ -3176,7 +3282,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M4-006",
-    "tasks": ["M4", "M4.1"],
+    "tasks": [
+      "M4",
+      "M4.1"
+    ],
     "date": "2026-09-27",
     "kind": "native-operation-view-and-visibility-differences",
     "files": [
@@ -3271,7 +3380,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M4-007",
-    "tasks": ["M4", "M4.1"],
+    "tasks": [
+      "M4",
+      "M4.1"
+    ],
     "date": "2026-09-27",
     "kind": "native-content-diffs-and-conflict-descriptors",
     "files": [
@@ -3477,7 +3589,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M4-008",
-    "tasks": ["M4", "M4.1"],
+    "tasks": [
+      "M4",
+      "M4.1"
+    ],
     "date": "2026-09-27",
     "kind": "bounded-native-query-cache-retention-and-recovery",
     "files": [
@@ -3643,7 +3758,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M4-009",
-    "tasks": ["M4", "M4.1"],
+    "tasks": [
+      "M4",
+      "M4.1"
+    ],
     "date": "2026-09-27",
     "kind": "native-query-cancellation-and-release-resource-qualification",
     "files": [
@@ -3820,7 +3938,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M4-010",
-    "tasks": ["M4", "M4.1"],
+    "tasks": [
+      "M4",
+      "M4.1"
+    ],
     "date": "2026-09-27",
     "kind": "native-query-metadata-shape-admission",
     "files": [
@@ -3955,7 +4076,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M4-011",
-    "tasks": ["M4", "M4.1"],
+    "tasks": [
+      "M4",
+      "M4.1"
+    ],
     "date": "2026-09-27",
     "kind": "native-revset-predicate-admission-and-reader-runtime",
     "files": [
@@ -4145,7 +4269,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M4-012",
-    "tasks": ["M4", "M4.1"],
+    "tasks": [
+      "M4",
+      "M4.1"
+    ],
     "date": "2026-09-27",
     "kind": "shared-native-query-workers",
     "files": [
@@ -4224,7 +4351,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M4-013",
-    "tasks": ["M4", "M4.1"],
+    "tasks": [
+      "M4",
+      "M4.1"
+    ],
     "date": "2026-09-27",
     "kind": "native-index-preparation-and-service-tasks",
     "files": [
@@ -4358,7 +4488,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M4-014",
-    "tasks": ["M4", "M4.1"],
+    "tasks": [
+      "M4",
+      "M4.1"
+    ],
     "date": "2026-09-27",
     "kind": "authenticated-http-reads-and-shared-tls-listener",
     "files": [
@@ -4545,7 +4678,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M4-015",
-    "tasks": ["M4", "M4.2"],
+    "tasks": [
+      "M4",
+      "M4.2"
+    ],
     "date": "2026-09-27",
     "kind": "committed-event-replay-and-authenticated-sse",
     "files": [
@@ -4703,7 +4839,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M4-016",
-    "tasks": ["M4", "M4.2"],
+    "tasks": [
+      "M4",
+      "M4.2"
+    ],
     "date": "2026-09-27",
     "kind": "generated-openapi-and-typescript-contracts",
     "files": [
@@ -4867,7 +5006,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M4-017",
-    "tasks": ["M4", "M4.2"],
+    "tasks": [
+      "M4",
+      "M4.2"
+    ],
     "date": "2026-09-27",
     "kind": "implementation",
     "files": [
@@ -5143,7 +5285,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M5-001",
-    "tasks": ["M5", "M5.1"],
+    "tasks": [
+      "M5",
+      "M5.1"
+    ],
     "date": "2026-09-27",
     "kind": "native-command-preparation",
     "files": [
@@ -5324,7 +5469,16 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-SCOPE-001",
-    "tasks": ["M4", "M4.2", "M4.3", "M5", "M5.1", "M6.2", "M8a", "M8a.1"],
+    "tasks": [
+      "M4",
+      "M4.2",
+      "M4.3",
+      "M5",
+      "M5.1",
+      "M6.2",
+      "M8a",
+      "M8a.1"
+    ],
     "date": "2026-09-27",
     "kind": "user-requested-scope-deferral",
     "files": [
@@ -5382,7 +5536,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M5-002",
-    "tasks": ["M5", "M5.1"],
+    "tasks": [
+      "M5",
+      "M5.1"
+    ],
     "date": "2026-09-27",
     "kind": "durable-native-command-service",
     "files": [
@@ -5554,7 +5711,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M5-003",
-    "tasks": ["M5", "M5.1"],
+    "tasks": [
+      "M5",
+      "M5.1"
+    ],
     "date": "2026-09-27",
     "kind": "typed-http-mutation-api",
     "files": [
@@ -5706,7 +5866,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M5-004",
-    "tasks": ["M5", "M5.1"],
+    "tasks": [
+      "M5",
+      "M5.1"
+    ],
     "date": "2026-09-27",
     "kind": "explicit-native-reconciliation",
     "files": [
@@ -5820,7 +5983,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M5-005",
-    "tasks": ["M5", "M5.2"],
+    "tasks": [
+      "M5",
+      "M5.2"
+    ],
     "date": "2026-09-27",
     "kind": "native-typed-abandon",
     "files": [
@@ -5949,7 +6115,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M5-006",
-    "tasks": ["M5", "M5.3"],
+    "tasks": [
+      "M5",
+      "M5.3"
+    ],
     "date": "2026-09-27",
     "kind": "atomic-native-conflict-terms",
     "files": [
@@ -6074,7 +6243,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M5-007",
-    "tasks": ["M5", "M5.3"],
+    "tasks": [
+      "M5",
+      "M5.3"
+    ],
     "date": "2026-09-27",
     "kind": "authorized-conflict-uploads",
     "files": [
@@ -6228,7 +6400,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M5-008",
-    "tasks": ["M5", "M5.3"],
+    "tasks": [
+      "M5",
+      "M5.3"
+    ],
     "date": "2026-09-27",
     "kind": "complete-conflict-reports",
     "files": [
@@ -6340,7 +6515,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M6-001",
-    "tasks": ["M6", "M6.1"],
+    "tasks": [
+      "M6",
+      "M6.1"
+    ],
     "date": "2026-09-27",
     "kind": "adapter-delivery-checkpoints",
     "files": [
@@ -6556,7 +6734,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M6-002",
-    "tasks": ["M6", "M6.2"],
+    "tasks": [
+      "M6",
+      "M6.2"
+    ],
     "date": "2026-09-27",
     "kind": "local-tantivy",
     "files": [
@@ -6705,7 +6886,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M6-003",
-    "tasks": ["M6", "M6.2"],
+    "tasks": [
+      "M6",
+      "M6.2"
+    ],
     "date": "2026-09-27",
     "kind": "native-tantivy-extraction",
     "files": [
@@ -6880,7 +7064,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M6-004",
-    "tasks": ["M6", "M6.2"],
+    "tasks": [
+      "M6",
+      "M6.2"
+    ],
     "date": "2026-09-27",
     "kind": "native-search-visibility",
     "files": [
@@ -6996,7 +7183,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M6-005",
-    "tasks": ["M6", "M6.2"],
+    "tasks": [
+      "M6",
+      "M6.2"
+    ],
     "date": "2026-09-27",
     "kind": "native-search-serving",
     "files": [
@@ -7153,7 +7343,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M6-006",
-    "tasks": ["M6", "M6.2"],
+    "tasks": [
+      "M6",
+      "M6.2"
+    ],
     "date": "2026-09-27",
     "kind": "http-search",
     "files": [
@@ -7272,7 +7465,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M6-007",
-    "tasks": ["M6", "M6.2"],
+    "tasks": [
+      "M6",
+      "M6.2"
+    ],
     "date": "2026-09-27",
     "kind": "search-config-recovery",
     "files": [
@@ -7370,7 +7566,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M6-008",
-    "tasks": ["M6", "M6.2"],
+    "tasks": [
+      "M6",
+      "M6.2"
+    ],
     "date": "2026-09-27",
     "kind": "server-search-lifecycle",
     "files": [
@@ -7579,7 +7778,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M6-009",
-    "tasks": ["M6", "M6.2"],
+    "tasks": [
+      "M6",
+      "M6.2"
+    ],
     "date": "2026-09-27",
     "kind": "authorized-immutable-snapshot-artifacts",
     "files": [
@@ -7684,7 +7886,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M6-010",
-    "tasks": ["M6", "M6.2"],
+    "tasks": [
+      "M6",
+      "M6.2"
+    ],
     "date": "2026-09-28",
     "kind": "tantivy-snapshot-restore-deployment",
     "files": [
@@ -7811,7 +8016,9 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-001",
-    "tasks": ["M4.4"],
+    "tasks": [
+      "M4.4"
+    ],
     "date": "2026-09-27",
     "kind": "storybook-foundation",
     "files": [
@@ -7905,7 +8112,9 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-002",
-    "tasks": ["M4.5"],
+    "tasks": [
+      "M4.5"
+    ],
     "date": "2026-09-27",
     "kind": "storybook-shell",
     "files": [
@@ -8024,7 +8233,9 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-003",
-    "tasks": ["M4.6"],
+    "tasks": [
+      "M4.6"
+    ],
     "date": "2026-09-27",
     "kind": "storybook-repository",
     "files": [
@@ -8309,7 +8520,9 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-004",
-    "tasks": ["M4.7"],
+    "tasks": [
+      "M4.7"
+    ],
     "date": "2026-09-27",
     "kind": "storybook-complete-application",
     "files": [
@@ -8416,7 +8629,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M3-015",
-    "tasks": ["M3", "M3.3"],
+    "tasks": [
+      "M3",
+      "M3.3"
+    ],
     "date": "2026-09-27",
     "kind": "foreground-shutdown-regression",
     "files": [
@@ -8492,7 +8708,9 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-005",
-    "tasks": ["M4.8"],
+    "tasks": [
+      "M4.8"
+    ],
     "date": "2026-09-27",
     "kind": "catalog-review-refinements",
     "files": [
@@ -8648,7 +8866,9 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-006",
-    "tasks": ["M4.8"],
+    "tasks": [
+      "M4.8"
+    ],
     "date": "2026-09-27",
     "kind": "catalog-log-and-files-navigation-polish",
     "files": [
@@ -8684,7 +8904,9 @@ and named tests are checked by the progress gate.
       "spec/src/spec-governance.md",
       "spec/src/ui.md"
     ],
-    "tests": ["scripts/catalog-browser.test.mjs#cold_catalog_contract"],
+    "tests": [
+      "scripts/catalog-browser.test.mjs#cold_catalog_contract"
+    ],
     "runs": [
       {
         "command": "pnpm test:storybook catalog/components/store-application/RepositoryReview.stories.svelte",
@@ -9084,7 +9306,11 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-007",
-    "tasks": ["M4", "M4.3", "M4.9"],
+    "tasks": [
+      "M4",
+      "M4.3",
+      "M4.9"
+    ],
     "date": "2026-09-27",
     "kind": "architecture",
     "files": [
@@ -9164,7 +9390,11 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-008",
-    "tasks": ["M4", "M4.3", "M4.9"],
+    "tasks": [
+      "M4",
+      "M4.3",
+      "M4.9"
+    ],
     "date": "2026-09-27",
     "kind": "implementation",
     "files": [
@@ -9264,7 +9494,11 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M4-018",
-    "tasks": ["M4", "M4.3", "M4.10"],
+    "tasks": [
+      "M4",
+      "M4.3",
+      "M4.10"
+    ],
     "date": "2026-09-27",
     "kind": "implementation",
     "files": [
@@ -9412,7 +9646,9 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-009",
-    "tasks": ["M4.8"],
+    "tasks": [
+      "M4.8"
+    ],
     "date": "2026-09-27",
     "kind": "implementation",
     "files": [
@@ -9486,7 +9722,9 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-010",
-    "tasks": ["M4.8"],
+    "tasks": [
+      "M4.8"
+    ],
     "date": "2026-09-27",
     "kind": "implementation",
     "files": [
@@ -9642,7 +9880,11 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-011",
-    "tasks": ["M4", "M4.3", "M4.11"],
+    "tasks": [
+      "M4",
+      "M4.3",
+      "M4.11"
+    ],
     "date": "2026-09-27",
     "kind": "implementation",
     "files": [
@@ -9806,7 +10048,11 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-012",
-    "tasks": ["M4", "M4.3", "M4.12"],
+    "tasks": [
+      "M4",
+      "M4.3",
+      "M4.12"
+    ],
     "date": "2026-09-27",
     "kind": "implementation",
     "files": [
@@ -9941,7 +10187,11 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-013",
-    "tasks": ["M4", "M4.3", "M4.13"],
+    "tasks": [
+      "M4",
+      "M4.3",
+      "M4.13"
+    ],
     "date": "2026-09-28",
     "kind": "implementation",
     "files": [
@@ -10199,7 +10449,11 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-014",
-    "tasks": ["M4", "M4.3", "M4.13"],
+    "tasks": [
+      "M4",
+      "M4.3",
+      "M4.13"
+    ],
     "date": "2026-09-28",
     "kind": "implementation",
     "files": [
@@ -10343,7 +10597,12 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-015",
-    "tasks": ["M4", "M4.3", "M4.11", "M4.13"],
+    "tasks": [
+      "M4",
+      "M4.3",
+      "M4.11",
+      "M4.13"
+    ],
     "date": "2026-09-28",
     "kind": "implementation",
     "files": [
@@ -10470,7 +10729,11 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-016",
-    "tasks": ["M4", "M4.3", "M4.14"],
+    "tasks": [
+      "M4",
+      "M4.3",
+      "M4.14"
+    ],
     "date": "2026-09-28",
     "kind": "acceptance",
     "files": [
@@ -10579,7 +10842,13 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-017",
-    "tasks": ["M4", "M4.3", "M4.15", "M6", "M6.2"],
+    "tasks": [
+      "M4",
+      "M4.3",
+      "M4.15",
+      "M6",
+      "M6.2"
+    ],
     "date": "2026-09-28",
     "kind": "implementation",
     "files": [
@@ -10724,7 +10993,11 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-018",
-    "tasks": ["M4", "M4.3", "M4.16"],
+    "tasks": [
+      "M4",
+      "M4.3",
+      "M4.16"
+    ],
     "date": "2026-09-28",
     "kind": "implementation",
     "files": [
@@ -10894,7 +11167,11 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-019",
-    "tasks": ["M4", "M4.3", "M4.17"],
+    "tasks": [
+      "M4",
+      "M4.3",
+      "M4.17"
+    ],
     "date": "2026-09-28",
     "kind": "implementation",
     "files": [
@@ -11082,7 +11359,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M8A-001",
-    "tasks": ["M8a", "M8a.2"],
+    "tasks": [
+      "M8a",
+      "M8a.2"
+    ],
     "date": "2026-09-28",
     "kind": "embedded-rustfs",
     "files": [
@@ -11195,7 +11475,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M8A-002",
-    "tasks": ["M8a", "M8a.3"],
+    "tasks": [
+      "M8a",
+      "M8a.3"
+    ],
     "date": "2026-09-28",
     "kind": "managed-local-storage",
     "files": [
@@ -11311,7 +11594,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M8A-003",
-    "tasks": ["M8a", "M8a.4"],
+    "tasks": [
+      "M8a",
+      "M8a.4"
+    ],
     "date": "2026-09-28",
     "kind": "local-trusted-access",
     "files": [
@@ -11499,7 +11785,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M8A-004",
-    "tasks": ["M8a", "M8a.1"],
+    "tasks": [
+      "M8a",
+      "M8a.1"
+    ],
     "date": "2026-09-28",
     "kind": "local-macos-release",
     "files": [
@@ -11633,7 +11922,12 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-020",
-    "tasks": ["M4", "M4.3", "M4.11", "M4.14"],
+    "tasks": [
+      "M4",
+      "M4.3",
+      "M4.11",
+      "M4.14"
+    ],
     "date": "2026-09-28",
     "kind": "implementation",
     "files": [
@@ -11743,7 +12037,13 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-021",
-    "tasks": ["M4", "M4.3", "M4.11", "M4.12", "M4.14"],
+    "tasks": [
+      "M4",
+      "M4.3",
+      "M4.11",
+      "M4.12",
+      "M4.14"
+    ],
     "date": "2026-09-28",
     "kind": "implementation",
     "files": [
@@ -11881,7 +12181,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-022",
-    "tasks": ["M4", "M4.8"],
+    "tasks": [
+      "M4",
+      "M4.8"
+    ],
     "date": "2026-09-28",
     "kind": "implementation",
     "files": [
@@ -11969,7 +12272,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-023",
-    "tasks": ["M4", "M4.8"],
+    "tasks": [
+      "M4",
+      "M4.8"
+    ],
     "date": "2026-09-28",
     "kind": "implementation",
     "files": [
@@ -12071,7 +12377,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-024",
-    "tasks": ["M4.15", "M8a.4"],
+    "tasks": [
+      "M4.15",
+      "M8a.4"
+    ],
     "date": "2026-09-28",
     "kind": "implementation",
     "files": [
@@ -12173,7 +12482,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M9-001",
-    "tasks": ["M9", "M9.1"],
+    "tasks": [
+      "M9",
+      "M9.1"
+    ],
     "date": "2026-09-28",
     "kind": "implementation",
     "files": [
@@ -12326,7 +12638,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M9-002",
-    "tasks": ["M9", "M9.2"],
+    "tasks": [
+      "M9",
+      "M9.2"
+    ],
     "date": "2026-09-28",
     "kind": "implementation",
     "files": [
@@ -12433,7 +12748,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M9-003",
-    "tasks": ["M9", "M9.2"],
+    "tasks": [
+      "M9",
+      "M9.2"
+    ],
     "date": "2026-09-28",
     "kind": "implementation",
     "files": [
@@ -12497,7 +12815,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M9-004",
-    "tasks": ["M9", "M9.2"],
+    "tasks": [
+      "M9",
+      "M9.2"
+    ],
     "date": "2026-09-28",
     "kind": "implementation",
     "files": [
@@ -12568,7 +12889,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M9-005",
-    "tasks": ["M9", "M9.2"],
+    "tasks": [
+      "M9",
+      "M9.2"
+    ],
     "date": "2026-09-28",
     "kind": "implementation",
     "files": [
@@ -12639,7 +12963,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M9-006",
-    "tasks": ["M9", "M9.2"],
+    "tasks": [
+      "M9",
+      "M9.2"
+    ],
     "date": "2026-09-28",
     "kind": "implementation",
     "files": [
@@ -12712,7 +13039,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M9-007",
-    "tasks": ["M9", "M9.2"],
+    "tasks": [
+      "M9",
+      "M9.2"
+    ],
     "date": "2026-09-28",
     "kind": "implementation",
     "files": [
@@ -12791,7 +13121,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M9-008",
-    "tasks": ["M9", "M9.2"],
+    "tasks": [
+      "M9",
+      "M9.2"
+    ],
     "date": "2026-09-28",
     "kind": "implementation",
     "files": [
@@ -12863,7 +13196,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M9-009",
-    "tasks": ["M9", "M9.2"],
+    "tasks": [
+      "M9",
+      "M9.2"
+    ],
     "date": "2026-09-28",
     "kind": "implementation",
     "files": [
@@ -12933,7 +13269,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M9-010",
-    "tasks": ["M9", "M9.3"],
+    "tasks": [
+      "M9",
+      "M9.3"
+    ],
     "date": "2026-09-28",
     "kind": "implementation",
     "files": [
@@ -13009,7 +13348,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M9-011",
-    "tasks": ["M9", "M9.3"],
+    "tasks": [
+      "M9",
+      "M9.3"
+    ],
     "date": "2026-09-28",
     "kind": "implementation",
     "files": [
@@ -13073,7 +13415,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M9-012",
-    "tasks": ["M9", "M9.3"],
+    "tasks": [
+      "M9",
+      "M9.3"
+    ],
     "date": "2026-09-28",
     "kind": "implementation",
     "files": [
@@ -13167,7 +13512,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M9-013",
-    "tasks": ["M9", "M9.3"],
+    "tasks": [
+      "M9",
+      "M9.3"
+    ],
     "date": "2026-09-28",
     "kind": "implementation",
     "files": [
@@ -13291,7 +13639,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M9-014",
-    "tasks": ["M9", "M9.3"],
+    "tasks": [
+      "M9",
+      "M9.3"
+    ],
     "date": "2026-09-28",
     "kind": "implementation",
     "files": [
@@ -13410,7 +13761,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M9-015",
-    "tasks": ["M9", "M9.2"],
+    "tasks": [
+      "M9",
+      "M9.2"
+    ],
     "date": "2026-09-28",
     "kind": "implementation",
     "files": [
@@ -13489,7 +13843,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M9-016",
-    "tasks": ["M9", "M9.2"],
+    "tasks": [
+      "M9",
+      "M9.2"
+    ],
     "date": "2026-09-28",
     "kind": "implementation",
     "files": [
@@ -13562,7 +13919,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M9-017",
-    "tasks": ["M9", "M9.2"],
+    "tasks": [
+      "M9",
+      "M9.2"
+    ],
     "date": "2026-09-28",
     "kind": "implementation",
     "files": [
@@ -13647,7 +14007,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M9-018",
-    "tasks": ["M9", "M9.2"],
+    "tasks": [
+      "M9",
+      "M9.2"
+    ],
     "date": "2026-09-28",
     "kind": "implementation",
     "files": [
@@ -13746,7 +14109,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M9-019",
-    "tasks": ["M9", "M9.2"],
+    "tasks": [
+      "M9",
+      "M9.2"
+    ],
     "date": "2026-09-28",
     "kind": "implementation",
     "files": [
@@ -13819,7 +14185,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M8A-005",
-    "tasks": ["M8a", "M8a.8"],
+    "tasks": [
+      "M8a",
+      "M8a.8"
+    ],
     "date": "2026-09-28",
     "kind": "implementation",
     "files": [
@@ -13994,7 +14363,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M9-020",
-    "tasks": ["M9", "M9.2"],
+    "tasks": [
+      "M9",
+      "M9.2"
+    ],
     "date": "2026-09-28",
     "kind": "implementation",
     "files": [
@@ -14109,7 +14481,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M9-021",
-    "tasks": ["M9", "M9.2"],
+    "tasks": [
+      "M9",
+      "M9.2"
+    ],
     "date": "2026-09-28",
     "kind": "implementation",
     "files": [
@@ -14194,7 +14569,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M9-022",
-    "tasks": ["M9", "M9.2"],
+    "tasks": [
+      "M9",
+      "M9.2"
+    ],
     "date": "2026-09-28",
     "kind": "implementation",
     "files": [
@@ -14282,10 +14660,16 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M9-023",
-    "tasks": ["M9", "M9.2", "M9.3"],
+    "tasks": [
+      "M9",
+      "M9.2",
+      "M9.3"
+    ],
     "date": "2026-09-28",
     "kind": "milestone-closeout",
-    "files": ["spec/src/milestones.md"],
+    "files": [
+      "spec/src/milestones.md"
+    ],
     "tests": [
       "crates/jj-store-cli/tests/agent_capture_publication.rs#captured_entries_publish_in_source_sequence_order",
       "crates/jj-store-cli/tests/agent_setup.rs#removal_restores_exact_original_and_disables_integration",
@@ -14314,7 +14698,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M9-024",
-    "tasks": ["M9", "M9.4"],
+    "tasks": [
+      "M9",
+      "M9.4"
+    ],
     "date": "2026-09-28",
     "kind": "root-pinned-agent-session-api",
     "files": [
@@ -14448,7 +14835,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M9-025",
-    "tasks": ["M9", "M9.4"],
+    "tasks": [
+      "M9",
+      "M9.4"
+    ],
     "date": "2026-09-28",
     "kind": "root-pinned-agent-session-detail",
     "files": [
@@ -14552,7 +14942,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M9-026",
-    "tasks": ["M9", "M9.4"],
+    "tasks": [
+      "M9",
+      "M9.4"
+    ],
     "date": "2026-09-28",
     "kind": "bounded-root-pinned-agent-transcripts",
     "files": [
@@ -14658,7 +15051,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M9-027",
-    "tasks": ["M9", "M9.4"],
+    "tasks": [
+      "M9",
+      "M9.4"
+    ],
     "date": "2026-09-28",
     "kind": "root-pinned-agent-relations",
     "files": [
@@ -14743,7 +15139,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M9-028",
-    "tasks": ["M9", "M9.4"],
+    "tasks": [
+      "M9",
+      "M9.4"
+    ],
     "date": "2026-09-28",
     "kind": "root-pinned-agent-checkpoints",
     "files": [
@@ -14844,7 +15243,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M9-029",
-    "tasks": ["M9", "M9.4"],
+    "tasks": [
+      "M9",
+      "M9.4"
+    ],
     "date": "2026-09-28",
     "kind": "root-pinned-review-threads",
     "files": [
@@ -14958,7 +15360,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M9-030",
-    "tasks": ["M9", "M9.4"],
+    "tasks": [
+      "M9",
+      "M9.4"
+    ],
     "date": "2026-09-28",
     "kind": "receipt-backed-review-commands",
     "files": [
@@ -15051,7 +15456,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M9-031",
-    "tasks": ["M9", "M9.4"],
+    "tasks": [
+      "M9",
+      "M9.4"
+    ],
     "date": "2026-09-29",
     "kind": "collaboration-cli-and-live-hints",
     "files": [
@@ -15145,7 +15553,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M8A-006",
-    "tasks": ["M8a.1", "M8a.3"],
+    "tasks": [
+      "M8a.1",
+      "M8a.3"
+    ],
     "date": "2026-09-29",
     "kind": "persistent-local-development-fixture",
     "files": [
@@ -15237,7 +15648,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M9-032",
-    "tasks": ["M9", "M9.5"],
+    "tasks": [
+      "M9",
+      "M9.5"
+    ],
     "date": "2026-09-29",
     "kind": "collaboration-application-presentation",
     "files": [
@@ -15398,7 +15812,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M9-033",
-    "tasks": ["M9", "M9.6"],
+    "tasks": [
+      "M9",
+      "M9.6"
+    ],
     "date": "2026-09-29",
     "kind": "collaboration-cold-copy-qualification",
     "files": [
@@ -15521,7 +15938,11 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M9-034",
-    "tasks": ["M9", "M9.2", "M9.5"],
+    "tasks": [
+      "M9",
+      "M9.2",
+      "M9.5"
+    ],
     "date": "2026-09-29",
     "kind": "representative-collaboration-demo-fixture",
     "files": [
@@ -15650,7 +16071,11 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M9-035",
-    "tasks": ["M9", "M9.4", "M9.5"],
+    "tasks": [
+      "M9",
+      "M9.4",
+      "M9.5"
+    ],
     "date": "2026-09-29",
     "kind": "collaboration-context-presentation-alignment",
     "files": [
@@ -15929,7 +16354,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M9-036",
-    "tasks": ["M9", "M9.5"],
+    "tasks": [
+      "M9",
+      "M9.5"
+    ],
     "date": "2026-09-29",
     "kind": "collaboration-layout-refinement",
     "files": [
@@ -16182,7 +16610,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M9-037",
-    "tasks": ["M9", "M9.5"],
+    "tasks": [
+      "M9",
+      "M9.5"
+    ],
     "date": "2026-09-29",
     "kind": "production-avatar-assets",
     "files": [
@@ -16282,7 +16713,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M9-038",
-    "tasks": ["M9", "M9.5"],
+    "tasks": [
+      "M9",
+      "M9.5"
+    ],
     "date": "2026-09-29",
     "kind": "inline-diff-and-tool-review-comments",
     "files": [
@@ -16420,7 +16854,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M9-039",
-    "tasks": ["M9", "M9.5"],
+    "tasks": [
+      "M9",
+      "M9.5"
+    ],
     "date": "2026-09-30",
     "kind": "native-diff-line-coordinates-and-emoji-picker-csp",
     "files": [
@@ -16516,7 +16953,9 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-025",
-    "tasks": ["M4.8"],
+    "tasks": [
+      "M4.8"
+    ],
     "date": "2026-09-30",
     "kind": "implementation",
     "files": [
@@ -16560,13 +16999,18 @@ and named tests are checked by the progress gate.
       }
     ],
     "result": "pending",
-    "remaining": ["Visual baselines remain unapproved."],
+    "remaining": [
+      "Visual baselines remain unapproved."
+    ],
     "versions": "Node.js 24.10.0; pnpm 10.32.1; Svelte 5.57.1; Design Core ^0.2.0.",
     "formats": "No native object, manifest, WAL, receipt or API changes. Branch presentation keeps square card corners by setting the command view container radius to 0px."
   },
   {
     "id": "E-UI-026",
-    "tasks": ["M4.8", "M4.16"],
+    "tasks": [
+      "M4.8",
+      "M4.16"
+    ],
     "date": "2026-09-30",
     "kind": "contextual-branch-rail-and-mutation-composer",
     "files": [
@@ -16653,7 +17097,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-027",
-    "tasks": ["M4.8", "M4.16"],
+    "tasks": [
+      "M4.8",
+      "M4.16"
+    ],
     "date": "2026-09-30",
     "kind": "bookmark-context-and-commit-selector",
     "files": [
@@ -16760,7 +17207,14 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-028",
-    "tasks": ["M4.2", "M4.8", "M4.15", "M4.16", "M5", "M5.1"],
+    "tasks": [
+      "M4.2",
+      "M4.8",
+      "M4.15",
+      "M4.16",
+      "M5",
+      "M5.1"
+    ],
     "date": "2026-09-30",
     "kind": "repository-tabs-file-edit-and-search-lifecycle",
     "files": [
@@ -17467,13 +17921,18 @@ and named tests are checked by the progress gate.
       }
     ],
     "result": "pending",
-    "remaining": ["Visual baselines remain unapproved."],
+    "remaining": [
+      "Visual baselines remain unapproved."
+    ],
     "versions": "Rust 1.98.1; Node.js 26.9.0; pnpm 10.32.1; Svelte 5.57.1; Storybook 10.5.7; Design Core ^0.2.0; Community ^0.1.0.",
     "formats": "The V1 typed mutation command union and capability list add edit_file with an exact bookmark target, canonical source/destination paths, bounded UTF-8 contents and description. Existing mutation request, prepared result, durable receipt, WAL, manifest and native object formats remain unchanged. Friendly landing-document labels/icons, measured More overflow, responsive commit details, body tabs/breadcrumb, persistent file display controls, the content-sized filename field, focus-ring-free line-numbered filename-highlighted Mira edit body and deferred search routing are browser presentation only; credentials remain memory-only. Changed stories remain visual-pending."
   },
   {
     "id": "E-M10-001",
-    "tasks": ["M10", "M10.1"],
+    "tasks": [
+      "M10",
+      "M10.1"
+    ],
     "date": "2026-09-30",
     "kind": "audit",
     "files": [
@@ -17523,7 +17982,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M10-002",
-    "tasks": ["M10", "M10.2"],
+    "tasks": [
+      "M10",
+      "M10.2"
+    ],
     "date": "2026-09-30",
     "kind": "authored-replication-origins",
     "files": [
@@ -17589,7 +18051,11 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M10-003",
-    "tasks": ["M10", "M10.3", "M10.4"],
+    "tasks": [
+      "M10",
+      "M10.3",
+      "M10.4"
+    ],
     "date": "2026-09-30",
     "kind": "verified-origin-import-and-native-head-reduction",
     "files": [
@@ -17700,7 +18166,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M10-004",
-    "tasks": ["M10", "M10.5"],
+    "tasks": [
+      "M10",
+      "M10.5"
+    ],
     "date": "2026-09-30",
     "kind": "collaboration-accepted-fact-convergence",
     "files": [
@@ -17984,7 +18453,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M10-005",
-    "tasks": ["M10", "M10.3"],
+    "tasks": [
+      "M10",
+      "M10.3"
+    ],
     "date": "2026-09-30",
     "kind": "authenticated-replication-transport-and-peer-cursors",
     "files": [
@@ -18134,7 +18606,11 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M10-006",
-    "tasks": ["M10", "M10.3", "M10.7"],
+    "tasks": [
+      "M10",
+      "M10.3",
+      "M10.7"
+    ],
     "date": "2026-09-30",
     "kind": "bounded-bidirectional-replication-worker",
     "files": [
@@ -18235,7 +18711,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M10-007",
-    "tasks": ["M10", "M10.4"],
+    "tasks": [
+      "M10",
+      "M10.4"
+    ],
     "date": "2026-09-30",
     "kind": "explicit-native-reconciliation-rpc-and-cli",
     "files": [
@@ -18326,7 +18805,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M10-008",
-    "tasks": ["M10", "M10.6"],
+    "tasks": [
+      "M10",
+      "M10.6"
+    ],
     "date": "2026-09-30",
     "kind": "replication-seed-checkpoint-bootstrap-and-workspace-migration",
     "files": [
@@ -18468,7 +18950,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M10-009",
-    "tasks": ["M10", "M10.7"],
+    "tasks": [
+      "M10",
+      "M10.7"
+    ],
     "date": "2026-09-30",
     "kind": "minimal-production-replication-activation",
     "files": [
@@ -18626,7 +19111,13 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M10-010",
-    "tasks": ["M10", "M10.1", "M10.3", "M10.6", "M10.7"],
+    "tasks": [
+      "M10",
+      "M10.1",
+      "M10.3",
+      "M10.6",
+      "M10.7"
+    ],
     "date": "2026-09-30",
     "kind": "native-envelope-transfer-and-zero-upstream-proof",
     "files": [
@@ -18724,7 +19215,9 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M10-011",
-    "tasks": ["M10"],
+    "tasks": [
+      "M10"
+    ],
     "date": "2026-09-30",
     "kind": "browser-acceptance-token-discovery-fixture-repair",
     "files": [
@@ -18804,7 +19297,9 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M10-012",
-    "tasks": ["M10"],
+    "tasks": [
+      "M10"
+    ],
     "date": "2026-09-30",
     "kind": "review-command-contract-regression-gate",
     "files": [
@@ -18996,7 +19491,9 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-029",
-    "tasks": ["M4.7"],
+    "tasks": [
+      "M4.7"
+    ],
     "date": "2026-09-30",
     "kind": "merged-file-preview-story-assertion-repair",
     "files": [
@@ -19064,7 +19561,9 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-030",
-    "tasks": ["M4.18"],
+    "tasks": [
+      "M4.18"
+    ],
     "date": "2026-09-30",
     "kind": "transient-store-settings",
     "before": "The profile menu exposed only connection actions. Repository discovery permission was omitted from summaries, while connected capabilities and snapshot authority were not available through the public presentation state and search health had no data-source or settings presentation path.",
@@ -19249,7 +19748,9 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-031",
-    "tasks": ["M4.18"],
+    "tasks": [
+      "M4.18"
+    ],
     "date": "2026-09-30",
     "kind": "compact-store-settings-navigation-regression",
     "before": "Collapsing the desktop left sidebar reduced the shell rail to 48 pixels, but StoreSettingsNavigation did not receive the shell compact state. Its Back, section heading and three section labels remained full width and were clipped instead of rendering the expected icon-only navigation.",
@@ -19376,13 +19877,18 @@ and named tests are checked by the progress gate.
     ],
     "result": "pass",
     "remaining": [],
-    "deferred": ["Human visual review and baseline approval."],
+    "deferred": [
+      "Human visual review and baseline approval."
+    ],
     "versions": "pnpm 10.32.1; Svelte 5.57.1; Storybook 10.5.7; Vitest browser 4.1.11; Design Core ^0.2.0.",
     "formats": "No server, OpenAPI, generated contract, persistence or wire-format change. The desktop shell compact state now controls jj-store-owned settings navigation; the story remains visual-pending."
   },
   {
     "id": "E-M10-014",
-    "tasks": ["M10", "M10.7"],
+    "tasks": [
+      "M10",
+      "M10.7"
+    ],
     "date": "2026-09-30",
     "kind": "minimal-replication-activation-scope-alignment",
     "files": [
@@ -19455,7 +19961,9 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-GOV-001",
-    "tasks": ["Bootstrap"],
+    "tasks": [
+      "Bootstrap"
+    ],
     "date": "2026-09-30",
     "kind": "targeted-verification-scope-guidance",
     "before": "The tracked guide already preferred targeted verification, but canonical governance deferred to the parent ladder and its escalation wording could still treat one shared UI component with several stories as full-suite impact. That ambiguity contributed to root aggregate runs for a small Settings presentation fix.",
@@ -19487,7 +19995,9 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-032",
-    "tasks": ["M4.19"],
+    "tasks": [
+      "M4.19"
+    ],
     "date": "2026-09-30",
     "kind": "repository-workspace-picker-and-pinned-route-context",
     "revision": "Enclosing Jujutsu change oxqznotm.",
@@ -19707,7 +20217,9 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-033",
-    "tasks": ["M4.20"],
+    "tasks": [
+      "M4.20"
+    ],
     "date": "2026-09-30",
     "kind": "repository-right-rail-navigation-and-responsive-tabs",
     "revision": "Enclosing Jujutsu change uqvnuppm.",
@@ -20045,7 +20557,9 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-034",
-    "tasks": ["M4.21"],
+    "tasks": [
+      "M4.21"
+    ],
     "date": "2026-09-30",
     "kind": "compact-operation-comparison-parent-picker",
     "revision": "Enclosing Jujutsu change uxsntunx.",
@@ -20285,7 +20799,9 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-035",
-    "tasks": ["M4.22"],
+    "tasks": [
+      "M4.22"
+    ],
     "date": "2026-09-30",
     "kind": "selected-repository-rail-actions",
     "revision": "Enclosing Jujutsu change mouksruo.",
@@ -20439,7 +20955,9 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-036",
-    "tasks": ["M4.23"],
+    "tasks": [
+      "M4.23"
+    ],
     "date": "2026-09-30",
     "kind": "commit-selector-alignment-and-navigation-spacing",
     "revision": "Enclosing Jujutsu change opokxnpq.",
@@ -20560,7 +21078,9 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-037",
-    "tasks": ["M4.24"],
+    "tasks": [
+      "M4.24"
+    ],
     "date": "2026-09-30",
     "kind": "shell-conflict-merge-editor",
     "revision": "Enclosing Jujutsu change txqzzrux.",
@@ -20746,7 +21266,9 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-038",
-    "tasks": ["M4.25"],
+    "tasks": [
+      "M4.25"
+    ],
     "date": "2026-09-30",
     "kind": "commit-selector-metadata-layout",
     "revision": "Enclosing Jujutsu change zlmvwkxm.",
@@ -20871,7 +21393,9 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-039",
-    "tasks": ["M4.26"],
+    "tasks": [
+      "M4.26"
+    ],
     "date": "2026-10-01",
     "kind": "conflict-sheet-file-browser-header-actions",
     "revision": "Enclosing Jujutsu change pksrltsu.",
@@ -21042,7 +21566,9 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-040",
-    "tasks": ["M4.27"],
+    "tasks": [
+      "M4.27"
+    ],
     "date": "2026-10-01",
     "kind": "commit-selector-stacked-identifiers",
     "revision": "Enclosing Jujutsu change oxtsvwrl.",
@@ -21352,7 +21878,9 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-041",
-    "tasks": ["M4.28"],
+    "tasks": [
+      "M4.28"
+    ],
     "date": "2026-10-01",
     "kind": "native-evolution-column-and-shell-alignment",
     "revision": "Enclosing Jujutsu change quurzzvr.",
@@ -21581,7 +22109,9 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-042",
-    "tasks": ["M4.29"],
+    "tasks": [
+      "M4.29"
+    ],
     "date": "2026-10-01",
     "kind": "served-editor-and-composer-focus-treatment",
     "revision": "Enclosing Jujutsu change uonqxxvs.",
@@ -21737,7 +22267,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M11-001",
-    "tasks": ["M11", "M11.1"],
+    "tasks": [
+      "M11",
+      "M11.1"
+    ],
     "date": "2026-09-30",
     "kind": "native-workstore",
     "revision": "enclosing Jujutsu change",
@@ -21936,7 +22469,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M11-002",
-    "tasks": ["M11", "M11.2"],
+    "tasks": [
+      "M11",
+      "M11.2"
+    ],
     "date": "2026-09-30",
     "kind": "workstore-transports-cli",
     "revision": "enclosing Jujutsu change",
@@ -22162,7 +22698,11 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M11-003",
-    "tasks": ["M11", "M11.1", "M11.3"],
+    "tasks": [
+      "M11",
+      "M11.1",
+      "M11.3"
+    ],
     "date": "2026-10-01",
     "kind": "workstore-browser-real-rustfs",
     "revision": "enclosing Jujutsu change",
@@ -22513,7 +23053,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M11-004",
-    "tasks": ["M11", "M11.3"],
+    "tasks": [
+      "M11",
+      "M11.3"
+    ],
     "date": "2026-10-01",
     "kind": "main-workspace-integration",
     "revision": "Enclosing Jujutsu change msxvwtvr.",
@@ -22780,7 +23323,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M12-001",
-    "tasks": ["M12", "M12.1"],
+    "tasks": [
+      "M12",
+      "M12.1"
+    ],
     "date": "2026-10-01",
     "kind": "native-git-dispatch",
     "revision": "Enclosing Jujutsu change tunulptm.",
@@ -22902,7 +23448,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M12-002",
-    "tasks": ["M12", "M12.2"],
+    "tasks": [
+      "M12",
+      "M12.2"
+    ],
     "date": "2026-10-01",
     "kind": "native-git-representations",
     "revision": "Enclosing Jujutsu change wtttvvsl.",
@@ -23065,7 +23614,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M12-003",
-    "tasks": ["M12", "M12.3"],
+    "tasks": [
+      "M12",
+      "M12.3"
+    ],
     "date": "2026-10-01",
     "kind": "authorized-git-publication",
     "revision": "Enclosing Jujutsu change vltktsqs.",
@@ -23180,7 +23732,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M12-004",
-    "tasks": ["M12", "M12.3"],
+    "tasks": [
+      "M12",
+      "M12.3"
+    ],
     "date": "2026-10-01",
     "kind": "native-git-fetch-cli",
     "revision": "Enclosing Jujutsu change ontrqtym.",
@@ -23329,7 +23884,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M12-005",
-    "tasks": ["M12", "M12.4"],
+    "tasks": [
+      "M12",
+      "M12.4"
+    ],
     "date": "2026-10-01",
     "kind": "native-git-push-attempts",
     "revision": "Enclosing Jujutsu change ylyqvktz.",
@@ -23523,7 +24081,12 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M12-006",
-    "tasks": ["M12", "M12.3", "M12.4", "M12.5"],
+    "tasks": [
+      "M12",
+      "M12.3",
+      "M12.4",
+      "M12.5"
+    ],
     "date": "2026-10-01",
     "kind": "native-git-origin-reduction",
     "revision": "Enclosing Jujutsu change uxpxtwyo.",
@@ -23708,7 +24271,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M12-007",
-    "tasks": ["M12", "M12.6"],
+    "tasks": [
+      "M12",
+      "M12.6"
+    ],
     "date": "2026-10-01",
     "kind": "native-git-bookmark-selection-and-remote-lifecycle",
     "revision": "Enclosing Jujutsu change szlvumzz.",
@@ -23773,7 +24339,11 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M12-008",
-    "tasks": ["M12", "M12.5", "M12.7"],
+    "tasks": [
+      "M12",
+      "M12.5",
+      "M12.7"
+    ],
     "date": "2026-10-01",
     "kind": "native-git-owned-process-lifetime",
     "revision": "Enclosing Jujutsu change lnwolwuz.",
@@ -23840,7 +24410,11 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M12-009",
-    "tasks": ["M12", "M12.5", "M12.6"],
+    "tasks": [
+      "M12",
+      "M12.5",
+      "M12.6"
+    ],
     "date": "2026-10-01",
     "kind": "native-git-recovery-ref-merge-and-stage-faults",
     "revision": "Enclosing Jujutsu change pxpqtlyw.",
@@ -23947,7 +24521,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M12-010",
-    "tasks": ["M12", "M12.7"],
+    "tasks": [
+      "M12",
+      "M12.7"
+    ],
     "date": "2026-10-01",
     "kind": "native-git-credentials-and-real-rustfs-cycle",
     "revision": "Enclosing Jujutsu change rkqwtxnl.",
@@ -24101,7 +24678,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M11-005",
-    "tasks": ["M11", "M11.4"],
+    "tasks": [
+      "M11",
+      "M11.4"
+    ],
     "date": "2026-10-01",
     "kind": "native-workstore-projects-hub",
     "revision": "enclosing Jujutsu change nuwmlxxk",
@@ -25572,7 +26152,9 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-043",
-    "tasks": ["M4.30"],
+    "tasks": [
+      "M4.30"
+    ],
     "date": "2026-10-01",
     "kind": "file-navigation-clears-editor-presentation",
     "revision": "Enclosing Jujutsu change psszmplx.",
@@ -25739,7 +26321,11 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M11-006",
-    "tasks": ["M11", "M11.4", "M4.30"],
+    "tasks": [
+      "M11",
+      "M11.4",
+      "M4.30"
+    ],
     "date": "2026-10-01",
     "kind": "projects-hub-main-workspace-integration",
     "revision": "Enclosing Jujutsu change zllovtln.",
@@ -25918,7 +26504,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M11-007",
-    "tasks": ["M11", "M11.4"],
+    "tasks": [
+      "M11",
+      "M11.4"
+    ],
     "date": "2026-10-01",
     "kind": "native-development-project-task-seed",
     "revision": "Enclosing Jujutsu change vqqlmmol.",
@@ -26138,7 +26727,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M13-001",
-    "tasks": ["M13", "M13.1"],
+    "tasks": [
+      "M13",
+      "M13.1"
+    ],
     "date": "2026-10-01",
     "kind": "filesystem-git",
     "revision": "nlvotsvl",
@@ -26299,7 +26891,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M13-002",
-    "tasks": ["M13", "M13.2"],
+    "tasks": [
+      "M13",
+      "M13.2"
+    ],
     "date": "2026-10-01",
     "kind": "filesystem-git",
     "revision": "uklylvot",
@@ -26506,7 +27101,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M13-003",
-    "tasks": ["M13", "M13.3"],
+    "tasks": [
+      "M13",
+      "M13.3"
+    ],
     "date": "2026-10-01",
     "kind": "filesystem-git",
     "revision": "tysxnlom",
@@ -26670,7 +27268,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M13-004",
-    "tasks": ["M13", "M13.3"],
+    "tasks": [
+      "M13",
+      "M13.3"
+    ],
     "date": "2026-10-01",
     "kind": "filesystem-git",
     "revision": "npsqzsms",
@@ -26844,7 +27445,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M13-005",
-    "tasks": ["M13", "M13.3"],
+    "tasks": [
+      "M13",
+      "M13.3"
+    ],
     "date": "2026-10-01",
     "kind": "filesystem-git",
     "revision": "vrunmlxs",
@@ -27000,7 +27604,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M13-006",
-    "tasks": ["M13", "M13.3"],
+    "tasks": [
+      "M13",
+      "M13.3"
+    ],
     "date": "2026-10-01",
     "kind": "filesystem-git",
     "revision": "vqvumrxn",
@@ -27134,7 +27741,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M13-007",
-    "tasks": ["M13", "M13.3"],
+    "tasks": [
+      "M13",
+      "M13.3"
+    ],
     "date": "2026-10-01",
     "kind": "filesystem-git",
     "revision": "nxwrlsnv",
@@ -27346,7 +27956,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M13-008",
-    "tasks": ["M13", "M13.3"],
+    "tasks": [
+      "M13",
+      "M13.3"
+    ],
     "date": "2026-10-01",
     "kind": "filesystem-git",
     "revision": "zyryzwyz",
@@ -27513,7 +28126,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M13-009",
-    "tasks": ["M13", "M13.3"],
+    "tasks": [
+      "M13",
+      "M13.3"
+    ],
     "date": "2026-10-01",
     "kind": "filesystem-git",
     "revision": "lvnyxywn",
@@ -27661,7 +28277,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M13-010",
-    "tasks": ["M13", "M13.3"],
+    "tasks": [
+      "M13",
+      "M13.3"
+    ],
     "date": "2026-10-01",
     "kind": "filesystem-git",
     "revision": "psvwxwlo",
@@ -27834,7 +28453,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M13-011",
-    "tasks": ["M13", "M13.3"],
+    "tasks": [
+      "M13",
+      "M13.3"
+    ],
     "date": "2026-10-01",
     "kind": "filesystem-git",
     "revision": "qtxvrqqm",
@@ -27969,7 +28591,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M13-012",
-    "tasks": ["M13", "M13.3"],
+    "tasks": [
+      "M13",
+      "M13.3"
+    ],
     "date": "2026-10-01",
     "kind": "workspace-integration",
     "revision": "ptqprvlv",
@@ -28428,7 +29053,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-044",
-    "tasks": ["M3", "M4.7"],
+    "tasks": [
+      "M3",
+      "M4.7"
+    ],
     "date": "2026-10-01",
     "kind": "development-browser-annotation-policy",
     "revision": "Enclosing Jujutsu change rlvvyrkm.",
@@ -28658,7 +29286,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-045",
-    "tasks": ["M9.5", "M11.4"],
+    "tasks": [
+      "M9.5",
+      "M11.4"
+    ],
     "date": "2026-10-01",
     "kind": "community-native-review-and-shared-project-activity",
     "revision": "Enclosing Jujutsu change nqpoyvww.",
@@ -29103,7 +29734,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-046",
-    "tasks": ["M9.5", "M11.4"],
+    "tasks": [
+      "M9.5",
+      "M11.4"
+    ],
     "date": "2026-10-01",
     "kind": "community-native-message-actions-and-copy-menus",
     "revision": "Enclosing Jujutsu change soynnsrx.",
@@ -29309,7 +29943,9 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-047",
-    "tasks": ["M11.4"],
+    "tasks": [
+      "M11.4"
+    ],
     "date": "2026-10-01",
     "kind": "community-projects-repository-scope-markdown-and-activity-filters",
     "revision": "Enclosing Jujutsu change lvpkolvw.",
@@ -29561,7 +30197,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M14-001",
-    "tasks": ["M14", "M14.1"],
+    "tasks": [
+      "M14",
+      "M14.1"
+    ],
     "date": "2026-10-01",
     "kind": "implementation",
     "files": [
@@ -29718,7 +30357,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M14-002",
-    "tasks": ["M14", "M14.2"],
+    "tasks": [
+      "M14",
+      "M14.2"
+    ],
     "date": "2026-10-01",
     "kind": "implementation",
     "files": [
@@ -29902,7 +30544,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M14-003",
-    "tasks": ["M14", "M14.2"],
+    "tasks": [
+      "M14",
+      "M14.2"
+    ],
     "date": "2026-10-01",
     "kind": "implementation",
     "files": [
@@ -30041,7 +30686,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M14-004",
-    "tasks": ["M14", "M14.3"],
+    "tasks": [
+      "M14",
+      "M14.3"
+    ],
     "date": "2026-10-01",
     "kind": "implementation",
     "files": [
@@ -30168,10 +30816,16 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M14-005",
-    "tasks": ["M14", "M14.2", "M14.3"],
+    "tasks": [
+      "M14",
+      "M14.2",
+      "M14.3"
+    ],
     "date": "2026-10-01",
     "kind": "integration",
-    "files": ["spec/src/milestones.md"],
+    "files": [
+      "spec/src/milestones.md"
+    ],
     "tests": [],
     "runs": [
       {
@@ -30254,7 +30908,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M14-006",
-    "tasks": ["M14", "M14.2"],
+    "tasks": [
+      "M14",
+      "M14.2"
+    ],
     "date": "2026-10-01",
     "kind": "implementation",
     "files": [
@@ -30438,7 +31095,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M14-007",
-    "tasks": ["M14", "M14.2"],
+    "tasks": [
+      "M14",
+      "M14.2"
+    ],
     "date": "2026-10-01",
     "kind": "presentation",
     "files": [
@@ -30496,7 +31156,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M14-008",
-    "tasks": ["M14", "M14.6"],
+    "tasks": [
+      "M14",
+      "M14.6"
+    ],
     "date": "2026-10-01",
     "kind": "local-sync-settings",
     "files": [
@@ -30611,7 +31274,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M14-009",
-    "tasks": ["M14", "M14.4"],
+    "tasks": [
+      "M14",
+      "M14.4"
+    ],
     "date": "2026-10-01",
     "kind": "editable-search-management",
     "files": [
@@ -30807,7 +31473,12 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M14-010",
-    "tasks": ["M14", "M14.2", "M14.4", "M14.6"],
+    "tasks": [
+      "M14",
+      "M14.2",
+      "M14.4",
+      "M14.6"
+    ],
     "date": "2026-10-01",
     "kind": "settings-page-tab-placement",
     "files": [
@@ -30921,7 +31592,13 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M14-011",
-    "tasks": ["M14", "M14.1", "M14.2", "M14.4", "M14.6"],
+    "tasks": [
+      "M14",
+      "M14.1",
+      "M14.2",
+      "M14.4",
+      "M14.6"
+    ],
     "date": "2026-10-01",
     "kind": "settings-shared-copy-navigation-and-scoped-layout",
     "files": [
@@ -31122,7 +31799,10 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M11-008",
-    "tasks": ["M11", "M11.4"],
+    "tasks": [
+      "M11",
+      "M11.4"
+    ],
     "date": "2026-10-01",
     "kind": "projects-page-header-filters",
     "files": [
@@ -31246,7 +31926,13 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-M14-012",
-    "tasks": ["M14", "M14.1", "M14.2", "M14.4", "M14.6"],
+    "tasks": [
+      "M14",
+      "M14.1",
+      "M14.2",
+      "M14.4",
+      "M14.6"
+    ],
     "date": "2026-10-01",
     "kind": "settings-right-title-circular-back-and-compact-insets",
     "files": [
@@ -31379,7 +32065,14 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-048",
-    "tasks": ["M4.7", "M4.20", "M4.29", "M4.30", "M9.5", "M11.4"],
+    "tasks": [
+      "M4.7",
+      "M4.20",
+      "M4.29",
+      "M4.30",
+      "M9.5",
+      "M11.4"
+    ],
     "date": "2026-10-01",
     "kind": "overview-inset-wide-file-editor-fixed-review-header-and-copy-submenus",
     "files": [
@@ -31608,7 +32301,15 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-049",
-    "tasks": ["M4.7", "M4.20", "M4.29", "M4.30", "M9.5", "M11.4", "M14.1"],
+    "tasks": [
+      "M4.7",
+      "M4.20",
+      "M4.29",
+      "M4.30",
+      "M9.5",
+      "M11.4",
+      "M14.1"
+    ],
     "date": "2026-10-01",
     "kind": "compact-application-header-insets-and-language-aware-safe-source-highlighting",
     "files": [
@@ -31872,7 +32573,11 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-UI-050",
-    "tasks": ["M11.4", "M3.3", "M13.2"],
+    "tasks": [
+      "M11.4",
+      "M3.3",
+      "M13.2"
+    ],
     "date": "2026-10-01",
     "kind": "development-fixtures-and-navigation",
     "files": [
@@ -32172,6 +32877,149 @@ and named tests are checked by the progress gate.
       "Git-backed JJ browser serving remains M13.4; visual baseline approval and release qualification remain separate."
     ],
     "artifacts": "Ignored .scratch/three-profiles-*.log and navigation-persistence-*.log; isolated /tmp/jj-store-three-profiles-cold and /tmp/jj-store-cli-install-review. Durable source chapter/ledger evidence retains scope; ignored .scratch/three-profiles-cold-before.json and -after.json bind the exact compared snapshots. .scratch/three-profiles-projects.jpg shows the native home and its three distinct links."
+  },
+  {
+    "id": "E-M15-001",
+    "tasks": [
+      "M15",
+      "M15.1"
+    ],
+    "date": "2026-10-01",
+    "kind": "focused-domain",
+    "revision": "enclosing Jujutsu change wnzmnxrz",
+    "before": "Clean isolated threads-reactions at c22556aa. Exact cargo test -p jj-collab --test domain fails because package does not exist. Main active UI work preserved.",
+    "versions": "Rust 1.98.1; JJ 0.45.1; emojis 0.9.0; image 0.25.10; unicode-segmentation 1.13.3; pnpm 10.32.1",
+    "formats": "New canonical collaboration V1 records and bounded radix pages; native manifest/local companion formats unchanged in this slice.",
+    "files": [
+      "Cargo.lock",
+      "Cargo.toml",
+      "crates/jj-collab/Cargo.toml",
+      "crates/jj-collab/src/assets.rs",
+      "crates/jj-collab/src/catalog.rs",
+      "crates/jj-collab/src/codec.rs",
+      "crates/jj-collab/src/commands.rs",
+      "crates/jj-collab/src/graph.rs",
+      "crates/jj-collab/src/ids.rs",
+      "crates/jj-collab/src/lib.rs",
+      "crates/jj-collab/src/objects.rs",
+      "crates/jj-collab/src/reactions.rs",
+      "crates/jj-collab/src/targets.rs",
+      "crates/jj-collab/src/threads.rs",
+      "crates/jj-collab/tests/domain.rs",
+      "scripts/check-boundaries.mjs",
+      "spec-validator.config.mjs",
+      "spec/src/architecture.md",
+      "spec/src/collaboration.md",
+      "spec/src/milestones.md",
+      "spec/src/spec-governance.md",
+      "spec/src/verification.md"
+    ],
+    "tests": [
+      "crates/jj-collab/tests/domain.rs#exact_observed_replacement_retains_auditable_history_and_rejects_stale_clear",
+      "crates/jj-collab/tests/domain.rs#delivery_permutations_preserve_conflicts_and_unseen_concurrent_additions",
+      "crates/jj-collab/tests/domain.rs#same_value_duplicates_count_once_and_same_value_set_is_a_noop",
+      "crates/jj-collab/tests/domain.rs#rich_values_preserve_literal_emoji_and_reject_non_emoji_or_multiple_values",
+      "crates/jj-collab/tests/domain.rs#message_revision_identity_and_agent_content_are_exact_and_witnesses_are_separate",
+      "crates/jj-collab/tests/domain.rs#thread_lifecycle_is_independent_and_restore_returns_idle",
+      "crates/jj-collab/tests/domain.rs#canonical_codec_rejects_unknown_fields_whitespace_and_wrong_kinds",
+      "crates/jj-collab/tests/domain.rs#custom_assets_validate_retained_bytes_and_static_preview",
+      "crates/jj-collab/tests/domain.rs#animation_bounds_are_enforced_and_preview_is_first_frame",
+      "crates/jj-collab/tests/domain.rs#optional_sessions_reference_many_threads_and_primary_reassignment_keeps_history",
+      "crates/jj-collab/tests/domain.rs#human_message_edits_keep_old_revisions_and_archiving_preserves_assignments",
+      "crates/jj-collab/tests/domain.rs#bounded_radix_updates_preserve_prior_snapshots_and_validate_keys",
+      "crates/jj-collab/tests/domain.rs#conflicting_reuse_of_stable_reaction_identity_is_rejected"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-collab --test domain (before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Package absent."
+      },
+      {
+        "command": "cargo test -p jj-collab --lib (first compile)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Serde tag/action conflict corrected."
+      },
+      {
+        "command": "cargo clippy -p jj-collab --all-targets --locked -- -D warnings (first)",
+        "result": "fail",
+        "failures": 3,
+        "note": "Unused import, collapsible conditional, argument count corrected."
+      },
+      {
+        "command": "cargo test -p jj-collab --test domain",
+        "result": "pass",
+        "failures": 0,
+        "note": "13 focused regressions; stable-ID equivocation also fails closed."
+      },
+      {
+        "command": "cargo clippy -p jj-collab --all-targets --locked -- -D warnings",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "cargo fmt -p jj-collab",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "pnpm install --offline --frozen-lockfile",
+        "result": "pass",
+        "failures": 0,
+        "note": "Dependencies restored from cache."
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "16 packages."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "4 validators, 21 chapters, 140 requirements."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "17 protected paths; 4 mapped canonical chapters."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "111 tasks; same-change evidence."
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/collaboration.md spec/src/architecture.md spec/src/spec-governance.md spec/src/milestones.md spec/src/verification.md spec-validator.config.mjs scripts/check-boundaries.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed governance and documentation formatting."
+      },
+      {
+        "command": "pnpm spec:first (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "New crate Cargo boundary also required architecture.md; added canonical dependency boundary."
+      },
+      {
+        "command": "pnpm spec:validate (initial)",
+        "result": "fail",
+        "failures": 36,
+        "note": "New requirements/milestone rows were outside their Markdown tables; joined tables before final validation."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Provider target membership/visibility resolver; custom-library publication commands.",
+      "Native/local atomic publication, durable receipts, cold recovery/copy, services/API/RPC/CLI, reducer 3, shared-owner released UI, search and complete-flow qualification remain dependent work."
+    ],
+    "scope": "Leaf domain and governing contract slice; unrelated Rust/UI and root aggregates out of scope.",
+    "next": "Implement native and local companion providers around the canonical domain graph."
   }
 ]
 ```

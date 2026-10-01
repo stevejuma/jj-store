@@ -19,6 +19,12 @@ in WAL. The service's Git record carrier preserves the existing repository-bound
 envelope bytes, while companion ref publication remains in JJ integration.
 Neither the shared reducer nor the object interface can select repository state.
 
+`jj-collab` owns persistent Thread/human-message and Reaction/custom-emoji
+models with independent root types. It depends only on owned model, AgentStore
+and ReviewStore types plus bounded canonical/Unicode/raster libraries. It has no
+publication, upstream JJ, transport, search, UI or runner capability. Its pure
+projectors stage graphs; persistence providers authorize and select roots.
+
 ## Requirements
 
 | ID           | Requirement                                                                                                                                                                                                                             |

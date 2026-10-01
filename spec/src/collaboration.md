@@ -1,4 +1,4 @@
-# Agent activity and repository reviews
+# Agent activity, repository reviews, Threads and Reactions
 
 AgentStore and ReviewStore are first-party repository capabilities. They share
 the existing object envelopes, WAL, receipts and manifest publication service,
@@ -26,15 +26,102 @@ reading a comment never dispatches an agent.
 
 ## Requirements
 
-| ID             | Requirement                                                                                                                                                                                                     |
-| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| JST-COLLAB-001 | The repository facade MUST expose independent root-pinned AgentStore and ReviewStore services backed only by the existing immutable object, WAL, receipt and manifest publication authority.                    |
-| JST-COLLAB-002 | Capture MUST preserve stable session/turn/tool/checkpoint identities, sanitized native evidence, deterministic normalized activity and explicit evidence-backed JJ associations for Codex, Cursor and OpenCode. |
-| JST-COLLAB-003 | Review threads MUST target exact immutable artifact versions and validated UTF-8 byte ranges, with stale-safe replies, edits, tombstones, resolve/reopen and conservative explicit re-anchoring.                |
-| JST-COLLAB-004 | LocalTrusted CLI and HTTP APIs MUST provide bounded root-pinned reads, typed writes, pagination and live hints without bearer credentials, public listeners or implicit controller dispatch.                    |
-| JST-COLLAB-005 | The application MUST reuse Community-owned thread/comment/agent presentation and Design Core diff extension points, with accessible interactions, virtualization and pinned-code versus live-activity state.    |
-| JST-COLLAB-006 | Sanitization MUST occur before every durable capture copy through the qualified in-process redaction library; credentials, unrelated sessions and unsafe rendered content MUST fail closed.                     |
-| JST-COLLAB-007 | Cold recovery and native copy MUST verify code, agent and review closures directly; search and other projections remain rebuildable, and unsupported remote/export/backup behavior stays deferred.              |
+| ID             | Requirement                                                                                                                                                                                                                             |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| JST-COLLAB-001 | The repository facade MUST expose independent root-pinned AgentStore and ReviewStore services backed only by the existing immutable object, WAL, receipt and manifest publication authority.                                            |
+| JST-COLLAB-002 | Capture MUST preserve stable session/turn/tool/checkpoint identities, sanitized native evidence, deterministic normalized activity and explicit evidence-backed JJ associations for Codex, Cursor and OpenCode.                         |
+| JST-COLLAB-003 | Review threads MUST target exact immutable artifact versions and validated UTF-8 byte ranges, with stale-safe replies, edits, tombstones, resolve/reopen and conservative explicit re-anchoring.                                        |
+| JST-COLLAB-004 | LocalTrusted CLI and HTTP APIs MUST provide bounded root-pinned reads, typed writes, pagination and live hints without bearer credentials, public listeners or implicit controller dispatch.                                            |
+| JST-COLLAB-005 | The application MUST reuse Community-owned thread/comment/agent presentation and Design Core diff extension points, with accessible interactions, virtualization and pinned-code versus live-activity state.                            |
+| JST-COLLAB-006 | Sanitization MUST occur before every durable capture copy through the qualified in-process redaction library; credentials, unrelated sessions and unsafe rendered content MUST fail closed.                                             |
+| JST-COLLAB-007 | Cold recovery and native copy MUST verify code, agent and review closures directly; search and other projections remain rebuildable, and unsupported remote/export/backup behavior stays deferred.                                      |
+| JST-COLLAB-008 | Threads MUST have stable distinct identities, immutable versions and auditable lifecycle transitions; optional primary session assignments and reference links preserve historical attribution without backfill or process control.     |
+| JST-COLLAB-009 | Human Thread messages MUST retain exact immutable revisions; timelines reference canonical AgentStore, ReviewStore and code evidence instead of duplicating captured transcripts or inferring causality from timestamps.                |
+| JST-COLLAB-010 | Reactions MUST target typed persisted identities and exact revisions or snapshots, resolve membership and visibility before disclosure, and use server-derived authenticated actors rather than capture AgentIdentity.                  |
+| JST-COLLAB-011 | Each actor/target reaction slot MUST use exact observed preconditions and immutable additions/retractions; concurrent different values remain explicit conflicts and unseen additions survive retraction.                               |
+| JST-COLLAB-012 | Rich reaction values MUST support semantic likes/dislikes, Unicode emoji and repository custom emoji with retained versioned raster assets, bounded decoding and a static reduced-motion preview.                                       |
+| JST-COLLAB-013 | Independent ThreadStore and ReactionStore roots MUST publish through additive native manifest format 5 and local companion version 2, preserving legacy bytes, complete closures, durable receipts and atomic multi-domain transitions. |
+| JST-COLLAB-014 | Typed bounded service, HTTP, native RPC and local CLI commands MUST share authorization, root-pinned reads, idempotency and unknown-outcome semantics; capture and runner binding remain explicit and optional.                         |
+| JST-COLLAB-015 | Thread/Reaction origin facts MUST converge under semantic reducer 3 without executing agents, tools, hooks, network image fetches or notifications; WorkStore native homes retain their replication freeze.                             |
+| JST-COLLAB-016 | The application MUST present persistent Threads and rich reactions through qualified Community/Design Core public contracts, explicit refresh, authorized actor inspection and reversible optimistic receipt-aware state.               |
+
+## Persistent Threads and Reactions (M14)
+
+`jj-collab` owns the Thread, human-message, reaction and custom-emoji domain.
+ThreadStore and ReactionStore have separate root catalogs and state versions.
+AgentStore remains the owner of sessions/transcripts/tools, ReviewStore of
+reviews, and JJ of code topology. No existing session is migrated or
+automatically linked. A session has zero or one primary Thread; additional
+Threads may reference it. Reassignment records the old relationship and retains
+historical attribution. Link session is an explicit Thread action. No lifecycle
+action controls a runner.
+
+Thread lifecycle is Created to Active, Active/Idle to each other, Active/Idle to
+Archived, Archived restore to Idle, and Active/Idle/Archived to Tombstoned. An
+authorized tombstone restore returns to Idle. Late linked capture remains
+retained without reopening archived or tombstoned Threads. Optional baselines
+pin exact native operations/views/commits or portable evidence capsules.
+Multiple heads remain explicit. Code associations retain evidence methods;
+manual links cannot claim stronger provenance. Review parenting is a ThreadStore
+relationship, so standalone reviews remain valid and jj-review has no reverse
+dependency. Human messages outside sessions have immutable versioned first-party
+records.
+
+Reaction targets distinguish logical Thread/review identities from exact human
+message, agent message, tool invocation/output, review comment/reply and
+checkpoint versions. Agent message targets include validated event/batch and
+content witnesses; outputs use the existing content object identity, never an
+invented ToolResultId. A central resolver validates membership and visibility
+against captured roots. Aggregation does not silently transfer feedback across
+edited revisions. Earlier revision reactions are separately disclosed only when
+authorized. Hidden targets or actors produce no count, search or identity
+disclosure.
+
+Values are Like, Dislike, Emoji(sequence), and Custom(emoji_id, exact_version).
+Imported + and - normalize to semantic values while retaining original source
+representation. Literal emoji remain distinct. Custom definitions are repository
+library records and pin retained GIF/PNG/JPEG/WebP bytes and a static preview.
+Limits are 2 MiB encoded, 512 by 512 pixels, 100 frames and 64 MiB aggregate
+decoded pixels. SVG/executable content and external URL dependencies are
+rejected.
+
+The slot key is repository, authenticated actor and exact target. Set, Clear and
+ResolveConflict name exactly observed active records. Replacement atomically
+retracts observed records and adds the new immutable value. Duplicate same-value
+additions count once; different concurrent values contribute no selected
+ordinary value until explicitly resolved. Clock time and WAL delivery order
+never choose a winner. Retractions only remove named observed additions. Stable
+request identities and durable receipts distinguish accepted, rejected and
+unknown outcomes. Capture never generates reactions as the user.
+
+Native format 5 adds optional Thread/Reaction roots and independent versions on
+first explicit feature use. Formats 1 through 4 retain their original encoding
+and interpretation. Native inventories, WAL, checkpoints, receipts, recovery and
+manifest-last copy retain complete histories and assets. The ordinary Git
+companion uses the existing owned refs/lapis/state/v1 with a versioned envelope
+and real Git reachability. Typed multi-domain transitions select all changed
+roots atomically. Projectors stage and validate; providers retain authorization
+and publication CAS.
+
+The public namespace is /v1/repos/{repo}/threads with list/detail/timeline and
+commands plus command status, /reactions/query and commands/status,
+/reaction-emojis and /reaction-assets. CLI lives under jj agent thread and jj
+agent reaction set/clear with typed target JSON. Bounded timeline pages pin all
+relevant roots, contain source references and never copy transcript bodies. WAL
+order is local publication order, not JJ ancestry or global causality. Runner
+integration begins with an explicit Thread binding contract; qualified jj-acp
+launch/continuation is a dependent gate. Search is rebuildable and indexes
+canonical source documents with authorized Thread joins and source explanations.
+Counts remain ReactionStore-derived. SSE announces freshness; refresh changes
+captured displayed roots. UI release/baseline gates remain separate.
+
+Reducer 3 transports Thread/Reaction facts and complete retained closures.
+Equivalent accepted origin sets converge. Replay/import only reconstructs data.
+Native WorkStore homes retain their origin freeze. Normal Git push/fetch remains
+code-only; complete collaboration exports and verified Nostr mappings are later
+adapters. Notifications are optional committed-event consumers and are never a
+publication prerequisite. No backfill, controller dispatch or adapter projection
+is implicit in Thread/Reaction publication.
 
 ## Initial delivery boundaries
 
