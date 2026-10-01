@@ -172,3 +172,10 @@ filesystem mode requires no object-store runtime or native RPC. Local freshness
 notifications announce changed operation heads or companion refs; only explicit
 refresh advances displayed snapshots. An unavailable folder, changed identity or
 unsupported capability is distinguished from denied access.
+
+The browsing stage provides owned Git-profile graph, content, references,
+operation-difference and conflict descriptors. A local binding generation and
+explicit operation replace native manifest positions in its code snapshot; there
+is no fabricated native epoch, WAL position or publication sequence.
+Content-filter revsets remain disabled until their bounded resource proofs are
+qualified. File text is bounded; binary/oversized content reports its status.

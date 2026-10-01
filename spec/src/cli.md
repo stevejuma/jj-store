@@ -734,3 +734,9 @@ executable repository settings and never snapshots checkout files. Server-owned
 private request journals retain initialization receipts before discovery. The
 filesystem-only serving mode and local browser endpoints are separately
 qualified under M13.4.
+
+The CLI's isolated ordinary-JJ fixtures qualify operation-pinned server reads
+against the explicit development binary. They retain dirty checkout files and
+verify graph, binary, conflict, root and multi-head behavior without invoking
+repository-configured programs or installing the CLI. Provider tests do not
+qualify filesystem server startup or browser integration.

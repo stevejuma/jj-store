@@ -545,3 +545,15 @@ base must match the durable Git lease; missing or ambiguous evidence refuses
 apply. A later observation cannot be rolled back by repairing an older attempt.
 The Git stage fault fixture exercises before/after manifest-write uncertainty
 for activation, intent, started, result and applied facts through cold replay.
+
+## Filesystem browser reads
+
+The ordinary Git-backed reader uses only server defaults and a private device
+binding. It checks bounded operation ancestry before `RepoLoader::load_at`, then
+checks the selected ancestry and predecessor closure before exposing code. Git
+SHA-1 objects and the virtual root retain their source identities. Content reads
+prove file membership through selected commit trees. Queries run in admitted
+cancelable workers with limits on metadata, work, bytes and time. Repository
+aliases, executable settings and content-predicate revsets are not loaded.
+Missing, unrelated and ambiguous selections fail explicitly. Reads may rebuild
+derived JJ indexes but cannot publish heads, refs or checkout snapshots.

@@ -247,3 +247,434 @@ async fn registration_recovers_after_initialization_and_rejects_identity_replace
     ));
     assert!(!folder.join(".jj/repo/lapis").exists());
 }
+
+#[tokio::test]
+async fn local_code_reads_pin_operations_and_preserve_repository_state() {
+    use jj_store_jj::local_browser::{Access, Executor, Request, Response};
+    use jj_store_model as m;
+    use std::sync::Arc;
+    let temp = tempfile::tempdir().unwrap();
+    jj(temp.path(), &["git", "init", "--colocate"]);
+    fs::write(temp.path().join("hello.txt"), "one\n").unwrap();
+    jj(temp.path(), &["describe", "-m", "First"]);
+    jj(temp.path(), &["bookmark", "create", "main"]);
+    let commit = jj(
+        temp.path(),
+        &["log", "--no-graph", "-r", "@", "-T", "commit_id"],
+    )
+    .parse()
+    .unwrap();
+    let op = jj(
+        temp.path(),
+        &["op", "log", "--no-graph", "-n", "1", "-T", "id"],
+    )
+    .parse()
+    .unwrap();
+    let heads_dir = temp.path().join(".jj/repo/op_heads/heads");
+    let heads = fs::read_dir(&heads_dir)
+        .unwrap()
+        .map(|e| e.unwrap().file_name())
+        .collect::<Vec<_>>();
+    fs::write(temp.path().join("hello.txt"), "dirty unsnapshotted\n").unwrap();
+    fs::write(temp.path().join("untracked.txt"), "untouched").unwrap();
+    let access: Arc<dyn Access> = Arc::new(ReadBinding(temp.path().join(".jj/repo")));
+    let reader = Executor::new(2).unwrap();
+    let head = reader.heads(access.clone()).await.unwrap();
+    assert_eq!(head.heads, vec![op]);
+    let Response::Commit(detail) = reader
+        .read(access.clone(), op, Request::Commit { commit })
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    assert_eq!(detail.commit.id, commit);
+    assert_eq!(detail.commit.id.to_string().len(), 40);
+    let Response::Paths(paths) = reader
+        .read(
+            access.clone(),
+            op,
+            Request::Paths(jj_store_jj::local_browser::paths::Request {
+                commit,
+                path: "".into(),
+                recursive: true,
+                limit: 10,
+                anchor: None,
+                direction: Default::default(),
+            }),
+        )
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    let jj_store_jj::local_browser::dto::TreeValue::File { id, .. } =
+        paths.entries[0].terms[0].as_ref().unwrap()
+    else {
+        panic!()
+    };
+    let Response::File(file) = reader
+        .read(access.clone(), op, Request::File { file: *id })
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    assert_eq!(file.text.as_deref(), Some("one\n"));
+    assert!(
+        reader
+            .read(
+                access.clone(),
+                op,
+                Request::File {
+                    file: m::GitSha1Id::new([9; 20])
+                }
+            )
+            .await
+            .is_err()
+    );
+    let Response::References(refs) = reader
+        .read(
+            access.clone(),
+            op,
+            Request::References(jj_store_jj::local_browser::references::Request {
+                operation: op,
+                query: "".into(),
+                kind: Default::default(),
+                limit: 10,
+                anchor: None,
+                direction: Default::default(),
+            }),
+        )
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    assert!(!refs.references.is_empty());
+    assert_eq!(
+        fs::read_to_string(temp.path().join("hello.txt")).unwrap(),
+        "dirty unsnapshotted\n"
+    );
+    assert_eq!(
+        fs::read_to_string(temp.path().join("untracked.txt")).unwrap(),
+        "untouched"
+    );
+    assert_eq!(
+        fs::read_dir(heads_dir)
+            .unwrap()
+            .map(|e| e.unwrap().file_name())
+            .collect::<Vec<_>>(),
+        heads
+    );
+    assert!(!temp.path().join(".jj/repo/lapis").exists());
+}
+
+struct ReadBinding(std::path::PathBuf);
+#[async_trait::async_trait]
+impl jj_store_jj::local_browser::Access for ReadBinding {
+    fn repository(&self) -> jj_store_model::RepositoryId {
+        jj_store_model::RepositoryId::new([20; 16])
+    }
+    fn generation(&self) -> u64 {
+        1
+    }
+    fn metadata_path(&self) -> &std::path::Path {
+        &self.0
+    }
+    async fn authorize(&self) -> jj_store_jj::local_browser::Result<()> {
+        Ok(())
+    }
+}
+
+#[tokio::test]
+async fn local_code_reads_cover_graphs_diffs_roots_conflicts_and_multiple_heads() {
+    use jj_store_jj::local_browser::{self as q, *};
+    use jj_store_model as m;
+    use std::sync::Arc;
+    let temp = tempfile::tempdir().unwrap();
+    jj(temp.path(), &["git", "init", "--colocate"]);
+    fs::write(temp.path().join("file.txt"), "base\n").unwrap();
+    fs::write(temp.path().join("binary.bin"), [1, 0, 2]).unwrap();
+    fs::write(temp.path().join("large.txt"), vec![b'x'; 300_000]).unwrap();
+    jj(temp.path(), &["describe", "-m", "Base"]);
+    jj(temp.path(), &["bookmark", "create", "main"]);
+    let base = jj(
+        temp.path(),
+        &["log", "--no-graph", "-r", "@", "-T", "commit_id"],
+    )
+    .parse()
+    .unwrap();
+    jj(temp.path(), &["new", "main", "-m", "Left"]);
+    fs::write(temp.path().join("file.txt"), "left\n").unwrap();
+    jj(temp.path(), &["describe", "-m", "Left"]);
+    jj(temp.path(), &["bookmark", "create", "left"]);
+    let left = jj(
+        temp.path(),
+        &["log", "--no-graph", "-r", "@", "-T", "commit_id"],
+    )
+    .parse()
+    .unwrap();
+    jj(temp.path(), &["new", "main", "-m", "Right"]);
+    fs::write(temp.path().join("file.txt"), "right\n").unwrap();
+    jj(temp.path(), &["describe", "-m", "Right"]);
+    jj(temp.path(), &["bookmark", "create", "right"]);
+    jj(temp.path(), &["new", "left", "right", "-m", "Merge"]);
+    let merge = jj(
+        temp.path(),
+        &["log", "--no-graph", "-r", "@", "-T", "commit_id"],
+    )
+    .parse()
+    .unwrap();
+    let op = jj(
+        temp.path(),
+        &["op", "log", "--no-graph", "-n", "1", "-T", "id"],
+    )
+    .parse()
+    .unwrap();
+    let reader = Executor::new(1).unwrap();
+    let access: Arc<dyn Access> = Arc::new(ReadBinding(temp.path().join(".jj/repo")));
+    let query = GraphRequest::Log {
+        revset: "all()".into(),
+        workspace: None,
+        user_email: "".into(),
+        at_time_millis: 1_700_000_000_000,
+    };
+    let Response::Graph(page) = reader
+        .read(
+            access.clone(),
+            op,
+            Request::Graph(
+                query.clone(),
+                GraphWindow {
+                    limit: 1,
+                    after: None,
+                },
+            ),
+        )
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    assert!(page.next.is_some());
+    let Response::Graph(next) = reader
+        .read(
+            access.clone(),
+            op,
+            Request::Graph(
+                query.clone(),
+                GraphWindow {
+                    limit: 1,
+                    after: page.next,
+                },
+            ),
+        )
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    assert_ne!(page.data, next.data);
+    assert!(
+        reader
+            .read(
+                access.clone(),
+                op,
+                Request::Graph(
+                    query,
+                    GraphWindow {
+                        limit: 0,
+                        after: None
+                    }
+                )
+            )
+            .await
+            .is_err()
+    );
+    let Response::Commit(root) = reader
+        .read(
+            access.clone(),
+            op,
+            Request::Commit {
+                commit: m::GitSha1Id::new([0; 20]),
+            },
+        )
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    assert!(root.object.virtual_object);
+    let Response::Diff(diff) = reader
+        .read(
+            access.clone(),
+            op,
+            Request::Diff(q::diff::Request {
+                from: base,
+                to: left,
+                path: "file.txt".into(),
+                content: true,
+            }),
+        )
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    assert!(
+        matches!(&diff.changes[0].content, q::diff::Content::Text { hunks } if hunks.iter().any(|h| h.after.contains("left")))
+    );
+    let Response::Paths(paths) = reader
+        .read(
+            access.clone(),
+            op,
+            Request::Paths(q::paths::Request {
+                commit: merge,
+                path: "".into(),
+                recursive: true,
+                limit: 10,
+                anchor: None,
+                direction: Default::default(),
+            }),
+        )
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    for row in paths.entries {
+        if let Some(Some(q::dto::TreeValue::File { id, .. })) = row.terms.first() {
+            if row.path == "binary.bin" || row.path == "large.txt" {
+                let Response::File(file) = reader
+                    .read(access.clone(), op, Request::File { file: *id })
+                    .await
+                    .unwrap()
+                else {
+                    panic!()
+                };
+                assert!(file.text.is_none());
+                if row.path == "binary.bin" {
+                    assert!(file.binary);
+                    assert_eq!(file.bytes, 3);
+                } else {
+                    assert!(file.too_large);
+                    assert_eq!(file.bytes, 300_000);
+                }
+            }
+        }
+    }
+    let Response::Conflicts(conflicts) = reader
+        .read(
+            access.clone(),
+            op,
+            Request::Conflicts(q::conflicts::Request {
+                commit: merge,
+                path: "".into(),
+            }),
+        )
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    assert_eq!(conflicts.conflicts.len(), 1);
+    assert_eq!(conflicts.conflicts[0].terms.len(), 3);
+    assert!(matches!(
+        conflicts.conflicts[0].editor,
+        q::conflicts::Editor::Text { .. }
+    ));
+    let Response::Graph(evolution) = reader
+        .read(
+            access.clone(),
+            op,
+            Request::Graph(
+                GraphRequest::Evolution { commit: left },
+                GraphWindow {
+                    limit: 20,
+                    after: None,
+                },
+            ),
+        )
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    assert!(matches!(evolution.data, Nodes::Evolution(nodes) if !nodes.is_empty()));
+    let Response::Operation(detail) = reader
+        .read(access.clone(), op, Request::Operation { operation: op })
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    let ObjectData::Operation(operation) = detail.operation.data else {
+        panic!()
+    };
+    let Response::OperationDiff(diff) = reader
+        .read(
+            access.clone(),
+            op,
+            Request::OperationDiff(q::operations::Request {
+                operation: op,
+                parent: None,
+            }),
+        )
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    assert!(matches!(diff.data, q::operations::Data::Difference(_)));
+    let Response::OperationChanges(changes) = reader
+        .read(
+            access.clone(),
+            op,
+            Request::OperationChanges(q::operation_changes::Request {
+                operation: op,
+                parent: operation.parents[0],
+                limit: 20,
+                anchor: None,
+                direction: Default::default(),
+            }),
+        )
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    assert!(!changes.groups.is_empty());
+    // Concurrent explicit-operation commands leave siblings. GET never reconciles them.
+    jj(
+        temp.path(),
+        &[
+            "--at-op",
+            &op.to_string(),
+            "--ignore-working-copy",
+            "new",
+            "main",
+            "-m",
+            "Sibling A",
+        ],
+    );
+    jj(
+        temp.path(),
+        &[
+            "--at-op",
+            &op.to_string(),
+            "--ignore-working-copy",
+            "new",
+            "main",
+            "-m",
+            "Sibling B",
+        ],
+    );
+    let before = reader.heads(access.clone()).await.unwrap();
+    assert_eq!(before.heads.len(), 2);
+    reader
+        .read(access.clone(), op, Request::Commit { commit: merge })
+        .await
+        .unwrap();
+    assert_eq!(reader.heads(access).await.unwrap().heads, before.heads);
+}

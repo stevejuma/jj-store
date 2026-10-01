@@ -7,6 +7,7 @@ mod copy_query;
 pub mod dependencies;
 pub mod factories;
 pub mod git_bridge;
+pub mod local_browser;
 pub mod local_evidence;
 pub mod local_metadata;
 pub mod local_repository;

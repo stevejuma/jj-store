@@ -113,7 +113,7 @@ shared-package release qualification does not alter those original Git gates.
 | M13.1       | Done        | M12                     | JST-LOCAL-001,JST-LOCAL-002                                                                                                                                              | Qualified metadata CAS/receipt/GC and stock JJ primitive compatibility                                                         | Retain CAS, receipt, retention and stock-JJ regression gates                   | E-M13-001                                                                                                                                                                                                                                                                                                                                                      |
 | M13.2       | Done        | M13.1                   | JST-LOCAL-003                                                                                                                                                            | Shared WorkStore semantics and server-free CLI                                                                                 | Retain WorkStore/CLI parity while completing M13.3                             | E-M13-002,E-UI-050                                                                                                                                                                                                                                                                                                                                             |
 | M13.3       | In progress | M13.2                   | JST-LOCAL-002,JST-LOCAL-003                                                                                                                                              | Portable agent/review anchors and exact retained evidence                                                                      | Qualify portable review anchors/CLI, hook causality and native capsule carrier | E-M13-003,E-M13-004,E-M13-005,E-M13-006,E-M13-007,E-M13-008,E-M13-009,E-M13-010,E-M13-011,E-M13-012                                                                                                                                                                                                                                                            |
-| M13.4       | In progress | M13.2                   | JST-LOCAL-004,JST-LOCAL-005                                                                                                                                              | Filesystem-only server, local UI and recoverable code commands                                                                 | Implement device bindings/APIs, recoverable code commands and cold UI gates    | E-M13-013                                                                                                                                                                                                                                                                                                                                                      |
+| M13.4       | In progress | M13.2                   | JST-LOCAL-004,JST-LOCAL-005                                                                                                                                              | Filesystem-only server, local UI and recoverable code commands                                                                 | Implement device bindings/APIs, recoverable code commands and cold UI gates    | E-M13-013,E-M13-014                                                                                                                                                                                                                                                                                                                                            |
 | M13.5       | Planned     | M13.4                   | JST-LOCAL-006                                                                                                                                                            | Independent local/native conversion with complete collaboration history                                                        | Implement bounded history/evidence conversion, mappings and source safety      | -                                                                                                                                                                                                                                                                                                                                                              |
 | M13.6       | Planned     | M13.5                   | JST-LOCAL-001,JST-LOCAL-002,JST-LOCAL-003,JST-LOCAL-004,JST-LOCAL-005,JST-LOCAL-006                                                                                      | Cold end-to-end and retained native regression qualification                                                                   | Qualify completed local flow cold and retain native regressions                | -                                                                                                                                                                                                                                                                                                                                                              |
 | M14         | In progress | M4.18                   | JST-UI-012,JST-UI-016                                                                                                                                                    | Local settings, profile-aware device links and safe maintenance                                                                | Implement M14.3 agent setup and automatic recovery                             | E-M14-001,E-M14-002,E-M14-003,E-M14-004,E-M14-005,E-M14-006,E-M14-007,E-M14-010,E-M14-011,E-M14-012                                                                                                                                                                                                                                                            |
@@ -25387,7 +25387,7 @@ and named tests are checked by the progress gate.
         "command": "pnpm test:governance",
         "result": "pass",
         "failures": 0,
-        "note": "jsh-directory-governance1.log: \u2714 rejects_unchanged_ledger_for_code (0.628042ms); \u2714 allows_documentation_without_execution_ledger (0.079ms); \u2139 pass 34"
+        "note": "jsh-directory-governance1.log: ✔ rejects_unchanged_ledger_for_code (0.628042ms); ✔ allows_documentation_without_execution_ledger (0.079ms); ℹ pass 34"
       },
       {
         "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7468 JJ_STORE_REAL_REPOSITORY=5ae8240e6d77fe8d0f6dd0b13f3d3874 JJ_STORE_REAL_RUNTIME=/tmp/jsh-cold-ijPU4c JJ_STORE_REAL_ROOT=/Users/stevejuma/code/lapismd/jj-store-projects-hub pnpm exec playwright test --config web/playwright.real.config.ts work-store.spec.ts",
@@ -32273,6 +32273,157 @@ and named tests are checked by the progress gate.
     "scope": "Folder admission and durable registration provider only; transport/runtime/UI remain subsequent slices. Root aggregates and unrelated product lanes out of scope.",
     "deferred": [
       "Filesystem runtime, local query APIs, browser integration and cold mixed acceptance remain pending."
+    ]
+  },
+  {
+    "id": "E-M13-014",
+    "tasks": ["M13.4"],
+    "date": "2026-10-01",
+    "kind": "local-browser-pinned-reads",
+    "files": [
+      "crates/jj-store-cli/tests/local_browser.rs",
+      "crates/jj-store-jj/src/lib.rs",
+      "crates/jj-store-jj/src/local_browser/budget.rs",
+      "crates/jj-store-jj/src/local_browser/conflicts.rs",
+      "crates/jj-store-jj/src/local_browser/diff.rs",
+      "crates/jj-store-jj/src/local_browser/diff_copies.rs",
+      "crates/jj-store-jj/src/local_browser/diff_summary.rs",
+      "crates/jj-store-jj/src/local_browser/dto.rs",
+      "crates/jj-store-jj/src/local_browser/graph_types.rs",
+      "crates/jj-store-jj/src/local_browser/graphs.rs",
+      "crates/jj-store-jj/src/local_browser/mod.rs",
+      "crates/jj-store-jj/src/local_browser/native.rs",
+      "crates/jj-store-jj/src/local_browser/operation_changes.rs",
+      "crates/jj-store-jj/src/local_browser/operations.rs",
+      "crates/jj-store-jj/src/local_browser/paths.rs",
+      "crates/jj-store-jj/src/local_browser/references.rs",
+      "spec/src/jj-integration.md",
+      "spec/src/local-jj.md",
+      "spec/src/cli.md"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/local_browser.rs#local_code_reads_pin_operations_and_preserve_repository_state",
+      "crates/jj-store-cli/tests/local_browser.rs#local_code_reads_cover_graphs_diffs_roots_conflicts_and_multiple_heads"
+    ],
+    "runs": [
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-cli --test local_browser --locked -- local_code_reads_pin_operations_and_preserve_repository_state --exact",
+        "result": "fail",
+        "failures": 5,
+        "note": "Before implementation: five missing local reader module diagnostics."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo check -p jj-store-jj --locked",
+        "result": "fail",
+        "failures": 10,
+        "note": "First reader compile exposed ten upstream type/trait wiring diagnostics; corrected without changing native modules."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo check -p jj-store-jj --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "Backend downcast used an obsolete as_any method; replaced with the pinned downcast_ref contract."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-cli --test local_browser --locked -- local_code_reads_pin_operations_and_preserve_repository_state --exact",
+        "result": "fail",
+        "failures": 1,
+        "note": "Same downcast diagnostic in the already-running test compile."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-cli --test local_browser --locked -- local_code_reads_pin_operations_and_preserve_repository_state --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "Read-only production reader regression passes."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo check -p jj-store-jj --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Bounded preflight compiles."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-cli --test local_browser --locked",
+        "result": "fail",
+        "failures": 2,
+        "note": "Format preflight used the wrong upstream store name; branch fixture selected an unretained anonymous head. Fixed the format name and explicit fixture bookmarks."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-cli --test local_browser --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "All five real filesystem reader and registration tests pass."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo test -p jj-store-cli --test local_browser --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "After moving tree membership to one bounded preflight, all five tests pass again."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target cargo check -p jj-store-jj -p jj-store-cli --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Reader and direct CLI consumer compile without warnings."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "fail",
+        "failures": 1,
+        "note": "CLI test changes additionally require cli.md ownership; added the provider qualification boundary."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Evidence bookkeeping validates."
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "15 package boundaries validate."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "21 canonical chapters and 132 requirements validate."
+      },
+      {
+        "command": "rustfmt --edition 2024 crates/jj-store-jj/src/local_browser/*.rs crates/jj-store-cli/tests/local_browser.rs",
+        "result": "pass",
+        "failures": 0,
+        "note": "All changed Rust source and tests formatted."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/jj-integration.md spec/src/local-jj.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed canonical prose and ledger formatted."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/cli.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Mapped CLI chapter and updated ledger formatted."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "Reader and CLI fixture ownership validate."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "versions": "Locked JJ 0.45.1, Git SHA-1, macOS ARM64.",
+    "formats": "Separate owned Git-profile read DTOs; no native codec or companion format change. Enclosing Jujutsu change uqnlnouy. Query counters report charged metadata/file bytes and bounded work.",
+    "next": "Compose filesystem-only runtime and expose local APIs/discovery before browser integration.",
+    "scope": "Operation-pinned read provider only. UI, HTTP contracts, runtime and cold mixed acceptance remain subsequent slices. Native algorithms are unchanged; root aggregates and unrelated packages out of scope.",
+    "deferred": [
+      "Content-predicate/cross-operation revsets, search and all local code writes remain disabled.",
+      "M13.4 remains In progress; browser/runtime gates are not qualified by these provider tests."
     ]
   }
 ]
