@@ -153,11 +153,17 @@ produced. Conflicted actors contribute no ordinary selected value. Earlier
 revisions remain separate exact queries. A Thread history page follows only the
 selected Thread's event chain, validates continuation membership, and carries
 canonical message/link references without copying captured transcript bodies.
-Absent Thread/Reaction domains remain absent during reads. Transport cursor
-capacity, expiry and query binding are separate acceptance gates. Native service
-command acceptance currently covers WorkStore homes with the frozen origin
-ledger and explicit code-repository rejection; replicated code writes require
-the separately qualified reducer 3.
+Absent Thread/Reaction domains remain absent during reads. Native continuation
+tokens are process-key signed and bind the viewer, repository, complete captured
+snapshot, query kind, exact target or Thread, page size and traversal position.
+Their bounded registry stores credential-free pins with object and encoded
+collaboration-byte budgets, fixed expiry and fail-fast concurrency. Resumed
+pages renew only the request deadline and reauthorize every query and response;
+expired or restarted pins return cursor-reset, never a latest-state fallback.
+Public pages expose opaque tokens rather than raw traversal positions. Native
+service command acceptance currently covers WorkStore homes with the frozen
+origin ledger and explicit code-repository rejection; replicated code writes
+require the separately qualified reducer 3.
 
 The public namespace is /v1/repos/{repo}/threads with list/detail/timeline and
 commands plus command status, /reactions/query and commands/status,

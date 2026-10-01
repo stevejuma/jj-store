@@ -199,7 +199,20 @@ impl PinnedCollabRead {
             + self.agents.as_ref().map_or(0, |s| s.object_count())
             + self.reviews.as_ref().map_or(0, |s| s.object_count())
     }
-    async fn authorize(&self, session: &NativeSession) -> Result<()> {
+    /// Encoded owned collaboration graphs retained in memory. Agent/Review pins
+    /// retain membership references and load bodies through their owned reader.
+    pub fn encoded_collab_bytes(&self) -> Result<usize> {
+        self.thread_graph
+            .objects
+            .values()
+            .chain(self.reaction_graph.objects.values())
+            .try_fold(0usize, |total, object| {
+                total
+                    .checked_add(encode_object(object).map_err(model)?.len())
+                    .ok_or(Error::Limit)
+            })
+    }
+    pub(crate) async fn authorize(&self, session: &NativeSession) -> Result<()> {
         if session.repository != self.snapshot.repo_id
             || session.principal(Permission::Read).await?.id() != self.viewer
         {

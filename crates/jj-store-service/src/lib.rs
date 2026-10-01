@@ -19,6 +19,7 @@ pub mod reads;
 pub mod review_mutations;
 
 pub mod collab_mutations;
+pub mod collab_pages;
 pub mod collab_reads;
 pub mod collaboration;
 pub mod commands;

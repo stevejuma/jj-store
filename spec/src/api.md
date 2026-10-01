@@ -123,6 +123,15 @@ continuations to transport requests is owned by the service pagination layer.
 
 ## Graph and directory continuations
 
+Thread, Thread-event, exact-target Reaction and custom-emoji pages use a
+separate bounded credential-free collaboration registry. Signed tokens bind
+every captured source root, repository, viewer, query and page size. Object
+count, encoded collaboration bytes, pin capacity, fixed expiry, token size and
+request concurrency remain bounded. Expiry or process replacement returns an
+explicit cursor-reset; publication does not change a resumed page's snapshot.
+Every resumed query authenticates its current request, and no raw continuation
+crosses the public response boundary.
+
 The service signs opaque V1 read cursors with a process-local HMAC key and
 retains a bounded, expiring snapshot pin without credentials. The signature
 binds repository, epoch, operation, publication position, manifest revision,

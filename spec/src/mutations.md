@@ -62,8 +62,12 @@ selected publication. Read pins retain immutable source roots without sessions
 or credentials and reject a different repository, viewer or epoch on reuse.
 Actor visibility is an injected trusted repository policy evaluated before
 reaction aggregates and identity pages; default repository-scoped admission has
-no private actor subresource grants. Transport registries must independently
-bound pin capacity, expiry and exact query continuations.
+no private actor subresource grants. The native collaboration pager
+independently bounds pin capacity, retained graph bytes, objects, expiry and
+query continuations. Its signed viewer/query binding cannot confer read or write
+permission: every resumed page rechecks current admission, and token revocation
+denies even a previously issued cursor. Paging never publishes metadata, emits
+mutation freshness or retries a command.
 
 Local collaboration command/result aliases consume the shared jj-collab domain
 contract. Provider requests and receipts retain their existing local encodings;
