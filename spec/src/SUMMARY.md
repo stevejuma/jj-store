@@ -7,6 +7,7 @@
 - [Publication and recovery](publication.md)
 - [Local-first writable replication](replication.md)
 - [Agent activity and repository reviews](collaboration.md)
+- [Native projects and tasks](projects.md)
 - [Native JJ integration](jj-integration.md)
 - [CLI and server commands](cli.md)
 - [Read APIs and browser](api.md)

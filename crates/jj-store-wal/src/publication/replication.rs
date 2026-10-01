@@ -257,6 +257,9 @@ impl Coordinator {
         changed_domains: BTreeSet<OriginDomainV1>,
         domain_facts: Option<DomainFactsV1>,
     ) -> Result<Option<AuthoredOrigin>> {
+        if base.manifest.work_root.is_some() || after_domains.is_some_and(|d| d.work.is_some()) {
+            return Ok(None);
+        }
         let Some(root_ref) = base.manifest.replication_root else {
             return Ok(None);
         };

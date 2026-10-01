@@ -104,6 +104,14 @@ workspace migration, local-only status, explicit controls and reconciliation,
 and SSE/search freshness after accepted imports. Ordinary reads and mutations
 remain local during an upstream outage.
 
+M11 adds native WorkStore projects with stable repository links, task state and
+hierarchy, threaded comments, authorized service/API/RPC/CLI access and browser
+presentation. A home owns metadata; linked code requires separate access.
+WorkStore homes preserve and freeze any existing M10 origin ledger until a
+qualified WorkStore reducer exists. Native creation does not require an
+upstream, but the CLI requires the native local service. Git refs and
+server-free storage remain deferred.
+
 Production components live under `web/src/lib`; catalog fixtures and harnesses
 may import them, while production MUST remain independent of catalog state.
 Inspect Community first and Design Core second before introducing presentation

@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { AppShellDisplayMode } from "@lapismd/design-core/shell";
   import type { StoreController } from "../../controller/contracts.js";
+  import StoreWork from "../store-work/StoreWork.svelte";
   import StoreApplication from "./StoreApplication.svelte";
   import CommunityProjectsRepositoryLog from "../community-projects/CommunityProjectsRepositoryLog.svelte";
   import CommunityProjectsRepositoryFiles from "../community-projects/CommunityProjectsRepositoryFiles.svelte";
@@ -39,7 +40,17 @@
   {layoutStorage}
 >
   {#snippet children(page)}
-    {#if needsOperation}<section class="store-repository-application__state">
+    {#if page === "projects" && controller.work}<StoreWork
+        work={controller.work}
+        repositories={state.repositories}
+        onOpenRepository={controller.actions.openRepository}
+        writable={state.accessMode === "local_trusted" ||
+          state.repository.permission === "write" ||
+          state.repository.permission === "admin"}
+      />
+    {:else if needsOperation}<section
+        class="store-repository-application__state"
+      >
         <Alert.Root>
           <Alert.Title>Multiple operation heads</Alert.Title>
           <Alert.Description

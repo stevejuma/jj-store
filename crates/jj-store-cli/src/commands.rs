@@ -20,6 +20,12 @@ pub enum Extension {
     /// Read and update repository-owned review threads
     #[command(long_about = include_str!("../../../docs/cli/review.md"))]
     Review(crate::review_commands::ReviewArgs),
+    /// Manage native project homes and repository links
+    #[command(long_about = include_str!("../../../docs/cli/work.md"))]
+    Project(crate::work_commands::ProjectArgs),
+    /// Manage native tasks, subtasks and threaded comments
+    #[command(long_about = include_str!("../../../docs/cli/work.md"))]
+    Task(crate::work_commands::TaskArgs),
     /// Manage authenticated native JJ repositories
     #[command(long_about = include_str!("../../../docs/cli/store.md"), after_long_help = "Use 'jj store help -k commands' for the native command guide.")]
     Store(StoreArgs),
@@ -86,6 +92,10 @@ pub async fn run(
 ) -> Result<(), CommandError> {
     let args = match command {
         Extension::Agent(args) => return crate::agent_commands::run(ui, helper, args).await,
+        Extension::Project(args) => {
+            return crate::work_commands::run_project(ui, helper, args).await;
+        }
+        Extension::Task(args) => return crate::work_commands::run_task(ui, helper, args).await,
         Extension::Review(args) => return crate::review_commands::run(ui, helper, args).await,
         Extension::Sync(args) => return crate::sync_commands::run(ui, helper, args).await,
         Extension::Replica(args) => {

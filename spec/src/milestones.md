@@ -90,6 +90,10 @@ adds evidence here in its enclosing Jujutsu change.
 | M10.6       | Done        | M10.5       | JST-REPL-004,JST-REPL-010,JST-REPL-011                                                                                                                                   | Complete snapshot-plus-tail bootstrap, format-2 seed upgrade and non-destructive existing-workspace migration                  | Retain bootstrap, migration and zero-upstream regressions                     | E-M10-008,E-M10-010,E-M10-013                                                                                                                                                                                                                                                                                                                                  |
 | M10.7       | Done        | M10.6       | JST-REPL-001,JST-REPL-006,JST-REPL-011,JST-REPL-012                                                                                                                      | Server-owned worker, one upstream, local outage readiness, controls, finite waits and SSE/search integration                   | Retain active profile; expanded hardening stays deferred to M10.8.            | E-M10-009,E-M10-010,E-M10-013,E-M10-014                                                                                                                                                                                                                                                                                                                        |
 | M10.8       | Deferred    | M10.7       | JST-REPL-011,JST-REPL-012                                                                                                                                                | Expanded pressure/fault soak, browser UI, cold two-instance RustFS, archive/export and topology qualification                  | Future replication hardening                                                  | -                                                                                                                                                                                                                                                                                                                                                              |
+| M11         | Done        | M9.6        | JST-WORK-001,JST-WORK-002,JST-WORK-003,JST-WORK-004,JST-WORK-005,JST-WORK-006,JST-WORK-007,JST-WORK-008                                                                  | Native project home, linked repositories, tasks and discussion                                                                 | Retain native local-service gates                                             | E-M11-001,E-M11-002,E-M11-003,E-M11-004                                                                                                                                                                                                                                                                                                                        |
+| M11.1       | Done        | M9.6        | JST-WORK-001,JST-WORK-002,JST-WORK-003,JST-WORK-004,JST-WORK-005,JST-WORK-007                                                                                            | Native model, publication, receipts, recovery and copy                                                                         | Retain native and real RustFS gates                                           | E-M11-001,E-M11-003                                                                                                                                                                                                                                                                                                                                            |
+| M11.2       | Done        | M11.1       | JST-WORK-005,JST-WORK-006,JST-WORK-008                                                                                                                                   | Authorized service, API, RPC and CLI                                                                                           | Retain local transport/CLI gates                                              | E-M11-002                                                                                                                                                                                                                                                                                                                                                      |
+| M11.3       | Done        | M11.2       | JST-WORK-008                                                                                                                                                             | Browser projects/tasks/comments and explicit refresh                                                                           | Retain cold browser gates; visual baselines pending                           | E-M11-003,E-M11-004                                                                                                                                                                                                                                                                                                                                            |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -22211,6 +22215,1062 @@ and named tests are checked by the progress gate.
     "versions": "jj 0.45.1; Node 24.10.0; pnpm 10.32.1; Svelte 5.57.1; Storybook 10.5.7; Vitest 4.1.11; Vite 8.3.1. Existing local dependency setup unchanged; no sibling or package manifest edits; registry-only release qualification is not claimed.",
     "formats": "Static application host stylesheet scopes native editable-content focus outline and shadow removal to file-editor contents and Community composer Mira content. Toolbar/button focus styles and editing/submission semantics remain intact. Actual production asset CSP is applied only to isolated preview HTML in the focused browser regression; no shared fixture/configuration, CSP policy, DTO, native identity, object, manifest, WAL, receipt or credential format changes.",
     "next": "Retain focused served-policy editor/composer regression and direct-consumer story coverage; visual approval remains separate."
+  },
+  {
+    "id": "E-M11-001",
+    "tasks": [
+      "M11",
+      "M11.1"
+    ],
+    "date": "2026-09-30",
+    "kind": "native-workstore",
+    "revision": "enclosing Jujutsu change",
+    "versions": "Rust 1.98.1; jj-cli/jj-lib 0.45.1; pnpm 10.32.1",
+    "formats": "Manifest 3 with optional WorkStore selections in WAL domains; typed repository-bound WorkRootV1 and WorkObjectV1 envelopes; existing format-1/2 canonical bytes preserved.",
+    "files": [
+      "Cargo.lock",
+      "Cargo.toml",
+      "crates/jj-store-wal/Cargo.toml",
+      "crates/jj-store-wal/src/publication/application.rs",
+      "crates/jj-store-wal/src/publication/collaboration.rs",
+      "crates/jj-store-wal/src/publication/domains.rs",
+      "crates/jj-store-wal/src/publication/native_copy.rs",
+      "crates/jj-store-wal/src/publication/reader.rs",
+      "crates/jj-store-wal/src/publication/replication_seed.rs",
+      "crates/jj-store-wal/src/publication/work.rs",
+      "crates/jj-store-wal/src/publication/work_commands.rs",
+      "crates/jj-store-wal/src/publication.rs",
+      "crates/jj-store-wal/src/records.rs",
+      "crates/jj-store-wal/tests/work_store.rs",
+      "crates/jj-work/Cargo.toml",
+      "crates/jj-work/src/apply.rs",
+      "crates/jj-work/src/commands.rs",
+      "crates/jj-work/src/ids.rs",
+      "crates/jj-work/src/lib.rs",
+      "crates/jj-work/src/state.rs",
+      "crates/jj-work/src/validation.rs",
+      "crates/jj-work/tests/commands.rs",
+      "scripts/check-boundaries.mjs",
+      "spec/src/SUMMARY.md",
+      "spec/src/architecture.md",
+      "spec/src/milestones.md",
+      "spec/src/projects.md",
+      "spec/src/publication.md",
+      "spec/src/replication.md",
+      "spec/src/spec-governance.md",
+      "spec/src/verification.md",
+      "spec-validator.config.mjs"
+    ],
+    "tests": [
+      "crates/jj-store-wal/tests/work_store.rs#workstore_receipt_survives_checkpoint_and_reconstruction",
+      "crates/jj-store-wal/tests/work_store.rs#linked_tasks_comments_pins_and_native_copy",
+      "crates/jj-store-wal/tests/work_store.rs#workstore_and_origin_replication_are_mutually_excluded",
+      "crates/jj-store-wal/tests/work_store.rs#uncertain_manifest_keeps_staged_work_invisible_and_retry_identity_stable",
+      "crates/jj-work/tests/commands.rs#rejects_cross_project_hierarchy_cross_task_replies_and_invalid_admission"
+    ],
+    "runs": [
+      {
+        "command": "jj git init --colocate .",
+        "result": "fail",
+        "failures": 1,
+        "note": "App-managed Git worktrees cannot host colocated JJ. Archived the empty managed worktree and used native jj workspace add."
+      },
+      {
+        "command": "jj workspace add /Users/stevejuma/code/lapismd/jj-store-native-project-tasks --name native-project-tasks -r uqvnuppm",
+        "result": "pass",
+        "failures": 0,
+        "note": "Clean native workspace from integrated base 4a224b91; original active work preserved."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --test work_store --locked workstore_receipt_survives_checkpoint_and_reconstruction -- --exact",
+        "result": "fail",
+        "failures": 3,
+        "note": "Before state: missing WorkStore imports/publication method; acceptance cannot compile."
+      },
+      {
+        "command": "cargo check -p jj-work",
+        "result": "pass",
+        "failures": 0,
+        "note": "Neutral domain package compiles; updates workspace lock with local crate."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --test work_store workstore_receipt_survives_checkpoint_and_reconstruction -- --exact",
+        "result": "fail",
+        "failures": 36,
+        "note": "Intermediate ambiguous glob imports; replaced them with explicit owned type exports."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --test work_store --locked workstore_receipt_survives_checkpoint_and_reconstruction -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "One exact durable receipt/cold reconstruction acceptance passes."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --test work_store --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "Intermediate test used private WriterEpoch tuple constructor; corrected to fixed-width native new()."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --test work_store --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Five focused native WorkStore tests pass."
+      },
+      {
+        "command": "cargo test -p jj-work --test commands --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "One model acceptance passes, covering cross-project/cross-task rejection and admission/actors."
+      },
+      {
+        "command": "cargo fmt -p jj-work -p jj-store-wal",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected Rust crates formatted."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "57 actual tests pass, zero failures. Escalation: shared manifest/history/copy format affects native, AgentStore and ReviewStore authority."
+      },
+      {
+        "command": "pnpm install --frozen-lockfile --lockfile=false --ignore-scripts",
+        "result": "fail",
+        "failures": 1,
+        "note": "Existing pnpmfile checksum makes frozen local validation incompatible; no tracked lockfile changed."
+      },
+      {
+        "command": "pnpm install --lockfile=false --ignore-scripts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Private local validation dependencies installed with ignored generated node_modules; registry manifest/lock retained."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/projects.md spec/src/SUMMARY.md spec/src/verification.md spec/src/publication.md spec/src/architecture.md spec/src/replication.md spec/src/spec-governance.md spec-validator.config.mjs scripts/check-boundaries.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed canonical documents and governance formatted."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "fail",
+        "failures": 8,
+        "note": "New verification rows were outside the existing Markdown table; moved into that table."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "24 protected files map to six changed owning chapters."
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "15 packages preserve neutral domain and owned JJ dependency boundaries."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/verification.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "New verification and milestone rows moved inside their existing Markdown tables and formatted."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "19 chapters and 115 requirements validate."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "77 tasks and same-change native evidence validate."
+      },
+      {
+        "command": "cargo clippy -p jj-work -p jj-store-wal --all-targets --locked -- -D warnings",
+        "result": "fail",
+        "failures": 1,
+        "note": "Intermediate collapsible reply validation; fixed without suppressing lint."
+      },
+      {
+        "command": "cargo clippy -p jj-work -p jj-store-wal --all-targets --locked -- -D warnings",
+        "result": "fail",
+        "failures": 1,
+        "note": "Intermediate manual range pattern; used the accepted 1..=3 manifest format range."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final affected authority suite passes 58 tests, zero failures, including six WorkStore regressions and the strengthened checkpoint domain check."
+      },
+      {
+        "command": "cargo clippy -p jj-work -p jj-store-wal --all-targets --locked -- -D warnings",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected native packages and targets pass with warnings denied."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "Native model and fake-store publication/recovery/copy only; M11.2/M11.3 and real RustFS WorkStore acceptance remain separate. Root aggregate and unrelated UI lanes are out of scope."
+  },
+  {
+    "id": "E-M11-002",
+    "tasks": [
+      "M11",
+      "M11.2"
+    ],
+    "date": "2026-09-30",
+    "kind": "workstore-transports-cli",
+    "revision": "enclosing Jujutsu change",
+    "versions": "Rust 1.98.1; jj-cli/jj-lib 0.45.1; pnpm 10.32.1",
+    "formats": "Work API/RPC V1; opaque random process-retained query/repository/epoch-bound five-minute page cursors; format-3 local WAL publications preserve and freeze M10 origin ledger. CLI remains native local-service backed, with no upstream required. No Git refs or filesystem mirror.",
+    "files": [
+      "crates/jj-store-cli/src/commands.rs",
+      "crates/jj-store-cli/src/lib.rs",
+      "crates/jj-store-cli/src/work_commands/output.rs",
+      "crates/jj-store-cli/src/work_commands/task.rs",
+      "crates/jj-store-cli/src/work_commands.rs",
+      "crates/jj-store-cli/tests/executable_native.rs",
+      "crates/jj-store-cli/tests/native_lifecycle/http_work.rs",
+      "crates/jj-store-cli/tests/native_lifecycle.rs",
+      "crates/jj-store-http/src/contract.rs",
+      "crates/jj-store-http/src/error.rs",
+      "crates/jj-store-http/src/lib.rs",
+      "crates/jj-store-http/src/routes.rs",
+      "crates/jj-store-http/src/work.rs",
+      "crates/jj-store-rpc/proto/native.proto",
+      "crates/jj-store-rpc/src/client.rs",
+      "crates/jj-store-rpc/src/lib.rs",
+      "crates/jj-store-rpc/src/server.rs",
+      "crates/jj-store-rpc/src/work.rs",
+      "crates/jj-store-rpc/tests/work.rs",
+      "crates/jj-store-server/src/replication.rs",
+      "crates/jj-store-service/src/lib.rs",
+      "crates/jj-store-service/src/native.rs",
+      "crates/jj-store-service/src/transport.rs",
+      "crates/jj-store-service/src/work/commands.rs",
+      "crates/jj-store-service/src/work/cursors.rs",
+      "crates/jj-store-service/src/work/models.rs",
+      "crates/jj-store-service/src/work/reads.rs",
+      "crates/jj-store-service/src/work.rs",
+      "crates/jj-store-service/tests/work_store.rs",
+      "crates/jj-store-wal/src/lib.rs",
+      "crates/jj-store-wal/src/publication/domains.rs",
+      "crates/jj-store-wal/src/publication/replication.rs",
+      "crates/jj-store-wal/src/publication/replication_import.rs",
+      "crates/jj-store-wal/src/publication/replication_seed.rs",
+      "crates/jj-store-wal/src/publication/replication_transfer.rs",
+      "crates/jj-store-wal/src/publication/work_commands.rs",
+      "crates/jj-store-wal/src/publication.rs",
+      "crates/jj-store-wal/tests/work_store.rs",
+      "docs/cli/work.md",
+      "schemas/openapi.json",
+      "scripts/contracts.mjs",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/jj-integration.md",
+      "spec/src/mutations.md",
+      "spec/src/projects.md",
+      "spec/src/publication.md",
+      "spec/src/replication.md",
+      "spec/src/security.md",
+      "spec/src/spec-governance.md",
+      "web/src/lib/api/generated.ts",
+      "spec/src/compatibility.md"
+    ],
+    "tests": [
+      "crates/jj-store-service/tests/work_store.rs#linked_repository_metadata_does_not_grant_code_access_and_cursors_expire",
+      "crates/jj-store-rpc/tests/work.rs#current",
+      "crates/jj-store-cli/tests/executable_native.rs#executable_workstore_creates_tasks_comments_and_recovers_without_an_upstream",
+      "crates/jj-store-cli/tests/native_lifecycle/http_work.rs#http_workstore_pages_commands_permissions_and_contract_capture"
+    ],
+    "runs": [
+      {
+        "command": "cargo check -p jj-store-service --locked",
+        "result": "fail",
+        "failures": 3,
+        "note": "Incomplete scaffolding: missing Work modules; later compiled."
+      },
+      {
+        "command": "cargo test -p jj-store-service --test work_store --locked",
+        "result": "fail",
+        "failures": 2,
+        "note": "Native creation already owns an origin ledger, invalidating the initial rejection."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --test work_store --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Six Work tests pass after preserving and freezing the origin ledger."
+      },
+      {
+        "command": "cargo check -p jj-store-cli --locked",
+        "result": "fail",
+        "failures": 15,
+        "note": "Glob-imported service Result conflicted with CLI result; replaced with explicit imports."
+      },
+      {
+        "command": "cargo check -p jj-store-cli --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "Server replication match needed permanent Unsupported handling."
+      },
+      {
+        "command": "cargo check -p jj-store-service --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Owned service compiles."
+      },
+      {
+        "command": "cargo check -p jj-store-rpc -p jj-store-http --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected transport packages compile."
+      },
+      {
+        "command": "cargo test -p jj-store-rpc --test work --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "One real isolated local RPC transport acceptance passes; storage is fake."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test executable_native --locked executable_workstore_creates_tasks_comments_and_recovers_without_an_upstream -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "Compiled CLI creates project/task/comment, retries, rejects reader writes, restarts and recovers receipts with no upstream; one pass."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked http_work_acceptance::http_workstore_pages_commands_permissions_and_contract_capture -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "One executed HTTP paging/commands/permissions/status acceptance passes."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --locked",
+        "result": "fail",
+        "failures": 1,
+        "note": "New copy test incorrectly named a service-only descriptor method; removed the invalid call."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "58 authority tests pass. Escalation: format-3 origin freeze affects shared code, AgentStore, ReviewStore publications and native copy. Nonempty historical origin ledger survives Work upgrade, checkpoint, copy and cold recovery."
+      },
+      {
+        "command": "cargo test -p jj-store-service --test work_store --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Three acceptances pass: pinned paging, no GET publication, durable actor/receipt/event semantics, separate target-code authorization, cursor expiry and token expiry."
+      },
+      {
+        "command": "cargo test -p jj-store-replication --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "16 direct consumer tests pass across origin transfer/bootstrap/checkpoint and agent/review convergence."
+      },
+      {
+        "command": "cargo clippy -p jj-store-service -p jj-store-http -p jj-store-rpc -p jj-store-cli -p jj-store-server --all-targets --locked -- -D warnings",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected packages and direct consumers pass with warnings denied."
+      },
+      {
+        "command": "pnpm contracts:generate",
+        "result": "pass",
+        "failures": 0,
+        "note": "OpenAPI and exact-integer browser contract generated."
+      },
+      {
+        "command": "pnpm contracts:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "78 actual HTTP/SSE responses conform; six contract unit tests and contract TypeScript pass. Escalation: shared route inventory and public generated API affect all captured direct consumers."
+      },
+      {
+        "command": "cargo fmt -p jj-store-service -p jj-store-wal -p jj-store-http -p jj-store-rpc -p jj-store-cli -p jj-store-server",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected Rust packages formatted."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "19 chapters / 115 requirements pass."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "fail",
+        "failures": 1,
+        "note": "Generated schema required compatibility ownership; added M11 additive contract."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "fail",
+        "failures": 1,
+        "note": "Starting browser milestone needs its own evidence; retained Planned until browser slice."
+      },
+      {
+        "command": "pnpm exec prettier --write scripts/contracts.mjs spec/src/{projects,architecture,api,cli,jj-integration,mutations,publication,replication,security,spec-governance,milestones,compatibility}.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected canonical and governance files formatted; commands executed in two invocations."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "All backend protected files map to changed owning chapters."
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "15 package dependency boundaries pass."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "77 tasks and scoped backend evidence pass."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "M11.2 owned service/transports/CLI with fake backing storage. M11.3 browser and real RustFS WorkStore qualification remain separate. Root aggregate and unrelated UI lanes are out of scope.",
+    "next": "Complete browser projects/tasks discussion and cold real RustFS acceptance."
+  },
+  {
+    "id": "E-M11-003",
+    "tasks": [
+      "M11",
+      "M11.1",
+      "M11.3"
+    ],
+    "date": "2026-10-01",
+    "kind": "workstore-browser-real-rustfs",
+    "revision": "enclosing Jujutsu change",
+    "versions": "Rust 1.98.1; jj-cli/jj-lib 0.45.1; Node 26.9.0; pnpm 10.32.1; Svelte 5.57.1; Vitest 4.1.11; Playwright 1.63.0; pinned embedded RustFS runtime",
+    "formats": "Manifest 3; WorkRootV1/WorkObjectV1; owned HTTP Work V1 contract; independent pinned paged collections and validated project/task hash fields; retained exact request bytes for unknown command outcomes. Development runtime format 2 records full fixture/search preparation separately from a fresh physical restart opening the persisted fixture; resource gates unchanged.",
+    "files": [
+      "AGENTS.md",
+      "catalog/components/store-work/StoreWork.stories.svelte",
+      "catalog/fixtures/StoreWorkFixture.svelte",
+      "crates/jj-store-cli/tests/work_rustfs.rs",
+      "scripts/dev-demo.mjs",
+      "scripts/real-browser-acceptance.mjs",
+      "spec/src/api.md",
+      "spec/src/cli.md",
+      "spec/src/compatibility.md",
+      "spec/src/milestones.md",
+      "spec/src/projects.md",
+      "spec/src/spec-governance.md",
+      "spec/src/ui.md",
+      "spec/src/verification.md",
+      "web/src/lib/controller/contracts.ts",
+      "web/src/lib/controller/http-store-data-source.ts",
+      "web/src/lib/controller/http-work-data-source.ts",
+      "web/src/lib/controller/native-data-source.ts",
+      "web/src/lib/controller/production-store-controller.svelte.ts",
+      "web/src/lib/controller/production-store-lifecycle.svelte.ts",
+      "web/src/lib/controller/production-store-view.ts",
+      "web/src/lib/controller/production-work-integration.ts",
+      "web/src/lib/controller/production-work.svelte.ts",
+      "web/src/lib/controller/store-error.ts",
+      "web/src/lib/controller/store-route-codec.ts",
+      "web/src/lib/controller/store-route-history.svelte.ts",
+      "web/src/lib/controller/work-types.ts",
+      "web/src/lib/ui/community-navigation/model.ts",
+      "web/src/lib/ui/store-application/StoreRepositoryApplication.svelte",
+      "web/src/lib/ui/store-application/repository-sections.ts",
+      "web/src/lib/ui/store-work/StoreWork.svelte",
+      "web/src/lib/ui/store-work/StoreWorkComments.svelte",
+      "web/src/lib/ui/store-work/StoreWorkProjectForm.svelte",
+      "web/src/lib/ui/store-work/StoreWorkTaskForm.svelte",
+      "web/src/lib/ui/store-work/store-work.css",
+      "web/src/lib/ui/store-work/work-hierarchy.ts",
+      "web/tests/real/native-repository.spec.ts",
+      "web/tests/real/work-store.spec.ts",
+      "web/tests/store-route-codec.test.ts",
+      "web/tests/vite/production-work.test.ts"
+    ],
+    "tests": [
+      "web/tests/vite/production-work.test.ts#work keeps unknown request intent across refresh and retries exactly",
+      "web/tests/vite/production-work.test.ts#late reads cannot replace a new selection or another session",
+      "web/tests/vite/production-work.test.ts#explicit model rejection releases the draft for correction",
+      "web/tests/vite/production-work.test.ts#loaded hierarchy orders children after parents and retains page fragments",
+      "web/tests/real/work-store.spec.ts#native projects tasks and discussion persist on RustFS and refresh explicitly",
+      "crates/jj-store-cli/tests/work_rustfs.rs#workstore_real_rustfs_restart_checkpoint_copy_and_historical_recovery",
+      "web/tests/real/native-repository.spec.ts#demo history exposes one native divergent change",
+      "web/tests/real/native-repository.spec.ts#external publication waits for explicit refresh and preserves selection",
+      "web/tests/real/native-repository.spec.ts#browser mutation previews and publishes one native request"
+    ],
+    "runs": [
+      {
+        "command": "pnpm web:check",
+        "result": "fail",
+        "failures": 10,
+        "note": "Before implementation completed: ten diagnostics from naming a derived value state alongside $state; renamed to view."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "fail",
+        "failures": 2,
+        "note": "Two accidental task.view replacements; restored task.state."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "fail",
+        "failures": 2,
+        "note": "Two oversized production modules; extracted existing controller/lifecycle/view helpers without changing baselines."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "fail",
+        "failures": 2,
+        "note": "Two invalid Testing Library exact role options; removed."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "fail",
+        "failures": 3,
+        "note": "Three toReversed diagnostics against the configured TypeScript lib; replaced with slice().reverse()."
+      },
+      {
+        "command": "pnpm web:test",
+        "result": "pass",
+        "failures": 0,
+        "note": "57 directly affected route, transport and model tests pass. Shared production route/controller contracts justify the complete web unit lane."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-work.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Four tests pass: retained unknown intent, late-read discard, explicit admission rejection and loaded hierarchy fragments."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final production type check: zero errors and warnings."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final catalog type check: zero errors and warnings; 74-module catalog boundary audit passes."
+      },
+      {
+        "command": "pnpm catalog:test",
+        "result": "pass",
+        "failures": 0,
+        "note": "80 tests in 18 files pass. Escalation: shared production controller and route/lifecycle extraction affect existing code, review and agent consumers."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "296 production modules pass the unchanged counted-line and dependency boundaries."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-shell/StoreShell.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Three Work stories pass; the supplied Shell path matched no file, so this run supplies Work evidence only."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "14 Work/Shell interactions pass with accessibility addon set to error. These are direct consumers of the new Projects navigation."
+      },
+      {
+        "command": "node --test scripts/dev-demo-collaboration.test.mjs scripts/dev-demo-repository.test.mjs scripts/dev-demo-state.test.mjs scripts/governance.test.mjs scripts/web-architecture.test.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "34 governance, architecture and development fixture/state source tests pass. Shared startup harness changes justify all directly consuming development helper tests."
+      },
+      {
+        "command": "cargo clippy -p jj-store-cli --test work_rustfs --locked -- -D warnings",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact new real-storage acceptance target compiles with warnings denied."
+      },
+      {
+        "command": "cargo fmt -p jj-store-cli -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected Rust package formatting passes."
+      },
+      {
+        "command": "JJ_STORE_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs cargo test -p jj-store-cli --test work_rustfs --locked -- --ignored --exact workstore_real_rustfs_restart_checkpoint_copy_and_historical_recovery",
+        "result": "pass",
+        "failures": 0,
+        "note": "One real RustFS acceptance passes in 5.6s: isolated source/destination runtimes, exact manifest, historical body, tombstone/target, checkpoint/copy, both cold recoveries, frozen origin ledger, local diagnostic readiness and original durable receipt."
+      },
+      {
+        "command": "JJ_STORE_DEV_PORT=7477 JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs JJ_STORE_REAL_TEST=work-store.spec.ts JJ_STORE_REAL_KEEP=1 pnpm web:test:real",
+        "result": "fail",
+        "failures": 1,
+        "note": "Runner rejected before Playwright: 1037ms first startup, 30006ms server/search restart, 332986ms separate fixture preparation, 136160KiB RSS. Strict 30000ms and 524288KiB gates retained. Full representative agent/review fixture used."
+      },
+      {
+        "command": "JJ_STORE_DEV_ROOT=/var/folders/_3/k1jv9rtn47s_0k5bm6qn_lk80000gn/T/jj-store-real-browser-2HUdkt JJ_STORE_DEV_PORT=7477 JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs pnpm dev:restart",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final bundle rebuilt with scrolling and bounded hierarchy. Owned persistent fixture cold-restarted: 3350ms server/search readiness, 172352KiB RSS."
+      },
+      {
+        "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7477/ JJ_STORE_REAL_REPOSITORY=760bab18beeed9f256b58d749e0194d2 JJ_STORE_REAL_RUNTIME=/var/folders/_3/k1jv9rtn47s_0k5bm6qn_lk80000gn/T/jj-store-real-browser-2HUdkt JJ_STORE_REAL_ROOT=/Users/stevejuma/code/lapismd/jj-store-native-project-tasks pnpm exec playwright test --config web/playwright.real.config.ts work-store.spec.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "Exact browser gate fails at first repository link. Svelte interpolated regex braces and native form validation prevented publication; changed pattern to a literal expression and added real browser link submission story."
+      },
+      {
+        "command": "pnpm exec prettier --check AGENTS.md scripts/dev-demo.mjs scripts/real-browser-acceptance.mjs spec/src/api.md spec/src/cli.md spec/src/compatibility.md spec/src/projects.md spec/src/spec-governance.md spec/src/ui.md web/src/lib/controller/contracts.ts web/src/lib/controller/http-store-data-source.ts web/src/lib/controller/http-work-data-source.ts web/src/lib/controller/native-data-source.ts web/src/lib/controller/production-store-controller.svelte.ts web/src/lib/controller/production-store-lifecycle.svelte.ts web/src/lib/controller/production-store-view.ts web/src/lib/controller/production-work-integration.ts web/src/lib/controller/production-work.svelte.ts web/src/lib/controller/store-error.ts web/src/lib/controller/store-route-codec.ts web/src/lib/controller/store-route-history.svelte.ts web/src/lib/controller/work-types.ts web/src/lib/ui/community-navigation/model.ts web/src/lib/ui/store-application/StoreRepositoryApplication.svelte web/src/lib/ui/store-application/repository-sections.ts web/src/lib/ui/store-work catalog/components/store-work/StoreWork.stories.svelte catalog/fixtures/StoreWorkFixture.svelte web/tests/real/work-store.spec.ts web/tests/store-route-codec.test.ts web/tests/vite/production-work.test.ts",
+        "result": "fail",
+        "failures": 4,
+        "note": "Four unformatted files; subsequently formatted. Exact file list is preserved in the tool output."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/controller/contracts.ts web/src/lib/controller/native-data-source.ts web/src/lib/ui/store-application/StoreRepositoryApplication.svelte catalog/components/store-work/StoreWork.stories.svelte web/src/lib/ui/store-work/StoreWork.svelte web/tests/real/work-store.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected source formatting applied."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "31 protected files map to six changed canonical chapters before final ledger/verification updates."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Four final Work stories pass, including actual valid Repository ID form submission; accessibility addon errors are enforced."
+      },
+      {
+        "command": "JJ_STORE_DEV_ROOT=/var/folders/_3/k1jv9rtn47s_0k5bm6qn_lk80000gn/T/jj-store-real-browser-2HUdkt JJ_STORE_DEV_PORT=7477 JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs pnpm dev:restart",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final pattern fix cold rebuild/restart preserves the owned fixture: 4456ms readiness and 152480KiB RSS."
+      },
+      {
+        "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7477/ JJ_STORE_REAL_REPOSITORY=760bab18beeed9f256b58d749e0194d2 JJ_STORE_REAL_RUNTIME=/var/folders/_3/k1jv9rtn47s_0k5bm6qn_lk80000gn/T/jj-store-real-browser-2HUdkt JJ_STORE_REAL_ROOT=/Users/stevejuma/code/lapismd/jj-store-native-project-tasks pnpm exec playwright test --config web/playwright.real.config.ts work-store.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact formerly failing browser gate passes in 16s after rebuilt cold stack. Real links, project selection, cross-target parent/child, state update, reply/edit/tombstone, explicit refresh, lost real publication response, durable-status recovery without duplicate comment, reload/route identity, zero axe WCAG violations and 420px overflow assertion pass. Screenshot reviewed; visual baseline remains unapproved."
+      },
+      {
+        "command": "JJ_STORE_DEV_ROOT=/var/folders/_3/k1jv9rtn47s_0k5bm6qn_lk80000gn/T/jj-store-real-browser-2HUdkt pnpm dev:stop",
+        "result": "pass",
+        "failures": 0,
+        "note": "Owned server/storage stopped; then verified no owned processes remain and removed only this disposable root. Fixture install/remove also cleaned the three transient checkout hook files."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "19 chapters and 115 requirements pass."
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "15 package dependency boundaries pass."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "77 tasks and pending browser evidence pass bookkeeping."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Post-pattern-fix production check has zero errors/warnings."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final formatted production source retains 296 passing modules and unchanged limits."
+      },
+      {
+        "command": "pnpm exec prettier --write AGENTS.md scripts/dev-demo.mjs scripts/real-browser-acceptance.mjs spec/src/api.md spec/src/cli.md spec/src/compatibility.md spec/src/milestones.md spec/src/projects.md spec/src/spec-governance.md spec/src/ui.md web/src/lib/controller/contracts.ts web/src/lib/controller/http-store-data-source.ts web/src/lib/controller/http-work-data-source.ts web/src/lib/controller/native-data-source.ts web/src/lib/controller/production-store-controller.svelte.ts web/src/lib/controller/production-store-lifecycle.svelte.ts web/src/lib/controller/production-store-view.ts web/src/lib/controller/production-work-integration.ts web/src/lib/controller/production-work.svelte.ts web/src/lib/controller/store-error.ts web/src/lib/controller/store-route-codec.ts web/src/lib/controller/store-route-history.svelte.ts web/src/lib/controller/work-types.ts web/src/lib/ui/community-navigation/model.ts web/src/lib/ui/store-application/StoreRepositoryApplication.svelte web/src/lib/ui/store-application/repository-sections.ts web/src/lib/ui/store-work catalog/components/store-work/StoreWork.stories.svelte catalog/fixtures/StoreWorkFixture.svelte web/tests/real/work-store.spec.ts web/tests/store-route-codec.test.ts web/tests/vite/production-work.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "All changed UI, catalog, harness and canonical files formatted; final write changed only ledger formatting."
+      },
+      {
+        "command": "JJ_STORE_DEV_PORT=7478 JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs pnpm web:test:real",
+        "result": "fail",
+        "failures": 1,
+        "note": "Fresh full gate rejected before Playwright: firstStartupMillis=1447, restartStartupMillis=32918, fixturePreparationMillis=316900, totalRssKiB=152400. The initial configured search instance was still constructing the fixture projection. Corrected reset to finish full fixture/search preparation, stop that instance and measure a new physical server/storage restart opening the persisted fixture. The 30000ms/524288KiB gates remain unchanged. Cold cache-loss search rebuild performance is separate and is not qualified by this slice. Runner stopped and removed this disposable root."
+      },
+      {
+        "command": "pnpm exec prettier --write scripts/dev-demo.mjs scripts/real-browser-acceptance.mjs spec/src/cli.md spec/src/spec-governance.md spec/src/compatibility.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formatted corrected cold persisted-fixture startup protocol and owning documentation."
+      },
+      {
+        "command": "pnpm exec prettier --write web/tests/real/work-store.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Strengthened browser evidence to assert a full non-null native operation pin survives WorkStore mutations and reload, while initial Projects still opens without a code pin."
+      },
+      {
+        "command": "node --test scripts/dev-demo-collaboration.test.mjs scripts/dev-demo-repository.test.mjs scripts/dev-demo-state.test.mjs scripts/governance.test.mjs scripts/web-architecture.test.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final shared startup/fixture direct-consumer source lane passes 34 tests."
+      },
+      {
+        "command": "pnpm exec prettier --check AGENTS.md scripts/dev-demo.mjs scripts/real-browser-acceptance.mjs spec/src/api.md spec/src/cli.md spec/src/compatibility.md spec/src/projects.md spec/src/spec-governance.md spec/src/ui.md web/src/lib/controller/contracts.ts web/src/lib/controller/http-store-data-source.ts web/src/lib/controller/http-work-data-source.ts web/src/lib/controller/native-data-source.ts web/src/lib/controller/production-store-controller.svelte.ts web/src/lib/controller/production-store-lifecycle.svelte.ts web/src/lib/controller/production-store-view.ts web/src/lib/controller/production-work-integration.ts web/src/lib/controller/production-work.svelte.ts web/src/lib/controller/store-error.ts web/src/lib/controller/store-route-codec.ts web/src/lib/controller/store-route-history.svelte.ts web/src/lib/controller/work-types.ts web/src/lib/ui/community-navigation/model.ts web/src/lib/ui/store-application/StoreRepositoryApplication.svelte web/src/lib/ui/store-application/repository-sections.ts web/src/lib/ui/store-work catalog/components/store-work/StoreWork.stories.svelte catalog/fixtures/StoreWorkFixture.svelte web/tests/real/work-store.spec.ts web/tests/store-route-codec.test.ts web/tests/vite/production-work.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact originally failing source-formatting check passes."
+      },
+      {
+        "command": "JJ_STORE_DEV_PORT=7478 JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs pnpm web:test:real",
+        "result": "fail",
+        "failures": 3,
+        "note": "Corrected physical cold startup passes: 1242ms first, 1008ms persistent restart, 333746ms full fixture preparation, 172240KiB RSS. WorkStore with a real non-null code operation pin passes; bootstrap and atomic conflict acceptance also pass. Three pre-existing native browser scenarios drifted: hidden JJ Log rail action now uses Commits tab; mutation Description is a Markdown editor textbox; route capture preceded the initial seeded revision-review association. Updated selectors and waited for the associated thread before capturing the complete route, preserving identity/publication/unchanged-route assertions. Runner stopped and removed its owned root."
+      },
+      {
+        "command": "pnpm exec prettier --write web/tests/real/native-repository.spec.ts spec/src/ui.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Updated cold direct-consumer fixtures and owning UI evidence formatted."
+      },
+      {
+        "command": "JJ_STORE_DEV_PORT=7478 JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs JJ_STORE_REAL_KEEP=1 pnpm web:test:real",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final full fresh fixture and physical cold server/storage restart pass: first 1031ms, restart 666ms, full preparation 342029ms, total RSS 172736KiB. All six real browser scenarios pass in 46.4s: LocalTrusted bootstrap, same-change divergent native identities, external publication/explicit refresh with complete route preservation, atomic conflict resolution, identical preview/apply native mutation and WorkStore project/link/subtask/state/reply/edit/tombstone/unknown receipt recovery/reload. Work test preserves a non-null full native code operation pin; zero axe violations and 420px overflow assertion pass. Strict 30000ms/524288KiB gates unchanged. Exact three formerly failing native scenarios pass within the full run."
+      },
+      {
+        "command": "JJ_STORE_DEV_ROOT=/var/folders/_3/k1jv9rtn47s_0k5bm6qn_lk80000gn/T/jj-store-real-browser-7O3yib pnpm dev:stop",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final kept acceptance server/storage stopped, no owned processes remained, and only its disposable root was removed. Checkout hooks removed by fixture teardown; no installations or existing deployments changed."
+      },
+      {
+        "command": "pnpm exec prettier --check AGENTS.md scripts/dev-demo.mjs scripts/real-browser-acceptance.mjs spec/src/{api,cli,compatibility,milestones,projects,spec-governance,ui,verification}.md web/src/lib/controller/{contracts.ts,http-store-data-source.ts,http-work-data-source.ts,native-data-source.ts,production-store-controller.svelte.ts,production-store-lifecycle.svelte.ts,production-store-view.ts,production-work-integration.ts,production-work.svelte.ts,store-error.ts,store-route-codec.ts,store-route-history.svelte.ts,work-types.ts} web/src/lib/ui/community-navigation/model.ts web/src/lib/ui/store-application/{StoreRepositoryApplication.svelte,repository-sections.ts} web/src/lib/ui/store-work catalog/components/store-work/StoreWork.stories.svelte catalog/fixtures/StoreWorkFixture.svelte web/tests/real/{native-repository,work-store}.spec.ts web/tests/store-route-codec.test.ts web/tests/vite/production-work.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "All changed source, fixtures, harness and canonical files pass formatting."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final 19 chapters / 115 requirements pass."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final 32 protected files map to seven changed canonical chapters."
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final 15 package boundaries pass."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final 77 tasks and completed M11 scoped evidence pass bookkeeping."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "M11 native local-service profile. Community task presentation and Design Core controls inspected in their owners; existing temporary source-validation hook retained without package/lockfile changes. Fake-store backend gates remain E-M11-001/002; this entry supplies separate real RustFS and browser evidence. No root aggregates, full Rust workspace or unrelated Storybook suites; those lanes are out of scope. Stories remain visual-pending, with no visual baseline approval. Git refs/server-free CLI, assignments, dispatch and origin replication for WorkStore homes remain deferred. Cold resources qualify opening the fully prepared persisted sample; initial search construction is explicitly fixture preparation, with no claim about cold cache-loss rebuild speed.",
+    "before": "Before UI implementation the Work unit target could not import its missing module (one failed suite). Initial cold harness attempt rejected before Playwright because restart timing incorrectly included full fixture seeding; timer now stops at server/search readiness and records fixturePreparationMillis separately. Exact original shell invocations for these two pre-handoff failures were not retained.",
+    "next": "Retain M11 focused/native/real browser gates. Visual baselines remain pending; WorkStore origin replication, Git refs, server-free CLI, assignments and dispatch remain deferred."
+  },
+  {
+    "id": "E-M11-004",
+    "tasks": [
+      "M11",
+      "M11.3"
+    ],
+    "date": "2026-10-01",
+    "kind": "main-workspace-integration",
+    "revision": "Enclosing Jujutsu change msxvwtvr.",
+    "before": "Clean main default workspace at fd58dc7c, clean native-project-tasks feature workspace at 1bdb15c4. JJ merge preserves both histories; only milestones.md conflicts textually. Combined baseline route codec passes seven tests; focused Work/evolution controller lane passes eleven. Web/catalog type checks have zero errors/warnings; architecture passes 312 modules. No backend, transport, schema, harness or dependency differences from the verified feature tip.",
+    "files": [
+      "spec/src/milestones.md",
+      "spec/src/ui.md",
+      "spec/src/api.md",
+      "web/tests/vite/store-route-history.test.ts",
+      "web/src/lib/controller/contracts.ts",
+      "web/src/lib/controller/production-store-lifecycle.svelte.ts",
+      "web/src/lib/controller/production-store-view.ts",
+      "web/src/lib/controller/store-route-codec.ts",
+      "web/src/lib/controller/store-route-history.svelte.ts",
+      "scripts/check-progress.mjs",
+      "scripts/governance.test.mjs",
+      "spec/src/spec-governance.md",
+      "catalog/components/store-application/StoreRepositoryNavigation.stories.svelte",
+      "catalog/components/store-mutations/StoreConflictEditor.stories.svelte",
+      "web/tests/real/native-repository.spec.ts"
+    ],
+    "versions": "jj 0.45.1; Node 24.10.0; pnpm 10.32.1; Svelte 5.57.1; Storybook 10.5.7; Vitest 4.1.11; Vite 8.3.1. Dependency resolution and existing temporary source-validation setup retained.",
+    "formats": "Existing WorkStore manifest format 3 and local WAL authority unchanged. Evo Log full commit anchor and WorkStore project/task identities coexist in shared routes; page changes clear incompatible selections while browser history retains each destination and full code operation pin. No format migration is executed by this integration. Progress validates every merge parent and rejects imported parent evidence as new integration evidence. Published spec-first merge qualification uses explicit common-ancestor and current commit IDs; no validator package patch.",
+    "scope": "Merged UI controller/history and shell combine independent main Evo Log/conflict/editor presentation with WorkStore Projects. This multi-consumer integration justifies all web/catalog unit tests, directly affected story families and the complete six-scenario real-browser suite on a fresh physical stack. Backend code/transport trees are byte-identical to nrtskmus; reuse E-M11-001/002/003 native, RPC/HTTP/CLI and RustFS evidence. Unrelated root aggregates/full Rust workspace are out of scope; visual baselines remain visual-pending. Progress CLI governance change is shared source infrastructure; run the full direct-consumer development/governance/architecture source suite, including a real disposable JJ merge and parent-evidence variant rejection. This does not alter storage/runtime startup.",
+    "runs": [
+      {
+        "command": "jj new uonqxxvs nrtskmus -m \"Merge native WorkStore into main workspace\"",
+        "result": "pass",
+        "failures": 0,
+        "note": "Two-parent merge in main default; sole ledger conflict reconciled by retaining every parent evidence object and adding four M11 task rows. Main independent M4.21-M4.29 task rows retained."
+      },
+      {
+        "command": "pnpm exec tsx --test web/tests/store-route-codec.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Seven combined native/evolution/WorkStore route tests."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero errors and warnings."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero errors and warnings; 81 catalog modules."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "312 production modules; existing 300 counted-line limit unchanged."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-work.test.ts web/tests/vite/production-store-evolution.test.ts web/tests/vite/production-store-controller.test.ts web/tests/vite/production-store-route.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Two existing files pass eleven tests. Controller/route placeholder filenames matched no files; actual route history target is store-route-history.test.ts and is verified separately."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/{api,ui,milestones}.md web/tests/vite/store-route-history.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formatted integration docs, ledger and exact shared-history regression."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/store-route-history.test.ts -t 'Projects and Evo Log restore independent identities through browser history'",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact new integration test passes; five unrelated tests skipped in this focused run."
+      },
+      {
+        "command": "pnpm web:test",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 58 web unit tests pass."
+      },
+      {
+        "command": "pnpm catalog:test",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 88 catalog/controller unit tests in 19 files pass."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "19 chapters and 115 requirements pass."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "fail",
+        "failures": 1,
+        "note": "Default published validator assumes a single @-; merge has two parents. Supported explicit --base/--head selection below qualifies the complete common-ancestor-to-merge diff."
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "15 package dependency boundaries pass."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "fail",
+        "failures": 1,
+        "note": "Progress CLI also assumed a single parent. Exact disposable JJ merge regression reproduced this; checker now enumerates all parent diffs/evidence and requires genuinely new integration evidence."
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/{api,milestones,ui,verification}.md web/src/lib/controller/{contracts.ts,production-store-lifecycle.svelte.ts,production-store-view.ts,store-route-codec.ts,store-route-history.svelte.ts} web/tests/{store-route-codec.test.ts,vite/store-route-history.test.ts}",
+        "result": "pass",
+        "failures": 0,
+        "note": "Auto-merged overlapping UI sources and initial integration edits formatted."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/StoreEvolutionColumn.stories.svelte catalog/components/store-application/StoreRepositoryNavigation.stories.svelte catalog/components/store-application/StoreFileEditor.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-mutations/StoreConflictEditor.stories.svelte catalog/components/store-mutations/StoreMutationCommitPicker.stories.svelte",
+        "result": "fail",
+        "failures": 2,
+        "note": "40 pass / two fail: navigation retained the old six-tab expectation; conflict sidebar immediate lookup preceded virtual-row layout. Updated navigation to all seven destinations and awaited both exact native paths without weakening retained-draft/header assertions."
+      },
+      {
+        "command": "node --test --test-name-pattern=progress_checks_merge_against_every_parent scripts/governance.test.mjs",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before checker fix, disposable two-parent JJ merge fails with ambiguous @- instead of checking integration evidence."
+      },
+      {
+        "command": "node --test --test-name-pattern=progress_checks_merge_against_every_parent scripts/governance.test.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact regression now rejects a merge that merely combines parent evidence, and accepts genuinely new merge evidence; owned disposable repo removed."
+      },
+      {
+        "command": "pnpm exec prettier --write scripts/{check-progress,governance.test}.mjs spec/src/{spec-governance,ui}.md catalog/components/store-application/StoreRepositoryNavigation.stories.svelte catalog/components/store-mutations/StoreConflictEditor.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formatted checker and corrected direct-consumer stories/canonical docs."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreRepositoryNavigation.stories.svelte catalog/components/store-mutations/StoreConflictEditor.stories.svelte -t 'RightRailNavigation|HeaderActionsAndFileBrowser'",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both exact originally failing stories pass on a fresh Vitest/Vite browser process; ten other stories skipped in this focused run."
+      },
+      {
+        "command": "node --test scripts/dev-demo-collaboration.test.mjs scripts/dev-demo-repository.test.mjs scripts/dev-demo-state.test.mjs scripts/governance.test.mjs scripts/web-architecture.test.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "36 full direct-consumer source tests pass; includes the disposable real JJ merge and multi-parent evidence variant regression."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "86 tasks pass using actual two-parent merge; same-change ledger enforcement intact."
+      },
+      {
+        "command": "pnpm spec:first --base 4a224b913d6c64630b62d0ddfdef4903b6657839 --head e407caa957ed506619ad02bf382d2b994af1b908",
+        "result": "pass",
+        "failures": 0,
+        "note": "Published explicit-base gate audits all 155 protected files against 13 changed canonical chapters; full integration from shared ancestor rather than either arbitrary parent."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/StoreEvolutionColumn.stories.svelte catalog/components/store-application/StoreRepositoryNavigation.stories.svelte catalog/components/store-application/StoreFileEditor.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-mutations/StoreConflictEditor.stories.svelte catalog/components/store-mutations/StoreMutationCommitPicker.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final cold Vitest/Vite process: all 42 directly affected stories in eight files pass; includes WorkStore, shell, evolution, seven-destination navigation, file editor/composers, conflict sheet/header/browser and native commit picker. Interaction and accessibility enforced; no visual baselines changed."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final corrected-story type check: zero errors/warnings and 81 passing catalog modules."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formatted current integration evidence."
+      },
+      {
+        "command": "pnpm exec prettier --check scripts/{check-progress,governance.test}.mjs spec/src/{api,milestones,spec-governance,ui,verification}.md web/src/lib/controller/{contracts.ts,production-store-lifecycle.svelte.ts,production-store-view.ts,store-route-codec.ts,store-route-history.svelte.ts} web/tests/{store-route-codec.test.ts,vite/store-route-history.test.ts} catalog/components/store-application/StoreRepositoryNavigation.stories.svelte catalog/components/store-mutations/StoreConflictEditor.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "All merged overlap and manual integration files pass formatting."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "19 chapters and 115 requirements pass after governance fix."
+      },
+      {
+        "command": "JJ_STORE_DEV_PORT=7480 JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs pnpm web:test:real",
+        "result": "fail",
+        "failures": 1,
+        "note": "Fresh merged main binaries/physical stack pass startup gates: first 1024ms, persisted restart 872ms, full fixture preparation 347175ms, 171488KiB RSS. Five real scenarios pass in 51.4s, including WorkStore; atomic conflict scenario still targets the old modal/path-heading/Use-left controls from feature ancestry. Current main uses a named merge-sheet region, native conflict region and Accept All Incoming Changes from Left. Updated only those selectors, retaining identical preview/apply requests, exact conflict.txt path, select_term=0 and full fingerprint. Runner stopped/deleted its owned root; transient checkout hooks removed."
+      },
+      {
+        "command": "pnpm exec prettier --write web/tests/real/native-repository.spec.ts spec/src/ui.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formatted current merge-surface cold acceptance selectors and owning chapter."
+      },
+      {
+        "command": "pnpm exec prettier --check scripts/{check-progress,governance.test}.mjs spec/src/{api,milestones,spec-governance,ui,verification}.md web/src/lib/controller/{contracts.ts,production-store-lifecycle.svelte.ts,production-store-view.ts,store-route-codec.ts,store-route-history.svelte.ts} web/tests/{store-route-codec.test.ts,vite/store-route-history.test.ts,real/native-repository.spec.ts} catalog/components/store-application/StoreRepositoryNavigation.stories.svelte catalog/components/store-mutations/StoreConflictEditor.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Includes final real merge-sheet regression; all changed and automatically merged overlaps formatted."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "86 tasks pass with final real-regression evidence registered; original parent objects remain exact."
+      },
+      {
+        "command": "JJ_STORE_DEV_PORT=7480 JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs JJ_STORE_REAL_KEEP=1 pnpm web:test:real",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final fresh merged-main physical stack passes all six real scenarios in 47.1s, including the exact formerly failing atomic-conflict case. First 616ms, persisted restart 1119ms, full fixture preparation 330084ms, server/storage RSS 155376KiB. Native IDs, complete route preservation, identical preview/apply payloads, select_term=0/full conflict fingerprint, WorkStore links/tasks/subtasks/state/comments/tombstones, unknown receipt recovery, explicit refresh/reload, axe and narrow-screen gates retained. Startup limits unchanged at 30000ms/524288KiB."
+      },
+      {
+        "command": "JJ_STORE_DEV_ROOT=/var/folders/_3/k1jv9rtn47s_0k5bm6qn_lk80000gn/T/jj-store-real-browser-UAUSzm pnpm dev:stop",
+        "result": "pass",
+        "failures": 0,
+        "note": "Stopped final owned test server/storage. Verified no root-owned processes, removed only its disposable root, and verified transient checkout hooks absent."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final completed integration: 19 chapters / 115 requirements."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final completed two-parent integration: 86 tasks; every original parent evidence entry preserved."
+      },
+      {
+        "command": "pnpm spec:first --base 4a224b913d6c64630b62d0ddfdef4903b6657839 --head e8f4e6316f8418c02e867052ea3494d1032e0687",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final completed implementation and evidence: 155 protected files mapped to 13 changed canonical chapters across the full merge."
+      },
+      {
+        "command": "pnpm exec prettier --check scripts/{check-progress,governance.test}.mjs spec/src/{api,milestones,spec-governance,ui,verification}.md web/src/lib/controller/{contracts.ts,production-store-lifecycle.svelte.ts,production-store-view.ts,store-route-codec.ts,store-route-history.svelte.ts} web/tests/{store-route-codec.test.ts,vite/store-route-history.test.ts,real/native-repository.spec.ts} catalog/components/store-application/StoreRepositoryNavigation.stories.svelte catalog/components/store-mutations/StoreConflictEditor.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final completed merge source/docs/evidence format pass; no generated hooks or disposable state included."
+      }
+    ],
+    "tests": [
+      "web/tests/vite/store-route-history.test.ts#Projects and Evo Log restore independent identities through browser history",
+      "scripts/governance.test.mjs#progress_checks_merge_against_every_parent",
+      "scripts/governance.test.mjs#rejects_existing_parent_variant_as_new_merge_evidence",
+      "web/tests/real/native-repository.spec.ts#native conflict selection previews and publishes one atomic resolution"
+    ],
+    "result": "pass",
+    "remaining": [],
+    "next": "Retain verified main-workspace WorkStore/evolution/history and cold merge-sheet gates. Source workspace remains available; visual baselines, WorkStore origin replication, Git refs, server-free CLI, assignments and dispatch remain deferred."
   }
 ]
 ```

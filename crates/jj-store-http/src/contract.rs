@@ -192,7 +192,14 @@ impl Document {
             operation["responses"]["503"]["description"] =
                 json!("search_not_ready, busy, unavailable, corrupt_index, or incomplete history.");
         }
-        if path.contains("/reviews/commands") {
+        if path.contains("/work") {
+            operation["tags"] = json!(["work"]);
+            operation["description"] = json!(
+                "Home-authorized native project/task metadata. Reads retain an immutable WorkStore root across query-bound opaque continuations. Commands derive authenticated actors and return durable receipts; unknown outcomes retain request IDs. Opening linked code requires separate target repository access. WorkStore origin replication is unsupported."
+            );
+            operation["responses"]["409"]["description"] =
+                json!("stale_work, cursor_reset, intent_conflict or work_replication_unsupported.");
+        } else if path.contains("/reviews/commands") {
             operation["tags"] = json!(["collaboration"]);
             operation["description"] = json!(
                 "Requires current repository write permission. The authenticated session supplies the actor and repository-bound publication identity. Apply returns a manifest-selected durable receipt or outcome_unknown; status reauthorizes and returns that receipt after restart. not_known never proves rejection. Stale review preconditions, changed retries and cross-principal identities fail without publication."

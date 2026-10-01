@@ -29,3 +29,5 @@ pub mod sync_commands;
 
 pub mod token_commands;
 mod token_journal;
+
+pub mod work_commands;

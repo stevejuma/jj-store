@@ -123,3 +123,20 @@ export function productionStoreView(
     status: data.status,
   };
 }
+
+export function productionControllerView(
+  data: ProductionStoreState,
+  history: ReturnType<
+    typeof import("./store-route-history.svelte.js").createStoreRouteHistory
+  >,
+  source: import("./native-data-source.js").StoreDataSource | null,
+  now: number,
+) {
+  return productionStoreView(data, history.route, {
+    connected: source !== null,
+    repository: source?.repository ?? history.route.repository,
+    canBack: history.canBack,
+    canForward: history.canForward,
+    now,
+  });
+}

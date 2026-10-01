@@ -177,6 +177,7 @@ impl From<transport::Error> for Error {
     fn from(e: transport::Error) -> Self {
         match e {
             transport::Error::Denied => Self::denied(),
+            transport::Error::Unsupported => Self::new(StatusCode::CONFLICT, "unsupported_profile"),
             transport::Error::Limit => Self::limit(),
             transport::Error::Invalid => Self::invalid(),
             _ => Self::unavailable(),
@@ -278,6 +279,27 @@ impl From<jj_store_tantivy::paging::Error> for Error {
             E::Adapter(A::Canceled) => Self::new(StatusCode::REQUEST_TIMEOUT, "canceled"),
             E::Read(e) => e.into(),
             E::Native(e) => e.into(),
+        }
+    }
+}
+
+impl From<jj_store_service::work::Error> for Error {
+    fn from(error: jj_store_service::work::Error) -> Self {
+        use jj_store_service::work::Error as E;
+        match error {
+            E::Denied => Self::denied(),
+            E::Stale => Self::new(StatusCode::CONFLICT, "stale_work"),
+            E::IntentConflict => Self::new(StatusCode::CONFLICT, "intent_conflict"),
+            E::NotFound => Self::new(StatusCode::NOT_FOUND, "not_found"),
+            E::Invalid | E::InvalidCursor => Self::invalid(),
+            E::CursorReset => Self::new(StatusCode::CONFLICT, "cursor_reset"),
+            E::Busy => Self::busy(),
+            E::Corrupt => Self::new(StatusCode::SERVICE_UNAVAILABLE, "corrupt_work"),
+            E::Limit => Self::limit(),
+            E::Unavailable => Self::unavailable(),
+            E::ReplicationUnsupported => {
+                Self::new(StatusCode::CONFLICT, "work_replication_unsupported")
+            }
         }
     }
 }

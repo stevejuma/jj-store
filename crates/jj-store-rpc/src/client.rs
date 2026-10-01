@@ -705,6 +705,52 @@ impl NativeClient {
             .into_inner();
         review::response(reply)
     }
+    pub async fn work_page(
+        &self,
+        query: &jj_store_service::work::WorkQuery,
+    ) -> Result<jj_store_service::work::WorkPage, Status> {
+        let reply = self
+            .wire()
+            .work_page(self.request(wire::WorkRequest {
+                repository: self.repository.as_bytes().to_vec(),
+                request_json:
+                    serde_json::to_vec(query).map_err(|_| Status::invalid_argument("work query"))?,
+            }))
+            .await?
+            .into_inner();
+        crate::work::response(reply)
+    }
+    pub async fn apply_work_command(
+        &self,
+        request: &jj_store_service::work::Request,
+    ) -> Result<jj_store_service::work::Outcome, Status> {
+        let reply = self
+            .wire()
+            .apply_work_command(
+                self.request(wire::WorkRequest {
+                    repository: self.repository.as_bytes().to_vec(),
+                    request_json: serde_json::to_vec(request)
+                        .map_err(|_| Status::invalid_argument("work command"))?,
+                }),
+            )
+            .await?
+            .into_inner();
+        crate::work::response(reply)
+    }
+    pub async fn work_command_status(
+        &self,
+        id: m::RequestId,
+    ) -> Result<jj_store_service::work::Status, Status> {
+        let reply = self
+            .wire()
+            .work_command_status(self.request(wire::WorkCommandStatusRequest {
+                repository: self.repository.as_bytes().to_vec(),
+                request_id: id.as_bytes().to_vec(),
+            }))
+            .await?
+            .into_inner();
+        crate::work::response(reply)
+    }
     fn object_request(&self, key: m::ObjectKey) -> Request<wire::ObjectRequest> {
         self.request(wire::ObjectRequest {
             repository: self.repository.as_bytes().to_vec(),

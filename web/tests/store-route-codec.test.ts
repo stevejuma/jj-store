@@ -178,3 +178,38 @@ test("workspace names round-trip independently of shared commit identities", () 
     );
   }
 });
+
+test("WorkStore task routes need a project and preserve independent code pin", () => {
+  const workRoute: StoreRoute = {
+    ...route,
+    page: "projects",
+    bookmark: "",
+    workspace: null,
+    snapshotOperationId: null,
+    inspectedOperationId: null,
+    commitId: null,
+    changeId: null,
+    comparisonParentId: null,
+    comparisonGroupId: null,
+    path: null,
+    directory: "",
+    agentSessionId: null,
+    reviewThreadId: null,
+    projectId: "11".repeat(16),
+    taskId: "22".repeat(16),
+  };
+  assert.deepEqual(storeRouteFromHash(storeRouteToHash(workRoute)!), {
+    kind: "route",
+    route: workRoute,
+  });
+  assert.equal(
+    storeRouteFromHash(`#/repos/${repository}/projects?task=${"22".repeat(16)}`)
+      .kind,
+    "invalid",
+  );
+  assert.equal(
+    storeRouteFromHash(`#/repos/${repository}/files?project=${"11".repeat(16)}`)
+      .kind,
+    "invalid",
+  );
+});

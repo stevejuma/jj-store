@@ -105,6 +105,7 @@ impl Coordinator {
                 Some(domains) => domains,
                 None => {
                     let domains = RepositoryDomains {
+                        work: None,
                         agent: DomainState {
                             root: self.stage_agent_root(&AgentRootV1::empty()).await?,
                             version: 0,

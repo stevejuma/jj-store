@@ -24,3 +24,5 @@ pub mod mutations;
 pub mod uploads;
 
 pub mod adapter;
+
+pub mod work;

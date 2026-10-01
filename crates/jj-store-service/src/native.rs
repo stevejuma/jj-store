@@ -208,6 +208,8 @@ impl NativeSession {
         &self,
         request: &replication::NegotiateReplicaV1,
     ) -> wal::Result<replication::ReplicaNegotiationV1> {
+        self.principal(Permission::Write).await?;
+        self.coordinator.ensure_origin_replication().await?;
         if request.schema_version != 1
             || request.repository != self.repository
             || !replication::ReplicaCapabilitiesV1::default().compatible_with(&request.capabilities)

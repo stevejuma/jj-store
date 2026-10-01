@@ -11,6 +11,7 @@ mod repositories;
 mod review_mutations;
 mod routes;
 mod search;
+mod work;
 pub use search::SearchIndex;
 mod uploads;
 use axum::{
@@ -142,6 +143,7 @@ struct State {
     operation_browser: OperationBrowserPager,
     agent_sessions: AgentSessionPager,
     review_threads: ReviewThreadPager,
+    work: jj_store_service::work::WorkPager,
     review_commands: jj_store_service::review_mutations::ReviewCommandService,
     tasks: index_tasks::IndexTasks,
     commands: jj_store_service::mutations::CommandService,
@@ -253,6 +255,7 @@ impl HttpApi {
             operation_browser,
             agent_sessions,
             review_threads,
+            work: jj_store_service::work::WorkPager::new(Arc::new(SystemClock)),
             review_commands,
             tasks,
             commands,

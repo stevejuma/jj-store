@@ -207,6 +207,9 @@ impl Coordinator {
         let Some(domains) = domains else {
             return Ok(());
         };
+        if let Some(work) = domains.work {
+            records.extend(self.work_store(work.root).await?.records);
+        }
         records.insert(domains.agent.root);
         let (_, _, agent) = self.read_agent_root_closure(domains.agent.root).await?;
         records.extend(agent.into_iter().map(super::agent::agent_record));
@@ -259,6 +262,7 @@ fn include_manifest_records(manifest: &Manifest, records: &mut BTreeSet<RecordRe
     records.extend(manifest.agent_root);
     records.extend(manifest.review_root);
     records.extend(manifest.replication_root);
+    records.extend(manifest.work_root);
 }
 
 async fn copy_exact(

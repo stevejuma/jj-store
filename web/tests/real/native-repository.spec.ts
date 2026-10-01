@@ -70,7 +70,7 @@ test("LocalTrusted bootstrap auto-opens without browser credentials", async ({
 
 test("demo history exposes one native divergent change", async ({ page }) => {
   await connect(page);
-  await page.getByRole("button", { name: "JJ Log", exact: true }).click();
+  await page.getByRole("tab", { name: "Commits", exact: true }).click();
 
   const alpha = page.getByRole("button", {
     name: "Divergent layout alpha",
@@ -115,6 +115,11 @@ test("external publication waits for explicit refresh and preserves selection", 
     .getByRole("button", { name: "Add repository browser", exact: true })
     .click();
 
+  // The seeded revision has a review association loaded after code selection.
+  await expect
+    .poll(() => routeQuery(page.url()).get("thread"))
+    .toMatch(/^[0-9a-f]{32}$/u);
+
   const selectedHash = new URL(page.url()).hash;
   const selected = routeQuery(page.url());
   expect(selected.get("bookmark")).toBe("main");
@@ -140,7 +145,7 @@ test("external publication waits for explicit refresh and preserves selection", 
   expect(refreshed.get("commit")).toBe(selected.get("commit"));
   expect(refreshed.get("change")).toBe(selected.get("change"));
 
-  await page.getByRole("button", { name: "JJ Log", exact: true }).click();
+  await page.getByRole("tab", { name: "Commits", exact: true }).click();
   await expect(
     page.getByRole("button", { name: publication, exact: true }),
   ).toBeVisible();
@@ -168,24 +173,28 @@ test("native conflict selection previews and publishes one atomic resolution", a
     .click();
   await page.getByRole("button", { name: "Repository actions" }).click();
   await page.getByRole("menuitem", { name: "Resolve conflicts" }).click();
-  const dialog = page.getByRole("dialog", { name: "Resolve native conflicts" });
+  const surface = page.getByRole("region", {
+    name: "Resolve native conflicts",
+  });
   await expect(
-    dialog.getByRole("heading", { name: "conflict.txt", exact: true }),
+    surface.getByRole("region", { name: "Conflict conflict.txt", exact: true }),
   ).toBeVisible();
-  await dialog.getByRole("button", { name: /^Use .*Conflict left/u }).click();
-  await dialog.getByRole("button", { name: "Preview 1/1" }).click();
-  await expect(dialog.getByText("Preview prepared")).toBeVisible();
+  await surface
+    .getByRole("button", { name: "Accept All Incoming Changes from Left" })
+    .click();
+  await surface.getByRole("button", { name: "Preview 1/1" }).click();
+  await expect(surface.getByText("Preview prepared")).toBeVisible();
   await expect(
-    dialog.locator(".store-mutation-preview dd").filter({
+    surface.locator(".store-mutation-preview dd").filter({
       hasText: "conflict.txt",
     }),
   ).toBeVisible();
-  await dialog.getByRole("button", { name: "Apply resolution" }).click();
+  await surface.getByRole("button", { name: "Apply resolution" }).click();
   const confirmation = page.getByRole("alertdialog", {
     name: "Apply atomic conflict resolution?",
   });
   await confirmation.getByRole("button", { name: "Apply resolution" }).click();
-  await expect(dialog.getByText("Conflicts resolved")).toBeVisible();
+  await expect(surface.getByText("Conflicts resolved")).toBeVisible();
 
   expect(requests).toHaveLength(2);
   expect(requests[1]).toEqual(requests[0]);
@@ -213,7 +222,7 @@ test("browser mutation previews and publishes one native request", async ({
   await page.getByRole("menuitem", { name: "Create change" }).click();
   const dialog = page.getByRole("dialog", { name: "Create change" });
   await dialog
-    .getByLabel("Description")
+    .getByRole("textbox", { name: "Markdown editor" })
     .fill("Create a durable browser mutation");
   await dialog.getByRole("button", { name: "Preview change" }).click();
   await expect(dialog.getByText("Preview prepared")).toBeVisible();
@@ -239,7 +248,7 @@ test("browser mutation previews and publishes one native request", async ({
       ),
     )
     .not.toBe("none");
-  await page.getByRole("button", { name: "JJ Log", exact: true }).click();
+  await page.getByRole("tab", { name: "Commits", exact: true }).click();
   await expect(
     page.getByRole("button", {
       name: "Create a durable browser mutation",

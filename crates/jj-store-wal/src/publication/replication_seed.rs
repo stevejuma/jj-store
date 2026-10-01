@@ -94,6 +94,9 @@ impl Coordinator {
             {
                 return self.seed_result(&base, request, &receipt.result).await;
             }
+            if base.manifest.work_root.is_some() {
+                return Err(Error::Unsupported("WorkStore origin replication"));
+            }
             if base.manifest.format != 2 || base.manifest.replication_root.is_some() {
                 return Err(Error::AlreadyExists);
             }

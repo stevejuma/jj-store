@@ -125,7 +125,7 @@
       within(sidebar).getByRole("radio", { name: "Show files as list" }),
     );
     await userEvent.click(
-      within(sidebar).getByRole("button", { name: "assets/logo.bin" }),
+      await within(sidebar).findByRole("button", { name: "assets/logo.bin" }),
     );
     await expect(
       view.queryByRole("button", { name: "Stage merged file" }),
@@ -134,7 +134,7 @@
       within(header).getByRole("button", { name: "Delete path" }),
     ).toBeVisible();
     await userEvent.click(
-      within(sidebar).getByRole("button", { name: "src/lib.rs" }),
+      await within(sidebar).findByRole("button", { name: "src/lib.rs" }),
     );
     await expect(editor).toHaveValue("// retained merge draft\n");
   }}

@@ -117,6 +117,7 @@ impl Coordinator {
         for _ in 0..self.limits.cas_attempts {
             let base = self.read().await?;
             self.guard.authorize_replication(&base, request).await?;
+            self.ensure_origin_replication().await?;
             if let Some(receipt) = self
                 .lookup_identity(
                     &base.manifest,
@@ -427,6 +428,7 @@ impl Coordinator {
                 ..base.manifest.clone()
             };
             self.guard.authorize_replication(&base, request).await?;
+            self.ensure_origin_replication().await?;
             match self.write_manifest(&base, manifest).await {
                 Ok(Some(_)) => return Ok(result),
                 Ok(None) => continue,

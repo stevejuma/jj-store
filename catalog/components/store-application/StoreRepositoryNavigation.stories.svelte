@@ -16,6 +16,7 @@
     "Op Log",
     "Agents",
     "Reviews",
+    "Projects",
   ];
 </script>
 
@@ -38,7 +39,14 @@
       ".lc-community-navigation__section",
     )!;
     await expect(getComputedStyle(section).marginBlockStart).toBe("0px");
-    for (const label of ["Branches", "JJ Log", "Op Log", "Agents", "Reviews"])
+    for (const label of [
+      "Branches",
+      "JJ Log",
+      "Op Log",
+      "Agents",
+      "Reviews",
+      "Projects",
+    ])
       await expect(left.queryByRole("button", { name: label })).toBeNull();
     await userEvent.click(
       canvas.getByRole("button", { name: "Toggle details" }),
@@ -61,6 +69,7 @@
       ["Op Log", "Op Log"],
       ["Agents", "Agents"],
       ["Reviews", "Reviews"],
+      ["Projects", "Projects"],
     ]) {
       const item = right.getByRole("button", { name: label });
       await expect(item.querySelector("svg")).not.toBeNull();

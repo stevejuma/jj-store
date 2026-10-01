@@ -1,6 +1,5 @@
 import type { QueryClient } from "@tanstack/svelte-query";
 import {
-  ApiError,
   Client,
   fullId,
   type Envelope,
@@ -19,11 +18,14 @@ import { storeQueryKeys, type StoreQueryScope } from "./store-query-keys.js";
 import { HttpCollaborationDataSource } from "./http-collaboration-data-source.js";
 import { HttpStoreWriteDataSource } from "./http-store-write-data-source.js";
 
+import { HttpWorkDataSource } from "./http-work-data-source.js";
+
 export class HttpStoreDataSource implements StoreDataSource {
   readonly #client: Client;
   readonly #scope: StoreQueryScope;
   readonly #collaboration: HttpCollaborationDataSource;
   readonly #writes: HttpStoreWriteDataSource;
+  readonly work: HttpWorkDataSource;
   #active = true;
 
   constructor(
@@ -36,6 +38,7 @@ export class HttpStoreDataSource implements StoreDataSource {
   ) {
     this.#client = new Client(repository, token, denied, fetcher);
     this.#scope = { repository, session };
+    this.work = new HttpWorkDataSource(this.#client);
     this.#writes = new HttpStoreWriteDataSource(this.#client);
     this.#collaboration = new HttpCollaborationDataSource(
       this.#client,
@@ -297,8 +300,4 @@ export class HttpStoreDataSource implements StoreDataSource {
   }
 }
 
-export function storeErrorMessage(cause: unknown): string {
-  if (cause instanceof ApiError) return cause.message;
-  if (cause instanceof DOMException && cause.name === "AbortError") return "";
-  return "The repository request could not be completed.";
-}
+export { storeErrorMessage } from "./store-error.js";

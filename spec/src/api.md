@@ -882,7 +882,28 @@ heads or reads client working-copy files. No HTTP or generated DTO changes are
 required for this presentation.
 
 Repository tab labels and right-rail navigation are presentation-only. Overview
-retains the existing `files` route, Commits retains `log`, and all six
+retains the existing `files` route, Commits retains `log`, and all seven
 destinations preserve their operation and workspace context through existing
 controller actions. Responsive overflow neither changes the route grammar nor
 publishes native state.
+
+## WorkStore service and transports
+
+WorkStore HTTP exposes bounded project/task/comment pages and typed command
+apply/status under /v1/repos/{repo}/work. Continuations retain one selected
+WorkStore root, repeat the query and page size, reauthorize each page, and reset
+after expiry or serving restart. The browser keeps code pins separate and
+refreshes task metadata explicitly.
+
+WorkStore browser reads use an independent pinned root per paged collection. The
+Projects destination does not require a selected code operation. Stable
+project/task route selections reload on explicit refresh. A saved receipt marks
+freshness; ambiguous outcomes keep the complete request, including exact version
+preconditions and entity IDs. Status and retry share that identity, even after
+refresh. Linked repository navigation uses the normal target session and token
+checks, never the home metadata grant.
+
+The shared browser history independently restores Projects task identities and
+the JJ Log evolution anchor. Page changes clear incompatible selections while
+preserving the full code operation pin; Back, Forward and reload restore the
+selected destination without publishing repository state.

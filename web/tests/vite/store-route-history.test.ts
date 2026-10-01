@@ -152,3 +152,49 @@ test("workspace names survive browser Back, Forward, reload and repository switc
   reload.destroy();
   history.destroy();
 });
+
+test("Projects and Evo Log restore independent identities through browser history", () => {
+  const commit = "78".repeat(64),
+    evolution = "9a".repeat(64),
+    project = "bc".repeat(16),
+    task = "de".repeat(16);
+  const initial = `#/repos/${repository}/log?at_op=${operation}&commit=${commit}&evolution=${evolution}`;
+  const navigation = fakeBrowser(initial),
+    history = createStoreRouteHistory(navigation.browser);
+  history.page("projects");
+  expect(history.route).toMatchObject({
+    page: "projects",
+    snapshotOperationId: operation,
+    commitId: null,
+    evolutionCommitId: null,
+  });
+  history.push({ ...history.route, projectId: project, taskId: task });
+  const projects = storeRouteToHash(history.route)!;
+  history.page("log");
+  expect(history.route).toMatchObject({
+    page: "log",
+    snapshotOperationId: operation,
+    projectId: null,
+    taskId: null,
+  });
+  navigation.visit(initial);
+  expect(history.route).toMatchObject({
+    page: "log",
+    commitId: commit,
+    evolutionCommitId: evolution,
+    snapshotOperationId: operation,
+  });
+  navigation.visit(projects);
+  const reload = createStoreRouteHistory(fakeBrowser(projects).browser);
+  for (const restored of [history, reload]) {
+    expect(restored.route).toMatchObject({
+      page: "projects",
+      projectId: project,
+      taskId: task,
+      snapshotOperationId: operation,
+      commitId: null,
+      evolutionCommitId: null,
+    });
+    restored.destroy();
+  }
+});

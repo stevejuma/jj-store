@@ -1,9 +1,14 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
+import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import {
   validateLedger,
   ledgerPath,
   needsEvidence,
+  run,
 } from "./check-progress.mjs";
 import { dependencyErrors } from "./check-boundaries.mjs";
 
@@ -140,6 +145,59 @@ test("rejects_touch_without_new_evidence", () =>
       fixture(undefined, undefined, {
         changed: ["crates/a/src/lib.rs", ledgerPath],
         previousEntries: [entry],
+      }),
+    ).join(),
+    /new or updated evidence/,
+  ));
+test("progress_checks_merge_against_every_parent", () => {
+  const root = mkdtempSync(join(tmpdir(), "jj-store-progress-merge-"));
+  const jj = (...args) =>
+    execFileSync("jj", ["--no-pager", ...args], {
+      cwd: root,
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "pipe"],
+    }).trim();
+  const ledger = (entries) =>
+    writeFileSync(join(root, ledgerPath), fixture(undefined, entries).source);
+  try {
+    jj("git", "init");
+    mkdirSync(join(root, "spec/src"), { recursive: true });
+    writeFileSync(
+      join(root, "spec/src/boundary.md"),
+      "| JST-GOV-001 | rule |\n",
+    );
+    writeFileSync(join(root, "test.rs"), "#[test] fn proof() {}\n");
+    ledger([entry]);
+    jj("commit", "-m", "baseline");
+    const base = jj("log", "-r", "@-", "--no-graph", "-T", "commit_id");
+    const left = { ...entry, id: "E-TEST-002" },
+      right = { ...entry, id: "E-TEST-003" };
+    mkdirSync(join(root, "web"));
+    writeFileSync(join(root, "web/left.ts"), "export {};\n");
+    ledger([entry, left]);
+    jj("commit", "-m", "left");
+    const leftId = jj("log", "-r", "@-", "--no-graph", "-T", "commit_id");
+    jj("new", base, "-m", "right");
+    mkdirSync(join(root, "web"), { recursive: true });
+    writeFileSync(join(root, "web/right.ts"), "export {};\n");
+    ledger([entry, right]);
+    jj("commit", "-m", "right");
+    const rightId = jj("log", "-r", "@-", "--no-graph", "-T", "commit_id");
+    jj("new", leftId, rightId, "-m", "merge");
+    ledger([entry, left, right]);
+    assert.throws(() => run(root), /new or updated evidence/);
+    ledger([entry, left, right, { ...entry, id: "E-TEST-004" }]);
+    assert.doesNotThrow(() => run(root));
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+test("rejects_existing_parent_variant_as_new_merge_evidence", () =>
+  assert.match(
+    validateLedger(
+      fixture(undefined, undefined, {
+        changed: ["web/merged.ts", ledgerPath],
+        previousEntries: [entry, { ...entry, kind: "other-parent" }],
       }),
     ).join(),
     /new or updated evidence/,

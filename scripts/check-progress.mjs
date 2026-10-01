@@ -205,8 +205,8 @@ export function validateLedger({
   if (changed.some(needsEvidence)) {
     if (!changed.includes(ledgerPath))
       errors.push("protected change requires a same-change ledger update");
-    const old = new Map(previousEntries.map((e) => [e.id, JSON.stringify(e)]));
-    if (!entries.some((e) => old.get(e.id) !== JSON.stringify(e)))
+    const old = new Set(previousEntries.map((e) => JSON.stringify(e)));
+    if (!entries.some((e) => !old.has(JSON.stringify(e))))
       errors.push("protected change requires a new or updated evidence entry");
   }
   return [...new Set(errors)];
@@ -222,16 +222,36 @@ export function run(root) {
       stdio: ["ignore", "pipe", "pipe"],
     });
   const rev = process.env.JJ_STORE_CHECK_REVISION ?? "@";
-  const changed = jj(["diff", "--name-only", "--from", `${rev}-`, "--to", rev])
+  const parents = jj([
+    "log",
+    "-r",
+    `${rev}-`,
+    "--no-graph",
+    "-T",
+    'commit_id ++ "\\n"',
+  ])
     .trim()
     .split("\n")
     .filter(Boolean);
+  if (!parents.length) throw new Error("checked revision has no parent");
+  const changed = [
+    ...new Set(
+      parents.flatMap((parent) =>
+        jj(["diff", "--name-only", "--from", parent, "--to", rev])
+          .trim()
+          .split("\n")
+          .filter(Boolean),
+      ),
+    ),
+  ];
   let previousEntries = [];
-  const parentFiles = jj(["file", "list", "-r", `${rev}-`]).split("\n");
-  if (parentFiles.includes(ledgerPath))
-    previousEntries = parseLedger(
-      jj(["file", "show", "-r", `${rev}-`, ledgerPath]),
-    ).entries;
+  for (const parent of parents) {
+    const parentFiles = jj(["file", "list", "-r", parent]).split("\n");
+    if (parentFiles.includes(ledgerPath))
+      previousEntries.push(
+        ...parseLedger(jj(["file", "show", "-r", parent, ledgerPath])).entries,
+      );
+  }
   const paths = jj(["file", "list"])
     .split("\n")
     .filter(

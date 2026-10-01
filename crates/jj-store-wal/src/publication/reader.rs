@@ -103,7 +103,7 @@ pub(super) async fn selected(
         {
             return Err(Error::Corrupt("previous log position"));
         }
-        let domains = if manifest.format == 2 && after.0 >= manifest.domain_history_start {
+        let domains = if manifest.format >= 2 && after.0 >= manifest.domain_history_start {
             Some(
                 prior
                     .after_domains
@@ -145,7 +145,7 @@ pub(super) async fn selected(
         {
             return Err(Error::Corrupt("committed log chain"));
         }
-        if manifest.format == 2 && position.0 >= manifest.domain_history_start {
+        if manifest.format >= 2 && position.0 >= manifest.domain_history_start {
             let after_domains = transaction
                 .after_domains
                 .ok_or(Error::Corrupt("domain history missing"))?;
@@ -180,7 +180,7 @@ pub(super) async fn selected(
     if after.0 + count == manifest.published.0
         && (previous != manifest.tail
             || previous_snapshot != manifest.snapshot()
-            || (manifest.format == 2
+            || (manifest.format >= 2
                 && manifest.published.0 >= manifest.domain_history_start
                 && previous_domains != manifest.domains()))
     {

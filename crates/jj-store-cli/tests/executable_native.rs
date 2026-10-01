@@ -1055,3 +1055,97 @@ async fn native_cli_semantic_git_transport_and_gc_fail_without_publication() {
     }
     assert!(!root.join(".git").exists());
 }
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn executable_workstore_creates_tasks_comments_and_recovers_without_an_upstream() {
+    let mut f = Fixture::new().await;
+    f.attach("workstore");
+    let work = f.root.path().join("workstore");
+    let request = m::RequestId::new([150; 16]).to_string();
+    let accepted: serde_json::Value = serde_json::from_str(&f.run(
+        &work,
+        &[
+            "project",
+            "create",
+            "--title",
+            "Release",
+            "--request-id",
+            &request,
+            "--format",
+            "json",
+        ],
+    ))
+    .unwrap();
+    let project = accepted["receipt"]["result"]["project"]["id"]
+        .as_str()
+        .unwrap();
+    let task_request = m::RequestId::new([151; 16]).to_string();
+    let args = [
+        "task",
+        "create",
+        "--project",
+        project,
+        "--title",
+        "Implement native tasks",
+        "--expected-project-version",
+        "1",
+        "--request-id",
+        &task_request,
+        "--format",
+        "json",
+    ];
+    let task: serde_json::Value = serde_json::from_str(&f.run(&work, &args)).unwrap();
+    let task_id = task["receipt"]["result"]["task"]["id"].as_str().unwrap();
+    assert_eq!(
+        serde_json::from_str::<serde_json::Value>(&f.run(&work, &args)).unwrap(),
+        task
+    );
+    let comment_request = m::RequestId::new([152; 16]).to_string();
+    f.run(
+        &work,
+        &[
+            "task",
+            "comment",
+            task_id,
+            "--expected-task-version",
+            "1",
+            "--body",
+            "Persisted discussion",
+            "--request-id",
+            &comment_request,
+        ],
+    );
+    let before = f.snapshot().await;
+    let denied = f
+        .command(
+            &work,
+            &[
+                "project",
+                "create",
+                "--title",
+                "Denied",
+                "--request-id",
+                &m::RequestId::new([153; 16]).to_string(),
+            ],
+        )
+        .env("JJ_STORE_TOKEN", f.reader.expose().as_str())
+        .output()
+        .unwrap();
+    assert!(!denied.status.success());
+    assert_eq!(f.snapshot().await, before);
+    f.stop().await;
+    f.start().await;
+    let status: serde_json::Value = serde_json::from_str(&f.run(
+        &work,
+        &["task", "status", &task_request, "--format", "json"],
+    ))
+    .unwrap();
+    assert_eq!(status, task);
+    let shown: serde_json::Value =
+        serde_json::from_str(&f.run(&work, &["task", "show", task_id, "--format", "json"]))
+            .unwrap();
+    assert_eq!(shown["comments"][0]["body"], "Persisted discussion");
+    assert_eq!(shown["tasks"][0]["version"], 2);
+    assert_eq!(f.snapshot().await, before);
+    f.stop().await;
+}

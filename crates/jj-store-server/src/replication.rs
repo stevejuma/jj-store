@@ -62,9 +62,10 @@ fn local_error(operation: &'static str, error: transport::Error) -> EndpointFail
         | transport::Error::Unknown
         | transport::Error::Conflict
         | transport::Error::Limit => EndpointFailure::transient(operation),
-        transport::Error::Denied | transport::Error::Invalid | transport::Error::NotFound => {
-            EndpointFailure::permanent(operation)
-        }
+        transport::Error::Unsupported
+        | transport::Error::Denied
+        | transport::Error::Invalid
+        | transport::Error::NotFound => EndpointFailure::permanent(operation),
     }
 }
 

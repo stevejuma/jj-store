@@ -33,6 +33,7 @@ repository suites remain outside the default verification scope.
 | `^crates/jj-store-object/`                                                                                                                                                                                                                     | `object-store.md`    |
 | `^crates/jj-store-wal/`                                                                                                                                                                                                                        | `publication.md`     |
 | `^crates/jj-store-replication/`                                                                                                                                                                                                                | `replication.md`     |
+| `^crates/jj-work/`                                                                                                                                                                                                                             | `projects.md`        |
 | `^crates/jj-(?:agent\|review)/`                                                                                                                                                                                                                | `collaboration.md`   |
 | `^crates/jj-store-jj/`                                                                                                                                                                                                                         | `jj-integration.md`  |
 | `^crates/jj-store-service/`                                                                                                                                                                                                                    | `mutations.md`       |
@@ -67,6 +68,14 @@ Governance commands that read tracked specification state through child
 processes use an explicit bounded output allowance large enough for the current
 ledger. Growth beyond that allowance fails closed instead of truncating parent
 evidence used by same-change validation.
+
+Progress validation enumerates every direct parent of a JJ merge, audits the
+union of changed paths and retains every parent's evidence signatures. Merely
+combining existing entries does not satisfy the same-change integration gate;
+the merge must add or update evidence absent from every parent. The published
+spec-first CLI accepts explicit common-ancestor and merge commit IDs through
+`--base` and `--head` for merge qualification; its default `@-` selection is
+single-parent only.
 
 The M0 contract harness is validated in both normal tests and spec checks. Real
 storage qualification remains an explicit lane and cannot be inferred from the
@@ -383,3 +392,31 @@ static catalog browser, production controller tests and an owned LocalTrusted
 reset distinct in the evidence ledger. The live reset must record that seeded
 hook capture currently lacks an exact code-association publication path; catalog
 association coverage cannot be presented as live Agent Context evidence.
+
+## Native WorkStore
+
+M11 owns native projects and tasks under projects.md. The boundary checker
+registers jj-work as a neutral model-only layer, with WAL allowed to depend on
+it. WorkStore persistence changes also require publication.md; native copy and
+fail-closed replication require explicit regression evidence.
+
+## WorkStore service and transports
+
+The WorkStore transport capture executes registered work page, command and
+durable-status handlers. Its generated contracts preserve typed
+command/precondition fields and full entity IDs. Native transport and CLI
+acceptance use disposable local sessions and do not replace installed binaries.
+
+M11 browser evidence records the exact Projects story/unit/Playwright targets.
+The cold real-browser runner accepts an explicit test-file filter and an
+explicit existing pinned RustFS runtime to avoid rebuilding unchanged storage.
+It retains fresh isolated initialization, native runtime verification and owned
+cleanup.
+
+M11 updates the tracked execution scope with the native local-service profile
+and the WorkStore/M10 boundary. Development reset finishes the full sample and
+its search projection on a temporary instance, then measures a fresh server and
+storage restart through server/search readiness. Complete initial preparation is
+measured separately; resource limits remain unchanged. This proves opening
+persisted sample state, while search cache-loss rebuild qualification remains a
+separate gate.
