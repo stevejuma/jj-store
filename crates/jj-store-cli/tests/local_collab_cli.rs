@@ -726,6 +726,16 @@ fn malformed_actor_fields_targets_and_oversized_documents_fail_without_publicati
         ],
     );
     reject(&path, &device, &["thread", "list", "--limit", "257"]);
+    reject(
+        &path,
+        &device,
+        &["thread", "list", "--cursor", "native-token"],
+    );
+    reject(
+        &path,
+        &device,
+        &["reaction", "emojis", "--cursor", "native-token"],
+    );
     reject(&path, &device, &["reaction", "emojis", "--limit", "0"]);
     assert_eq!(
         output(&path, &device, &["thread", "list"])["snapshot"],

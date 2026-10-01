@@ -107,6 +107,12 @@ classified; status returning `not_known` is never treated as rejection.
 
 ## Native publication policy
 
+Native CLI collaboration uses the same typed RPC mutation service and explicit
+request IDs as application transports. Unavailable, timed-out, cancelled or
+unclassifiable responses remain outcome-unknown under that original identity;
+known authorization, validation, stale and changed-intent errors stay errors.
+Status and page reads never retry publication or initialize capture state.
+
 Native RPC collaboration requests carry only version, stable request identity
 and typed intent. Custom definition uploads have one binary source field and
 must not also supply inline JSON bytes. The codec reconstructs the same intent

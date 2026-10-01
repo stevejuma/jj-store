@@ -64,6 +64,10 @@ actor state absent. Cross-process pages bind the named current metadata commit;
 changed state returns stale and requires explicit refresh. Native RPC support is
 qualified independently rather than silently opening a local Git profile.
 
+CLI mutation input admission is shared across providers without changing local
+intent or receipt encodings. Native --cursor and local --after/--at-metadata
+continuations are explicitly disjoint; profile-mismatched selectors fail closed.
+
 Local Thread/Reaction commands and results use the shared jj-collab typed domain
 variants. Existing local names remain public aliases and preserve exact JSON
 tags, field order and receipt framing. Filesystem admission, actor derivation,

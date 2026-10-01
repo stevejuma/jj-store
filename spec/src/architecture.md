@@ -47,6 +47,11 @@ domain cannot publish a Git ref or repository manifest.
 
 ## Requirements
 
+The CLI has one collaboration input-admission module for both providers. Native
+reads and mutations consume only the typed RPC client, while filesystem commands
+retain the companion facade. An uncertain RPC command response is reported with
+its original request ID rather than silently retried.
+
 | ID           | Requirement                                                                                                                                                                                                                             |
 | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | JST-ARCH-001 | The repository MUST provide a Rust workspace with independently owned native storage, publication, JJ integration, services, transports, adapters, and presentation boundaries.                                                         |

@@ -1,9 +1,11 @@
 # CLI and server commands
 
-The native RPC client exposes typed Thread/Reaction commands, status, signed
-pages and exact detail/asset reads. Native CLI dispatch remains a dependent
-gate; the existence of an RPC client does not establish executable CLI
-acceptance.
+The native CLI uses the typed RPC client for Thread/Reaction commands, status,
+signed pages and Thread detail. Native pages use opaque --cursor; local Git
+pages use --after with --at-metadata. Mixing these profiles fails explicitly.
+Both providers share the same bounded input admission and typed intent. Unknown
+RPC outcomes return the original request ID without retrying publication. Native
+code writes still require reducer 3; WorkStore homes retain their origin freeze.
 
 Local `jj agent thread` exposes list/show/create, bounded typed apply/message
 intents and durable status. `jj agent reaction` exposes exact-target query,
@@ -13,9 +15,9 @@ identities; actors are filesystem-provider derived and explicit request IDs
 survive process loss. Input reads stop at their byte limit instead of loading
 unbounded files. Read and result JSON stays within four MiB. Continuations
 require an explicit metadata commit and reject changed snapshots; reads do not
-initialize metadata, actor state or the agent registry. Native CLI transport
-remains a separate gate. These commands neither launch nor continue jj-acp or
-another agent process.
+initialize metadata, actor state or the agent registry. Native serving and cold
+local filesystem qualification remain distinct. These commands neither launch
+nor continue jj-acp or another agent process.
 
 M13 local agent commands resolve the admitted GitBackend without a native
 connection. Status and session reads do not initialize companion metadata;

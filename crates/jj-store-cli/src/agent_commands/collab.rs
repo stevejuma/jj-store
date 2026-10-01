@@ -1,3 +1,5 @@
+mod intents;
+mod native;
 use super::{AgentCommand, Backend, CommandError, error};
 use clap::Subcommand;
 use jj_collab::*;
@@ -21,6 +23,8 @@ pub enum ThreadCliCommand {
         after: Option<ThreadId>,
         #[arg(long)]
         at_metadata: Option<GitOid>,
+        #[arg(long)]
+        cursor: Option<String>,
     },
     Show {
         thread_id: ThreadId,
@@ -92,6 +96,8 @@ pub enum ReactionCliCommand {
         after: Option<m::PrincipalId>,
         #[arg(long)]
         at_metadata: Option<GitOid>,
+        #[arg(long)]
+        cursor: Option<String>,
     },
     DefineEmoji {
         #[arg(long)]
@@ -122,6 +128,8 @@ pub enum ReactionCliCommand {
         after: Option<CustomEmojiId>,
         #[arg(long)]
         at_metadata: Option<GitOid>,
+        #[arg(long)]
+        cursor: Option<String>,
     },
     Status {
         request_id: m::RequestId,
@@ -171,6 +179,14 @@ fn continuation(
     }
     Ok(())
 }
+fn local_cursor(cursor: &Option<String>) -> Result<(), CommandError> {
+    if cursor.is_some() {
+        return Err(error(
+            "local Git pages use --after and --at-metadata; native --cursor is not supported",
+        ));
+    }
+    Ok(())
+}
 async fn apply(
     repo: &LocalRepository,
     id: m::RequestId,
@@ -198,10 +214,18 @@ impl Backend {
         ) {
             return Ok(None);
         }
-        let Self::Local(repo) = self else {
-            return Err(error(
-                "native Thread/Reaction CLI transport is not qualified yet",
-            ));
+        if let Some((id, intent)) = intents::read(command)? {
+            let output = match self {
+                Self::Local(repo) => apply(repo, id, intent).await?,
+                Self::Native(connection) => native::apply(connection, id, intent).await?,
+            };
+            return Ok(Some(output));
+        }
+        let repo = match self {
+            Self::Local(repo) => repo,
+            Self::Native(connection) => {
+                return native::read(connection, command).await.map(Some);
+            }
         };
         let output = match command {
             AgentCommand::Thread { command } => match command {
@@ -209,7 +233,9 @@ impl Backend {
                     limit,
                     after,
                     at_metadata,
+                    cursor,
                 } => {
+                    local_cursor(cursor)?;
                     let store = repo.thread_store().await.map_err(error)?;
                     continuation(
                         after.is_some(),
@@ -265,157 +291,34 @@ impl Backend {
                         &serde_json::json!({"snapshot":store.snapshot,"reference":reference,"value":thread}),
                     )?
                 }
-                ThreadCliCommand::Create {
-                    request_id,
-                    thread_id,
-                    title,
-                    baseline,
-                } => {
-                    let baseline = baseline.as_ref().map(|p| document(p)).transpose()?;
-                    apply(
-                        repo,
-                        *request_id,
-                        CollabCommandV1::Thread {
-                            intent: ThreadCommandV1::Create {
-                                thread_id: *thread_id,
-                                title: title.clone(),
-                                baseline,
-                            },
-                        },
-                    )
-                    .await?
-                }
-                ThreadCliCommand::Apply { request_id, intent }
-                | ThreadCliCommand::Message { request_id, intent } => {
-                    let intent: ThreadCommandV1 = document(intent)?;
-                    if matches!(command, ThreadCliCommand::Message { .. })
-                        && !matches!(intent, ThreadCommandV1::Message { .. })
-                    {
-                        return Err(error("thread message requires a typed message intent"));
-                    }
-                    apply(repo, *request_id, CollabCommandV1::Thread { intent }).await?
-                }
                 ThreadCliCommand::Status { request_id } => {
                     value(&repo.collab_command_status(*request_id).map_err(error)?)?
                 }
+                _ => return Err(error("collaboration intent dispatch failed")),
             },
             AgentCommand::Reaction { command } => match command {
-                ReactionCliCommand::Set {
-                    request_id,
-                    target,
-                    value: reaction,
-                    observed,
-                } => {
-                    let observed = observed
-                        .as_ref()
-                        .map(|p| document::<BTreeSet<CollabObjectRef>>(p))
-                        .transpose()?
-                        .unwrap_or_default();
-                    apply(
-                        repo,
-                        *request_id,
-                        CollabCommandV1::Reaction {
-                            intent: ReactionCommandV1::Set {
-                                target: document(target)?,
-                                observed,
-                                value: document(reaction)?,
-                            },
-                        },
-                    )
-                    .await?
-                }
-                ReactionCliCommand::Clear {
-                    request_id,
-                    target,
-                    observed,
-                } => {
-                    apply(
-                        repo,
-                        *request_id,
-                        CollabCommandV1::Reaction {
-                            intent: ReactionCommandV1::Clear {
-                                target: document(target)?,
-                                observed: document(observed)?,
-                            },
-                        },
-                    )
-                    .await?
-                }
-                ReactionCliCommand::Resolve {
-                    request_id,
-                    target,
-                    observed,
-                    value: reaction,
-                } => {
-                    apply(
-                        repo,
-                        *request_id,
-                        CollabCommandV1::Reaction {
-                            intent: ReactionCommandV1::ResolveConflict {
-                                target: document(target)?,
-                                observed: document(observed)?,
-                                value: reaction.as_ref().map(|p| document(p)).transpose()?,
-                            },
-                        },
-                    )
-                    .await?
-                }
                 ReactionCliCommand::Query {
                     target,
                     limit,
                     after,
                     at_metadata,
-                } => value(
-                    &repo
-                        .reaction_query(&document(target)?, *after, *limit, *at_metadata)
-                        .await
-                        .map_err(error)?,
-                )?,
-                ReactionCliCommand::DefineEmoji {
-                    request_id,
-                    emoji_id,
-                    expected,
-                    shortcode,
-                    label,
-                    asset,
+                    cursor,
                 } => {
-                    apply(
-                        repo,
-                        *request_id,
-                        CollabCommandV1::Emoji {
-                            intent: CustomEmojiCommandV1::Define {
-                                emoji_id: *emoji_id,
-                                expected: expected.map(definition),
-                                shortcode: shortcode.clone(),
-                                label: label.clone(),
-                                bytes: bytes(asset, MAX_IMAGE_BYTES)?,
-                            },
-                        },
-                    )
-                    .await?
-                }
-                ReactionCliCommand::RetireEmoji {
-                    request_id,
-                    emoji_id,
-                    expected,
-                } => {
-                    apply(
-                        repo,
-                        *request_id,
-                        CollabCommandV1::Emoji {
-                            intent: CustomEmojiCommandV1::Retire {
-                                emoji_id: *emoji_id,
-                                expected: definition(*expected),
-                            },
-                        },
-                    )
-                    .await?
+                    local_cursor(cursor)?;
+                    value(
+                        &repo
+                            .reaction_query(&document(target)?, *after, *limit, *at_metadata)
+                            .await
+                            .map_err(error)?,
+                    )?
                 }
                 ReactionCliCommand::Emojis {
                     limit,
                     after,
                     at_metadata,
+                    cursor,
                 } => {
+                    local_cursor(cursor)?;
                     let store = repo.reaction_store().await.map_err(error)?;
                     continuation(
                         after.is_some(),
@@ -428,6 +331,7 @@ impl Backend {
                 ReactionCliCommand::Status { request_id } => {
                     value(&repo.collab_command_status(*request_id).map_err(error)?)?
                 }
+                _ => return Err(error("collaboration intent dispatch failed")),
             },
             _ => return Ok(None),
         };

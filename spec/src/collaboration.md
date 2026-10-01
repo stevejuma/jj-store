@@ -182,8 +182,11 @@ agent integrations. Separate executable processes preserve receipt replay, exact
 human-message revision feedback, observed-set preconditions, retained custom
 definition versions, bounded input/output and explicit metadata-commit
 continuations. These commands leave code operation heads and unsnapshotted files
-unchanged. Native CLI transport and jj-acp process execution remain independent
-qualification gates; local command acceptance does not establish either.
+unchanged. Native executable CLI acceptance and jj-acp process execution remain
+independent gates; local command acceptance does not establish either. Native
+CLI commands share input admission with the local profile, use signed --cursor
+pages, retain original identities on uncertain transport responses, and never
+initialize an agent registry or invoke a runner.
 
 Reducer 3 transports Thread/Reaction facts and complete retained closures.
 Equivalent accepted origin sets converge. Replay/import only reconstructs data.
