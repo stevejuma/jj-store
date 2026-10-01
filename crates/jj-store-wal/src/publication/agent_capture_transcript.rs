@@ -9,10 +9,10 @@ use jj_agent::{
 const TRANSCRIPT_PAGE_ENTRIES: usize = 256;
 const SOURCE_GENERATION: u64 = 1;
 
-impl Coordinator {
+impl AgentProjector<'_> {
     pub(super) async fn stage_capture_transcript(
         &self,
-        base: &AgentStoreSnapshot,
+        base: &dyn AgentSnapshotRead,
         batch: &SanitizedObservationBatchV1,
         normalized: &NormalizationBatchV1,
         session: &mut AgentSessionSnapshotV1,
@@ -119,7 +119,7 @@ impl Coordinator {
 }
 
 async fn transcript_chunk_references(
-    base: &AgentStoreSnapshot,
+    base: &dyn AgentSnapshotRead,
     stream: &TranscriptStreamV1,
 ) -> Result<Vec<(u64, AgentObjectRef)>> {
     let mut values = Vec::new();

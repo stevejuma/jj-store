@@ -11,10 +11,10 @@ use jj_review::{
 const PAGE_ENTRIES: usize = 256;
 const MAX_INDEX_ENTRIES: usize = 4096;
 
-impl Coordinator {
+impl ReviewProjector<'_> {
     pub(super) async fn stage_new_thread_indexes(
         &self,
-        store: &ReviewStoreSnapshot,
+        store: &dyn ReviewSnapshotRead,
         anchor: &ArtifactAnchorV1,
         thread_id: jj_review::ReviewThreadId,
         snapshot: ReviewObjectRef,
@@ -56,7 +56,7 @@ impl Coordinator {
 
     pub(super) async fn stage_updated_thread_indexes(
         &self,
-        store: &ReviewStoreSnapshot,
+        store: &dyn ReviewSnapshotRead,
         loaded: &LoadedReviewThread,
         snapshot: ReviewObjectRef,
         next_status: ThreadStatusV1,
@@ -112,7 +112,7 @@ impl Coordinator {
 
     async fn upsert_relation(
         &self,
-        store: &ReviewStoreSnapshot,
+        store: &dyn ReviewSnapshotRead,
         catalog: ReviewCatalogKind,
         subject: ReviewRelationSubjectV1,
         entry: ReviewThreadRelationV1,
@@ -135,7 +135,7 @@ impl Coordinator {
 
     async fn upsert_status(
         &self,
-        store: &ReviewStoreSnapshot,
+        store: &dyn ReviewSnapshotRead,
         status: ThreadStatusV1,
         thread_id: jj_review::ReviewThreadId,
         snapshot: Option<ReviewObjectRef>,
@@ -170,7 +170,7 @@ impl Coordinator {
 
     async fn load_relation_entries(
         &self,
-        store: &ReviewStoreSnapshot,
+        store: &dyn ReviewSnapshotRead,
         mut page: Option<ReviewObjectRef>,
         subject: &ReviewRelationSubjectV1,
     ) -> std::result::Result<Vec<ReviewThreadRelationV1>, ReviewCommandError> {
@@ -191,7 +191,7 @@ impl Coordinator {
 
     async fn load_status_entries(
         &self,
-        store: &ReviewStoreSnapshot,
+        store: &dyn ReviewSnapshotRead,
         mut page: Option<ReviewObjectRef>,
         status: ThreadStatusV1,
     ) -> std::result::Result<Vec<ReviewThreadRelationV1>, ReviewCommandError> {

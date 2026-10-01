@@ -29,7 +29,7 @@ impl ReviewCommandRequest {
         Ok(request)
     }
 
-    fn validate(&self) -> std::result::Result<(), ReviewCommandError> {
+    pub(super) fn validate(&self) -> std::result::Result<(), ReviewCommandError> {
         self.command
             .validate()
             .map_err(|_| ReviewCommandError::Invalid("review command"))
@@ -66,8 +66,9 @@ pub enum ReviewCommandError {
     Invalid(&'static str),
 }
 
-pub(super) struct AppliedReviewCommand {
-    pub root: RecordRef,
+/// Immutable projection only; this value is not a publication or receipt.
+pub struct AppliedReviewCommand {
+    pub root: ReviewRootV1,
     pub delta: ReviewDeltaV1,
     pub result: ReviewCommandResultV1,
 }
@@ -139,8 +140,8 @@ impl Coordinator {
             }
 
             let pinned = self.review_store(current.root).await?;
-            let applied = self
-                .apply_review_command(&pinned, request, accepted_at_millis)
+            let applied = ReviewProjector::new(self)
+                .stage_command(&pinned, request, accepted_at_millis)
                 .await?;
             let result = encode_command_result(&applied.result)
                 .map_err(|_| ReviewCommandError::Invalid("review command result"))?;
@@ -150,7 +151,7 @@ impl Coordinator {
                 request.publication_id,
                 Domain::Review,
                 current,
-                applied.root,
+                self.stage_review_root(&applied.root).await?,
                 result,
             )?
             .with_review_facts(applied.delta)?;

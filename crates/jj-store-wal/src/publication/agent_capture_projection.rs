@@ -6,11 +6,11 @@ use jj_agent::{
     NormalizerProfileV1,
 };
 
-impl Coordinator {
+impl AgentProjector<'_> {
     #[allow(clippy::too_many_arguments)]
     pub(super) async fn stage_projection(
         &self,
-        base: &AgentStoreSnapshot,
+        base: &dyn AgentSnapshotRead,
         profile: &NormalizerProfileV1,
         activated_at_millis: i64,
         sessions: &[SessionSelection],

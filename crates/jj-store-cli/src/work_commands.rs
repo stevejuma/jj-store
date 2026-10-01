@@ -1,16 +1,13 @@
-//! Native project and task commands over the repository's local service.
-use crate::{
-    binding::Connection,
-    commands::{Format, error},
-    presentation,
-};
+//! Project/task commands through the repository's native or local JJ service.
+use crate::{commands::Format, presentation};
 use clap::{Args, Subcommand};
 use jj_cli::{cli_util::CommandHelper, command_error::CommandError, ui::Ui};
 use jj_store_model::{RepositoryId, RequestId};
 use jj_store_service::work::{
-    ProjectId, Request, TaskId, TaskStateV1, WorkCommandV1, WorkCommentId, WorkPage, WorkQuery,
+    ProjectId, Request, TaskId, TaskStateV1, WorkCommandV1, WorkCommentId, WorkQuery,
 };
 use sha2::{Digest as _, Sha256};
+mod client;
 mod output;
 mod task;
 
@@ -24,7 +21,7 @@ pub struct ProjectArgs {
 }
 #[derive(Clone, Debug, Subcommand)]
 pub enum ProjectCommand {
-    /// List one pinned page of native projects
+    /// List one pinned page of repository projects
     List {
         #[arg(long, default_value_t = 50)]
         limit: usize,
@@ -98,7 +95,7 @@ async fn apply(
     ui: &mut Ui,
     helper: &CommandHelper,
     format: Format,
-    client: &jj_store_rpc::client::NativeClient,
+    client: &client::Client,
     id: RequestId,
     command: WorkCommandV1,
 ) -> Result<(), CommandError> {
@@ -108,8 +105,7 @@ async fn apply(
             request_id: id,
             command,
         })
-        .await
-        .map_err(error)?;
+        .await?;
     output::result(ui, helper, format, &outcome)
 }
 pub async fn run_project(
@@ -120,8 +116,7 @@ pub async fn run_project(
     let Some(command) = args.command else {
         return presentation::help(ui, helper, &["project".into()]);
     };
-    let connection = Connection::read(helper.workspace_loader()?.repo_path()).map_err(error)?;
-    let client = connection.connect().await.map_err(error)?;
+    let client = client::Client::open(helper).await?;
     let (id, command) = match command {
         ProjectCommand::List { limit, cursor } => {
             return output::page(
@@ -134,8 +129,7 @@ pub async fn run_project(
                         cursor,
                         ..Default::default()
                     })
-                    .await
-                    .map_err(error)?,
+                    .await?,
             );
         }
         ProjectCommand::Show { id, limit, cursor } => {
@@ -150,8 +144,7 @@ pub async fn run_project(
                         cursor,
                         ..Default::default()
                     })
-                    .await
-                    .map_err(error)?,
+                    .await?,
             );
         }
         ProjectCommand::Status { request_id } => {
@@ -159,10 +152,7 @@ pub async fn run_project(
                 ui,
                 helper,
                 args.format,
-                &client
-                    .work_command_status(request_id)
-                    .await
-                    .map_err(error)?,
+                &client.work_command_status(request_id).await?,
             );
         }
         ProjectCommand::Create {
@@ -173,9 +163,7 @@ pub async fn run_project(
         } => (
             request_id,
             WorkCommandV1::CreateProject {
-                id: id.unwrap_or_else(|| {
-                    ProjectId::new(entity_id(connection.repository, request_id, b"project"))
-                }),
+                id: id.unwrap_or_else(|| ProjectId::new(client.entity_id(request_id, b"project"))),
                 title,
                 body,
             },

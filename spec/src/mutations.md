@@ -1,5 +1,38 @@
 # Typed mutations
 
+M13 adds an in-process LocalRepository facade for admitted local Git-backed JJ
+folders. WorkStore commands use the same neutral domain reducer and exact entity
+preconditions. Local actor identity is established atomically in
+repository-local device state on first write; reads never create it. Receipts
+identify the Git metadata profile explicitly rather than fabricating a native
+WAL snapshot.
+
+Local AgentStore commands retain the typed sanitized capture request as their
+intent, resolve selected receipts before running the shared reducer and use the
+same source-order and overlap policy as native capture. Their independent state
+version and canonical record inventory are selected only by companion ref CAS.
+Unknown outcomes preserve the original request for retry; no code operation,
+checkout or native manifest is changed by this domain command.
+
+Local provenance commands retain the exact portable record, expected selection
+and bounded canonical source capsule bytes as their intent. Shared projection
+requires existing session identity and root-pinned dependency reads; corrections
+retain the selected previous version. A ref race reapplies disjoint edits and
+reports same-key changes as stale. Record and capsule inventories are selected
+together; staging alone exposes neither.
+
+Local checkpoint and association pages bind the catalog kind, page size, last
+key and selected metadata commit. Cross-catalog cursor reuse and staged metadata
+commits fail stale or invalid. Pages share the session page count and byte
+ceilings and leave metadata and device actor state absent on ordinary reads.
+
+The local session pager binds continuations to selected metadata history, page
+size and the last catalog key. Staged candidates cannot be selected through a
+cursor; later publications and process restart do not replace the pinned root.
+Responses enforce the shared page count and a four-MiB byte ceiling. Explicit
+capture delivery may establish device actor provenance after sanitization;
+ordinary reads never do so.
+
 An authorized read can produce a credential-free, immutable selected-view commit
 set for search filtering. Only the service constructs this value after native
 traversal and a final authorization check. It is informational, cannot publish,
@@ -534,3 +567,10 @@ heads. WorkStore publication still freezes its origin ledger.
 WorkStore browse reads are an owned read-only service surface. They derive
 summary counts and labels from selected native state, share permission and
 resource admission with existing WorkStore reads and never publish empty roots.
+
+Local Git-backed repository review commands use the owned review projector and
+companion receipt protocol. Local actor identity is device provenance, and
+filesystem admission supplies the access boundary. Exact immutable thread or
+comment selections and workflow counters retain native stale semantics. Unknown
+ref publication returns the original request identity; status/retry checks the
+selected receipt before reapplying any entity precondition.

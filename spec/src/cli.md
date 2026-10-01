@@ -1,5 +1,24 @@
 # CLI and server commands
 
+M13 local agent commands resolve the admitted GitBackend without a native
+connection. Status and session reads do not initialize companion metadata;
+explicit initialization and supported enablement are metadata writes. Existing
+registry, owned setup and sanitizer behavior is shared with native capture. The
+private spool records either the original local typed capture request or the
+native prepared delta before publication, rejects cross-profile delivery and
+stops ordered progress on unknown outcomes. Local receipt and pinned
+session-page output identify their metadata profile and snapshot explicitly.
+
+The CLI-owned upstream boundary additionally qualifies direct local provenance
+publication against exact GitBackend capsules and stock JJ/Git. This fixture
+proves the service provider. Local provenance commands inspect
+explicit-operation evidence, accept bounded typed association/checkpoint
+documents and expose selected-history pages. Before publication a private
+repository/actor-bound journal retains the exact record, expected version and
+capsule bytes. Explicit retry uses that original request without reopening the
+source operation store; a matching selected receipt is required before journal
+removal. Automatic hook code association remains separately gated.
+
 Native search acceptance compares selected-view commit visibility with retained
 historical metadata, including invisible predecessors and pagination after
 hidden-hit filtering. These fixtures do not introduce CLI search commands.
@@ -548,7 +567,12 @@ installed service, controller dispatch or credential persistence.
 Native jj project and jj task commands read and mutate WorkStore through the
 local repository connection. Task/project commands require exact request IDs and
 entity/project versions; they are independent of optional upstream connectivity.
-No server-free or Git-ref fallback is introduced.
+For an ordinary Git-backed JJ repository, M13 dispatches the same project/task
+commands directly to the LocalRepository service without a server connection.
+Reads do not snapshot the checkout, reconcile operation heads or initialize
+metadata. Local writes use stable request-derived entity IDs and shared domain
+validation; their version-2 receipts/pages identify the Git metadata root.
+Native commands retain their existing version-1 transport and output contracts.
 
 Disposable development/browser qualification may explicitly reuse a separately
 built pinned RustFS binary through `JJ_STORE_DEV_RUSTFS_RUNTIME`. The server

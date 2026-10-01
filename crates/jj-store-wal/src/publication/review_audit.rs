@@ -4,7 +4,7 @@ use jj_review::{
     ReviewIndexPageV1, ReviewObjectKind, ReviewRootV1, ReviewThreadSnapshotV1, ThreadStatusV1,
 };
 
-impl Coordinator {
+impl ReviewProjector<'_> {
     pub(super) async fn audit_review_root(
         &self,
         root: &ReviewRootV1,

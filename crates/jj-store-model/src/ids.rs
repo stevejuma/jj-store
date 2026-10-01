@@ -105,6 +105,10 @@ id!(PrincipalId, 16);
 id!(TokenId, 16);
 id!(ConflictFingerprint, 64);
 id!(ConflictUploadId, 32);
+// SHA-1's all-zero sentinel is the upstream GitBackend root commit identity.
+// Physical Git objects use an additional nonzero check at the adapter boundary.
+id!(GitSha1Id, 20);
+id!(CodeCapsuleId, 32);
 
 /// A copy placeholder is not a content-addressed object or dependency.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]

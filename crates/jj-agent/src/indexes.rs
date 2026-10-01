@@ -108,12 +108,28 @@ pub enum AgentRelationSubjectV1 {
     Revision {
         commit_id: CommitId,
     },
+    PortableOperation {
+        evidence: jj_store_model::portable::CodeEvidenceRefV1,
+    },
+    PortableRevision {
+        evidence: jj_store_model::portable::CodeEvidenceRefV1,
+        commit: jj_store_model::portable::CodeCommitIdV1,
+    },
     Checkpoint {
         checkpoint_id: AgentCheckpointId,
     },
 }
 impl AgentRelationSubjectV1 {
+    pub fn validate(&self) -> Result<()> {
+        if let Self::PortableRevision { evidence, commit } = self
+            && evidence.profile != commit.profile()
+        {
+            return Err(Error::Invalid("agent relation source profile"));
+        }
+        Ok(())
+    }
     pub fn catalog_key(&self) -> Result<AgentCatalogKey> {
+        self.validate()?;
         derive_key("relation", self)
     }
 }
@@ -128,6 +144,7 @@ pub struct AgentRelationPageV1 {
 }
 impl AgentRelationPageV1 {
     pub fn validate(&self) -> Result<()> {
+        self.subject.validate()?;
         let unique: BTreeSet<_> = self.selections.iter().collect();
         if self.schema_version != 1
             || self.selections.is_empty()

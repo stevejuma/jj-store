@@ -22,7 +22,7 @@ pub(super) struct TranscriptChunkSelection {
 }
 
 pub(super) async fn stage_capture_objects(
-    coordinator: &Coordinator,
+    coordinator: &dyn AgentObjectIo,
     profile: &NormalizerProfileV1,
     source: &SanitizedObservationBatchV1,
     normalized: &NormalizationBatchV1,
@@ -138,7 +138,7 @@ pub(super) async fn stage_capture_objects(
 }
 
 async fn stage_optional_content(
-    coordinator: &Coordinator,
+    coordinator: &dyn AgentObjectIo,
     payload: Option<&SanitizedPayloadV1>,
 ) -> Result<Option<AgentObjectRef>> {
     match payload {
@@ -148,7 +148,7 @@ async fn stage_optional_content(
 }
 
 async fn stage_content(
-    coordinator: &Coordinator,
+    coordinator: &dyn AgentObjectIo,
     payload: &SanitizedPayloadV1,
 ) -> Result<AgentObjectRef> {
     coordinator

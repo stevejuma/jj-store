@@ -118,8 +118,17 @@ cold end-to-end gates are qualified through GB6 on macOS ARM64 with JJ 0.45.1
 and Git 2.55.0 under the SHA-1 bookmark profile. The ledger owns the exact
 fault, credential, cache-loss, real-RustFS and browser evidence. Tag
 publication, signing/conflict export profiles, native Git import/export and
-other platform qualification remain deferred. Server-free storage remains
-deferred.
+other platform qualification remain deferred. M13's separately governed local
+Git-backed companion profile in `spec/src/local-jj.md` implements immutable
+metadata selected by an owned Git ref, shared WorkStore semantics and
+server-free project/task/comment CLI, local agent capture and portable
+provenance, and repository-wide review persistence. Portable code/agent review
+anchors, review CLI qualification, automatic hook code associations and the
+native portable evidence carrier remain pending. Filesystem-only LocalTrusted
+serving/UI, recoverable code commands, local conversion and cold full-flow
+qualification also remain pending. Storage/identity qualification blocks
+dependent stages; the milestone ledger owns the exact supported stages and
+acceptance evidence.
 
 Production components live under `web/src/lib`; catalog fixtures and harnesses
 may import them, while production MUST remain independent of catalog state.

@@ -9,16 +9,19 @@ use jj_agent::{
     normalize_batch,
 };
 
-impl Coordinator {
+impl AgentProjector<'_> {
     pub async fn stage_agent_capture(
         &self,
-        base: &AgentStoreSnapshot,
+        base: &dyn AgentSnapshotRead,
         profile: &NormalizerProfileV1,
         batch: &SanitizedObservationBatchV1,
         activated_at_millis: i64,
     ) -> Result<AgentDeltaV1> {
+        if base.repository() != self.objects.repository() {
+            return Err(Error::Corrupt("agent projection repository"));
+        }
         let normalized = normalize_batch(profile, batch).map_err(agent_error)?;
-        let objects = stage_capture_objects(self, profile, batch, &normalized).await?;
+        let objects = stage_capture_objects(self.objects, profile, batch, &normalized).await?;
         let (mut edits, sessions) = self
             .stage_sessions(base, batch, &normalized, &objects)
             .await?;
@@ -50,7 +53,7 @@ impl Coordinator {
 
     async fn stage_sessions(
         &self,
-        base: &AgentStoreSnapshot,
+        base: &dyn AgentSnapshotRead,
         batch: &SanitizedObservationBatchV1,
         normalized: &NormalizationBatchV1,
         objects: &CaptureObjects,
@@ -105,7 +108,7 @@ impl Coordinator {
 
     async fn stage_aliases(
         &self,
-        base: &AgentStoreSnapshot,
+        base: &dyn AgentSnapshotRead,
         aliases: &[AgentAliasV1],
     ) -> Result<Vec<AgentCatalogEditV1>> {
         let mut edits = Vec::new();
@@ -124,7 +127,7 @@ impl Coordinator {
 
     async fn stage_source_state(
         &self,
-        base: &AgentStoreSnapshot,
+        base: &dyn AgentSnapshotRead,
         profile: &NormalizerProfileV1,
         batch: &SanitizedObservationBatchV1,
         normalized: &NormalizationBatchV1,

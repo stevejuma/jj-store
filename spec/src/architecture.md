@@ -7,7 +7,17 @@ composition consume these owned contracts; publication remains independent.
 Crates are added as milestones begin, not as empty placeholders. Native codecs
 initially live with JJ integration. The server uses in-process stores rather
 than calling its own RPC. Local indexes are derived and rebuildable. The source
-repo is colocated for development; product storage has no Git carrier.
+repo is colocated for development. Native product storage has no Git carrier;
+the separate local Git-backed companion profile is governed by local-jj.md. Its
+WorkStore facade uses existing service/domain dependencies; disposable
+filesystem qualification uses a test-only temporary-directory dependency.
+Portable source identity types stay in the neutral model layer; their pinned
+upstream conversions and Git evidence capsule framing stay in JJ integration.
+The adapter uses the existing SHA-256 primitive directly for capsule integrity.
+Agent projection, catalog edits and bounded reads use owned immutable interfaces
+in WAL. The service's Git record carrier preserves the existing repository-bound
+envelope bytes, while companion ref publication remains in JJ integration.
+Neither the shared reducer nor the object interface can select repository state.
 
 ## Requirements
 

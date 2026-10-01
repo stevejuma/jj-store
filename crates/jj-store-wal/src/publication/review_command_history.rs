@@ -25,14 +25,14 @@ impl ReviewStoreSnapshot {
     }
 }
 
-impl Coordinator {
+impl ReviewProjector<'_> {
     pub(super) async fn load_review_thread(
         &self,
-        store: &ReviewStoreSnapshot,
+        store: &dyn ReviewSnapshotRead,
         thread_id: ReviewThreadId,
     ) -> std::result::Result<LoadedReviewThread, ReviewCommandError> {
         let reference = store
-            .lookup_thread(thread_id)
+            .lookup(ReviewCatalogKind::Threads, thread_key(thread_id)?)
             .await?
             .ok_or(ReviewCommandError::NotFound("thread"))?;
         match store.read_object(reference).await? {
@@ -79,7 +79,7 @@ impl Coordinator {
 
     pub(super) async fn load_review_comment(
         &self,
-        store: &ReviewStoreSnapshot,
+        store: &dyn ReviewSnapshotRead,
         comment_id: CommentId,
     ) -> std::result::Result<(ReviewObjectRef, ReviewCommentRevisionV1), ReviewCommandError> {
         let reference = store
@@ -94,7 +94,7 @@ impl Coordinator {
 
     async fn load_review_events(
         &self,
-        store: &ReviewStoreSnapshot,
+        store: &dyn ReviewSnapshotRead,
         root: ReviewObjectRef,
     ) -> std::result::Result<Vec<ReviewObjectRef>, ReviewCommandError> {
         let mut events = Vec::new();

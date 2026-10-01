@@ -22,10 +22,12 @@ impl Coordinator {
             return Err(Error::Corrupt("agent object kind"));
         }
         object.validate().map_err(agent_error)?;
+        reject_portable(&object)?;
         Ok(object)
     }
 
     pub async fn stage_agent_object(&self, object: &AgentObjectV1) -> Result<AgentObjectRef> {
+        reject_portable(object)?;
         let dependencies = object.dependencies().map_err(agent_error)?;
         let mut native = object.native_dependencies().map_err(agent_error)?;
         native.extend(self.audit_agent_dependencies(dependencies).await?.native);
@@ -93,6 +95,17 @@ impl Coordinator {
             native,
         })
     }
+}
+
+fn reject_portable(object: &AgentObjectV1) -> Result<()> {
+    if matches!(
+        object,
+        AgentObjectV1::PortableAssociation(_) | AgentObjectV1::PortableCheckpointVersion(_)
+    ) || !object.code_evidence().map_err(agent_error)?.is_empty()
+    {
+        return Err(Error::Unsupported("native portable capsule carrier"));
+    }
+    Ok(())
 }
 
 pub(super) fn agent_record(reference: AgentObjectRef) -> RecordRef {

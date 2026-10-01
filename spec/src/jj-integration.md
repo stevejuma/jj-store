@@ -1,5 +1,32 @@
 # Native JJ integration
 
+The companion metadata adapter provides bounded immutable blob staging and
+staging reads for the shared collaboration reducer. These operations cannot
+select metadata. Public retained reads additionally prove membership in the
+explicit selected metadata closure; service facades audit their domain root
+before exposing immutable objects. Native object access and code publication
+keep their existing authority boundaries.
+
+The local Git-backed companion profile is governed by local-jj.md. Its Git
+object/ref adapter stays in this crate and does not replace native publication.
+The local repository resolver loads only the pinned GitBackend to obtain its
+object database; it does not load or reconcile operation heads or snapshot
+files.
+
+Source evidence capture pins one explicit operation with `RepoLoader::load_at`
+and archives complete owned operation/view and GitBackend commit records. Its
+bounded closure follows ancestry and evolution dependencies, preserves ordered
+merge terms and extra metadata, and stages immutable blobs without publishing JJ
+heads or editing a checkout. Selected capsule reads reconstruct and verify
+source operation/view identities without requiring the source operation store or
+derived index. Capsule selection remains a domain publication concern.
+
+Capsule retention derives every non-root physical commit and backend tree from
+the exact archive. Selected reads require those entries in the selected metadata
+retention inventory, even when a blob was retained for another domain. An anchor
+additionally verifies its operation/profile and exact commit membership against
+that capsule.
+
 Search visibility uses the same bounded native commit-parent traversal as
 operation differences. It starts at the explicitly selected operation's view
 heads and does not follow predecessor links or reconcile operation heads.

@@ -12,6 +12,36 @@ pub(super) struct ReplicatedThreadState {
 }
 
 impl Coordinator {
+    pub(super) async fn load_review_event_graph(
+        &self,
+        root: ReviewObjectRef,
+    ) -> Result<ReviewEventGraphV1> {
+        ReviewProjector::new(self)
+            .load_review_event_graph(root)
+            .await
+    }
+    pub(super) async fn stage_review_event_graph(
+        &self,
+        graph: ReviewEventGraphV1,
+    ) -> Result<ReviewObjectRef> {
+        ReviewProjector::new(self)
+            .stage_review_event_graph(graph)
+            .await
+    }
+    pub(super) async fn audit_review_event_graph(&self, graph: &ReviewEventGraphV1) -> Result<()> {
+        ReviewProjector::new(self)
+            .audit_review_event_graph(graph)
+            .await
+    }
+    pub(super) async fn reduce_review_workflow(
+        &self,
+        graph: &ReviewEventGraphV1,
+    ) -> Result<(ThreadStatusV1, Vec<ReviewActionId>, u64, u64)> {
+        ReviewProjector::new(self)
+            .reduce_review_workflow(graph)
+            .await
+    }
+
     pub(super) async fn load_replicated_thread(
         &self,
         reference: ReviewObjectRef,
@@ -40,72 +70,6 @@ impl Coordinator {
                 })
             }
             _ => Err(Error::Corrupt("review thread selection kind")),
-        }
-    }
-
-    pub(super) async fn load_review_event_graph(
-        &self,
-        root: ReviewObjectRef,
-    ) -> Result<ReviewEventGraphV1> {
-        match self.read_review_object(root).await? {
-            ReviewObjectV1::EventGraph(graph) => Ok(graph),
-            ReviewObjectV1::EventPage(first) => {
-                let thread_id = first.thread_id;
-                let mut entries = first.entries;
-                let mut next = first.next;
-                let mut pages = BTreeSet::from([root]);
-                while let Some(reference) = next {
-                    if !pages.insert(reference) || pages.len() > MAX_REVIEW_FACTS {
-                        return Err(Error::Corrupt("review event page cycle"));
-                    }
-                    let ReviewObjectV1::EventPage(page) =
-                        self.read_review_object(reference).await?
-                    else {
-                        return Err(Error::Corrupt("review event page kind"));
-                    };
-                    if page.thread_id != thread_id {
-                        return Err(Error::Corrupt("review event page thread"));
-                    }
-                    entries.extend(page.entries);
-                    next = page.next;
-                }
-                if entries.is_empty() || entries.len() > MAX_REVIEW_FACTS {
-                    return Err(Error::Limit("review event graph"));
-                }
-                entries.sort_by_key(|entry| entry.sequence);
-                for (index, entry) in entries.iter().enumerate() {
-                    if entry.sequence != index as u64 + 1 {
-                        return Err(Error::Corrupt("review event history sequence"));
-                    }
-                }
-                let events = entries
-                    .into_iter()
-                    .map(|entry| entry.event)
-                    .collect::<Vec<_>>();
-                let mut nodes = events
-                    .iter()
-                    .enumerate()
-                    .map(|(index, event)| ReviewEventNodeV1 {
-                        event: *event,
-                        parents: index
-                            .checked_sub(1)
-                            .map(|parent| vec![events[parent]])
-                            .unwrap_or_default(),
-                    })
-                    .collect::<Vec<_>>();
-                nodes.sort_by_key(|node| node.event);
-                Ok(ReviewEventGraphV1 {
-                    schema_version: 1,
-                    thread_id,
-                    nodes,
-                    heads: vec![
-                        *events
-                            .last()
-                            .ok_or(Error::Corrupt("empty review event history"))?,
-                    ],
-                })
-            }
-            _ => Err(Error::Corrupt("review event graph kind")),
         }
     }
 
@@ -153,15 +117,6 @@ impl Coordinator {
             .map_err(|_| Error::Corrupt("review event graph"))?;
         self.audit_review_event_graph(&graph).await?;
         Ok(graph)
-    }
-
-    pub(super) async fn stage_review_event_graph(
-        &self,
-        graph: ReviewEventGraphV1,
-    ) -> Result<ReviewObjectRef> {
-        self.audit_review_event_graph(&graph).await?;
-        self.stage_review_object(&ReviewObjectV1::EventGraph(graph))
-            .await
     }
 
     pub(super) async fn merge_review_comments(
@@ -301,47 +256,6 @@ impl Coordinator {
             }
         }
         Ok(false)
-    }
-
-    pub(super) async fn audit_review_event_graph(&self, graph: &ReviewEventGraphV1) -> Result<()> {
-        graph
-            .validate()
-            .map_err(|_| Error::Corrupt("review event graph"))?;
-        let parents = graph
-            .nodes
-            .iter()
-            .map(|node| {
-                (
-                    node.event,
-                    node.parents.iter().copied().collect::<BTreeSet<_>>(),
-                )
-            })
-            .collect::<BTreeMap<_, _>>();
-        let mut resolved = BTreeSet::new();
-        loop {
-            let before = resolved.len();
-            for (event, dependencies) in &parents {
-                if dependencies.is_subset(&resolved) {
-                    resolved.insert(*event);
-                }
-            }
-            if resolved.len() == parents.len() {
-                break;
-            }
-            if resolved.len() == before {
-                return Err(Error::Corrupt("review event graph cycle"));
-            }
-        }
-        for node in &graph.nodes {
-            let ReviewObjectV1::ThreadEvent(event) = self.read_review_object(node.event).await?
-            else {
-                return Err(Error::Corrupt("review event graph selection"));
-            };
-            if event.thread_id != graph.thread_id {
-                return Err(Error::Corrupt("review event graph thread"));
-            }
-        }
-        Ok(())
     }
 }
 

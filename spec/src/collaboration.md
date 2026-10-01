@@ -5,6 +5,19 @@ the existing object envelopes, WAL, receipts and manifest publication service,
 but retain independent models, authorization and state versions. They are not
 upstream JJ traits, Tantivy indexes, Nostr projections or agent executors.
 
+The separately governed local Git profile uses the M13 companion publication
+store and the same domain models. New versioned portable anchors distinguish
+source native and Git identities and name immutable evidence capsules. Existing
+native V1 anchor bytes and their interpretation remain unchanged. An evidence
+reference is not a device binding or permission to open a local path.
+
+Agent normalization, cumulative transcript construction and catalog path-copy
+edits use one owned projection engine behind a repository-bound immutable object
+interface. Persistence providers validate canonical records, kinds and complete
+dependencies; the shared engine has no publication capability. Native adapters
+retain manifest authorization and their existing record framing, while the local
+provider selects its complete closure through companion ref CAS.
+
 The first release is LocalTrusted. It captures Codex, Cursor and OpenCode
 through qualified integrations, stores sanitized evidence before normalized
 views and supports exact discussions on immutable code, diff and agent
@@ -95,6 +108,22 @@ reason. File claims reject absolute or traversing paths, and manual assertions
 cannot masquerade as stronger evidence. Stable IDs and JJ change IDs are lookup
 facts; exact operation/commit IDs and immutable evidence objects are retention
 edges.
+
+Portable `CodeAssociationV2` and `AgentCheckpointVersionV2` use explicit source
+repository, profile and capsule references for operations and commits. A commit
+must match its evidence profile. Their shared non-code facts preserve the native
+path, evidence, correction, coverage and dependency rules. Canonical bounded
+decoders reject unknown versions, fields and noncanonical bytes. Native V1 field
+order and serialization remain frozen; these additive models do not by
+themselves enable a persistence provider or CLI command.
+
+Portable object variants retain the existing repository-bound AgentObject record
+framing and semantic catalog kinds. Shared provenance projection validates the
+selected session and pinned checkpoint dependencies, exact correction selection
+and stable identities, then adds typed session/tool/checkpoint/code relation
+pages. Git relation subjects carry source-profile evidence rather than native
+commit IDs. Native storage rejects portable evidence until its own capsule
+carrier is implemented; it cannot silently discard those retention edges.
 
 An AgentStore read is pinned to one selected `AgentRootV1`. Stable session,
 checkpoint and association keys resolve through bounded persistent radix pages;
@@ -434,6 +463,18 @@ or for lineage evidence.
 
 ## Immutable ReviewStore objects
 
+Catalog path copying and bounded root-pinned enumeration share one owned engine
+across persistence adapters. Its object interface requires canonical identity,
+semantic kind and dependency validation; its snapshot interface admits only the
+audited selected closure. These interfaces do not carry publication authority.
+Native staging repeats existing catalog, relation, comment ownership and event
+reconstruction audits before selecting the returned root. Typed command
+reduction and complete cross-object review auditing MUST use the same owned
+projector across adapters. It returns a root value, delta and typed result only;
+authorization, external code/agent retention, receipt replay and publication
+remain adapter responsibilities. Repository identity is checked before immutable
+reads or staging, and no projector result alone selects state.
+
 `ReviewRootV1` selects independent COW catalog roots for threads, comments,
 thread events, original-anchor relations, artifact relations, statuses, work
 requests, external aliases and accepted source positions. The canonical empty
@@ -508,6 +549,12 @@ and object reads to the selected root closure. Reading an unselected staged
 object returns stale. Catalog enumeration accepts at most 256 selections per
 call and uses the last returned stable catalog key for continuation. Old
 snapshots retain their original roots and selections after later COW updates.
+
+Local repository-wide ReviewStore threads use the same command projector and
+root-pinned reader. Their companion descriptor and receipt select the canonical
+root and complete retained record inventory in one review-domain publication.
+Local code/agent anchors remain unsupported until their external evidence and
+ownership have a qualified provider; repository threads do not qualify them.
 
 ## Conservative anchor placement
 

@@ -5,12 +5,6 @@ use jj_review::{Error as ReviewError, ReviewObjectId};
 
 const MAX_REVIEW_DEPENDENCIES: usize = 16_384;
 
-pub(super) struct ReviewDependencyClosure {
-    pub objects: BTreeSet<ReviewObjectRef>,
-    pub agent_objects: BTreeSet<AgentObjectRef>,
-    pub native: BTreeSet<ObjectKey>,
-}
-
 impl Coordinator {
     pub(super) async fn read_review_object(
         &self,
@@ -48,8 +42,9 @@ impl Coordinator {
         let closure = self
             .audit_review_dependencies(root.dependencies().map_err(review_error)?)
             .await?;
-        self.audit_review_root(root, &closure.objects).await?;
-        self.audit_review_threads(&closure.objects).await?;
+        ReviewProjector::new(self)
+            .audit_root_state(root, &closure.objects)
+            .await?;
         self.verify_delta(None, closure.native).await?;
         self.records.put(RecordKind::ReviewRoot, None, root).await
     }
@@ -71,36 +66,23 @@ impl Coordinator {
         let closure = self
             .audit_review_dependencies(root.dependencies().map_err(review_error)?)
             .await?;
-        self.audit_review_root(&root, &closure.objects).await?;
-        self.audit_review_threads(&closure.objects).await?;
+        ReviewProjector::new(self)
+            .audit_root_state(&root, &closure.objects)
+            .await?;
         Ok((root, closure))
     }
 
     async fn audit_review_dependencies(
         &self,
-        mut pending: Vec<ReviewObjectRef>,
+        pending: Vec<ReviewObjectRef>,
     ) -> Result<ReviewDependencyClosure> {
-        let mut objects = BTreeSet::new();
-        let mut native = BTreeSet::new();
-        let mut agent = BTreeSet::new();
-        while let Some(reference) = pending.pop() {
-            if !objects.insert(reference) {
-                continue;
-            }
-            if objects.len() > MAX_REVIEW_DEPENDENCIES {
-                return Err(Error::Limit("review dependency closure"));
-            }
-            let object = self.read_review_object(reference).await?;
-            native.extend(object.native_dependencies().map_err(review_error)?);
-            agent.extend(object.agent_dependencies().map_err(review_error)?);
-            pending.extend(object.review_dependencies().map_err(review_error)?);
-        }
-        let agent_objects = self.audit_review_agent_dependencies(agent).await?;
-        Ok(ReviewDependencyClosure {
-            objects,
-            agent_objects,
-            native,
-        })
+        let mut closure = ReviewProjector::new(self)
+            .audit_dependencies(pending)
+            .await?;
+        closure.agent_objects = self
+            .audit_review_agent_dependencies(closure.agent_objects)
+            .await?;
+        Ok(closure)
     }
 
     async fn audit_review_agent_dependencies(

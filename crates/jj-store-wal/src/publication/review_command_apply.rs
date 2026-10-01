@@ -10,10 +10,10 @@ use jj_review::{
     ReviewThreadEventV1, ReviewThreadId, ReviewThreadSnapshotV1, ThreadStatusV1,
 };
 
-impl Coordinator {
+impl ReviewProjector<'_> {
     pub(super) async fn apply_review_command(
         &self,
-        store: &ReviewStoreSnapshot,
+        store: &dyn ReviewSnapshotRead,
         request: &ReviewCommandRequest,
         accepted_at_millis: i64,
     ) -> std::result::Result<AppliedReviewCommand, ReviewCommandError> {
@@ -136,22 +136,19 @@ impl Coordinator {
 
     async fn create_review_thread(
         &self,
-        store: &ReviewStoreSnapshot,
+        store: &dyn ReviewSnapshotRead,
         request: &ReviewCommandRequest,
         anchor: &jj_review::ArtifactAnchorV1,
         body: &ReviewCommentBodyV1,
         accepted_at_millis: i64,
     ) -> std::result::Result<AppliedReviewCommand, ReviewCommandError> {
-        if anchor.repository_id != self.records.repository {
+        if anchor.repository_id != self.io.repository() {
             return Err(ReviewCommandError::Invalid("anchor repository"));
         }
-        let thread_id = ReviewThreadId::new(command_entity_id(
-            self.records.repository,
-            request,
-            b"thread",
-        ));
+        let thread_id =
+            ReviewThreadId::new(command_entity_id(self.io.repository(), request, b"thread"));
         let comment_id = CommentId::new(command_entity_id(
-            self.records.repository,
+            self.io.repository(),
             request,
             b"initial-comment",
         ));

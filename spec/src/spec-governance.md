@@ -25,6 +25,10 @@ repository suites remain outside the default verification scope.
 
 ## Change map
 
+Local Git-backed companion implementation additionally requires local-jj.md;
+native identity and publication chapters continue to govern their existing
+formats.
+
 | Protected area                                                                                                                                                                                                                                 | Required chapter     |
 | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
 | `^(?:catalog/\|\.storybook/\|docs/catalog\.md$)`                                                                                                                                                                                               | `ui.md`              |
@@ -81,6 +85,16 @@ the merge must add or update evidence absent from every parent. The published
 spec-first CLI accepts explicit common-ancestor and merge commit IDs through
 `--base` and `--head` for merge qualification; its default `@-` selection is
 single-parent only.
+
+Landing the M13 workspace preserves native Projects browsing and development
+fixture evidence alongside the local companion evidence. Integration resolves
+shared paging visibility for both providers without changing native publication
+or local ref authority. Tracked agent scope and `local-jj.md` must distinguish
+implemented server-free WorkStore, agent provenance and repository-wide review
+persistence from pending portable review anchors/CLI, filesystem serving/UI,
+recoverable code mutations, conversion and cold full-flow gates. These pending
+capabilities do not become qualified merely because their workspace is landed;
+`milestones.md` remains the sole implementation status ledger.
 
 The M0 contract harness is validated in both normal tests and spec checks. Real
 storage qualification remains an explicit lane and cannot be inferred from the

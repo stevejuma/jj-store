@@ -6,6 +6,31 @@ future log digest. Manifest revision differs from publication sequence, and an
 epoch identifies an authority lineage without itself fencing an old writer. No
 destructive GC, automated promotion, or multi-writer serving in v1.
 
+Shared AgentStore projection and catalog edits stage immutable objects through
+owned repository-bound interfaces. They do not select native or local roots.
+Native adapters retain all manifest guards and receipts; the local companion
+adapter admits only immutable domain records and publishes through its separate
+expected-old-value ref protocol. Record framing and native authority are
+unchanged.
+
+Portable agent objects expose capsule dependencies separately from native
+retention roots. Native staging and recovery reject unsupported portable
+evidence. Local descriptor V2 selects a canonical capsule inventory with the
+root and retains every declared Git commit and nonstandard tree dependency;
+descriptor V1 remains readable. The shared provenance reducer can stage records
+and relation pages but cannot publish either provider's state.
+
+ReviewStore catalog editing and bounded reads use owned repository-bound
+immutable object and pinned snapshot interfaces. Native wrappers retain full
+root/thread cross-object audit, authorization, receipts and manifest selection.
+The shared editor returns a root value; it cannot stage a publication or select
+repository state. Alternative providers must audit the complete root before
+publication and recovery. The shared ReviewProjector also stages typed commands
+and audits complete review roots without publication. Native adapters verify the
+returned external code and AgentStore dependency closure and retain
+authorization, receipt-first replay and manifest CAS around the shared
+projection.
+
 ## Requirements
 
 | ID          | Requirement                                                                                                                                                                              |

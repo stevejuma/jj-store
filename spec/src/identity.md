@@ -67,6 +67,20 @@ Token IDs are distinct 128-bit identifiers, independent of principal IDs and
 publication/request identities. Bearer secrets and verifiers are service-owned
 credential types and never native object identities.
 
+The local Git profile adds a distinct 20-byte `GitSha1Id` and 32-byte
+`CodeCapsuleId`. Profile-tagged commit and object references never pad or cast
+Git identities into native IDs. Source operation/view IDs keep the pinned
+64-byte upstream identity, including exact synthetic root sentinels. Additive
+portable review anchors use schema version 2 and retain their source repository
+and evidence identity independently of a destination home. Native V1 codecs,
+envelopes and anchors retain their existing frozen interpretation.
+
+Portable agent association and checkpoint schema V2 carries source-profile
+evidence separately from shared non-code facts. Ordered evidence sets use the
+owned typed identities without changing their serialization or native V1
+association/checkpoint layouts. A Git commit paired with native evidence, or
+another mismatched profile, is invalid.
+
 The native V1 payload types are also exported as complete owned read DTOs. Their
 field ordering, serialization and identity conversions remain frozen and covered
 by the existing codec fixtures. API wrappers version their use of this native

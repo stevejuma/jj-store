@@ -10,7 +10,7 @@ use jj_review::{
 const MAX_THREAD_EVENTS: usize = 4096;
 const EVENT_PAGE_ENTRIES: usize = 256;
 
-impl Coordinator {
+impl ReviewProjector<'_> {
     pub(super) async fn stage_review_body(
         &self,
         body: &ReviewCommentBodyV1,
@@ -83,15 +83,21 @@ impl Coordinator {
 
     pub(super) async fn stage_review_command_delta(
         &self,
-        store: &ReviewStoreSnapshot,
+        store: &dyn ReviewSnapshotRead,
         edits: Vec<ReviewCatalogEditV1>,
-    ) -> std::result::Result<(RecordRef, ReviewDeltaV1), ReviewCommandError> {
+    ) -> std::result::Result<(ReviewRootV1, ReviewDeltaV1), ReviewCommandError> {
         let delta = ReviewDeltaV1 {
             schema_version: 1,
             edits,
         };
-        match self.stage_review_delta(store, &delta).await {
-            Ok(root) => Ok((root, delta)),
+        match ReviewCatalogEditor::new(self.io)
+            .apply_delta(store, &delta)
+            .await
+        {
+            Ok(root) => {
+                self.audit_root(&root).await?;
+                Ok((root, delta))
+            }
             Err(Error::Stale) => Err(ReviewCommandError::Stale),
             Err(error) => Err(error.into()),
         }

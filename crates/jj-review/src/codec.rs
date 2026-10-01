@@ -50,7 +50,7 @@ pub fn decode_command_result(bytes: &[u8]) -> Result<ReviewCommandResultV1> {
     Ok(value)
 }
 
-fn encode<T: Serialize>(value: &T, limit: u64) -> Result<Vec<u8>> {
+pub(crate) fn encode<T: Serialize>(value: &T, limit: u64) -> Result<Vec<u8>> {
     struct Limited {
         bytes: Vec<u8>,
         limit: u64,
@@ -78,7 +78,7 @@ fn encode<T: Serialize>(value: &T, limit: u64) -> Result<Vec<u8>> {
     }
 }
 
-fn decode<T: Serialize + DeserializeOwned>(bytes: &[u8], limit: u64) -> Result<T> {
+pub(crate) fn decode<T: Serialize + DeserializeOwned>(bytes: &[u8], limit: u64) -> Result<T> {
     if bytes.len() as u64 > limit {
         return Err(Error::Limit);
     }

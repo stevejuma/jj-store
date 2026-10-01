@@ -107,13 +107,13 @@ pub(super) async fn authorize_pin(session: &NativeSession, pin: &Pin) -> Result<
     session.principal(Permission::Read).await?;
     Ok(())
 }
-fn overhead(projects: &[ProjectV1], tasks: &[TaskV1]) -> Result<usize> {
+pub(crate) fn overhead(projects: &[ProjectV1], tasks: &[TaskV1]) -> Result<usize> {
     Ok(serde_json::to_vec(&(projects, tasks))
         .map_err(|_| Error::Corrupt)?
         .len()
         + 1024)
 }
-pub(super) fn take_page<'a, T: Serialize + Clone + 'a>(
+pub(crate) fn take_page<'a, T: Serialize + Clone + 'a>(
     values: impl Iterator<Item = &'a T>,
     offset: usize,
     limit: usize,
