@@ -24,6 +24,9 @@
   let expanded = $state(false);
   const paired = $derived(store.saved.mode === "system");
   const buzz = $derived(store.theme === "buzz" || store.theme === "buzz-dark");
+  const original = $derived(
+    store.theme === "original" || store.theme === "original-dark",
+  );
   const selected = $derived(
     paired && !lightThemes.has(store.saved.theme)
       ? (themePairs.get(store.saved.theme) ?? store.saved.theme)
@@ -97,7 +100,7 @@
             ></button
           >{/each}
       </div>{/if}
-    {#if !buzz}<AppearanceRow
+    {#if !buzz && !original}<AppearanceRow
         title="Accent color"
         description="Choose the highlight color used throughout jj-store."
       >

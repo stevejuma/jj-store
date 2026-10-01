@@ -46,7 +46,7 @@
   display: flex;
   min-width: 0;
   align-items: center;
-  gap: 0.05rem;
+  gap: 0.25rem;
   overflow-x: auto;
   scrollbar-width: none;
 }
@@ -56,7 +56,7 @@
 }
 
 .community-chat-composer__toolbar-main :is([data-ui-component="button"]) {
-  color: var(--muted-foreground);
+  color: var(--foreground);
 }
 
 .community-chat-composer__toolbar-main :is([data-ui-component="button"]:hover),
@@ -70,10 +70,6 @@
   height: 1.25rem;
   margin-inline: 0.28rem;
   background: var(--border);
-}
-
-:is(.community-chat-composer__send[data-ui-component="button"]) {
-  border-radius: 0.5rem;
 }
 
 .community-chat-composer__spinner {

@@ -1,7 +1,7 @@
 import { writeFileSync, mkdirSync, readFileSync } from "node:fs";
 import { createThemeVars } from "../web/src/lib/appearance/adaptive-theme.js";
 import { format } from "prettier";
-import { themeNames } from "../web/src/lib/appearance/theme-catalog.js";
+import { buzzThemeNames } from "../web/src/lib/appearance/theme-catalog.js";
 
 // Buzz palette extraction at ef2aa1ae (Apache-2.0); npm Shiki themes 4.0.2.
 const syntaxScopes: Record<string, string[]> = {
@@ -21,8 +21,9 @@ const syntaxScopes: Record<string, string[]> = {
 };
 const output: string[] = [
   "/* Generated from Shiki 4.0.2 and Buzz ef2aa1ae; run pnpm exec tsx scripts/appearance-palettes.mts. */",
+  '@import "./palettes/original.css";',
 ];
-for (const name of themeNames) {
+for (const name of buzzThemeNames) {
   const base =
     name === "buzz"
       ? "github-light"

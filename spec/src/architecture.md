@@ -527,6 +527,13 @@ syntax palettes and Inter 5.2.8 fonts for the Buzz-derived Appearance page.
 Generation uses npm theme data and the attributed owned palette adapter; no Buzz
 or Community checkout is a runtime/build dependency.
 
+The picker also includes the pre-Appearance Design Core semantic palette as the
+static Original light/dark pair. Its historical snapshot remains independent of
+Shiki generation; the generated import index includes both sources. Public
+foundation dialog tokens and the app-owned prose composer's Mira bridge bind
+surface and text roles to the resolved palette. Menus keep popover surfaces, and
+standalone code/file editors retain their own editor surfaces.
+
 Local Appearance acceptance in main uses the existing ignored foundational
 package hook against landed Design Core source. Its chat typography and native
 scrolling extensions are absent from registry 0.2.0; portable manifest/lockfile

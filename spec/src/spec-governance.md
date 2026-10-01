@@ -23,6 +23,13 @@ checks remain required while visual baselines stay separately approved. Every
 directly affected boundary still needs named evidence, while unrelated
 repository suites remain outside the default verification scope.
 
+Appearance palette generation checks the complete pinned Buzz-derived catalog
+and its generated import index. The Original theme is an attributed historical
+foundation snapshot, kept separate from derived palette generation. Catalog
+extensions qualify persistence, mode pairing, scoped previews and app-wide
+foreground/background roles before recording acceptance. Inherited broad-lane
+failures and visual approval remain explicit independent gates.
+
 ## Requirements
 
 | ID          | Requirement                                                                                                                                                                                                                                                                          |

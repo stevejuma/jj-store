@@ -1,4 +1,5 @@
 /* Generated from Shiki 4.0.2 and Buzz ef2aa1ae; run pnpm exec tsx scripts/appearance-palettes.mts. */
+@import "./palettes/original.css";
 @import "./palettes/buzz.css";
 @import "./palettes/buzz-dark.css";
 @import "./palettes/andromeeda.css";

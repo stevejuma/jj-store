@@ -46,3 +46,32 @@ source hook with `pnpm install --no-frozen-lockfile --lockfile=false`. Installed
 foundation files match the landed source. Main retains portable registry
 manifests and lockfiles. The published 0.2.0 tarball lacks these extensions, so
 this local main acceptance is not registry-only release qualification.
+
+The Original picker option preserves the pre-Appearance app palette. Before
+`rmwvnkzr`, `web/src/style.css` imported Design Core's default `styles.css`
+without the named Lapis theme. `palettes/original.css` snapshots its public
+semantic colours from released Design Core 0.2.0 `src/theme.css`; the release
+tarball and currently installed source contain identical default theme bytes.
+The two variants pair in System mode. Original uses the foundation's native
+accent, while retaining the saved accent choice for other palettes. Buzz's 62
+generated styles remain separate from this historical snapshot.
+
+The token alignment audit in E-UI-055 compares those defaults with the new
+GitHub Light Default palette and Buzz's component bindings:
+
+| Role or surface           | Previous light theme                                          | Buzz-derived GitHub Light Default                                | App binding                                                  |
+| ------------------------- | ------------------------------------------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------ |
+| App background            | `oklch(100% 0 0)` (white)                                     | `#fff`                                                           | `--background`                                               |
+| Popover background        | `oklch(100% 0 0)` (white)                                     | `#ebebeb`                                                        | Menus retain `--popover`                                     |
+| Main text                 | `oklch(15% 0.05 295)`                                         | `#1f2328`                                                        | Values, headings and actions use `--foreground`              |
+| Secondary text            | `oklch(50% 0.05 295)`                                         | `hsl(212 7.94% 37.1%)`                                           | Helpers and placeholders use `--muted-foreground`            |
+| Composer                  | Foundation composer uses `--popover`; editor has its own fill | Buzz uses `bg-background`, `border-border/50`, no resting shadow | App background and transparent Mira editor                   |
+| Normal/confirmation modal | Foundation dialog tokens use `--popover`                      | Buzz uses `bg-background`                                        | Public dialog background/foreground tokens bind to app roles |
+
+Buzz reference paths are `desktop/src/features/messages/ui/MessageComposer.tsx`,
+`ComposerAddressControls.tsx`, `MessageComposerToolbar.tsx`, and
+`desktop/src/shared/ui/{dialog,alert-dialog}.tsx` at the same pinned revision.
+The composer passes the existing foundation send-button part to preserve its
+circular geometry. The Mira bridge captures palette roles on the composer
+ancestor before Mira defines reverse aliases. Standalone file/code editor
+surfaces and palette generation remain independent of these app bindings.

@@ -132,7 +132,7 @@ shared-package release qualification does not alter those original Git gates.
 | M15.5       | In progress | M15.3                   | JST-COLLAB-016,JST-GOV-008,JST-UI-017                                                                                                                                                   | Owned Community channel/forum templates, Threads navigation and native workspace search                                        | Retain interaction/cold UI and qualify remaining full flow                                     | E-M15-011,E-M15-015,E-M15-016,E-M15-017,E-M15-018,E-M15-019,E-M15-021,E-M15-022,E-M15-025                                                                                                                                                                                                                                                                      |
 | M15.6       | In progress | M15.3                   | JST-COLLAB-009,JST-COLLAB-010,JST-API-009,JST-ADAPT-007                                                                                                                                 | Derived canonical-source timeline/search and review integration                                                                | Qualify authorized joins                                                                       | E-M15-006,E-M15-020,E-M15-021,E-M15-022,E-M15-025                                                                                                                                                                                                                                                                                                              |
 | M15.7       | Planned     | M15.4,M15.5,M15.6       | JST-COLLAB-007,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                                                                                              | Cold real-RustFS/local full flow and runner qualification                                                                      | Retain native/local/cold evidence                                                              | -                                                                                                                                                                                                                                                                                                                                                              |
-| M16         | Partial     | M15.5                   | JST-UI-018                                                                                                                                                                              | Complete device Appearance and cold consumer qualification                                                                     | Complete source release and registry-only consumer qualification                               | E-UI-052,E-UI-053,E-UI-054                                                                                                                                                                                                                                                                                                                                     |
+| M16         | Partial     | M15.5                   | JST-UI-018                                                                                                                                                                              | Complete device Appearance and cold consumer qualification                                                                     | Complete source release and registry-only consumer qualification                               | E-UI-052,E-UI-053,E-UI-054,E-UI-055                                                                                                                                                                                                                                                                                                                            |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -40110,6 +40110,226 @@ and named tests are checked by the progress gate.
     "scope": "User-authorized main browser-bundle rebuild and graceful restart of its owned development server/managed storage, with live read-only readiness and isolated device-preference smoke. UI-only source changes reuse qualified native binaries; Rust rebuild/tests, root aggregates and unrelated suite/service lanes are out of scope. No fixture reset/reseed, native application mutations, installed CLI replacement, unrelated daemon restart, package publication or baseline approval. M16 remains Partial; E-UI-052/E-UI-053 own outstanding release, registry-only, inherited suite/composer-CSP and visual gates.",
     "next": "Use http://127.0.0.1:7460/ for the rebuilt main app. Keep independent M16 qualification gates explicit.",
     "artifacts": "Private mode0600 /tmp/jj-thread-appearance-main-before.json and ready.json; /tmp/jj-appearance-dev-main-*.log; ignored .scratch/appearance-live-main.mjs; persistent state .local/dev-demo. Live main server remains running as requested; temporary browser context closed."
+  },
+  {
+    "id": "E-UI-055",
+    "tasks": ["M16"],
+    "date": "2026-10-02",
+    "kind": "appearance-token-alignment-and-original-theme",
+    "revision": "enclosing Jujutsu change lwqssrow",
+    "before": "Clean main above xzsyulwq/2ab7da97. Foundation light background/popover were both white; new Github Light palette keeps background white but popover is grey. Composer inherits popover and Mira adds its own surface. WorkStore modal uses popover and copied field values use muted text. Original theme is absent from picker.",
+    "files": [
+      "catalog/components/store-appearance/AppearanceComposer.stories.svelte",
+      "catalog/components/store-appearance/AppearanceDialog.stories.svelte",
+      "catalog/components/store-appearance/StoreAppearance.stories.svelte",
+      "catalog/fixtures/AppearanceComposerFixture.svelte",
+      "catalog/fixtures/AppearanceDialogFixture.svelte",
+      "docs/reference/appearance-provenance.md",
+      "scripts/appearance-palettes.mts",
+      "spec/src/ui.md",
+      "web/src/lib/appearance/appearance.css",
+      "web/src/lib/appearance/palettes/original.css",
+      "web/src/lib/appearance/preferences.ts",
+      "web/src/lib/appearance/theme-catalog.ts",
+      "web/src/lib/appearance/theme-palettes.css",
+      "web/src/lib/ui/community-chat-composer/CommunityChatComposer.svelte",
+      "web/src/lib/ui/community-chat-composer/composer-0.css",
+      "web/src/lib/ui/community-chat-composer/composer-1.css",
+      "web/src/lib/ui/store-appearance/AppearanceThemes.svelte",
+      "web/src/lib/ui/store-work/community-work-forms.css",
+      "web/tests/vite/appearance.test.ts",
+      "spec/src/milestones.md",
+      "spec/src/verification.md",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/spec-governance.md"
+    ],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-appearance/AppearanceComposer.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before: inset white editor on a popover shell. Initial foreground/diagnostic retries each fail once; these expose empty cyclic aliases when the reverse Mira bridge is placed on its own host. /tmp/jj-composer-palettes-before.log, after.log, text.log, diagnostic.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-appearance/AppearanceComposer.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Ancestor bridge and transparent editor pass 1/1 across the original 62 palettes; app-background and Buzz styling retries also pass. /tmp/jj-composer-palettes-fixed.log and white.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-appearance/AppearanceComposer.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "New ArrowUp dependency initially hit a Tailwind import declaration failure while owned temporary Storybook was running; no test cases executed. Stopped the owned inspection server/tab and repeated cold. /tmp/jj-composer-palettes-buzz.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-appearance/AppearanceComposer.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Cold process passes 1/1. Toolbar colour assertion subsequently waits for the existing 160ms transition without relaxing equality; all 62 text/placeholder/retained-draft checks pass. /tmp/jj-composer-palettes-buzz-cold.log and final.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-appearance/AppearanceComposer.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Live inspection found square send geometry. Added exact circular-radius regression: radius8 at width32 fails. Existing foundation send-button part fixes geometry. /tmp/jj-composer-send-before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-appearance/AppearanceComposer.stories.svelte catalog/components/store-threads catalog/components/store-application/AppearanceDiscussions.stories.svelte catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/StoreFileEditor.stories.svelte catalog/components/store-mutations/StoreRepositoryActions.stories.svelte catalog/components/store-work/StoreWork.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Initial 34 passed/1 failed assertion (animated toolbar colour) and 3 Bits teardown derived_inert errors. An exact actions retry reproduces that assertion. /tmp/jj-composer-consumers.log and palettes-actions.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-appearance/AppearanceComposer.stories.svelte catalog/components/store-threads catalog/components/store-application/AppearanceDiscussions.stories.svelte catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/StoreFileEditor.stories.svelte catalog/components/store-mutations/StoreRepositoryActions.stories.svelte catalog/components/store-work/StoreWork.stories.svelte",
+        "result": "fail",
+        "failures": 3,
+        "note": "Final assertions pass 35/35, including circular geometry; process remains non-green due to three Bits dismissible/scrollbar derived_inert errors. No diagnostic suppression. /tmp/jj-composer-consumers-final.log."
+      },
+      {
+        "command": "python3 /tmp/jj-composer-baseline.py",
+        "result": "fail",
+        "failures": 2,
+        "note": "Temporarily restored the three production composer files from @- and ran only EditAndRename|PreviewAndApply|UnknownOutcomeRecovery; 3 assertions pass, 3 skipped, 2 inherited Bits teardown errors. All files restored byte-for-byte in finally. /tmp/jj-composer-consumer-baseline.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-appearance/AppearanceDialog.stories.svelte",
+        "result": "fail",
+        "failures": 2,
+        "note": "Before: normal and confirmation modal backgrounds are rgb235 rather than white. /tmp/jj-modal-palettes-before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-appearance/AppearanceDialog.stories.svelte",
+        "result": "fail",
+        "failures": 2,
+        "note": "After background binding, exact WorkStore field-value assertion exposes muted rather than primary text; next dark transition frame still has old modal fill. /tmp/jj-modal-palettes-background.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-appearance/AppearanceComposer.stories.svelte catalog/components/store-appearance/AppearanceDialog.stories.svelte",
+        "result": "fail",
+        "failures": 2,
+        "note": "Composer passes; both modal stories initially read the previous background during foundation transition:all 100ms. Read-only CUA inspection confirms settled roles are correct; waitFor retains exact colour assertions. /tmp/jj-composer-modal-palettes-final.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-appearance/AppearanceDialog.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Two stories pass across all original 62 palettes after waiting for settled modal colours. Values use foreground and helpers remain muted. /tmp/jj-modal-palettes-settled.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/appearance.test.ts -t \"restores the original theme\"",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before: unknown original preference falls back to Buzz; 7 filtered skips. /tmp/jj-original-theme-before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/appearance.test.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "After adding Original first in the catalog, the existing unpaired Light fallback accidentally changes from Buzz to Original. Preserved the prior fallback explicitly in switchMode; 7 other tests pass. /tmp/jj-original-theme-units-final.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/appearance.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 8 preference/link/draft tests pass, including Original persistence and System/Light/Dark pairing. /tmp/jj-original-theme-units-corrected.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-appearance",
+        "result": "pass",
+        "failures": 0,
+        "note": "7/7 across three files, with axe: Original picker/mode comparison, all controls, and exact composer/normal/confirmation roles across all64 variants (62 Buzz styles plus Original pair). /tmp/jj-theme-alignment-exact.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit",
+        "result": "pass",
+        "failures": 0,
+        "note": "215/215 across36 files. Wider unit lane is justified by the shared theme registry/preference parser/mode fallback consumed app-wide. /tmp/jj-theme-alignment-all-unit.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:ui-ownership; pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial and expanded targeted checks pass: zero errors/warnings, final129 catalog and719 production modules. /tmp/jj-theme-alignment-{web-check,catalog-check,ownership,architecture}.log and earlier /tmp/jj-composer-*-complete.log."
+      },
+      {
+        "command": "pnpm exec tsx scripts/appearance-palettes.mts; pnpm exec tsx scripts/appearance-palettes.mts --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "All62 Buzz-derived sheets retain identical generated bytes; index additionally includes the static Original snapshot. /tmp/jj-original-palette-generate.log and /tmp/jj-theme-alignment-palette-check.log."
+      },
+      {
+        "command": "python3 (read-only Design Core 0.2.0 tarball comparison)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Released package/src/theme.css bytes exactly match installed source defaults; Original snapshots the semantic colour declarations for root and dark, rather than deriving a substitute from Shiki."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Main builds pass before and after final send/modal/Original changes; only inherited chunk-size advisory. Final built output /tmp/jj-theme-alignment-main-build.log; previous complete log /tmp/jj-composer-main-build-complete.log."
+      },
+      {
+        "command": "JJ_THREAD_SLICE_EVIDENCE_PREFIX=/tmp/jj-thread-composer-main node /tmp/jj-thread-main-slice-restart.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Intermediate restart: server36884 ->43017/storage43018,920ms; preserved snapshots/threads/messages/fixture/installation and served built index. /tmp/jj-composer-main-restart.log."
+      },
+      {
+        "command": "JJ_THREAD_SLICE_EVIDENCE_PREFIX=/tmp/jj-thread-theme-alignment-main node /tmp/jj-thread-main-slice-restart.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final restart: server43017 ->46157/storage46158,1199ms. Native state unchanged; search ready/HTTP200. Served index matches rebuilt main SHA25602c34b393434dbc62d251ea035cccda97f63fc57d82b246d5dbd0f5097fba214. /tmp/jj-theme-alignment-main-restart.log and /tmp/jj-thread-theme-alignment-main-ready.json."
+      },
+      {
+        "command": "CUA fresh main-bundle composer, task modal and Appearance picker inspection",
+        "result": "pass",
+        "failures": 0,
+        "note": "Live Github Light shell/modal white; editor transparent; primary text/field values rgb36,41,46; helpers rgb87,94,103; send32px/radius999px. Original tile visible beside Buzz in System gallery. User theme and red accent retained. Test draft exists only in temporary tab; no submission. /tmp/jj-store-{composer-fixed,modal-fixed,original-theme-picker}.jpg."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook",
+        "result": "fail",
+        "failures": 4,
+        "note": "152 passed/4 failed tests;34 passed/4 failed files of53 before browser connection closed at RepositoryLayout. Same four failures already reproduced untouched-main in E-UI-052: three aria-controls picker accessibility defects and MobileHeaderFilters draft retention. Two inherited Bits derived_inert errors plus browser-connection closure; full suite is incomplete and not green. /tmp/jj-theme-alignment-all-stories.log. The shared root modal/theme catalog impact justifies this escalation; focused direct consumer runs remain separately qualified."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress",
+        "result": "fail",
+        "failures": 2,
+        "note": "Initial bookkeeping: spec:first requires mapped API/architecture/governance updates; spec:validate passes. Progress rejects an it()-based unit test reference because its named-test scanner supports test(), fn and def only; unit verification remains in actual runs, without changing the test/checker. Updated canonical chapters and removed unsupported named-test field. /tmp/jj-theme-alignment-{spec-first,spec-validate,progress}.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-threads catalog/components/store-application/AppearanceDiscussions.stories.svelte catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-application/NativeMessageActions.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/StoreFileEditor.stories.svelte catalog/components/store-mutations/StoreRepositoryActions.stories.svelte catalog/components/store-mutations/StoreConflictEditor.stories.svelte catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-work/ProjectsDirectory.stories.svelte catalog/components/store-work/NavigationPersistence.stories.svelte catalog/components/store-search catalog/components/store-application/StoreRepositorySearch.stories.svelte catalog/components/store-application/StoreWorkspaceSettings.stories.svelte",
+        "result": "fail",
+        "failures": 4,
+        "note": "All67 direct consumer assertions pass across18 files (Threads, task/project forms, message/review/agent discussions, file editor, mutations, conflicts, search and settings). Process remains non-green with four inherited Bits dismissible/scrollbar derived_inert teardown errors in file-editor/repository-action stories, the family reproduced before this change. Narrow consumer rerun resolves broad browser-closure coverage gap without suppressing diagnostics. /tmp/jj-theme-alignment-direct-consumers.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm spec:first; pnpm spec:validate; pnpm check:progress; pnpm exec prettier --check $(jj --no-pager diff --name-only)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final web types zero errors/warnings;18 protected files mapped to five updated canonical chapters;five validators/21 chapters/146 requirements;120 ledger tasks;all changed paths formatted. /tmp/jj-theme-alignment-web-check-final.log and /tmp/jj-theme-alignment-{spec-first-final,spec-validate-final,progress-final,format-check}.log. This final evidence-only annotation is consumed again before commit."
+      },
+      {
+        "command": "CUA main tab refresh and temporary-tab cleanup",
+        "result": "pass",
+        "failures": 0,
+        "note": "Confirmed user tab had no open modal or editable fields before reload, then retained its current file/snapshot route while loading rebuilt main. Temporary tab3 closed after screenshots; user tab1 retained. No device preference changes or task submissions."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Inherited picker accessibility, MobileHeaderFilters draft retention, Bits teardown and broad browser-connection closure remain recorded in E-UI-052 and this entry; broad Storybook remains incomplete.",
+      "M16 release/registry-only acceptance, mounted composer strict-CSP qualification and visual baseline approval remain pending."
+    ],
+    "scope": "UI-only shared token/palette adaptation. Wider catalog-unit and full relevant Storybook are justified by root normal/confirmation dialog roles and shared theme registry/preference fallback across app surfaces; focused Appearance regressions run first. No Rust checks/build/tests, root aggregate commands, wire contract changes, package publication or unrelated daemon restart. Main native binaries are reused; no reset/reseed/native mutation or installed CLI replacement.",
+    "formats": "jj-store.appearance.v1 version1 unchanged; two supported theme values original/original-dark added. Static historical foundation palette plus unchanged62 generated Buzz styles. Existing asset-manifest version1 and native snapshot/WAL authority unchanged.",
+    "versions": "Buzz ef2aa1ae38fadcc0bc22b8bf6ed96b35933146be; Design Core registry0.2.0 default theme (identical to existing installed0.1.2/yovkqwtu source via ignored hook); Mira0.0.2; Shiki4.0.2; pnpm10.32.1; JJ0.45.1; Svelte5.57.1; Bits UI2.18.1.",
+    "next": "Use Original in Appearance for direct comparison. Retain M16 Partial and independently resolve its qualification gates.",
+    "artifacts": "Logs /tmp/jj-composer-*.log, /tmp/jj-modal-*.log, /tmp/jj-original-*.log and /tmp/jj-theme-alignment-*.log. Private restart state evidence /tmp/jj-thread-theme-alignment-main-{before,ready}.json; screenshots /tmp/jj-store-{composer-fixed,modal-fixed,original-theme-picker}.jpg. Temporary diagnostic Storybook PID44833 and tab4 closed; temporary tab3 closed after final live proof; user tab1 refreshed in place and retained."
   }
 ]
 ```

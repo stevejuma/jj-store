@@ -15,6 +15,64 @@
 </script>
 
 <Story
+  name="Original theme comparison and paired modes"
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await userEvent.click(c.getByRole("button", { name: /Theme style,/ }));
+    await userEvent.click(
+      c.getByRole("button", { name: "Use Original theme" }),
+    );
+    await waitFor(() =>
+      expect(document.documentElement.dataset.storeTheme).toBe("original"),
+    );
+    await expect(
+      getComputedStyle(document.documentElement)
+        .getPropertyValue("--background")
+        .trim(),
+    ).toBe("oklch(100% 0 0)");
+    await expect(
+      getComputedStyle(document.documentElement)
+        .getPropertyValue("--popover")
+        .trim(),
+    ).toBe("oklch(100% 0 0)");
+    await expect(saved(canvasElement)).toMatchObject({
+      theme: "original",
+      accent: "#3b82f6",
+    });
+    await userEvent.click(c.getByRole("radio", { name: "Dark" }));
+    await waitFor(() =>
+      expect(document.documentElement.dataset.storeTheme).toBe("original-dark"),
+    );
+    await expect(
+      getComputedStyle(document.documentElement)
+        .getPropertyValue("--background")
+        .trim(),
+    ).toBe("oklch(12.9% 0.042 264.695)");
+    await expect(
+      getComputedStyle(document.documentElement)
+        .getPropertyValue("--popover")
+        .trim(),
+    ).toBe("oklch(20.8% 0.042 265.755)");
+    await userEvent.click(c.getByRole("radio", { name: "Light" }));
+    await waitFor(() =>
+      expect(document.documentElement.dataset.storeTheme).toBe("original"),
+    );
+    await userEvent.click(
+      c.getByRole("button", { name: "Use Github Light Default theme" }),
+    );
+    await expect(
+      c.getByRole("button", { name: "Use Blue accent" }),
+    ).toHaveAttribute("aria-pressed", "true");
+    const originalPreview = canvasElement.querySelector(
+      '[data-store-theme="original"]',
+    )!;
+    await expect(
+      getComputedStyle(originalPreview).getPropertyValue("--background").trim(),
+    ).toBe("oklch(100% 0 0)");
+  }}
+/>
+
+<Story
   name="All controls and local links"
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
@@ -22,11 +80,11 @@
     await userEvent.click(c.getByRole("button", { name: /Theme style,/ }));
     await expect(
       c.getAllByRole("button", { name: /Use .* theme/ }),
-    ).toHaveLength(18);
+    ).toHaveLength(19);
     await userEvent.click(c.getByRole("radio", { name: "Dark" }));
     await expect(
       c.getAllByRole("button", { name: /Use .* theme/ }),
-    ).toHaveLength(43);
+    ).toHaveLength(44);
     await userEvent.click(c.getByRole("button", { name: "Use Dracula theme" }));
     await expect(
       c.getByRole("button", { name: "Use Blue accent" }),
@@ -67,7 +125,7 @@
     await userEvent.click(c.getByRole("radio", { name: "Light" }));
     await expect(
       c.getAllByRole("button", { name: /Use .* theme/ }),
-    ).toHaveLength(19);
+    ).toHaveLength(20);
     await userEvent.click(c.getByRole("button", { name: "Use Buzz theme" }));
     await expect(
       c.getByRole("switch", { name: "Prominent active tab" }),

@@ -64,6 +64,12 @@ finalization remain deferred. Snapshot operation, inspected operation, commit,
 change and comparison identities are distinct fields and must not be substituted
 for one another.
 
+Appearance uses the device-local `jj-store.appearance.v1` preference record. The
+Original light/dark pair and Buzz-derived palettes change browser presentation
+only. Theme, composer and modal changes retain the current route, captured
+snapshot, conversation draft and native request identities; selecting a theme
+sends no repository mutation and adds no HTTP/RPC contract fields.
+
 Use tonic/protobuf for native RPC and Axum JSON/SSE for browser/agent APIs.
 Generate OpenAPI and client types. Full IDs are authoritative; shortened IDs are
 presentation. Historical loading requires no physical server working copy. Graph

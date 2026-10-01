@@ -25,6 +25,12 @@
   --store-message-leading: 1.55;
   --store-paragraph-spacing: 0.45rem;
 }
+html[data-store-theme] {
+  --ui-dialog-background: var(--background);
+  --ui-dialog-foreground: var(--foreground);
+  --ui-alert-dialog-background: var(--background);
+  --ui-alert-dialog-foreground: var(--foreground);
+}
 html[data-store-font="smaller"] {
   --store-type-scale: calc(13 / 14);
 }

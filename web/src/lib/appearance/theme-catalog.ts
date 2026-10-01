@@ -1,5 +1,5 @@
 // Buzz ef2aa1ae, desktop/src/shared/theme/theme-loader.ts (Apache-2.0).
-export const themeNames = [
+export const buzzThemeNames = [
   "buzz",
   "buzz-dark",
   "andromeeda",
@@ -63,8 +63,14 @@ export const themeNames = [
   "vitesse-dark",
   "vitesse-light",
 ] as const;
+export const themeNames = [
+  "original",
+  "original-dark",
+  ...buzzThemeNames,
+] as const;
 export type ThemeName = (typeof themeNames)[number];
 export const lightThemes = new Set<ThemeName>([
+  "original",
   "buzz",
   "catppuccin-latte",
   "everforest-light",
@@ -86,6 +92,8 @@ export const lightThemes = new Set<ThemeName>([
   "vitesse-light",
 ]);
 export const themePairs = new Map<ThemeName, ThemeName>([
+  ["original", "original-dark"],
+  ["original-dark", "original"],
   ["buzz", "buzz-dark"],
   ["catppuccin-latte", "catppuccin-mocha"],
   ["everforest-light", "everforest-dark"],

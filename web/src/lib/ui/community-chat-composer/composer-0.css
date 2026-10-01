@@ -1,19 +1,39 @@
 .community-chat-composer {
+  /* Capture app tokens before Mira maps its own tokens back to these roles. */
+  --mira-background: transparent;
+  --mira-editor-background: transparent;
+  --mira-code-editor-background: transparent;
+  --mira-foreground: var(--foreground);
+  --mira-muted-foreground: var(--muted-foreground);
+  --mira-border: var(--border);
+  --mira-accent: var(--primary);
+  --mira-selection: color-mix(in srgb, var(--primary) 20%, transparent);
+  --mira-popover: var(--popover);
+  --mira-popover-foreground: var(--popover-foreground);
+
   position: relative;
   width: 100%;
   overflow: visible;
 }
 
 :is(.community-chat-composer__surface[data-ui-component="ai-chat-composer"]) {
-  --ui-ai-chat-composer-radius: 0.75rem;
-  --ui-ai-chat-composer-padding: 0.65rem;
+  --ui-ai-chat-composer-background: var(--background);
+  --ui-ai-chat-composer-radius: 1rem;
+  --ui-ai-chat-composer-padding: 0.75rem;
   width: 100%;
+}
+
+:is(.community-chat-composer__surface[data-ui-component="ai-chat-composer"])
+  > [data-ui-part="body"] {
+  border-color: color-mix(in srgb, var(--border) 50%, transparent);
+  padding-inline: 1rem;
+  padding-bottom: 0.5rem;
 }
 
 :is(
   .community-chat-composer__context-drawer[data-ui-component="ai-chat-composer-drawer"]
 ) {
-  border-radius: 0.75rem 0.75rem 0 0;
+  border-radius: 1rem 1rem 0 0;
 }
 
 :is(
@@ -207,7 +227,6 @@
   --file-margins-y: 0;
   min-height: 3.25rem;
   max-height: none;
-  background: transparent;
 }
 
 :is(.community-chat-composer__mira .cm-editor > .cm-scroller) {
@@ -219,10 +238,6 @@
 :is(.community-chat-composer__mira .cm-cursor) {
   border-inline-start: 2px solid var(--foreground);
   margin-inline-start: -1px;
-}
-
-:is(.community-chat-composer__mira .cm-placeholder) {
-  padding-inline-start: 0.25rem;
 }
 
 :is(

@@ -10,7 +10,7 @@
   import { Composer, type ComposerStatus } from "@lapismd/design-core/ai/chat";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { ScrollArea } from "@lapismd/design-core/shadcn/scroll-area";
-  import SendIcon from "@lucide/svelte/icons/send";
+  import ArrowUpIcon from "@lucide/svelte/icons/arrow-up";
   import type { EditorView } from "@codemirror/view";
   import { onDestroy, untrack } from "svelte";
   import type { ComposerProps } from "./props.js";
@@ -207,7 +207,7 @@
     class="community-chat-composer__surface"
     {value}
     density="spacious"
-    elevation="low"
+    elevation="none"
     disabled={blocked}
     {status}
     statusPosition="top"
@@ -291,10 +291,11 @@
           type="button"
           size="icon-sm"
           class="community-chat-composer__send"
+          data-ui-part="send-button"
           aria-label={submitLabel ??
             (context?.kind === "edit" ? "Save message" : "Send message")}
           disabled={blocked || !onSubmit || !value.trim()}
-          onclick={submit}><SendIcon aria-hidden="true" /></Button
+          onclick={submit}><ArrowUpIcon aria-hidden="true" /></Button
         >
       {/if}{/snippet}
   </Composer>

@@ -36,6 +36,6 @@
   padding: 0;
   border: 0;
   background: transparent;
-  color: var(--muted-foreground);
+  color: var(--foreground);
   box-shadow: none;
 }

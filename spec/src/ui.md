@@ -114,12 +114,13 @@ repository; LocalTrusted fixtures discover without an Authorization header.
 ## Device appearance
 
 JST-UI-018 owns the Buzz Appearance adaptation. The page exposes all 62 theme
-styles, System/Light/Dark mode, paired transitions, ten accent choices, browser
-glass with 30-90 percent opacity/reset, prominent navigation, 13/14/15 pixel
-body typography, Compact/Comfy/Spacious conversations, local Compact/Rich link
-cards and Focus/Split discussions. Preferences are device-local and app-wide;
-Settings location remains transient. Defaults are System/Buzz, default font,
-Comfy density, Compact links, Split replies, glass off and subtle active tabs.
+styles plus the previous app's Original light/dark pair, System/Light/Dark mode,
+paired transitions, ten accent choices, browser glass with 30-90 percent
+opacity/reset, prominent navigation, 13/14/15 pixel body typography,
+Compact/Comfy/Spacious conversations, local Compact/Rich link cards and
+Focus/Split discussions. Preferences are device-local and app-wide; Settings
+location remains transient. Defaults are System/Buzz, default font, Comfy
+density, Compact links, Split replies, glass off and subtle active tabs.
 Temporary previews never persist. Startup, cross-tab and OS changes share the
 same resolved palette, including portalled controls and emoji pickers. Native
 entity links retain chips rather than becoming website cards. Conversation and
@@ -129,6 +130,25 @@ repository details rail. Native/local capability and snapshot authority are
 unaffected. Browser glass reveals the application background, not the operating
 system desktop. Palette, font and preview assets are local under the existing
 strict CSP.
+
+Prose composers use the resolved app background for their entire input surface
+(white in GitHub Light Default), with Buzz's light rounded border, no resting
+shell shadow, foreground action icons and circular upward-arrow send control.
+Their frameless Mira editor uses transparent public editor/code-editor
+background tokens and bridges foreground, placeholder, border, popover, accent
+and selection tokens from the owned composer to the resolved app palette. The
+bridge captures app roles on the composer ancestor before Mira defines its own
+aliases, avoiding cyclic tokens. These tokens stay scoped to prose composers;
+standalone code and file editors retain their surfaces.
+
+Normal and confirmation modal surfaces bind the public foundation background and
+foreground tokens to the resolved app background and foreground, including
+portalled dialogs. WorkStore form values use foreground; field descriptions and
+placeholders retain muted foreground. These roles follow every palette without
+changing the user's selected accent or device preferences. Original retains the
+pre-Appearance Design Core semantic palette and its native accent in light and
+dark modes, including System pairing, scoped gallery previews and persisted
+restoration. Choosing it retains the saved accent for other themes.
 
 ## Transient store settings
 

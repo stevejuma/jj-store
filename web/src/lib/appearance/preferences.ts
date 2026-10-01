@@ -104,7 +104,6 @@ export function switchMode(
     theme:
       lightThemes.has(prefs.theme) === needsLight
         ? prefs.theme
-        : (themePairs.get(prefs.theme) ??
-          themeNames.find((t) => lightThemes.has(t) === needsLight)!),
+        : (themePairs.get(prefs.theme) ?? (needsLight ? "buzz" : "buzz-dark")),
   };
 }

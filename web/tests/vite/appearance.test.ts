@@ -10,6 +10,7 @@ import { createAppearanceStore } from "../../src/lib/appearance/store.svelte.js"
 import { createDrafts } from "../../src/lib/appearance/drafts.svelte.js";
 import {
   themeNames,
+  buzzThemeNames,
   lightThemes,
   pairedThemes,
   themePairs,
@@ -22,11 +23,28 @@ import {
 import { createMemoryStoryStorage } from "../../../catalog/fixtures/memory-storage.js";
 
 describe("device appearance", () => {
+  it("restores the original theme and follows its light and dark pair", () => {
+    const prefs = parseAppearance(
+      '{"version":1,"mode":"system","theme":"original"}',
+    );
+    expect(prefs.theme).toBe("original");
+    expect(resolveTheme(prefs, false)).toBe("original");
+    expect(resolveTheme(prefs, true)).toBe("original-dark");
+    const storage = createMemoryStoryStorage();
+    const store = createAppearanceStore(storage);
+    store.update(prefs);
+    store.mode("dark");
+    expect(store.theme).toBe("original-dark");
+    store.mode("light");
+    expect(store.theme).toBe("original");
+    expect(createAppearanceStore(storage).saved.theme).toBe("original");
+  });
   it("contains the complete pinned theme catalog and reciprocal pairs", () => {
-    expect(themeNames).toHaveLength(62);
-    expect(new Set(themeNames).size).toBe(62);
-    expect(lightThemes.size).toBe(19);
-    expect(pairedThemes).toHaveLength(18);
+    expect(buzzThemeNames).toHaveLength(62);
+    expect(themeNames).toHaveLength(64);
+    expect(new Set(themeNames).size).toBe(64);
+    expect(lightThemes.size).toBe(20);
+    expect(pairedThemes).toHaveLength(19);
     for (const [name, pair] of themePairs)
       expect(themePairs.get(pair)).toBe(name);
   });
