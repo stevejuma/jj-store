@@ -1,5 +1,5 @@
 use crate::*;
-use jj_agent::{AgentObjectRef, AgentSessionId, CodeAnchorV2, EvidenceMethod};
+use jj_agent::{AgentObjectRef, AgentSessionId, CodeAnchorV1, CodeAnchorV2, EvidenceMethod};
 use jj_review::{ReviewObjectRef, ReviewThreadId};
 use jj_store_model::PrincipalId;
 use serde::{Deserialize, Serialize};
@@ -48,7 +48,7 @@ pub struct ThreadVersionV1 {
     pub accepted_at_millis: i64,
     pub previous: Option<CollabObjectRef>,
     pub event: CollabObjectRef,
-    pub baseline: Option<CodeAnchorV2>,
+    pub baseline: Option<ThreadCodeAnchorV1>,
 }
 impl ThreadVersionV1 {
     pub fn validate(&self) -> Result<()> {
@@ -167,7 +167,7 @@ pub enum ThreadLinkTargetV1 {
         primary: bool,
     },
     Code {
-        anchor: CodeAnchorV2,
+        anchor: ThreadCodeAnchorV1,
         evidence_method: EvidenceMethod,
         evidence: Option<AgentObjectRef>,
     },
@@ -242,5 +242,61 @@ impl ThreadBindingV1 {
             expect(reference, CollabObjectKind::ThreadLink)?;
         }
         Ok(())
+    }
+}
+
+/// Native IDs and portable evidence remain distinct; neither is a device path.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
+#[serde(
+    tag = "profile",
+    content = "anchor",
+    rename_all = "snake_case",
+    deny_unknown_fields
+)]
+pub enum ThreadCodeAnchorV1 {
+    Native(CodeAnchorV1),
+    Portable(CodeAnchorV2),
+}
+impl ThreadCodeAnchorV1 {
+    pub fn validate(&self) -> Result<()> {
+        match self {
+            Self::Native(v)
+                if v.operations.len() > 256
+                    || v.commits.len() > 256
+                    || (v.operations.is_empty() && v.commits.is_empty()) =>
+            {
+                Err(Error::Invalid("native Thread anchor"))
+            }
+            Self::Portable(v) => {
+                v.validate()
+                    .map_err(|_| Error::Invalid("portable Thread anchor"))?;
+                if v.is_empty() {
+                    return Err(Error::Invalid("empty portable Thread anchor"));
+                }
+                Ok(())
+            }
+            _ => Ok(()),
+        }
+    }
+    pub fn evidence(
+        &self,
+    ) -> std::collections::BTreeSet<jj_store_model::portable::CodeEvidenceRefV1> {
+        match self {
+            Self::Native(_) => Default::default(),
+            Self::Portable(v) => v.evidence(),
+        }
+    }
+    pub fn native_dependencies(&self) -> std::collections::BTreeSet<jj_store_model::ObjectKey> {
+        use jj_store_model::ObjectKey;
+        match self {
+            Self::Native(v) => v
+                .operations
+                .iter()
+                .copied()
+                .map(ObjectKey::Operation)
+                .chain(v.commits.iter().copied().map(ObjectKey::Commit))
+                .collect(),
+            Self::Portable(_) => Default::default(),
+        }
     }
 }

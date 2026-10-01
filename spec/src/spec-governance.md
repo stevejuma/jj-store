@@ -518,3 +518,14 @@ Agent seed setup, hooks and removal MUST run with the isolated physical fixture
 folder as their working directory, as well as an explicit repository argument.
 The harness must not temporarily install hook configuration in the source
 checkout. Cold acceptance verifies teardown in both locations.
+
+## M14 Thread/Reaction authority changes
+
+The jj-collab domain is governed by collaboration.md. Native root records,
+manifest/WAL versions, atomic root publication, cold recovery and manifest-last
+copy also require publication.md. Local companion envelope/ref receipt changes
+require jj-integration.md and local-jj.md. Legacy origin fail-closed behavior
+and reducer qualification require replication.md. The milestone ledger keeps
+native memory-store, local filesystem, direct-consumer compilation and real
+RustFS/cold acceptance as distinct evidence. Shared authority infrastructure
+justifies the full relevant WAL suite; it does not justify unrelated UI lanes.

@@ -1,13 +1,15 @@
 //! Independent application-domain roots published through the repository CAS.
 use super::*;
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum Domain {
     Agent,
     Review,
     Work,
     Git,
+    Thread,
+    Reaction,
 }
 impl Domain {
     fn record_kind(self) -> RecordKind {
@@ -16,6 +18,8 @@ impl Domain {
             Self::Review => RecordKind::ReviewRoot,
             Self::Work => RecordKind::WorkRoot,
             Self::Git => RecordKind::GitRoot,
+            Self::Thread => RecordKind::ThreadRoot,
+            Self::Reaction => RecordKind::ReactionRoot,
         }
     }
     fn semantic_kind(self) -> SemanticKind {
@@ -24,6 +28,8 @@ impl Domain {
             Self::Review => SemanticKind::ReviewStateChanged,
             Self::Work => SemanticKind::WorkStateChanged,
             Self::Git => SemanticKind::GitStateChanged,
+            Self::Thread => SemanticKind::ThreadStateChanged,
+            Self::Reaction => SemanticKind::ReactionStateChanged,
         }
     }
 }
@@ -44,6 +50,10 @@ pub struct RepositoryDomains {
     pub work: Option<DomainState>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub git: Option<DomainState>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub thread: Option<DomainState>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub reaction: Option<DomainState>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -58,6 +68,8 @@ pub struct DomainRequest {
     pub result: Vec<u8>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub facts: Option<DomainFactsV1>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub additional: Vec<DomainSelectionV1>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -67,6 +79,13 @@ pub struct DomainFactsV1 {
     pub agent: Option<AgentDeltaV1>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub review: Option<ReviewDeltaV1>,
+}
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct DomainSelectionV1 {
+    pub domain: Domain,
+    pub expected: DomainState,
+    pub root: RecordRef,
 }
 impl DomainRequest {
     pub fn new(
@@ -87,9 +106,25 @@ impl DomainRequest {
             root,
             result,
             facts: None,
+            additional: Vec::new(),
         };
         request.validate()?;
         Ok(request)
+    }
+    pub fn with_additional(mut self, selection: DomainSelectionV1) -> Result<Self> {
+        self.additional.push(selection);
+        self.additional.sort_by_key(|s| s.domain);
+        self.validate()?;
+        Ok(self)
+    }
+    fn selections(&self) -> Vec<DomainSelectionV1> {
+        std::iter::once(DomainSelectionV1 {
+            domain: self.domain,
+            expected: self.expected,
+            root: self.root,
+        })
+        .chain(self.additional.clone())
+        .collect()
     }
     pub fn with_agent_facts(mut self, delta: AgentDeltaV1) -> Result<Self> {
         delta.validate().map_err(super::agent::agent_error)?;
@@ -110,6 +145,21 @@ impl DomainRequest {
         Ok(self)
     }
     fn validate(&self) -> Result<()> {
+        if self.additional.len() > 5
+            || self
+                .additional
+                .windows(2)
+                .any(|p| p[0].domain >= p[1].domain)
+            || self.additional.iter().any(|s| {
+                s.domain == self.domain
+                    || s.root.kind != s.domain.record_kind()
+                    || s.expected.root.kind != s.domain.record_kind()
+                    || s.root.attempt.is_some()
+                    || s.expected.root.attempt.is_some()
+            })
+        {
+            return Err(Error::Corrupt("atomic domain selections"));
+        }
         if self.result.len() > 1024 * 1024
             || self.root.kind != self.domain.record_kind()
             || self.expected.root.kind != self.domain.record_kind()
@@ -118,7 +168,7 @@ impl DomainRequest {
             || self.facts.as_ref().is_some_and(|facts| match self.domain {
                 Domain::Agent => facts.agent.is_none() || facts.review.is_some(),
                 Domain::Review => facts.agent.is_some() || facts.review.is_none(),
-                Domain::Work | Domain::Git => true,
+                Domain::Work | Domain::Git | Domain::Thread | Domain::Reaction => true,
             })
         {
             return Err(Error::Corrupt("domain publication request"));
@@ -157,10 +207,28 @@ impl Coordinator {
         request: &DomainRequest,
         intent: IntentDigest,
     ) -> Result<Receipt> {
-        let native_roots = self.read_domain_root(request.domain, request.root).await?;
+        let mut native_roots = BTreeSet::new();
+        for selection in request.selections() {
+            native_roots.extend(
+                self.read_domain_root(selection.domain, selection.root)
+                    .await?,
+            );
+        }
         for _ in 0..self.limits.cas_attempts {
             let base = self.read().await?;
             self.guard.authorize_domain(&base, request).await?;
+            for selection in &request.additional {
+                let probe = DomainRequest::new(
+                    request.principal,
+                    request.request_id,
+                    request.publication_id,
+                    selection.domain,
+                    selection.expected,
+                    selection.root,
+                    Vec::new(),
+                )?;
+                self.guard.authorize_domain(&base, &probe).await?;
+            }
             if let Some(receipt) = self
                 .lookup_identity(
                     &base.manifest,
@@ -173,37 +241,78 @@ impl Coordinator {
             {
                 return Ok(receipt);
             }
-            let mut current = base.manifest.domain_state(request.domain);
-            if request.domain == Domain::Work && current.is_none() {
-                current = Some(DomainState {
-                    root: self.empty_work_store().await?.reference(),
-                    version: 0,
-                });
-            }
-            if request.domain == Domain::Git && current.is_none() {
-                current = Some(DomainState {
-                    root: self.empty_git_store().await?.reference,
-                    version: 0,
-                });
-            }
-            if current != Some(request.expected) {
-                return Err(Error::Stale);
-            }
-            if request.domain == Domain::Git {
-                let previous = self.git_store(request.expected.root).await?;
-                let staged = self.git_store(request.root).await?;
-                if previous
-                    .values
+            if request
+                .selections()
+                .iter()
+                .any(|s| matches!(s.domain, Domain::Thread | Domain::Reaction))
+                && base.manifest.replication_root.is_some()
+                && base.manifest.work_root.is_none()
+                && !request
+                    .selections()
                     .iter()
-                    .any(|(key, value)| staged.values.get(key) != Some(value))
-                {
-                    return Err(Error::Corrupt("Git facts cannot be removed"));
+                    .any(|s| s.domain == Domain::Work)
+            {
+                return Err(Error::Unsupported(
+                    "Thread/Reaction reducer 3 is not qualified",
+                ));
+            }
+            for selection in request.selections() {
+                let mut current = base.manifest.domain_state(selection.domain);
+                if selection.domain == Domain::Work && current.is_none() {
+                    current = Some(DomainState {
+                        root: self.empty_work_store().await?.reference(),
+                        version: 0,
+                    });
                 }
-                if base.manifest.work_root.is_none() && base.manifest.replication_root.is_some() {
-                    let accepted = self.accepted_code_operations(&base).await?;
-                    self.operation_heads
-                        .verify_git(&staged, Some(&previous), Some(&accepted))
-                        .await?;
+                if selection.domain == Domain::Git && current.is_none() {
+                    current = Some(DomainState {
+                        root: self.empty_git_store().await?.reference,
+                        version: 0,
+                    });
+                }
+                if current.is_none()
+                    && matches!(selection.domain, Domain::Thread | Domain::Reaction)
+                {
+                    let root = match selection.domain {
+                        Domain::Thread => {
+                            self.stage_native_thread_root(
+                                &jj_collab::ThreadRootV1::empty(),
+                                &jj_collab::CollabGraphV1::default(),
+                            )
+                            .await?
+                        }
+                        _ => {
+                            self.stage_native_reaction_root(
+                                &jj_collab::ReactionRootV1::empty(),
+                                &jj_collab::CollabGraphV1::default(),
+                            )
+                            .await?
+                        }
+                    };
+                    current = Some(DomainState { root, version: 0 });
+                }
+                if current != Some(selection.expected) {
+                    return Err(Error::Stale);
+                }
+            }
+            for selection in request.selections() {
+                if selection.domain == Domain::Git {
+                    let previous = self.git_store(selection.expected.root).await?;
+                    let staged = self.git_store(selection.root).await?;
+                    if previous
+                        .values
+                        .iter()
+                        .any(|(key, value)| staged.values.get(key) != Some(value))
+                    {
+                        return Err(Error::Corrupt("Git facts cannot be removed"));
+                    }
+                    if base.manifest.work_root.is_none() && base.manifest.replication_root.is_some()
+                    {
+                        let accepted = self.accepted_code_operations(&base).await?;
+                        self.operation_heads
+                            .verify_git(&staged, Some(&previous), Some(&accepted))
+                            .await?;
+                    }
                 }
             }
             let inventory = if native_roots.is_empty() {
@@ -257,26 +366,44 @@ impl Coordinator {
                 .domains()
                 .ok_or(Error::Corrupt("domain roots"))?;
             let mut after_domains = before_domains;
-            let selected = DomainState {
-                root: request.root,
-                version: request
-                    .expected
-                    .version
-                    .checked_add(1)
-                    .ok_or(Error::Limit("domain version"))?,
-            };
-            match request.domain {
-                Domain::Agent => after_domains.agent = selected,
-                Domain::Review => after_domains.review = selected,
-                Domain::Work => after_domains.work = Some(selected),
-                Domain::Git => after_domains.git = Some(selected),
+            let mut changed_domains = BTreeSet::new();
+            for selection in request.selections() {
+                let selected = DomainState {
+                    root: selection.root,
+                    version: selection
+                        .expected
+                        .version
+                        .checked_add(1)
+                        .ok_or(Error::Limit("domain version"))?,
+                };
+                let changed = match selection.domain {
+                    Domain::Agent => {
+                        after_domains.agent = selected;
+                        OriginDomainV1::Agent
+                    }
+                    Domain::Review => {
+                        after_domains.review = selected;
+                        OriginDomainV1::Review
+                    }
+                    Domain::Work => {
+                        after_domains.work = Some(selected);
+                        OriginDomainV1::Repository
+                    }
+                    Domain::Git => {
+                        after_domains.git = Some(selected);
+                        OriginDomainV1::Git
+                    }
+                    Domain::Thread => {
+                        after_domains.thread = Some(selected);
+                        OriginDomainV1::Repository
+                    }
+                    Domain::Reaction => {
+                        after_domains.reaction = Some(selected);
+                        OriginDomainV1::Repository
+                    }
+                };
+                changed_domains.insert(changed);
             }
-            let changed_domain = match request.domain {
-                Domain::Agent => OriginDomainV1::Agent,
-                Domain::Review => OriginDomainV1::Review,
-                Domain::Work => OriginDomainV1::Repository,
-                Domain::Git => OriginDomainV1::Git,
-            };
             let origin = self
                 .author_origin(
                     &base,
@@ -288,7 +415,7 @@ impl Coordinator {
                     BTreeSet::new(),
                     Some(after_domains),
                     inventory,
-                    BTreeSet::from([changed_domain]),
+                    changed_domains,
                     request.facts.clone(),
                 )
                 .await?;
@@ -311,7 +438,11 @@ impl Coordinator {
                 receipt: receipt_ref,
                 inventory,
                 settings: base.manifest.settings,
-                kind: request.domain.semantic_kind(),
+                kind: if request.additional.is_empty() {
+                    request.domain.semantic_kind()
+                } else {
+                    SemanticKind::DomainsStateChanged
+                },
                 published_operations: BTreeSet::new(),
                 before_domains: Some(before_domains),
                 after_domains: Some(after_domains),
@@ -329,13 +460,19 @@ impl Coordinator {
                 )
                 .await?;
             let manifest = Manifest {
-                format: if after_domains.git.is_some() {
+                format: if after_domains.thread.is_some() || after_domains.reaction.is_some() {
+                    5
+                } else if after_domains.git.is_some() {
                     4
                 } else if after_domains.work.is_some() {
                     3
                 } else {
                     base.manifest.format
                 },
+                thread_root: after_domains.thread.map(|s| s.root),
+                thread_state_version: after_domains.thread.map_or(0, |s| s.version),
+                reaction_root: after_domains.reaction.map(|s| s.root),
+                reaction_state_version: after_domains.reaction.map_or(0, |s| s.version),
                 git_root: after_domains.git.map(|s| s.root),
                 git_state_version: after_domains.git.map_or(0, |s| s.version),
                 work_root: after_domains.work.map(|s| s.root),
@@ -363,6 +500,18 @@ impl Coordinator {
                 Err(Error::OutcomeUnknown) => {
                     let latest = self.read().await.map_err(|_| Error::OutcomeUnknown)?;
                     self.guard.authorize_domain(&latest, request).await?;
+                    for selection in &request.additional {
+                        let probe = DomainRequest::new(
+                            request.principal,
+                            request.request_id,
+                            request.publication_id,
+                            selection.domain,
+                            selection.expected,
+                            selection.root,
+                            Vec::new(),
+                        )?;
+                        self.guard.authorize_domain(&latest, &probe).await?;
+                    }
                     return self
                         .lookup_identity(
                             &latest.manifest,
@@ -386,6 +535,8 @@ impl Coordinator {
         root: RecordRef,
     ) -> Result<BTreeSet<ObjectKey>> {
         match domain {
+            Domain::Thread => Ok(self.native_thread_store(root).await?.native),
+            Domain::Reaction => Ok(self.native_reaction_store(root).await?.native),
             Domain::Git => Ok(self.git_store(root).await?.native),
             Domain::Work => {
                 self.work_store(root).await?;

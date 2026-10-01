@@ -1,5 +1,5 @@
 use crate::*;
-use jj_agent::{AgentSessionId, CodeAnchorV2};
+use jj_agent::AgentSessionId;
 use jj_store_model::{PrincipalId, RequestId};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest as _, Sha256};
@@ -11,7 +11,7 @@ pub enum ThreadCommandV1 {
     Create {
         thread_id: ThreadId,
         title: String,
-        baseline: Option<CodeAnchorV2>,
+        baseline: Option<ThreadCodeAnchorV1>,
     },
     Rename {
         thread_id: ThreadId,

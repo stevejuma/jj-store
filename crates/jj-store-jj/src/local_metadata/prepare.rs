@@ -1,6 +1,6 @@
 use super::{
-    Candidate, Error, GitOid, MetadataStore, Preparation, Receipt, Result, RootV1, Selection,
-    Snapshot, Update, objects,
+    BatchUpdate, Candidate, Domain, DomainUpdate, Error, GitOid, MetadataStore, Preparation,
+    Receipt, Result, RootV1, Selection, Snapshot, Update, objects,
 };
 use gix::objs::Write as _;
 use std::collections::BTreeMap;
@@ -9,6 +9,33 @@ impl MetadataStore {
     /// Prepare immutable bytes without making them discoverable. A domain CAS
     /// race is resolved by reloading and preparing again, never replacing siblings.
     pub fn prepare(&self, base: Option<&Snapshot>, update: &Update) -> Result<Preparation> {
+        self.prepare_many(
+            base,
+            &BatchUpdate {
+                repository: update.repository,
+                actor: update.actor,
+                request: update.request,
+                intent: update.intent,
+                domains: BTreeMap::from([(
+                    update.domain,
+                    DomainUpdate {
+                        expected: update.expected.clone(),
+                        bytes: update.bytes.clone(),
+                    },
+                )]),
+                result: update.result.clone(),
+                retained: update.retained.clone(),
+            },
+        )
+    }
+    pub fn prepare_many(
+        &self,
+        base: Option<&Snapshot>,
+        update: &BatchUpdate,
+    ) -> Result<Preparation> {
+        if update.domains.is_empty() || update.domains.len() > 5 {
+            return Err(Error::Invalid("batch domains"));
+        }
         if let Some(base) = base {
             if base.repository() != update.repository {
                 return Err(Error::Invalid("repository binding"));
@@ -20,10 +47,15 @@ impl MetadataStore {
                 return Ok(Preparation::Committed(receipt.clone()));
             }
         }
-        if base.and_then(|s| s.selection(update.domain)) != update.expected.as_ref() {
-            return Err(Error::Stale);
+        for (&domain, change) in &update.domains {
+            if base.and_then(|s| s.selection(domain)) != change.expected.as_ref() {
+                return Err(Error::Stale);
+            }
+            if change.bytes.len() > self.limits.object_bytes {
+                return Err(Error::Limit);
+            }
         }
-        if update.bytes.len() > self.limits.object_bytes || update.result.len() > 1024 * 1024 {
+        if update.result.len() > 1024 * 1024 {
             return Err(Error::Limit);
         }
         let repo = gix::open(&self.git_dir).map_err(Error::other)?;
@@ -38,14 +70,30 @@ impl MetadataStore {
         });
         root.sequence = root.sequence.checked_add(1).ok_or(Error::Limit)?;
         root.previous = base.map(|s| s.commit);
-        let selection = Selection {
-            object: objects::blob(&repo, &update.bytes)?,
-            version: update
-                .expected
-                .as_ref()
-                .map_or(Ok(1), |s| s.version.checked_add(1).ok_or(Error::Limit))?,
-        };
-        root.domains.insert(update.domain, selection.clone());
+        if update.domains.len() > 1
+            || update
+                .domains
+                .keys()
+                .any(|d| matches!(d, Domain::Thread | Domain::Reaction))
+        {
+            root.version = 2;
+        }
+        let mut selections = BTreeMap::new();
+        for (&domain, change) in &update.domains {
+            let selection = Selection {
+                object: objects::blob(&repo, &change.bytes)?,
+                version: change
+                    .expected
+                    .as_ref()
+                    .map_or(Ok(1), |s| s.version.checked_add(1).ok_or(Error::Limit))?,
+            };
+            root.domains.insert(domain, selection.clone());
+            selections.insert(domain, selection);
+        }
+        let (&primary, selection) = selections
+            .first_key_value()
+            .ok_or(Error::Invalid("empty batch"))?;
+        let selection = selection.clone();
         for (&id, &kind) in &update.retained {
             if root
                 .retained
@@ -64,7 +112,12 @@ impl MetadataStore {
             request: update.request,
             intent: update.intent,
             sequence: root.sequence,
-            domain: update.domain,
+            domain: primary,
+            selections: if selections.len() > 1 {
+                selections
+            } else {
+                BTreeMap::new()
+            },
             selection,
             result: update.result.clone(),
         };

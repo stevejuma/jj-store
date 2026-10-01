@@ -207,6 +207,12 @@ impl Coordinator {
         let Some(domains) = domains else {
             return Ok(());
         };
+        if let Some(thread) = domains.thread {
+            records.extend(self.native_thread_store(thread.root).await?.records);
+        }
+        if let Some(reaction) = domains.reaction {
+            records.extend(self.native_reaction_store(reaction.root).await?.records);
+        }
         if let Some(git) = domains.git {
             records.extend(self.git_store(git.root).await?.records);
         }
@@ -270,6 +276,8 @@ fn include_manifest_records(manifest: &Manifest, records: &mut BTreeSet<RecordRe
     records.extend(manifest.replication_root);
     records.extend(manifest.work_root);
     records.extend(manifest.git_root);
+    records.extend(manifest.thread_root);
+    records.extend(manifest.reaction_root);
 }
 
 async fn copy_exact(

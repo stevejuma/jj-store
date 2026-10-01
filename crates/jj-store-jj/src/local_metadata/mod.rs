@@ -176,7 +176,12 @@ impl MetadataStore {
         Ok(Snapshot { commit, root })
     }
     fn validate_root(&self, root: &RootV1) -> Result<()> {
-        if root.version != 1
+        if !matches!(root.version, 1 | 2)
+            || (root.version == 1
+                && root
+                    .domains
+                    .keys()
+                    .any(|d| matches!(d, Domain::Thread | Domain::Reaction)))
             || root.sequence == 0
             || root.domains.is_empty()
             || (root.sequence == 1) != root.previous.is_none()
@@ -197,6 +202,19 @@ impl MetadataStore {
                 || receipt.sequence == 0
                 || receipt.sequence > root.sequence
                 || receipt.result.len() > 1024 * 1024
+                || (root.version == 1
+                    && (!receipt.selections.is_empty()
+                        || matches!(receipt.domain, Domain::Thread | Domain::Reaction)))
+                || receipt.selection.version == 0
+                || receipt.selection.version > receipt.sequence
+                || (!receipt.selections.is_empty() && receipt.selections.len() < 2)
+                || !root.domains.contains_key(&receipt.domain)
+                || (!receipt.selections.is_empty()
+                    && receipt.selections.get(&receipt.domain) != Some(&receipt.selection))
+                || receipt
+                    .selections
+                    .values()
+                    .any(|s| s.version == 0 || s.version > receipt.sequence)
             {
                 return Err(Error::Invalid("receipt identity/sequence"));
             }

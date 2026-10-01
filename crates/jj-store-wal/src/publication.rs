@@ -12,6 +12,7 @@ mod agent_provenance;
 mod agent_read_engine;
 mod agent_reads;
 mod application;
+mod collab_store;
 mod collaboration;
 mod domains;
 mod git_interop;
@@ -55,8 +56,11 @@ pub use agent_io::{AgentObjectIo, AgentProjector, AgentSnapshotRead};
 pub use agent_read_engine::AgentReader;
 pub use agent_reads::{AgentCatalogPage, AgentRelationCursor, AgentRelationRange, TranscriptRange};
 pub use application::ApplicationIntent;
+pub use collab_store::{NativeReactionStoreV1, NativeThreadStoreV1};
 pub use collaboration::{CollaborationOutcome, CollaborationRequest};
-pub use domains::{Domain, DomainFactsV1, DomainRequest, DomainState, RepositoryDomains};
+pub use domains::{
+    Domain, DomainFactsV1, DomainRequest, DomainSelectionV1, DomainState, RepositoryDomains,
+};
 pub use git_interop::{
     GIT_PROFILE, GitObjectKind, GitObjectV1, GitObservationV1, GitPushEventKindV1, GitPushEventV1,
     GitPushIntentV1, GitPushRefOutcomeV1, GitPushRefV1, GitRecordV1, GitRefV1, GitRemoteV1,
@@ -194,6 +198,14 @@ pub struct Manifest {
     pub git_root: Option<RecordRef>,
     #[serde(default, skip_serializing_if = "is_zero")]
     pub git_state_version: u64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub thread_root: Option<RecordRef>,
+    #[serde(default, skip_serializing_if = "is_zero")]
+    pub thread_state_version: u64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub reaction_root: Option<RecordRef>,
+    #[serde(default, skip_serializing_if = "is_zero")]
+    pub reaction_state_version: u64,
 }
 impl Manifest {
     pub fn snapshot(&self) -> Snapshot {
@@ -210,6 +222,8 @@ impl Manifest {
             Domain::Review => (self.review_root, self.review_state_version),
             Domain::Work => (self.work_root, self.work_state_version),
             Domain::Git => (self.git_root, self.git_state_version),
+            Domain::Thread => (self.thread_root, self.thread_state_version),
+            Domain::Reaction => (self.reaction_root, self.reaction_state_version),
         };
         root.map(|root| DomainState { root, version })
     }
@@ -219,10 +233,12 @@ impl Manifest {
             review: self.domain_state(Domain::Review)?,
             work: self.domain_state(Domain::Work),
             git: self.domain_state(Domain::Git),
+            thread: self.domain_state(Domain::Thread),
+            reaction: self.domain_state(Domain::Reaction),
         })
     }
     fn validate(&self, repository: RepositoryId) -> Result<()> {
-        if !matches!(self.format, 1..=4)
+        if !matches!(self.format, 1..=5)
             || self.repository != repository
             || self.heads.is_empty()
             || self.heads.len() > MAX_HEADS
@@ -243,7 +259,7 @@ impl Manifest {
             {
                 return Err(Error::Corrupt("legacy manifest domains"));
             }
-            2..=4
+            2..=5
                 if self.domains().is_none()
                     || self.agent_root.is_some_and(|r| {
                         r.kind != RecordKind::AgentRoot || r.attempt.is_some()
@@ -279,6 +295,25 @@ impl Manifest {
                 .is_some_and(|r| r.kind != RecordKind::GitRoot || r.attempt.is_some())
         {
             return Err(Error::Corrupt("Git manifest state"));
+        }
+        if (self.format < 5
+            && (self.thread_root.is_some()
+                || self.reaction_root.is_some()
+                || self.thread_state_version != 0
+                || self.reaction_state_version != 0))
+            || (self.format == 5 && self.thread_root.is_none() && self.reaction_root.is_none())
+            || (self.thread_root.is_some() != (self.thread_state_version != 0))
+            || (self.reaction_root.is_some() != (self.reaction_state_version != 0))
+            || self.thread_state_version > self.published.0
+            || self.reaction_state_version > self.published.0
+            || self
+                .thread_root
+                .is_some_and(|r| r.kind != RecordKind::ThreadRoot || r.attempt.is_some())
+            || self
+                .reaction_root
+                .is_some_and(|r| r.kind != RecordKind::ReactionRoot || r.attempt.is_some())
+        {
+            return Err(Error::Corrupt("Thread/Reaction manifest state"));
         }
         if self.replication_root.is_some_and(|reference| {
             reference.kind != RecordKind::ReplicationRoot || reference.attempt.is_some()
@@ -401,6 +436,9 @@ pub enum SemanticKind {
     ReviewStateChanged,
     WorkStateChanged,
     GitStateChanged,
+    ThreadStateChanged,
+    ReactionStateChanged,
+    DomainsStateChanged,
     ReplicationImported,
     ReplicationSeeded,
 }
@@ -728,6 +766,10 @@ impl Coordinator {
                 work_state_version: 0,
                 git_root: None,
                 git_state_version: 0,
+                thread_root: None,
+                thread_state_version: 0,
+                reaction_root: None,
+                reaction_state_version: 0,
             };
             let bytes = records::encode(&manifest, MAX_MANIFEST)?;
             let upload = StagedUpload::from_bytes(&bytes, MAX_MANIFEST).await?;
@@ -1028,7 +1070,10 @@ impl Coordinator {
                 )
                 .await?;
             let manifest = Manifest {
-                format: if after_domains.is_some_and(|d| d.git.is_some()) {
+                format: if after_domains.is_some_and(|d| d.thread.is_some() || d.reaction.is_some())
+                {
+                    5
+                } else if after_domains.is_some_and(|d| d.git.is_some()) {
                     4
                 } else {
                     base.manifest.format
@@ -1438,6 +1483,12 @@ impl Coordinator {
             }
             if let Some(root) = manifest.work_root {
                 self.work_store(root).await?;
+            }
+            if let Some(root) = manifest.thread_root {
+                domain_native.extend(self.native_thread_store(root).await?.native);
+            }
+            if let Some(root) = manifest.reaction_root {
+                domain_native.extend(self.native_reaction_store(root).await?.native);
             }
             let inventory = self.inventory(&snapshot, max_entries).await?;
             let inventory_keys: BTreeSet<_> = inventory.iter().map(|node| node.key).collect();

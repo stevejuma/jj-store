@@ -79,6 +79,12 @@ impl Coordinator {
     ) -> Result<SeedReplicationResultV1> {
         for _ in 0..self.limits.cas_attempts {
             let base = self.read().await?;
+            if base.manifest.thread_root.is_some() || base.manifest.reaction_root.is_some() {
+                return Err(Error::Unsupported(
+                    "Thread/Reaction reducer 3 is not qualified",
+                ));
+            }
+
             self.guard
                 .authorize_replication_seed(&base, request)
                 .await?;

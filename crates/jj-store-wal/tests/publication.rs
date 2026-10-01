@@ -820,7 +820,7 @@ async fn legacy_repository_enables_collaboration_without_rewriting_code_history(
     .unwrap();
     assert_eq!(
         c.enable_collaboration(&another).await.unwrap(),
-        CollaborationOutcome::AlreadyEnabled(domains)
+        CollaborationOutcome::AlreadyEnabled(Box::new(domains))
     );
 
     let code = Request {

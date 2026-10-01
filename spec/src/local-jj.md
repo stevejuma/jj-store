@@ -142,3 +142,16 @@ network synchronization is outside this profile.
 | M13.4     | Recoverable local code mutations                                                                                     | Durably journal the exact unpublished JJ operation before publishing heads; prove stable unknown/retry outcomes, concurrent sibling preservation, undo/abandon safety and protection of dirty unsnapshotted checkout files.                                                                                                         |
 | M13.5     | Bounded durable local/native conversion and identity mapping reports                                                 | Create an independent destination with a fresh operation log, selected code state/ancestry, complete collaboration history and exact evidence archives. Reject unsupported active representations in preflight, verify bounded closures, publish native manifests last, export only to a new folder and leave the source untouched. |
 | M13.6     | Cold full-flow qualification and retained native regressions                                                         | Exercise the completed local CLI, filesystem server/UI, recovery and conversion in fresh processes; retain native identity, publication, collaboration and browser regression evidence. Focused provider tests alone do not satisfy this gate.                                                                                      |
+
+## M14 additive collaboration publication
+
+Threads and Reactions use independently selected canonical roots and immutable
+complete-closure inventories. Native manifest format 5 adds optional roots and
+state versions; local companion version 2 extends the owned ref envelope on
+first feature use. Earlier formats remain byte-identical. Publication providers
+retain original request receipts and expected-state checks; staging is
+invisible. Cold recovery and copy audit all current and historical selected
+roots, including raster assets and external AgentStore/ReviewStore/code
+dependencies. Reducer 3 qualification precedes replicated collaboration
+publication; unsupported origins fail closed. No replay executes agents or
+fetches image bytes.

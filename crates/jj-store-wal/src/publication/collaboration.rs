@@ -44,7 +44,7 @@ impl CollaborationRequest {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum CollaborationOutcome {
     Enabled(Receipt),
-    AlreadyEnabled(RepositoryDomains),
+    AlreadyEnabled(Box<RepositoryDomains>),
     OutcomeUnknown {
         request_id: RequestId,
         publication_id: PublicationId,
@@ -96,7 +96,7 @@ impl Coordinator {
                 return Ok(CollaborationOutcome::Enabled(receipt));
             }
             if let Some(domains) = base.manifest.domains() {
-                return Ok(CollaborationOutcome::AlreadyEnabled(domains));
+                return Ok(CollaborationOutcome::AlreadyEnabled(Box::new(domains)));
             }
             if base.manifest.format != 1 {
                 return Err(Error::Corrupt("collaboration manifest format"));
@@ -107,6 +107,8 @@ impl Coordinator {
                     let domains = RepositoryDomains {
                         work: None,
                         git: None,
+                        thread: None,
+                        reaction: None,
                         agent: DomainState {
                             root: self.stage_agent_root(&AgentRootV1::empty()).await?,
                             version: 0,

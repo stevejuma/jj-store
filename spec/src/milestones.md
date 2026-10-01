@@ -126,7 +126,7 @@ shared-package release qualification does not alter those original Git gates.
 | M14.7       | Planned     | M14.3,M14.4,M14.5,M14.6 | JST-UI-016,JST-SEC-006                                                                                                                                                   | Integrated local settings and cold persistent acceptance                                                                       | Qualify completed native flow and preserve unsupported M13 capabilities        | -                                                                                                                                                                                                                                                                                                                                                              |
 | M15         | In progress | M13.1             | JST-COLLAB-008,JST-COLLAB-009,JST-COLLAB-010,JST-COLLAB-011,JST-COLLAB-012,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                   | Persistent Threads and rich Reactions                                                                                          | Qualify native/local publication                                               | E-M15-001                                                                                                                                                                                                                                                                                                                                                      |
 | M15.1       | In progress | M13.1             | JST-COLLAB-008,JST-COLLAB-009,JST-COLLAB-010,JST-COLLAB-011,JST-COLLAB-012                                                                                               | Canonical domain, lifecycle, exact targets, conflict semantics and retained images                                             | Complete target resolution/provider membership                                 | E-M15-001                                                                                                                                                                                                                                                                                                                                                      |
-| M15.2       | Planned     | M15.1             | JST-COLLAB-013                                                                                                                                                           | Native format 5, local version 2, atomic roots, receipts, recovery and copy                                                    | Qualify both persistence providers                                             | -                                                                                                                                                                                                                                                                                                                                                              |
+| M15.2       | In progress | M15.1             | JST-COLLAB-013                                                                                                                                                           | Native format 5, local version 2, atomic roots, receipts, recovery and copy                                                    | Qualify both persistence providers                                             | E-M15-002                                                                                                                                                                                                                                                                                                                                                      |
 | M15.3       | Planned     | M15.2             | JST-COLLAB-014                                                                                                                                                           | Bounded authorized services, HTTP/RPC, CLI and capture binding                                                                 | Qualify public contracts                                                       | -                                                                                                                                                                                                                                                                                                                                                              |
 | M15.4       | Planned     | M15.2             | JST-COLLAB-015                                                                                                                                                           | Reducer 3 data-only convergence and complete closure transfer                                                                  | Qualify reordered and duplicate origin sets                                    | -                                                                                                                                                                                                                                                                                                                                                              |
 | M15.5       | Planned     | M15.3             | JST-COLLAB-016                                                                                                                                                           | Released shared UI, Threads navigation and rich reactions                                                                      | Qualify owners and cold consumer flow                                          | -                                                                                                                                                                                                                                                                                                                                                              |
@@ -33020,6 +33020,177 @@ and named tests are checked by the progress gate.
     ],
     "scope": "Leaf domain and governing contract slice; unrelated Rust/UI and root aggregates out of scope.",
     "next": "Implement native and local companion providers around the canonical domain graph."
+  },
+  {
+    "id": "E-M15-002",
+    "tasks": [
+      "M15",
+      "M15.1",
+      "M15.2"
+    ],
+    "date": "2026-10-01",
+    "kind": "native-memory-and-local-filesystem",
+    "revision": "enclosing Jujutsu change qvwrlxto",
+    "before": "Canonical domain slice committed at ba78eb90. Exact new WAL collab_persistence target absent before implementation. Native formats 1-4 and local companion version 1 contain no Thread/Reaction roots.",
+    "versions": "Rust 1.98.1; JJ 0.45.1; pinned gix 0.87.1 and existing Git; image 0.25.10",
+    "formats": "Additive native manifest 5; optional independent Thread/Reaction root/version fields; repository-bound CollabObject/ThreadRoot/ReactionRoot V1 records with bounded canonical-object inventories. Existing native fields omit new empty values. Local companion version 2 supports independent Thread/Reaction domains and atomic multi-domain receipts under unchanged refs/lapis/state/v1.",
+    "files": [
+      "Cargo.lock",
+      "crates/jj-collab/src/commands.rs",
+      "crates/jj-collab/src/objects.rs",
+      "crates/jj-collab/src/threads.rs",
+      "crates/jj-store-jj/src/local_metadata/mod.rs",
+      "crates/jj-store-jj/src/local_metadata/prepare.rs",
+      "crates/jj-store-jj/src/local_metadata/types.rs",
+      "crates/jj-store-jj/tests/local_metadata.rs",
+      "crates/jj-store-wal/Cargo.toml",
+      "crates/jj-store-wal/src/publication.rs",
+      "crates/jj-store-wal/src/publication/collab_store.rs",
+      "crates/jj-store-wal/src/publication/collaboration.rs",
+      "crates/jj-store-wal/src/publication/domains.rs",
+      "crates/jj-store-wal/src/publication/native_copy.rs",
+      "crates/jj-store-wal/src/publication/replication_import.rs",
+      "crates/jj-store-wal/src/publication/replication_seed.rs",
+      "crates/jj-store-wal/src/records.rs",
+      "crates/jj-store-wal/tests/collab_persistence.rs",
+      "crates/jj-store-wal/tests/publication.rs",
+      "scripts/check-boundaries.mjs",
+      "spec/src/architecture.md",
+      "spec/src/collaboration.md",
+      "spec/src/jj-integration.md",
+      "spec/src/local-jj.md",
+      "spec/src/milestones.md",
+      "spec/src/publication.md",
+      "spec/src/replication.md",
+      "spec/src/spec-governance.md"
+    ],
+    "tests": [
+      "crates/jj-store-jj/tests/local_metadata.rs#additive_collaboration_batch_selects_both_domains_and_preserves_legacy_receipts",
+      "crates/jj-store-jj/tests/local_metadata.rs#stale_batch_precondition_cannot_partially_publish_any_domain",
+      "crates/jj-store-wal/tests/collab_persistence.rs#explicit_feature_use_publishes_format_five_without_backfill_or_code_changes",
+      "crates/jj-store-wal/tests/collab_persistence.rs#cold_receipts_checkpoint_and_manifest_last_copy_retain_human_revision_reactions",
+      "crates/jj-store-wal/tests/collab_persistence.rs#custom_emoji_assets_and_static_previews_survive_native_copy",
+      "crates/jj-store-wal/tests/collab_persistence.rs#atomic_domain_selection_replays_one_receipt_and_never_partially_accepts_stale_roots",
+      "crates/jj-store-wal/tests/collab_persistence.rs#each_atomic_domain_requires_authorization_before_any_root_is_selected",
+      "crates/jj-store-wal/tests/collab_persistence.rs#legacy_manifest_and_domain_request_encoding_omit_all_additive_fields",
+      "crates/jj-store-wal/tests/collab_persistence.rs#work_homes_keep_origin_ledger_frozen_while_accepting_local_threads",
+      "crates/jj-store-wal/tests/collab_persistence.rs#replicated_code_repositories_reject_unqualified_collaboration_without_changing_authority",
+      "crates/jj-store-wal/tests/collab_persistence.rs#existing_domain_publication_keeps_format_five_and_thread_roots_pinned"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-wal --test collab_persistence (before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Test target absent."
+      },
+      {
+        "command": "cargo check -p jj-store-wal",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "cargo test -p jj-store-wal --test collab_persistence --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "9 focused regressions pass, including every-domain authorization, legacy omission, frozen WorkStore origin compatibility, unsupported code-repository origins and format-5 preservation. Native memory-store evidence only."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --test local_metadata --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "13 real filesystem metadata tests including additive batch atomicity, legacy receipts, stock Git/JJ GC, hard exit and unknown outcomes. New batch domain bytes are carrier fixtures, not complete local typed-service acceptance."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "66 tests pass. Escalated because shared manifest/WAL/recovery/domain publication affects independent existing code/AgentStore/ReviewStore/WorkStore/Git consumers. Final additive authorization/legacy omission tests rerun in the exact 6-test target."
+      },
+      {
+        "command": "cargo clippy -p jj-collab -p jj-store-wal -p jj-store-jj --all-targets --locked -- -D warnings (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Larger RepositoryDomains made AlreadyEnabled variant too large; boxed the variant, then updated its exact existing test constructor."
+      },
+      {
+        "command": "cargo clippy -p jj-collab -p jj-store-wal -p jj-store-jj --all-targets --locked -- -D warnings (constructor repair)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Existing test required the new boxed constructor; corrected without weakening assertions."
+      },
+      {
+        "command": "cargo clippy -p jj-collab -p jj-store-wal -p jj-store-jj --all-targets --locked -- -D warnings",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "cargo check -p jj-store-service -p jj-store-replication -p jj-store-rpc --all-targets --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Direct Rust consumer compilation; no full consumer acceptance claim."
+      },
+      {
+        "command": "cargo test -p jj-collab --test domain --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "13 retained domain regressions."
+      },
+      {
+        "command": "cargo fmt -p jj-collab -p jj-store-wal -p jj-store-jj",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "4 validators, 21 chapters, 140 requirements."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "111 tasks; same-change protected evidence."
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "16 packages."
+      },
+      {
+        "command": "pnpm spec:first (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Boundary checker change also maps to spec-governance.md; added exact M15 authority/lane scope."
+      },
+      {
+        "command": "cargo clippy -p jj-store-wal --all-targets --locked -- -D warnings",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "20 protected files; 8 canonical chapters."
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/architecture.md spec/src/collaboration.md spec/src/jj-integration.md spec/src/local-jj.md spec/src/publication.md spec/src/replication.md spec/src/spec-governance.md spec/src/milestones.md scripts/check-boundaries.mjs",
+        "result": "pass",
+        "failures": 0
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Local typed graph carrier/services/commands and complete local asset retention acceptance remain pending; lower-level batch metadata is implemented.",
+      "Native portable capsule carrier remains unsupported; explicit native operation/commit anchors are available.",
+      "Central target membership/visibility resolver, service/API/RPC/CLI, reducer 3, shared released UI, search and real-RustFS/cold full-flow qualification remain pending."
+    ],
+    "scope": "New native persistence plus additive local carrier envelope. Full relevant WAL suite escalated for shared authority infrastructure; focused JJ metadata/domain suites and direct Rust consumer checks. Root aggregate and UI/browser lanes remain out of scope.",
+    "next": "Implement shared target resolution and typed publication providers, including actual local canonical graph retention.",
+    "evidence_correction": "The E-M15-001 initial spec-validator diagnostic count was not retained independently; it is a failed gate observation, not a verified individual-regression count. Final canonical validation is the acceptance evidence."
   }
 ]
 ```

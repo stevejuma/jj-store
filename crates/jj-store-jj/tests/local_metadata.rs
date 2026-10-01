@@ -436,3 +436,100 @@ fn stock_jj_import_gc_and_undo_preserve_companion_metadata() {
         Some(&receipt)
     );
 }
+#[test]
+fn additive_collaboration_batch_selects_both_domains_and_preserves_legacy_receipts() {
+    let (_root, store) = fixture();
+    let original = publish(&store, None, &update(60, Domain::Work, None));
+    let before = store.read().unwrap().unwrap();
+    assert_eq!(before.format_version(), 1);
+    let batch = BatchUpdate {
+        repository: REPOSITORY,
+        actor: ACTOR,
+        request: m::RequestId::new([61; 16]),
+        intent: m::IntentDigest::new([61; 32]),
+        domains: BTreeMap::from([
+            (
+                Domain::Thread,
+                DomainUpdate {
+                    expected: None,
+                    bytes: b"thread bytes".to_vec(),
+                },
+            ),
+            (
+                Domain::Reaction,
+                DomainUpdate {
+                    expected: None,
+                    bytes: b"reaction bytes".to_vec(),
+                },
+            ),
+        ]),
+        result: b"atomic result".to_vec(),
+        retained: BTreeMap::new(),
+    };
+    let Preparation::Ready(staged) = store.prepare_many(Some(&before), &batch).unwrap() else {
+        panic!()
+    };
+    assert_eq!(store.read().unwrap().unwrap().commit(), before.commit());
+    let PublishOutcome::Committed(receipt) = store.publish(*staged).unwrap() else {
+        panic!()
+    };
+    assert_eq!(receipt.selections.len(), 2);
+    let cold = MetadataStore::open(store.git_dir(), Limits::default()).unwrap();
+    let after = cold.read().unwrap().unwrap();
+    assert_eq!(after.format_version(), 2);
+    assert_eq!(after.receipt(ACTOR, original.request), Some(&original));
+    assert_eq!(
+        after.selection(Domain::Work),
+        before.selection(Domain::Work)
+    );
+    assert_eq!(after.receipt(ACTOR, batch.request), Some(&receipt));
+    assert_eq!(
+        cold.read_domain(&after, Domain::Thread).unwrap(),
+        Some(b"thread bytes".to_vec())
+    );
+    assert_eq!(
+        cold.read_domain(&after, Domain::Reaction).unwrap(),
+        Some(b"reaction bytes".to_vec())
+    );
+    assert!(
+        matches!(cold.prepare_many(Some(&after),&batch).unwrap(),Preparation::Committed(existing) if existing==receipt)
+    );
+    assert_eq!(cold.history(&after).unwrap().len(), 2);
+}
+#[test]
+fn stale_batch_precondition_cannot_partially_publish_any_domain() {
+    let (_root, store) = fixture();
+    publish(&store, None, &update(62, Domain::Thread, None));
+    let before = store.read().unwrap().unwrap();
+    let batch = BatchUpdate {
+        repository: REPOSITORY,
+        actor: ACTOR,
+        request: m::RequestId::new([63; 16]),
+        intent: m::IntentDigest::new([63; 32]),
+        domains: BTreeMap::from([
+            (
+                Domain::Thread,
+                DomainUpdate {
+                    expected: None,
+                    bytes: b"stale".to_vec(),
+                },
+            ),
+            (
+                Domain::Reaction,
+                DomainUpdate {
+                    expected: None,
+                    bytes: b"must stay invisible".to_vec(),
+                },
+            ),
+        ]),
+        result: Vec::new(),
+        retained: BTreeMap::new(),
+    };
+    assert!(matches!(
+        store.prepare_many(Some(&before), &batch),
+        Err(Error::Stale)
+    ));
+    let after = store.read().unwrap().unwrap();
+    assert_eq!(after.commit(), before.commit());
+    assert!(after.selection(Domain::Reaction).is_none());
+}

@@ -71,6 +71,8 @@ pub enum Domain {
     Work,
     Agent,
     Review,
+    Thread,
+    Reaction,
 }
 impl Domain {
     pub(crate) fn name(self) -> &'static str {
@@ -78,6 +80,8 @@ impl Domain {
             Self::Work => "work",
             Self::Agent => "agent",
             Self::Review => "review",
+            Self::Thread => "thread",
+            Self::Reaction => "reaction",
         }
     }
 }
@@ -104,6 +108,8 @@ pub struct Receipt {
     pub sequence: u64,
     pub domain: Domain,
     pub selection: Selection,
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub selections: BTreeMap<Domain, Selection>,
     pub result: Vec<u8>,
 }
 impl Receipt {
@@ -128,6 +134,9 @@ pub struct Snapshot {
     pub(crate) root: RootV1,
 }
 impl Snapshot {
+    pub fn format_version(&self) -> u32 {
+        self.root.version
+    }
     pub fn commit(&self) -> GitOid {
         self.commit
     }
@@ -177,4 +186,19 @@ pub enum PublishOutcome {
     Committed(Receipt),
     Conflict,
     Unknown,
+}
+
+/// One expected-old-ref publication selects every named domain together.
+pub struct DomainUpdate {
+    pub expected: Option<Selection>,
+    pub bytes: Vec<u8>,
+}
+pub struct BatchUpdate {
+    pub repository: RepositoryId,
+    pub actor: PrincipalId,
+    pub request: RequestId,
+    pub intent: IntentDigest,
+    pub domains: BTreeMap<Domain, DomainUpdate>,
+    pub result: Vec<u8>,
+    pub retained: BTreeMap<GitOid, RetainedKind>,
 }

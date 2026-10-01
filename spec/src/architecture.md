@@ -463,3 +463,10 @@ home and link distinct repository identities. The Git-backed fixture is CLI-only
 until local serving is qualified; discovery never substitutes a native copy for
 its storage profile. `cli:install` builds the owned CLI package and copies the
 server and custom JJ tools under distinct names without replacing system JJ.
+
+Native Thread/Reaction roots select bounded canonical-object-to-envelope
+catalogs. This retains shared domain content identities while reusing
+repository-bound immutable WAL records. Complete source closures include
+external AgentStore, ReviewStore and native code edges. Local companion batches
+retain independently versioned domains through one owned ref and a versioned
+receipt envelope.

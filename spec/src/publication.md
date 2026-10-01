@@ -469,3 +469,16 @@ boundaries. Cold recovery exposes the old or wholly selected next catalog;
 replaying each stable request produces one domain increment and a stable
 receipt. This memory fault evidence does not substitute for real RustFS
 qualification.
+
+## M14 additive collaboration publication
+
+Threads and Reactions use independently selected canonical roots and immutable
+complete-closure inventories. Native manifest format 5 adds optional roots and
+state versions; local companion version 2 extends the owned ref envelope on
+first feature use. Earlier formats remain byte-identical. Publication providers
+retain original request receipts and expected-state checks; staging is
+invisible. Cold recovery and copy audit all current and historical selected
+roots, including raster assets and external AgentStore/ReviewStore/code
+dependencies. Reducer 3 qualification precedes replicated collaboration
+publication; unsupported origins fail closed. No replay executes agents or
+fetches image bytes.

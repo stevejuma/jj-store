@@ -545,3 +545,13 @@ base must match the durable Git lease; missing or ambiguous evidence refuses
 apply. A later observation cannot be rolled back by repairing an older attempt.
 The Git stage fault fixture exercises before/after manifest-write uncertainty
 for activation, intent, started, result and applied facts through cold replay.
+
+## M14 companion envelope extension
+
+The owned local ref retains its existing name. Version 2 adds Thread and
+Reaction domain selections and typed batch updates. A batch checks every exact
+domain selection before preparing one metadata commit/ref CAS and retains a
+single original receipt naming all changed selections. Version 1 receipts and
+commits remain byte-identical and readable. All selected domain blobs and
+retained immutable object blobs have actual Git reachability; hashes in JSON are
+not retention. No ordinary Git transport or code operation is implicit.

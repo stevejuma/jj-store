@@ -173,6 +173,20 @@ impl CollabObjectV1 {
             _ => BTreeSet::new(),
         }
     }
+    pub fn native_dependencies(&self) -> BTreeSet<jj_store_model::ObjectKey> {
+        match self {
+            Self::ThreadVersion(v) => v
+                .baseline
+                .as_ref()
+                .map(|a| a.native_dependencies())
+                .unwrap_or_default(),
+            Self::ThreadLink(v) => match &v.target {
+                ThreadLinkTargetV1::Code { anchor, .. } => anchor.native_dependencies(),
+                _ => Default::default(),
+            },
+            _ => Default::default(),
+        }
+    }
     pub fn code_evidence(&self) -> BTreeSet<CodeEvidenceRefV1> {
         match self {
             Self::ThreadVersion(v) => v
