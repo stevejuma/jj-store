@@ -34,3 +34,9 @@
   max-width: 100%;
   width: 100%;
 }
+
+.community-app-shell__surface
+  [data-ui-part="sidebar"][data-side="right"]:not([data-variant="rail"])
+  > [data-ui-part="sidebar-header"] {
+  border-block-end: 1px solid var(--border);
+}

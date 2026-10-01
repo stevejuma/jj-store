@@ -66,7 +66,11 @@
 </AppShell.Toolbar>
 
 <style>
-  :global(.community-application__room-toolbar) {
+  :global(
+    .community-app-shell__surface
+      [data-ui-part="toolbar"].community-application__room-toolbar
+  ) {
+    border-block-end: 1px solid var(--border);
     flex: 0 0 auto;
     justify-content: space-between;
   }

@@ -204,6 +204,21 @@ test("cold LocalTrusted Threads shell settings references scoped search and repl
       }),
     )
     .toEqual([Number(threadWidth), 280]);
+  const paneHeader = settings.locator('[data-ui-part="sidebar-header"]');
+  const toolbar = page.getByLabel("Thread toolbar", { exact: true });
+  const toolbarBounds = (await toolbar.boundingBox())!;
+  const paneHeaderBounds = (await paneHeader.boundingBox())!;
+  expect(Math.abs(paneHeaderBounds.y - toolbarBounds.y)).toBeLessThan(1);
+  expect(
+    Math.abs(
+      paneHeaderBounds.y +
+        paneHeaderBounds.height -
+        toolbarBounds.y -
+        toolbarBounds.height,
+    ),
+  ).toBeLessThan(1);
+  await expect(paneHeader).toHaveCSS("border-bottom-width", "1px");
+  await expect(toolbar).toHaveCSS("border-bottom-width", "1px");
   const bounds = (await settings.boundingBox())!;
   const composition = page.locator(".community-app-shell__surface");
   const compositionBounds = (await composition.boundingBox())!;
@@ -304,6 +319,17 @@ test("cold LocalTrusted Threads shell settings references scoped search and repl
   const replyRoot = replies.locator(
     `[data-message-id="${THREAD_IDS.message}"]`,
   );
+  const replyHeaderBounds = (await replies
+    .locator('[data-ui-part="sidebar-header"]')
+    .boundingBox())!;
+  expect(
+    Math.abs(
+      replyHeaderBounds.y +
+        replyHeaderBounds.height -
+        toolbarBounds.y -
+        toolbarBounds.height,
+    ),
+  ).toBeLessThan(1);
   await replyRoot.hover();
   const actions = replyRoot.getByRole("group", { name: /Actions for/ });
   const actionBounds = (await actions.boundingBox())!;

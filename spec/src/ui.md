@@ -49,9 +49,12 @@ messages/replies and WorkStore descriptions/comments; code search keeps its
 independent operation pins.
 
 The Thread toolbar supplies the page's level-one heading with the copied channel
-typography. The application owns a fixed viewport with no document scrolling.
-Its Threads settings/create and search dialogs retain modal focus/overlay
-behavior while disabling redundant document scroll locking through the public
+typography. Its header and the standard settings, contributor and reply headers
+share the shell geometry tokens and aligned separator; consumer header content
+does not add vertical padding. The separate outer rail retains its own
+treatment. The application owns a fixed viewport with no document scrolling. Its
+Threads settings/create and search dialogs retain modal focus/overlay behavior
+while disabling redundant document scroll locking through the public
 `preventScroll` option. Cold built-asset acceptance checks that closing them
 restores pointer interaction under the served strict asset policy.
 

@@ -21,6 +21,20 @@
     await expect(body.queryByRole("menu")).toBeNull();
     const settings = c.getByRole("complementary", { name: "Thread settings" });
     await expect(within(settings).getByText("Code baseline")).toBeVisible();
+    const mainHeader = c
+      .getByRole("heading", { name: "general", level: 1 })
+      .closest('[data-ui-part="toolbar"]')!;
+    const paneHeader = settings.querySelector(
+      '[data-ui-part="sidebar-header"]',
+    )!;
+    await expect(
+      Math.abs(
+        mainHeader.getBoundingClientRect().bottom -
+          paneHeader.getBoundingClientRect().bottom,
+      ),
+    ).toBeLessThan(1);
+    await expect(getComputedStyle(paneHeader).borderBottomWidth).toBe("1px");
+
     await expect(settings).toHaveClass(
       "community-application__standard-right-sidebar",
     );
