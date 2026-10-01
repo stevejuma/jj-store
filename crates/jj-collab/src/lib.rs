@@ -8,6 +8,7 @@ mod graph;
 mod ids;
 mod objects;
 mod reactions;
+mod resolver;
 mod targets;
 mod threads;
 
@@ -19,6 +20,7 @@ pub use graph::*;
 pub use ids::*;
 pub use objects::*;
 pub use reactions::*;
+pub use resolver::*;
 pub use targets::*;
 pub use threads::*;
 
@@ -31,6 +33,10 @@ pub enum Error {
     Limit,
     #[error("observed collaboration state is stale")]
     Stale,
+    #[error("reaction target is unavailable")]
+    TargetUnavailable,
+    #[error("pinned reaction target reader is unavailable")]
+    ReadUnavailable,
     #[error("invalid canonical collaboration encoding")]
     Encoding(#[from] serde_json::Error),
     #[error("invalid reaction image")]

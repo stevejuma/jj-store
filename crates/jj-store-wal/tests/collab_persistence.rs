@@ -70,6 +70,323 @@ async fn fixture() -> (Arc<MemoryStore>, Coordinator) {
         .unwrap();
     (store, c)
 }
+
+#[tokio::test]
+async fn pinned_target_reader_hides_staged_objects_and_current_tombstoned_history() {
+    use wal::publication::CollabTargetReaderV1;
+    let (storage, c) = fixture().await;
+    let (expected, reference, mut graph, root, created) = thread(&c).await;
+    publish(&c, 4, Domain::Thread, expected, reference).await;
+    let message_id = HumanMessageId::new([5; 16]);
+    let (root, message) = ThreadStateV1::read(root, &graph)
+        .unwrap()
+        .apply(
+            &ThreadCommandV1::Message {
+                thread_id: created.thread_id,
+                expected_thread: created.version,
+                message_id,
+                expected_revision: None,
+                body: Some("visible".into()),
+            },
+            ACTOR,
+            RequestId::new([5; 16]),
+            11,
+            &mut graph,
+        )
+        .unwrap();
+    let reference2 = c.stage_native_thread_root(&root, &graph).await.unwrap();
+    publish(
+        &c,
+        5,
+        Domain::Thread,
+        DomainState {
+            root: reference,
+            version: 1,
+        },
+        reference2,
+    )
+    .await;
+    let cold = coordinator(storage.clone());
+    cold.recover(100).await.unwrap();
+    let pin = cold.read().await.unwrap();
+    let old = cold
+        .native_thread_store(pin.manifest().thread_root.unwrap())
+        .await
+        .unwrap();
+    let target = ReactionTargetV1::HumanMessage {
+        thread_id: created.thread_id,
+        message_id,
+        revision: message.message.unwrap(),
+    };
+    let reader =
+        CollabTargetReaderV1::new(REPO, Some((old.state.root.clone(), &old.graph)), None, None)
+            .unwrap();
+    assert_eq!(
+        resolve_reaction_target(&reader, &target)
+            .await
+            .unwrap()
+            .revision,
+        TargetRevisionV1::Current
+    );
+    let (root, _) = ThreadStateV1::read(root, &graph)
+        .unwrap()
+        .apply(
+            &ThreadCommandV1::Message {
+                thread_id: created.thread_id,
+                expected_thread: message.version,
+                message_id,
+                expected_revision: message.message,
+                body: None,
+            },
+            ACTOR,
+            RequestId::new([6; 16]),
+            12,
+            &mut graph,
+        )
+        .unwrap();
+    let staged = ThreadStateV1::read(root.clone(), &graph).unwrap().messages[&message_id];
+    let before = cold.read().await.unwrap().digest();
+    assert!(reader.collab_object(staged).await.unwrap().is_none());
+    let reference3 = c.stage_native_thread_root(&root, &graph).await.unwrap();
+    publish(
+        &c,
+        6,
+        Domain::Thread,
+        DomainState {
+            root: reference2,
+            version: 2,
+        },
+        reference3,
+    )
+    .await;
+    let new = cold
+        .native_thread_store(cold.read().await.unwrap().manifest().thread_root.unwrap())
+        .await
+        .unwrap();
+    let new_reader =
+        CollabTargetReaderV1::new(REPO, Some((new.state.root.clone(), &new.graph)), None, None)
+            .unwrap();
+    assert!(matches!(
+        resolve_reaction_target(&new_reader, &target).await,
+        Err(jj_collab::Error::TargetUnavailable)
+    ));
+    assert!(resolve_reaction_target(&reader, &target).await.is_ok());
+    assert_ne!(cold.read().await.unwrap().digest(), before);
+    let after = cold.read().await.unwrap().digest();
+    assert!(matches!(
+        resolve_reaction_target(&new_reader, &target).await,
+        Err(jj_collab::Error::TargetUnavailable)
+    ));
+    assert_eq!(cold.read().await.unwrap().digest(), after);
+}
+
+#[tokio::test]
+async fn target_reader_closure_excludes_unselected_collab_and_agent_bytes() {
+    use wal::publication::CollabTargetReaderV1;
+    let (_, c) = fixture().await;
+    let (_, _, mut graph, root, _) = thread(&c).await;
+    let orphan = graph
+        .stage(CollabObjectV1::HumanMessageRevision(
+            HumanMessageRevisionV1 {
+                schema_version: 1,
+                message_id: HumanMessageId::new([9; 16]),
+                thread_id: ThreadId::new([4; 16]),
+                actor: ACTOR,
+                accepted_at_millis: 12,
+                previous: None,
+                body: Some("staged only".into()),
+            },
+        ))
+        .unwrap();
+    let agent_root = c
+        .stage_agent_root(&jj_agent::AgentRootV1::empty())
+        .await
+        .unwrap();
+    let agent = c.agent_store(agent_root).await.unwrap();
+    let staged = c
+        .stage_agent_object(&jj_agent::AgentObjectV1::Content(
+            jj_agent::AgentContentV1 {
+                schema_version: 1,
+                payload: jj_agent::SanitizedPayloadV1::new(
+                    jj_agent::SanitizedMediaType::Text,
+                    b"staged only",
+                )
+                .unwrap(),
+            },
+        ))
+        .await
+        .unwrap();
+    let reader = CollabTargetReaderV1::new(REPO, Some((root, &graph)), Some(&agent), None).unwrap();
+    assert!(reader.collab_object(orphan).await.unwrap().is_none());
+    assert!(reader.agent_object(staged).await.unwrap().is_none());
+    assert!(
+        reader
+            .session_selection(jj_agent::AgentSessionId::new([4; 16]))
+            .await
+            .unwrap()
+            .is_none()
+    );
+}
+
+#[tokio::test]
+async fn target_resolver_uses_repository_bound_agent_ids_from_pinned_root() {
+    use jj_agent as a;
+    use wal::publication::CollabTargetReaderV1;
+    let (_, c) = fixture().await;
+    let content = c
+        .stage_agent_object(&a::AgentObjectV1::Content(a::AgentContentV1 {
+            schema_version: 1,
+            payload: a::SanitizedPayloadV1::new(a::SanitizedMediaType::Text, b"output").unwrap(),
+        }))
+        .await
+        .unwrap();
+    let session_id = a::AgentSessionId::new([9; 16]);
+    let tool_id = a::ToolCallId::new([9; 16]);
+    let tool = c
+        .stage_agent_object(&a::AgentObjectV1::ToolSnapshot(
+            a::ToolInvocationSnapshotV1 {
+                schema_version: 1,
+                tool_call_id: tool_id,
+                session_id,
+                turn_id: None,
+                native_name: "test".into(),
+                kind: a::ToolKind::Execute,
+                state: a::ToolState::Succeeded,
+                attempts: Default::default(),
+                input: None,
+                output: Some(content),
+                evidence: vec![],
+            },
+        ))
+        .await
+        .unwrap();
+    let session = a::AgentSessionSnapshotV1 {
+        schema_version: 1,
+        session_id,
+        integration: a::IntegrationId::Codex,
+        state: a::SessionState::Ended,
+        parent_session_id: None,
+        evidence: vec![],
+        event_batches: vec![],
+        transcripts: vec![],
+        tools: BTreeMap::from([(tool_id, tool)]),
+        coverage: a::CoverageV1 {
+            completeness: a::CompletenessV1::Unknown,
+            gaps: 0,
+            redacted_fields: 0,
+            truncated: false,
+        },
+    };
+    let key = session.catalog_key().unwrap();
+    let selected = c
+        .stage_agent_object(&a::AgentObjectV1::SessionSnapshot(session))
+        .await
+        .unwrap();
+    let page = c
+        .stage_agent_object(&a::AgentObjectV1::IndexPage(a::AgentIndexPageV1::Leaf {
+            prefix: String::new(),
+            entries: BTreeMap::from([(key, selected)]),
+        }))
+        .await
+        .unwrap();
+    let mut root = a::AgentRootV1::empty();
+    root.sessions = Some(page);
+    let reference = c.stage_agent_root(&root).await.unwrap();
+    let agent = c.agent_store(reference).await.unwrap();
+    let reader = CollabTargetReaderV1::new(REPO, None, Some(&agent), None).unwrap();
+    let target = ReactionTargetV1::ToolOutput {
+        session_id,
+        tool_id,
+        snapshot: tool,
+        content,
+    };
+    assert_eq!(
+        resolve_reaction_target(&reader, &target)
+            .await
+            .unwrap()
+            .revision,
+        TargetRevisionV1::Current
+    );
+}
+
+#[tokio::test]
+async fn target_resolver_uses_repository_bound_review_ids_and_selected_moderation() {
+    use jj_review as r;
+    use wal::publication::{CollabTargetReaderV1, ReviewCommandRequest};
+    let (_, c) = fixture().await;
+    let command = r::ReviewCommandV1::CreateThread {
+        anchor: Box::new(r::ArtifactAnchorV1 {
+            schema_version: 1,
+            repository_id: REPO,
+            target: r::ArtifactTargetV1::Repository,
+            created_context: r::CreatedContextV1 {
+                publication_position: Some(0),
+                code_state_version: Some(0),
+                agent_root: None,
+            },
+            sensitivity: r::SensitivityV1::Repository,
+        }),
+        body: r::ReviewCommentBodyV1 {
+            schema_version: 1,
+            format: r::ReviewBodyFormatV1::PlainText,
+            text: "visible".into(),
+            sanitizer_version: "v1".into(),
+        },
+    };
+    let request = ReviewCommandRequest::new(
+        ACTOR,
+        RequestId::new([8; 16]),
+        PublicationId::new([8; 16]),
+        command,
+    )
+    .unwrap();
+    let PublishOutcome::Committed(receipt) = c.publish_review_command(&request).await.unwrap()
+    else {
+        panic!()
+    };
+    let created = r::decode_command_result(&receipt.result).unwrap();
+    let old = c
+        .review_store(c.read().await.unwrap().manifest().review_root.unwrap())
+        .await
+        .unwrap();
+    let reader = CollabTargetReaderV1::new(REPO, None, None, Some(&old)).unwrap();
+    let target = ReactionTargetV1::ReviewComment {
+        thread_id: created.thread_id,
+        comment_id: created.comment_id.unwrap(),
+        revision: created.comment_revision.unwrap(),
+    };
+    assert_eq!(
+        resolve_reaction_target(&reader, &target)
+            .await
+            .unwrap()
+            .revision,
+        TargetRevisionV1::Current
+    );
+    let hide = ReviewCommandRequest::new(
+        ACTOR,
+        RequestId::new([9; 16]),
+        PublicationId::new([9; 16]),
+        r::ReviewCommandV1::HideComment {
+            comment_id: created.comment_id.unwrap(),
+            expected_revision_id: r::CommentRevisionId::new(
+                *created.comment_revision.unwrap().id.as_bytes(),
+            ),
+            moderation_reason: "hidden".into(),
+        },
+    )
+    .unwrap();
+    c.publish_review_command(&hide).await.unwrap();
+    let current = c
+        .review_store(c.read().await.unwrap().manifest().review_root.unwrap())
+        .await
+        .unwrap();
+    let current_reader = CollabTargetReaderV1::new(REPO, None, None, Some(&current)).unwrap();
+    assert!(matches!(
+        resolve_reaction_target(&current_reader, &target).await,
+        Err(jj_collab::Error::TargetUnavailable)
+    ));
+    assert!(resolve_reaction_target(&reader, &target).await.is_ok());
+}
 async fn publish(
     c: &Coordinator,
     n: u8,

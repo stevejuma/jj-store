@@ -125,7 +125,7 @@ shared-package release qualification does not alter those original Git gates.
 | M14.6       | In progress | M14.2,M10.7             | JST-UI-016,JST-REPL-012                                                                                                                                                  | Configured sync status and controls in Settings                                                                                | Expose existing controls without upstream configuration or credential editing  | E-M14-008,E-M14-010,E-M14-011,E-M14-012                                                                                                                                                                                                                                                                                                                        |
 | M14.7       | Planned     | M14.3,M14.4,M14.5,M14.6 | JST-UI-016,JST-SEC-006                                                                                                                                                   | Integrated local settings and cold persistent acceptance                                                                       | Qualify completed native flow and preserve unsupported M13 capabilities        | -                                                                                                                                                                                                                                                                                                                                                              |
 | M15         | In progress | M13.1             | JST-COLLAB-008,JST-COLLAB-009,JST-COLLAB-010,JST-COLLAB-011,JST-COLLAB-012,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                   | Persistent Threads and rich Reactions                                                                                          | Qualify native/local publication                                               | E-M15-001                                                                                                                                                                                                                                                                                                                                                      |
-| M15.1       | In progress | M13.1             | JST-COLLAB-008,JST-COLLAB-009,JST-COLLAB-010,JST-COLLAB-011,JST-COLLAB-012                                                                                               | Canonical domain, lifecycle, exact targets, conflict semantics and retained images                                             | Complete target resolution/provider membership                                 | E-M15-001                                                                                                                                                                                                                                                                                                                                                      |
+| M15.1       | In progress | M13.1             | JST-COLLAB-008,JST-COLLAB-009,JST-COLLAB-010,JST-COLLAB-011,JST-COLLAB-012                                                                                               | Canonical domain, lifecycle, exact targets, conflict semantics and retained images                                             | Qualify command/provider membership                                            | E-M15-001                                                                                                                                                                                                                                                                                                                                                      |
 | M15.2       | In progress | M15.1             | JST-COLLAB-013                                                                                                                                                           | Native format 5, local version 2, atomic roots, receipts, recovery and copy                                                    | Qualify both persistence providers                                             | E-M15-002                                                                                                                                                                                                                                                                                                                                                      |
 | M15.3       | Planned     | M15.2             | JST-COLLAB-014                                                                                                                                                           | Bounded authorized services, HTTP/RPC, CLI and capture binding                                                                 | Qualify public contracts                                                       | -                                                                                                                                                                                                                                                                                                                                                              |
 | M15.4       | Planned     | M15.2             | JST-COLLAB-015                                                                                                                                                           | Reducer 3 data-only convergence and complete closure transfer                                                                  | Qualify reordered and duplicate origin sets                                    | -                                                                                                                                                                                                                                                                                                                                                              |
@@ -33191,6 +33191,212 @@ and named tests are checked by the progress gate.
     "scope": "New native persistence plus additive local carrier envelope. Full relevant WAL suite escalated for shared authority infrastructure; focused JJ metadata/domain suites and direct Rust consumer checks. Root aggregate and UI/browser lanes remain out of scope.",
     "next": "Implement shared target resolution and typed publication providers, including actual local canonical graph retention.",
     "evidence_correction": "The E-M15-001 initial spec-validator diagnostic count was not retained independently; it is a failed gate observation, not a verified individual-regression count. Final canonical validation is the acceptance evidence."
+  },
+  {
+    "id": "E-M15-003",
+    "tasks": [
+      "M15",
+      "M15.1",
+      "M15.2"
+    ],
+    "date": "2026-10-01",
+    "kind": "focused-target-resolution",
+    "revision": "enclosing Jujutsu change vvurrnyz",
+    "before": "Clean isolated workspace at 4c6a8d24. cargo test -p jj-collab --test target_resolution --locked fails because target is absent. Native collab_persistence baseline has 9 passing tests. Existing runtime has no jj-acp dependency or executable wiring; ThreadBindingV1 is an optional contract only.",
+    "versions": "Rust 1.98.1; JJ 0.45.1; async-trait 0.1.92; tokio 1.53.1",
+    "formats": "Canonical collaboration V1 and existing repository-bound Agent/Review IDs preserved; native manifest 5 and local metadata 2 unchanged.",
+    "files": [
+      "Cargo.lock",
+      "crates/jj-collab/Cargo.toml",
+      "crates/jj-collab/src/lib.rs",
+      "crates/jj-collab/src/resolver.rs",
+      "crates/jj-collab/tests/target_resolution.rs",
+      "crates/jj-store-wal/src/publication.rs",
+      "crates/jj-store-wal/src/publication/collab_targets.rs",
+      "crates/jj-store-wal/tests/collab_persistence.rs",
+      "spec/src/collaboration.md",
+      "spec/src/publication.md",
+      "spec/src/milestones.md",
+      "spec/src/architecture.md"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-collab --test target_resolution --locked (before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Target absent."
+      },
+      {
+        "command": "cargo test -p jj-collab --lib",
+        "result": "pass",
+        "failures": 0,
+        "note": "First resolver compile; no lib tests."
+      },
+      {
+        "command": "cargo test -p jj-collab --test target_resolution --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "9 focused regressions."
+      },
+      {
+        "command": "cargo clippy -p jj-collab --all-targets --locked -- -D warnings",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "cargo test -p jj-store-wal --test collab_persistence --locked (before)",
+        "result": "pass",
+        "failures": 0,
+        "note": "9 retained native tests."
+      },
+      {
+        "command": "cargo clippy -p jj-collab -p jj-store-wal --all-targets --locked -- -D warnings (first adapter compile)",
+        "result": "fail",
+        "failures": 4,
+        "note": "E0282/E0283 ambiguous closure Result type; corrected explicit error type. Initial native target compile reported the same diagnostics."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --test collab_persistence --locked (first adapter compile)",
+        "result": "fail",
+        "failures": 4,
+        "note": "Same closure type diagnostics; corrected."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --test collab_persistence --locked (after annotation)",
+        "result": "pass",
+        "failures": 0,
+        "note": "11 tests."
+      },
+      {
+        "command": "cargo test -p jj-collab --locked (initial suite)",
+        "result": "pass",
+        "failures": 0,
+        "note": "22 tests."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --test collab_persistence --locked -- target_resolver_uses_repository_bound_agent_ids_from_pinned_root (before correction)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Resolver initially compared payload hash to existing repository envelope identity. Exact regression exposed mismatch; removed duplicate identity codec and retained owning reader authority."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --test collab_persistence --locked -- target_resolver_uses_repository_bound_agent_ids_from_pinned_root",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact regression after correction."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --test collab_persistence --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "13 native memory-store tests including real repository-bound agent/review IDs, moderation, staged exclusions and old/new pins."
+      },
+      {
+        "command": "cargo clippy -p jj-collab -p jj-store-wal --all-targets --locked -- -D warnings",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "cargo test -p jj-collab --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "22 final domain/resolver tests."
+      },
+      {
+        "command": "cargo fmt -p jj-collab -p jj-store-wal",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "4 validators, 21 chapters, 140 requirements."
+      },
+      {
+        "command": "cargo check -p jj-store-service --all-targets --locked",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "pnpm spec:first (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Cargo.lock maps to architecture.md. Added exact target-reader ownership boundary."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "111 tasks."
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "16 packages."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/collaboration.md spec/src/publication.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/architecture.md spec/src/collaboration.md spec/src/publication.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "8 protected files; 4 canonical chapters."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --test collab_persistence --locked (after inaccessible lookup mapping)",
+        "result": "pass",
+        "failures": 0,
+        "note": "13 tests."
+      },
+      {
+        "command": "cargo clippy -p jj-collab -p jj-store-wal --all-targets --locked -- -D warnings (final)",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "pnpm check:progress (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "111 tasks."
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/architecture.md spec/src/collaboration.md spec/src/publication.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Local canonical graph provider and typed native/local command publication remain pending.",
+      "Service/API/RPC/CLI actor filtering, capture binding, reducer 3, shared UI, search and cold real-RustFS/local/runner qualification remain pending."
+    ],
+    "scope": "Rust target-resolution surface and direct native persistence consumers. Focused domain/native target and crate Clippy; no full WAL suite escalation because publication/CAS infrastructure is unchanged. Root aggregate, UI and live RustFS lanes out of scope.",
+    "next": "Implement local canonical graph carrier with complete retained blobs, then typed Thread/Reaction command providers.",
+    "tests": [
+      "crates/jj-collab/tests/target_resolution.rs#human_targets_require_selected_history_and_current_visibility",
+      "crates/jj-collab/tests/target_resolution.rs#agent_message_checks_selected_batch_and_exact_event_content_witnesses",
+      "crates/jj-collab/tests/target_resolution.rs#tool_output_is_exact_and_old_snapshot_requires_selected_tool_membership",
+      "crates/jj-collab/tests/target_resolution.rs#review_current_hidden_tombstone_and_conflict_suppress_prior_reactions",
+      "crates/jj-collab/tests/target_resolution.rs#resolved_review_conflict_retains_exact_alternatives_but_rejects_orphans",
+      "crates/jj-collab/tests/target_resolution.rs#selected_review_replies_use_the_same_exact_revision_policy",
+      "crates/jj-collab/tests/target_resolution.rs#checkpoint_versions_require_exact_native_or_portable_supersession",
+      "crates/jj-collab/tests/target_resolution.rs#forged_hashes_and_cross_entity_selections_fail_closed",
+      "crates/jj-collab/tests/target_resolution.rs#revision_traversal_is_bounded_and_absent_targets_are_unavailable",
+      "crates/jj-store-wal/tests/collab_persistence.rs#pinned_target_reader_hides_staged_objects_and_current_tombstoned_history",
+      "crates/jj-store-wal/tests/collab_persistence.rs#target_reader_closure_excludes_unselected_collab_and_agent_bytes",
+      "crates/jj-store-wal/tests/collab_persistence.rs#target_resolver_uses_repository_bound_agent_ids_from_pinned_root",
+      "crates/jj-store-wal/tests/collab_persistence.rs#target_resolver_uses_repository_bound_review_ids_and_selected_moderation"
+    ]
   }
 ]
 ```

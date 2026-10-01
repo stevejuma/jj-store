@@ -77,6 +77,27 @@ edited revisions. Earlier revision reactions are separately disclosed only when
 authorized. Hidden targets or actors produce no count, search or identity
 disclosure.
 
+The shared target resolver consumes one authorized, repository-bound selection
+of Thread, Agent and Review roots. Its reader never exposes staged objects. Its
+provider verifies existing repository-bound Agent/Review identities; the domain
+resolver verifies collaboration content IDs and typed entity membership without
+replacing the owning stores' identity codecs. Human and review revisions must be
+reachable from the selected logical message/comment; checkpoint versions must be
+in the selected checkpoint's supersession chain. Tool snapshots require the
+selected session/tool and retained snapshot membership; output content must
+match that exact snapshot. Message event witnesses must belong to the selected
+session's event batches and match the exact message and content IDs. Resolution
+returns only an exact key and a current/earlier distinction, never a target body
+or reaction count.
+
+Current tombstones and hidden or conflicted review comment selections suppress
+all earlier-revision reaction disclosure. Absent and inaccessible targets have
+the same unavailable result. Revision traversal is bounded to 4096 objects;
+malformed identities or exhausted bounds fail closed. Authorization of reacting
+actors remains a provider responsibility before aggregation or identity
+disclosure. These checks do not authorize publication or establish runner
+control.
+
 Values are Like, Dislike, Emoji(sequence), and Custom(emoji_id, exact_version).
 Imported + and - normalize to semantic values while retaining original source
 representation. Literal emoji remain distinct. Custom definitions are repository

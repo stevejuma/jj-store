@@ -482,3 +482,12 @@ roots, including raster assets and external AgentStore/ReviewStore/code
 dependencies. Reducer 3 qualification precedes replicated collaboration
 publication; unsupported origins fail closed. No replay executes agents or
 fetches image bytes.
+
+Target resolution composes the selected Thread graph with audited AgentStore and
+ReviewStore read facades captured from the same authorized snapshot. Unselected
+collaboration objects and staged agent/review records are excluded. The owning
+record readers preserve and verify existing repository-bound Agent/Review object
+IDs; collaboration content IDs remain separate. A newer selected tombstone or
+moderation state suppresses historical reaction disclosure without changing an
+older explicit read pin. Resolver reads do not publish or reconcile repository
+state.

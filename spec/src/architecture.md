@@ -23,7 +23,11 @@ Neither the shared reducer nor the object interface can select repository state.
 models with independent root types. It depends only on owned model, AgentStore
 and ReviewStore types plus bounded canonical/Unicode/raster libraries. It has no
 publication, upstream JJ, transport, search, UI or runner capability. Its pure
-projectors stage graphs; persistence providers authorize and select roots.
+projectors stage graphs; persistence providers authorize and select roots. The
+async target-reader contract supports both storage profiles without an execution
+runtime dependency. WAL composes existing immutable read facades; the domain
+checks membership and visibility while owning providers verify repository
+envelopes and retain authorization and publication authority.
 
 ## Requirements
 

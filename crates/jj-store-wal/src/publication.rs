@@ -13,6 +13,7 @@ mod agent_read_engine;
 mod agent_reads;
 mod application;
 mod collab_store;
+mod collab_targets;
 mod collaboration;
 mod domains;
 mod git_interop;
@@ -57,6 +58,7 @@ pub use agent_read_engine::AgentReader;
 pub use agent_reads::{AgentCatalogPage, AgentRelationCursor, AgentRelationRange, TranscriptRange};
 pub use application::ApplicationIntent;
 pub use collab_store::{NativeReactionStoreV1, NativeThreadStoreV1};
+pub use collab_targets::CollabTargetReaderV1;
 pub use collaboration::{CollaborationOutcome, CollaborationRequest};
 pub use domains::{
     Domain, DomainFactsV1, DomainRequest, DomainSelectionV1, DomainState, RepositoryDomains,
