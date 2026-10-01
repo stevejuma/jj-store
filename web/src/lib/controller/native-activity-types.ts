@@ -1,8 +1,9 @@
-import type { Model, Snapshot } from "../api/client.js";
+import type { CodeSnapshot as Snapshot } from "./repository-profile.js";
+import type { Model } from "../api/client.js";
 import type { RepositoryLogRevision } from "../projects/repository-log.js";
 
 export interface NativeAgentContext {
-  sessions: Model<"AgentSessionDetail">[];
+  sessions: import("./repository-read-types.js").AgentDetail[];
   error: string;
   relatedSessionIds?: readonly string[];
   /** Read association metadata when the virtual row mounts. */
@@ -21,14 +22,14 @@ export interface NativeActivityQuery {
   cursor?: string;
   atTimeMillis?: number;
   refresh?: boolean;
-  agentSnapshot?: Model<"AgentReadSnapshot">;
+  agentSnapshot?: import("./repository-read-types.js").AgentSnapshot;
 }
 export interface NativeActivityPage {
   snapshot: Snapshot;
   atTimeMillis: number;
   commits: NativeActivityCommit[];
   cursor: string | null;
-  agentSnapshot?: Model<"AgentReadSnapshot">;
+  agentSnapshot?: import("./repository-read-types.js").AgentSnapshot;
 }
 export interface NativeReviewContext {
   commits: NativeActivityCommit[];

@@ -112,7 +112,7 @@ export async function seedRepositoryProfiles({
     await history(
       localFolder,
       "Local Git-backed JJ repository",
-      "Ordinary JJ Git storage with local companion metadata. Browser serving of this profile is pending; use the local project CLI.",
+      "Ordinary JJ Git storage with local companion metadata. Browse recorded code and use projects through the app or local CLI.",
     );
     const initialized = JSON.parse(
       (

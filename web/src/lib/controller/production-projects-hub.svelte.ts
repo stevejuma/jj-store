@@ -233,6 +233,9 @@ export function createProjectsHub(
         views.clear();
         if (ticket !== generation || context.route().page !== "projects")
           return;
+        await Promise.allSettled(
+          [...sources.values()].map((source) => source.refresh?.()),
+        );
         await navigation.load(true);
         if (ticket !== generation || context.route().page !== "projects")
           return;

@@ -6,6 +6,7 @@ import type { StorePage } from "../ui/community-navigation/model.js";
 import type { StoreRoute } from "./contracts.js";
 
 const repositoryId = /^[0-9a-f]{32}$/u;
+const commitObjectId = /^(?:[0-9a-f]{40}|[0-9a-f]{128})$/u;
 const objectId = /^[0-9a-f]{128}$/u;
 const changeId = /^[0-9a-f]{32}$/u;
 const stableId = /^[0-9a-f]{32}$/u;
@@ -144,8 +145,8 @@ export function storeRouteFromHash(hash: string): StoreRouteHashResult {
     validOptional(projectId, stableId) &&
     validOptional(taskId, stableId) &&
     validOptional(snapshotOperationId, objectId) &&
-    validOptional(commitId, objectId) &&
-    validOptional(evolutionCommitId, objectId) &&
+    validOptional(commitId, commitObjectId) &&
+    validOptional(evolutionCommitId, commitObjectId) &&
     validOptional(change, changeId) &&
     validOptional(inspectedOperationId, objectId) &&
     validOptional(comparisonParentId, objectId) &&

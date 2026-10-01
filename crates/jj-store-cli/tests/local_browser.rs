@@ -886,6 +886,16 @@ async fn filesystem_runtime_registers_and_reads_without_native_storage() {
         .json()
         .await
         .unwrap();
+    // Ordinary browser startup fans out discovery, WorkStore and code snapshot reads.
+    // The installation's admitted request limit bounds waiting for local workers.
+    let (first, second, capabilities) = tokio::join!(
+        read(&format!("/local/repos/{id}/snapshot")).send(),
+        read(&format!("/local/repos/{id}/snapshot")).send(),
+        read(&format!("/local/repos/{id}/capabilities")).send()
+    );
+    assert_eq!(first.unwrap().status(), reqwest::StatusCode::OK);
+    assert_eq!(second.unwrap().status(), reqwest::StatusCode::OK);
+    assert_eq!(capabilities.unwrap().status(), reqwest::StatusCode::OK);
     let operation = snapshot["heads"][0].as_str().unwrap();
     assert!(!snapshot["metadata_commit"].is_null());
     let query = json!({"operation":operation,"request":{"kind":"graph","query":[{"graph":"log","revset":"all()","workspace":null,"user_email":"","at_time_millis":1700000000000_i64},{"limit":1,"after":null}]},"cursor":null});

@@ -76,7 +76,7 @@
     if (mutation.status !== "idle") controller.actions.resetMutation();
   }
   async function stage(
-    conflict: Model<"ConflictDescriptor">,
+    conflict: import("../../controller/repository-read-types.js").CodeConflict,
     contents: string,
   ) {
     if (!commit) return;

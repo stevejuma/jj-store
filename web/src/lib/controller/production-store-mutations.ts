@@ -1,3 +1,4 @@
+import { isLocal, type RepositoryHead } from "./repository-profile.js";
 import type { Head } from "../api/client.js";
 import type { StoreDataSource } from "./native-data-source.js";
 import { storeErrorMessage } from "./http-store-data-source.js";
@@ -15,7 +16,7 @@ import {
 export function createProductionStoreMutations(options: {
   state: MutableStoreMutationState;
   source: () => StoreDataSource;
-  head: () => Head | null;
+  head: () => RepositoryHead | null;
   current: (source: StoreDataSource) => boolean;
   committed: (
     receipt: StoreMutationReceipt,
@@ -43,7 +44,8 @@ export function createProductionStoreMutations(options: {
   async function preview(command: StoreMutationCommand) {
     const source = options.source();
     const head = options.head();
-    if (!head) throw new Error("No captured repository head is available.");
+    if (!head || isLocal(head))
+      throw new Error("No captured repository head is available.");
     request = mutationRequest(head, command);
     Object.assign(state, {
       status: "previewing",

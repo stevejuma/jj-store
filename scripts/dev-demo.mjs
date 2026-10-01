@@ -15,6 +15,7 @@ import { seedAgentActivity } from "./dev-demo-agents.mjs";
 import { seedReviews } from "./dev-demo-reviews.mjs";
 import { seedRepository } from "./dev-demo-repository.mjs";
 import { seedRepositoryProfiles } from "./dev-demo-profiles.mjs";
+import { registerDemoLocalFolder } from "./dev-demo-local-folder.mjs";
 import { linkDemoFolder } from "./dev-demo-folder.mjs";
 import { seedSampleWork } from "./dev-demo-work-run.mjs";
 import { seedWork } from "./dev-demo-work.mjs";
@@ -212,6 +213,11 @@ async function restart({ reset = false } = {}) {
       unixSocket: layout.unixSocket,
       run,
     });
+    await registerDemoLocalFolder({
+      origin,
+      repositoryId: profiles.localGit,
+      path: profiles.localFolder,
+    });
     await linkDemoFolder({
       origin,
       repositoryId: fixture.repositoryId,
@@ -264,7 +270,7 @@ async function restart({ reset = false } = {}) {
   });
   await chmod(layout.runtimeRoot, 0o700);
   console.log(
-    `JJ Store LocalTrusted development demo is ready.\n\nURL: ${origin}\nRepository ID: ${fixture.repositoryId}\nServer-only native: ${profiles.nativeServer}\nLocal Git-backed JJ: ${profiles.localGit} (${profiles.localFolder}; CLI only, browser serving pending)\nCredentials: none (local loopback access)\nRuntime: ${layout.runtimeRoot}\nStorage: embedded RustFS\nFixture: ${reset ? "reset and seeded" : "reused or initialized"}\nSearch: ${searchConfigured ? "ready" : "disabled"}\nStartup: ${fixture.firstStartupMillis} ms cold, ${restartStartupMillis} ms restart\nResident memory: ${processes.totalRssKiB} KiB server plus storage\n\nThe repository, installation identity and RustFS volume persist across restart and stop. Run pnpm dev:reset to replace them with a deterministic sample fixture.`,
+    `JJ Store LocalTrusted development demo is ready.\n\nURL: ${origin}\nRepository ID: ${fixture.repositoryId}\nServer-only native: ${profiles.nativeServer}\nLocal Git-backed JJ: ${profiles.localGit} (${profiles.localFolder}; browser ready)\nCredentials: none (local loopback access)\nRuntime: ${layout.runtimeRoot}\nStorage: embedded RustFS\nFixture: ${reset ? "reset and seeded" : "reused or initialized"}\nSearch: ${searchConfigured ? "ready" : "disabled"}\nStartup: ${fixture.firstStartupMillis} ms cold, ${restartStartupMillis} ms restart\nResident memory: ${processes.totalRssKiB} KiB server plus storage\n\nThe repository, installation identity and RustFS volume persist across restart and stop. Run pnpm dev:reset to replace them with a deterministic sample fixture.`,
   );
 }
 

@@ -12,10 +12,19 @@ export type WorkQuery = {
   cursor?: string;
   limit?: number;
 };
+export type WorkSnapshot =
+  Model<"WorkReadSnapshot"> | Model<"LocalWorkSnapshot">;
+export type WorkPage = Model<"WorkPage"> | Model<"LocalWorkPage">;
+export type WorkBrowsePage =
+  Model<"WorkBrowsePage"> | Model<"LocalWorkBrowsePage">;
+export type WorkOutcome =
+  Model<"WorkCommandOutcome"> | Model<"LocalWorkOutcome">;
+export type WorkStatus = Model<"WorkCommandStatus"> | Model<"LocalWorkOutcome">;
 export interface WorkTransport {
-  page(query: WorkQuery, signal?: AbortSignal): Promise<Model<"WorkPage">>;
-  apply(request: WorkRequest): Promise<Model<"WorkCommandOutcome">>;
-  status(id: string): Promise<Model<"WorkCommandStatus">>;
+  refresh?(): Promise<void>;
+  page(query: WorkQuery, signal?: AbortSignal): Promise<WorkPage>;
+  apply(request: WorkRequest): Promise<WorkOutcome>;
+  status(id: string): Promise<WorkStatus>;
 }
 export interface WorkState {
   drafts?: Record<string, WorkDraft>;
@@ -24,7 +33,7 @@ export interface WorkState {
   tasks: Model<"TaskV1">[];
   task: Model<"TaskV1"> | null;
   comments: Model<"WorkCommentV1">[];
-  snapshot: Model<"WorkReadSnapshot"> | null;
+  snapshot: WorkSnapshot | null;
   projectCursor: string | null;
   taskCursor: string | null;
   commentCursor: string | null;

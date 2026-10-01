@@ -1,4 +1,5 @@
-import { fullId, type Snapshot } from "../api/client.js";
+import { codeId, type CodeSnapshot as Snapshot } from "./repository-profile.js";
+import { fullId } from "../api/client.js";
 import { displayable } from "../graph.js";
 import type { StoreEvolutionState } from "./contracts.js";
 import type { StoreDataSource } from "./native-data-source.js";
@@ -54,7 +55,7 @@ export function createProductionEvolutionReader(context: {
           throw new Error("Repeated evolution cursor.");
         const value = await source.graph("evolution", {
           operation: fullId(operation),
-          commit: fullId(commit),
+          commit: codeId(commit, source.profile),
           cursor,
           limit: 50,
         });

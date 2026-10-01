@@ -7,16 +7,26 @@
   import { onMount, tick } from "svelte";
   import type { StorePage } from "../community-navigation/model.js";
   import { repositorySections } from "./repository-sections.js";
-  let { page, onSelect }: { page: StorePage; onSelect(page: StorePage): void } =
-    $props();
+  let {
+    page,
+    onSelect,
+    local = false,
+  }: {
+    page: StorePage;
+    onSelect(page: StorePage): void;
+    local?: boolean;
+  } = $props();
   let header: HTMLElement | null = $state(null);
   let tabList: HTMLElement | null = $state(null);
   let visibleCount = $state(repositorySections.length);
   let mounted = false,
     measuring = false,
     fitAgain = false;
-  const visible = $derived(repositorySections.slice(0, visibleCount));
-  const overflow = $derived(repositorySections.slice(visibleCount));
+  const sections = $derived(
+    repositorySections.filter((item) => !local || item.page !== "reviews"),
+  );
+  const visible = $derived(sections.slice(0, visibleCount));
+  const overflow = $derived(sections.slice(visibleCount));
   const overflowActive = $derived(overflow.some((item) => item.page === page));
   function select(value: string | undefined) {
     const section = repositorySections.find((item) => item.page === value);
@@ -31,7 +41,7 @@
     measuring = true;
     do {
       fitAgain = false;
-      visibleCount = repositorySections.length;
+      visibleCount = sections.length;
       await tick();
       while (
         mounted &&

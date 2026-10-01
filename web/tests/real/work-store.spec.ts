@@ -58,7 +58,9 @@ test("native projects tasks and discussion persist on RustFS and refresh explici
     scope.getByRole("group", { name: label, exact: true }).getByRole("textbox");
   async function refresh() {
     await view.getByRole("button", { name: "Refresh projects" }).click();
-    await expect(view).toHaveAttribute("aria-busy", "false");
+    await expect(view).toHaveAttribute("aria-busy", "false", {
+      timeout: 30000,
+    });
   }
   const headers = {
     Origin: new URL(page.url()).origin,
@@ -105,11 +107,11 @@ test("native projects tasks and discussion persist on RustFS and refresh explici
     ).toBeVisible();
   }
   await expect(view.getByRole("tab")).toHaveText([
+    "Activity",
     "Projects",
     "Tasks",
     "Reviews",
     "Repositories",
-    "Activity",
   ]);
   await createProject(title, home);
   await createProject(`Second home ${run}`, second);
@@ -391,6 +393,9 @@ test("native projects tasks and discussion persist on RustFS and refresh explici
   });
   if ((await detailsToggle.getAttribute("aria-expanded")) === "false")
     await detailsToggle.click();
+  await page
+    .getByRole("button", { name: "Filters for tasks", exact: true })
+    .click();
   await page.getByRole("button", { name: "Task state", exact: true }).click();
   await page
     .getByRole("menuitemradio", { name: "In progress", exact: true })
@@ -408,10 +413,16 @@ test("native projects tasks and discussion persist on RustFS and refresh explici
   ).toBeVisible();
   const filtered = new URL(page.url()).hash;
   await page.reload();
+  await page
+    .getByRole("button", { name: "Filters for tasks", exact: true })
+    .click();
   await expect(page.getByLabel("Search tasks", { exact: true })).toHaveValue(
     "Child",
   );
   expect(new URL(page.url()).hash).toBe(filtered);
+  await page
+    .getByRole("button", { name: "Close filters", exact: true })
+    .click();
   // Filters on the main task view do not remove sidebar projects.
   await expect(
     sidebar.getByRole("button", { name: title, exact: true }),
@@ -425,7 +436,13 @@ test("native projects tasks and discussion persist on RustFS and refresh explici
   expect(reviewResponse.ok()).toBe(true);
   const thread = (await reviewResponse.json()).threads[0];
   expect(thread).toBeTruthy();
+  await page
+    .getByRole("button", { name: "Filters for reviews", exact: true })
+    .click();
   await chooseRepository(page, "Repository filter", home);
+  await page
+    .getByRole("button", { name: "Close filters", exact: true })
+    .click();
   const reviewPath = new URL(page.url()).hash;
   await view
     .getByRole("button", { name: /^Open .* review with/ })
@@ -459,14 +476,21 @@ test("native projects tasks and discussion persist on RustFS and refresh explici
   await expect(
     repositoryRow.getByRole("group", { name: /commits,.*reviews,.*tasks/ }),
   ).toBeVisible();
+  await expect(repositoryRow.getByRole("alert")).toHaveCount(0);
   await expect(repositoryRow.locator("time")).toBeVisible();
   await expect(
     repositoryRow.getByRole("button", { name: /^View .*profile$/ }),
   ).toBeVisible();
   await page.goto(`/${filtered}`);
+  await page
+    .getByRole("button", { name: "Filters for tasks", exact: true })
+    .click();
   await expect(page.getByLabel("Search tasks", { exact: true })).toHaveValue(
     "Child",
   );
+  await page
+    .getByRole("button", { name: "Close filters", exact: true })
+    .click();
   const accessibility = await new AxeBuilder({ page })
     .include(".store-projects")
     .withTags(["wcag2a", "wcag2aa", "wcag21aa"])

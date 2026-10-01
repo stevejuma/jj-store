@@ -1,3 +1,4 @@
+import { snapshotRepository } from "./repository-profile.js";
 import type { StoreDataSource } from "./native-data-source.js";
 import type {
   NativeActivityPage,
@@ -29,7 +30,10 @@ export async function readNativeActivityPage(
   let operation = query.operation;
   if (!operation) {
     const head = await source.snapshot(query.refresh);
-    if (head.repo_id !== source.repository || head.heads.length !== 1)
+    if (
+      snapshotRepository(head) !== source.repository ||
+      head.heads.length !== 1
+    )
       throw new Error(
         "Select an explicit code operation before browsing activity.",
       );

@@ -38,13 +38,26 @@ assert.ok(
 assert.ok(
   directory.repositories.some((repo) => repo.id === profiles.nativeServer),
 );
-assert.ok(
-  !directory.repositories.some((repo) => repo.id === profiles.localGit),
-  "Git fixture must not be advertised as native",
+const gitEntry = directory.repositories.find(
+  (repo) => repo.id === profiles.localGit,
 );
+assert.equal(
+  gitEntry?.profile,
+  "git_sha1_jj045",
+  "Git fixture retains its own authority",
+);
+assert.equal(gitEntry?.availability, "ready");
+const gitSnapshot = await get(`local/repos/${profiles.localGit}/snapshot`);
+assert.equal(gitSnapshot.profile, "git_sha1_jj045");
+assert.equal(gitSnapshot.heads.length, 1);
 const work = await get(`repos/${profiles.nativeLocal}/work?limit=256`);
 const samples = sampleWork(profiles.nativeLocal, profiles.repositoryLinks);
-assert.equal(work.projects.length, 3);
+// Restart qualification preserves the seeded records alongside later user/test work.
+const sampleIds = new Set(samples.map((sample) => sample.id));
+assert.equal(
+  work.projects.filter((project) => sampleIds.has(project.id)).length,
+  3,
+);
 for (const sample of samples) {
   const project = work.projects.find((project) => project.id === sample.id);
   assert.deepEqual(
@@ -106,7 +119,7 @@ console.log(
       projects: 3,
       tasks: 9,
       checks:
-        "native directory and references, distinct links/targets, local folder binding, server-only cleanup and Git companion identity",
+        "mixed directory and snapshots, native references, distinct links/targets, local folder binding, server-only cleanup and Git companion identity",
     },
     null,
     2,

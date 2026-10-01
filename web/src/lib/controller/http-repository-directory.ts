@@ -23,6 +23,7 @@ export async function readRepositoryDirectory(
     head.repo_id !== client.repository ||
     tasks.snapshot.repo_id !== client.repository ||
     reviews.snapshot.repo_id !== client.repository ||
+    !("epoch" in tasks.snapshot) ||
     tasks.snapshot.epoch !== head.epoch ||
     reviews.snapshot.epoch !== head.epoch
   )

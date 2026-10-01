@@ -10,7 +10,7 @@ export type StoreConflictResolution =
 
 export function buildConflictCommand(
   commit: string,
-  conflicts: readonly Model<"ConflictDescriptor">[],
+  conflicts: readonly import("../../controller/repository-read-types.js").CodeConflict[],
   selections: ReadonlyMap<string, StoreConflictResolution>,
 ): StoreConflictCommand {
   requireHex(commit, 128, "commit");
@@ -38,7 +38,7 @@ export function buildConflictCommand(
 }
 
 function validateResolution(
-  conflict: Model<"ConflictDescriptor">,
+  conflict: import("../../controller/repository-read-types.js").CodeConflict,
   resolution: StoreConflictResolution,
 ) {
   if (

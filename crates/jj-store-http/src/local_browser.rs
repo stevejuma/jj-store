@@ -133,7 +133,8 @@ async fn blocking<T: Send + 'static>(
     let permit = state
         .local_jobs
         .clone()
-        .try_acquire_owned()
+        .acquire_owned()
+        .await
         .map_err(|_| Error::busy())?;
     tokio::task::spawn_blocking(move || {
         let _permit = permit;

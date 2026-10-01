@@ -1,7 +1,13 @@
 import { ApiError, decode, responseBytes, type Model } from "./client.js";
 
 export type RepositoryPage = Model<"RepositoryPage">;
-export type RepositorySummary = Model<"RepositorySummary">;
+export type RepositorySummary = Omit<
+  Model<"RepositorySummary">,
+  "profile" | "availability"
+> & {
+  profile: import("../controller/repository-profile.js").RepositoryProfile;
+  availability: "ready" | "unavailable" | "identity_changed";
+};
 
 async function page(
   token: string | null,
@@ -50,7 +56,18 @@ export async function repositories(
   try {
     do {
       const current = await page(token, cursor, fetcher, combined);
-      result.push(...current.repositories);
+      for (const row of current.repositories) {
+        if (
+          row.profile &&
+          !["native_v1", "git_sha1_jj045"].includes(row.profile)
+        )
+          throw new ApiError("unsupported_repository_profile");
+        result.push({
+          ...row,
+          profile: row.profile === "git_sha1_jj045" ? row.profile : "native",
+          availability: row.availability ?? "ready",
+        });
+      }
       cursor = current.next_cursor ?? null;
     } while (cursor);
     return result;

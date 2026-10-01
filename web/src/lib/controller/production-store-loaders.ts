@@ -1,4 +1,5 @@
-import { fullId, type Model, type Snapshot } from "../api/client.js";
+import type { CodeSnapshot as Snapshot } from "./repository-profile.js";
+import { fullId, type Model } from "../api/client.js";
 import type { RepositoryLogGraph } from "../projects/repository-log.js";
 import type { RepositoryWorkingCopy } from "../projects/repository-log.js";
 import type { Bookmark, RevisionDetail } from "../projects/presentation.js";
@@ -87,7 +88,12 @@ export async function readGraph(
     revset:
       kind === "log" && targets
         ? targets.length
-          ? targets.map((id) => `::${fullId(id)}`).join(" | ")
+          ? targets
+              .map(
+                (id) =>
+                  `::${fullId(id, source.profile === "git_sha1_jj045" ? 40 : 128)}`,
+              )
+              .join(" | ")
           : "none()"
         : undefined,
   });
@@ -111,7 +117,7 @@ export async function readPaths(
     expected?: Snapshot;
   },
 ): Promise<{
-  entries: Model<"Entry">[];
+  entries: import("./repository-read-types.js").CodeEntry[];
   path: string;
   recursive: boolean;
   cursor: string | null;
@@ -146,7 +152,7 @@ export async function readCommitInspection(
 ): Promise<{
   detail: RevisionDetail;
   comparisons: Map<string, Comparison>;
-  conflicts: Model<"ConflictDescriptor">[];
+  conflicts: import("./repository-read-types.js").CodeConflict[];
   continuation: InspectionContinuation | null;
 }> {
   const value = await source.commit(id, operation);

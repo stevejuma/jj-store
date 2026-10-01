@@ -30,6 +30,27 @@ fn bundle(root: &std::path::Path) {
 }
 
 #[tokio::test]
+async fn strict_browser_csp_allows_only_empty_style_attribute_reset() {
+    let root = tempfile::tempdir().unwrap();
+    bundle(root.path());
+    let response = BrowserAssets::load(root.path())
+        .unwrap()
+        .router()
+        .oneshot(Request::builder().uri("/").body(Body::empty()).unwrap())
+        .await
+        .unwrap();
+    let csp = response.headers()["content-security-policy"]
+        .to_str()
+        .unwrap();
+    assert!(csp.contains(
+        "style-src-attr 'unsafe-hashes' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=';"
+    ));
+    assert!(csp.contains("script-src 'self';"));
+    assert!(!csp.contains("'unsafe-inline'"));
+    assert!(!csp.contains("'unsafe-eval'"));
+}
+
+#[tokio::test]
 async fn development_annotations_allow_inline_helpers_without_widening_resource_sources() {
     let root = tempfile::tempdir().unwrap();
     bundle(root.path());

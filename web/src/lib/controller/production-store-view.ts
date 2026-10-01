@@ -1,3 +1,4 @@
+import { snapshotOperation } from "./repository-profile.js";
 import type { StoreControllerState, StoreRoute } from "./contracts.js";
 import { nextPathPage } from "./production-file-pages.js";
 import type { ProductionStoreState } from "./production-store-state.svelte.js";
@@ -25,6 +26,7 @@ export function productionStoreView(
     canNavigateForward: options.canForward,
     repositories: data.repositories,
     repository: {
+      ...data.repositories.find((candidate) => candidate.id === repository),
       id: repository,
       name:
         data.repositories.find((candidate) => candidate.id === repository)
@@ -91,7 +93,8 @@ export function productionStoreView(
       indexPreparation: data.indexPreparation,
       indexPreparationError: data.indexPreparationError,
       indexOperation:
-        data.neededIndex?.operation_id ?? route.snapshotOperationId,
+        (data.neededIndex ? snapshotOperation(data.neededIndex) : null) ??
+        route.snapshotOperationId,
     },
     mutation: data.mutation,
     agentSessions: data.agentSessions,

@@ -3,6 +3,7 @@
   import BotIcon from "@lucide/svelte/icons/bot";
   import ExternalLinkIcon from "@lucide/svelte/icons/external-link";
   import { CommunityMessage } from "@lapismd/lapis-community/components/community-message";
+  import { isLocalAssociation } from "../../controller/repository-read-types.js";
   import type { StoreController } from "../../controller/contracts.js";
   import {
     agentMember,
@@ -30,15 +31,34 @@
           relation.association?.session_id === selected?.session.session_id,
       )?.association,
   );
+  const localAssociation = $derived(
+    association && isLocalAssociation(association) ? association : null,
+  );
+  const sourceRepository = $derived(
+    localAssociation
+      ? localAssociation.source_repositories.length === 1
+        ? localAssociation.source_repositories[0]
+        : null
+      : state.repository.id,
+  );
+  const sourceOperation = $derived(
+    localAssociation
+      ? (localAssociation.evidence.find(
+          (e) => e.repository === sourceRepository,
+        )?.operation ?? null)
+      : state.route.snapshotOperationId,
+  );
   const changeId = $derived(association?.changes[0]);
   const commitId = $derived(
     association?.after_commits[0] ?? association?.before_commits[0],
   );
   const changeHref = $derived(
-    selected && changeId && commitId
+    selected && changeId && commitId && sourceRepository && sourceOperation
       ? (storeRouteToHash({
           ...state.route,
           page: "log",
+          repository: sourceRepository ?? state.repository.id,
+          snapshotOperationId: sourceOperation,
           bookmark: "",
           inspectedOperationId: null,
           commitId,
@@ -47,7 +67,10 @@
           comparisonGroupId: null,
           path: null,
           directory: "",
-          agentSessionId: selected.session.session_id,
+          agentSessionId:
+            sourceRepository === state.repository.id
+              ? selected.session.session_id
+              : null,
           reviewThreadId: null,
         }) ?? "#")
       : null,
@@ -57,6 +80,9 @@
 {#if selected && agent}
   <div class="store-agent-context">
     <header class="store-collaboration__detail-header">
+      {#if localAssociation}<p>
+          Source repositories: {localAssociation.source_repositories.join(", ")}
+        </p>{/if}
       <div class="store-collaboration__detail-title-row">
         <span class="store-collaboration__detail-identity">
           <CommunityMemberAvatar
@@ -74,7 +100,13 @@
             { label: "Copy snapshot ID", value: selected.session.snapshot_id },
             { label: "Copy agent root", value: selected.snapshot.agent_root },
             { label: "Copy repository ID", value: selected.snapshot.repo_id },
-            { label: "Copy epoch ID", value: selected.snapshot.epoch },
+            {
+              label: "Copy epoch ID",
+              value:
+                "epoch" in selected.snapshot
+                  ? selected.snapshot.epoch
+                  : selected.snapshot.metadata_commit,
+            },
           ]}
         />
       </div>

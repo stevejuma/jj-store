@@ -523,3 +523,8 @@ Contract qualification includes actual filesystem-browser responses from the
 isolated runtime fixture alongside the retained native fixtures. Generated
 contracts and request/response identity widths remain independently checked.
 Adding local transport capture does not substitute for native acceptance.
+
+Local browser cold acceptance runs filesystem-only and mixed real embedded
+RustFS installations on isolated roots and ports. Demo restart admits its
+existing Git fixture without reseeding code or replacing the three project
+identities and their native metadata home.

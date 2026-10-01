@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreLocalFolders from "./StoreLocalFolders.svelte";
   import type { StoreController } from "../../controller/contracts.js";
   let { controller }: { controller: StoreController } = $props();
   const state = $derived(controller.state);
@@ -39,3 +40,7 @@
     </div>
   </dl>
 </section>
+
+{#if state.accessMode === "local_trusted"}<StoreLocalFolders
+    {controller}
+  />{/if}

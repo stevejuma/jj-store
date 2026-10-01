@@ -19,7 +19,7 @@
     merged = $bindable(""),
     onSelect,
   }: {
-    conflict: Model<"ConflictDescriptor">;
+    conflict: import("../../controller/repository-read-types.js").CodeConflict;
     resolution?: StoreConflictResolution;
     actions: readonly string[];
     uploading?: boolean;

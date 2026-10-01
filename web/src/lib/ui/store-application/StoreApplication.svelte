@@ -265,6 +265,7 @@
           {#if !(current.page === "projects" && controller.projects && !isRepositoryProjects(current))}
             {#if !(current.page === "reviews" && current.reviewThreadId)}<StoreRepositoryTabs
                 page={current.page}
+                local={controller.state.repository.profile === "git_sha1_jj045"}
                 onSelect={selectPage}
               />{/if}
             {#if current.page !== "reviews"}<StoreWorkspaceSectionHeader

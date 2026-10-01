@@ -1,5 +1,14 @@
 # Storybook presentation catalog
 
+The local Git-backed browser reuses these screens through explicit profile-aware
+transports. Native snapshots retain manifest/WAL authority; local snapshots
+retain binding generation, code operation and independent committed companion
+selection. Routes accept complete Git SHA-1 or native commit IDs syntactically
+and validate their width against discovered profile before reads. Cache keys
+include profile, repository and connection session. External freshness only
+offers refresh, including changes missed during disconnection. Unsupported local
+search, code writes, reviews, conversion and synchronization remain gated.
+
 The reviewed catalog application is the presentation authority for the served
 browser. Production browsing, search, typed mutations and conflict editing share
 the same components and asynchronous controller contract. Reusable components
@@ -963,3 +972,8 @@ pinned collaboration state. Settings expose binding recovery and removal.
 Capabilities hide unavailable code editing, indexed search, reviews, native
 maintenance and synchronization. Browser navigation preferences retain their
 existing device-local format.
+
+The development runner admits the existing Git-backed fixture without reseeding
+its code or moving any sample project's metadata home. Restart acceptance checks
+the three deterministic sample project identities and their separate repository
+links, while allowing additional projects created during normal use.

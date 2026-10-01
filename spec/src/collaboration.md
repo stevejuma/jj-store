@@ -882,3 +882,8 @@ fabricated. Association presentation retains source repository and capsule
 evidence alongside exact operation and Git commit IDs. Session/transcript reads
 validate committed metadata history and selected session membership before
 returning content.
+
+Local Agents presentation retains selected companion metadata, qualified source
+repository identities, Git commits and immutable evidence. The browser gates
+review controls for local repositories and compares freshness announcements with
+retained selections, including stream reconnects.

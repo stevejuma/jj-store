@@ -30,13 +30,13 @@ export interface WorkBrowseTransport extends WorkTransport {
   browse(
     query: WorkBrowseQuery,
     signal?: AbortSignal,
-  ): Promise<Model<"WorkBrowsePage">>;
+  ): Promise<import("./work-types.js").WorkBrowsePage>;
 }
 export interface ProjectHome {
   repository: StoreRepositorySummary;
   projects: Model<"WorkProjectSummary">[];
   tasks: Model<"WorkTaskSummary">[];
-  snapshot: Model<"WorkReadSnapshot"> | null;
+  snapshot: import("./work-types.js").WorkSnapshot | null;
   cursor: string | null;
   total: number;
   loading: boolean;

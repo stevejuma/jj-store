@@ -138,7 +138,7 @@ network synchronization is outside this profile.
 | --------- | -------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | M13.3     | Portable code and agent review anchors, backend-aware review CLI, bounded review detail/pagination and durable retry | Validate exact selected capsules and retained Git closures; preserve stale semantics and original receipts across restart, unknown outcomes and ref races; reject missing or unsupported evidence.                                                                                                                                  |
 | M13.3     | Automatic hook code-causality associations and native portable capsule carrier                                       | Associate original sanitized captures with observed explicit code operations without inventing causality; qualify native retained capsule publication and replay. Native providers continue rejecting portable records until that carrier passes.                                                                                   |
-| M13.4     | Filesystem-only LocalTrusted server/UI, explicit device folder bindings, versioned local APIs and code reads/search  | Serve registered ordinary JJ folders without RustFS, pin explicit operation and metadata selections, preserve separate code authorization and require explicit refresh. Qualify cold startup and mixed native/local use.                                                                                                            |
+| M13.4     | Indexed local code search                                                                                            | Build bounded rebuildable local search over explicit operation and companion selections; preserve independent code access, native search contracts and refresh-only snapshot advancement.                                                                                                                                           |
 | M13.4     | Recoverable local code mutations                                                                                     | Durably journal the exact unpublished JJ operation before publishing heads; prove stable unknown/retry outcomes, concurrent sibling preservation, undo/abandon safety and protection of dirty unsnapshotted checkout files.                                                                                                         |
 | M13.5     | Bounded durable local/native conversion and identity mapping reports                                                 | Create an independent destination with a fresh operation log, selected code state/ancestry, complete collaboration history and exact evidence archives. Reject unsupported active representations in preflight, verify bounded closures, publish native manifests last, export only to a new folder and leave the source untouched. |
 | M13.6     | Cold full-flow qualification and retained native regressions                                                         | Exercise the completed local CLI, filesystem server/UI, recovery and conversion in fresh processes; retain native identity, publication, collaboration and browser regression evidence. Focused provider tests alone do not satisfy this gate.                                                                                      |
@@ -234,3 +234,15 @@ operation heads and the selected companion ref. They announce current selections
 without reconciling heads, changing working files or moving displayed snapshots.
 A reconnect must compare the announced selections against the retained browser
 pin, so changes while disconnected remain visible until explicit refresh.
+
+The browser selects transports by discovered profile and availability. Folder
+controls persist the exact pending Add request in device browser storage before
+dispatch. Reload checks its outcome; retry reuses the same intent. Removal and
+reconnect retain repository and project identities. Displayed code and
+collaboration selections remain pinned until explicit refresh.
+
+Local browser read transports reuse the existing bounded busy-retry policy for
+shared read-worker admission. A retry retains the exact operation, companion
+selection and query, including its continuation; it never captures a newer
+snapshot. Only read operations retry automatically. Registration and domain
+commands retain their explicit receipt and unknown-outcome handling.

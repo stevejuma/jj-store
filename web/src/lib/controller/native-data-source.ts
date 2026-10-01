@@ -1,4 +1,10 @@
 import type {
+  RepositoryCapabilities,
+  RepositoryHead,
+  RepositoryProfile,
+} from "./repository-profile.js";
+import type * as Browse from "./repository-read-types.js";
+import type {
   Envelope,
   Exact,
   Graph,
@@ -46,26 +52,30 @@ export type StoreReviewCommandRequest = Exact<
 
 export interface StoreDataSource {
   readonly repository: string;
+  readonly profile?: RepositoryProfile;
   readonly searchSettings?: import("./search-settings.js").SearchSettingsTransport;
   readonly sync?: import("./sync-settings.js").SyncTransport;
   readonly localWorkspaces?: import("./workspace-link-types.js").WorkspaceLinkTransport;
-  readonly work?: import("./work-types.js").WorkTransport;
-  capabilities(): Promise<Model<"Capabilities">>;
-  snapshot(fresh?: boolean): Promise<Head>;
-  references(operation: string, cursor?: string): Promise<Model<"Window">>;
+  readonly work?: import("./projects-hub-types.js").WorkBrowseTransport;
+  capabilities(): Promise<RepositoryCapabilities>;
+  snapshot(fresh?: boolean): Promise<RepositoryHead>;
+  references(
+    operation: string,
+    cursor?: string,
+  ): Promise<Browse.CodeWindow<Browse.CodeReferences>>;
   graph(
     kind: "log" | "operations" | "evolution",
     query: GraphQuery,
-  ): Promise<Envelope<Graph>>;
+  ): Promise<Browse.CodeEnvelope<Browse.CodeGraph>>;
   commit(
     id: string,
     operation: string,
-  ): Promise<Envelope<Model<"CommitDetail">>>;
+  ): Promise<Browse.CodeEnvelope<Browse.CodeCommitDetail>>;
   paths(
     commit: string,
     operation: string,
     query?: PathQuery,
-  ): Promise<Model<"Window3">>;
+  ): Promise<Browse.CodeWindow<Browse.CodePaths>>;
   file(
     id: string,
     operation: string,
@@ -73,32 +83,34 @@ export interface StoreDataSource {
     text?: string;
     bytes: number;
   }>;
-  operation(id: string): Promise<Envelope<Model<"OperationDetail">>>;
+  operation(
+    id: string,
+  ): Promise<Browse.CodeEnvelope<Browse.CodeOperationDetail>>;
   operationDiff(
     id: string,
     parent?: string,
-  ): Promise<Envelope<Model<"OperationDiffResponse">>>;
+  ): Promise<Browse.CodeEnvelope<Browse.CodeOperationDiff>>;
   operationChanges(
     id: string,
     parent: string,
     cursor?: string,
-  ): Promise<Model<"Window2">>;
+  ): Promise<Browse.CodeWindow<Browse.CodeOperationChanges>>;
   diffPaths(
     operation: string,
     from: string,
     to: string,
     cursor?: string,
-  ): Promise<Model<"Window4">>;
+  ): Promise<Browse.CodeWindow<Browse.CodeDiffPaths>>;
   diff(
     operation: string,
     from: string,
     to: string,
     path: string,
-  ): Promise<Envelope<Model<"FileDiffResponse">>>;
+  ): Promise<Browse.CodeEnvelope<Browse.CodeDiff>>;
   conflicts(
     operation: string,
     commit: string,
-  ): Promise<Envelope<Model<"ConflictResponse">>>;
+  ): Promise<Browse.CodeEnvelope<Browse.CodeConflicts>>;
   uploadConflict(
     head: Head,
     commit: string,
@@ -108,17 +120,17 @@ export interface StoreDataSource {
   ): Promise<Model<"ConflictUpload">>;
   search(query: SearchQuery): Promise<Model<"SearchPage">>;
   searchStatus(fresh?: boolean): Promise<Model<"SearchStatus">>;
-  agentSessions(cursor?: string): Promise<Model<"AgentSessionPage">>;
-  agentSession(id: string): Promise<Model<"AgentSessionDetail">>;
+  agentSessions(cursor?: string): Promise<Browse.AgentPage>;
+  agentSession(id: string): Promise<Browse.AgentDetail>;
   agentRelations(
     subject: { commit: string } | { operation: string },
     cursor?: string,
-  ): Promise<Model<"AgentRelationPage">>;
+  ): Promise<Browse.AgentRelations>;
   agentTranscript(
     session: string,
     transcript: Model<"AgentTranscriptDescriptor">,
     cursor?: string,
-  ): Promise<Model<"AgentTranscriptPage">>;
+  ): Promise<Browse.AgentTranscript>;
   reviewThreads(cursor?: string): Promise<Model<"ReviewThreadPage">>;
   reviewThread(id: string): Promise<Model<"ReviewThreadDetail">>;
   applyReviewCommand(
@@ -133,7 +145,7 @@ export interface StoreDataSource {
   events(
     after: string | undefined,
     signal: AbortSignal,
-    deliver: Parameters<import("../api/client.js").Client["events"]>[2],
+    deliver: (event: Browse.RepositoryFreshness, id?: string) => void,
   ): Promise<void>;
   close(): void;
 }

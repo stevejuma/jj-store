@@ -599,10 +599,13 @@ served; repository paths cannot select filesystem content. Agent icons retain
 their stable same-origin `/agent-icons/<name>.svg` URLs. The production document
 permits same-origin scripts, styles, connections and images plus image loads
 from the exact `https://www.gravatar.com` origin. The only admitted inline style
-is the exact SHA-256 hash of the pinned emoji-mart 5.6.0 shadow stylesheet used
-by Community's emoji picker; arbitrary inline style and every inline script
-remain blocked. The document also prohibits framing and plugins. The browser
-read client is independent of the later typed mutation and search capabilities.
+element is the exact SHA-256 hash of the pinned emoji-mart 5.6.0 shadow
+stylesheet used by Community's emoji picker. Style attributes admit only the
+SHA-256 hash of the empty string with `unsafe-hashes`, allowing dialog cleanup
+to clear its temporary CSSOM lock. Nonempty inline style attributes and every
+inline script remain blocked. The document also prohibits framing and plugins.
+The browser read client is independent of the later typed mutation and search
+capabilities.
 
 The explicit loopback LocalTrusted development annotation setting admits inline
 scripts and styles only for the static bundle. It defaults to false; the owned
@@ -1088,3 +1091,14 @@ POST `/v1/local/repositories/{repo}/reconnect` requires the current device
 registry revision and an inspected folder path with the original companion
 identity. It replaces only the device binding, increments its generation and
 rejects a conflicting ready copy. It does not initialize replacement metadata.
+
+The application dispatches Git-backed repositories only through the LocalTrusted
+local namespace. Native ID validation, endpoints and event parser retain their
+original contracts. Shared screen models use explicit native/local snapshot
+unions; local data cannot fabricate native epoch, WAL positions or graph cache
+reports.
+
+Admitted local requests wait within the existing HTTP request/deadline bound for
+a local worker. Parallel startup code and project reads cannot fail merely
+because the bounded worker pool is briefly occupied. Cancellation before
+admission performs no folder work.
