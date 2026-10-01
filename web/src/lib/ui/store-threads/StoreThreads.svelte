@@ -122,9 +122,13 @@
           onLoadOlder={threads.older}
           handlers={{
             onAddReaction: (id, emoji, custom) =>
-              threads.toggle(projection.targets[id]!, emoji, custom),
+              threads
+                .toggle(projection.targets[id]!, emoji, custom)
+                .catch(() => {}),
             onToggleReaction: (id, emoji, custom) =>
-              threads.toggle(projection.targets[id]!, emoji, custom, true),
+              threads
+                .toggle(projection.targets[id]!, emoji, custom, true)
+                .catch(() => {}),
             onSendMessage: (_, text) => threads.send(text),
             onOpenThread: reply,
             onReply: reply,

@@ -1,3 +1,5 @@
+import { ApiError } from "./api-error.js";
+export { ApiError } from "./api-error.js";
 import { readReactionAsset } from "./reaction-asset.js";
 import { parse, stringify } from "lossless-json";
 import type { components } from "./generated";
@@ -34,15 +36,7 @@ export function decode(text: string): unknown {
     return Number.isSafeInteger(n) ? n : BigInt(raw);
   });
 }
-export class ApiError extends Error {
-  constructor(
-    readonly code: string,
-    readonly snapshot?: Snapshot,
-    readonly heads?: Head,
-  ) {
-    super(code.replaceAll("_", " "));
-  }
-}
+
 export function fullId(value: string, width = 128): string {
   if (!new RegExp(`^[0-9a-f]{${width}}$`).test(value))
     throw new ApiError("invalid_full_id");

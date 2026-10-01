@@ -4,7 +4,7 @@
     CommunityMemberModel,
     CommunityMessageModel,
   } from "../../community/workspace-model.js";
-  import { untrack } from "svelte";
+  import StoreMessageReactions from "./StoreMessageReactions.svelte";
   import type { ThreadsController } from "../../controller/thread-types.js";
   import { replyRoot } from "./thread-view.js";
   let {
@@ -20,7 +20,6 @@
     currentMemberId?: string;
     disabled: boolean;
   } = $props();
-  let error = $state("");
   const conversationRoot = $derived(
     replyRoot(threads.projection.messages, rootId),
   );
@@ -37,39 +36,6 @@
         reactions: threads.reactionModels(threads.projection.targets[m.id]!),
       }));
   });
-  $effect(() => {
-    const targets = messages.map((m) => threads.projection.targets[m.id]!);
-    threads.reactionRevision;
-    let live = true;
-    untrack(() => {
-      for (const target of targets)
-        void threads.loadReactions(target).catch((e) => {
-          if (live) error = String(e);
-        });
-    });
-    return () => {
-      live = false;
-    };
-  });
-  async function react(
-    id: string,
-    emoji: string,
-    custom?: { shortcode: string; url: string },
-    fromBar = false,
-  ) {
-    if (disabled || threads.busy || threads.pending) return;
-    try {
-      await threads.toggle(
-        threads.projection.targets[id]!,
-        emoji,
-        custom,
-        fromBar,
-      );
-      error = "";
-    } catch (e) {
-      error = e instanceof Error ? e.message : String(e);
-    }
-  }
 </script>
 
 <CommunityThreadPanel
@@ -94,12 +60,26 @@
   communityEmojis={threads.emojis}
   onToggleReaction={disabled
     ? undefined
-    : (id, emoji, custom) => react(id, emoji, custom, true)}
+    : (id, emoji, custom) =>
+        threads
+          .toggle(threads.projection.targets[id]!, emoji, custom, true)
+          .catch(() => {})}
   onAddReaction={disabled
     ? undefined
-    : (id, emoji, custom) => react(id, emoji, custom)}
+    : (id, emoji, custom) =>
+        threads
+          .toggle(threads.projection.targets[id]!, emoji, custom)
+          .catch(() => {})}
   onSaveMessageEdit={disabled
     ? undefined
     : (id, text) => threads.send(text, undefined, id)}
-/>
-{#if error}<p role="alert">{error}</p>{/if}
+>
+  {#snippet messageSupplement(message)}
+    {#if threads.projection.targets[message.id]}<StoreMessageReactions
+        {threads}
+        target={threads.projection.targets[message.id]!}
+        {disabled}
+        showControls={false}
+      />{/if}
+  {/snippet}
+</CommunityThreadPanel>

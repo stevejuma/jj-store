@@ -1,3 +1,4 @@
+import type { Snippet } from "svelte";
 import type { ComposerStatus } from "@lapismd/design-core/ai/chat";
 
 import type {
@@ -13,9 +14,11 @@ import type {
   CommunityMemberModel,
   CommunityRoomModel,
   CommunityThreadModel,
+  CommunityMessageModel,
 } from "../community-workspace/model.js";
 
 export type ThreadPanelProps = {
+  messageSupplement?: Snippet<[CommunityMessageModel]>;
   virtualize?: boolean;
   history?: CommunityHistoryState;
   presentation?: CommunityTimelinePresentation;

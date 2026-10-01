@@ -8,6 +8,66 @@
     tags: ["visual-pending"],
     parameters: { layout: "fullscreen", jjStoreShell: true },
   });
+  async function pendingReaction(
+    { canvasElement }: { canvasElement: HTMLElement },
+    reply = false,
+  ) {
+    const c = within(canvasElement),
+      body = within(document.body);
+    const mainLog = await c.findByRole("log", { name: "general messages" });
+    await within(mainLog).findByText("Welcome to the channel");
+    const message = reply
+      ? (await c.findByText("A retained reply")).closest("article")!
+      : within(mainLog).getByText("Welcome to the channel").closest("article")!;
+    await userEvent.hover(message);
+    await waitFor(() =>
+      expect(message).toHaveAttribute("data-actions-visible"),
+    );
+    await userEvent.click(
+      within(message).getByRole("button", {
+        name: "Add reaction",
+      }),
+    );
+    await userEvent.click(await body.findByRole("button", { name: ":lapis:" }));
+    await waitFor(() =>
+      expect(
+        message.querySelector(
+          '[data-ui-component="ai-chat-message-metadata"] [role="status"]',
+        ),
+      ).toHaveTextContent("Awaiting reaction confirmation"),
+    );
+    await expect(
+      canvasElement.querySelector(
+        '.store-threads > [data-ui-component="alert"]',
+      ),
+    ).toBeNull();
+    await expect(
+      message.querySelector('[data-ui-component="ai-chat-message-bubble"]'),
+    ).toHaveTextContent(reply ? "A retained reply" : "Welcome to the channel");
+    if (reply)
+      await expect(
+        c
+          .getByRole("log", { name: "general messages" })
+          .querySelector(
+            '[data-ui-component="ai-chat-message-metadata"] [role="status"]',
+          ),
+      ).toBeNull();
+    await userEvent.click(
+      within(message).getByRole("button", {
+        name: "Check action status",
+      }),
+    );
+    await waitFor(() =>
+      expect(
+        within(message).queryByText(/Awaiting reaction confirmation/),
+      ).toBeNull(),
+    );
+    await expect(
+      await within(message).findByRole("button", {
+        name: /1 reaction with Lapis/,
+      }),
+    ).toBeVisible();
+  }
 </script>
 
 <Story
@@ -164,5 +224,54 @@
     );
     const dismiss = c.queryByRole("button", { name: "Dismiss" });
     if (dismiss) await userEvent.click(dismiss);
+  }}
+/>
+
+<Story
+  name="Unknown reaction stays in main message metadata"
+  args={{ selected: true, unknownFirst: true }}
+  play={(context) => pendingReaction(context)}
+/>
+<Story
+  name="Unknown reply reaction stays in reply message metadata"
+  args={{ selected: true, unknownFirst: true, replySelected: true }}
+  play={(context) => pendingReaction(context, true)}
+/>
+
+<Story
+  name="Rejected reaction stays in message metadata"
+  args={{ selected: true, rejectReaction: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement),
+      body = within(document.body);
+    const message = (await c.findByText("Welcome to the channel")).closest(
+      "article",
+    )!;
+    await userEvent.hover(message);
+    await waitFor(() =>
+      expect(message).toHaveAttribute("data-actions-visible"),
+    );
+    await userEvent.click(
+      within(message).getByRole("button", { name: "Add reaction" }),
+    );
+    await userEvent.click(await body.findByRole("button", { name: ":lapis:" }));
+    await waitFor(() =>
+      expect(
+        message.querySelector(
+          '[data-ui-component="ai-chat-message-metadata"] [role="alert"]',
+        ),
+      ).toHaveTextContent("access denied"),
+    );
+    await expect(
+      canvasElement.querySelector(
+        '.store-threads > [data-ui-component="alert"]',
+      ),
+    ).toBeNull();
+    await expect(
+      c.queryByRole("button", { name: "Check action status" }),
+    ).toBeNull();
+    await expect(
+      message.querySelector('[data-ui-component="ai-chat-message-bubble"]'),
+    ).toHaveTextContent("Welcome to the channel");
   }}
 />

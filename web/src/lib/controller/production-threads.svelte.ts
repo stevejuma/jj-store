@@ -251,7 +251,7 @@ export function createThreadsController(options: {
       return status;
     },
     get error() {
-      return actions.error || error;
+      return actions.errorKind === "reactions" ? error : actions.error || error;
     },
     get busy() {
       return actions.busy;
@@ -268,6 +268,7 @@ export function createThreadsController(options: {
     get emojis() {
       return richReactions.emojis;
     },
+    reactionError: richReactions.getError,
     getReaction: richReactions.getReaction,
     reactionModels: richReactions.reactionModels,
     loadEmojis: richReactions.loadEmojis,

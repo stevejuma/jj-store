@@ -23,7 +23,12 @@
   } = $props();
 </script>
 
+{#snippet supplement()}{#if panel.messageSupplement}{@render panel.messageSupplement(
+      message,
+    )}{/if}{/snippet}
+
 <CommunityMessage
+  supplement={panel.messageSupplement ? supplement : undefined}
   {message}
   highlighted={message.id === focused}
   {isContinuation}

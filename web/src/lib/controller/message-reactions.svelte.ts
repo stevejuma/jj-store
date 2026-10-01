@@ -22,6 +22,7 @@ export function createMessageReactions(options: {
   ) => Promise<void>;
 }) {
   let reactions = $state<Record<string, ReactionItems>>({});
+  let errors = $state<Record<string, string>>({});
   let emojiDefinitions = $state<Model<"CustomEmojiVersionV1">[]>([]);
   let emojiVersions = $state<Record<string, Model<"CollabObjectRef">>>({});
   let emojiUrls = $state<Record<string, string>>({});
@@ -143,7 +144,7 @@ export function createMessageReactions(options: {
         : v.type === "dislike"
           ? "👎"
           : v.sequence;
-  async function toggle(
+  async function performToggle(
     target: ReactionTarget,
     emoji: string,
     customEmoji?: { shortcode: string; url: string },
@@ -197,10 +198,28 @@ export function createMessageReactions(options: {
     });
     if (options.valid(ticket, transport)) await loadReactions(target, true);
   }
+  async function toggle(...args: Parameters<typeof performToggle>) {
+    const key = targetKey(args[0]),
+      ticket = options.generation(),
+      transport = options.source(),
+      stamp = epoch;
+    errors = { ...errors, [key]: "" };
+    try {
+      await performToggle(...args);
+    } catch (cause) {
+      if (stamp === epoch && options.valid(ticket, transport))
+        errors = {
+          ...errors,
+          [key]: cause instanceof Error ? cause.message : String(cause),
+        };
+      throw cause;
+    }
+  }
   function invalidate() {
     epoch++;
     revision++;
     reactions = {};
+    errors = {};
     loaded = false;
     emojiLoad = undefined;
   }
@@ -218,6 +237,9 @@ export function createMessageReactions(options: {
           ownerPubkey: d.actor,
           owned: d.actor === options.principal(),
         }));
+    },
+    getError(target: ReactionTarget) {
+      return errors[targetKey(target)] ?? "";
     },
     getReaction(target: ReactionTarget) {
       return reactions[targetKey(target)];

@@ -31,6 +31,7 @@ export function createCollabActions(options: {
   let intents = $state<Record<string, Intent>>({});
   let active = $state<Record<string, boolean>>({});
   let errors = $state<Record<string, string>>({});
+  let errorKinds = $state<Record<string, Intent["kind"]>>({});
   const remove = (repo: string) => {
     const next = { ...intents };
     delete next[repo];
@@ -67,6 +68,7 @@ export function createCollabActions(options: {
             ? cause.message
             : String(cause);
       errors = { ...errors, [repo]: message };
+      errorKinds = { ...errorKinds, [repo]: intent.kind };
       throw new Error(message);
     } finally {
       if (stamp === epoch) active = { ...active, [repo]: false };
@@ -77,6 +79,7 @@ export function createCollabActions(options: {
       epoch++;
       active = {};
       errors = {};
+      errorKinds = {};
       if (!preservePending) intents = {};
     },
     get pending() {
@@ -84,6 +87,11 @@ export function createCollabActions(options: {
     },
     get busy() {
       return active[identity()] ?? false;
+    },
+    get errorKind() {
+      return errors[identity()]
+        ? (errorKinds[identity()] ?? intents[identity()]?.kind)
+        : intents[identity()]?.kind;
     },
     get error() {
       return (

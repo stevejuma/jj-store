@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { MessageMetadata } from "@lapismd/design-core/ai/chat";
   import { targetKey } from "../../collaboration/thread-presentation.js";
   import CommunityReactions from "../community-reactions/CommunityReactions.svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
@@ -19,6 +20,7 @@
     showControls?: boolean;
   } = $props();
   let error = $state("");
+  const actionError = $derived(threads.reactionError(target));
   const items = $derived(threads.getReaction(target));
   const pending = $derived(
     threads.pending?.kind === "reactions" &&
@@ -51,8 +53,8 @@
     error = "";
     try {
       await threads.toggle(target, emoji, custom, fromBar);
-    } catch (e) {
-      error = e instanceof Error ? e.message : String(e);
+    } catch {
+      /* Targeted controller feedback is rendered below. */
     }
   }
 </script>
@@ -69,34 +71,41 @@
       onToggle={(emoji) => select(emoji, undefined, true)}
       onSelect={(emoji, custom) => select(emoji, custom)}
     />{/if}
-  {#if pending}<span role="status">An action is awaiting confirmation.</span>
-    <Button
-      variant="outline"
-      size="sm"
-      disabled={threads.busy}
-      onclick={threads.checkPending}>Check action status</Button
-    >
-    <Button
-      variant="ghost"
-      size="sm"
-      disabled={threads.busy}
-      onclick={() => threads.retryPending().catch((e) => (error = String(e)))}
-      >Retry same action</Button
-    >
-  {/if}
-  {#if items?.conflict_count}<span role="status"
-      >Reaction conflict. Refresh and resolve before changing it.</span
-    >{/if}
-  {#if error}<span role="alert">{error}</span><Button
-      variant="ghost"
-      size="sm"
-      onclick={() => {
-        error = "";
-        void threads
-          .loadReactions(target, true)
-          .catch((e) => (error = String(e)));
-      }}>Retry reactions</Button
-    >{/if}
+  {#snippet feedback()}
+    {#if pending}<span role="status">Awaiting reaction confirmation.</span>
+      <Button
+        variant="outline"
+        size="sm"
+        disabled={threads.busy}
+        onclick={threads.checkPending}>Check action status</Button
+      >
+      <Button
+        variant="ghost"
+        size="sm"
+        disabled={threads.busy}
+        onclick={() => threads.retryPending().catch((e) => (error = String(e)))}
+        >Retry same action</Button
+      >
+    {/if}
+    {#if items?.conflict_count}<span role="status"
+        >Reaction conflict. Refresh and resolve before changing it.</span
+      >{/if}
+    {#if !pending && (error || actionError)}<span role="alert"
+        >{error || actionError}</span
+      ><Button
+        variant="ghost"
+        size="sm"
+        onclick={() => {
+          error = "";
+          void threads
+            .loadReactions(target, true)
+            .catch((e) => (error = String(e)));
+        }}>Retry reactions</Button
+      >{/if}
+  {/snippet}
+  {#if pending || items?.conflict_count || error || actionError}<MessageMetadata
+      footer={feedback}
+    />{/if}
 </div>
 
 <style>

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { untrack } from "svelte";
+  import { ApiError } from "../../web/src/lib/api/api-error.js";
   import StoreRepositoryApplication from "../../web/src/lib/ui/store-application/StoreRepositoryApplication.svelte";
   import { createThreadsController } from "../../web/src/lib/controller/production-threads.svelte.js";
   import { initialStoreRoute } from "../../web/src/lib/controller/store-route-history.svelte.js";
@@ -11,12 +12,35 @@
     unknownFirst = false,
     selected = false,
     readOnly = false,
+    replySelected = false,
+    rejectReaction = false,
   }: {
     unknownFirst?: boolean;
     selected?: boolean;
     readOnly?: boolean;
+    replySelected?: boolean;
+    rejectReaction?: boolean;
   } = $props();
   const transport = untrack(() => createThreadTransport({ unknownFirst }));
+  const replyId = "77".repeat(16);
+  untrack(() => {
+    if (rejectReaction) {
+      const command = transport.transport.command;
+      transport.transport.command = async (kind, request) => {
+        if (kind === "reactions") throw new ApiError("access_denied");
+        return command(kind, request);
+      };
+    }
+    if (replySelected) {
+      const root = transport.history.get(THREAD_IDS.thread)![0]!;
+      transport.addMessage(
+        THREAD_IDS.thread,
+        replyId,
+        "A retained reply",
+        root.value.event.type === "message" ? root.value.event.revision : null,
+      );
+    }
+  });
   const base = untrack(() => createInMemoryStoreController());
   const layoutStorage = untrack(createMemoryStoryStorage);
   let route = $state({
@@ -24,7 +48,7 @@
     repository: THREAD_IDS.repo,
     page: "threads" as const,
     threadId: untrack(() => (selected ? THREAD_IDS.thread : null)),
-    replyId: null as string | null,
+    replyId: untrack(() => (replySelected ? replyId : null)) as string | null,
   });
   const threads = createThreadsController({
     source: () => transport.transport,

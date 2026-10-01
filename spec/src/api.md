@@ -21,8 +21,12 @@ repository and principal, survive transport recreation within that credential
 session and are discarded on disconnect. A definitively rejected first message
 leaves its composer draft available; publishing the same title again continues
 the created thread with a fresh message request. It does not claim an atomic
-two-command creation. Reaction actor popovers exclude conflicts and group only
-values represented by the selected message revision's displayed chip.
+two-command creation. Reaction hover/focus tooltips show counts and loaded
+authorized actors, exclude conflicts and group only values represented by the
+selected message revision's displayed chip. Pending/error UI is scoped to the
+exact reaction target in message metadata, including replies; unknown outcomes
+keep the same request ID and status/retry semantics, while non-reaction failures
+retain page feedback.
 
 The rebased HTTP inventory retains all local workspace, Search and Sync
 management routes alongside Thread, Reaction and retained-image routes. The
