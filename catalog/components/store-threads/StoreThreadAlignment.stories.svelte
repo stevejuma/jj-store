@@ -16,22 +16,9 @@
   play={async ({ canvasElement }) => {
     const c = within(canvasElement),
       body = within(document.body);
-    async function openMenu() {
-      const trigger = c.getByRole("button", { name: "Thread actions" });
-      await waitFor(() =>
-        expect(getComputedStyle(trigger).pointerEvents).not.toBe("none"),
-      );
-      await userEvent.click(trigger);
-    }
     await expect(await c.findByText("Welcome to the channel")).toBeVisible();
-    await openMenu();
-    await userEvent.click(
-      body.getByRole("menuitem", { name: "Thread settings" }),
-    );
-    await waitFor(() => expect(body.queryByRole("menu")).toBeNull());
-    await waitFor(() =>
-      expect(document.body.style.pointerEvents).not.toBe("none"),
-    );
+    await userEvent.click(c.getByRole("button", { name: "Thread settings" }));
+    await expect(body.queryByRole("menu")).toBeNull();
     const settings = c.getByRole("complementary", { name: "Thread settings" });
     await expect(within(settings).getByText("Code baseline")).toBeVisible();
     await expect(settings).toHaveClass(
@@ -203,10 +190,8 @@
       "contenteditable",
       "false",
     );
-    await userEvent.click(c.getByRole("button", { name: "Thread actions" }));
-    await userEvent.click(
-      body.getByRole("menuitem", { name: "Thread settings" }),
-    );
+    await userEvent.click(c.getByRole("button", { name: "Thread settings" }));
+    await expect(body.queryByRole("menu")).toBeNull();
     await expect(c.queryByRole("button", { name: "Remove thread" })).toBeNull();
     await expect(c.queryByRole("button", { name: /^Name/ })).toBeNull();
   }}

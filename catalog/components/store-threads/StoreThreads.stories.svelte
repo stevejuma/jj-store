@@ -106,15 +106,17 @@
     await userEvent.click(await body.findByRole("button", { name: ":lapis:" }));
     await expect(
       await within(reply as HTMLElement).findByRole("button", {
-        name: "Lapis",
+        name: /1 reaction with Lapis/,
       }),
     ).toBeVisible();
     const reaction = within(reply as HTMLElement).getByRole("button", {
-      name: "Lapis",
+      name: /1 reaction with Lapis/,
     });
-    await userEvent.hover(reaction);
+    reaction.focus();
     await expect(
-      await body.findByRole("group", { name: "People who reacted with Lapis" }),
+      await body.findByText(/1 reaction with Lapis/, {
+        selector: '[data-ui-part="tooltip-content"]',
+      }),
     ).toBeVisible();
     await expect(
       body.queryByRole("button", { name: /Who reacted/ }),
@@ -122,7 +124,9 @@
     await userEvent.click(reaction);
     await waitFor(() =>
       expect(
-        within(reply as HTMLElement).queryByRole("button", { name: "Lapis" }),
+        within(reply as HTMLElement).queryByRole("button", {
+          name: /1 reaction with Lapis/,
+        }),
       ).toBeNull(),
     );
   }}

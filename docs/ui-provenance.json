@@ -1502,16 +1502,6 @@
       ]
     },
     {
-      "local": "web/src/lib/ui/community-reactions/CommunityReactionActors.svelte",
-      "sources": [
-        {
-          "path": "src/components/community-reactions/CommunityReactions.svelte",
-          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
-          "license": "Apache-2.0"
-        }
-      ]
-    },
-    {
       "local": "web/src/lib/ui/community-reactions/CommunityReactions.svelte",
       "sources": [
         {

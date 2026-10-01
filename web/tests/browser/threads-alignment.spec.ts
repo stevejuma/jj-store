@@ -167,7 +167,7 @@ test("cold LocalTrusted Threads shell settings references scoped search and repl
     page.getByRole("tab", { name: "Branches", exact: true }),
   ).toHaveCount(0);
   const menu = page.getByRole("button", {
-    name: "Thread actions",
+    name: "Thread settings",
     exact: true,
   });
   const toolbarButtons = await page
@@ -175,15 +175,10 @@ test("cold LocalTrusted Threads shell settings references scoped search and repl
     .getByRole("button")
     .all();
   expect(await toolbarButtons.at(-1)!.getAttribute("aria-label")).toBe(
-    "Thread actions",
+    "Thread settings",
   );
   await menu.click();
-  await expect(
-    page.getByRole("menuitem", { name: "Set idle", exact: true }),
-  ).toHaveCount(0);
-  await page
-    .getByRole("menuitem", { name: "Thread settings", exact: true })
-    .click();
+  await expect(page.getByRole("menu")).toHaveCount(0);
   const settings = page.getByRole("complementary", { name: "Thread settings" });
   await expect(settings).toBeVisible();
   await expect(settings).toHaveClass(
@@ -344,16 +339,18 @@ test("cold LocalTrusted Threads shell settings references scoped search and repl
     .click();
   await page.getByRole("button", { name: ":lapis:", exact: true }).click();
   await expect(
-    createdReply.getByRole("button", { name: "Lapis", exact: true }),
-  ).toBeVisible();
-  await createdReply
-    .getByRole("button", { name: "Lapis", exact: true })
-    .hover();
-  await expect(
-    page.getByRole("group", {
-      name: "People who reacted with Lapis",
+    createdReply.getByRole("button", {
+      name: /1 reaction with Lapis/,
       exact: true,
     }),
+  ).toBeVisible();
+  await createdReply
+    .getByRole("button", { name: /1 reaction with Lapis/, exact: true })
+    .hover();
+  await expect(
+    page
+      .locator('[data-ui-component="tooltip"][data-ui-part="tooltip-content"]')
+      .filter({ hasText: /1 reaction with Lapis/ }),
   ).toBeVisible();
   await expect(page.getByRole("button", { name: /Who reacted/ })).toHaveCount(
     0,

@@ -1,6 +1,5 @@
 <script lang="ts">
   import { ReactionBar } from "@lapismd/design-core/ai/experimental";
-  import CommunityReactionActors from "./CommunityReactionActors.svelte";
   import type { CommunityReactionModel } from "../../community/workspace-model.js";
   import type { ComponentProps } from "svelte";
   import type { CommunityCustomEmoji } from "../../community/contracts.js";
@@ -28,19 +27,14 @@
   } = $props();
 </script>
 
-{#if mode !== "picker"}
-  {#if reactions.some((r) => r.actors?.length)}
-    <div class="community-reactions" role="group" aria-label={label}>
-      {#each reactions as reaction (reaction.emoji)}
-        {#if reaction.actors?.length}<CommunityReactionActors
-            {reaction}
-            onToggle={barProps.onToggle}
-          />
-        {:else}<ReactionBar {...barProps} reactions={[reaction]} {label} />{/if}
-      {/each}
-    </div>
-  {:else}<ReactionBar {...barProps} {reactions} {label} />{/if}
-{/if}
+{#if mode !== "picker"}<ReactionBar
+    {...barProps}
+    reactions={reactions.map((reaction) => ({
+      ...reaction,
+      label: `${reaction.count} ${reaction.count === 1 ? "reaction" : "reactions"} with ${reaction.label ?? reaction.emoji}${reaction.actors?.length ? `: ${reaction.actors.map((actor) => actor.name).join(", ")}` : ""}`,
+    }))}
+    {label}
+  />{/if}
 {#if mode !== "bar" && onSelect}<CommunityEmojiPicker
     label={pickerLabel}
     {disabled}
@@ -49,12 +43,3 @@
     {communityEmojis}
     {onSelect}
   />{/if}
-
-<style>
-  .community-reactions {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.375rem;
-  }
-</style>

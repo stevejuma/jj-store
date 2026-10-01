@@ -57,13 +57,14 @@ restores pointer interaction under the served strict asset policy.
 
 Threads use the forum's full-width inline post composer above
 Topic/Replies/Activity rows, preserving post content in native messages. The
-channel toolbar ends with its kebab menu, which opens settings. Settings retain
-metadata, rename and icon-led lifecycle controls using Community management
-rows; Remove uses its separate destructive-colour group and confirmation dialog.
-Reaction chips expose authorized actors in a reaction-specific hover/focus
-popover, with click retaining exact-value toggling. Edited labels and action
-feedback use Chat Message Metadata rather than the Markdown body. Reply panels
-reserve clearance for the first row's hover actions.
+channel toolbar ends with its kebab settings button, which opens settings
+directly. Settings retain metadata, rename and icon-led lifecycle controls using
+Community management rows; Remove uses its separate destructive-colour group and
+confirmation dialog. Reaction chips use Community's Design Core shadcn tooltip
+on hover or keyboard focus, showing reaction counts, value and loaded authorized
+actors. Click retains exact-value toggling; hover never opens a modal popover.
+Edited labels and action feedback use Chat Message Metadata rather than the
+Markdown body. Reply panels reserve clearance for the first row's hover actions.
 
 ## Requirements
 
@@ -85,7 +86,7 @@ reserve clearance for the first row's hover actions.
 | JST-UI-014 | Repository view navigation MUST live in the Community-styled right rail beneath its page heading and create action, with selection-aware, capability-gated commands beneath Details and no duplicate metadata panels; body tabs MUST present Overview first, followed by Branches, Commits, Op Log, Agents and Reviews, retain their pill styling, and move trailing tabs into an accessible dropdown when width is limited without changing route or workspace context.                                                                                                                                                                                                                                                                                                                             |
 | JST-UI-015 | The installation Projects hub MUST expose authorized homes, repository and task directories, a shared native commit and agent Activity timeline with Activity-first tabs and recorded-agent filters, a repository-linked Projects list, shared safe Markdown previews, searchable project/task views, native identity routes, permission-gated dialogs and threaded Markdown discussion; use Community card/list layout controls and Mine/Other groups, searchable repository Command View selectors, Settings-style form rows and icon-only page-header filters, a centered top-header breadcrumb, and an original-message preview above the edit composer; keep independent bounded snapshot continuations and retained navigation state; and advance displayed metadata only on explicit refresh. |
 | JST-UI-016 | Local management MUST expose explicitly linked device workspaces, qualified capture setup and queue recovery, editable Search with isolated worker replacement, non-destructive storage verification/checkpoints and configured sync controls through typed capability-gated interfaces; unsupported profiles and deferred operations MUST remain explicit.                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| JST-UI-017 | Threads MUST use the owned Community channel toolbar, bordered standard right pane, independently controlled outer details rail, settings, contributor and reply presentation, forum directory rows, native composer entity pickers and message chips; workspace search MUST show recent activity, server-filtered section and entity scopes, native focus links and permission-gated bottom actions without inventing runner controls.                                                                                                                                                                                                                                                                                                                                                              |
+| JST-UI-017 | Threads MUST use the owned Community channel toolbar with a direct settings action, bordered standard right pane, independently controlled outer details rail, settings, contributor and reply presentation, forum directory rows, native composer entity pickers and message chips; workspace search MUST show recent activity, server-filtered section and entity scopes, native focus links and permission-gated bottom actions without inventing runner controls.                                                                                                                                                                                                                                                                                                                                |
 
 The production controller completes bootstrap before rendering connection
 choices. One ready LocalTrusted catalog entry opens without a token, several

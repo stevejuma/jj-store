@@ -587,3 +587,8 @@ Forum composer copies adapt Community draft persistence to protected in-memory
 native drafts. Reaction actor presentation composes released ReactionBar and
 Popover primitives with repository-authorized actor models. Both remain
 repository-owned presentation under JST-GOV-008.
+
+Reaction presentation uses the owned Community wrapper and the permitted Design
+Core reaction bar. Removing an owned adapter also removes its provenance entry;
+the remaining Community components retain source attribution and no Community
+package dependency.

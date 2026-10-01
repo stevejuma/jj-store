@@ -39269,6 +39269,101 @@ and named tests are checked by the progress gate.
     "remaining": [],
     "scope": "Explicitly user-authorized main landing and dev-server rebuild/restart. Isolated Threads change and other workspaces preserved. Production code is unchanged from its complete E-M15-025 qualification. No package publication, installed CLI replacement, unrelated daemon restart, fixture reset, migration or visual baseline approval. Root aggregates, Rust builds/tests and independent M15 runner/full-flow/registry-only foundation qualification are out of scope.",
     "next": "Use the rebuilt main application at http://127.0.0.1:7460/. Keep the isolated workspace and independently pending M15 runner/full-flow and registry-only foundation qualification; visual baseline approval remains separate."
+  },
+  {
+    "id": "E-M15-027",
+    "tasks": ["M15", "M15.5"],
+    "date": "2026-10-01",
+    "kind": "direct-thread-settings-and-reaction-tooltips",
+    "revision": "enclosing Jujutsu change wytvknwz",
+    "before": "Main clean above landing b59fe1a8. Kebab opens a single-item menu. Existing alignment story updated to require immediate Thread settings: initial exact display-name filter ran zero tests (3 skipped); complete story file fails 2 / 3 on missing direct button, 1 passes. /tmp/jj-thread-direct-before.log and before2.log. Tooltip count regression: 2 captured-message stories fail before with custom actor popover and no count label. Cold alignment failed after edits because message menu document scroll lock remained active (body pointer-events none, no menu). Tooltip replacement alone does not repair that; existing canvas scroll-lock policy applies to message menus too.",
+    "versions": "JJ 0.45.1; pnpm 10.32.1; inherited Design Core 0.1.2 development snapshot, registry foundation qualification separate.",
+    "formats": "Existing Button directly opens standard settings pane. No dropdown intermediary; accessible label Thread settings; toolbar placement remains last. No native/API formats changed. Existing ReactionBar owns shadcn hover/focus tooltip; labels carry counts/value/loaded authorized actors. Exact-value toggling preserved. Message menu disables redundant document scrolling through public preventScroll=false.",
+    "files": [
+      "web/src/lib/ui/store-threads/StoreThreadHeader.svelte",
+      "web/src/lib/ui/store-threads/StoreThreadMenu.svelte",
+      "catalog/components/store-threads/StoreThreadAlignment.stories.svelte",
+      "web/tests/browser/threads-alignment.spec.ts",
+      "spec/src/ui.md",
+      "spec/src/milestones.md",
+      "web/src/lib/ui/community-reactions/CommunityReactions.svelte",
+      "web/src/lib/ui/community-reactions/CommunityReactionActors.svelte",
+      "web/src/lib/ui/community-message-actions/CommunityMessageActions.svelte",
+      "catalog/components/store-threads/StoreCapturedReactions.stories.svelte",
+      "catalog/components/store-threads/StoreThreads.stories.svelte",
+      "docs/ui-provenance.json",
+      "spec/src/spec-governance.md"
+    ],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-threads/StoreThreadAlignment.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact regression after implementation: 3 / 3 pass, direct settings and read-only permissions remain correct. /tmp/jj-thread-direct-after.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both type checks have 0 errors and warnings; 121 catalog modules pass. Main production build passes with inherited chunk-size advisory. /tmp/jj-thread-direct-web-check.log, catalog-check.log, build.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-threads",
+        "result": "pass",
+        "failures": 0,
+        "note": "8/8 direct Thread, Agent and Review reaction tests; hover tooltip initially checked as role tooltip but current library renders a generic data-ui tooltip. Tests now verify the actual shared component and text; keyboard focus in stories plus real hover in cold browser. /tmp/jj-thread-tooltip-final-stories.log."
+      },
+      {
+        "command": "pnpm exec playwright test --config /tmp/jj-thread-main-slices-playwright.config.mjs threads-alignment.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Cold built bundle: 1/1; direct settings, independent pane/rail, edit then reply and actual reaction hover. Scroll-lock regression 1 failure -> 0. /tmp/jj-thread-controls-browser.log."
+      },
+      {
+        "command": "JJ_THREAD_SLICE_EVIDENCE_PREFIX=/tmp/jj-thread-controls node /tmp/jj-thread-main-slice-restart.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Main server 28089/storage 28090; served index equals build; snapshots, selected Thread/messages, fixture and installation unchanged; content search HTTP200 and ready. /tmp/jj-thread-controls-restart.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/NativeReviewDetail.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Direct agent/review conversations: 10/10."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Direct WorkStore discussion consumer: 5/5."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-collaboration catalog/components/store-work",
+        "result": "fail",
+        "failures": 3,
+        "note": "Overbroad directory selection includes unrelated Projects activity/filter stories: 23/26 plus one ScrollArea derived_inert teardown diagnostic. The named collaboration directory does not exist. Actual direct consumers qualified separately. /tmp/jj-thread-controls-consumers.log."
+      },
+      {
+        "command": "Parent-source comparison: temporarily restore parent CommunityMessageActions, CommunityReactions and actor adapter; run exact ProjectsActivity and ProjectsFilters story files; finally restore current bytes",
+        "result": "fail",
+        "failures": 2,
+        "note": "Parent source reproduces both retained filter search failures (2/4 checks); Activity passes in isolation, and broad ScrollArea teardown diagnostic does not recur. Both filter checks are outside changed interaction impact. No assertions/source altered. /tmp/jj-thread-controls-unrelated-parent.log."
+      },
+      {
+        "command": "pnpm spec:validate; pnpm check:progress; pnpm check:architecture; pnpm web:check; pnpm catalog:check; scoped pnpm exec prettier --write/check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Spec initially failed removed actor provenance, progress initially rejected remaining gap with pass result; removed provenance entry and corrected evidence scope. Final validators/checks pass. Both type checks zero errors/warnings."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "User-authorized main workspace slice and rebuild/restart after each slice. Direct owning Thread story family and cold served browser only; Rust and root aggregate suites out of scope. Existing data preserved, no package publication or baseline approval. Stories remain visual-pending. Shared message actions are consumed by WorkStore and Agent/Review conversation presentation, so direct consumer stories are included. Overbroad Projects checks are recorded as out-of-scope parent failures; no full-suite claim.",
+    "next": "Commit controls and tooltip slice, then align pane headers and put targeted reaction feedback in Chat Message Metadata.",
+    "removed_files": [
+      "web/src/lib/ui/store-threads/StoreThreadMenu.svelte",
+      "web/src/lib/ui/community-reactions/CommunityReactionActors.svelte"
+    ]
   }
 ]
 ```

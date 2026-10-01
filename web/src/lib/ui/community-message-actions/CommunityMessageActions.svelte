@@ -126,6 +126,7 @@
           {/snippet}
         </DropdownMenu.Trigger>
         <DropdownMenu.Content
+          preventScroll={false}
           class="community-message__menu-content"
           style="min-width: 13.5rem;"
           align="end"

@@ -5,10 +5,10 @@
   import Users from "@lucide/svelte/icons/users";
   import ArrowLeft from "@lucide/svelte/icons/arrow-left";
   import Refresh from "@lucide/svelte/icons/refresh-cw";
+  import Ellipsis from "@lucide/svelte/icons/ellipsis";
   import type { StoreController } from "../../controller/contracts.js";
   import { useThreadPanel } from "./thread-panel.svelte.js";
   import { threadMembers } from "./thread-view.js";
-  import StoreThreadMenu from "./StoreThreadMenu.svelte";
   let { controller }: { controller: StoreController } = $props();
   const threads = $derived(controller.threads);
   const panel = useThreadPanel();
@@ -55,7 +55,13 @@
       disabled={threads?.busy}
       onclick={() => threads?.refresh()}><Refresh aria-hidden="true" /></Button
     >
-    <StoreThreadMenu {controller} />
+    {#if threads?.detail}<Button
+        variant="ghost"
+        size="icon-sm"
+        aria-label="Thread settings"
+        onclick={() => panel.open("settings")}
+        ><Ellipsis aria-hidden="true" /></Button
+      >{/if}
   </div>
 </AppShell.Toolbar>
 
