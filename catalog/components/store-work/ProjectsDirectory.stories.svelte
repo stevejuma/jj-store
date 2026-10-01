@@ -15,6 +15,9 @@
   name="Repository metadata in list and cards"
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
+    await expect(
+      c.getByRole("heading", { name: "Projects", level: 1 }),
+    ).toBeVisible();
     await waitFor(() =>
       expect(c.getByRole("button", { name: "New project" })).toBeVisible(),
     );

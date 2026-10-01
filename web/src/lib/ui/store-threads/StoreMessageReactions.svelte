@@ -1,14 +1,12 @@
 <script lang="ts">
+  import { targetKey } from "../../collaboration/thread-presentation.js";
   import CommunityReactions from "../community-reactions/CommunityReactions.svelte";
-  import CommunityDetails from "../community-details/CommunityDetails.svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import * as Dialog from "@lapismd/design-core/shadcn/dialog";
   import { untrack } from "svelte";
   import type {
     ReactionTarget,
     ThreadsController,
   } from "../../controller/thread-types.js";
-  import { principalMember } from "../../collaboration/presentation.js";
   let {
     threads,
     target,
@@ -20,11 +18,13 @@
     disabled?: boolean;
     showControls?: boolean;
   } = $props();
-  let error = $state(""),
-    actorsOpen = $state(false);
+  let error = $state("");
   const items = $derived(threads.getReaction(target));
-  const members = $derived(
-    items?.actors.map((actor) => principalMember(actor.actor)) ?? [],
+  const pending = $derived(
+    threads.pending?.kind === "reactions" &&
+      (threads.pending.request.command.type === "set" ||
+        threads.pending.request.command.type === "clear") &&
+      targetKey(threads.pending.request.command.target) === targetKey(target),
   );
   $effect(() => {
     const captured = target;
@@ -69,25 +69,21 @@
       onToggle={(emoji) => select(emoji, undefined, true)}
       onSelect={(emoji, custom) => select(emoji, custom)}
     />{/if}
-  {#if members.length}<Button
-      variant="ghost"
-      size="sm"
-      onclick={() => (actorsOpen = true)}>Who reacted</Button
-    >{/if}
-  {#if threads.pending}<span role="status"
-      >An action is awaiting confirmation.</span
-    ><Button
+  {#if pending}<span role="status">An action is awaiting confirmation.</span>
+    <Button
       variant="outline"
       size="sm"
       disabled={threads.busy}
       onclick={threads.checkPending}>Check action status</Button
-    ><Button
+    >
+    <Button
       variant="ghost"
       size="sm"
       disabled={threads.busy}
       onclick={() => threads.retryPending().catch((e) => (error = String(e)))}
       >Retry same action</Button
-    >{/if}
+    >
+  {/if}
   {#if items?.conflict_count}<span role="status"
       >Reaction conflict. Refresh and resolve before changing it.</span
     >{/if}
@@ -102,24 +98,6 @@
       }}>Retry reactions</Button
     >{/if}
 </div>
-<Dialog.Root bind:open={actorsOpen}>
-  <Dialog.Content preventScroll={false}
-    ><Dialog.Header
-      ><Dialog.Title>Who reacted</Dialog.Title><Dialog.Description
-        >Authorized reactions to this exact message revision.</Dialog.Description
-      ></Dialog.Header
-    >
-    <CommunityDetails
-      room={{ id: "reactions", name: "this message", kind: "channel" }}
-      details={{
-        description:
-          "People with visible reactions. Conflicted reactions are excluded from the counts.",
-        memberIds: members.map((m) => m.id),
-      }}
-      {members}
-    />
-  </Dialog.Content>
-</Dialog.Root>
 
 <style>
   .store-message-reactions {

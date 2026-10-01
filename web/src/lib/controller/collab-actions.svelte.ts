@@ -24,6 +24,7 @@ export function createCollabActions(options: {
   generation: () => number;
   valid: (ticket: number, transport: ThreadTransport) => boolean;
   refresh: () => Promise<void>;
+  onCommitted?: (id: string) => void;
 }) {
   const identity = () => `${options.repository()}:${options.principal()}`;
   let epoch = 0;
@@ -53,6 +54,7 @@ export function createCollabActions(options: {
       if (outcome.receipt.request_id !== intent.request.request_id)
         throw new ApiError("receipt_identity_mismatch");
       remove(repo);
+      options.onCommitted?.(intent.request.request_id);
       if (options.valid(ticket, transport)) await options.refresh();
     } catch (cause) {
       if (stamp !== epoch) return;
@@ -114,6 +116,7 @@ export function createCollabActions(options: {
           if (result.receipt.request_id !== intent.request.request_id)
             throw new ApiError("receipt_identity_mismatch");
           remove(repo);
+          options.onCommitted?.(intent.request.request_id);
           errors = { ...errors, [repo]: "" };
           if (options.valid(ticket, transport)) await options.refresh();
         } else

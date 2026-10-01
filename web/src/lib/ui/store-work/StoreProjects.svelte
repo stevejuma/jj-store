@@ -193,7 +193,7 @@
               />{:else if tab === "activity"}<HistoryIcon
                 aria-hidden="true"
               />{:else}<FolderKanban aria-hidden="true" />{/if}
-            <h2>{tab[0]!.toUpperCase() + tab.slice(1)}</h2>
+            <h1>{tab[0]!.toUpperCase() + tab.slice(1)}</h1>
           </div>
           {@render actions()}
         </header>{/if}

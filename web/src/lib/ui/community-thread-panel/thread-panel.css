@@ -52,7 +52,7 @@
   max-width: none;
   min-width: 0;
   margin-inline: 0;
-  padding-block-end: 0.5rem;
+  padding-block: 2.5rem 0.5rem;
 }
 
 .community-thread-panel

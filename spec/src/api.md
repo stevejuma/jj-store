@@ -11,6 +11,19 @@ actor-derived participants and reactions on existing review comments and
 supported Agent messages. It preserves explicit refresh and durable request
 identities for unknown outcomes.
 
+UI refresh preserves loaded conversation history at one captured Thread root,
+and focused replies load their exact-revision ancestor closure within bounded
+paging. New replies preserve the main message ID, revision, body and reaction
+target. Inline forum creation retains its in-memory draft and stable native
+create/message request identities through unknown outcomes; status recovery
+resumes the same post only after committed receipts. Drafts are scoped to the
+repository and principal, survive transport recreation within that credential
+session and are discarded on disconnect. A definitively rejected first message
+leaves its composer draft available; publishing the same title again continues
+the created thread with a fresh message request. It does not claim an atomic
+two-command creation. Reaction actor popovers exclude conflicts and group only
+values represented by the selected message revision's displayed chip.
+
 The rebased HTTP inventory retains all local workspace, Search and Sync
 management routes alongside Thread, Reaction and retained-image routes. The
 merged inventory retains all 67 native routes and 18 separately scoped local

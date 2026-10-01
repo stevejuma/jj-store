@@ -21,19 +21,12 @@
     await expect(
       await within(message).findByRole("button", { name: "Lapis" }),
     ).toBeVisible();
-    await userEvent.click(
-      within(message).getByRole("button", { name: "Who reacted" }),
+    await userEvent.hover(
+      within(message).getByRole("button", { name: "Lapis" }),
     );
     await expect(
-      await body.findByRole("dialog", { name: "Who reacted" }),
+      await body.findByRole("group", { name: "People who reacted with Lapis" }),
     ).toBeVisible();
-    await userEvent.click(body.getByRole("button", { name: "Close" }));
-    await waitFor(() =>
-      expect(
-        getComputedStyle(within(message).getByRole("button", { name: "Lapis" }))
-          .pointerEvents,
-      ).not.toBe("none"),
-    );
     await userEvent.click(
       within(message).getByRole("button", { name: "Lapis" }),
     );

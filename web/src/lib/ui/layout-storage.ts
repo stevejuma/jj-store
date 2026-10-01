@@ -4,6 +4,7 @@ import type { AppShellSidebarLayout } from "@lapismd/design-core/shell";
 const layoutNamespace = "jj-store/layout/v1";
 
 export const repositoryShellStorageKey = `${layoutNamespace}/shell`;
+export const repositoryDetailsPanelId = "repository-details";
 export const repositoryFileTreeStorageKey = `${layoutNamespace}/file-tree`;
 export const repositoryFileTreeDefaultWidth = 256;
 export const repositoryFileTreeMinimumWidth = 208;
@@ -17,6 +18,7 @@ export interface RepositoryFileTreeLayout {
 export interface RepositoryShellLayout {
   left?: AppShellSidebarLayout;
   right?: AppShellSidebarLayout;
+  repositoryDetails?: AppShellSidebarLayout;
 }
 
 export function repositoryColumnCanvasStorageKey(page: StorePage): string {
@@ -45,9 +47,14 @@ export function loadRepositoryShellLayout(
     }
     const left = readSidebarLayout(value.panels.left, "left");
     const right = readSidebarLayout(value.panels.right, "right");
+    const repositoryDetails = readSidebarLayout(
+      value.panels[repositoryDetailsPanelId],
+      "right",
+    );
     return {
       ...(left ? { left } : {}),
       ...(right ? { right } : {}),
+      ...(repositoryDetails ? { repositoryDetails } : {}),
     };
   } catch {
     return {};

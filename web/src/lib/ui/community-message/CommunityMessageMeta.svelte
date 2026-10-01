@@ -59,10 +59,13 @@
 </script>
 
 <div class="community-message__metadata">
-  {#if !isContinuation}
-    <MessageMetadata timestamp={message.timestamp} />
+  {#if !isContinuation || message.edited}
+    {#snippet edited()}<span>Edited</span>{/snippet}
+    <MessageMetadata
+      timestamp={isContinuation ? undefined : message.timestamp}
+      footer={message.edited ? edited : undefined}
+    />
   {/if}
-  {#if message.edited}<span>(edited)</span>{/if}
   {#if showReplySummary || implicitMentions.length}
     <CommunityMessageReplySummary
       label={showReplySummary ? replyLabel : undefined}

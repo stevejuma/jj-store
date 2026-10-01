@@ -4,6 +4,7 @@
   import CommunitySkeleton from "../community-skeleton/CommunitySkeleton.svelte";
   import ForumTopicList from "../forum-topic-list/ForumTopicList.svelte";
   import type { CommunityWorkspaceModel } from "../../community/workspace-model.js";
+  import { ScrollArea } from "@lapismd/design-core/shadcn/scroll-area";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as Alert from "@lapismd/design-core/shadcn/alert";
   import { untrack } from "svelte";
@@ -11,7 +12,11 @@
   import StoreMessageReactions from "./StoreMessageReactions.svelte";
   import StoreThreadHeader from "./StoreThreadHeader.svelte";
   import { useThreadPanel } from "./thread-panel.svelte.js";
-  import { threadMembers, threadDisabled } from "./thread-view.js";
+  import {
+    threadMembers,
+    threadDisabled,
+    threadWritable,
+  } from "./thread-view.js";
   import { principalMember } from "../../collaboration/presentation.js";
   import { storeRouteToHash } from "../../controller/store-route-codec.js";
   let { controller }: { controller: StoreController } = $props();
@@ -44,6 +49,7 @@
     members,
     currentMemberId: controller.state.repository.principal,
   });
+  let forumViewport = $state<HTMLElement | null>(null);
   const topics = $derived(
     threads?.threads.map((t) => ({
       id: t.value.thread_id,
@@ -57,8 +63,7 @@
         Number(
           t.directory?.last_activity_at_millis ?? t.value.accepted_at_millis,
         ),
-      ).toLocaleDateString(),
-      tags: [t.value.status],
+      ).toLocaleDateString(undefined, { month: "short", day: "numeric" }),
     })) ?? [],
   );
   const directoryMembers = $derived([
@@ -100,6 +105,8 @@
       </Alert.Root>{/if}
     {#if !threads.detail && threads.status === "loading"}<CommunitySkeleton
         layout="messages"
+        label="Loading threads"
+        padded
       />
     {:else if threads.detail && projection}
       <div class="store-threads__conversation">
@@ -144,11 +151,28 @@
               />{/if}{/snippet}
         </CommunityWorkspaceSurface>
       </div>
-    {:else}<ForumTopicList
-        {topics}
-        members={directoryMembers}
-        onOpenTopic={(id) => threads.open(id)}
-      />{#if threads.hasMore}<Button variant="outline" onclick={threads.more}
-          >More threads</Button
-        >{/if}{/if}
+    {:else}<ScrollArea
+        bind:viewportRef={forumViewport}
+        type="hover"
+        orientation="vertical"
+        class="store-threads__directory"
+      >
+        <ForumTopicList
+          {topics}
+          members={directoryMembers}
+          viewport={forumViewport}
+          disabled={threads.busy || !!threads.pending}
+          composerStatus={threads.error
+            ? { type: "error", message: threads.error }
+            : undefined}
+          onCreateTopic={threadWritable(controller)
+            ? (draft) => threads.create(draft.title, draft.content)
+            : undefined}
+          onOpenTopic={(id) => threads.open(id)}
+        />{#if threads.hasMore}<Button
+            variant="ghost"
+            class="store-threads__more"
+            onclick={threads.more}>More threads</Button
+          >{/if}</ScrollArea
+      >{/if}
   </section>{/if}

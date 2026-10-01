@@ -32,18 +32,21 @@
       c.getByRole("button", { name: "Close thread panel" }),
     );
     await userEvent.click(c.getByRole("button", { name: "All threads" }));
-    await userEvent.click(c.getByRole("button", { name: "New thread" }));
-    await userEvent.type(
-      await body.findByRole("textbox", { name: "Thread name" }),
-      "planning",
+    await userEvent.click(
+      c.getByRole("button", { name: "Start a new post in Threads" }),
     );
-    await userEvent.click(body.getByRole("button", { name: "Create thread" }));
+    await userEvent.type(
+      await c.findByRole("textbox"),
+      "planning{Shift>}{Enter}{/Shift}First post",
+    );
+    await userEvent.click(c.getByRole("button", { name: "Publish post" }));
     await expect(
       await c.findByText("planning", { selector: "[data-ui-part=room-title]" }),
     ).toBeVisible();
     await expect(
       await c.findByRole("button", { name: "planning" }),
     ).toBeVisible();
+    await expect(await c.findByText(/First post/)).toBeVisible();
   }}
 />
 <Story
@@ -78,6 +81,12 @@
     await expect(
       await within(replies).findByText("A reply", { exact: true }),
     ).toBeVisible();
+    await expect(
+      within(c.getByRole("log", { name: "general messages" })).getByText(
+        "A message",
+        { exact: true },
+      ),
+    ).toBeVisible();
     await userEvent.click(c.getByRole("button", { name: "Refresh threads" }));
     await expect(
       await within(replies).findByText("A reply", { exact: true }),
@@ -100,9 +109,17 @@
         name: "Lapis",
       }),
     ).toBeVisible();
-    await userEvent.click(
-      within(reply as HTMLElement).getByRole("button", { name: "Lapis" }),
-    );
+    const reaction = within(reply as HTMLElement).getByRole("button", {
+      name: "Lapis",
+    });
+    await userEvent.hover(reaction);
+    await expect(
+      await body.findByRole("group", { name: "People who reacted with Lapis" }),
+    ).toBeVisible();
+    await expect(
+      body.queryByRole("button", { name: /Who reacted/ }),
+    ).toBeNull();
+    await userEvent.click(reaction);
     await waitFor(() =>
       expect(
         within(reply as HTMLElement).queryByRole("button", { name: "Lapis" }),
@@ -122,6 +139,11 @@
     await expect(
       (await c.findAllByText(/action outcome is unknown/))[0]!,
     ).toBeVisible();
+    await expect(
+      canvasElement.querySelectorAll(
+        '.community-message [data-ui-part="bubbles"] [role="status"]',
+      ),
+    ).toHaveLength(0);
     await userEvent.click(
       c.getAllByRole("button", { name: "Check action status" })[0]!,
     );

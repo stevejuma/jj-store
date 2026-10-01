@@ -135,7 +135,7 @@
 }
 
 .community-projects__directory-header h1,
-.community-projects__surface-header h2 {
+.community-projects__surface-header :is(h1, h2) {
   font-size: var(--community-text-body);
 }
 
@@ -147,7 +147,7 @@
 }
 
 .community-projects__directory-header h1,
-.community-projects__surface-header h2,
+.community-projects__surface-header :is(h1, h2),
 .community-projects__review-header h2 {
   margin: 0;
   font-size: var(--community-text-dialog);
@@ -155,7 +155,7 @@
 }
 
 .community-projects__directory-header h1,
-.community-projects__surface-header h2 {
+.community-projects__surface-header :is(h1, h2) {
   font-size: var(--community-text-body);
   font-weight: 550;
 }

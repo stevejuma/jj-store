@@ -31,22 +31,39 @@ preserves the production source budget.
 
 JST-GOV-008 governs all Community-derived UI: components, types, styles, assets
 and presentation helpers are local source with provenance, rather than imports
-from Community. Threads use the channel toolbar and shell-owned far-right
-panels; the directory uses forum rows. Thread settings expose native
-rename/lifecycle, identity, baseline, links and contributor details under
-repository permissions. Native Markdown references and composer entity pickers
-preserve full identities. Global search covers connected authorized sources,
-offers four recent entities, context scope chips and permission-gated
-create/browse actions. Content search includes stored Thread messages/replies
-and WorkStore descriptions/comments; code search keeps its independent operation
-pins.
+from Community. Threads use the channel toolbar, standard right pane and
+separate outer details rail; the directory uses forum rows. The standard Thread
+pane uses Community's bordered main-canvas treatment, while the separate outer
+details rail uses its rail treatment and an independent named controller. Their
+widths and open states persist under separate panel identities, including across
+navigation/remount. Where repository details are supported, the outer rail can
+stay open alongside Thread settings, contributors or replies; its global toggle
+never closes the standard pane. The Projects hub's active tab title supplies its
+level-one page heading without changing the copied header typography. Thread
+settings expose native rename/lifecycle, identity, baseline, links and
+contributor details under repository permissions. Native Markdown references and
+composer entity pickers preserve full identities. Global search covers connected
+authorized sources, offers four recent entities, context scope chips and
+permission-gated create/browse actions. Content search includes stored Thread
+messages/replies and WorkStore descriptions/comments; code search keeps its
+independent operation pins.
 
 The Thread toolbar supplies the page's level-one heading with the copied channel
 typography. The application owns a fixed viewport with no document scrolling.
-Its Threads settings/create, reaction actor and search dialogs retain modal
-focus/overlay behavior while disabling redundant document scroll locking through
-the public `preventScroll` option. Cold built-asset acceptance checks that
-closing them restores pointer interaction under the served strict asset policy.
+Its Threads settings/create and search dialogs retain modal focus/overlay
+behavior while disabling redundant document scroll locking through the public
+`preventScroll` option. Cold built-asset acceptance checks that closing them
+restores pointer interaction under the served strict asset policy.
+
+Threads use the forum's full-width inline post composer above
+Topic/Replies/Activity rows, preserving post content in native messages. The
+channel toolbar ends with its kebab menu, which opens settings. Settings retain
+metadata, rename and icon-led lifecycle controls using Community management
+rows; Remove uses its separate destructive-colour group and confirmation dialog.
+Reaction chips expose authorized actors in a reaction-specific hover/focus
+popover, with click retaining exact-value toggling. Edited labels and action
+feedback use Chat Message Metadata rather than the Markdown body. Reply panels
+reserve clearance for the first row's hover actions.
 
 ## Requirements
 
@@ -57,7 +74,7 @@ closing them restores pointer interaction under the served strict asset policy.
 | JST-UI-003 | Branches, JJ Log and Op Log MUST reuse Community graph/row/file/diff compositions, preserve native identities and conflicting targets, support fixture-only drill-down without transport or mutation capabilities, and expose a Community-styled page heading and create action in the right rail while selected native detail remains in the body.                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | JST-UI-004 | The complete catalog application MUST expose a typed state/actions controller with independent in-memory navigation, repository snapshots, file contents and profile actions, using copied Community file-browser and footer compositions without backend access.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | JST-UI-005 | The served browser MUST use the reviewed shell and repository components through an authenticated asynchronous controller with cursor paging, representative page and detail loading skeletons, explicit snapshot refresh and typed hash restoration.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| JST-UI-006 | Large repository collections MUST use bounded virtual rows, all resizable shell/canvas regions MUST persist versioned layout state, and catalog stories MUST exercise the production components.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| JST-UI-006 | Large repository collections MUST use bounded virtual rows, all resizable shell/canvas regions MUST persist versioned layout state with independent identities for the standard Thread pane and outer details rail, and catalog stories MUST exercise the production components.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | JST-UI-007 | Repository search MUST use the released Design Core Command View in a Community-adapted overlay, query the selected authenticated operation snapshot, represent readiness and paging states, and navigate results with stable full identities.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | JST-UI-008 | Authenticated repository commands and text-file edits MUST use Community-adapted actions, composer-backed prose fields, shared commit/change identity rows, searchable Design Core commit selectors and form/confirmation controls, preview the exact typed request before apply, preserve its request ID through unknown outcomes, and advance the displayed snapshot only from a committed receipt.                                                                                                                                                                                                                                                                                                                                                                                                |
 | JST-UI-009 | Conflict editing MUST use the AppShell structural sheet with a dominant syntax-highlighted merge editor, use its built-in accept-all controls for text sides, retain exact native paths, ordered terms and fingerprints in bound state without extra metadata cards, stage bounded uploads separately, preview the atomic selection, and retain server-advertised unsupported or stale states explicitly.                                                                                                                                                                                                                                                                                                                                                                                            |
@@ -68,7 +85,7 @@ closing them restores pointer interaction under the served strict asset policy.
 | JST-UI-014 | Repository view navigation MUST live in the Community-styled right rail beneath its page heading and create action, with selection-aware, capability-gated commands beneath Details and no duplicate metadata panels; body tabs MUST present Overview first, followed by Branches, Commits, Op Log, Agents and Reviews, retain their pill styling, and move trailing tabs into an accessible dropdown when width is limited without changing route or workspace context.                                                                                                                                                                                                                                                                                                                             |
 | JST-UI-015 | The installation Projects hub MUST expose authorized homes, repository and task directories, a shared native commit and agent Activity timeline with Activity-first tabs and recorded-agent filters, a repository-linked Projects list, shared safe Markdown previews, searchable project/task views, native identity routes, permission-gated dialogs and threaded Markdown discussion; use Community card/list layout controls and Mine/Other groups, searchable repository Command View selectors, Settings-style form rows and icon-only page-header filters, a centered top-header breadcrumb, and an original-message preview above the edit composer; keep independent bounded snapshot continuations and retained navigation state; and advance displayed metadata only on explicit refresh. |
 | JST-UI-016 | Local management MUST expose explicitly linked device workspaces, qualified capture setup and queue recovery, editable Search with isolated worker replacement, non-destructive storage verification/checkpoints and configured sync controls through typed capability-gated interfaces; unsupported profiles and deferred operations MUST remain explicit.                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| JST-UI-017 | Threads MUST use the owned Community channel toolbar, outer right shell panel, settings, contributor and reply presentation, forum directory rows, native composer entity pickers and message chips; workspace search MUST show recent activity, server-filtered section and entity scopes, native focus links and permission-gated bottom actions without inventing runner controls.                                                                                                                                                                                                                                                                                                                                                                                                                |
+| JST-UI-017 | Threads MUST use the owned Community channel toolbar, bordered standard right pane, independently controlled outer details rail, settings, contributor and reply presentation, forum directory rows, native composer entity pickers and message chips; workspace search MUST show recent activity, server-filtered section and entity scopes, native focus links and permission-gated bottom actions without inventing runner controls.                                                                                                                                                                                                                                                                                                                                                              |
 
 The production controller completes bootstrap before rendering connection
 choices. One ready LocalTrusted catalog entry opens without a token, several

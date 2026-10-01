@@ -1,5 +1,8 @@
 <script lang="ts">
   import "./forum-topic-list.css";
+  import CommunityTopicComposer from "../community-topic-composer/CommunityTopicComposer.svelte";
+  import type { CommunityTopicDraft } from "../../community/contracts.js";
+  import type { ComposerStatus } from "@lapismd/design-core/ai/chat";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as Empty from "@lapismd/design-core/shadcn/empty";
   import MessagesSquareIcon from "@lucide/svelte/icons/messages-square";
@@ -12,21 +15,36 @@
     type CommunityMemberModel,
     type CommunityTopicModel,
   } from "../community-workspace/model.js";
-  let viewport = $state<HTMLElement>();
+
   let {
     title = "Threads",
     topics,
     members,
     onOpenTopic,
+    onCreateTopic,
+    disabled = false,
+    composerStatus,
+    viewport,
   }: {
     title?: string;
     topics: CommunityTopicModel[];
     members: CommunityMemberModel[];
     onOpenTopic?: (id: string) => void;
+    onCreateTopic?: (draft: CommunityTopicDraft) => Promise<void>;
+    disabled?: boolean;
+    composerStatus?: ComposerStatus;
+    viewport?: HTMLElement | null;
   } = $props();
 </script>
 
 <section class="forum-topic-list" aria-label={`${title} listing`}>
+  {#if onCreateTopic}<CommunityTopicComposer
+      forumName={title}
+      {members}
+      {disabled}
+      {composerStatus}
+      onPublish={onCreateTopic}
+    />{/if}
   {#if !topics.length}<Empty.Root class="forum-topic-list__empty"
       ><Empty.Header
         ><Empty.Media variant="icon"
@@ -38,9 +56,9 @@
     >
   {:else}
     <div class="forum-topic-list__columns" aria-hidden="true">
-      <span>Thread</span><span>Replies</span><span>Activity</span>
+      <span>Topic</span><span>Replies</span><span>Activity</span>
     </div>
-    <div class="forum-topic-list__topics" bind:this={viewport}>
+    <div class="forum-topic-list__topics">
       {#snippet row(topic: CommunityTopicModel)}
         {@const author = memberById(members, topic.authorId)}
         <div class="forum-topic-list__topic-row" data-topic-id={topic.id}>

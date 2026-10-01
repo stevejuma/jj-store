@@ -16,10 +16,49 @@
   play={async ({ canvasElement }) => {
     const c = within(canvasElement),
       body = within(document.body);
+    async function openMenu() {
+      const trigger = c.getByRole("button", { name: "Thread actions" });
+      await waitFor(() =>
+        expect(getComputedStyle(trigger).pointerEvents).not.toBe("none"),
+      );
+      await userEvent.click(trigger);
+    }
     await expect(await c.findByText("Welcome to the channel")).toBeVisible();
-    await userEvent.click(c.getByRole("button", { name: "Thread settings" }));
+    await openMenu();
+    await userEvent.click(
+      body.getByRole("menuitem", { name: "Thread settings" }),
+    );
+    await waitFor(() => expect(body.queryByRole("menu")).toBeNull());
+    await waitFor(() =>
+      expect(document.body.style.pointerEvents).not.toBe("none"),
+    );
     const settings = c.getByRole("complementary", { name: "Thread settings" });
     await expect(within(settings).getByText("Code baseline")).toBeVisible();
+    await expect(settings).toHaveClass(
+      "community-application__standard-right-sidebar",
+    );
+    const threadResize = c.getByRole("slider", {
+      name: "Resize thread details",
+    });
+    const threadWidth = Number(threadResize.getAttribute("aria-valuenow"));
+    threadResize.focus();
+    await userEvent.keyboard("{ArrowRight}");
+    await waitFor(() =>
+      expect(Number(threadResize.getAttribute("aria-valuenow"))).toBeLessThan(
+        threadWidth,
+      ),
+    );
+    const resizedThreadWidth = threadResize.getAttribute("aria-valuenow");
+    await userEvent.click(c.getByRole("button", { name: "Toggle details" }));
+    const rail = c.getByRole("complementary", { name: "Repository details" });
+    await expect(rail).toBeVisible();
+    await expect(settings).toBeVisible();
+    await userEvent.click(c.getByRole("button", { name: "Toggle details" }));
+    await expect(rail).not.toBeVisible();
+    await expect(settings).toBeVisible();
+    await expect(
+      c.getByRole("slider", { name: "Resize thread details" }),
+    ).toHaveAttribute("aria-valuenow", resizedThreadWidth!);
     await userEvent.click(
       within(settings).getByRole("button", { name: /^Name/ }),
     );
@@ -39,14 +78,39 @@
     await waitFor(() =>
       expect(document.body.style.pointerEvents).not.toBe("none"),
     );
-    await waitFor(() =>
-      expect(
-        within(settings).getByRole("button", { name: "Archive thread" }),
-      ).toBeEnabled(),
+    const archive = within(settings).getByRole("button", {
+      name: "Archive thread",
+    });
+    const removeAction = within(settings).getByRole("button", {
+      name: "Remove thread",
+    });
+    await expect(
+      archive.querySelector("svg[data-icon=inline-start]"),
+    ).not.toBeNull();
+    await expect(
+      removeAction.querySelector("svg[data-icon=inline-start]"),
+    ).not.toBeNull();
+    await expect(removeAction).toHaveClass("lc-channel-settings__destructive");
+    await expect(getComputedStyle(removeAction).color).not.toBe(
+      getComputedStyle(archive).color,
     );
     await userEvent.click(
-      within(settings).getByRole("button", { name: "Archive thread" }),
+      within(settings).getByRole("button", { name: "Set idle" }),
     );
+    await expect(
+      await within(settings).findByText("idle", { exact: true }),
+    ).toBeVisible();
+    const activate = within(settings).getByRole("button", {
+      name: "Activate thread",
+    });
+    await expect(
+      activate.querySelector("svg[data-icon=inline-start]"),
+    ).not.toBeNull();
+    await userEvent.click(activate);
+    await expect(
+      await within(settings).findByText("active", { exact: true }),
+    ).toBeVisible();
+    await userEvent.click(archive);
     await expect(
       await within(settings).findByText("archived", { exact: true }),
     ).toBeVisible();
@@ -114,7 +178,8 @@
   name="Readonly conversations omit mutation actions"
   args={{ selected: true, readOnly: true }}
   play={async ({ canvasElement }) => {
-    const c = within(canvasElement);
+    const c = within(canvasElement),
+      body = within(document.body);
     const text = await c.findByText("Welcome to the channel");
     const message = text.closest("[data-message-id]") as HTMLElement;
     await userEvent.hover(message);
@@ -138,7 +203,10 @@
       "contenteditable",
       "false",
     );
-    await userEvent.click(c.getByRole("button", { name: "Thread settings" }));
+    await userEvent.click(c.getByRole("button", { name: "Thread actions" }));
+    await userEvent.click(
+      body.getByRole("menuitem", { name: "Thread settings" }),
+    );
     await expect(c.queryByRole("button", { name: "Remove thread" })).toBeNull();
     await expect(c.queryByRole("button", { name: /^Name/ })).toBeNull();
   }}

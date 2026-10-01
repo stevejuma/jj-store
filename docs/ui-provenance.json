@@ -1502,6 +1502,16 @@
       ]
     },
     {
+      "local": "web/src/lib/ui/community-reactions/CommunityReactionActors.svelte",
+      "sources": [
+        {
+          "path": "src/components/community-reactions/CommunityReactions.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
       "local": "web/src/lib/ui/community-reactions/CommunityReactions.svelte",
       "sources": [
         {
@@ -1672,6 +1682,26 @@
       ]
     },
     {
+      "local": "web/src/lib/ui/community-topic-composer/CommunityTopicComposer.svelte",
+      "sources": [
+        {
+          "path": "src/components/community-topic-composer/CommunityTopicComposer.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-topic-composer/CommunityTopicComposerEditor.svelte",
+      "sources": [
+        {
+          "path": "src/components/community-topic-composer/CommunityTopicComposerEditor.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
       "local": "web/src/lib/ui/community-typography.css",
       "sources": [
         {
@@ -1752,10 +1782,30 @@
       ]
     },
     {
+      "local": "web/src/lib/ui/store-application/StoreApplicationRightPanels.svelte",
+      "sources": [
+        {
+          "path": "src/components/community-application/CommunityApplication.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
       "local": "web/src/lib/ui/store-threads/StoreThreadHeader.svelte",
       "sources": [
         {
           "path": "src/components/community-application/CommunityApplication.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/store-threads/StoreThreadLifecycleActions.svelte",
+      "sources": [
+        {
+          "path": "src/components/community-channel-settings/CommunityChannelSettings.svelte",
           "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
           "license": "Apache-2.0"
         }

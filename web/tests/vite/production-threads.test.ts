@@ -50,6 +50,9 @@ function fixture(unknownFirst = false) {
     switchSource: (next: ThreadTransport) => {
       source = next;
     },
+    switchRepository: (repository: string) => {
+      route = { ...route, repository };
+    },
   };
 }
 test("human replies retain exact parent revision and edit identity", async () => {
@@ -143,7 +146,15 @@ test("semantic glyph collisions aggregate while clearing the exact viewer value"
   f.rows.set(targetKey(target), items);
   expect(
     reactionModels(items, () => ({ emoji: ":custom:", label: "custom" })),
-  ).toEqual([{ emoji: "👍", label: "👍", count: 2, selected: true }]);
+  ).toMatchObject([
+    {
+      emoji: "👍",
+      label: "👍",
+      count: 2,
+      selected: true,
+      actors: [{ id: ids.actor }],
+    },
+  ]);
   await f.controller.toggle(target, "👍", undefined, true);
   expect(f.requests[0].command).toMatchObject({
     type: "clear",
@@ -359,4 +370,213 @@ test("settings commands use exact selected thread revision", async () => {
     thread_id: ids.thread,
     action: "archive",
   });
+});
+
+test("reply receipt refresh retains loaded root and ancestor history", async () => {
+  const f = fixture();
+  const original = f.transport.events;
+  let paged = false;
+  f.transport.events = async (id, cursor) => {
+    const full = await original(id);
+    if (!paged) return full;
+    return {
+      ...full,
+      items: {
+        type: "events",
+        thread_id: id,
+        events: cursor
+          ? f.history.get(id)!.slice(1)
+          : f.history.get(id)!.slice(0, 1),
+      },
+      next_cursor: cursor ? null : "older",
+    };
+  };
+  await f.controller.restore();
+  const before = f.controller.projection.targets[ids.message];
+  paged = true;
+  await f.controller.send("A paged reply", ids.message);
+  expect(f.controller.projection.targets[ids.message]).toEqual(before);
+  expect(
+    f.controller.projection.messages.find((m) => m.id === ids.message)?.content,
+  ).toBe("Welcome to the channel");
+  expect(
+    f.controller.projection.messages.find((m) => m.content === "A paged reply")
+      ?.parentMessageId,
+  ).toBe(ids.message);
+});
+
+test("focused replies load their missing ancestors before presentation", async () => {
+  const f = fixture();
+  const root = f.history.get(ids.thread)![0];
+  f.addMessage(
+    ids.thread,
+    "77".repeat(16),
+    "Focused reply",
+    root.value.event.type === "message" ? root.value.event.revision : null,
+  );
+  const original = f.transport.events;
+  f.transport.events = async (id, cursor) => {
+    const full = await original(id);
+    return {
+      ...full,
+      items: {
+        type: "events",
+        thread_id: id,
+        events: cursor
+          ? f.history.get(id)!.slice(1)
+          : f.history.get(id)!.slice(0, 1),
+      },
+      next_cursor: cursor ? null : "older",
+    };
+  };
+  f.controller.selectReply("77".repeat(16));
+  await f.controller.restore();
+  expect(
+    f.controller.projection.messages.find((m) => m.id === "77".repeat(16))
+      ?.parentMessageId,
+  ).toBe(ids.message);
+  expect(f.controller.projection.targets[ids.message]).toBeDefined();
+});
+
+test("inline forum posts retain content through unknown create and body receipts", async () => {
+  for (const unknownStep of [1, 2]) {
+    const f = fixture();
+    await f.controller.open(null);
+    const original = f.transport.command;
+    let step = 0;
+    f.transport.command = async (kind, request) => {
+      const result = await original(kind, request);
+      return ++step === unknownStep
+        ? { status: "outcome_unknown", request_id: request.request_id }
+        : result;
+    };
+    await expect(
+      f.controller.create("Topic", "Topic\nFirst post"),
+    ).rejects.toThrow("unknown");
+    const pending = f.controller.pending!;
+    await f.controller.checkPending();
+    expect(f.controller.pending).toBeNull();
+    expect(f.controller.detail?.thread.value.title).toBe("Topic");
+    expect(f.requests.filter((r) => r.command.type === "create")).toHaveLength(
+      1,
+    );
+    expect(f.requests.filter((r) => r.command.type === "message")).toHaveLength(
+      1,
+    );
+    expect(f.controller.projection.messages.map((m) => m.content)).toEqual([
+      "Topic\nFirst post",
+    ]);
+    expect(pending.request.request_id).toBe(
+      f.requests[unknownStep - 1].request_id,
+    );
+  }
+});
+
+test("new reply leaves main revision body and exact reaction target unchanged", async () => {
+  const f = fixture();
+  await f.controller.restore();
+  const before = f.controller.projection.targets[ids.message];
+  await f.controller.toggle(before, "👍");
+  await f.controller.send("Reply", ids.message);
+  expect(f.controller.projection.targets[ids.message]).toEqual(before);
+  expect(
+    f.controller.projection.messages.find((m) => m.id === ids.message),
+  ).toMatchObject({
+    content: "Welcome to the channel",
+    edited: false,
+    replyCount: 1,
+  });
+  await f.controller.loadReactions(before);
+  expect(f.controller.reactionModels(before)[0]).toMatchObject({
+    emoji: "👍",
+    count: 1,
+    actors: [{ id: ids.actor }],
+  });
+});
+
+test("refresh follows a reply's historical parent revision after root edits", async () => {
+  const f = fixture();
+  await f.controller.restore();
+  const before = f.controller.projection.targets[ids.message];
+  await f.controller.send("Historical reply", ids.message);
+  const original = f.transport.events;
+  f.transport.events = async (id, cursor) => {
+    const full = await original(id);
+    return {
+      ...full,
+      items: {
+        type: "events",
+        thread_id: id,
+        events: cursor
+          ? f.history.get(id)!.slice(2)
+          : f.history.get(id)!.slice(0, 2),
+      },
+      next_cursor: cursor ? null : "older",
+    };
+  };
+  await f.controller.send("Edited root", undefined, ids.message);
+  expect(
+    f.controller.projection.messages.find(
+      (m) => m.content === "Historical reply",
+    )?.parentMessageId,
+  ).toBe(ids.message);
+  expect(f.controller.projection.targets[ids.message]).not.toEqual(before);
+  expect(
+    f.controller.projection.messages.find((m) => m.id === ids.message)?.content,
+  ).toBe("Edited root");
+});
+
+test("inline posts recover after transport recreation without blocking another repository", async () => {
+  const f = fixture(true);
+  await f.controller.open(null);
+  await expect(f.controller.create("First repo", "First body")).rejects.toThrow(
+    "unknown",
+  );
+  const pending = f.controller.pending!;
+  f.controller.clear(true);
+  const other = createThreadTransport();
+  f.switchRepository("f".repeat(32));
+  f.switchSource(other.transport);
+  await f.controller.open(null);
+  await f.controller.create("Second repo", "Second body");
+  expect(f.controller.projection.messages.map((m) => m.content)).toEqual([
+    "Second body",
+  ]);
+  f.controller.clear(true);
+  f.switchRepository(ids.repo);
+  f.switchSource({ ...f.transport });
+  await f.controller.open(null);
+  expect(f.controller.pending).toEqual(pending);
+  await f.controller.checkPending();
+  expect(f.controller.pending).toBeNull();
+  expect(f.controller.detail?.thread.value.title).toBe("First repo");
+  expect(f.controller.projection.messages.map((m) => m.content)).toEqual([
+    "First body",
+  ]);
+  expect(f.requests.filter((r) => r.command.type === "create")).toHaveLength(1);
+});
+
+test("rejected initial body keeps the directory draft and retries its created thread", async () => {
+  const { ApiError } = await import("../../src/lib/api/client.js");
+  const f = fixture();
+  await f.controller.open(null);
+  const original = f.transport.command;
+  let rejectBody = true;
+  f.transport.command = async (kind, request) => {
+    if (request.command.type === "message" && rejectBody) {
+      rejectBody = false;
+      throw new ApiError("invalid_request");
+    }
+    return original(kind, request);
+  };
+  await expect(f.controller.create("Topic", "First draft")).rejects.toThrow(
+    "invalid request",
+  );
+  expect(f.controller.detail).toBeUndefined();
+  expect(f.controller.pending).toBeNull();
+  await f.controller.create("Topic", "Corrected draft");
+  expect(f.requests.filter((r) => r.command.type === "create")).toHaveLength(1);
+  expect(f.controller.projection.messages.map((m) => m.content)).toEqual([
+    "Corrected draft",
+  ]);
 });

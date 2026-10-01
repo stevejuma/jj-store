@@ -582,3 +582,8 @@ profile-aware route restoration, Thread capability visibility, the complete web
 transport consumers and the directly affected Rust reader/contract boundaries.
 Cold filesystem-only and mixed real-RustFS acceptance remain distinct, isolated
 from the default development deployment.
+
+Forum composer copies adapt Community draft persistence to protected in-memory
+native drafts. Reaction actor presentation composes released ReactionBar and
+Popover primitives with repository-authorized actor models. Both remain
+repository-owned presentation under JST-GOV-008.

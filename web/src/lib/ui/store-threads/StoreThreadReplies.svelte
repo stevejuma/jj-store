@@ -1,14 +1,10 @@
 <script lang="ts">
   import CommunityThreadPanel from "../community-thread-panel/CommunityThreadPanel.svelte";
-  import CommunityDetails from "../community-details/CommunityDetails.svelte";
   import type {
     CommunityMemberModel,
     CommunityMessageModel,
   } from "../../community/workspace-model.js";
-  import { Button } from "@lapismd/design-core/shadcn/button";
-  import * as Dialog from "@lapismd/design-core/shadcn/dialog";
   import { untrack } from "svelte";
-  import { principalMember } from "../../collaboration/presentation.js";
   import type { ThreadsController } from "../../controller/thread-types.js";
   import { replyRoot } from "./thread-view.js";
   let {
@@ -24,8 +20,7 @@
     currentMemberId?: string;
     disabled: boolean;
   } = $props();
-  let error = $state(""),
-    actorsOpen = $state(false);
+  let error = $state("");
   const conversationRoot = $derived(
     replyRoot(threads.projection.messages, rootId),
   );
@@ -42,17 +37,6 @@
         reactions: threads.reactionModels(threads.projection.targets[m.id]!),
       }));
   });
-  const actors = $derived([
-    ...new Map(
-      messages
-        .flatMap(
-          (m) =>
-            threads.getReaction(threads.projection.targets[m.id]!)?.actors ??
-            [],
-        )
-        .map((a) => [a.actor, principalMember(a.actor)]),
-    ).values(),
-  ]);
   $effect(() => {
     const targets = messages.map((m) => threads.projection.targets[m.id]!);
     threads.reactionRevision;
@@ -119,24 +103,3 @@
     : (id, text) => threads.send(text, undefined, id)}
 />
 {#if error}<p role="alert">{error}</p>{/if}
-{#if actors.length}<Button
-    variant="ghost"
-    size="sm"
-    onclick={() => (actorsOpen = true)}>Who reacted to replies</Button
-  >{/if}
-<Dialog.Root bind:open={actorsOpen}
-  ><Dialog.Content preventScroll={false}
-    ><Dialog.Header
-      ><Dialog.Title>Who reacted to replies</Dialog.Title><Dialog.Description
-        >Authorized reaction actors in the loaded reply conversation.</Dialog.Description
-      ></Dialog.Header
-    ><CommunityDetails
-      room={{ id: rootId, name: "Replies", kind: "channel" }}
-      members={actors}
-      details={{
-        description: "Visible actors for the loaded reply messages.",
-        memberIds: actors.map((m) => m.id),
-      }}
-    /></Dialog.Content
-  ></Dialog.Root
->

@@ -73,8 +73,6 @@
         {#if children}{@render children()}{/if}
       </div>
     </section>
-    {#if actions}<section class="lc-channel-settings__management-zone">
-        {@render actions()}
-      </section>{/if}
+    {#if actions}{@render actions()}{/if}
   </div></AppShell.Sidebar.Body
 >

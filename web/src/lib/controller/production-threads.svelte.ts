@@ -1,7 +1,7 @@
-import {
-  collabRequestId,
-  createCollabActions,
-} from "./collab-actions.svelte.js";
+import { collabRequestId } from "./collab-actions.svelte.js";
+import { createCollabActions } from "./collab-actions.svelte.js";
+import { retainThreadHistory, replyContextLoaded } from "./thread-history.js";
+import { createThreadPost } from "./thread-post.svelte.js";
 import { createMessageReactions } from "./message-reactions.svelte.js";
 import { ApiError, type Model } from "../api/client.js";
 import { channelMessages } from "../collaboration/thread-presentation.js";
@@ -29,6 +29,7 @@ export function createThreadsController(options: {
     generation: () => generation,
     valid,
     refresh,
+    onCommitted: (id) => post.committed(id),
   });
   const richReactions = createMessageReactions({
     source: options.source,
@@ -36,6 +37,12 @@ export function createThreadsController(options: {
     generation: () => generation,
     valid,
     execute: actions.execute,
+  });
+  const post = createThreadPost({
+    ...options,
+    execute: (request) => actions.execute("threads", request),
+    pending: () => !!actions.pending,
+    open,
   });
   const projection = $derived(channelMessages(events));
   function valid(ticket: number, transport: ThreadTransport) {
@@ -56,6 +63,7 @@ export function createThreadsController(options: {
     status = "idle";
     error = "";
     richReactions.clear();
+    if (!preservePending) post.clear();
   }
   async function list(more = false) {
     const transport = options.source(),
@@ -83,20 +91,25 @@ export function createThreadsController(options: {
       ticket = generation;
     status = detail ? "refreshing" : "loading";
     try {
-      const [d, p] = await Promise.all([
+      const retained = more ? [] : projection.messages.map((m) => m.id);
+      const [d, first] = await Promise.all([
         more ? Promise.resolve(detail!) : transport.thread(id),
         transport.events(id, more ? (eventCursor ?? undefined) : undefined),
       ]);
-      if (!valid(ticket, transport) || options.route().threadId !== id) return;
-      if (
-        p.items.type !== "events" ||
-        p.items.thread_id !== id ||
-        p.snapshot.thread_root !== d.snapshot.thread_root
-      )
-        throw new ApiError("thread_changed_refresh_required");
+      const loaded = await retainThreadHistory({
+        transport,
+        id,
+        root: d.snapshot.thread_root,
+        first,
+        retained,
+        more,
+        valid: () =>
+          valid(ticket, transport) && options.route().threadId === id,
+      });
+      if (!loaded) return;
       detail = d;
-      events = more ? [...events, ...p.items.events] : p.items.events;
-      eventCursor = p.next_cursor;
+      events = more ? [...events, ...loaded.events] : loaded.events;
+      eventCursor = loaded.cursor;
       status = "ready";
       error = "";
     } catch (e) {
@@ -111,7 +124,10 @@ export function createThreadsController(options: {
       ticket = generation;
     for (
       let page = 0;
-      target && !projection.targets[target] && eventCursor && page < 20;
+      target &&
+      !replyContextLoaded(projection.messages, target) &&
+      eventCursor &&
+      page < 20;
       page++
     ) {
       const previous = eventCursor;
@@ -123,7 +139,11 @@ export function createThreadsController(options: {
       )
         return;
     }
-    if (target && !projection.targets[target] && ticket === generation)
+    if (
+      target &&
+      !replyContextLoaded(projection.messages, target) &&
+      ticket === generation
+    )
       error = eventCursor
         ? "Message is outside loaded history. Load older messages to continue."
         : "This message is unavailable in the current thread.";
@@ -159,23 +179,6 @@ export function createThreadsController(options: {
   async function refresh() {
     richReactions.invalidate();
     await restore();
-  }
-  async function create(title: string) {
-    const originalRoute = options.route(),
-      transport = options.source();
-    const thread_id = collabRequestId();
-    await actions.execute("threads", {
-      version: 1,
-      request_id: collabRequestId(),
-      command: {
-        type: "create",
-        thread_id,
-        title: title.trim(),
-        baseline: null,
-      },
-    });
-    if (options.route() === originalRoute && valid(generation, transport))
-      await open(thread_id);
   }
   async function send(body: string, parentId?: string, editId?: string) {
     if (!detail) throw new ApiError("select_thread_first");
@@ -276,10 +279,16 @@ export function createThreadsController(options: {
     restore,
     open,
     refresh,
-    create,
+    create: post.create,
     send,
-    checkPending: actions.checkPending,
-    retryPending: actions.retryPending,
+    checkPending: async () => {
+      await actions.checkPending();
+      await post.resume();
+    },
+    retryPending: async () => {
+      await actions.retryPending();
+      await post.resume();
+    },
     selectReply: (id: string | null) => options.selectReply?.(id),
     get reactionRevision() {
       return richReactions.revision;

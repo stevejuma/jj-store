@@ -105,6 +105,8 @@ export interface CommunityReactionModel {
   selected?: boolean;
   label?: string;
   customEmojiUrl?: string;
+  /** Authorized, non-conflicted actors for this exact displayed reaction. */
+  actors?: readonly CommunityMemberModel[];
 }
 
 export interface CommunityEmojiReference {

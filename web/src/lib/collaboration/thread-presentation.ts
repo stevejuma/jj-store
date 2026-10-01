@@ -97,5 +97,20 @@ export function reactionModels(
         : {}),
     });
   }
+  for (const row of items.actors) {
+    if (row.conflict || !row.value || !row.active.length) continue;
+    const value = row.value;
+    const emoji =
+      value.type === "custom"
+        ? custom(value).emoji
+        : value.type === "like"
+          ? "👍"
+          : value.type === "dislike"
+            ? "👎"
+            : value.sequence;
+    const group = groups.get(emoji);
+    if (group)
+      group.actors = [...(group.actors ?? []), principalMember(row.actor)];
+  }
   return [...groups.values()];
 }

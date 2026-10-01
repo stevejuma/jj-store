@@ -202,15 +202,6 @@
     {/if}
   </MessageBubble>
 
-  {#if supplement}
-    <div
-      class="community-message__supplement"
-      data-ui-part="message-supplement"
-    >
-      {@render supplement()}
-    </div>
-  {/if}
-
   {#if message.activity === undefined}
     <CommunityMessageActions
       id={message.id}
@@ -258,6 +249,15 @@
   {/if}
 
   {#snippet metadata()}
+    {#if supplement}
+      <div
+        class="community-message__supplement"
+        data-ui-part="message-supplement"
+      >
+        {@render supplement()}
+      </div>
+    {/if}
+
     <CommunityMessageMeta
       {message}
       {members}

@@ -4,7 +4,9 @@
     AppShell,
     type AppShellDisplayMode,
   } from "@lapismd/design-core/shell";
+  import StoreApplicationRightPanels from "./StoreApplicationRightPanels.svelte";
   import { createStoreShell } from "./create-store-shell.js";
+  import { repositoryDetailsPanelId } from "../layout-storage.js";
   import { provideStoreEntityContext } from "./entity-context.js";
   import { projectsSidebarModel } from "../store-work/projects-sidebar-model.js";
   import { withThreadNavigation } from "../store-threads/thread-navigation.js";
@@ -14,11 +16,8 @@
   } from "./store-navigation.js";
   import StoreProjectsBreadcrumb from "../store-work/StoreProjectsBreadcrumb.svelte";
   import { isRepositoryProjects } from "../../controller/projects-view-cache.js";
-  import StoreProjectsRail from "../store-work/StoreProjectsRail.svelte";
-  import StoreThreadSidebar from "../store-threads/StoreThreadSidebar.svelte";
   import { createThreadPanel } from "../store-threads/thread-panel.svelte.js";
   import StoreRepositoryTabs from "./StoreRepositoryTabs.svelte";
-  import StoreRepositoryNavigation from "./StoreRepositoryNavigation.svelte";
   import { repositorySections } from "./repository-sections.js";
   import { onDestroy, setContext, untrack, type Snippet } from "svelte";
   import "./store-application.css";
@@ -33,8 +32,6 @@
   } from "../community-navigation/model.js";
   import type { StoreController } from "../../controller/contracts.js";
   import CommunityProfileMenu from "../community-profile-menu/CommunityProfileMenu.svelte";
-  import StoreRepositoryDetails from "./StoreRepositoryDetails.svelte";
-  import StoreRepositoryContextActions from "./StoreRepositoryContextActions.svelte";
   import StoreRepositoryNotices from "./StoreRepositoryNotices.svelte";
   import StoreSearchOverlay from "../store-search/StoreSearchOverlay.svelte";
   import StoreSettings from "../store-settings/StoreSettings.svelte";
@@ -73,6 +70,7 @@
     untrack(() => initiallyCollapsed),
   );
   onDestroy(() => void shell.dispose());
+  const detailsRail = shell.getPanel(repositoryDetailsPanelId)!;
   const threadPanel = createThreadPanel(
     () => shell.right.open(),
     () => shell.right.close(),
@@ -175,9 +173,9 @@
   {#snippet headerEnd()}{#if !settingsOpen}<StoreApplicationHeaderActions
         {controller}
         disabled={conflictOpen}
-        detailsOpen={!shell.right.closed}
+        detailsOpen={!detailsRail.closed}
         toggleDetails={() =>
-          shell.right.closed ? shell.right.open() : shell.right.close()}
+          detailsRail.closed ? detailsRail.open() : detailsRail.close()}
       />{/if}{/snippet}
   <AppShell.Sidebar
     side="left"
@@ -239,7 +237,11 @@
           <div
             style="margin-inline-start: auto; display: flex; flex: 0 0 auto;"
           >
-            <AppShell.Sidebar.Toggle side="right" sidebarName="details" />
+            <AppShell.Sidebar.Toggle
+              side="right"
+              sidebarController={detailsRail}
+              sidebarName="details"
+            />
           </div>
         </AppShell.Toolbar>
       {/if}
@@ -278,35 +280,11 @@
       </AppShell.Body>
     {/if}
   </AppShell.Main>
-  {#if !settingsOpen}<AppShell.Sidebar
-      side="right"
-      constraintPriority={0}
-      constrainedPresentation="replace-main"
-      variant={current.page === "threads" ? "default" : "rail"}
-      class="community-application__project-overview-sidebar"
-      label={current.page === "threads"
-        ? threadPanel.kind === "settings"
-          ? "Thread settings"
-          : threadPanel.kind === "members"
-            ? "Thread contributors"
-            : "Thread replies"
-        : "Repository details"}
-      resizeLabel="Resize repository details"
-      closeable
-    >
-      {#if current.page === "threads" && controller.threads?.detail}<StoreThreadSidebar
-          {controller}
-        />{:else}<AppShell.Sidebar.Body>
-          {#if current.page === "projects" && controller.projects && !isRepositoryProjects(current)}<StoreProjectsRail
-              {controller}
-            />{:else}<StoreRepositoryDetails {controller} />
-            <StoreRepositoryNavigation
-              page={current.page}
-              onSelect={selectPage}
-            />
-            <StoreRepositoryContextActions {controller} />{/if}
-        </AppShell.Sidebar.Body>{/if}
-    </AppShell.Sidebar>{/if}
+  {#if !settingsOpen}<StoreApplicationRightPanels
+      {controller}
+      {shell}
+      onSelectPage={selectPage}
+    />{/if}
   <StoreConflictEditor
     {controller}
     open={conflictOpen}

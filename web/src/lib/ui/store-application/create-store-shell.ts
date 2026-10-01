@@ -4,6 +4,7 @@ import {
 } from "@lapismd/design-core/shell";
 import {
   loadRepositoryShellLayout,
+  repositoryDetailsPanelId,
   repositoryShellStorageKey,
 } from "../layout-storage.js";
 export function createStoreShell(
@@ -30,6 +31,16 @@ export function createStoreShell(
           ),
         }
       : {}),
+  });
+  // Match Community's standard pane plus independently persisted outer rail.
+  // Seed the rail from the formerly shared value only for existing layouts.
+  const rail = initialLayout.repositoryDetails ?? initialLayout.right;
+  shell.createSidebar(repositoryDetailsPanelId, "right", {
+    collapsed: rail?.collapsed ?? false,
+    closed: rail?.closed ?? true,
+    width: rail?.width ?? 280,
+    minWidth: 220,
+    maxWidth: 440,
   });
   return shell;
 }

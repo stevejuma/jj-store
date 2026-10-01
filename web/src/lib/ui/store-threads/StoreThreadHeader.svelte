@@ -3,13 +3,12 @@
   import { Button } from "@lapismd/design-core/shadcn/button";
   import Hash from "@lucide/svelte/icons/hash";
   import Users from "@lucide/svelte/icons/users";
-  import Ellipsis from "@lucide/svelte/icons/ellipsis";
   import ArrowLeft from "@lucide/svelte/icons/arrow-left";
   import Refresh from "@lucide/svelte/icons/refresh-cw";
   import type { StoreController } from "../../controller/contracts.js";
   import { useThreadPanel } from "./thread-panel.svelte.js";
-  import { threadMembers, threadWritable } from "./thread-view.js";
-  import StoreThreadCreate from "./StoreThreadCreate.svelte";
+  import { threadMembers } from "./thread-view.js";
+  import StoreThreadMenu from "./StoreThreadMenu.svelte";
   let { controller }: { controller: StoreController } = $props();
   const threads = $derived(controller.threads);
   const panel = useThreadPanel();
@@ -48,13 +47,7 @@
           aria-hidden="true"
         />{members.length}</Button
       >
-      <Button
-        variant="ghost"
-        size="icon-sm"
-        aria-label="Thread settings"
-        onclick={() => panel.open("settings")}
-        ><Ellipsis aria-hidden="true" /></Button
-      >{/if}
+    {/if}
     <Button
       variant="ghost"
       size="icon-sm"
@@ -62,10 +55,7 @@
       disabled={threads?.busy}
       onclick={() => threads?.refresh()}><Refresh aria-hidden="true" /></Button
     >
-    {#if threads && !threads.detail}<StoreThreadCreate
-        {threads}
-        disabled={!threadWritable(controller)}
-      />{/if}
+    <StoreThreadMenu {controller} />
   </div>
 </AppShell.Toolbar>
 
