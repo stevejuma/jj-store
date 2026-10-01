@@ -1,66 +1,35 @@
 <script lang="ts">
   import "./store-threads.css";
-  import {
-    CommunityWorkspaceSurface,
-    CommunityDetails,
-    CommunityMemberAvatarGroup,
-    CommunitySkeleton,
-  } from "@lapismd/lapis-community/components";
-  import type {
-    CommunityWorkspaceModel,
-    CommunityRoomModel,
-  } from "@lapismd/lapis-community/components";
+  import CommunityWorkspaceSurface from "../community-workspace/CommunityWorkspaceSurface.svelte";
+  import CommunitySkeleton from "../community-skeleton/CommunitySkeleton.svelte";
+  import ForumTopicList from "../forum-topic-list/ForumTopicList.svelte";
+  import type { CommunityWorkspaceModel } from "../../community/workspace-model.js";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as Alert from "@lapismd/design-core/shadcn/alert";
   import { untrack } from "svelte";
-  import HashIcon from "@lucide/svelte/icons/hash";
-  import XIcon from "@lucide/svelte/icons/x";
   import type { StoreController } from "../../controller/contracts.js";
-  import StoreThreadReplies from "./StoreThreadReplies.svelte";
-  import StoreThreadCreate from "./StoreThreadCreate.svelte";
   import StoreMessageReactions from "./StoreMessageReactions.svelte";
+  import StoreThreadHeader from "./StoreThreadHeader.svelte";
+  import { useThreadPanel } from "./thread-panel.svelte.js";
+  import { threadMembers, threadDisabled } from "./thread-view.js";
   import { principalMember } from "../../collaboration/presentation.js";
+  import { storeRouteToHash } from "../../controller/store-route-codec.js";
   let { controller }: { controller: StoreController } = $props();
-  const view = $derived(controller.state),
-    threads = $derived(controller.threads);
-  const replyId = $derived(view.route.replyId ?? null);
-  let detailsOpen = $state(false);
-  const writable = $derived(
-    view.repository.permission === "write" ||
-      view.repository.permission === "admin",
-  );
+  const threads = $derived(controller.threads);
+  const panel = useThreadPanel();
+  const members = $derived(threadMembers(controller));
+  const disabled = $derived(threadDisabled(controller));
   const projection = $derived(threads?.projection);
-  const creator = $derived(threads?.detail?.thread.value.actor);
-  const members = $derived(
-    creator
-      ? [
-          ...new Map(
-            [principalMember(creator), ...(projection?.members ?? [])].map(
-              (m) => [m.id, m],
-            ),
-          ).values(),
-        ]
-      : (projection?.members ?? []),
-  );
-  const room = $derived<CommunityRoomModel>({
+  const room = $derived({
     id: threads?.detail?.thread.value.thread_id ?? "",
     name: threads?.detail?.thread.value.title ?? "Threads",
-    kind: "channel",
+    kind: "channel" as const,
     participantIds: members.map((m) => m.id),
-    memberListCompleteness: "partial",
-    archived: threads?.detail?.thread.value.status === "archived",
+    memberListCompleteness: "partial" as const,
   });
-  const disabled = $derived(
-    !writable ||
-      !!threads?.pending ||
-      !!threads?.busy ||
-      ["archived", "tombstoned"].includes(
-        threads?.detail?.thread.value.status ?? "",
-      ),
-  );
   const model = $derived<CommunityWorkspaceModel>({
     communities: [],
-    activeCommunityId: view.route.repository,
+    activeCommunityId: controller.state.route.repository,
     navigationSections: [{ id: "threads", label: "Threads", rooms: [room] }],
     activeRoomId: room.id,
     view: "channel",
@@ -73,47 +42,52 @@
         })) ?? [],
     topics: [],
     members,
-    currentMemberId: view.repository.principal,
+    currentMemberId: controller.state.repository.principal,
   });
+  const topics = $derived(
+    threads?.threads.map((t) => ({
+      id: t.value.thread_id,
+      title: t.value.title,
+      excerpt: t.directory?.excerpt ?? "",
+      authorId: t.value.actor,
+      replyCount: Number(t.directory?.reply_count ?? 0),
+      replyCountAvailable: !!t.directory,
+      participantIds: t.directory?.participants ?? [],
+      lastActivityLabel: new Date(
+        Number(
+          t.directory?.last_activity_at_millis ?? t.value.accepted_at_millis,
+        ),
+      ).toLocaleDateString(),
+      tags: [t.value.status],
+    })) ?? [],
+  );
+  const directoryMembers = $derived([
+    ...new Map(
+      (threads?.threads ?? []).flatMap((t) =>
+        [t.value.actor, ...(t.directory?.participants ?? [])].map(
+          (id) => [id, principalMember(id)] as const,
+        ),
+      ),
+    ).values(),
+  ]);
   $effect(() => {
     const id = room.id;
     untrack(() => {
-      detailsOpen = false;
       if (id) void threads?.loadEmojis().catch(() => {});
     });
   });
+  function reply(id: string) {
+    threads?.selectReply(id);
+    panel.open("replies");
+  }
 </script>
 
-{#if threads}
-  <section class="store-threads" aria-label="Threads">
-    <header class="store-threads__header">
-      <h1>
-        {#if threads.detail}<HashIcon
-            aria-hidden="true"
-          />{room.name}{:else}Threads{/if}
-      </h1>
-      {#if threads.detail}<CommunityMemberAvatarGroup
-          {members}
-          label="Thread participants"
-        /><Button
-          variant="ghost"
-          size="sm"
-          onclick={() => (detailsOpen = !detailsOpen)}>Members</Button
-        ><Button variant="ghost" size="sm" onclick={() => threads.open(null)}
-          >All threads</Button
-        >{/if}
-      <Button
-        variant="ghost"
-        size="sm"
-        disabled={threads.busy}
-        onclick={() => threads.refresh()}>Refresh threads</Button
-      >
-      <StoreThreadCreate {threads} disabled={!writable} />
-    </header>
+{#if threads}<section class="store-threads" aria-label="Threads">
+    <StoreThreadHeader {controller} />
     {#if threads.error}<Alert.Root variant="destructive"
         ><Alert.Title>Thread action needs attention</Alert.Title
-        ><Alert.Description>{threads.error}</Alert.Description
-        >{#if threads.pending}<Button
+        ><Alert.Description>{threads.error}</Alert.Description>
+        {#if threads.pending}<Button
             variant="outline"
             disabled={threads.busy}
             onclick={() => threads.checkPending()}>Check action status</Button
@@ -122,127 +96,59 @@
             disabled={threads.busy}
             onclick={() => threads.retryPending().catch(() => {})}
             >Retry same action</Button
-          >{/if}</Alert.Root
-      >{/if}
+          >{/if}
+      </Alert.Root>{/if}
     {#if !threads.detail && threads.status === "loading"}<CommunitySkeleton
         layout="messages"
       />
     {:else if threads.detail && projection}
-      {#if projection.messages.some( (m) => m.parentMessageId?.startsWith("unloaded:") )}<p
-          role="status"
+      <div class="store-threads__conversation">
+        <CommunityWorkspaceSurface
+          {model}
+          communityEmojis={threads.emojis}
+          readOnly={disabled}
+          readOnlyReason="This thread is read only or has an action awaiting confirmation."
+          history={{
+            hasOlder: threads.hasOlder,
+            loading: threads.status === "refreshing",
+          }}
+          onLoadOlder={threads.older}
+          handlers={{
+            onAddReaction: (id, emoji, custom) =>
+              threads.toggle(projection.targets[id]!, emoji, custom),
+            onToggleReaction: (id, emoji, custom) =>
+              threads.toggle(projection.targets[id]!, emoji, custom, true),
+            onSendMessage: (_, text) => threads.send(text),
+            onOpenThread: reply,
+            onReply: reply,
+            onSaveMessageEdit: (id, text) => threads.send(text, undefined, id),
+            onCopyMessageLink: (id) => {
+              const hash = storeRouteToHash({
+                ...controller.state.route,
+                replyId: id,
+              });
+              if (hash)
+                void navigator.clipboard.writeText(
+                  new URL(hash, window.location.href).href,
+                );
+            },
+          }}
         >
-          Some replies refer to older messages. Load older messages to see their
-          conversation.
-        </p>
-        <Button
-          variant="ghost"
-          disabled={!threads.hasOlder || threads.status === "refreshing"}
-          onclick={threads.older}>Load older messages</Button
-        >{/if}
-      <div class="store-threads__panes">
-        <div class="store-threads__conversation">
-          <CommunityWorkspaceSurface
-            {model}
-            communityEmojis={threads.emojis}
-            readOnly={disabled}
-            readOnlyReason={!writable
-              ? "You have read access to this repository."
-              : "This thread is closed or has an action awaiting confirmation."}
-            history={{
-              key: room.id,
-              complete: !threads.hasOlder,
-              hasNewer: false,
-              hasOlder: threads.hasOlder,
-              loading: threads.status === "refreshing",
-            }}
-            onLoadOlder={threads.older}
-            handlers={{
-              onAddReaction: (id, emoji, custom) =>
-                threads.toggle(projection.targets[id]!, emoji, custom),
-              onToggleReaction: (id, emoji, custom) =>
-                threads.toggle(projection.targets[id]!, emoji, custom, true),
-              onSendMessage: (_, text) => threads.send(text),
-              onOpenThread: (id) => {
-                threads.selectReply(id);
-                detailsOpen = false;
-              },
-              onReply: (id) => {
-                threads.selectReply(id);
-                detailsOpen = false;
-              },
-              onSaveMessageEdit: (id, text) =>
-                threads.send(text, undefined, id),
-            }}
-          >
-            {#snippet messageSupplement(
-              message,
-            )}{#if projection.targets[message.id]}<StoreMessageReactions
-                  {threads}
-                  target={projection.targets[message.id]!}
-                  {disabled}
-                  showControls={false}
-                />{/if}{/snippet}
-          </CommunityWorkspaceSurface>
-        </div>
-        {#if replyId}<aside
-            class="store-threads__side"
-            aria-label="Thread replies"
-          >
-            <header>
-              <h2>Replies</h2>
-              <Button
-                variant="ghost"
-                size="icon-sm"
-                aria-label="Close replies"
-                onclick={() => threads.selectReply(null)}
-                ><XIcon aria-hidden="true" /></Button
-              >
-            </header>
-            <StoreThreadReplies
-              {threads}
-              rootId={replyId}
-              {members}
-              currentMemberId={view.repository.principal}
-              {disabled}
-            />
-          </aside>{:else if detailsOpen}<aside
-            class="store-threads__side"
-            aria-label="Thread members"
-          >
-            <header>
-              <h2>Members</h2>
-              <Button
-                variant="ghost"
-                size="icon-sm"
-                aria-label="Close members"
-                onclick={() => (detailsOpen = false)}
-                ><XIcon aria-hidden="true" /></Button
-              >
-            </header>
-            <CommunityDetails
-              {room}
-              {members}
-              details={{
-                description:
-                  "Participants visible in the loaded conversation. Load older messages to see earlier participants.",
-                memberIds: members.map((m) => m.id),
-              }}
-            />
-          </aside>{/if}
+          {#snippet messageSupplement(
+            message,
+          )}{#if projection.targets[message.id]}<StoreMessageReactions
+                {threads}
+                target={projection.targets[message.id]!}
+                {disabled}
+                showControls={false}
+              />{/if}{/snippet}
+        </CommunityWorkspaceSurface>
       </div>
-    {:else}<div class="store-threads__directory">
-        {#if !threads.threads.length}<p>
-            No threads yet. Create a thread to start a conversation.
-          </p>{/if}
-        {#each threads.threads as thread (thread.value.thread_id)}<Button
-            variant="ghost"
-            onclick={() => threads.open(thread.value.thread_id)}
-            ><HashIcon data-icon="inline-start" aria-hidden="true" />{thread
-              .value.title}</Button
-          >{/each}
-        {#if threads.hasMore}<Button variant="outline" onclick={threads.more}
-            >More threads</Button
-          >{/if}
-      </div>{/if}
-  </section>
-{/if}
+    {:else}<ForumTopicList
+        {topics}
+        members={directoryMembers}
+        onOpenTopic={(id) => threads.open(id)}
+      />{#if threads.hasMore}<Button variant="outline" onclick={threads.more}
+          >More threads</Button
+        >{/if}{/if}
+  </section>{/if}

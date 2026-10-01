@@ -1,9 +1,7 @@
 <script lang="ts">
   // CommunityProjectsActivityFeed timeline and commit card (Apache-2.0).
-  import {
-    CommunityMarkdownContent,
-    CommunityRelativeTime,
-  } from "@lapismd/lapis-community/components";
+  import CommunityMarkdownContent from "../community-markdown-content/CommunityMarkdownContent.svelte";
+  import CommunityRelativeTime from "../community-relative-time/CommunityRelativeTime.svelte";
   import GitCommitIcon from "@lucide/svelte/icons/git-commit-horizontal";
   import type { NativeActivityCommit } from "../../controller/native-activity-types.js";
   import type { StoreController } from "../../controller/contracts.js";

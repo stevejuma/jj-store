@@ -2,7 +2,7 @@ import type { Model } from "../../api/client.js";
 import type {
   CommunityMemberModel,
   CommunityMessageModel,
-} from "@lapismd/lapis-community/components/community-message";
+} from "../../community/workspace-model.js";
 
 export function workMember(id: string): CommunityMemberModel {
   const local = id === "local" || id.endsWith(":local");

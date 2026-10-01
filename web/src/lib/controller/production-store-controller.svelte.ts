@@ -1,24 +1,18 @@
+import { connectRepositorySource } from "./production-repository-connect.js";
+import { createEntitySearch } from "./production-entity-search.js";
 import { createProductionRefresh } from "./production-store-refresh.js";
 import { createThreadsIntegration } from "./production-threads-integration.js";
 import { createProfileRouteRestorer } from "./production-profile-route.js";
 import { createProductionProjects } from "./production-projects-integration.js";
 import { createProductionConnect } from "./production-store-connect.js";
-import { connectionDeniedMessage, storeErrorMessage } from "./store-error.js";
 
 import { ApiError } from "../api/client.js";
 import type { StoreController } from "./contracts.js";
-import {
-  repositorySource,
-  selectedRepository,
-  configureRepositoryConnection,
-} from "./repository-source.js";
+
 import type { StoreDataSource } from "./native-data-source.js";
 import { followProductionStoreEvents } from "./production-store-events.js";
 import { createProductionStoreReader } from "./production-store-reader.svelte.js";
-import {
-  clearProductionStoreView,
-  createProductionStoreState,
-} from "./production-store-state.svelte.js";
+import { createProductionStoreState } from "./production-store-state.svelte.js";
 import { createStoreRouteHistory } from "./store-route-history.svelte.js";
 import { productionControllerSurface } from "./production-store-view.js";
 import { createProductionStoreSearch } from "./production-store-search-controller.js";
@@ -114,6 +108,17 @@ export function createProductionStoreController(
     restore: reader.restorePage,
   });
 
+  const { openRoute, globalSearch, referenceSearch } = createEntitySearch({
+    repositories: () => data.repositories,
+    token: () => sessionToken,
+    route: () => history.route,
+    push: history.push,
+    repository: () => source?.repository,
+    projects,
+    connectRepository,
+    restoreRoute,
+    fetcher: options.fetcher,
+  });
   function disconnect(message = "", denied = false, preserveSession = false) {
     const repositoryStatus = data.status.repositories;
     version += 1;
@@ -128,6 +133,8 @@ export function createProductionStoreController(
     mutations.configure([]);
     mutations.reset();
     search.clear();
+    globalSearch.clear();
+    referenceSearch.clear();
     resetConnectionView(data, message, denied);
     if (preserveSession) data.status.repositories = repositoryStatus;
     else if (data.accessMode === "authenticated") {
@@ -136,57 +143,41 @@ export function createProductionStoreController(
     }
   }
   async function connectRepository(repository: string, token: string | null) {
-    disconnect("", false, true);
-    data.status.connection = "connecting";
-    const ticket = ++version,
-      requestedRoute = history.route;
-    const credential =
-      data.accessMode === "authenticated" ? (token ?? sessionToken) : null;
-    if (data.accessMode === "authenticated" && !credential)
-      throw new ApiError("bearer_required");
-    try {
-      const candidate = selectedRepository(data, history.route, repository);
-      const active = repositorySource(
-        candidate,
-        credential,
-        `session-${++session}`,
-        () => {
-          if (source === active)
-            disconnect(connectionDeniedMessage(data.accessMode), true);
+    await connectRepositorySource(
+      {
+        data,
+        history,
+        token: () => sessionToken,
+        setToken: (value) => {
+          sessionToken = value;
         },
-        options.fetcher,
-      );
-      source = active;
-      const capabilities = await active.capabilities();
-      const captured = await active.snapshot();
-      if (!current(ticket, active) || history.route !== requestedRoute) return;
-      const selected = configureRepositoryConnection(
-        data,
-        active.repository,
-        captured,
-        capabilities,
-        mutations.configure,
-      );
-      if (data.accessMode === "authenticated") sessionToken = credential;
-      history.connect(active.repository, selected);
-      data.status.connection = "connected";
-      data.status.repositories = "ready";
-      feed = new AbortController();
-      void followProductionStoreEvents(
-        active,
-        () => active === source,
-        data,
-        feed.signal,
-      );
-      await threadsIntegration.connected();
-      if (history.route.page === "projects") await projects.restore();
-      else if (history.route.snapshotOperationId) await reader.restorePage();
-    } catch (cause) {
-      if (ticket !== version) return;
-      const message = storeErrorMessage(cause);
-      disconnect(message);
-      data.status.connection = "failed";
-    }
+        source: () => source,
+        setSource: (value) => {
+          source = value;
+        },
+        nextVersion: () => ++version,
+        version: () => version,
+        nextSession: () => ++session,
+        current,
+        disconnect,
+        configure: mutations.configure,
+        follow: (active) => {
+          feed = new AbortController();
+          void followProductionStoreEvents(
+            active,
+            () => active === source,
+            data,
+            feed.signal,
+          );
+        },
+        connected: threadsIntegration.connected,
+        projects,
+        reader,
+        fetcher: options.fetcher,
+      },
+      repository,
+      token,
+    );
   }
   const connect = createProductionConnect({
     data,
@@ -300,7 +291,9 @@ export function createProductionStoreController(
       threads: threadsIntegration,
       projects,
       now: options.now,
-      actions: { ...actions, openThreads },
+      globalSearch,
+      referenceSearch,
+      actions: { ...actions, openThreads, openRoute },
     },
   );
 }

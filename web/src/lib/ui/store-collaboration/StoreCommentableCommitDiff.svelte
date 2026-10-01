@@ -7,7 +7,7 @@
   } from "@lapismd/design-core/diff";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import MessageSquarePlusIcon from "@lucide/svelte/icons/message-square-plus";
-  import { CommunityChatComposer } from "@lapismd/lapis-community/components/community-chat-composer";
+  import CommunityChatComposer from "../community-chat-composer/CommunityChatComposer.svelte";
   import "../editor-focus.css";
   import { reviewPatchMatchesLine } from "../../collaboration/presentation.js";
   import type { StoreController } from "../../controller/contracts.js";

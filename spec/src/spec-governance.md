@@ -25,17 +25,33 @@ repository suites remain outside the default verification scope.
 
 ## Requirements
 
-| ID          | Requirement                                                                                                                                                                                                                                                              |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| JST-GOV-001 | The canonical specification MUST live under spec/src, build with mdBook, and assign unique JST requirement IDs with exactly one verification row each.                                                                                                                   |
-| JST-GOV-002 | Protected implementation, interface, tooling, and agent-guidance changes MUST update their mapped canonical chapter in the same Jujutsu change.                                                                                                                          |
-| JST-GOV-003 | Every implementation slice MUST update milestones.md with actual commands, results, failures, affected files, versions/formats, gaps, and next action in the same change.                                                                                                |
-| JST-GOV-004 | Progress checks MUST validate task/dependency references, evidence links/test names, completion gates, and same-change ledger updates; passing bookkeeping MUST NOT substitute for passing product tests.                                                                |
-| JST-GOV-005 | Verified slices MUST be committed with Jujutsu while unrelated work and local workspace configuration remain uncommitted.                                                                                                                                                |
-| JST-GOV-006 | Rust formatting MUST use the pinned toolchain component and tracked rustfmt.toml, and MUST be checked by both normal and specification checks.                                                                                                                           |
-| JST-GOV-007 | Verification MUST remain within the changed layer and direct consumers by default; full suites require independent cross-layer or multi-consumer impact, shared infrastructure, release qualification, or an explicit user request, with the escalation reason recorded. |
+| ID          | Requirement                                                                                                                                                                                                                                                                          |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| JST-GOV-001 | The canonical specification MUST live under spec/src, build with mdBook, and assign unique JST requirement IDs with exactly one verification row each.                                                                                                                               |
+| JST-GOV-002 | Protected implementation, interface, tooling, and agent-guidance changes MUST update their mapped canonical chapter in the same Jujutsu change.                                                                                                                                      |
+| JST-GOV-003 | Every implementation slice MUST update milestones.md with actual commands, results, failures, affected files, versions/formats, gaps, and next action in the same change.                                                                                                            |
+| JST-GOV-004 | Progress checks MUST validate task/dependency references, evidence links/test names, completion gates, and same-change ledger updates; passing bookkeeping MUST NOT substitute for passing product tests.                                                                            |
+| JST-GOV-005 | Verified slices MUST be committed with Jujutsu while unrelated work and local workspace configuration remain uncommitted.                                                                                                                                                            |
+| JST-GOV-006 | Rust formatting MUST use the pinned toolchain component and tracked rustfmt.toml, and MUST be checked by both normal and specification checks.                                                                                                                                       |
+| JST-GOV-007 | Verification MUST remain within the changed layer and direct consumers by default; full suites require independent cross-layer or multi-consumer impact, shared infrastructure, release qualification, or an explicit user request, with the escalation reason recorded.             |
+| JST-GOV-008 | Community-derived presentation MUST be copied and maintained in this repository with complete source and license provenance; the ui-ownership plugin MUST reject runtime, build, test and type dependencies, external checkout links, substitutions and missing declared provenance. |
+
+## Repository-owned presentation
+
+The ui-ownership plugin runs during spec validation, normal checks and aggregate
+spec checks. The focused `pnpm check:ui-ownership` command runs that plugin
+only. It checks executable imports, package/lockfile/configuration entries,
+source links and the local provenance manifest. Documentation attribution and
+explicit negative fixtures are permitted. Design Core and Mira remain
+foundational dependencies. Visual fidelity is established by browser and
+interaction evidence, not by dependency exclusion. Existing Community package
+qualification is historical evidence; new slices copy the necessary source
+closure locally.
 
 ## Change map
+
+`docs/ui-provenance.json` requires both `spec-governance.md` and `ui.md`.
+Provenance changes are protected ownership and presentation changes.
 
 Local Git-backed companion implementation additionally requires local-jj.md;
 native identity and publication chapters continue to govern their existing
@@ -381,14 +397,16 @@ unchanged. Governance tests cover both local-source resolution and the registry
 fallback when that sibling is absent; local installation uses `--lockfile=false`
 so validation state cannot rewrite the release lock.
 
-M9.5 extends that guarded development resolution to the declared
-`@lapismd/lapis-community` range. The manifest remains a normal registry range;
-the hook substitutes only an available clean sibling checkout for local
-acceptance, and its focused tests prove both substitution and registry fallback.
-The catalog provenance record pins the inspected Community and Design Core
-source revisions and states whether code was consumed through public exports or
-adapted locally. Collaboration stories remain `visual-pending` while their
-Chromium interactions and automatic accessibility checks are blocking.
+Community presentation is copied into this repository. The provenance manifest
+covers recognized Community families, explicitly marked copies and extracted
+presentation components; native helpers are separately identified with reasons.
+The ownership plugin rejects missing coverage as well as every external
+Community dependency. A renamed copy outside recognized families must carry an
+`@community-copy` source marker so the audit can enforce its provenance. Static
+analysis does not claim to identify arbitrarily renamed unmarked copies. The
+historical M9.5 package consumption is superseded by this owned-source boundary.
+Catalog interactions and accessibility remain blocking; visual baselines remain
+separately approved.
 
 M4.8 review acceptance covers populated and filtered branch dividers, the
 absence of duplicate history-page titles, shared column header styling, and
@@ -491,10 +509,10 @@ contracts with focused regression evidence in the same change.
 The Projects hub browse capture extends the existing registered WorkStore HTTP
 contract fixture. Projects UI evidence includes focused controller/history,
 production story interaction/accessibility and cold native-browser lanes.
-Production bundling composes Community's public `build/vite` helper in the main
-and ES module worker pipelines. This consumer configuration is qualified by the
-production build and all existing real native-browser scenarios; no dependency
-source or generated package installation is patched.
+Production bundling uses the repository-owned Vite configuration and released
+Design Core/Mira foundations. Removing the prior Community build helper requires
+a cold production build and the directly affected browser scenarios. No sibling
+Community source, dependency patch or local substitution is permitted.
 
 The browser asset-manifest generator traverses the compiler's application entry,
 static imports, dynamic imports, styles and assets, rejecting missing or unsafe

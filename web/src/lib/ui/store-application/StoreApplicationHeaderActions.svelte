@@ -18,18 +18,21 @@
   } = $props();
 </script>
 
-<StoreRepositoryActions {controller} {disabled} />
-<Button
-  variant={controller.state.status.refreshAvailable ? "outline" : "ghost"}
-  size="icon-sm"
-  aria-label={controller.state.status.refreshAvailable
-    ? "Refresh snapshot (new history available)"
-    : "Refresh snapshot"}
-  title="Refresh snapshot"
-  disabled={disabled || controller.state.status.connection !== "connected"}
-  onclick={() => controller.actions.refresh()}
-  ><RefreshCwIcon aria-hidden="true" /></Button
->
+{#if controller.state.route.page !== "threads"}<StoreRepositoryActions
+    {controller}
+    {disabled}
+  />
+  <Button
+    variant={controller.state.status.refreshAvailable ? "outline" : "ghost"}
+    size="icon-sm"
+    aria-label={controller.state.status.refreshAvailable
+      ? "Refresh snapshot (new history available)"
+      : "Refresh snapshot"}
+    title="Refresh snapshot"
+    disabled={disabled || controller.state.status.connection !== "connected"}
+    onclick={() => controller.actions.refresh()}
+    ><RefreshCwIcon aria-hidden="true" /></Button
+  >{/if}
 <Button
   variant="ghost"
   size="icon-sm"

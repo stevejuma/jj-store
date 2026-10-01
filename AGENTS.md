@@ -134,17 +134,26 @@ owns the exact supported stages and acceptance evidence.
 
 Production components live under `web/src/lib`; catalog fixtures and harnesses
 may import them, while production MUST remain independent of catalog state.
-Inspect Community first and Design Core second before introducing presentation
-components. Fix a shared-library deficiency in its owning repository and consume
-only a released registry version in jj-store. Credentials stay memory-only; SSE
-announces freshness and displayed snapshots change only on explicit refresh.
-Stories remain visual-pending; baseline approval is separate from interaction
-and accessibility acceptance. Manual-token authenticated repository discovery is
-implemented. Expanded replication pressure/fault qualification, its browser UI,
-cold two-instance real-RustFS qualification, archive/export tooling, additional
-deployment topologies, shared release qualification, controller dispatch,
-backup/restore, stock-JJ filesystem mirroring, continuous Git mirroring, Nostr
-export, other harnesses and CRDT semantics remain deferred.
+Community is a design and source reference, never a package or checkout
+dependency. Copy and maintain every Community-derived component used here under
+`web/src/lib`, including required presentation models, helpers, styles and
+assets; record original paths, source revisions and license attribution in
+`docs/ui-provenance.json`. Runtime, build, test and type-only Community imports,
+package aliases, local substitutions and external source links are prohibited.
+Run `pnpm check:ui-ownership` for this boundary. This repository-specific rule
+implements the user's explicit ownership decision and supersedes the parent
+shared-package rule for Community-derived presentation. Design Core and Mira
+remain released foundational dependencies; fix their deficiencies upstream.
+Inspect Community first and Design Core second before changing presentation.
+Credentials stay memory-only; SSE announces freshness and displayed snapshots
+change only on explicit refresh. Stories remain visual-pending; baseline
+approval is separate from interaction and accessibility acceptance. Manual-token
+authenticated repository discovery is implemented. Expanded replication
+pressure/fault qualification, its browser UI, cold two-instance real-RustFS
+qualification, archive/export tooling, additional deployment topologies, shared
+release qualification, controller dispatch, backup/restore, stock-JJ filesystem
+mirroring, continuous Git mirroring, Nostr export, other harnesses and CRDT
+semantics remain deferred.
 
 ## Local execution
 

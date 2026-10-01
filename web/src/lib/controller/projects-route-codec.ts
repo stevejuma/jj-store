@@ -3,6 +3,7 @@ const id = /^[0-9a-f]{32}$/u;
 const tabs = ["projects", "tasks", "reviews", "repositories", "activity"];
 const states = ["active", "all", "open", "in_progress", "blocked", "done"];
 const fields = [
+  "comment",
   "home",
   "project",
   "task",
@@ -17,6 +18,7 @@ const fields = [
 export function projectsRouteToHash(route: StoreRoute): string | null {
   const query = new URLSearchParams();
   const pairs = {
+    comment: route.commentId,
     home: route.projectId ? route.repository : undefined,
     project: route.projectId,
     task: route.taskId,
@@ -43,7 +45,14 @@ export function projectsRouteFromHash(hash: string): StoreRoute | null {
     )
   )
     return null;
-  for (const key of ["home", "project", "task", "repository", "scope"])
+  for (const key of [
+    "home",
+    "project",
+    "task",
+    "comment",
+    "repository",
+    "scope",
+  ])
     if (query.has(key) && !id.test(query.get(key)!)) return null;
   if (
     query.has("at_op") &&
@@ -66,7 +75,8 @@ export function projectsRouteFromHash(hash: string): StoreRoute | null {
     return null;
   if (
     query.has("project") !== query.has("home") ||
-    (query.has("task") && !query.has("project"))
+    (query.has("task") && !query.has("project")) ||
+    (query.has("comment") && !query.has("task"))
   )
     return null;
   return {
@@ -75,6 +85,7 @@ export function projectsRouteFromHash(hash: string): StoreRoute | null {
     repository: query.get("home") ?? "",
     projectId: query.get("project"),
     taskId: query.get("task"),
+    ...(query.get("comment") ? { commentId: query.get("comment") } : {}),
     workTab: (tab ??
       (query.has("project") ? "tasks" : "projects")) as StoreRoute["workTab"],
     workState: (state ?? "active") as StoreRoute["workState"],

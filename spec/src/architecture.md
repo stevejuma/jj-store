@@ -45,6 +45,15 @@ canonical Git-blob descriptors plus existing source record and capsule carriers.
 Source closure validation and physical retention remain adapter concerns; the
 domain cannot publish a Git ref or repository manifest.
 
+Browser presentation owns the copied Community source closure locally and may
+not resolve the Community package or sibling checkout. Design Core and Mira
+remain foundational dependencies. All copied components use native application
+models; Community/Nostr storage, authentication and controller runtimes are not
+part of this application's presentation dependency graph. Browser and catalog
+bundles deduplicate Svelte and the released Bits UI overlay runtime shared by
+Mira and Design Core; independent modal managers cannot own the same document
+body lock.
+
 ## Requirements
 
 The CLI has one collaboration input-admission module for both providers. Native
@@ -426,7 +435,7 @@ separate production modules. The HTTP collaboration source owns generated DTOs,
 session-scoped query keys and ReviewCommand transport. The collaboration
 controller owns paging, stale-response rejection, durable unknown-outcome state
 and hash selection actions. Agent and review components depend only on the
-shared controller contract plus Community and Design Core public exports.
+shared controller contract, owned Community adaptations and Design Core exports.
 Catalog collaboration fixtures and state wrappers remain transport-free and
 cannot be imported by production. These extractions keep every production module
 and complete Svelte file within the governed counted-line budget.

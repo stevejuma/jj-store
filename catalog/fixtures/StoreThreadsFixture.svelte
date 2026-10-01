@@ -10,7 +10,12 @@
   let {
     unknownFirst = false,
     selected = false,
-  }: { unknownFirst?: boolean; selected?: boolean } = $props();
+    readOnly = false,
+  }: {
+    unknownFirst?: boolean;
+    selected?: boolean;
+    readOnly?: boolean;
+  } = $props();
   const transport = untrack(() => createThreadTransport({ unknownFirst }));
   const base = untrack(() => createInMemoryStoreController());
   const layoutStorage = untrack(createMemoryStoryStorage);
@@ -36,7 +41,9 @@
   const repository = {
     id: THREAD_IDS.repo,
     name: "Collaboration home",
-    permission: "admin" as const,
+    permission: untrack(() =>
+      readOnly ? ("read" as const) : ("admin" as const),
+    ),
     principal: THREAD_IDS.actor,
   };
   const controller: StoreController = {

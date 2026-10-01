@@ -1,17 +1,16 @@
 <script lang="ts">
-  import {
-    CommunityThreadPanel,
-    CommunityDetails,
-  } from "@lapismd/lapis-community/components";
+  import CommunityThreadPanel from "../community-thread-panel/CommunityThreadPanel.svelte";
+  import CommunityDetails from "../community-details/CommunityDetails.svelte";
   import type {
     CommunityMemberModel,
     CommunityMessageModel,
-  } from "@lapismd/lapis-community/components";
+  } from "../../community/workspace-model.js";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as Dialog from "@lapismd/design-core/shadcn/dialog";
   import { untrack } from "svelte";
   import { principalMember } from "../../collaboration/presentation.js";
   import type { ThreadsController } from "../../controller/thread-types.js";
+  import { replyRoot } from "./thread-view.js";
   let {
     threads,
     rootId,
@@ -27,9 +26,12 @@
   } = $props();
   let error = $state(""),
     actorsOpen = $state(false);
+  const conversationRoot = $derived(
+    replyRoot(threads.projection.messages, rootId),
+  );
   const messages = $derived.by(() => {
     const all = threads.projection.messages,
-      ids = new Set([rootId]);
+      ids = new Set([conversationRoot]);
     for (let i = 0; i < all.length; i++)
       for (const m of all)
         if (m.parentMessageId && ids.has(m.parentMessageId)) ids.add(m.id);
@@ -87,17 +89,34 @@
 </script>
 
 <CommunityThreadPanel
-  thread={{ rootMessageId: rootId, messages }}
+  thread={{ rootMessageId: conversationRoot, messages }}
   {members}
   {currentMemberId}
   {disabled}
+  focusMessageId={rootId}
+  history={{
+    key: conversationRoot,
+    hasNewer: false,
+    complete: !threads.hasOlder,
+    hasOlder: threads.hasOlder,
+    loading: threads.status === "refreshing",
+  }}
+  onLoadOlder={threads.older}
   disabledReason="Sending replies is unavailable."
-  onSendReply={(parent, text) => threads.send(text, parent)}
-  onReply={threads.selectReply}
+  onSendReply={disabled
+    ? undefined
+    : (parent, text) => threads.send(text, parent)}
+  onReply={disabled ? undefined : threads.selectReply}
   communityEmojis={threads.emojis}
-  onToggleReaction={(id, emoji, custom) => react(id, emoji, custom, true)}
-  onAddReaction={(id, emoji, custom) => react(id, emoji, custom)}
-  onSaveMessageEdit={(id, text) => threads.send(text, undefined, id)}
+  onToggleReaction={disabled
+    ? undefined
+    : (id, emoji, custom) => react(id, emoji, custom, true)}
+  onAddReaction={disabled
+    ? undefined
+    : (id, emoji, custom) => react(id, emoji, custom)}
+  onSaveMessageEdit={disabled
+    ? undefined
+    : (id, text) => threads.send(text, undefined, id)}
 />
 {#if error}<p role="alert">{error}</p>{/if}
 {#if actors.length}<Button
@@ -106,7 +125,7 @@
     onclick={() => (actorsOpen = true)}>Who reacted to replies</Button
   >{/if}
 <Dialog.Root bind:open={actorsOpen}
-  ><Dialog.Content
+  ><Dialog.Content preventScroll={false}
     ><Dialog.Header
       ><Dialog.Title>Who reacted to replies</Dialog.Title><Dialog.Description
         >Authorized reaction actors in the loaded reply conversation.</Dialog.Description

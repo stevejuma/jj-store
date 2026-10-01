@@ -199,6 +199,8 @@ export function productionControllerSurface(
     projects: StoreController["projects"];
     now?: () => number;
     actions: StoreController["actions"];
+    globalSearch?: StoreController["globalSearch"];
+    referenceSearch?: StoreController["referenceSearch"];
   },
 ): StoreController {
   return {
@@ -206,6 +208,8 @@ export function productionControllerSurface(
       return options.threads.available() ? options.threads.threads : undefined;
     },
     projects: options.projects,
+    globalSearch: options.globalSearch,
+    referenceSearch: options.referenceSearch,
     get state() {
       return productionSessionView(
         data,

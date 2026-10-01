@@ -22,6 +22,32 @@ the same components and asynchronous controller contract. Reusable components
 receive presentation data and callbacks, while HTTP and in-memory controllers
 supply interchangeable sources. Deterministic fixtures remain catalog-only.
 
+## Repository-owned Community presentation
+
+Rebase integration preserves collapsed section hints, project navigation and
+profile-gated native Threads alongside the local Git-backed browser. Search
+state types are kept in a small shared module so combining these contracts
+preserves the production source budget.
+
+JST-GOV-008 governs all Community-derived UI: components, types, styles, assets
+and presentation helpers are local source with provenance, rather than imports
+from Community. Threads use the channel toolbar and shell-owned far-right
+panels; the directory uses forum rows. Thread settings expose native
+rename/lifecycle, identity, baseline, links and contributor details under
+repository permissions. Native Markdown references and composer entity pickers
+preserve full identities. Global search covers connected authorized sources,
+offers four recent entities, context scope chips and permission-gated
+create/browse actions. Content search includes stored Thread messages/replies
+and WorkStore descriptions/comments; code search keeps its independent operation
+pins.
+
+The Thread toolbar supplies the page's level-one heading with the copied channel
+typography. The application owns a fixed viewport with no document scrolling.
+Its Threads settings/create, reaction actor and search dialogs retain modal
+focus/overlay behavior while disabling redundant document scroll locking through
+the public `preventScroll` option. Cold built-asset acceptance checks that
+closing them restores pointer interaction under the served strict asset policy.
+
 ## Requirements
 
 | ID         | Requirement                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
@@ -42,6 +68,7 @@ supply interchangeable sources. Deterministic fixtures remain catalog-only.
 | JST-UI-014 | Repository view navigation MUST live in the Community-styled right rail beneath its page heading and create action, with selection-aware, capability-gated commands beneath Details and no duplicate metadata panels; body tabs MUST present Overview first, followed by Branches, Commits, Op Log, Agents and Reviews, retain their pill styling, and move trailing tabs into an accessible dropdown when width is limited without changing route or workspace context.                                                                                                                                                                                                                                                                                                                             |
 | JST-UI-015 | The installation Projects hub MUST expose authorized homes, repository and task directories, a shared native commit and agent Activity timeline with Activity-first tabs and recorded-agent filters, a repository-linked Projects list, shared safe Markdown previews, searchable project/task views, native identity routes, permission-gated dialogs and threaded Markdown discussion; use Community card/list layout controls and Mine/Other groups, searchable repository Command View selectors, Settings-style form rows and icon-only page-header filters, a centered top-header breadcrumb, and an original-message preview above the edit composer; keep independent bounded snapshot continuations and retained navigation state; and advance displayed metadata only on explicit refresh. |
 | JST-UI-016 | Local management MUST expose explicitly linked device workspaces, qualified capture setup and queue recovery, editable Search with isolated worker replacement, non-destructive storage verification/checkpoints and configured sync controls through typed capability-gated interfaces; unsupported profiles and deferred operations MUST remain explicit.                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| JST-UI-017 | Threads MUST use the owned Community channel toolbar, outer right shell panel, settings, contributor and reply presentation, forum directory rows, native composer entity pickers and message chips; workspace search MUST show recent activity, server-filtered section and entity scopes, native focus links and permission-gated bottom actions without inventing runner controls.                                                                                                                                                                                                                                                                                                                                                                                                                |
 
 The production controller completes bootstrap before rendering connection
 choices. One ready LocalTrusted catalog entry opens without a token, several
@@ -782,10 +809,10 @@ before server pagination. Project rows show linked repositories and active/done
 task counts. Task rows show their project, state, target, parent, current
 comment count and update time. Task details present Markdown, parent navigation,
 independently paged subtasks and threaded discussion. Project/task prose and
-comments compose the public Community Markdown editor and renderer; dialogs and
-tombstone confirmation use public Design Core controls. Native state names
-remain open, in_progress, blocked and done. A board, assignments and dispatch
-remain deferred.
+comments compose the owned Community-derived Markdown editor and renderer;
+dialogs and tombstone confirmation use public Design Core controls. Native state
+names remain open, in_progress, blocked and done. A board, assignments and
+dispatch remain deferred.
 
 Hub routes use `#/projects` with validated tab, home/project/task identities and
 query/filter fields. Legacy repository Projects routes remain readable. Back,
@@ -885,7 +912,7 @@ provide the existing list/card controls.
 
 Landing tabs, project cards, repository/review rows, task rows and task detail
 sections copy Community Projects composition and styling, adapting native fields
-and authorized actions. Discussion uses public CommunityMessage and the copied
+and authorized actions. Discussion uses owned CommunityMessage and the copied
 Community thread tree with avatar guides, hover/focus actions and the public
 composer's reply/edit context. Native identities and creation/edit actors stay
 exact; no relay events, assignments or Community links are synthesized. Project,
@@ -932,11 +959,11 @@ lists cannot reuse each other's results. The installation hub remains a separate
 destination.
 
 All repository document tabs, Markdown file previews and edit previews compose
-the public Community Markdown renderer with safe HTML policy. Inline code,
-links, emphasis and fenced code use the shared preview. Executable raw HTML is
-omitted from the safe preview; Source still retains the original file bytes.
-Document selection uses a three-pixel indicator while preserving tab overflow
-and keyboard navigation.
+the owned Community-derived Markdown renderer with safe HTML policy. Inline
+code, links, emphasis and fenced code use the shared preview. Executable raw
+HTML is omitted from the safe preview; Source still retains the original file
+bytes. Document selection uses a three-pixel indicator while preserving tab
+overflow and keyboard navigation.
 
 Project and installation Activity filters use Community's searchable Command
 View in a shadcn popover, triggered by an icon-only control in the page header.

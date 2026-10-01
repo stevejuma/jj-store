@@ -1,9 +1,7 @@
 <script lang="ts">
   // CommunityProjects.svelte projectDirectoryCard (Apache-2.0).
-  import {
-    CommunityMemberHoverCard,
-    CommunityRelativeTime,
-  } from "@lapismd/lapis-community/components";
+  import CommunityMemberHoverCard from "../community-member-hover-card/CommunityMemberHoverCard.svelte";
+  import CommunityRelativeTime from "../community-relative-time/CommunityRelativeTime.svelte";
   import FolderKanbanIcon from "@lucide/svelte/icons/folder-kanban";
   import GitBranchIcon from "@lucide/svelte/icons/git-branch";
   import type { Model } from "../../api/client.js";

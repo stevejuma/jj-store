@@ -1,5 +1,5 @@
 import type { RepositoryDirectoryEntry } from "../../controller/projects-repositories.svelte.js";
-import type { CommunityMemberModel } from "@lapismd/lapis-community/components/community-message";
+import type { CommunityMemberModel } from "../../community/workspace-model.js";
 import type { Model } from "../../api/client.js";
 
 export function repositoryActivity(

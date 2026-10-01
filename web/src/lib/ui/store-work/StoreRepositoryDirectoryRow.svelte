@@ -1,10 +1,8 @@
 <script lang="ts">
   // CommunityProjects.svelte repositoryListRow (Apache-2.0).
-  import {
-    CommunityChip,
-    CommunityMemberHoverCard,
-    CommunityRelativeTime,
-  } from "@lapismd/lapis-community/components";
+  import CommunityChip from "../community-chip/CommunityChip.svelte";
+  import CommunityMemberHoverCard from "../community-member-hover-card/CommunityMemberHoverCard.svelte";
+  import CommunityRelativeTime from "../community-relative-time/CommunityRelativeTime.svelte";
   import GitBranchIcon from "@lucide/svelte/icons/git-branch";
   import type { Snippet } from "svelte";
   import type { StoreRepositorySummary } from "../../controller/contracts.js";

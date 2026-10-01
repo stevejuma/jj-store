@@ -4,7 +4,7 @@ Thread event pages include their own human revisions from the captured graph.
 Emoji pages include exact definition version references, and retained previews
 are fetched through the credential-bound client into revocable memory-only URLs.
 
-The browser composes public CommunityWorkspaceSurface, CommunityThreadPanel,
+The browser composes owned CommunityWorkspaceSurface, CommunityThreadPanel,
 CommunityDetails and CommunityReactions contracts. Threads have a channel
 section in the left sidebar, bounded history, exact persisted replies, visible
 actor-derived participants and reactions on existing review comments and
@@ -13,8 +13,8 @@ identities for unknown outcomes.
 
 The rebased HTTP inventory retains all local workspace, Search and Sync
 management routes alongside Thread, Reaction and retained-image routes. The
-merged inventory retains all 66 native routes and 18 separately scoped local
-routes. Generated contracts and response captures qualify the combined 84-path
+merged inventory retains all 67 native routes and 18 separately scoped local
+routes. Generated contracts and response captures qualify the combined 85-path
 inventory before UI composition.
 
 Native Agent capture preparation adds optional canonical ThreadBindingV1 bytes
@@ -62,18 +62,43 @@ View contains project entries rather than linked repository children. Its
 choices keep exact home/project identities, and the separate Repositories
 Command View retains repository access and selection.
 
+## Captured application content search
+
+Profile-aware connection and route restoration remain shared by repository
+navigation, Threads and entity search. Global native search skips local
+Git-backed profiles without issuing native API requests and reports their
+unsupported search explicitly. The local profile's existing capability gates
+remain in effect; a source change never fabricates native Thread authority.
+
+`GET /v1/repos/{repo}/content/search` searches the complete bounded current
+Thread and WorkStore roots, independently of the selected code operation and
+Tantivy file scope. It includes current visible human messages and replies,
+project/task descriptions and current comments. Edits replace prior content and
+tombstones remove it. Empty queries return recent active entity summaries.
+Continuations retain the immutable result projection, bind every filter and page
+size, expire after five minutes and reauthorize the same viewer and repository
+before every page. Epoch replacement requires an explicit refresh. No body,
+count or identity is returned before repository admission. Full source IDs and
+revisions accompany results; navigation preserves their native meaning.
+
+The browser fans out at concurrency two over all connected authorized sources,
+clears protected results on session replacement/disconnect, and shows per-source
+failures. Section, repository, Thread, project and task scopes filter on the
+server. Code results keep their own operation-selected Tantivy snapshots.
+
 ## Requirements
 
-| ID          | Requirement                                                                                                                                                                                                                                                                                                                                                             |
-| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| JST-API-001 | Read APIs MUST expose versioned DTOs for capabilities, snapshots, native objects, commit/operation/evolution graphs, trees, files, diffs, and conflicts without parsing CLI output.                                                                                                                                                                                     |
-| JST-API-002 | Pagination MUST bind an explicit operation, query, repository, and epoch; ambiguous heads and workspace-dependent expressions MUST require explicit resolution.                                                                                                                                                                                                         |
-| JST-API-003 | SSE MUST resume from committed positions and detect writes from other serving processes; slow consumers MUST NOT block repository publication.                                                                                                                                                                                                                          |
-| JST-API-004 | Queries MUST enforce authorization and resource budgets, safely render untrusted source content, and expose incomplete history or rebuild tasks explicitly.                                                                                                                                                                                                             |
-| JST-API-005 | The Svelte UI MUST show repository selection, snapshot state, three graph views, object/diff inspection, context-aware right-rail metadata/actions, Community-composer mutation prose, conflict editing, mutation previews/results, and search freshness.                                                                                                               |
-| JST-API-006 | HTTP routes and owned DTOs MUST generate OpenAPI and TypeScript contracts; normal and specification checks MUST reject drift and validate representative actual responses.                                                                                                                                                                                              |
-| JST-API-007 | Versioned bootstrap MUST expose LocalTrusted access mode, public capabilities, embedded-storage readiness and installation-owned repository discovery without exposing internal credentials or treating discovery metadata as repository authority.                                                                                                                     |
-| JST-API-008 | `GET /v1/repositories` MUST provide bounded cursor-paged installation discovery: all registered repositories in LocalTrusted mode and only currently reauthorized token candidates in authenticated mode; each entry MUST expose its current authenticated principal and effective permission without credential material; bootstrap MUST NOT embed repository entries. |
+| ID          | Requirement                                                                                                                                                                                                                                                                                                                                                                                            |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| JST-API-001 | Read APIs MUST expose versioned DTOs for capabilities, snapshots, native objects, commit/operation/evolution graphs, trees, files, diffs, and conflicts without parsing CLI output.                                                                                                                                                                                                                    |
+| JST-API-002 | Pagination MUST bind an explicit operation, query, repository, and epoch; ambiguous heads and workspace-dependent expressions MUST require explicit resolution.                                                                                                                                                                                                                                        |
+| JST-API-003 | SSE MUST resume from committed positions and detect writes from other serving processes; slow consumers MUST NOT block repository publication.                                                                                                                                                                                                                                                         |
+| JST-API-004 | Queries MUST enforce authorization and resource budgets, safely render untrusted source content, and expose incomplete history or rebuild tasks explicitly.                                                                                                                                                                                                                                            |
+| JST-API-005 | The Svelte UI MUST show repository selection, snapshot state, three graph views, object/diff inspection, context-aware right-rail metadata/actions, Community-composer mutation prose, conflict editing, mutation previews/results, and search freshness.                                                                                                                                              |
+| JST-API-006 | HTTP routes and owned DTOs MUST generate OpenAPI and TypeScript contracts; normal and specification checks MUST reject drift and validate representative actual responses.                                                                                                                                                                                                                             |
+| JST-API-007 | Versioned bootstrap MUST expose LocalTrusted access mode, public capabilities, embedded-storage readiness and installation-owned repository discovery without exposing internal credentials or treating discovery metadata as repository authority.                                                                                                                                                    |
+| JST-API-008 | `GET /v1/repositories` MUST provide bounded cursor-paged installation discovery: all registered repositories in LocalTrusted mode and only currently reauthorized token candidates in authenticated mode; each entry MUST expose its current authenticated principal and effective permission without credential material; bootstrap MUST NOT embed repository entries.                                |
+| JST-API-009 | Application content search MUST use one bounded manifest-selected current Thread and WorkStore projection, return full native identities and revisions with bounded excerpts, filter recent and scoped queries, exclude superseded bodies and tombstones, and bind opaque expiring continuations to query, limit, repository, viewer and authority epoch with current authorization before every page. |
 
 ## Bootstrap and browser admission
 

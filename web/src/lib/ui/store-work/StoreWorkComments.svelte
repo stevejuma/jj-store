@@ -1,12 +1,13 @@
 <script lang="ts">
+  import { focusNativeMessage } from "../focus-message.js";
   import StoreWorkEmpty from "./StoreWorkEmpty.svelte";
   import StoreMessageActions from "../store-collaboration/StoreMessageActions.svelte";
   import { untrack } from "svelte";
   import type { Snippet } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import StoreWorkRemoveComment from "./StoreWorkRemoveComment.svelte";
-  import { CommunityChatComposer } from "@lapismd/lapis-community/components/community-chat-composer";
-  import { CommunityMessage } from "@lapismd/lapis-community/components";
+  import CommunityChatComposer from "../community-chat-composer/CommunityChatComposer.svelte";
+  import CommunityMessage from "../community-message/CommunityMessage.svelte";
   import {
     workCommentRows,
     workMember,
@@ -41,6 +42,9 @@
   );
   let removing = $state<string | null>(null);
   let activityOpen = $state(false);
+  $effect(() => {
+    if (view.focusCommentId) activityOpen = true;
+  });
   const rows = $derived(workCommentRows(view.comments));
   const members = $derived([
     ...new Map(
@@ -123,7 +127,14 @@
 </script>
 
 <!-- CommunityProjects task activity and CommunityThreadTreeRow, native callbacks. -->
-<section aria-label="Task discussion">
+<section
+  aria-label="Task discussion"
+  use:focusNativeMessage={view.comments.some(
+    (c) => c.id === view.focusCommentId,
+  )
+    ? view.focusCommentId
+    : null}
+>
   <Collapsible.Root
     class="community-projects__task-activity"
     bind:open={activityOpen}
@@ -152,6 +163,8 @@
             class="community-thread-tree-row"
             role="listitem"
             aria-label={`Comment ${comment.id.slice(0, 8)}`}
+            data-message-id={comment.id}
+            data-highlighted={comment.id === view.focusCommentId || undefined}
             data-ui-part="thread-tree-row"
             data-thread-depth={row.depth}
             style={`--community-thread-indent: ${row.indentRem}rem; --community-thread-connector-indent: ${row.connectorIndentRem ?? 0}rem;`}

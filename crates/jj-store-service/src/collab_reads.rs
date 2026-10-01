@@ -67,9 +67,19 @@ pub struct CollabReadSnapshotV1 {
     pub review_root: Option<m::RecordDigest>,
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
+pub struct ThreadDirectoryMetadata {
+    pub message_count: u32,
+    pub reply_count: u32,
+    pub excerpt: String,
+    pub participants: Vec<m::PrincipalId>,
+    pub last_activity_at_millis: i64,
+}
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 pub struct ThreadSummaryV1 {
     pub reference: CollabObjectRef,
     pub value: ThreadVersionV1,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub directory: Option<ThreadDirectoryMetadata>,
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 pub struct ThreadDetailV1 {
@@ -96,6 +106,8 @@ pub struct ThreadPageV1 {
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 pub struct ThreadEventItemV1 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub link: Option<ThreadLinkV1>,
     pub message: Option<HumanMessageRevisionV1>,
     pub reference: CollabObjectRef,
     pub value: ThreadEventV1,
@@ -147,6 +159,7 @@ pub struct PinnedCollabRead {
     viewer: m::PrincipalId,
     threads: ThreadStateV1,
     thread_graph: CollabGraphV1,
+    directory: BTreeMap<ThreadId, ThreadDirectoryMetadata>,
     reactions: ReactionStateV1,
     reaction_graph: CollabGraphV1,
     agents: Option<AgentStoreSnapshot>,
@@ -201,11 +214,13 @@ impl PinnedCollabRead {
                 Some(root) => Some(session.coordinator.review_store(root).await?),
                 None => None,
             };
+            let directory = crate::thread_directory::project(&threads, &thread_graph)?;
             let result = Self {
                 snapshot,
                 viewer,
                 threads,
                 thread_graph,
+                directory,
                 reactions,
                 reaction_graph,
                 agents,
@@ -266,6 +281,7 @@ impl PinnedCollabRead {
         Ok(ThreadSummaryV1 {
             reference,
             value: value.clone(),
+            directory: self.directory.get(&id).cloned(),
         })
     }
     async fn threads_inner(
@@ -369,7 +385,21 @@ impl PinnedCollabRead {
             } else {
                 None
             };
+            let link = if let ThreadEventKindV1::Link { version } = value.event {
+                let CollabObjectV1::ThreadLink(link) =
+                    self.thread_graph.get(version).map_err(|_| Error::Corrupt)?
+                else {
+                    return Err(Error::Corrupt);
+                };
+                if link.thread_id != id {
+                    return Err(Error::Corrupt);
+                }
+                Some(link.clone())
+            } else {
+                None
+            };
             events.push(ThreadEventItemV1 {
+                link,
                 message,
                 reference,
                 value: value.clone(),

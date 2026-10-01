@@ -24,9 +24,9 @@
     await userEvent.click(
       canvas.getByRole("button", { name: "Search repository" }),
     );
-    const dialog = page.getByRole("dialog", { name: "Search repository" });
+    const dialog = page.getByRole("dialog", { name: "Search workspace" });
     const input = within(dialog).getByRole("combobox", {
-      name: "Search repository",
+      name: "Search workspace",
     });
     await userEvent.type(input, "immutable");
     const result = await within(dialog).findByRole("option", {
@@ -35,7 +35,7 @@
     await userEvent.click(result);
     await waitFor(() =>
       expect(
-        page.queryByRole("dialog", { name: "Search repository" }),
+        page.queryByRole("dialog", { name: "Search workspace" }),
       ).not.toBeInTheDocument(),
     );
     await expect(
@@ -53,7 +53,7 @@
 
     await userEvent.keyboard("{Meta>}k{/Meta}");
     await expect(
-      page.getByRole("dialog", { name: "Search repository" }),
+      page.getByRole("dialog", { name: "Search workspace" }),
     ).toBeVisible();
     await userEvent.keyboard("{Escape}");
   }}

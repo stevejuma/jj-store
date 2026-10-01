@@ -1,9 +1,7 @@
 <script lang="ts">
   // CommunityProjectsPullRequestList.svelte reviewRow (Apache-2.0).
-  import {
-    CommunityMemberHoverCard,
-    CommunityRelativeTime,
-  } from "@lapismd/lapis-community/components";
+  import CommunityMemberHoverCard from "../community-member-hover-card/CommunityMemberHoverCard.svelte";
+  import CommunityRelativeTime from "../community-relative-time/CommunityRelativeTime.svelte";
   import CircleCheckIcon from "@lucide/svelte/icons/circle-check";
   import MessageSquareIcon from "@lucide/svelte/icons/message-square";
   import GitBranchIcon from "@lucide/svelte/icons/git-branch";

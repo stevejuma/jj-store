@@ -37,13 +37,25 @@
   }}
   play={async ({ canvasElement, args }) => {
     const page = within(canvasElement.ownerDocument.body);
-    const dialog = page.getByRole("dialog", { name: "Search repository" });
+    const dialog = page.getByRole("dialog", { name: "Search workspace" });
     await expect(
       dialog.querySelector('[data-ui-component="command-view"]'),
     ).not.toBeNull();
-    await expect(within(dialog).getByText("Operations")).toBeVisible();
-    await expect(within(dialog).getByText("Commits")).toBeVisible();
-    await expect(within(dialog).getByText("Files")).toBeVisible();
+    await expect(
+      within(dialog).getByText("Operations", {
+        selector: "[data-command-group-heading]",
+      }),
+    ).toBeVisible();
+    await expect(
+      within(dialog).getByText("Commits", {
+        selector: "[data-command-group-heading]",
+      }),
+    ).toBeVisible();
+    await expect(
+      within(dialog).getByText("Files", {
+        selector: "[data-command-group-heading]",
+      }),
+    ).toBeVisible();
     await expect(
       within(dialog).getByText("Indexing newer history"),
     ).toBeVisible();
@@ -85,9 +97,7 @@
   }}
   play={async ({ canvasElement }) => {
     const page = within(canvasElement.ownerDocument.body);
-    await expect(page.getByRole("status")).toHaveTextContent(
-      "Searching repository",
-    );
+    await expect(page.getByRole("status")).toHaveTextContent("Searching…");
   }}
 >
   {#snippet template(args)}
@@ -117,7 +127,7 @@
   }}
   play={async ({ canvasElement }) => {
     const page = within(canvasElement.ownerDocument.body);
-    await expect(await page.findByRole("status")).toHaveTextContent(
+    await expect(await page.findByRole("alert")).toHaveTextContent(
       "Search is not configured",
     );
     await userEvent.click(page.getByRole("button", { name: "Close search" }));

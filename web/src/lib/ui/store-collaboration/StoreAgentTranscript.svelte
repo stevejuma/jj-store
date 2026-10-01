@@ -1,8 +1,8 @@
 <script lang="ts">
   import * as Chat from "@lapismd/design-core/ai/chat";
-  import { CommunityMessage } from "@lapismd/lapis-community/components/community-message";
-  import type { CommunityMemberModel } from "@lapismd/lapis-community/components/community-message";
-  import type { CommunityMessageModel } from "@lapismd/lapis-community/components/community-message";
+  import CommunityMessage from "../community-message/CommunityMessage.svelte";
+  import type { CommunityMemberModel } from "../../community/workspace-model.js";
+  import type { CommunityMessageModel } from "../../community/workspace-model.js";
   import type { Model } from "../../api/client.js";
   import type { StoreController } from "../../controller/contracts.js";
   import StoreMessageReactions from "../store-threads/StoreMessageReactions.svelte";

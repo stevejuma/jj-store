@@ -106,6 +106,28 @@ export function createThreadsController(options: {
       }
     }
   }
+  async function focusReply(id: string) {
+    const target = options.route().replyId,
+      ticket = generation;
+    for (
+      let page = 0;
+      target && !projection.targets[target] && eventCursor && page < 20;
+      page++
+    ) {
+      const previous = eventCursor;
+      await read(id, true);
+      if (
+        ticket !== generation ||
+        status === "failed" ||
+        previous === eventCursor
+      )
+        return;
+    }
+    if (target && !projection.targets[target] && ticket === generation)
+      error = eventCursor
+        ? "Message is outside loaded history. Load older messages to continue."
+        : "This message is unavailable in the current thread.";
+  }
   async function restore() {
     generation++;
     if (detail?.thread.value.thread_id !== options.route().threadId) {
@@ -117,7 +139,10 @@ export function createThreadsController(options: {
     await list();
     if (ticket !== generation) return;
     const id = options.route().threadId;
-    if (id) await read(id);
+    if (id) {
+      await read(id);
+      await focusReply(id);
+    }
   }
   async function open(id: string | null) {
     generation++;
@@ -126,8 +151,10 @@ export function createThreadsController(options: {
     eventCursor = null;
     error = "";
     options.select(id);
-    if (id) await read(id);
-    else await list();
+    if (id) {
+      await read(id);
+      await focusReply(id);
+    } else await list();
   }
   async function refresh() {
     richReactions.invalidate();
@@ -176,12 +203,43 @@ export function createThreadsController(options: {
       },
     });
   }
+  async function rename(title: string) {
+    if (!detail) throw new ApiError("select_thread_first");
+    await actions.execute("threads", {
+      version: 1,
+      request_id: collabRequestId(),
+      command: {
+        type: "rename",
+        thread_id: detail.thread.value.thread_id,
+        expected: detail.thread.reference,
+        title: title.trim(),
+      },
+    });
+  }
+  async function lifecycle(action: Model<"ThreadActionV1">) {
+    if (!detail) throw new ApiError("select_thread_first");
+    await actions.execute("threads", {
+      version: 1,
+      request_id: collabRequestId(),
+      command: {
+        type: "lifecycle",
+        thread_id: detail.thread.value.thread_id,
+        expected: detail.thread.reference,
+        action,
+      },
+    });
+  }
   return {
+    rename,
+    lifecycle,
     get threads() {
       return threads;
     },
     get detail() {
       return detail;
+    },
+    get events() {
+      return events;
     },
     get projection() {
       return projection;

@@ -2,7 +2,7 @@ import type { Model } from "../api/client.js";
 import type {
   CommunityMemberModel,
   CommunityMessageModel,
-} from "@lapismd/lapis-community/components/community-message";
+} from "../community/workspace-model.js";
 import { agentAvatarUrl } from "./agent-avatar.js";
 import type { FileDiffLineContext } from "@lapismd/design-core/diff";
 import type { ReviewInlinePatch } from "../controller/review-anchor-patch.js";

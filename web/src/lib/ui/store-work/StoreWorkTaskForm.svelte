@@ -4,7 +4,7 @@
   import StoreWorkField from "./StoreWorkField.svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { Input } from "@lapismd/design-core/shadcn/input";
-  import { CommunityChatComposer } from "@lapismd/lapis-community/components/community-chat-composer";
+  import CommunityChatComposer from "../community-chat-composer/CommunityChatComposer.svelte";
   import { workDraft } from "./work-drafts.js";
   import StoreWorkPicker from "./StoreWorkPicker.svelte";
   import { untrack } from "svelte";
@@ -17,6 +17,7 @@
     task = null,
     repositories,
     disabled = false,
+    onSaved,
     initialParent = "",
     transport,
   }: {
@@ -25,6 +26,7 @@
     task?: Model<"TaskV1"> | null;
     repositories: readonly StoreRepositorySummary[];
     disabled?: boolean;
+    onSaved?: () => void;
     initialParent?: string;
     transport?: import("../../controller/projects-hub-types.js").WorkBrowseTransport;
   } = $props();
@@ -67,6 +69,7 @@
             ...fields,
           },
     );
+    if (!work.state.pending && !work.state.error) onSaved?.();
   }
 </script>
 

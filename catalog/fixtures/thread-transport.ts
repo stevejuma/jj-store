@@ -168,6 +168,29 @@ export function createThreadTransport(
       if (kind === "threads") {
         const c = (request as ThreadRequest).command;
         if (c.type === "create") addThread(c.thread_id, c.title);
+        if (c.type === "rename" || c.type === "lifecycle") {
+          const thread = threads.get(c.thread_id)!;
+          threads.set(c.thread_id, {
+            ...thread,
+            reference: ref("thread_version", ++seq),
+            value: {
+              ...thread.value,
+              ...(c.type === "rename"
+                ? { title: c.title }
+                : {
+                    status: (
+                      {
+                        activate: "active",
+                        idle: "idle",
+                        archive: "archived",
+                        tombstone: "tombstoned",
+                        restore: "idle",
+                      } as const
+                    )[c.action],
+                  }),
+            },
+          });
+        }
         if (c.type === "message")
           addMessage(
             c.thread_id,

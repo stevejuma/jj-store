@@ -5,7 +5,7 @@
   import StoreWorkEmpty from "./StoreWorkEmpty.svelte";
   import StoreRepositoryDirectoryRow from "./StoreRepositoryDirectoryRow.svelte";
   import ListTodoIcon from "@lucide/svelte/icons/list-todo";
-  import { CommunitySkeleton } from "@lapismd/lapis-community/components";
+  import CommunitySkeleton from "../community-skeleton/CommunitySkeleton.svelte";
   import type { StoreController } from "../../controller/contracts.js";
   import "./community-work-rows.css";
   let {

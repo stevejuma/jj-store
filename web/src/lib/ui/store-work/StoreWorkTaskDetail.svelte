@@ -3,10 +3,8 @@
   import type { Snippet } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as Collapsible from "@lapismd/design-core/shadcn/collapsible";
-  import {
-    CommunityMarkdownContent,
-    CommunityRelativeTime,
-  } from "@lapismd/lapis-community/components";
+  import CommunityMarkdownContent from "../community-markdown-content/CommunityMarkdownContent.svelte";
+  import CommunityRelativeTime from "../community-relative-time/CommunityRelativeTime.svelte";
   import ArrowLeftIcon from "@lucide/svelte/icons/arrow-left";
   import ChevronDownIcon from "@lucide/svelte/icons/chevron-down";
   import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";

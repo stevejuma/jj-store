@@ -41,3 +41,7 @@ pub mod local_management;
 pub mod sync_management;
 
 pub mod search_management;
+
+pub mod content_search;
+
+mod thread_directory;

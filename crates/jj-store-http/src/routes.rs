@@ -8,6 +8,7 @@ use crate::collab::{
     emojis as collab_emojis, events as collab_events, message as collab_message,
     reactions as collab_reactions, thread as collab_thread, threads as collab_threads,
 };
+use crate::content_search::page as content_search;
 use crate::local_management::{link_workspace, local_workspaces, pick_workspace_folder};
 use crate::mutations::{
     apply as mutation_apply, preview as mutation_preview, status as mutation_status,
@@ -303,6 +304,7 @@ macro_rules! endpoints {
             (post, "/repos/{repo}/reaction-emojis/commands", collab_emoji_retire, Empty, jj_store_service::collab_mutations::Outcome, Reply::Json(200)),
             (get, "/repos/{repo}/reaction-emojis/commands/{request_id}", collab_status, Empty, jj_store_service::collab_mutations::Status, Reply::Json(200)),
             (get, "/repos/{repo}/reaction-assets/{asset}", collab_image, Empty, String, Reply::Raster),
+            (get, "/repos/{repo}/content/search", content_search, jj_store_service::content_search::ContentQuery, jj_store_service::content_search::ContentPage, Reply::Json(200)),
             (get, "/repos/{repo}/work/browse", work_browse, jj_store_service::work::WorkBrowseQuery, jj_store_service::work::WorkBrowsePage, Reply::Json(200)),
             (get, "/repos/{repo}/work", work_page, jj_store_service::work::WorkQuery, jj_store_service::work::WorkPage, Reply::Json(200)),
             (post, "/repos/{repo}/work/commands", work_apply, Empty, jj_store_service::work::Outcome, Reply::Json(200)),

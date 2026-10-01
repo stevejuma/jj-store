@@ -6,6 +6,7 @@ import {
 
 export default defineConfig(tableRequirements(), {
   name: "jj-store",
+  plugins: ["scripts/check-ui-ownership.mjs"],
   idPattern: /^JST-[A-Z]+-\d{3}$/,
   tableSection: "Requirements",
   ruleIds: {
@@ -59,6 +60,10 @@ export default defineConfig(tableRequirements(), {
         {
           pattern: "^(?:catalog/|\\.storybook/|docs/catalog\\.md$)",
           chapters: ["spec/src/ui.md"],
+        },
+        {
+          pattern: "^docs/ui-provenance\\.json$",
+          chapters: ["spec/src/spec-governance.md", "spec/src/ui.md"],
         },
         {
           pattern: "^rustfmt\\.toml$",

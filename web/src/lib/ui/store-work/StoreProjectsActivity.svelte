@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import { CommunitySkeleton } from "@lapismd/lapis-community/components";
+  import CommunitySkeleton from "../community-skeleton/CommunitySkeleton.svelte";
   import { filterNativeActivity } from "../../controller/native-activity-filter.js";
   import type { NativeActivityCommit } from "../../controller/native-activity-types.js";
   import StoreRepositoryActivity from "../store-collaboration/StoreRepositoryActivity.svelte";

@@ -2,7 +2,7 @@
   import * as Empty from "@lapismd/design-core/shadcn/empty";
   import BotIcon from "@lucide/svelte/icons/bot";
   import ExternalLinkIcon from "@lucide/svelte/icons/external-link";
-  import { CommunityMessage } from "@lapismd/lapis-community/components/community-message";
+  import CommunityMessage from "../community-message/CommunityMessage.svelte";
   import { isLocalAssociation } from "../../controller/repository-read-types.js";
   import type { StoreController } from "../../controller/contracts.js";
   import {

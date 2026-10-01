@@ -1,3 +1,4 @@
+import { loadWorkCommentFocus } from "./work-comment-focus.js";
 import { ApiError, pretty } from "../api/client.js";
 import {
   emptyWorkState,
@@ -9,7 +10,11 @@ import {
 import type { Model } from "../api/client.js";
 export function createWorkController(context: {
   source(): WorkTransport;
-  route(): { projectId?: string | null; taskId?: string | null };
+  route(): {
+    projectId?: string | null;
+    taskId?: string | null;
+    commentId?: string | null;
+  };
   select(project: string | null, task: string | null): void;
   changed(): void;
 }): WorkController {
@@ -99,8 +104,11 @@ export function createWorkController(context: {
     state.loading = true;
     state.error = "";
     const selection = context.route();
+    state.focusCommentId = selection.commentId ?? null;
     const saved =
-      !refresh && cached.get(key(selection.projectId, selection.taskId));
+      !refresh &&
+      !selection.commentId &&
+      cached.get(key(selection.projectId, selection.taskId));
     if (saved) {
       const { savedPins, ...view } = saved;
       pins.clear();
@@ -130,6 +138,7 @@ export function createWorkController(context: {
           { project: route.projectId ?? undefined, task: route.taskId },
           "comments",
         );
+      await loadWorkCommentFocus(state, route, read, () => ticket === version);
     } catch (cause) {
       if (ticket === version) {
         if (

@@ -31,19 +31,19 @@ results. It replaces rooms, messages and members with snapshot-bound native
 operations, commits and files, and consumes the released Design Core Command
 View and Dialog exports without copying them.
 
-Agent and review presentation was inspected at Community revision
-`5691eebd61d2ae387a4cf2fd70af5a525c2bc1e3`; its focused public component
-subpaths were accepted at revision `0df681141dcd6c70c31c1ba796323a7934c3488e`.
-Design Core was inspected at revision
-`5596d04ee7b2b6da9b0f3f066c5c0c2db7037f4d`. jj-store consumes Community's public
-`CommunityMessage`, `CommunityChatComposer` and presentation-model exports
-through their focused subpaths and the normal `@lapismd/lapis-community@^0.1.0`
-manifest range. The local pnpm hook resolves the clean sibling source for
-development acceptance without changing the publishable range. Native stable
-identities, root pins, pagination, durable review commands, route state and
-layout storage remain jj-store-owned. Design Core's public Column Canvas, Empty,
-Alert, Button and Skeleton exports provide the shared interaction primitives; no
-upstream component was copied for this slice.
+Community-derived production presentation, models, helpers, styles and assets
+are maintained entirely under `web/src/lib`. `docs/ui-provenance.json` records
+source paths, revisions and Apache-2.0 attribution for the complete copied
+closure, plus explicitly native helpers. The Threads, forum directory, settings,
+search and composer adaptation inspected source revision
+`741b8285e2081f1c9af58afe5a9b72f538fad781`. No runtime, type, build, test or
+local checkout dependency on Community is permitted. `pnpm check:ui-ownership`
+enforces dependencies, local file ownership and declared provenance coverage.
+Design Core and Mira remain foundational packages. Native stable identities,
+root pins, pagination, durable review commands, route state and layout storage
+remain jj-store-owned. Design Core's public Column Canvas, Empty, Alert, Button
+and Skeleton exports provide the shared interaction primitives; no upstream
+component was copied for this slice.
 
 | Community source                                                                                                                                                                                                    | jj-store destination                                                                         | Adaptation                                                                                                                                               |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |

@@ -320,3 +320,43 @@ test("opening Threads from Projects binds an authorized repository and clears un
   expect(history.route.repository).toBe(ids.repo);
   expect(connected).toHaveLength(1);
 });
+
+test("search selection loads bounded older pages to locate the exact message", async () => {
+  const f = fixture();
+  const original = f.transport.events;
+  const full = await original(ids.thread);
+  const read = vi.fn(async (_id: string, cursor?: string) =>
+    cursor
+      ? full
+      : {
+          ...full,
+          items: { type: "events" as const, thread_id: ids.thread, events: [] },
+          next_cursor: "older",
+        },
+  );
+  f.transport.events = read;
+  f.controller.selectReply(ids.message);
+  await f.controller.restore();
+  expect(read).toHaveBeenCalledWith(ids.thread, "older");
+  expect(
+    f.controller.projection.messages.find((m) => m.id === ids.message)?.content,
+  ).toBe("Welcome to the channel");
+});
+test("settings commands use exact selected thread revision", async () => {
+  const f = fixture();
+  await f.controller.restore();
+  const before = f.controller.detail!.thread.reference;
+  await f.controller.rename("Planning");
+  expect(f.requests[0].command).toEqual({
+    type: "rename",
+    thread_id: ids.thread,
+    expected: before,
+    title: "Planning",
+  });
+  await f.controller.lifecycle("archive");
+  expect(f.requests[1].command).toMatchObject({
+    type: "lifecycle",
+    thread_id: ids.thread,
+    action: "archive",
+  });
+});

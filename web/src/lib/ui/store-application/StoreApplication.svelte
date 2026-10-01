@@ -2,10 +2,10 @@
   // Adapted from CommunityApplication's shell composition; all state is local.
   import {
     AppShell,
-    AppShellController,
-    createLocalStorageAppShellLayoutPersistence,
     type AppShellDisplayMode,
   } from "@lapismd/design-core/shell";
+  import { createStoreShell } from "./create-store-shell.js";
+  import { provideStoreEntityContext } from "./entity-context.js";
   import { projectsSidebarModel } from "../store-work/projects-sidebar-model.js";
   import { withThreadNavigation } from "../store-threads/thread-navigation.js";
   import {
@@ -15,6 +15,8 @@
   import StoreProjectsBreadcrumb from "../store-work/StoreProjectsBreadcrumb.svelte";
   import { isRepositoryProjects } from "../../controller/projects-view-cache.js";
   import StoreProjectsRail from "../store-work/StoreProjectsRail.svelte";
+  import StoreThreadSidebar from "../store-threads/StoreThreadSidebar.svelte";
+  import { createThreadPanel } from "../store-threads/thread-panel.svelte.js";
   import StoreRepositoryTabs from "./StoreRepositoryTabs.svelte";
   import StoreRepositoryNavigation from "./StoreRepositoryNavigation.svelte";
   import { repositorySections } from "./repository-sections.js";
@@ -41,11 +43,7 @@
   import StoreApplicationHeaderActions from "./StoreApplicationHeaderActions.svelte";
   import StoreConflictEditor from "../store-conflicts/StoreConflictEditor.svelte";
   import { conflictEditorKey } from "../store-conflicts/conflict-editor.js";
-  import {
-    loadRepositoryShellLayout,
-    repositoryShellStorageKey,
-    resolveLayoutStorage,
-  } from "../layout-storage.js";
+  import { resolveLayoutStorage } from "../layout-storage.js";
   import {
     loadNavigationLayout,
     saveNavigationLayout,
@@ -70,29 +68,20 @@
   $effect(() =>
     saveNavigationLayout(storage, { sections: sectionOpen, items: itemOpen }),
   );
-  const initialLayout = untrack(() => loadRepositoryShellLayout(storage));
-  const shell = new AppShellController({
-    leftCollapsed:
-      initialLayout.left?.collapsed ?? untrack(() => initiallyCollapsed),
-    leftClosed: initialLayout.left?.closed ?? false,
-    ...(initialLayout.left?.width === undefined
-      ? {}
-      : { leftWidth: initialLayout.left.width }),
-    rightCollapsed: initialLayout.right?.collapsed ?? false,
-    rightClosed: initialLayout.right?.closed ?? true,
-    rightWidth: initialLayout.right?.width ?? 320,
-    sidebarMinWidth: 48,
-    sidebarMaxWidth: 440,
-    ...(storage
-      ? {
-          persistence: createLocalStorageAppShellLayoutPersistence(
-            repositoryShellStorageKey,
-            storage,
-          ),
-        }
-      : {}),
-  });
+  const shell = createStoreShell(
+    storage,
+    untrack(() => initiallyCollapsed),
+  );
   onDestroy(() => void shell.dispose());
+  const threadPanel = createThreadPanel(
+    () => shell.right.open(),
+    () => shell.right.close(),
+  );
+  $effect(() => {
+    const route = controller.state.route;
+    if (route.page === "threads" && route.replyId)
+      untrack(() => threadPanel.open("replies"));
+  });
   const workspaceGuard = $state({ editing: false });
   setContext(workspaceNavigationKey, workspaceGuard);
   let conflictOpen = $state(false);
@@ -110,6 +99,10 @@
       ["previewing", "prepared", "applying", "unknown"].includes(
         controller.state.mutation.status,
       ),
+  );
+  provideStoreEntityContext(
+    () => controller,
+    () => workspaceBlocked,
   );
   const current = $derived(controller.state.route);
   let searchOpen = $state(false);
@@ -287,22 +280,32 @@
   </AppShell.Main>
   {#if !settingsOpen}<AppShell.Sidebar
       side="right"
-      variant="rail"
+      constraintPriority={0}
+      constrainedPresentation="replace-main"
+      variant={current.page === "threads" ? "default" : "rail"}
       class="community-application__project-overview-sidebar"
-      label="Repository details"
+      label={current.page === "threads"
+        ? threadPanel.kind === "settings"
+          ? "Thread settings"
+          : threadPanel.kind === "members"
+            ? "Thread contributors"
+            : "Thread replies"
+        : "Repository details"}
       resizeLabel="Resize repository details"
       closeable
     >
-      <AppShell.Sidebar.Body>
-        {#if current.page === "projects" && controller.projects && !isRepositoryProjects(current)}<StoreProjectsRail
-            {controller}
-          />{:else}<StoreRepositoryDetails {controller} />
-          <StoreRepositoryNavigation
-            page={current.page}
-            onSelect={selectPage}
-          />
-          <StoreRepositoryContextActions {controller} />{/if}
-      </AppShell.Sidebar.Body>
+      {#if current.page === "threads" && controller.threads?.detail}<StoreThreadSidebar
+          {controller}
+        />{:else}<AppShell.Sidebar.Body>
+          {#if current.page === "projects" && controller.projects && !isRepositoryProjects(current)}<StoreProjectsRail
+              {controller}
+            />{:else}<StoreRepositoryDetails {controller} />
+            <StoreRepositoryNavigation
+              page={current.page}
+              onSelect={selectPage}
+            />
+            <StoreRepositoryContextActions {controller} />{/if}
+        </AppShell.Sidebar.Body>{/if}
     </AppShell.Sidebar>{/if}
   <StoreConflictEditor
     {controller}

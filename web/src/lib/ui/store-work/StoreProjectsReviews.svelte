@@ -2,7 +2,7 @@
   import StoreWorkCollection from "./StoreWorkCollection.svelte";
   import GitBranchIcon from "@lucide/svelte/icons/git-branch";
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import { CommunitySkeleton } from "@lapismd/lapis-community/components";
+  import CommunitySkeleton from "../community-skeleton/CommunitySkeleton.svelte";
   import StoreWorkReviewRow from "./StoreWorkReviewRow.svelte";
   import "./community-work-reviews.css";
   import type { StoreController } from "../../controller/contracts.js";

@@ -1,71 +1,15 @@
 .store-threads {
   display: flex;
+  flex: 1;
+  width: 100%;
+  min-width: 0;
   flex-direction: column;
   min-height: 0;
   height: 100%;
-}
-.store-threads__header {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  padding: 0.75rem;
-  border-bottom: 1px solid var(--border);
-}
-.store-threads h1 {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin: 0 auto 0 0;
-  font-size: 1rem;
-}
-.store-threads__panes {
-  display: flex;
-  flex: 1;
-  min-height: 0;
 }
 .store-threads__conversation {
   display: flex;
   flex: 1;
   min-width: 0;
   min-height: 0;
-}
-.store-threads__side {
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  width: 22rem;
-  max-width: 45%;
-  border-left: 1px solid var(--border);
-}
-.store-threads__side > header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.5rem;
-}
-.store-threads h2 {
-  margin: 0;
-  font-size: 1rem;
-}
-.store-threads__directory {
-  display: grid;
-  gap: 0.5rem;
-  padding: 1rem;
-  align-content: start;
-}
-@media (max-width: 700px) {
-  .store-threads__panes {
-    position: relative;
-  }
-  .store-threads__side {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    max-width: none;
-    background: var(--background);
-  }
-  .store-threads__header {
-    gap: 0.25rem;
-  }
 }

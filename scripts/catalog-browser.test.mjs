@@ -206,7 +206,7 @@ test("cold_catalog_contract", { timeout: 60000 }, async () => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(url);
     await expect(shell).toHaveAttribute("data-display-mode", "mobile");
-    await page.getByRole("button", { name: "Open navigation sidebar" }).click();
+    await page.getByRole("button", { name: "Open details sidebar" }).click();
     await page.getByRole("button", { name: "JJ Log", exact: true }).click();
     await expect(
       page.getByRole("button", { name: "Collapse JJ Log column", exact: true }),
@@ -253,13 +253,11 @@ test("cold_catalog_contract", { timeout: 60000 }, async () => {
       name: "Markdown preview for README.md",
     });
     await expect(markdownPreview).toContainText("jj-store");
-    await expect(markdownPreview).toContainText(
-      "<script>alert('source')</script>",
-    );
     await expect(markdownPreview.locator("script")).toHaveCount(0);
     await page.getByRole("button", { name: "Source", exact: true }).click();
     const code = page.locator('[data-ui-component="code-block"]').first();
     await expect(code).toContainText("# jj-store");
+    await expect(code).toContainText("<script>alert('source')</script>");
     await expect(code).toHaveCSS("font-family", /Source Code Pro/);
     await page.screenshot({ path: ".scratch/catalog-files.png" });
     await page.setViewportSize({ width: 390, height: 844 });

@@ -2,7 +2,7 @@
   import { FileDiff } from "@lapismd/design-core/diff";
   import StoreMessageReactions from "../store-threads/StoreMessageReactions.svelte";
   import StoreReviewComposer from "./StoreReviewComposer.svelte";
-  import { CommunityMessage } from "@lapismd/lapis-community/components/community-message";
+  import CommunityMessage from "../community-message/CommunityMessage.svelte";
   import type { StoreController } from "../../controller/contracts.js";
   import {
     anchorPath,

@@ -227,6 +227,21 @@ async fn http_threads_reactions_keep_exact_targets_assets_signed_roots_and_recei
     .await;
     let earlier = post(&router, "reactions/query", &query).await;
     assert_eq!(earlier["items"]["reactions"][0]["count"], 1);
+    let content = get(&router, "content/search?q=Second&section=threads").await;
+    assert_eq!(content["results"].as_array().unwrap().len(), 1);
+    assert_eq!(content["results"][0]["message"], json!(message_id));
+    assert!(
+        get(&router, "content/search?q=First").await["results"]
+            .as_array()
+            .unwrap()
+            .is_empty()
+    );
+    assert_eq!(
+        send(&router, request("content/search?limit=0", None))
+            .await
+            .0,
+        StatusCode::BAD_REQUEST
+    );
     let new_target = json!({"type":"human_message","thread_id":thread_id,"message_id":message_id,"revision":edited["receipt"]["result"]["result"]["message"]});
     let current = post(
         &router,
@@ -360,6 +375,7 @@ async fn http_threads_reactions_keep_exact_targets_assets_signed_roots_and_recei
     );
     let mut samples = vec![];
     for (route, method, data) in [
+        ("content/search", "get", content),
         ("threads", "get", empty),
         ("threads", "get", page),
         ("threads", "get", resumed),

@@ -3,6 +3,7 @@ import { svelte } from "@sveltejs/vite-plugin-svelte";
 import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
   plugins: [tailwindcss(), svelte()],
+  resolve: { dedupe: ["svelte", "bits-ui"] },
   // Process source-distributed Svelte rune modules through the normal compiler.
   optimizeDeps: {
     include: [

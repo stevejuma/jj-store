@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { CommunityMarkdownContent } from "@lapismd/lapis-community/components";
+  import CommunityMarkdownContent from "../community-markdown-content/CommunityMarkdownContent.svelte";
   let {
     content,
     label = "Markdown preview",

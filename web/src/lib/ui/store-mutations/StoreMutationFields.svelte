@@ -2,7 +2,7 @@
   import { Input } from "@lapismd/design-core/shadcn/input";
   import { Checkbox } from "@lapismd/design-core/shadcn/checkbox";
   import * as Field from "@lapismd/design-core/shadcn/field";
-  import { CommunityChatComposer } from "@lapismd/lapis-community/components/community-chat-composer";
+  import CommunityChatComposer from "../community-chat-composer/CommunityChatComposer.svelte";
   import "../editor-focus.css";
   import { untrack } from "svelte";
   import type { RepositoryLogRevision } from "../../projects/repository-log.js";

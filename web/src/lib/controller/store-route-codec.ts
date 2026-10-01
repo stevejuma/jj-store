@@ -39,6 +39,7 @@ const queryKeys = new Set([
   "task",
   "channel",
   "reply",
+  "comment",
 ]);
 
 export type StoreRouteHashResult =
@@ -93,7 +94,8 @@ export function storeRouteToHash(route: StoreRoute): string | null {
   if (route.path) query.set("file", route.path);
   if (route.directory) query.set("directory", route.directory);
   if (route.agentSessionId) query.set("session", route.agentSessionId);
-  if (route.threadId) query.set("channel", route.threadId);
+  if (route.threadId) query.set("thread", route.threadId);
+  if (route.commentId) query.set("comment", route.commentId);
   if (route.replyId) query.set("reply", route.replyId);
   if (route.reviewThreadId) query.set("thread", route.reviewThreadId);
   if (route.projectId) query.set("project", route.projectId);
@@ -141,15 +143,25 @@ export function storeRouteFromHash(hash: string): StoreRouteHashResult {
   const path = one(query, "file");
   const directory = one(query, "directory");
   const agentSessionId = one(query, "session");
-  const reviewThreadId = one(query, "thread");
-  const threadId = one(query, "channel");
+  const primaryThread = one(query, "thread");
+  const legacyThread = one(query, "channel");
+  if (page === "threads" && primaryThread !== null && legacyThread !== null)
+    return {
+      kind: "invalid",
+      message: "Thread route has duplicate selections.",
+    };
+  const reviewThreadId = page === "threads" ? null : primaryThread;
+  const threadId =
+    page === "threads" ? (primaryThread ?? legacyThread) : legacyThread;
   const replyId = one(query, "reply");
   const reviewView = one(query, "review_view");
   const projectId = one(query, "project");
   const taskId = one(query, "task");
+  const commentId = one(query, "comment");
   const valid =
     (reviewView === null || (page === "reviews" && reviewView === "columns")) &&
     validOptional(projectId, stableId) &&
+    validOptional(commentId, stableId) &&
     validOptional(taskId, stableId) &&
     validOptional(snapshotOperationId, objectId) &&
     validOptional(commitId, commitObjectId) &&
@@ -176,6 +188,8 @@ export function storeRouteFromHash(hash: string): StoreRouteHashResult {
     return { kind: "invalid", message: "Replies require a selected Thread." };
   if ((projectId || taskId) && page !== "projects")
     return { kind: "invalid", message: "Task selections require Projects." };
+  if (commentId && (!taskId || page !== "projects"))
+    return { kind: "invalid", message: "Comment selections require a task." };
   if (taskId && !projectId)
     return { kind: "invalid", message: "Task selections require a project." };
   const hasSnapshotSelection = Boolean(
@@ -284,7 +298,9 @@ export function storeRouteFromHash(hash: string): StoreRouteHashResult {
       reviewThreadId,
       ...(threadId ? { threadId } : {}),
       ...(replyId ? { replyId } : {}),
-      ...(page === "projects" ? { projectId, taskId } : {}),
+      ...(page === "projects"
+        ? { projectId, taskId, ...(commentId ? { commentId } : {}) }
+        : {}),
     },
   };
 }

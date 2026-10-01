@@ -4,6 +4,7 @@ pub mod assets;
 mod body;
 mod collab;
 mod collaboration;
+mod content_search;
 pub mod contract;
 mod dto;
 mod error;
@@ -164,6 +165,7 @@ struct State {
     review_threads: ReviewThreadPager,
     collab: jj_store_service::collab_pages::CollabPager,
     work: jj_store_service::work::WorkPager,
+    content: jj_store_service::content_search::ContentPager,
     review_commands: jj_store_service::review_mutations::ReviewCommandService,
     tasks: index_tasks::IndexTasks,
     commands: jj_store_service::mutations::CommandService,
@@ -297,6 +299,7 @@ impl HttpApi {
             review_threads,
             collab,
             work: jj_store_service::work::WorkPager::new(Arc::new(SystemClock)),
+            content: jj_store_service::content_search::ContentPager::new(Arc::new(SystemClock)),
             review_commands,
             tasks,
             commands,

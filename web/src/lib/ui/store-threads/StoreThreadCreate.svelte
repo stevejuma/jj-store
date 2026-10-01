@@ -7,9 +7,15 @@
   let {
     threads,
     disabled = false,
-  }: { threads: ThreadsController; disabled?: boolean } = $props();
-  let open = $state(false),
-    title = $state(""),
+    open = $bindable(false),
+    showTrigger = true,
+  }: {
+    threads: ThreadsController;
+    disabled?: boolean;
+    open?: boolean;
+    showTrigger?: boolean;
+  } = $props();
+  let title = $state(""),
     error = $state("");
   async function create() {
     error = "";
@@ -24,15 +30,15 @@
 </script>
 
 <Dialog.Root bind:open>
-  <Button
-    variant="outline"
-    disabled={disabled || threads.busy || !!threads.pending}
-    onclick={() => (open = true)}>New thread</Button
-  >
-  <Dialog.Content>
+  {#if showTrigger}<Button
+      variant="outline"
+      disabled={disabled || threads.busy || !!threads.pending}
+      onclick={() => (open = true)}>New thread</Button
+    >{/if}
+  <Dialog.Content preventScroll={false}>
     <Dialog.Header
       ><Dialog.Title>New thread</Dialog.Title><Dialog.Description
-        >Create a channel for this repository’s conversation.</Dialog.Description
+        >Create a thread for this repository’s conversation.</Dialog.Description
       ></Dialog.Header
     >
     <form

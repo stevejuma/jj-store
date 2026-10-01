@@ -3,7 +3,7 @@
   import { Button } from "@lapismd/design-core/shadcn/button";
   import MessageSquareIcon from "@lucide/svelte/icons/message-square";
   import MessageSquareReplyIcon from "@lucide/svelte/icons/message-square-reply";
-  import { CommunityChatComposer } from "@lapismd/lapis-community/components/community-chat-composer";
+  import CommunityChatComposer from "../community-chat-composer/CommunityChatComposer.svelte";
   import "../editor-focus.css";
   import type { Model } from "../../api/client.js";
   import {

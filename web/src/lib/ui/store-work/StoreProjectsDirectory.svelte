@@ -7,7 +7,7 @@
   import StoreProjectsRepositories from "./StoreProjectsRepositories.svelte";
   import type { StoreController } from "../../controller/contracts.js";
   import StoreWorkEmpty from "./StoreWorkEmpty.svelte";
-  import { CommunitySkeleton } from "@lapismd/lapis-community/components";
+  import CommunitySkeleton from "../community-skeleton/CommunitySkeleton.svelte";
   import StoreWorkTaskRows from "./StoreWorkTaskRows.svelte";
   let {
     controller,

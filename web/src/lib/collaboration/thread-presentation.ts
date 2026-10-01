@@ -2,7 +2,7 @@ import type {
   CommunityMemberModel,
   CommunityMessageModel,
   CommunityReactionModel,
-} from "@lapismd/lapis-community/components";
+} from "../community/workspace-model.js";
 import { pretty, type Model } from "../api/client.js";
 import type {
   ReactionItems,

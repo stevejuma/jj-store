@@ -3,7 +3,7 @@
   import StoreWorkField from "./StoreWorkField.svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { Input } from "@lapismd/design-core/shadcn/input";
-  import { CommunityChatComposer } from "@lapismd/lapis-community/components/community-chat-composer";
+  import CommunityChatComposer from "../community-chat-composer/CommunityChatComposer.svelte";
   import { workDraft } from "./work-drafts.js";
   import { untrack } from "svelte";
   import type { Model } from "../../api/client.js";
@@ -12,10 +12,12 @@
     work,
     project = null,
     disabled = false,
+    onSaved,
   }: {
     work: WorkController;
     project?: Model<"ProjectV1"> | null;
     disabled?: boolean;
+    onSaved?: () => void;
   } = $props();
   const formId = $props.id();
   const draft = untrack(() =>
@@ -42,6 +44,7 @@
             body: draft.body,
           },
     );
+    if (!work.state.pending && !work.state.error) onSaved?.();
   }
 </script>
 

@@ -1,5 +1,11 @@
 # Typed mutations
 
+Application content search is an authorized read facade over one selected
+Thread/WorkStore snapshot. The service checks source inventory bounds before
+filtering and reauthorizes retained query pages. Thread directory metadata is
+derived from the same selected graph; neither projection stages objects or
+publishes state. The API and adapter chapters govern query and cursor contracts.
+
 Thread timeline pages hydrate only their own authorized human-message revisions
 from the same captured graph. Agent and review content remains in its canonical
 source; UI adapters never invent transcript bodies.

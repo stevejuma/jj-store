@@ -445,12 +445,25 @@ async fn history_and_emoji_pages_keep_pinned_membership_and_query_kind() {
         .unwrap();
     assert_eq!(first.snapshot, next.snapshot);
     assert!(next.next_cursor.is_none());
-    let Items::Emojis { definitions } = next.items else {
+    let Items::Emojis {
+        definitions,
+        versions,
+    } = next.items
+    else {
         panic!()
     };
     assert_eq!(
         definitions[0].emoji_id,
         jj_collab::CustomEmojiId::new([21; 16])
+    );
+    assert_eq!(versions.len(), 1);
+    assert_eq!(
+        versions.get(&definitions[0].emoji_id),
+        Some(
+            &jj_collab::CollabObjectV1::CustomEmojiVersion(definitions[0].clone())
+                .reference()
+                .unwrap()
+        )
     );
     assert_eq!(
         pager

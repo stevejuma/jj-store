@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { CommunityChatComposer } from "@lapismd/lapis-community/components/community-chat-composer";
+  import CommunityChatComposer from "../community-chat-composer/CommunityChatComposer.svelte";
   import type { StoreController } from "../../controller/contracts.js";
   import {
     principalMember,

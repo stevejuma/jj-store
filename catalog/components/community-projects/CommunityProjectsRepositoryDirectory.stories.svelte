@@ -94,7 +94,7 @@
     const indicator = readme.querySelector<HTMLElement>(
       ".community-projects__repository-document-tab-indicator",
     )!;
-    await expect(getComputedStyle(indicator).height).toBe("2px");
+    await expect(getComputedStyle(indicator).height).toBe("3px");
     await waitFor(() => expect(getComputedStyle(indicator).opacity).toBe("1"));
     await expect(getComputedStyle(license).backgroundColor).toBe(
       "rgba(0, 0, 0, 0)",

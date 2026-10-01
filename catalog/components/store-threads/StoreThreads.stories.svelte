@@ -22,11 +22,16 @@
       (await c.findAllByRole("button", { name: "general" }))[0]!,
     );
     await expect(await c.findByText("Welcome to the channel")).toBeVisible();
-    await userEvent.click(c.getByRole("button", { name: "Members" }));
+    await userEvent.click(
+      c.getByRole("button", { name: /View thread contributors/ }),
+    );
     await expect(
-      c.getByRole("complementary", { name: "Thread members" }),
+      c.getByRole("complementary", { name: "Thread contributors" }),
     ).toBeVisible();
-    await userEvent.click(c.getByRole("button", { name: "Close members" }));
+    await userEvent.click(
+      c.getByRole("button", { name: "Close thread panel" }),
+    );
+    await userEvent.click(c.getByRole("button", { name: "All threads" }));
     await userEvent.click(c.getByRole("button", { name: "New thread" }));
     await userEvent.type(
       await body.findByRole("textbox", { name: "Thread name" }),
@@ -34,7 +39,7 @@
     );
     await userEvent.click(body.getByRole("button", { name: "Create thread" }));
     await expect(
-      await c.findByRole("heading", { name: "planning" }),
+      await c.findByText("planning", { selector: "[data-ui-part=room-title]" }),
     ).toBeVisible();
     await expect(
       await c.findByRole("button", { name: "planning" }),

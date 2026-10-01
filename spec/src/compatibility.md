@@ -1,5 +1,11 @@
 # Compatibility and release
 
+The additive application content-search endpoint exposes V1 results with full
+native source identities, current revisions, bounded excerpts and opaque
+expiring cursors. Generated OpenAPI/TypeScript and actual HTTP response captures
+qualify this route alongside existing consumers. Persistence formats and
+operation-pinned code search remain unchanged.
+
 The channel UI consumes additive authorized timeline and reaction witnesses.
 Messages with no reply parent retain the original canonical bytes; replies
 retain exact parent revisions through edits, closure transfer and cold recovery.

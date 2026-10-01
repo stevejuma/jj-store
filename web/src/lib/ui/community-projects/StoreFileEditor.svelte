@@ -7,7 +7,7 @@
   import * as Dialog from "@lapismd/design-core/shadcn/dialog";
   import * as Field from "@lapismd/design-core/shadcn/field";
   import { Spinner } from "@lapismd/design-core/shadcn/spinner";
-  import { CommunityChatComposer } from "@lapismd/lapis-community/components/community-chat-composer";
+  import CommunityChatComposer from "../community-chat-composer/CommunityChatComposer.svelte";
   import { untrack } from "svelte";
   import type {
     RepositoryBlob,

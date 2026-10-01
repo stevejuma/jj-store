@@ -1,5 +1,10 @@
 # CLI and server commands
 
+The native lifecycle HTTP fixture additionally qualifies current application
+content search and Thread directory metadata through the same authorized native
+service. This transport acceptance remains independent of a live runner or
+real-RustFS browser qualification.
+
 Typed human-message commands accept an optional exact reply parent. Existing
 unlinked message commands preserve their encoding and behavior.
 

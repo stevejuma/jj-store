@@ -1,10 +1,8 @@
 <script lang="ts">
   // CommunityProjects.svelte taskListRow (Apache-2.0), native fields/actions.
   import type { Model } from "../../api/client.js";
-  import {
-    CommunityMemberHoverCard,
-    CommunityRelativeTime,
-  } from "@lapismd/lapis-community/components";
+  import CommunityMemberHoverCard from "../community-member-hover-card/CommunityMemberHoverCard.svelte";
+  import CommunityRelativeTime from "../community-relative-time/CommunityRelativeTime.svelte";
   import { workHierarchy } from "./work-hierarchy.js";
   import { workMember } from "./work-presentation.js";
   import StoreWorkTaskStateIcon from "./StoreWorkTaskStateIcon.svelte";

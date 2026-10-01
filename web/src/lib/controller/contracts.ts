@@ -1,4 +1,13 @@
 import type {
+  StoreSearchResult,
+  StoreSearchState,
+} from "./store-search-types.js";
+export type {
+  StoreSearchResultKind,
+  StoreSearchResult,
+  StoreSearchState,
+} from "./store-search-types.js";
+import type {
   RepositoryHead as Head,
   RepositoryCapabilities,
   RepositoryProfile,
@@ -40,33 +49,8 @@ export interface RepositoryChoice {
   searchTerms?: readonly string[];
   targets: readonly string[];
 }
-export type StoreSearchResultKind = "operation" | "commit" | "file";
-export interface StoreSearchResult {
-  id: string;
-  kind: StoreSearchResultKind;
-  title: string;
-  description: string;
-  author: string;
-  timestamp: number;
-  operationId: string | null;
-  commitId: string | null;
-  changeId: string | null;
-  scope: string | null;
-  path: string | null;
-  hasConflict: boolean;
-}
-export interface StoreSearchState {
-  readonly available: boolean;
-  readonly query: string;
-  readonly results: readonly StoreSearchResult[];
-  readonly status: StoreLoadStatus;
-  readonly error: string;
-  readonly canLoadMore: boolean;
-  readonly isStale: boolean;
-  readonly degraded: boolean;
-  readonly truncated: boolean;
-}
 export interface StoreRoute {
+  commentId?: string | null;
   threadId?: string | null;
   replyId?: string | null;
   projectsHub?: boolean;
@@ -210,6 +194,8 @@ export interface StoreControllerState {
 }
 /** Community's state/actions contract shape, scoped to local JJ presentation. */
 export interface StoreController {
+  readonly referenceSearch?: import("./global-search-types.js").GlobalSearchController;
+  readonly globalSearch?: import("./global-search-types.js").GlobalSearchController;
   readonly threads?: import("./thread-types.js").ThreadsController;
   readonly projects?: import("./projects-hub-types.js").ProjectsHubController;
   readonly work?: import("./work-types.js").WorkController;
@@ -264,6 +250,7 @@ export interface StoreController {
     ): Promise<StoreConflictUpload>;
     setFileViewMode(mode: FileListingViewMode): void | Promise<void>;
     toggleDirectory(path: string): void | Promise<void>;
+    openRoute?(route: StoreRoute): Promise<void>;
     openThreads?(id?: string | null): Promise<void>;
     openReview?(repository: string, thread: string): Promise<void>;
     openRepository(id: string): void | Promise<void>;

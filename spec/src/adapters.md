@@ -7,6 +7,19 @@ Tantivy opstamps are not WAL positions. The active index is never a RustFS
 mount. Nostr, Git export, and passive replication remain independent follow-on
 adapters.
 
+## Application content projection
+
+Application content search builds a bounded in-memory projection directly from
+one manifest-selected Thread/WorkStore snapshot. This is rebuilt on an explicit
+new query and is never repository authority. It has independent five-minute
+query-bound continuations, current-viewer checks and epoch invalidation.
+Matching uses current full bodies while returned excerpts are bounded. Neither
+historical revisions nor tombstones are searched as current content. An empty
+query selects recent active Threads, projects and tasks. Durable Tantivy
+acceleration for this projection is not required for this bounded native
+profile; code search retains its existing index, readiness and operation-pin
+contract.
+
 ## Requirements
 
 | ID            | Requirement                                                                                                                                                                                                                                                                                                                 |
@@ -17,6 +30,7 @@ adapters.
 | JST-ADAPT-004 | Lost index files MUST trigger compatible restore or rebuild even with an advanced remote cursor; search pagination MUST pin a reader generation and apply fresh authorization.                                                                                                                                              |
 | JST-ADAPT-005 | Passive replicas MUST publish applied manifests only after complete dependency transfer and MUST remain read-only until separately verified fenced promotion.                                                                                                                                                               |
 | JST-ADAPT-006 | Backup adapters MUST copy a pinned WAL recovery closure without blocking publication, verify streamed destination bytes and exact object versions, bind checkpoints to source and destination identity, publish immutable inventories/certificates, and advance a latest-verified pointer only after complete verification. |
+| JST-ADAPT-007 | The native application search projection MUST remain bounded, rebuildable and independent of repository authority and operation-pinned code search; failures MUST remain explicit and cannot select historical content as current.                                                                                          |
 
 ## Delivery and checkpoint contract
 

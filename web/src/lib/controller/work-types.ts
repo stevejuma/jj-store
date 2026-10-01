@@ -27,6 +27,7 @@ export interface WorkTransport {
   status(id: string): Promise<WorkStatus>;
 }
 export interface WorkState {
+  focusCommentId?: string | null;
   drafts?: Record<string, WorkDraft>;
   projects: Model<"ProjectV1">[];
   project: Model<"ProjectV1"> | null;
@@ -61,6 +62,7 @@ export function workId(): string {
 }
 export const emptyWorkState = (): WorkState => ({
   drafts: undefined,
+  focusCommentId: null,
   projects: [],
   project: null,
   tasks: [],

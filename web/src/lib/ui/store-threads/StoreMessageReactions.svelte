@@ -1,8 +1,6 @@
 <script lang="ts">
-  import {
-    CommunityReactions,
-    CommunityDetails,
-  } from "@lapismd/lapis-community/components";
+  import CommunityReactions from "../community-reactions/CommunityReactions.svelte";
+  import CommunityDetails from "../community-details/CommunityDetails.svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as Dialog from "@lapismd/design-core/shadcn/dialog";
   import { untrack } from "svelte";
@@ -105,7 +103,7 @@
     >{/if}
 </div>
 <Dialog.Root bind:open={actorsOpen}>
-  <Dialog.Content
+  <Dialog.Content preventScroll={false}
     ><Dialog.Header
       ><Dialog.Title>Who reacted</Dialog.Title><Dialog.Description
         >Authorized reactions to this exact message revision.</Dialog.Description

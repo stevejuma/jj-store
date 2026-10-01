@@ -1,0 +1,181 @@
+.lc-channel-settings__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: var(--ui-shell-toolbar-height);
+  padding: 0.75rem 1rem;
+  border-block-end: 0;
+}
+
+.lc-channel-settings__row > span:not(.lc-channel-settings__avatars) {
+  display: grid;
+  min-width: 0;
+  text-align: start;
+  overflow-wrap: anywhere;
+}
+
+.lc-channel-settings__row strong {
+  font-weight: 400;
+}
+
+.lc-channel-settings__row small,
+.lc-channel-settings p {
+  color: var(--muted-foreground);
+  font-size: var(--community-text-secondary);
+  font-weight: 400;
+}
+
+.lc-channel-settings {
+  display: grid;
+  gap: 1rem;
+  padding: 0.5rem 0.75rem 1rem;
+}
+
+.lc-channel-settings--canvas {
+  height: 100%;
+  min-height: 100%;
+}
+
+.lc-channel-settings__body--canvas
+  > [data-ui-component="scroll-area"]
+  > [data-ui-part="scroll-area-viewport"]
+  > div {
+  height: 100%;
+}
+
+.lc-channel-settings section {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.lc-channel-settings h2,
+.lc-channel-settings p {
+  margin: 0;
+}
+
+.lc-channel-settings__identity {
+  display: grid;
+  justify-items: center;
+  gap: 0.5rem;
+  padding: 1.25rem 0.75rem 1.5rem;
+  text-align: center;
+}
+
+.lc-channel-settings__identity > strong {
+  font-size: var(--community-text-dialog);
+}
+
+.lc-channel-settings__image {
+  display: grid;
+  width: 5rem;
+  height: 5rem;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--background);
+  background: var(--foreground);
+}
+
+.lc-channel-settings__image svg {
+  width: 2.25rem;
+  height: 2.25rem;
+  stroke-width: 1.75;
+}
+
+.lc-channel-settings h2 {
+  padding: 0.25rem 0.5rem;
+  font-size: var(--community-text-secondary);
+  font-weight: 700;
+}
+
+.lc-channel-settings p {
+  max-width: 17rem;
+  padding-inline: 0.5rem;
+  line-height: 1.5;
+}
+
+.lc-channel-settings__row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: auto;
+  min-height: 2.75rem;
+  justify-content: flex-start;
+  padding: 0.55rem 0.5rem;
+  white-space: normal;
+}
+
+.lc-channel-settings__row > [data-icon="inline-end"] {
+  margin-inline-start: auto;
+}
+
+.lc-channel-settings__copy-icon,
+.lc-channel-settings__edit-icon {
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.lc-channel-settings__row:hover .lc-channel-settings__copy-icon,
+.lc-channel-settings__row:focus .lc-channel-settings__copy-icon,
+.lc-channel-settings__row:focus-visible .lc-channel-settings__copy-icon,
+.lc-channel-settings__row:hover .lc-channel-settings__edit-icon,
+.lc-channel-settings__row:focus .lc-channel-settings__edit-icon,
+.lc-channel-settings__row:focus-visible .lc-channel-settings__edit-icon {
+  opacity: 1;
+}
+
+.lc-channel-settings__details-card,
+.lc-channel-settings__management-zone,
+.lc-channel-settings__canvas-entry,
+.lc-channel-settings__danger-zone {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--background);
+}
+
+.lc-channel-settings__avatars {
+  display: flex;
+  margin-inline-start: auto;
+  padding-inline-start: 0.5rem;
+}
+
+.lc-channel-settings__details-card > .lc-channel-settings__row,
+.lc-channel-settings__management-zone > .lc-channel-settings__row,
+.lc-channel-settings__canvas-entry > .lc-channel-settings__row,
+.lc-channel-settings__danger-zone > .lc-channel-settings__row {
+  min-height: 4rem;
+  border-radius: 0;
+}
+
+.lc-channel-settings__details-card > .lc-channel-settings__row:not(:last-child),
+.lc-channel-settings__management-zone
+  > .lc-channel-settings__row:not(:last-child),
+.lc-channel-settings__canvas-entry > .lc-channel-settings__row:not(:last-child),
+.lc-channel-settings__danger-zone > .lc-channel-settings__row:not(:last-child) {
+  border-block-end: 1px solid var(--border);
+}
+
+.lc-channel-settings__avatar {
+  margin-inline-start: -0.35rem;
+  outline: 2px solid var(--background);
+  border-radius: 50%;
+}
+
+.lc-channel-settings__avatar[data-shape="rounded"] {
+  border-radius: 25%;
+}
+
+.lc-channel-settings__danger-zone {
+  gap: 0;
+}
+
+.lc-channel-settings__destructive[data-ui-component="button"] {
+  color: var(--destructive);
+}
+
+.lc-channel-settings__destructive[data-ui-component="button"]:hover,
+.lc-channel-settings__destructive[data-ui-component="button"]:focus-visible {
+  color: color-mix(in srgb, var(--destructive) 70%, var(--foreground));
+  background: color-mix(in srgb, var(--destructive) 8%, var(--background));
+}
