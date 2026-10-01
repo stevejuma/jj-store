@@ -2,7 +2,9 @@ use super::{
     LocalCodeEvidenceV1, LocalError, LocalProfile, LocalRepository, LocalResult,
     agent_descriptor::LocalAgentRootV2,
 };
-use jj_store_jj::local_metadata::{Domain, Preparation, PublishOutcome, Receipt, Update};
+use jj_store_jj::local_metadata::{
+    BatchUpdate, Domain, DomainUpdate, Preparation, PublishOutcome, Receipt, Update,
+};
 use jj_store_model as m;
 use jj_store_wal::publication::{
     AgentCatalogEditor, AgentObjectRef, AgentObjectV1, AgentProjector, CaptureBatchId,
@@ -18,6 +20,11 @@ pub enum LocalAgentCommand {
     Capture {
         profile: NormalizerProfileV1,
         batch: Box<SanitizedObservationBatchV1>,
+    },
+    BoundCapture {
+        profile: NormalizerProfileV1,
+        batch: Box<SanitizedObservationBatchV1>,
+        binding: jj_collab::ThreadBindingV1,
     },
     Provenance {
         expected: Option<AgentObjectRef>,
@@ -37,9 +44,14 @@ impl LocalAgentRequest {
         if self.version != 1 {
             return Err(LocalError::Invalid);
         }
-        if let LocalAgentCommand::Capture { profile, batch } = &self.command {
+        if let LocalAgentCommand::Capture { profile, batch }
+        | LocalAgentCommand::BoundCapture { profile, batch, .. } = &self.command
+        {
             batch.validate().map_err(|_| LocalError::Invalid)?;
             profile.validate().map_err(|_| LocalError::Unsupported)?;
+        }
+        if let LocalAgentCommand::BoundCapture { binding, .. } = &self.command {
+            binding.validate()?;
         }
         if let LocalAgentCommand::Provenance {
             expected,
@@ -166,17 +178,21 @@ impl LocalRepository {
                 return receipt(value);
             }
             let base = self.agent_store_at(selected.as_ref(), proposed).await?;
+            let mut captured = None;
             let root = match &request.command {
                 LocalAgentCommand::Initialize => {
                     jj_store_wal::publication::AgentSnapshotRead::root(&base).clone()
                 }
-                LocalAgentCommand::Capture { profile, batch } => {
+                LocalAgentCommand::Capture { profile, batch }
+                | LocalAgentCommand::BoundCapture { profile, batch, .. } => {
                     let delta = AgentProjector::new(base.io.as_ref())
                         .stage_agent_capture(&base, profile, batch, at)
                         .await?;
-                    AgentCatalogEditor::new(base.io.as_ref())
+                    let root = AgentCatalogEditor::new(base.io.as_ref())
                         .apply_delta(&base, &delta)
-                        .await?
+                        .await?;
+                    captured = Some(delta);
+                    root
                 }
                 LocalAgentCommand::Provenance {
                     expected,
@@ -192,12 +208,27 @@ impl LocalRepository {
                         .await?
                 }
             };
+            let bound = match (&request.command, captured.as_ref()) {
+                (LocalAgentCommand::BoundCapture { binding, .. }, Some(delta)) => Some(
+                    super::agent_thread_binding::CaptureBinding {
+                        binding,
+                        delta,
+                        actor,
+                        request: request.request_id,
+                        at,
+                    }
+                    .stage(self, selected.as_ref(), &base)
+                    .await?,
+                ),
+                _ => None,
+            };
             let reference = base.io.stage_root(&root).await?;
             let result = AgentResult {
                 root: reference.digest,
                 accepted_at_millis: at,
                 batch: match &request.command {
-                    LocalAgentCommand::Capture { batch, .. } => Some(batch.batch_id),
+                    LocalAgentCommand::Capture { batch, .. }
+                    | LocalAgentCommand::BoundCapture { batch, .. } => Some(batch.batch_id),
                     _ => None,
                 },
             };
@@ -227,7 +258,47 @@ impl LocalRepository {
                     retained
                 },
             };
-            let candidate = match self.metadata.prepare(selected.as_ref(), &update)? {
+            let preparation = if let Some((bytes, retained)) = bound {
+                let mut combined = update.retained;
+                for (oid, kind) in retained {
+                    if combined.insert(oid, kind).is_some_and(|old| old != kind) {
+                        return Err(LocalError::Corrupt);
+                    }
+                }
+                self.metadata.prepare_many(
+                    selected.as_ref(),
+                    &BatchUpdate {
+                        repository: update.repository,
+                        actor: update.actor,
+                        request: update.request,
+                        intent: update.intent,
+                        domains: std::collections::BTreeMap::from([
+                            (
+                                Domain::Agent,
+                                DomainUpdate {
+                                    expected: update.expected,
+                                    bytes: update.bytes,
+                                },
+                            ),
+                            (
+                                Domain::Thread,
+                                DomainUpdate {
+                                    expected: selected
+                                        .as_ref()
+                                        .and_then(|s| s.selection(Domain::Thread))
+                                        .cloned(),
+                                    bytes,
+                                },
+                            ),
+                        ]),
+                        result: update.result,
+                        retained: combined,
+                    },
+                )?
+            } else {
+                self.metadata.prepare(selected.as_ref(), &update)?
+            };
+            let candidate = match preparation {
                 Preparation::Committed(value) => return receipt(&value),
                 Preparation::Ready(candidate) => candidate,
             };

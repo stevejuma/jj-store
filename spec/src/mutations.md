@@ -1,5 +1,15 @@
 # Typed mutations
 
+Explicit local BoundCapture carries the exact observed Thread version and
+primary assignment with the original sanitized batch/profile. It requires one
+session replacement, stages the shared link without changing lifecycle and
+selects Agent and Thread descriptors in one companion ref CAS. The Thread
+descriptor audits and retains the complete newly staged session closure before
+selection. Matching receipt replay precedes entity/source preconditions; stale
+bindings select neither root. The private spool retains this original bound
+request across unknown outcomes. Legacy unlinked capture tags, field order and
+receipts remain unchanged.
+
 Native capture preparation forwards an explicit optional Thread binding through
 the owned service facade. It validates typed input, derives the current actor
 and acceptance time, and stages the exact Agent delta without selecting

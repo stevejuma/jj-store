@@ -27,8 +27,10 @@ impl LocalAgentCapturePublisher for Publisher {
                 request_id: request.request_id,
             });
         }
-        let LocalAgentCommand::Capture { batch, .. } = &request.command else {
-            panic!("capture required")
+        let batch = match &request.command {
+            LocalAgentCommand::Capture { batch, .. }
+            | LocalAgentCommand::BoundCapture { batch, .. } => batch,
+            _ => panic!("capture required"),
         };
         Ok(LocalAgentOutcome::Committed {
             receipt: Box::new(LocalAgentReceipt {
@@ -52,9 +54,18 @@ impl LocalAgentCapturePublisher for Publisher {
     }
 }
 fn enqueue(spool: &mut AgentCaptureSpool, id: u8, sequence: u64, repository: RepositoryId) {
+    enqueue_bound(spool, id, sequence, repository, None);
+}
+fn enqueue_bound(
+    spool: &mut AgentCaptureSpool,
+    id: u8,
+    sequence: u64,
+    repository: RepositoryId,
+    binding: Option<jj_collab::ThreadBindingV1>,
+) {
     let source = SourceInstanceId::new([4; 16]);
     spool
-        .enqueue(
+        .enqueue_with_binding(
             repository,
             NormalizerProfileV1::codex_0_156_1(),
             CaptureCursorV1 {
@@ -86,8 +97,63 @@ fn enqueue(spool: &mut AgentCaptureSpool, id: u8, sequence: u64, repository: Rep
                     .unwrap(),
                 }],
             },
+            binding,
         )
         .unwrap();
+}
+
+#[tokio::test]
+async fn bound_local_spool_keeps_original_observation_and_request_across_unknown_restart() {
+    use jj_collab::{CollabObjectId, CollabObjectKind, CollabObjectRef, ThreadBindingV1, ThreadId};
+    let root = tempfile::tempdir().unwrap();
+    let binding = ThreadBindingV1 {
+        thread_id: ThreadId::new([20; 16]),
+        observed_thread: CollabObjectRef {
+            kind: CollabObjectKind::ThreadVersion,
+            id: CollabObjectId::new([21; 32]),
+        },
+        observed_assignment: None,
+    };
+    let publisher = Publisher {
+        replies: Mutex::new([false, true].into()),
+        requests: Mutex::default(),
+        mismatch: false,
+    };
+    let mut spool = AgentCaptureSpool::open(root.path(), 4 * 1024 * 1024).unwrap();
+    enqueue_bound(&mut spool, 1, 1, REPO, Some(binding.clone()));
+    drop(spool);
+    let mut spool = AgentCaptureSpool::open(root.path(), 4 * 1024 * 1024).unwrap();
+    assert!(
+        drain_local_capture_spool(&mut spool, &publisher)
+            .await
+            .unwrap()
+            .outcome_unknown
+    );
+    let entry = spool.pending().unwrap().remove(0);
+    let PendingCaptureStateV1::LocalPrepared { mut request } = entry.state else {
+        panic!()
+    };
+    let LocalAgentCommand::BoundCapture {
+        binding: selected, ..
+    } = &mut request.command
+    else {
+        panic!()
+    };
+    assert_eq!(selected, &binding);
+    selected.thread_id = ThreadId::new([22; 16]);
+    assert!(spool.prepare_local(entry.batch.batch_id, request).is_err());
+    drop(spool);
+    let mut spool = AgentCaptureSpool::open(root.path(), 4 * 1024 * 1024).unwrap();
+    assert_eq!(
+        drain_local_capture_spool(&mut spool, &publisher)
+            .await
+            .unwrap()
+            .committed,
+        1
+    );
+    assert!(spool.pending().unwrap().is_empty());
+    let requests = publisher.requests.lock().unwrap();
+    assert_eq!(requests[0], requests[1]);
 }
 #[tokio::test]
 async fn unknown_local_capture_restarts_with_exact_intent_before_later_batches() {

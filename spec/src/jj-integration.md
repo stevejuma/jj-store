@@ -1,5 +1,15 @@
 # Native JJ integration
 
+Explicit local BoundCapture carries the exact observed Thread version and
+primary assignment with the original sanitized batch/profile. It requires one
+session replacement, stages the shared link without changing lifecycle and
+selects Agent and Thread descriptors in one companion ref CAS. The Thread
+descriptor audits and retains the complete newly staged session closure before
+selection. Matching receipt replay precedes entity/source preconditions; stale
+bindings select neither root. The private spool retains this original bound
+request across unknown outcomes. Legacy unlinked capture tags, field order and
+receipts remain unchanged.
+
 Native RPC preserves optional capture bindings in both preparation and delta
 publication. The durable device spool stores the explicit observed assignment
 before source acknowledgment and the exact server-prepared acceptance time
@@ -10,8 +20,8 @@ encodings.
 Prepared Agent delta decoding retains and validates an optional explicit Thread
 binding; it must not reconstruct the legacy fields and silently drop that
 intent. Unlinked capture preparation rejects an unexpected returned binding.
-Native bound preparation is explicit; local-provider and runner integrations
-remain separately gated.
+Native bound preparation is explicit; local-provider qualification and future
+runner integration have separate gates.
 
 The companion metadata adapter provides bounded immutable blob staging and
 staging reads for the shared collaboration reducer. These operations cannot

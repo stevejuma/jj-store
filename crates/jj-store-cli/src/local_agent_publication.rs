@@ -48,9 +48,17 @@ pub async fn drain_local_capture_spool<P: LocalAgentCapturePublisher>(
                 let request = LocalAgentRequest {
                     version: 1,
                     request_id: request_id(repository, entry.batch.batch_id),
-                    command: LocalAgentCommand::Capture {
-                        profile: entry.profile.clone(),
-                        batch: Box::new(entry.batch.clone()),
+                    command: if let Some(binding) = &entry.thread_binding {
+                        LocalAgentCommand::BoundCapture {
+                            profile: entry.profile.clone(),
+                            batch: Box::new(entry.batch.clone()),
+                            binding: binding.clone(),
+                        }
+                    } else {
+                        LocalAgentCommand::Capture {
+                            profile: entry.profile.clone(),
+                            batch: Box::new(entry.batch.clone()),
+                        }
                     },
                 };
                 spool.prepare_local(entry.batch.batch_id, request.clone())?;

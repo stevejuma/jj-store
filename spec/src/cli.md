@@ -4,7 +4,9 @@ The native capture worker consumes an explicit optional binding retained in the
 captured spool entry. Binding-aware preparation validates returned intent;
 unknown publication retains the exact prepared request across restart. Ordinary
 owned hook/watch capture remains unlinked unless an explicit caller supplies a
-binding. This does not add jj-acp launch/continuation or local bound capture.
+binding. The local drain creates the exact BoundCapture request when a binding
+is present and retains it across unknown outcomes. These worker primitives do
+not add jj-acp launch/continuation or an automatic hook binding.
 
 The capture spool validates the complete prepared Agent request, including any
 explicit binding, instead of rebuilding only legacy fields. Existing unlinked

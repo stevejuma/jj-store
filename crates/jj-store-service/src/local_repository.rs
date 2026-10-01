@@ -8,6 +8,7 @@ mod agent_io;
 mod agent_pages;
 mod agent_provenance_pages;
 mod agent_store;
+mod agent_thread_binding;
 mod collab_commands;
 mod collab_external;
 mod collab_graph;

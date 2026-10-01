@@ -29,6 +29,28 @@ pub(crate) struct ExternalV1 {
     pub evidence: Vec<EvidenceEntry>,
 }
 impl ExternalV1 {
+    /// Bound captures reference a newly staged session, before the Agent root
+    /// is selected. Admit its immutable inventory explicitly for closure audit.
+    pub(crate) fn retain_staged_agent(
+        &mut self,
+        agent: &super::LocalAgentStore,
+    ) -> LocalResult<()> {
+        merge(&mut self.agent, agent.io.store.inventory())?;
+        let mut evidence: BTreeMap<_, _> = self
+            .evidence
+            .iter()
+            .map(|e| (e.reference.capsule, e.clone()))
+            .collect();
+        for value in agent.io.evidence.inventory() {
+            if let Some(old) = evidence.insert(value.reference.capsule, value.clone())
+                && (old.reference != value.reference || old.blob != value.blob)
+            {
+                return Err(LocalError::Corrupt);
+            }
+        }
+        self.evidence = evidence.into_values().collect();
+        Ok(())
+    }
     pub fn retained(
         &self,
         repo: &LocalRepository,

@@ -1,5 +1,15 @@
 # Local Git-backed JJ collaboration
 
+Explicit local BoundCapture carries the exact observed Thread version and
+primary assignment with the original sanitized batch/profile. It requires one
+session replacement, stages the shared link without changing lifecycle and
+selects Agent and Thread descriptors in one companion ref CAS. The Thread
+descriptor audits and retains the complete newly staged session closure before
+selection. Matching receipt replay precedes entity/source preconditions; stale
+bindings select neither root. The private spool retains this original bound
+request across unknown outcomes. Legacy unlinked capture tags, field order and
+receipts remain unchanged.
+
 M13 adds an owned companion metadata store to ordinary Git-backed JJ
 repositories. Upstream GitBackend and JJ operation publication remain code
 authority. Native repositories continue to use their existing manifest, WAL and
