@@ -3,7 +3,6 @@
   import StoreSyncSettings from "../../web/src/lib/ui/store-settings/StoreSyncSettings.svelte";
   import { syncWorker } from "./sync-settings.js";
   import type { SyncSettings } from "../../web/src/lib/controller/sync-settings.js";
-  import "../../web/src/lib/ui/store-settings/StoreSettings.css";
   let {
     supported = true,
     configured = true,
@@ -23,7 +22,7 @@
   );
 </script>
 
-<div class="store-settings">
+<div>
   <StoreSyncSettings
     {settings}
     {supported}

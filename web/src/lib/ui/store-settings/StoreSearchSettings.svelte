@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreSettingsPage from "./StoreSettingsPage.svelte";
   import * as Tabs from "@lapismd/design-core/shadcn/tabs";
   import StoreSearchHealth from "./StoreSearchHealth.svelte";
   import StoreSearchConfiguration from "./StoreSearchConfiguration.svelte";
@@ -7,15 +8,15 @@
   let { controller }: { controller: StoreController } = $props();
 </script>
 
-<Tabs.Root bind:value={active} class="store-settings__tabs">
-  <Tabs.List
-    aria-label="Search settings sections"
-    class="store-settings__tab-list"
-  >
-    <Tabs.Trigger value="configuration">Configuration</Tabs.Trigger>
-    <Tabs.Trigger value="scopes">File scopes</Tabs.Trigger>
-    <Tabs.Trigger value="health">Health</Tabs.Trigger>
-  </Tabs.List>
+<StoreSettingsPage
+  section="search"
+  bind:value={active}
+  tabs={[
+    { value: "configuration", label: "Configuration" },
+    { value: "scopes", label: "File scopes" },
+    { value: "health", label: "Health" },
+  ]}
+>
   {#each ["configuration", "scopes"] as section}
     <Tabs.Content value={section}
       >{#if active === section}<StoreSearchConfiguration
@@ -32,4 +33,4 @@
     >
   {/each}
   <Tabs.Content value="health"><StoreSearchHealth {controller} /></Tabs.Content>
-</Tabs.Root>
+</StoreSettingsPage>

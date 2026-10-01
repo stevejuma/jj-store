@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreSettingsPage from "./StoreSettingsPage.svelte";
   import * as Tabs from "@lapismd/design-core/shadcn/tabs";
   import StoreSettingsIdentifier from "./StoreSettingsIdentifier.svelte";
   import type { Model } from "../../api/client.js";
@@ -30,15 +31,15 @@
       .join(", ");
 </script>
 
-<Tabs.Root value="general" class="store-settings__tabs">
-  <Tabs.List
-    aria-label="Repository settings sections"
-    class="store-settings__tab-list"
-  >
-    <Tabs.Trigger value="general">General</Tabs.Trigger>
-    <Tabs.Trigger value="folders">Local folders</Tabs.Trigger>
-    <Tabs.Trigger value="advanced">Advanced</Tabs.Trigger>
-  </Tabs.List>
+<StoreSettingsPage
+  section="repository"
+  value="general"
+  tabs={[
+    { value: "general", label: "General" },
+    { value: "folders", label: "Local folders" },
+    { value: "advanced", label: "Advanced" },
+  ]}
+>
   <Tabs.Content value="general">
     <section
       class="store-settings__section"
@@ -215,4 +216,4 @@
       </section>
     {/if}
   </Tabs.Content>
-</Tabs.Root>
+</StoreSettingsPage>

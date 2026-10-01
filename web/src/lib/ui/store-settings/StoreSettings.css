@@ -162,9 +162,58 @@
 }
 .store-settings__tabs {
   min-width: 0;
+  gap: 0;
 }
-.store-settings__tab-list {
-  max-width: 100%;
-  flex-wrap: wrap;
+
+/* Match Community Projects' full-width, sticky navigation strip. */
+.store-settings__tab-bar {
+  position: sticky;
+  z-index: 3;
+  top: 0;
+  display: flex;
+  width: 100%;
+  min-height: 3.25rem;
+  box-sizing: border-box;
+  align-items: center;
+  padding: 0.55rem 1rem;
+  background: color-mix(in srgb, var(--background) 96%, transparent);
+  backdrop-filter: blur(12px);
+}
+
+.store-settings__tab-scroll {
+  flex: 1;
+  min-width: 0;
+}
+
+.store-settings__tab-bar [data-slot="tabs-list"] {
+  display: flex;
+  width: max-content;
   height: auto;
+  gap: 0.4rem;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.store-settings__tab-bar [data-slot="tabs-trigger"] {
+  min-height: 1.8rem;
+  flex: none;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.25rem 0.8rem;
+  color: var(--muted-foreground);
+  background: color-mix(in srgb, var(--muted) 38%, transparent);
+  box-shadow: none;
+  font-size: var(--community-text-secondary);
+  font-weight: 500;
+}
+
+.store-settings__tab-bar [data-slot="tabs-trigger"][data-state="active"] {
+  color: var(--foreground);
+  background: var(--muted);
+}
+
+.store-settings__tab-bar [data-slot="tabs-trigger"]:hover:not(:disabled) {
+  color: var(--foreground);
+  background: color-mix(in srgb, var(--muted) 72%, transparent);
 }

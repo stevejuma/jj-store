@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreSettingsPage from "./StoreSettingsPage.svelte";
   import * as Tabs from "@lapismd/design-core/shadcn/tabs";
   import * as Alert from "@lapismd/design-core/shadcn/alert";
   import { Button } from "@lapismd/design-core/shadcn/button";
@@ -28,19 +29,21 @@
     value?.replaceAll("_", " ") ?? "None";
 </script>
 
-{#if !supported}
-  <p class="store-settings__empty">
-    Sync management is not available for this connection.
-  </p>
-{:else}
-  <Tabs.Root value="overview" class="store-settings__tabs">
-    <Tabs.List
-      aria-label="Sync settings sections"
-      class="store-settings__tab-list"
-    >
-      <Tabs.Trigger value="overview">Overview</Tabs.Trigger>
-      <Tabs.Trigger value="progress" disabled={!worker}>Progress</Tabs.Trigger>
-    </Tabs.List>
+<StoreSettingsPage
+  section="sync"
+  value="overview"
+  tabs={supported
+    ? [
+        { value: "overview", label: "Overview" },
+        { value: "progress", label: "Progress", disabled: !worker },
+      ]
+    : []}
+>
+  {#if !supported}
+    <p class="store-settings__empty">
+      Sync management is not available for this connection.
+    </p>
+  {:else}
     <Tabs.Content value="overview">
       <section class="store-settings__section" aria-labelledby="sync-overview">
         <header class="store-settings__section-heading">
@@ -205,10 +208,10 @@
         </section>
       {/if}
     </Tabs.Content>
-  </Tabs.Root>
-  {#if settings.error}<Alert.Root variant="destructive"
-      ><Alert.Title>Sync status unavailable</Alert.Title><Alert.Description
-        >{settings.error}</Alert.Description
-      ></Alert.Root
-    >{/if}
-{/if}
+    {#if settings.error}<Alert.Root variant="destructive"
+        ><Alert.Title>Sync status unavailable</Alert.Title><Alert.Description
+          >{settings.error}</Alert.Description
+        ></Alert.Root
+      >{/if}
+  {/if}
+</StoreSettingsPage>

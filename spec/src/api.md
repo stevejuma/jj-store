@@ -72,6 +72,9 @@ settings projection. This UI adds no server route, schema or generated contract.
 The transient destination consumes the shell's existing compact state so a
 collapsed desktop rail exposes Back and each settings section as labelled icon
 controls while keeping section selection and repository authority unchanged.
+Settings subsection tabs share a presentation-only page header above their
+content, retaining existing controller drafts and capability-gated actions. This
+layout adds no routes, requests or public contract changes.
 
 ## Read-session foundation
 

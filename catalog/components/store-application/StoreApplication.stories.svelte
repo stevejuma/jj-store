@@ -87,6 +87,11 @@
       canvas.queryByRole("button", { name: "Toggle details" }),
     ).not.toBeInTheDocument();
     await userEvent.click(canvas.getByRole("button", { name: "Repository" }));
+    const tablist = canvas.getByRole("tablist");
+    const heading = canvas.getByRole("heading", { level: 1 });
+    await expect(tablist.getBoundingClientRect().bottom).toBeLessThan(
+      heading.getBoundingClientRect().top,
+    );
     await expect(canvas.getByText("admin")).toBeVisible();
     await expect(
       canvas.getByRole("textbox", { name: "Repository ID" }),

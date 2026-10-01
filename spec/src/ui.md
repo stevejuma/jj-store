@@ -164,6 +164,12 @@ service installation, upstream credential editing, Git transport management or
 remote administration is included. Qualification and visual baseline approval
 remain separate.
 
+Repository, Search and Sync subsection tabs occupy a full-width strip at the top
+of the Settings content, above the page heading, matching Projects. The strip
+stays visible while scrolling and uses horizontal overflow on narrow screens.
+Keyboard selection and tab-panel relationships remain intact; moving the
+navigation does not reset form drafts or change action availability.
+
 ## Shell composition
 
 The shell defaults to Branches, a collapsed left sidebar and closed 320px right

@@ -36,6 +36,16 @@ test("local sync controls and grouped progress preserve repository context", asy
     .click();
   await page.getByRole("menuitem", { name: "Settings" }).click();
   await page.getByRole("button", { name: "Sync", exact: true }).click();
+  const tabs = page.getByRole("tablist", { name: "Sync settings sections" });
+  const tabBounds = (await tabs.boundingBox())!;
+  const contentBounds = (await page
+    .getByRole("region", { name: "Settings content" })
+    .boundingBox())!;
+  const headingBounds = (await page
+    .getByRole("heading", { name: "Sync", level: 1 })
+    .boundingBox())!;
+  expect(tabBounds.y - contentBounds.y).toBeLessThan(16);
+  expect(tabBounds.y + tabBounds.height).toBeLessThan(headingBounds.y);
   await page.getByRole("button", { name: "Pause sync", exact: true }).click();
   await expect(page.getByRole("button", { name: "Retry sync" })).toBeDisabled();
   await page.getByRole("button", { name: "Resume sync" }).click();

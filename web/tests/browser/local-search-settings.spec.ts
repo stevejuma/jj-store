@@ -53,7 +53,24 @@ test("Search tabs preserve drafts and separate Save from Apply", async ({
     .click();
   await page.getByRole("menuitem", { name: "Settings" }).click();
   await page.getByRole("button", { name: "Search", exact: true }).click();
-  await page.getByRole("tab", { name: "File scopes", exact: true }).click();
+  const tabs = page.getByRole("tablist", { name: "Search settings sections" });
+  const tabBounds = (await tabs.boundingBox())!;
+  const contentBounds = (await page
+    .getByRole("region", { name: "Settings content" })
+    .boundingBox())!;
+  const headingBounds = (await page
+    .getByRole("heading", { name: "Search", level: 1 })
+    .boundingBox())!;
+  expect(tabBounds.y - contentBounds.y).toBeLessThan(16);
+  expect(tabBounds.y + tabBounds.height).toBeLessThan(headingBounds.y);
+  await page.getByRole("tab", { name: "Configuration", exact: true }).focus();
+  await page.keyboard.press("ArrowRight");
+  await expect(
+    page.getByRole("tab", { name: "File scopes", exact: true }),
+  ).toBeFocused();
+  await expect(
+    page.getByRole("tab", { name: "File scopes", exact: true }),
+  ).toHaveAttribute("aria-selected", "true");
   const prefixes = page.getByRole("textbox", { name: "Exclude path prefixes" });
   await prefixes.fill("private");
   await page.getByRole("tab", { name: "Health", exact: true }).click();
@@ -85,6 +102,23 @@ test("Search tabs preserve drafts and separate Save from Apply", async ({
   await expect(page.getByText(/Matches saved settings/)).toBeVisible();
   expect(applies).toBe(1);
   await page.setViewportSize({ width: 390, height: 844 });
+  const mobileTabsTop = (await tabs.boundingBox())!.y;
+  const scroller = page
+    .getByRole("region", { name: "Settings content" })
+    .locator('[data-ui-part="scroll-area-viewport"]')
+    .first();
+  await scroller.evaluate((element) => {
+    element.scrollTop = 240;
+  });
+  await expect
+    .poll(() => scroller.evaluate((element) => element.scrollTop))
+    .toBeGreaterThan(0);
+  await expect
+    .poll(async () => Math.abs((await tabs.boundingBox())!.y - mobileTabsTop))
+    .toBeLessThan(1);
+  await expect(
+    page.getByRole("tab", { name: "Health", exact: true }),
+  ).toBeVisible();
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= innerWidth,

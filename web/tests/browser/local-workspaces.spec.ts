@@ -70,6 +70,18 @@ test("local folder settings preserve drafts and link without changing repository
     .click();
   await page.getByRole("menuitem", { name: "Settings" }).click();
   await page.getByRole("button", { name: "Repository", exact: true }).click();
+  const tabs = page.getByRole("tablist", {
+    name: "Repository settings sections",
+  });
+  const tabBounds = (await tabs.boundingBox())!;
+  const contentBounds = (await page
+    .getByRole("region", { name: "Settings content" })
+    .boundingBox())!;
+  const headingBounds = (await page
+    .getByRole("heading", { name: "Repository", level: 1 })
+    .boundingBox())!;
+  expect(tabBounds.y - contentBounds.y).toBeLessThan(16);
+  expect(tabBounds.y + tabBounds.height).toBeLessThan(headingBounds.y);
   await page.getByRole("tab", { name: "Local folders", exact: true }).click();
   const input = page.getByRole("textbox", { name: "Folder path" });
   await expect(page.getByText("No local folders linked.")).toBeVisible();

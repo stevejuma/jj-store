@@ -6,56 +6,33 @@
   import StoreSearchSettings from "./StoreSearchSettings.svelte";
   import StoreServiceSettings from "./StoreServiceSettings.svelte";
   import type { StoreSettingsSection } from "./model.js";
-  import "./StoreSettings.css";
+  import StoreSettingsPage from "./StoreSettingsPage.svelte";
 
   let {
     controller,
     section,
   }: { controller: StoreController; section: StoreSettingsSection } = $props();
-
-  const title = $derived(
-    section === "service"
-      ? "Local service"
-      : section === "repository"
-        ? "Repository"
-        : section === "sync"
-          ? "Sync"
-          : "Search",
-  );
-  const description = $derived(
-    section === "service"
-      ? "Connection and storage state for this jj-store installation."
-      : section === "repository"
-        ? "Identity, snapshot, graph preparation and capabilities for the selected repository."
-        : section === "sync"
-          ? "Local readiness and controls for the configured upstream."
-          : "Configuration, file scopes and text-search health for the selected repository.",
-  );
 </script>
 
 <AppShell.Body layout="regions" label="Store settings">
-  <AppShell.Body.Content>
-    <div class="store-settings" aria-labelledby="store-settings-title">
-      <header class="store-settings__heading">
-        <h1 id="store-settings-title">{title}</h1>
-        <p>{description}</p>
-      </header>
-      {#if section === "service"}
-        <StoreServiceSettings {controller} />
-      {:else if section === "repository"}
-        <StoreRepositorySettings {controller} />
-      {:else if section === "sync"}
-        <StoreSyncSettings
-          settings={controller.state.settings.syncSettings}
-          supported={Boolean(
-            controller.state.settings.capabilities?.local_sync_management,
-          )}
-          onRefresh={controller.actions.refreshSyncSettings}
-          onControl={controller.actions.controlSync}
-        />
-      {:else}
-        <StoreSearchSettings {controller} />
-      {/if}
-    </div>
+  <AppShell.Body.Content label="Settings content">
+    {#if section === "service"}
+      <StoreSettingsPage section="service"
+        ><StoreServiceSettings {controller} /></StoreSettingsPage
+      >
+    {:else if section === "repository"}
+      <StoreRepositorySettings {controller} />
+    {:else if section === "sync"}
+      <StoreSyncSettings
+        settings={controller.state.settings.syncSettings}
+        supported={Boolean(
+          controller.state.settings.capabilities?.local_sync_management,
+        )}
+        onRefresh={controller.actions.refreshSyncSettings}
+        onControl={controller.actions.controlSync}
+      />
+    {:else}
+      <StoreSearchSettings {controller} />
+    {/if}
   </AppShell.Body.Content>
 </AppShell.Body>
