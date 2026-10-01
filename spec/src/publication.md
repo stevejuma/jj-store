@@ -1,5 +1,14 @@
 # Publication and recovery
 
+Native prepared capture requests may carry an explicit optional Thread binding
+and server-chosen acceptance time. The absent field is omitted, preserving the
+legacy intent encoding. Binding validates one session replacement selected by
+the same Agent delta and selects Agent plus Thread roots in one manifest CAS.
+Both domains authorize before receipt replay; the source manifest is privately
+pinned through CAS and reloaded after a race. Matching receipts survive later
+Thread changes and unknown outcomes retain original request/publication IDs.
+Replicated code remains gated on reducer 3.
+
 Upload objects, validate full dependency closure against a certified base,
 upload inventory/result/candidate, then CAS the manifest. No receipt embeds its
 future log digest. Manifest revision differs from publication sequence, and an

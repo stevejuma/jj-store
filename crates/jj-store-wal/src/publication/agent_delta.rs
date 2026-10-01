@@ -10,6 +10,8 @@ pub struct AgentDeltaRequest {
     pub publication_id: PublicationId,
     pub delta: AgentDeltaV1,
     pub result: Vec<u8>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub thread_binding: Option<AgentThreadBindingV1>,
 }
 impl AgentDeltaRequest {
     pub fn new(
@@ -25,11 +27,13 @@ impl AgentDeltaRequest {
             publication_id,
             delta,
             result,
+            thread_binding: None,
         };
         request.validate()?;
         Ok(request)
     }
-    fn validate(&self) -> Result<()> {
+    pub fn validate(&self) -> Result<()> {
+        self.validate_thread_binding()?;
         if self.result.len() > 1024 * 1024 {
             return Err(Error::Limit("agent delta result"));
         }
@@ -89,6 +93,22 @@ impl Coordinator {
                 request.result.clone(),
             )?;
             self.guard.authorize_domain(&base, &probe).await?;
+            let thread_expected = if request.thread_binding.is_some() {
+                let expected = self.collab_domain_state(&base, Domain::Thread).await?;
+                let thread_probe = DomainRequest::new(
+                    request.principal,
+                    request.request_id,
+                    request.publication_id,
+                    Domain::Thread,
+                    expected,
+                    expected.root,
+                    Vec::new(),
+                )?;
+                self.guard.authorize_domain(&base, &thread_probe).await?;
+                Some(expected)
+            } else {
+                None
+            };
             if let Some(receipt) = self
                 .lookup_identity(
                     &base.manifest,
@@ -113,7 +133,18 @@ impl Coordinator {
                 request.result.clone(),
             )?
             .with_agent_facts(request.delta.clone())?;
-            match self.publish_domain_inner(&domain, intent).await {
+            let domain = if let Some(expected) = thread_expected {
+                domain.with_additional(self.stage_agent_thread_binding(request, expected).await?)?
+            } else {
+                domain
+            };
+            let published = if thread_expected.is_some() {
+                self.publish_domain_at_manifest(&domain, intent, Some(base.digest))
+                    .await
+            } else {
+                self.publish_domain_inner(&domain, intent).await
+            };
+            match published {
                 Err(Error::Stale) => continue,
                 result => return result,
             }

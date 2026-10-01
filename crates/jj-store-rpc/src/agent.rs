@@ -108,7 +108,8 @@ pub(crate) fn prepared(
     result: &[u8],
 ) -> Result<AgentDeltaRequest, Status> {
     let request = delta_request(&value.request_json)?;
-    if request.request_id != request_id
+    if request.thread_binding.is_some()
+        || request.request_id != request_id
         || request.publication_id != publication_id
         || request.result != result
     {
@@ -129,14 +130,8 @@ pub(crate) fn publish_request(
 
 pub(crate) fn delta_request(bytes: &[u8]) -> Result<AgentDeltaRequest, Status> {
     let value: AgentDeltaRequest = decode(bytes, DELTA_BYTES)?;
-    AgentDeltaRequest::new(
-        value.principal,
-        value.request_id,
-        value.publication_id,
-        value.delta,
-        value.result,
-    )
-    .map_err(|_| invalid())
+    value.validate().map_err(|_| invalid())?;
+    Ok(value)
 }
 
 pub(crate) fn wire_outcome(value: PublishOutcome) -> wire::AgentPublicationReply {
@@ -247,3 +242,7 @@ fn snapshot(value: Option<wire::Snapshot>) -> Result<Snapshot, Status> {
         heads,
     })
 }
+
+#[cfg(test)]
+#[path = "agent/binding_tests.rs"]
+mod binding_tests;

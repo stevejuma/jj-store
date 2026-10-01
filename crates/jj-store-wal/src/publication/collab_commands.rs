@@ -102,7 +102,7 @@ impl Coordinator {
             Ok(Err(error)) => Err(error),
         }
     }
-    async fn collab_domain_state(
+    pub(super) async fn collab_domain_state(
         &self,
         base: &ManifestSnapshot,
         domain: Domain,

@@ -318,3 +318,41 @@ fn capture_lock_and_pending_symlinks_fail_closed() {
         b"unchanged"
     );
 }
+
+#[test]
+fn prepared_thread_binding_survives_restart_and_invalid_binding_is_not_persisted() {
+    use jj_collab::{CollabObjectId, CollabObjectKind, CollabObjectRef, ThreadBindingV1, ThreadId};
+    let directory = tempfile::tempdir().unwrap();
+    let repository = RepositoryId::new([9; 16]);
+    let profile = NormalizerProfileV1::codex_0_156_1();
+    let mut spool = AgentCaptureSpool::open(directory.path(), 4 * 1024 * 1024).unwrap();
+    spool
+        .enqueue(repository, profile, cursor(), batch())
+        .unwrap();
+    let bound = request()
+        .with_thread_binding(
+            ThreadBindingV1 {
+                thread_id: ThreadId::new([10; 16]),
+                observed_thread: CollabObjectRef {
+                    kind: CollabObjectKind::ThreadVersion,
+                    id: CollabObjectId::new([11; 32]),
+                },
+                observed_assignment: None,
+            },
+            123,
+        )
+        .unwrap();
+    let mut invalid = bound.clone();
+    invalid.thread_binding.as_mut().unwrap().accepted_at_millis = -1;
+    assert!(spool.prepare(batch().batch_id, invalid).is_err());
+    assert!(matches!(
+        spool.pending().unwrap()[0].state,
+        PendingCaptureStateV1::Captured
+    ));
+    spool.prepare(batch().batch_id, bound.clone()).unwrap();
+    drop(spool);
+    let spool = AgentCaptureSpool::open(directory.path(), 4 * 1024 * 1024).unwrap();
+    assert!(
+        matches!(&spool.pending().unwrap()[0].state,PendingCaptureStateV1::Prepared { request } if request==&bound)
+    );
+}

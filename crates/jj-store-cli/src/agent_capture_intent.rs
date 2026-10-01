@@ -5,7 +5,6 @@ use jj_agent::{CaptureBatchId, SourcePositionV1};
 use jj_store_jj::operation_stores::AuthorityResult;
 use jj_store_model::RequestId;
 use jj_store_service::local_repository::{LocalAgentCommand, LocalAgentRequest};
-use jj_store_wal::publication::AgentDeltaRequest;
 use std::fs;
 
 impl PendingCaptureV1 {
@@ -31,13 +30,7 @@ impl PendingCaptureV1 {
             return Err("capture spool identity mismatch".into());
         }
         if let PendingCaptureStateV1::Prepared { request } = &self.state {
-            AgentDeltaRequest::new(
-                request.principal,
-                request.request_id,
-                request.publication_id,
-                request.delta.clone(),
-                request.result.clone(),
-            )?;
+            request.validate()?;
         }
         if let PendingCaptureStateV1::LocalPrepared { request } = &self.state {
             request.validate()?;

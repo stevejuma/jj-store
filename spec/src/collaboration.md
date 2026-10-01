@@ -1,5 +1,15 @@
 # Agent activity, repository reviews, Threads and Reactions
 
+An optional native prepared capture binding pins an observed Thread version and
+primary assignment. It requires exactly one selected session edit in the capture
+delta and derives a stable link identity from the authenticated actor, request
+and session. Agent evidence and the primary Thread link publish atomically.
+Receipt replay precedes observed preconditions; stale Thread/assignment or a
+failed authorization selects neither root. Late bound capture retains the Thread
+lifecycle without reopening it. Unlinked capture keeps its original canonical
+request and receipt bytes. This provider primitive does not imply
+spool/RPC/local-provider or runner integration qualification.
+
 HTTP keeps Thread and Reaction intent namespaces distinct. Binary custom emoji
 definition and typed retirement assemble the same service commands. Empty reads
 do not initialize domains; resumed pages retain signed captured selections.

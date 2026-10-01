@@ -1,6 +1,7 @@
 //! Repository-owned persistent Threads and rich Reactions. No publication or runner authority.
 #![forbid(unsafe_code)]
 mod assets;
+mod capture_binding;
 mod catalog;
 mod codec;
 mod command_types;

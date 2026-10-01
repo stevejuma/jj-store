@@ -1,5 +1,10 @@
 # CLI and server commands
 
+The capture spool validates the complete prepared Agent request, including any
+explicit binding, instead of rebuilding only legacy fields. Existing unlinked
+preparation fails closed on an unexpected binding. Explicit bound enqueue and
+worker/runner entry points remain separately qualified.
+
 The native lifecycle HTTP acceptance fixture qualifies the Thread/Reaction
 transport and representative generated responses through isolated MemoryStore
 authority. It does not establish real-RustFS or jj-acp execution qualification.

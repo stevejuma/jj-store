@@ -188,14 +188,9 @@ fn validate_prepared(
     publication_id: PublicationId,
     result: &[u8],
 ) -> AuthorityResult<()> {
-    AgentDeltaRequest::new(
-        request.principal,
-        request.request_id,
-        request.publication_id,
-        request.delta.clone(),
-        request.result.clone(),
-    )?;
-    if request.request_id != request_id
+    request.validate()?;
+    if request.thread_binding.is_some()
+        || request.request_id != request_id
         || request.publication_id != publication_id
         || request.result != result
     {

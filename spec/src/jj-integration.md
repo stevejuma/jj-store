@@ -1,5 +1,10 @@
 # Native JJ integration
 
+Prepared Agent delta decoding retains and validates an optional explicit Thread
+binding; it must not reconstruct the legacy fields and silently drop that
+intent. Unlinked capture preparation rejects an unexpected returned binding. The
+additive publication primitive does not qualify a bound prepare RPC.
+
 The companion metadata adapter provides bounded immutable blob staging and
 staging reads for the shared collaboration reducer. These operations cannot
 select metadata. Public retained reads additionally prove membership in the
