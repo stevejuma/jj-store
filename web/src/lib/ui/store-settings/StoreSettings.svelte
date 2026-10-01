@@ -1,6 +1,7 @@
 <script lang="ts">
   import { AppShell } from "@lapismd/design-core/shell";
   import type { StoreController } from "../../controller/contracts.js";
+  import StoreAppearance from "../store-appearance/StoreAppearance.svelte";
   import StoreRepositorySettings from "./StoreRepositorySettings.svelte";
   import StoreSyncSettings from "./StoreSyncSettings.svelte";
   import StoreSearchSettings from "./StoreSearchSettings.svelte";
@@ -21,7 +22,11 @@
 
 <AppShell.Body layout="regions" label="Store settings">
   <AppShell.Body.Content label="Settings content">
-    {#if section === "service"}
+    {#if section === "appearance"}
+      <StoreSettingsPage section="appearance" {onClose}
+        ><StoreAppearance /></StoreSettingsPage
+      >
+    {:else if section === "service"}
       <StoreSettingsPage section="service" {onClose}
         ><StoreServiceSettings {controller} /></StoreSettingsPage
       >

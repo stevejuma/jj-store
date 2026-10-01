@@ -41,6 +41,8 @@
     scrollToKey?: string | null | undefined;
   } = $props();
 
+  import { useAppearance } from "../../appearance/store.svelte.js";
+  const appearance = useAppearance();
   let host: HTMLDivElement;
   let scrollElement = $state<HTMLElement | null | undefined>(undefined);
   let alive = true;
@@ -125,6 +127,34 @@
         overscan: nextOverscan,
       });
     });
+  });
+
+  let previousAppearance: string | undefined;
+  $effect(() => {
+    if (!appearance) return;
+    const signature = `${appearance.live.fontSize}:${appearance.live.density}:${appearance.live.links}`;
+    const scroller = scrollElement;
+    if (!scroller || signature === previousAppearance) return;
+    const initial = previousAppearance === undefined;
+    previousAppearance = signature;
+    if (initial) return;
+    const frame = requestAnimationFrame(() =>
+      untrack(() => {
+        const instance = get(virtualizer);
+        const first = instance.getVirtualItems()[0];
+        const offset = first ? scroller.scrollTop - first.start : 0;
+        const atBottom =
+          scroller.scrollHeight - scroller.clientHeight - scroller.scrollTop <
+          8;
+        instance.measure();
+        if (atBottom) scroller.scrollTop = scroller.scrollHeight;
+        else if (first) {
+          instance.scrollToIndex(first.index, { align: "start" });
+          scroller.scrollTop += offset;
+        }
+      }),
+    );
+    return () => cancelAnimationFrame(frame);
   });
 
   $effect(() => {

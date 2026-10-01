@@ -187,7 +187,7 @@
 
   :global(.community-chip[data-chip-tone="success"]) {
     border-color: color-mix(in srgb, #16a34a 44%, var(--border));
-    color: color-mix(in srgb, #16a34a 70%, var(--foreground));
+    color: color-mix(in srgb, #16a34a 60%, var(--foreground));
     background: color-mix(in srgb, #16a34a 14%, var(--background));
   }
 

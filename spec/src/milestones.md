@@ -132,6 +132,7 @@ shared-package release qualification does not alter those original Git gates.
 | M15.5       | In progress | M15.3                   | JST-COLLAB-016,JST-GOV-008,JST-UI-017                                                                                                                                                   | Owned Community channel/forum templates, Threads navigation and native workspace search                                        | Retain interaction/cold UI and qualify remaining full flow                                     | E-M15-011,E-M15-015,E-M15-016,E-M15-017,E-M15-018,E-M15-019,E-M15-021,E-M15-022,E-M15-025                                                                                                                                                                                                                                                                      |
 | M15.6       | In progress | M15.3                   | JST-COLLAB-009,JST-COLLAB-010,JST-API-009,JST-ADAPT-007                                                                                                                                 | Derived canonical-source timeline/search and review integration                                                                | Qualify authorized joins                                                                       | E-M15-006,E-M15-020,E-M15-021,E-M15-022,E-M15-025                                                                                                                                                                                                                                                                                                              |
 | M15.7       | Planned     | M15.4,M15.5,M15.6       | JST-COLLAB-007,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                                                                                              | Cold real-RustFS/local full flow and runner qualification                                                                      | Retain native/local/cold evidence                                                              | -                                                                                                                                                                                                                                                                                                                                                              |
+| M16         | Partial     | M15.5                   | JST-UI-018                                                                                                                                                                              | Complete device Appearance and cold consumer qualification                                                                     | Complete source release and registry-only consumer qualification                               | E-UI-052                                                                                                                                                                                                                                                                                                                                                       |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -39496,6 +39497,458 @@ and named tests are checked by the progress gate.
     "remaining": [],
     "scope": "User-authorized main UI-only slice and rebuild/restart after each slice. Complete direct presentation/controller/HTTP boundaries plus cold bundle; Rust/root aggregates and independent real-RustFS/runner/registry/visual-baseline gates out of scope. M15 remains In progress; visual-pending unchanged.",
     "next": "Commit verified main slice; use rebuilt application at port7460. Keep independent milestone qualification and pre-existing Projects-filter story failures separate."
+  },
+  {
+    "id": "E-UI-052",
+    "tasks": ["M16"],
+    "date": "2026-10-01",
+    "kind": "buzz-device-appearance-local-source-acceptance",
+    "revision": "rmwvnkzr",
+    "files": [
+      ".storybook/preview.css",
+      "catalog/components/store-appearance/StoreAppearance.stories.svelte",
+      "catalog/components/store-application/AppearanceDiscussions.stories.svelte",
+      "catalog/components/store-application/NativeReviewDetail.stories.svelte",
+      "catalog/components/store-application/appearance-tool-discussion-play.ts",
+      "catalog/components/store-threads/StoreThreads.stories.svelte",
+      "catalog/components/store-work/ProjectsHub.stories.svelte",
+      "catalog/fixtures/AppearanceFixture.svelte",
+      "catalog/fixtures/projects-hub-layout.ts",
+      "docs/licenses/buzz-Apache-2.0.txt",
+      "docs/licenses/inter-OFL-1.1.txt",
+      "docs/licenses/shiki-themes-MIT.txt",
+      "docs/reference/appearance-provenance.md",
+      "docs/ui-provenance.json",
+      "package.json",
+      "pnpm-lock.yaml",
+      "scripts/appearance-palettes.mts",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/compatibility.md",
+      "spec/src/milestones.md",
+      "spec/src/spec-governance.md",
+      "spec/src/ui.md",
+      "spec/src/verification.md",
+      "web/src/App.svelte",
+      "web/src/lib/appearance/adaptive-theme.ts",
+      "web/src/lib/appearance/appearance.css",
+      "web/src/lib/appearance/drafts.svelte.ts",
+      "web/src/lib/appearance/local-link.ts",
+      "web/src/lib/appearance/palettes/andromeeda.css",
+      "web/src/lib/appearance/palettes/aurora-x.css",
+      "web/src/lib/appearance/palettes/ayu-dark.css",
+      "web/src/lib/appearance/palettes/buzz-dark.css",
+      "web/src/lib/appearance/palettes/buzz.css",
+      "web/src/lib/appearance/palettes/catppuccin-frappe.css",
+      "web/src/lib/appearance/palettes/catppuccin-latte.css",
+      "web/src/lib/appearance/palettes/catppuccin-macchiato.css",
+      "web/src/lib/appearance/palettes/catppuccin-mocha.css",
+      "web/src/lib/appearance/palettes/dark-plus.css",
+      "web/src/lib/appearance/palettes/dracula-soft.css",
+      "web/src/lib/appearance/palettes/dracula.css",
+      "web/src/lib/appearance/palettes/everforest-dark.css",
+      "web/src/lib/appearance/palettes/everforest-light.css",
+      "web/src/lib/appearance/palettes/github-dark-default.css",
+      "web/src/lib/appearance/palettes/github-dark-dimmed.css",
+      "web/src/lib/appearance/palettes/github-dark-high-contrast.css",
+      "web/src/lib/appearance/palettes/github-dark.css",
+      "web/src/lib/appearance/palettes/github-light-default.css",
+      "web/src/lib/appearance/palettes/github-light-high-contrast.css",
+      "web/src/lib/appearance/palettes/github-light.css",
+      "web/src/lib/appearance/palettes/gruvbox-dark-hard.css",
+      "web/src/lib/appearance/palettes/gruvbox-dark-medium.css",
+      "web/src/lib/appearance/palettes/gruvbox-dark-soft.css",
+      "web/src/lib/appearance/palettes/gruvbox-light-hard.css",
+      "web/src/lib/appearance/palettes/gruvbox-light-medium.css",
+      "web/src/lib/appearance/palettes/gruvbox-light-soft.css",
+      "web/src/lib/appearance/palettes/houston.css",
+      "web/src/lib/appearance/palettes/kanagawa-dragon.css",
+      "web/src/lib/appearance/palettes/kanagawa-lotus.css",
+      "web/src/lib/appearance/palettes/kanagawa-wave.css",
+      "web/src/lib/appearance/palettes/laserwave.css",
+      "web/src/lib/appearance/palettes/light-plus.css",
+      "web/src/lib/appearance/palettes/material-theme-darker.css",
+      "web/src/lib/appearance/palettes/material-theme-lighter.css",
+      "web/src/lib/appearance/palettes/material-theme-ocean.css",
+      "web/src/lib/appearance/palettes/material-theme-palenight.css",
+      "web/src/lib/appearance/palettes/material-theme.css",
+      "web/src/lib/appearance/palettes/min-dark.css",
+      "web/src/lib/appearance/palettes/min-light.css",
+      "web/src/lib/appearance/palettes/monokai.css",
+      "web/src/lib/appearance/palettes/night-owl.css",
+      "web/src/lib/appearance/palettes/nord.css",
+      "web/src/lib/appearance/palettes/one-dark-pro.css",
+      "web/src/lib/appearance/palettes/one-light.css",
+      "web/src/lib/appearance/palettes/plastic.css",
+      "web/src/lib/appearance/palettes/poimandres.css",
+      "web/src/lib/appearance/palettes/red.css",
+      "web/src/lib/appearance/palettes/rose-pine-dawn.css",
+      "web/src/lib/appearance/palettes/rose-pine-moon.css",
+      "web/src/lib/appearance/palettes/rose-pine.css",
+      "web/src/lib/appearance/palettes/slack-dark.css",
+      "web/src/lib/appearance/palettes/slack-ochin.css",
+      "web/src/lib/appearance/palettes/snazzy-light.css",
+      "web/src/lib/appearance/palettes/solarized-dark.css",
+      "web/src/lib/appearance/palettes/solarized-light.css",
+      "web/src/lib/appearance/palettes/synthwave-84.css",
+      "web/src/lib/appearance/palettes/tokyo-night.css",
+      "web/src/lib/appearance/palettes/vesper.css",
+      "web/src/lib/appearance/palettes/vitesse-black.css",
+      "web/src/lib/appearance/palettes/vitesse-dark.css",
+      "web/src/lib/appearance/palettes/vitesse-light.css",
+      "web/src/lib/appearance/preferences.ts",
+      "web/src/lib/appearance/runtime.svelte.ts",
+      "web/src/lib/appearance/store.svelte.ts",
+      "web/src/lib/appearance/theme-catalog.ts",
+      "web/src/lib/appearance/theme-palettes.css",
+      "web/src/lib/ui/community-app-shell/CommunityAppShell.svelte",
+      "web/src/lib/ui/community-chip/CommunityChip.svelte",
+      "web/src/lib/ui/community-conversation/CommunityConversation.svelte",
+      "web/src/lib/ui/community-emoji-picker/CommunityEmojiPicker.svelte",
+      "web/src/lib/ui/community-markdown-content/CommunityLinkCard.svelte",
+      "web/src/lib/ui/community-markdown-content/CommunityMarkdownContent.svelte",
+      "web/src/lib/ui/community-markdown-content/CommunitySpoiler.svelte",
+      "web/src/lib/ui/community-markdown-content/syntax-hast.ts",
+      "web/src/lib/ui/community-markdown-content/syntax.ts",
+      "web/src/lib/ui/community-message/CommunityMessage.svelte",
+      "web/src/lib/ui/community-message/message-local.css",
+      "web/src/lib/ui/community-projects/CommunityProjectsVirtualRows.svelte",
+      "web/src/lib/ui/community-thread-panel/CommunityThreadMessage.svelte",
+      "web/src/lib/ui/community-thread-panel/CommunityThreadPanel.svelte",
+      "web/src/lib/ui/store-appearance/AppearanceChoice.svelte",
+      "web/src/lib/ui/store-appearance/AppearancePreferences.svelte",
+      "web/src/lib/ui/store-appearance/AppearanceRow.svelte",
+      "web/src/lib/ui/store-appearance/AppearanceThemes.svelte",
+      "web/src/lib/ui/store-appearance/StoreAppearance.svelte",
+      "web/src/lib/ui/store-appearance/ThemePreview.svelte",
+      "web/src/lib/ui/store-appearance/appearance-preview.css",
+      "web/src/lib/ui/store-appearance/appearance.css",
+      "web/src/lib/ui/store-appearance/theme-preview.css",
+      "web/src/lib/ui/store-application/StoreApplication.svelte",
+      "web/src/lib/ui/store-application/StoreApplicationRightPanels.svelte",
+      "web/src/lib/ui/store-application/store-application.css",
+      "web/src/lib/ui/store-collaboration/StoreAgentToolDiscussion.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentToolReview.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentTranscript.svelte",
+      "web/src/lib/ui/store-collaboration/StoreReviewConversation.svelte",
+      "web/src/lib/ui/store-collaboration/StoreReviewThreads.svelte",
+      "web/src/lib/ui/store-collaboration/review-drafts.svelte.ts",
+      "web/src/lib/ui/store-discussion/StoreDiscussionWorkspace.svelte",
+      "web/src/lib/ui/store-settings/StoreSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreSettingsNavigation.svelte",
+      "web/src/lib/ui/store-settings/StoreSettingsPage.svelte",
+      "web/src/lib/ui/store-settings/model.ts",
+      "web/src/lib/ui/store-threads/StoreThreadFocus.svelte",
+      "web/src/lib/ui/store-threads/thread-panel.svelte.ts",
+      "web/src/lib/ui/store-work/StoreWorkComments.svelte",
+      "web/src/lib/ui/store-work/StoreWorkTaskDetail.svelte",
+      "web/src/lib/ui/store-work/community-work-disclosures.css",
+      "web/src/main.ts",
+      "web/src/style.css",
+      "web/tests/browser/appearance.spec.ts",
+      "web/tests/vite/appearance.test.ts",
+      "web/vite.config.ts"
+    ],
+    "tests": [],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/appearance.test.ts web/tests/vite/settings.test.ts web/tests/vite/threads.test.ts web/tests/vite/mixed-profile.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Focused Appearance and Settings/Threads/mixed-profile acceptance: 33 tests across four files, following a 26-test baseline."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit",
+        "result": "pass",
+        "failures": 0,
+        "note": "204 tests across 34 files, including preference validation, complete theme pairs, session drafts and local URL cards."
+      },
+      {
+        "command": "pnpm web:test",
+        "result": "pass",
+        "failures": 0,
+        "note": "70 tests pass; no transport contract changed."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-appearance/StoreAppearance.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-threads/StoreThreads.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Initial new draft flow used the wrong member label; 18/19 pass. Later label correction exposed and resolved Dialog pointer teardown timing and the Bits UI deferred scrollbar warning through the source-owned native host strategy."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-threads/StoreThreads.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte",
+        "result": "fail",
+        "failures": 12,
+        "note": "An extracted draft initially mutated unbound props, fixed with owner callbacks. Native viewport regions then duplicated landmarks, fixed in Design Core. Final pass left one active-chip contrast failure (4.37:1); app-owned success text mix adjusted."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreCollaboration.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Nine interactions and axe pass, including agent response replies and Focus/Split draft preservation. The new scenario is subsequently extracted into AppearanceDiscussions with a separate play helper to preserve source budgets."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Production assets and manifest built. Fonts remain local files under unchanged font-src through assetsInlineLimit=0."
+      },
+      {
+        "command": "pnpm exec playwright test -c .scratch/appearance.playwright.config.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "Initial strict CSP run exposed inlined font assets and existing static toolbar style, corrected in production source. Remaining Bits Command template violations belong to inherited Overview bookmarks; the cold Appearance lane enters Threads to isolate the owned setting surface. No CSP weakened. A peer using Overview also requested an inherited Gravatar; both fixture tabs now enter Threads. Narrow viewport assertion was scoped to the page heading to disambiguate the shell heading."
+      },
+      {
+        "command": "pnpm exec playwright test -c .scratch/appearance.playwright.config.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Cold built UI: startup/reload persistence, cross-tab propagation, OS System pairs, dark/light selections, geometry/zoom, reduced-motion desktop and 390px mobile axe, all appearance controls, zero CSP violations and zero external requests in this flow."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero errors and warnings."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero errors/warnings and catalog boundaries passed before final regression corrections; a final check follows below."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "fail",
+        "failures": 1,
+        "note": "Initial oversized palette and owner modules failed the source budget; generated palette sheets and extracted ownership/story helpers resolve the final 707-module check."
+      },
+      {
+        "command": "pnpm test:storybook",
+        "result": "fail",
+        "failures": 8,
+        "note": "First full UI run: 7 failed/39 passed files of 51 reached; 8 failed/167 passed tests, 7 unhandled errors. Related selection, link-name, task Activity and Split review regressions were corrected; a browser closed before the complete suite finished. Final full run is recorded separately."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-projects/CommunityProjectsRevisionGraph.stories.svelte catalog/components/community-projects/RepositoryDocuments.stories.svelte catalog/components/store-application/NativeReviewDetail.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Intermediate related regressions: graph/document acceptance passed; one detail-header test still selected the retained Split context viewport. After correction, NativeReviewDetail passes 2/2 in the next layout regression run. Logs /tmp/jj-appearance-regressions.log and /tmp/jj-appearance-layout-regressions2.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-application/NativeReviewDetail.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Intermediate 10 passed/1 failed: both review scenarios passed; moving Activity outside task metadata exposed selector ancestry. Owning disclosure selectors and fixture context were corrected."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsHub.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final task layout, discussion, response and accessibility acceptance: 9/9, /tmp/jj-appearance-task-final.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-appearance/StoreAppearance.stories.svelte catalog/components/store-threads/StoreThreads.stories.svelte catalog/components/store-application/AppearanceDiscussions.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final controls, keyboard, dark mode, native replies and agent Focus/Split draft-retention acceptance: 8/8 across three files, including axe; /tmp/jj-appearance-feature-final.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-mutations/StoreMutationCommitPicker.stories.svelte catalog/components/store-application/StoreComparisonParentPicker.stories.svelte",
+        "result": "fail",
+        "failures": 2,
+        "note": "Read-only untouched-main baseline: 2 failed/2 passed with the same aria-controls violations; /tmp/jj-appearance-baseline-pickers.log. Existing accessibility was not suppressed."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreRepositoryApplication.stories.svelte -t LargeVirtualizedRepository",
+        "result": "fail",
+        "failures": 1,
+        "note": "Read-only untouched-main baseline: 1 failed/5 skipped with the same aria-controls failure and inherited Bits dismissible-layer derived_inert teardown error; /tmp/jj-appearance-baseline-large.log."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final production rebuild after related corrections; manifest/local assets generated. Existing large-chunk warning retained; /tmp/jj-appearance-qualified-build.log."
+      },
+      {
+        "command": "pnpm exec playwright test -c .scratch/appearance.playwright.config.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final cold rebuilt UI: 1/1; reload, cross-tab, OS mode, desktop/mobile axe and reduced motion, geometry/zoom, no CSP violations or external requests in the Threads/Appearance flow; /tmp/jj-appearance-qualified-cold.log."
+      },
+      {
+        "command": "pnpm exec tsx scripts/appearance-palettes.mts --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final generated-byte check for all 62 palettes; /tmp/jj-appearance-palettes-verified.log."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final owned-source graph and source budgets pass for 707 modules; /tmp/jj-appearance-architecture-last.log."
+      },
+      {
+        "command": "pnpm test:storybook",
+        "result": "fail",
+        "failures": 4,
+        "note": "Final broad UI run: 4 failed/34 passed files of 51; 4 failed/151 passed tests and 6 errors before a browser connection closed. Failures are inherited commit/comparison/repository picker aria-controls violations and MobileHeaderFilters retaining a search draft. All four reproduce read-only on untouched main. Related Appearance regressions pass focused runs; Bits dismissible/scrollbar teardown errors remain explicit. /tmp/jj-appearance-all-stories-final.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsFilters.stories.svelte -t MobileHeaderFilters",
+        "result": "fail",
+        "failures": 1,
+        "note": "Read-only untouched-main baseline: 1 failed/1 skipped; reopened mobile search has empty value instead of draft, matching the final broad lane. /tmp/jj-appearance-baseline-mobile-filters.log."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final production typecheck after all corrections: zero errors/warnings; /tmp/jj-appearance-web-check-complete.log."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final catalog typecheck and boundaries: zero errors/warnings, 125 modules; /tmp/jj-appearance-catalog-check-last.log."
+      },
+      {
+        "command": "pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final ownership validator passes with 21 chapters/146 requirements; no Community package, source aliases or checkout dependencies. /tmp/jj-appearance-ownership-last.log."
+      },
+      {
+        "command": "pnpm exec prettier --check .",
+        "result": "fail",
+        "failures": 2,
+        "note": "Repository-wide check found the Appearance ledger formatting, corrected, and inherited crates/jj-agent/tests/fixtures/native-association-v1.json formatting. The unrelated fixture is unchanged; /tmp/jj-appearance-format-last.log."
+      },
+      {
+        "command": "pnpm exec prettier --check --ignore-unknown <all paths from jj --no-pager diff --name-only>",
+        "result": "pass",
+        "failures": 0,
+        "note": "Every changed source, story, generated stylesheet, manifest and document passes targeted formatting after ledger correction."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "fail",
+        "failures": 1,
+        "note": "Verification table supports only Implemented/Planned; the initial Partial row was corrected to Implemented with explicit local-source and release limits. Milestone M16 retains Partial rather than Done."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "135 protected files and six canonical chapters, before final evidence completion; /tmp/jj-appearance-spec-first-last.log."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "120 tasks; evidence bookkeeping only, before final evidence completion; /tmp/jj-appearance-progress-last.log."
+      },
+      {
+        "command": "pnpm checks",
+        "result": "fail",
+        "failures": 1,
+        "note": "Design Core isolated source: earlier complete run failed WebKit duplicate native labels after other lanes passed; corrected in the owning library. Intermediate governance retries also exposed atomic acceptance form/word budgets. A later 205/207-file interaction run stalled and was terminated, never counted as a pass. Source logs /tmp/dc-appearance-checks*.log."
+      },
+      {
+        "command": "pnpm checks",
+        "result": "pass",
+        "failures": 0,
+        "note": "Design Core final source qualification: 715 unit tests; 641 Storybook tests/207 files; static build/audit, formatting/types/governance; 14 workspace, 11 shell, 3 AI and 35 Shadcn Chromium/WebKit browser tests, one configured engine skip. /tmp/dc-appearance-checks-qualified.log."
+      },
+      {
+        "command": "pnpm spec:check; pnpm exec prettier --check spec/src/verification.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Design Core final evidence edit: all three spec lanes and targeted formatting pass. Source committed as yovkqwtu / 2ad3d8fa; source workspace is clean."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-threads/StoreThreads.stories.svelte -t AppearanceFocus",
+        "result": "pass",
+        "failures": 0,
+        "note": "After rebase onto the newly committed 59f1cfe8, exact Focus acceptance passes 1/1 with 3 skips. Drafts survive, only the standard Thread pane is hidden, and independently open repository details retain their state."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/appearance.test.ts web/tests/vite/settings.test.ts web/tests/vite/threads.test.ts web/tests/vite/production-threads.test.ts web/tests/vite/store-shell-layout.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "After rebase, 31 tests across three matching files: Appearance, production Threads and independent shell layouts. Legacy settings.test.ts/threads.test.ts filter names do not exist; the complete unit run below includes actual production-* Settings coverage."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final base includes the new Thread regressions: 212/212 across 35 files, including all actual Settings and Thread model files; /tmp/jj-appearance-rebased-all-unit.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-appearance/StoreAppearance.stories.svelte catalog/components/store-threads catalog/components/store-application/AppearanceDiscussions.stories.svelte catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-work/ProjectsDirectory.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "After rebase: 18/18 across seven files; complete Appearance controls, native Thread presentation/reactions/replies, independent rail/Focus draft retention, agent discussion, Split review and project directory acceptance, including axe. /tmp/jj-appearance-rebased-stories.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "After rebase: zero type errors/warnings, 125 catalog modules, 715 owned source modules and ownership pass. Root aggregates and Rust lanes remain out of scope; /tmp/jj-appearance-rebased-*.log."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final production bundle on 59f1cfe8 built; existing large-chunk warning is retained; /tmp/jj-appearance-rebased-build.log."
+      },
+      {
+        "command": "pnpm exec playwright test -c .scratch/appearance.playwright.config.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "Initial rebased cold run and diagnostic retry both reached the final CSP assertion: two blocked CodeMirror style elements. The generic fixture omitted Threads API, causing the new directory error composer to mount Mira. Diagnostic DOM ancestry identifies community-chat-composer__mira; no CSP or console diagnostics were suppressed. Healthy Threads fixture is now supplied, and mounted composer CSP qualification remains separately explicit."
+      },
+      {
+        "command": "pnpm exec playwright test -c .scratch/appearance.playwright.config.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final built healthy empty-directory/Appearance lane passes 1/1: desktop/mobile axe, all controls, reload, cross-tab, OS mode, root geometry and reduced motion, zero CSP violations/external requests in this flow. /tmp/jj-appearance-rebased-cold-final.log."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "After the supported verification status correction, five validators, 21 chapters and 146 requirements passed before final rebase/evidence completion."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress; pnpm exec prettier --check --ignore-unknown <all changed paths>",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final rebased evidence checks: 136 protected files/six owning chapters; five validators/21 chapters/146 requirements; 120 ledger tasks; all 143 changed paths formatted. Logs /tmp/jj-appearance-final-*.log. This final evidence-only annotation is then consumed again before commit."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Release containing yovkqwtu within the consumer registry range and registry-only qualification",
+      "Inherited broad Storybook failures/teardown errors and mounted Mira/CodeMirror strict-CSP qualification remain open"
+    ],
+    "scope": "UI-only. Full relevant Storybook is justified by app-wide palette/type tokens and shared virtualizer/scrollbar lifecycle across native Threads, review, task and agent surfaces. Rust checks/builds/tests, wire contract generation, root aggregates and unrelated live service lanes are out of scope under targeted verification policy. Main source, its active landing evidence, installed CLI and running services are untouched by this task. The Appearance workspace alone rebases onto the latest committed Thread layout at 59f1cfe8.",
+    "before": "New appearance workspace is based on 0915f828 with Community-owned components and native Threads already landed. Baseline has transient service/repository/search/sync Settings but no complete Appearance page or device-wide policy.",
+    "formats": "Device-local jj-store.appearance.v1 JSON preferences, version 1; session-only exact repository/conversation draft keys; existing route/snapshot/native/WAL/API authority unchanged. Source budget preserved with 62 generated palette sheets.",
+    "versions": "Buzz ef2aa1ae38fadcc0bc22b8bf6ed96b35933146be; Shiki 4.0.2; Inter Variable 5.2.8; pnpm 10.32.1; JJ 0.45.1; locked Svelte/Storybook/Vitest/Playwright. Temporary source Design Core 0.1.2 in yovkqwtu; portable manifest/lock continue to declare registry ^0.2.0.",
+    "next": "Review rmwvnkzr and the source yovkqwtu commit. Complete a separately authorized compatible foundation release and registry-only acceptance before main integration; retain unrelated accessibility, composer CSP and visual gates.",
+    "deferred": [
+      "Visual baselines remain visual-pending; screenshots are manual QA, not approval.",
+      "Foundation release/registry-only validation, main landing, publication and unrelated service restart are not authorized.",
+      "Inherited Overview bookmark Bits Command CSP violations remain outside the Appearance lane.",
+      "Untouched-main accessibility and mobile-filter draft failures remain outside the Appearance implementation; no global diagnostic or axe suppression.",
+      "Inherited native-association-v1.json formatting remains unchanged.",
+      "Mounted Mira/CodeMirror composers inject inline styles under the unchanged strict CSP; the healthy empty-directory Appearance lane does not mount a composer. This is not a global editor/CSP pass."
+    ],
+    "artifacts": "Ignored .scratch/appearance-preview.mjs and appearance.playwright.config.ts use built web/dist, fixture APIs, isolated port7489 and exact production STRICT_CSP; owned server closes automatically. Logs in /tmp/jj-appearance-*.log and /tmp/dc-appearance-*.log; desktop/mobile screenshots /tmp/jj-store-appearance*.png.",
+    "integrationBase": "59f1cfe8: latest committed Thread presentation and separate repository/details rail changes; active main landing evidence is user-owned and untouched.",
+    "mainWork": "Default workspace subsequently started active uncommitted Thread-menu/reaction edits in wytvknwz. No active main files are copied, overwritten or landed here. Consumer qualification is pinned to the committed 59f1cfe8 Thread layout, including its separate details rail; review/rebase after concurrent work completes before any main integration."
   }
 ]
 ```

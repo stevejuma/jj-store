@@ -118,7 +118,10 @@
       expect(c.getByRole("article", { name: "Task details" })).toBeVisible(),
     );
     const detail = c.getByRole("article", { name: "Task details" });
-    await expectCommunityDisclosures(detail);
+    await expectCommunityDisclosures(
+      detail,
+      c.getByRole("complementary", { name: "Task discussion" }),
+    );
     await expectTaskTitleRow(detail);
     await expect(
       c.getByRole("navigation", { name: "breadcrumb" }),

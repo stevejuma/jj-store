@@ -7,7 +7,12 @@ export default defineConfig({
   plugins: [tailwindcss(), svelte()],
   resolve: { dedupe: ["svelte", "bits-ui"] },
   worker: { format: "es" },
-  build: { manifest: true, sourcemap: false, target: "es2022" },
+  build: {
+    assetsInlineLimit: 0,
+    manifest: true,
+    sourcemap: false,
+    target: "es2022",
+  },
   server: { host: "127.0.0.1", strictPort: true },
   preview: { host: "127.0.0.1", strictPort: true },
 });

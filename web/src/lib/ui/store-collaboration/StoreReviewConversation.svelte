@@ -114,7 +114,6 @@
                 message={reviewMessage(comment)}
                 {author}
                 {members}
-                density="compact"
               >
                 {#snippet supplement()}{#if controller.threads && detail && comment.content.state === "visible"}<StoreMessageReactions
                       threads={controller.threads}

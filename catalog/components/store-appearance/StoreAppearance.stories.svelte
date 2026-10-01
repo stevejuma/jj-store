@@ -1,0 +1,110 @@
+<script module lang="ts">
+  import { defineMeta } from "@storybook/addon-svelte-csf";
+  import { expect, userEvent, waitFor, within } from "storybook/test";
+  import Fixture from "../../fixtures/AppearanceFixture.svelte";
+  const { Story } = defineMeta({
+    title: "JJ Store/Appearance",
+    component: Fixture,
+    tags: ["visual-pending"],
+    parameters: { layout: "fullscreen" },
+  });
+  const saved = (canvas: HTMLElement) =>
+    JSON.parse(
+      canvas.querySelector<HTMLElement>(".appearance-fixture")!.dataset.saved!,
+    );
+</script>
+
+<Story
+  name="All controls and local links"
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await expect(c.getByRole("heading", { name: "Appearance" })).toBeVisible();
+    await userEvent.click(c.getByRole("button", { name: /Theme style,/ }));
+    await expect(
+      c.getAllByRole("button", { name: /Use .* theme/ }),
+    ).toHaveLength(18);
+    await userEvent.click(c.getByRole("radio", { name: "Dark" }));
+    await expect(
+      c.getAllByRole("button", { name: /Use .* theme/ }),
+    ).toHaveLength(43);
+    await userEvent.click(c.getByRole("button", { name: "Use Dracula theme" }));
+    await expect(
+      c.getByRole("button", { name: "Use Blue accent" }),
+    ).toBeVisible();
+    await expect(
+      c.queryByRole("switch", { name: "Prominent active tab" }),
+    ).toBeNull();
+    await userEvent.click(c.getByRole("button", { name: "Use Green accent" }));
+    await userEvent.click(c.getByRole("switch", { name: "Glass background" }));
+    const slider = c.getByRole("slider", { name: "Glass opacity" });
+    await userEvent.click(slider);
+    await userEvent.keyboard("{End}");
+    await expect(slider).toHaveAttribute("aria-valuenow", "90");
+    await userEvent.click(
+      c.getByRole("button", { name: "Reset glass opacity" }),
+    );
+    await expect(slider).toHaveAttribute("aria-valuenow", "65");
+    await userEvent.click(c.getByRole("radio", { name: "Larger" }));
+    await userEvent.click(c.getByRole("radio", { name: "Spacious" }));
+    await userEvent.click(c.getByRole("radio", { name: "Rich" }));
+    await userEvent.click(c.getByRole("radio", { name: "Focus" }));
+    await expect(saved(canvasElement)).toMatchObject({
+      mode: "dark",
+      theme: "dracula",
+      accent: "#22c55e",
+      glass: true,
+      opacity: 65,
+      fontSize: "larger",
+      density: "spacious",
+      links: "rich",
+      threads: "focus",
+    });
+    const link = c.getByRole("link", { name: /Existing product updates/ });
+    await expect(link).toHaveAttribute("data-layout", "rich");
+    await expect(
+      c.getByText("https://example.com/code", { exact: true }),
+    ).toBeVisible();
+    await userEvent.click(c.getByRole("radio", { name: "Light" }));
+    await expect(
+      c.getAllByRole("button", { name: /Use .* theme/ }),
+    ).toHaveLength(19);
+    await userEvent.click(c.getByRole("button", { name: "Use Buzz theme" }));
+    await expect(
+      c.getByRole("switch", { name: "Prominent active tab" }),
+    ).toBeVisible();
+    await expect(
+      c.queryByRole("button", { name: "Use Blue accent" }),
+    ).toBeNull();
+    await userEvent.click(
+      c.getByRole("switch", { name: "Prominent active tab" }),
+    );
+    await expect(saved(canvasElement).prominent).toBe(true);
+  }}
+/>
+<Story
+  name="Preview and keyboard selection"
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    const before = saved(canvasElement);
+    await userEvent.hover(c.getByRole("radio", { name: "Smaller" }));
+    await waitFor(() =>
+      expect(document.documentElement.dataset.storeFont).toBe("smaller"),
+    );
+    await expect(saved(canvasElement)).toEqual(before);
+    await userEvent.unhover(c.getByRole("radio", { name: "Smaller" }));
+    await waitFor(() =>
+      expect(document.documentElement.dataset.storeFont).toBe("default"),
+    );
+    c.getByRole("radio", { name: "Default" }).focus();
+    await userEvent.keyboard("{ArrowRight}");
+    await expect(c.getByRole("radio", { name: "Larger" })).toHaveAttribute(
+      "aria-checked",
+      "true",
+    );
+    await expect(saved(canvasElement).fontSize).toBe("larger");
+  }}
+/>
+<Story
+  name="Dark paired appearance"
+  args={{ preferences: { mode: "dark", theme: "catppuccin-mocha" } }}
+/>

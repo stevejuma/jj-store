@@ -91,7 +91,7 @@
     const header = detail.querySelector<HTMLElement>(
       ".community-projects__review-header",
     )!;
-    const scrollRoot = canvasElement.querySelector<HTMLElement>(
+    const scrollRoot = detail.querySelector<HTMLElement>(
       ".store-collaboration__review-scroll",
     )!;
     scrollRoot.style.maxHeight = "24rem";
@@ -114,7 +114,7 @@
 />
 
 <Story
-  name="Community review list opens full page detail"
+  name="Community review list retains context beside split detail"
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
     const list = c.getByRole("list", { name: "Review threads" });
@@ -136,7 +136,7 @@
     await userEvent.click(
       await c.findByRole("button", { name: /Open Revision open/ }),
     );
-    await expect(c.queryByRole("list", { name: "Review threads" })).toBeNull();
+    await expect(c.getByRole("list", { name: "Review threads" })).toBeVisible();
     await expect(c.queryByRole("tab", { name: "Reviews" })).toBeNull();
     await expect(
       c.getByRole("article", { name: "Review details" }),

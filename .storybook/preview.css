@@ -1,4 +1,6 @@
 @import "../web/src/lib/ui/community-typography.css";
+@import "../web/src/lib/appearance/theme-palettes.css";
+@import "../web/src/lib/appearance/appearance.css";
 html,
 body,
 #storybook-root {

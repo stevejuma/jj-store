@@ -27,6 +27,9 @@
     onSelect: (emoji: string, custom?: CommunityCustomEmoji) => void;
   } = $props();
 
+  import { useAppearance } from "../../appearance/store.svelte.js";
+  import { lightThemes } from "../../appearance/theme-catalog.js";
+  const appearance = useAppearance();
   let pickerHost = $state<HTMLDivElement>();
 
   $effect(() => {
@@ -41,7 +44,11 @@
       navPosition: "bottom",
       previewPosition: "none",
       skinTonePosition: "search",
-      theme: "auto",
+      theme: appearance
+        ? lightThemes.has(appearance.theme)
+          ? "light"
+          : "dark"
+        : "auto",
       onEmojiSelect: (selection: { native?: string; shortcodes?: string }) => {
         const emoji = selection.native ?? selection.shortcodes;
         if (emoji === undefined) return;

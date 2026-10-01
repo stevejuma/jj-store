@@ -1850,6 +1850,10 @@
     {
       "local": "web/src/lib/ui/community-repository-branch-command/CommunityWorkingCopyCard.svelte",
       "reason": "Native jj-store presentation adapter composing owned copies and Design Core; locally authored, not copied from Community."
+    },
+    {
+      "local": "web/src/lib/ui/community-markdown-content/CommunityLinkCard.svelte",
+      "reason": "Native device appearance link cards use existing message text and HTTP addresses without remote metadata."
     }
   ]
 }

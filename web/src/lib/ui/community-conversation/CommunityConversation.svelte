@@ -7,7 +7,7 @@
     SystemMessage,
     type ComposerStatus,
   } from "@lapismd/design-core/ai/chat";
-  import { untrack, type Snippet } from "svelte";
+  import { type Snippet } from "svelte";
   import CommunityMessage from "../community-message/CommunityMessage.svelte";
   import CommunityChatComposer from "../community-chat-composer/CommunityChatComposer.svelte";
   import CommunitySkeleton from "../community-skeleton/CommunitySkeleton.svelte";
@@ -74,23 +74,22 @@
     messageSupplement?: Snippet<[CommunityMessageModel]>;
     footer?: Snippet;
   } = $props();
-  let value = $state("");
-  let editing = $state<CommunityMessageModel>();
-  $effect(() => {
-    room.id;
-    untrack(() => {
-      value = "";
-      editing = undefined;
-    });
-  });
+  import { useAppearance } from "../../appearance/store.svelte.js";
+  import { useDrafts } from "../../appearance/drafts.svelte.js";
+  const appearance = useAppearance();
+  const drafts = useDrafts();
+  const draft = $derived(drafts.get(`conversation:${room.id}`));
+  const editing = $derived(
+    messages.find((message) => message.id === draft.editing),
+  );
   function startEditing(message: CommunityMessageModel) {
-    editing = message;
-    value = message.content;
+    draft.editing = message.id;
+    draft.value = message.content;
   }
   async function submit(content: string) {
     if (editing && onSaveMessageEdit) {
       await onSaveMessageEdit(editing.id, content);
-      editing = undefined;
+      draft.editing = undefined;
     } else await onSend?.(content);
   }
 </script>
@@ -102,7 +101,7 @@
   data-footer={footer ? "custom" : "composer"}
 >
   <Layout
-    density="compact"
+    density={appearance?.density ?? "compact"}
     scrollMode="history"
     conversationKey={room.id}
     aria-label={`${room.name} conversation`}
@@ -126,7 +125,7 @@
         </div>{/if}{/snippet}
     {#snippet composer()}{#if footer}{@render footer()}{:else}
         <CommunityChatComposer
-          bind:value
+          bind:value={draft.value}
           {members}
           rooms={rooms.length ? rooms : [room]}
           {communityEmojis}
@@ -138,14 +137,14 @@
             ? { kind: "edit", id: editing.id, label: "Editing message" }
             : undefined}
           onCancelContext={() => {
-            editing = undefined;
-            value = "";
+            draft.editing = undefined;
+            draft.value = "";
           }}
           onSubmit={(submission) => submit(submission.content)}
         />
       {/if}{/snippet}
     <MessageList
-      density="compact"
+      density={appearance?.density ?? "compact"}
       aria-label={`${room.name} messages`}
       conversationKey={room.id}
       latestMessageId={messages.at(-1)?.id ?? ""}
@@ -165,7 +164,7 @@
           author={memberById(members, message.authorId)}
           {members}
           rooms={rooms.length ? rooms : [room]}
-          density="compact"
+          density={appearance?.density ?? "compact"}
           {currentMemberId}
           {communityEmojis}
           isContinuation={isMessageContinuation(messages, index, {

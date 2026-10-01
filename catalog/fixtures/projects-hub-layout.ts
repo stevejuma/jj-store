@@ -1,8 +1,14 @@
 import { expect, userEvent, within } from "storybook/test";
 
-export async function expectCommunityDisclosures(detail: HTMLElement) {
+export async function expectCommunityDisclosures(
+  detail: HTMLElement,
+  discussion: HTMLElement = detail,
+) {
   for (const name of ["Description", "Subtasks", "Activity"]) {
-    const trigger = within(detail).getByRole("button", { name });
+    const trigger = within(name === "Activity" ? discussion : detail).getByRole(
+      "button",
+      { name },
+    );
     const label = trigger.querySelector("span")!;
     const chevron = trigger.querySelector("svg")!;
     await expect(getComputedStyle(trigger).fontWeight).toBe("500");

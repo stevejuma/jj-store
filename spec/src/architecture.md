@@ -519,3 +519,10 @@ Folder initialization composition persists the proposed identity before
 publication and reuses the same initialization receipt. Reconnect changes only a
 validated device binding; companion metadata and linked project identities
 remain authoritative and unchanged.
+
+## Bundled appearance assets
+
+The browser bundles the pinned Shiki 4.0.2 theme data as generated semantic and
+syntax palettes and Inter 5.2.8 fonts for the Buzz-derived Appearance page.
+Generation uses npm theme data and the attributed owned palette adapter; no Buzz
+or Community checkout is a runtime/build dependency.

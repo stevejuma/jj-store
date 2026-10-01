@@ -93,6 +93,7 @@ actions.
 | JST-UI-015 | The installation Projects hub MUST expose authorized homes, repository and task directories, a shared native commit and agent Activity timeline with Activity-first tabs and recorded-agent filters, a repository-linked Projects list, shared safe Markdown previews, searchable project/task views, native identity routes, permission-gated dialogs and threaded Markdown discussion; use Community card/list layout controls and Mine/Other groups, searchable repository Command View selectors, Settings-style form rows and icon-only page-header filters, a centered top-header breadcrumb, and an original-message preview above the edit composer; keep independent bounded snapshot continuations and retained navigation state; and advance displayed metadata only on explicit refresh. |
 | JST-UI-016 | Local management MUST expose explicitly linked device workspaces, qualified capture setup and queue recovery, editable Search with isolated worker replacement, non-destructive storage verification/checkpoints and configured sync controls through typed capability-gated interfaces; unsupported profiles and deferred operations MUST remain explicit.                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | JST-UI-017 | Threads MUST use the owned Community channel toolbar with a direct settings action, aligned pane headers, targeted Chat Message Metadata feedback, reaction count tooltips, bordered standard right pane, independently controlled outer details rail, settings, contributor and reply presentation, forum directory rows, native composer entity pickers and message chips; workspace search MUST show recent activity, server-filtered section and entity scopes, native focus links and permission-gated bottom actions without inventing runner controls.                                                                                                                                                                                                                                        |
+| JST-UI-018 | The browser MUST expose the complete Buzz-derived device Appearance page, persist and restore app-wide preferences, apply resolved themes and typography to all owned conversations and overlays, retain native links and drafts, and offer working local link cards and responsive Focus/Split discussions without altering repository authority.                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 
 The production controller completes bootstrap before rendering connection
 choices. One ready LocalTrusted catalog entry opens without a token, several
@@ -110,15 +111,34 @@ discovery requests as the production controller. Authenticated fixtures supply
 one memory-only token and an authorized repository page before opening a
 repository; LocalTrusted fixtures discover without an Authorization header.
 
+## Device appearance
+
+JST-UI-018 owns the Buzz Appearance adaptation. The page exposes all 62 theme
+styles, System/Light/Dark mode, paired transitions, ten accent choices, browser
+glass with 30-90 percent opacity/reset, prominent navigation, 13/14/15 pixel
+body typography, Compact/Comfy/Spacious conversations, local Compact/Rich link
+cards and Focus/Split discussions. Preferences are device-local and app-wide;
+Settings location remains transient. Defaults are System/Buzz, default font,
+Comfy density, Compact links, Split replies, glass off and subtle active tabs.
+Temporary previews never persist. Startup, cross-tab and OS changes share the
+same resolved palette, including portalled controls and emoji pickers. Native
+entity links retain chips rather than becoming website cards. Conversation and
+reply drafts survive Settings and layout changes within the session. Focus hides
+the standard Thread reply pane while preserving the independently controlled
+repository details rail. Native/local capability and snapshot authority are
+unaffected. Browser glass reveals the application background, not the operating
+system desktop. Palette, font and preview assets are local under the existing
+strict CSP.
+
 ## Transient store settings
 
 Settings opens from the existing profile menu and replaces the repository
 navigation and body with a jj-store-owned settings sidebar and selected section.
-The sidebar contains Local service, Repository and Search. Repository tabs,
-header actions and the details sidebar are absent until Back to jj-store
-restores the same repository route and selected snapshot. Settings never writes
-its destination or section to the hash, browser history or storage. A fresh
-component starts on Local service; section selection lasts only for that
+The sidebar contains Appearance, Local service, Repository, Search and Sync.
+Repository tabs, header actions and the details sidebar are absent until Back to
+jj-store restores the same repository route and selected snapshot. Settings
+never writes its destination or section to the hash, browser history or storage.
+A fresh component starts on Local service; section selection lasts only for that
 component lifetime. Mobile selection returns to the content stage and retains a
 control that reopens settings navigation. On desktop, collapsing the settings
 sidebar retains Back, Local service, Repository and Search as labelled icon

@@ -1206,3 +1206,9 @@ Admitted local requests wait within the existing HTTP request/deadline bound for
 a local worker. Parallel startup code and project reads cannot fail merely
 because the bounded worker pool is briefly occupied. Cancellation before
 admission performs no folder work.
+
+## Browser appearance state
+
+Device appearance is browser-owned presentation state under JST-UI-018. It is
+independent of server settings revisions, repository operations and receipts.
+Appearance changes make no repository mutation or website metadata requests.

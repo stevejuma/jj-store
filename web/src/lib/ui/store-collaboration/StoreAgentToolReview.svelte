@@ -3,7 +3,8 @@
   import { Button } from "@lapismd/design-core/shadcn/button";
   import MessageSquareIcon from "@lucide/svelte/icons/message-square";
   import MessageSquareReplyIcon from "@lucide/svelte/icons/message-square-reply";
-  import CommunityChatComposer from "../community-chat-composer/CommunityChatComposer.svelte";
+  import StoreDiscussionWorkspace from "../store-discussion/StoreDiscussionWorkspace.svelte";
+  import StoreAgentToolDiscussion from "./StoreAgentToolDiscussion.svelte";
   import "../editor-focus.css";
   import type { Model } from "../../api/client.js";
   import {
@@ -13,7 +14,6 @@
   import type { StoreController } from "../../controller/contracts.js";
   import StoreAgentToolDetail from "./StoreAgentToolDetail.svelte";
   import StoreRecordMenu from "./StoreRecordMenu.svelte";
-  import StoreReviewConversation from "./StoreReviewConversation.svelte";
 
   let {
     tool,
@@ -27,8 +27,15 @@
     interactive?: boolean;
   } = $props();
 
-  let draftOpen = $state(false);
-  let draft = $state("");
+  import { useDrafts } from "../../appearance/drafts.svelte.js";
+
+  const drafts = useDrafts();
+  const draft = $derived(
+    drafts.get(
+      `tool:${controller.state.agentSession?.session.session_id}:${tool.tool_call_id}`,
+    ),
+  );
+  let draftOpen = $derived(draft.open ?? false);
   let actionsVisible = $state(false);
   let menuOpen = $state(false);
 
@@ -74,15 +81,13 @@
       controller.state.reviewThread?.thread.thread_id !== review.thread_id
     )
       await controller.actions.selectReviewThread(review.thread_id);
-    draftOpen = true;
-    draft = "";
+    draft.open = true;
   }
 
   async function submit(content: string) {
     await controller.actions.commentOnAgentTool(tool.tool_call_id, content);
     if (controller.state.status.reviewAction === "ready") {
-      draft = "";
-      draftOpen = false;
+      draft.value = "";
     }
   }
 </script>
@@ -91,122 +96,108 @@
   <StoreAgentToolDetail {tool} {patches} />
 {/snippet}
 
-<div
-  class="store-agent-tool-review"
-  data-ui-part="agent-tool-review"
-  role="group"
-  aria-label={`${tool.native_name} tool call`}
-  onpointerenter={() => (actionsVisible = true)}
-  onpointerleave={() => {
-    if (!draftOpen) actionsVisible = false;
-  }}
-  onfocusin={() => (actionsVisible = true)}
-  onfocusout={(event) => {
-    const next = event.relatedTarget;
-    if (
-      next instanceof Node &&
-      event.currentTarget instanceof Node &&
-      event.currentTarget.contains(next)
-    )
-      return;
-    if (!draftOpen) actionsVisible = false;
-  }}
+<StoreDiscussionWorkspace
+  open={interactive && draftOpen}
+  title={`Reply to ${tool.native_name}`}
+  onClose={() => (draft.open = false)}
 >
-  <Chat.ToolCalls
-    label="Tool activity"
-    calls={[
-      {
-        id: tool.tool_call_id,
-        name: tool.native_name,
-        status: status(tool.state),
-        target: target(),
-        errorMessage: tool.state === "failed" ? "Tool failed" : undefined,
-        detail,
-      },
-    ]}
-  />
-  <div
-    class="store-agent-tool-review__actions"
-    role="group"
-    aria-label={`Actions for ${tool.native_name} tool call`}
-    data-visible={actionsVisible || menuOpen ? "" : undefined}
-  >
-    {#if interactive && review}
-      <span
-        class="store-agent-tool-review__count"
-        aria-label={`${review.comment_count} comments`}
-        title={`${review.comment_count} comments`}
-      >
-        <MessageSquareIcon aria-hidden="true" />
-        {review.comment_count}
-      </span>
-    {/if}
-    {#if interactive}<Button
-        type="button"
-        variant="ghost"
-        size="icon-sm"
-        aria-label={`Reply to ${tool.native_name} tool call`}
-        title="Reply to tool call"
-        onclick={() => void beginReply()}
-      >
-        <MessageSquareReplyIcon aria-hidden="true" />
-      </Button>{/if}
-    <StoreRecordMenu
-      label={`More ${tool.native_name} tool actions`}
-      onOpenChange={(open) => (menuOpen = open)}
-      items={[
-        { label: "Copy tool call ID", value: tool.tool_call_id },
-        { label: "Copy snapshot ID", value: tool.snapshot_id },
-        { label: "Copy turn ID", value: tool.turn_id },
-        { label: "Copy tool name", value: tool.native_name },
-        { label: "Copy input", value: tool.input?.content },
-        { label: "Copy output", value: tool.output?.content },
-        {
-          label: "Copy paths",
-          value: tool.observed_paths.length
-            ? tool.observed_paths.join("\n")
-            : null,
-        },
-      ]}
-    />
-  </div>
-  {#if interactive && selected}
-    <div class="store-agent-tool-review__thread">
-      <StoreReviewConversation
-        {controller}
-        inline
-        showComposer={false}
-        showDiff={false}
-      />
-    </div>
-  {/if}
-  {#if draftOpen}
+  {#snippet context()}
     <div
-      class="store-agent-tool-review__composer"
-      data-ui-part="agent-tool-reply-composer"
+      class="store-agent-tool-review"
+      data-ui-part="agent-tool-review"
+      role="group"
+      aria-label={`${tool.native_name} tool call`}
+      onpointerenter={() => (actionsVisible = true)}
+      onpointerleave={() => {
+        if (!draftOpen) actionsVisible = false;
+      }}
+      onfocusin={() => (actionsVisible = true)}
+      onfocusout={(event) => {
+        const next = event.relatedTarget;
+        if (
+          next instanceof Node &&
+          event.currentTarget instanceof Node &&
+          event.currentTarget.contains(next)
+        )
+          return;
+        if (!draftOpen) actionsVisible = false;
+      }}
     >
-      <CommunityChatComposer
-        mode="form"
-        showSubmitButton
-        bind:value={draft}
-        disabled={controller.state.status.reviewAction === "refreshing" ||
-          !!controller.state.reviewActionRequestId}
-        busy={controller.state.status.reviewAction === "refreshing"}
-        ariaLabel={`Reply to ${tool.native_name} tool call`}
-        submitLabel="Reply"
-        placeholder="Reply to this tool call"
-        onCancel={() => {
-          draft = "";
-          draftOpen = false;
-        }}
-        onSubmit={(submission) => submit(submission.content)}
+      <Chat.ToolCalls
+        label="Tool activity"
+        calls={[
+          {
+            id: tool.tool_call_id,
+            name: tool.native_name,
+            status: status(tool.state),
+            target: target(),
+            errorMessage: tool.state === "failed" ? "Tool failed" : undefined,
+            detail,
+          },
+        ]}
       />
-      {#if controller.state.status.reviewAction === "failed" || controller.state.status.reviewAction === "unavailable"}
-        <p role="alert">{controller.state.reviewActionMessage}</p>
-      {/if}
+      <div
+        class="store-agent-tool-review__actions"
+        role="group"
+        aria-label={`Actions for ${tool.native_name} tool call`}
+        data-visible={actionsVisible || menuOpen ? "" : undefined}
+      >
+        {#if interactive && review}
+          <span
+            class="store-agent-tool-review__count"
+            aria-label={`${review.comment_count} comments`}
+            title={`${review.comment_count} comments`}
+          >
+            <MessageSquareIcon aria-hidden="true" />
+            {review.comment_count}
+          </span>
+        {/if}
+        {#if interactive}<Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            aria-label={`Reply to ${tool.native_name} tool call`}
+            title="Reply to tool call"
+            onclick={() => void beginReply()}
+          >
+            <MessageSquareReplyIcon aria-hidden="true" />
+          </Button>{/if}
+        <StoreRecordMenu
+          label={`More ${tool.native_name} tool actions`}
+          onOpenChange={(open) => (menuOpen = open)}
+          items={[
+            { label: "Copy tool call ID", value: tool.tool_call_id },
+            { label: "Copy snapshot ID", value: tool.snapshot_id },
+            { label: "Copy turn ID", value: tool.turn_id },
+            { label: "Copy tool name", value: tool.native_name },
+            { label: "Copy input", value: tool.input?.content },
+            { label: "Copy output", value: tool.output?.content },
+            {
+              label: "Copy paths",
+              value: tool.observed_paths.length
+                ? tool.observed_paths.join("\n")
+                : null,
+            },
+          ]}
+        />
+      </div>
     </div>
-  {/if}
-</div>
+  {/snippet}
+  {#snippet discussion()}
+    <StoreAgentToolDiscussion
+      {tool}
+      {controller}
+      {draft}
+      {selected}
+      onSubmit={submit}
+      onChange={(value) => (draft.value = value)}
+      onCancel={() => {
+        draft.value = "";
+        draft.open = false;
+      }}
+    />
+  {/snippet}
+</StoreDiscussionWorkspace>
 
 <style>
   .store-agent-tool-review {
@@ -254,18 +245,6 @@
   .store-agent-tool-review__count :global(svg) {
     width: 0.8rem;
     height: 0.8rem;
-  }
-
-  .store-agent-tool-review__thread,
-  .store-agent-tool-review__composer {
-    min-width: 0;
-    margin: 0.35rem 0.25rem 0.5rem 4.85rem;
-  }
-
-  .store-agent-tool-review__composer > p {
-    margin: 0.4rem 0 0;
-    color: var(--destructive);
-    font-size: var(--community-text-secondary);
   }
 
   @media (hover: none) {

@@ -275,3 +275,88 @@
     ).toHaveTextContent("Welcome to the channel");
   }}
 />
+
+<Story
+  name="Appearance focus preserves channel and reply drafts"
+  args={{ selected: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement),
+      body = within(document.body);
+    const welcome = await c.findByText("Welcome to the channel");
+    const channel = c.getByRole("textbox");
+    await userEvent.click(channel);
+    await userEvent.type(channel, "Unsent channel draft");
+    const message = welcome.closest("article")!;
+    await userEvent.hover(message);
+    await waitFor(() =>
+      expect(message).toHaveAttribute("data-actions-visible"),
+    );
+    await userEvent.click(
+      within(message).getByRole("button", { name: "Reply in thread" }),
+    );
+    const replies = c.getByRole("complementary", { name: "Thread replies" });
+    await userEvent.type(
+      within(replies).getByRole("textbox"),
+      "Unsent reply draft",
+    );
+    await userEvent.click(c.getByRole("button", { name: "Toggle details" }));
+    await expect(
+      c.getByRole("complementary", { name: "Repository details" }),
+    ).toBeVisible();
+    await userEvent.click(
+      c.getByRole("button", { name: /Open profile menu for/ }),
+    );
+    await userEvent.click(body.getByRole("menuitem", { name: "Settings" }));
+    await userEvent.click(c.getByRole("button", { name: "Appearance" }));
+    await userEvent.click(c.getByRole("radio", { name: "Focus" }));
+    await userEvent.click(c.getByRole("radio", { name: "Larger" }));
+    await userEvent.click(c.getByRole("button", { name: "Back to app" }));
+    const dialog = await body.findByRole("dialog", { name: "Replies" });
+    await expect(within(dialog).getByRole("textbox")).toHaveTextContent(
+      "Unsent reply draft",
+    );
+    await expect(
+      canvasElement.querySelector(
+        ".community-application__standard-right-sidebar",
+      ),
+    ).toBeNull();
+    await userEvent.click(
+      within(dialog).getByRole("button", { name: "Close" }),
+    );
+    await waitFor(() =>
+      expect(body.queryByRole("dialog", { name: "Replies" })).toBeNull(),
+    );
+    await waitFor(() =>
+      expect(getComputedStyle(document.body).pointerEvents).not.toBe("none"),
+    );
+    await expect(c.getByRole("textbox")).toHaveTextContent(
+      "Unsent channel draft",
+    );
+    await expect(
+      c.getByRole("complementary", { name: "Repository details" }),
+    ).toBeVisible();
+    await userEvent.hover(
+      c.getByText("Welcome to the channel").closest("article")!,
+    );
+    await waitFor(() =>
+      expect(
+        c.getByText("Welcome to the channel").closest("article"),
+      ).toHaveAttribute("data-actions-visible"),
+    );
+    await userEvent.click(
+      within(
+        c.getByText("Welcome to the channel").closest("article")!,
+      ).getByRole("button", { name: "Reply in thread" }),
+    );
+    const reopened = await body.findByRole("dialog", { name: "Replies" });
+    await expect(within(reopened).getByRole("textbox")).toHaveTextContent(
+      "Unsent reply draft",
+    );
+    await userEvent.click(
+      within(reopened).getByRole("button", { name: "Close" }),
+    );
+    await waitFor(() =>
+      expect(getComputedStyle(document.body).pointerEvents).not.toBe("none"),
+    );
+  }}
+/>

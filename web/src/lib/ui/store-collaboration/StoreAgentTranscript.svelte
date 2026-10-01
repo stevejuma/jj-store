@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { useAppearance } from "../../appearance/store.svelte.js";
+  const appearance = useAppearance();
   import * as Chat from "@lapismd/design-core/ai/chat";
   import CommunityMessage from "../community-message/CommunityMessage.svelte";
   import type { CommunityMemberModel } from "../../community/workspace-model.js";
@@ -53,7 +55,7 @@
 </script>
 
 <Chat.MessageList
-  density="compact"
+  density={appearance?.density ?? "compact"}
   isEmpty={activity.length === 0}
   aria-label="Agent conversation activity"
 >

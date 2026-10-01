@@ -18,8 +18,10 @@
     controller,
     shell,
     onSelectPage,
+    threadFocused = false,
   }: {
     controller: StoreController;
+    threadFocused?: boolean;
     shell: AppShellController;
     onSelectPage: StoreController["actions"]["selectPage"];
   } = $props();
@@ -35,7 +37,7 @@
   );
 </script>
 
-{#if current.page === "threads" && controller.threads?.detail}
+{#if current.page === "threads" && controller.threads?.detail && !threadFocused}
   <AppShell.Sidebar
     side="right"
     constraintPriority={0}

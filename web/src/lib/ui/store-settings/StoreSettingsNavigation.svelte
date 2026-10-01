@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Button } from "@lapismd/design-core/shadcn/button";
+  import PaletteIcon from "@lucide/svelte/icons/palette";
   import ArrowLeftIcon from "@lucide/svelte/icons/arrow-left";
   import DatabaseIcon from "@lucide/svelte/icons/database";
   import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
@@ -21,6 +22,7 @@
   } = $props();
 
   const sections = [
+    { id: "appearance", label: "Appearance", icon: PaletteIcon },
     { id: "service", label: "Local service", icon: ServerIcon },
     { id: "repository", label: "Repository", icon: DatabaseIcon },
     { id: "search", label: "Search", icon: SearchIcon },

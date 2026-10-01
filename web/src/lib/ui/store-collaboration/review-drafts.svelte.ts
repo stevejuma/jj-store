@@ -12,6 +12,7 @@ export function reviewDraft(
   controller: StoreController,
   threadId: string,
 ): ReviewDraft {
+  threadId = JSON.stringify([controller.state.route.repository, threadId]);
   let threads = drafts.get(controller);
   if (!threads) {
     threads = new Map();

@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { useAppearance } from "../../appearance/store.svelte.js";
+  const appearance = useAppearance();
   import CommunityMessage from "../community-message/CommunityMessage.svelte";
   import {
     memberById,
@@ -38,7 +40,7 @@
   replyParticipants={(message.replyParticipantIds ?? []).map((id) =>
     memberById(members, id),
   )}
-  density="compact"
+  density={appearance?.density ?? "compact"}
   communityEmojis={panel.communityEmojis ?? []}
   onToggleReaction={panel.onToggleReaction}
   onAddReaction={panel.onAddReaction}

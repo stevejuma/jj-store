@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Snippet } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
+  import PaletteIcon from "@lucide/svelte/icons/palette";
   import ArrowLeftIcon from "@lucide/svelte/icons/arrow-left";
   import DatabaseIcon from "@lucide/svelte/icons/database";
   import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
@@ -26,22 +27,26 @@
   } = $props();
 
   const title = $derived(
-    section === "service"
-      ? "Local service"
-      : section === "repository"
-        ? "Repository"
-        : section === "sync"
-          ? "Sync"
-          : "Search",
+    section === "appearance"
+      ? "Appearance"
+      : section === "service"
+        ? "Local service"
+        : section === "repository"
+          ? "Repository"
+          : section === "sync"
+            ? "Sync"
+            : "Search",
   );
   const PageIcon = $derived(
-    section === "service"
-      ? ServerIcon
-      : section === "repository"
-        ? DatabaseIcon
-        : section === "sync"
-          ? RefreshCwIcon
-          : SearchIcon,
+    section === "appearance"
+      ? PaletteIcon
+      : section === "service"
+        ? ServerIcon
+        : section === "repository"
+          ? DatabaseIcon
+          : section === "sync"
+            ? RefreshCwIcon
+            : SearchIcon,
   );
 </script>
 
@@ -57,7 +62,6 @@
         variant="ghost"
         size="icon"
         class="store-settings__back"
-        style="--ui-button-radius: 9999px"
         aria-label="Back to app"
         title="Back to app"
         onclick={onClose}
@@ -107,6 +111,9 @@
   }
   .store-settings :global(.store-settings__section:first-child) {
     margin-block-start: 0;
+  }
+  :global(.store-settings__back) {
+    --ui-button-radius: 9999px;
   }
   .store-settings__page-title {
     display: flex;

@@ -96,7 +96,7 @@
     --mira-font-sans: var(--font-sans, ui-sans-serif, system-ui, sans-serif);
     --mira-font-mono: var(--font-mono, ui-monospace, monospace);
     --mira-font-size: inherit;
-    --mira-line-height: 1.55;
+    --mira-line-height: var(--store-message-leading, 1.55);
 
     min-width: 0;
     color: var(--foreground);
@@ -111,7 +111,7 @@
 
   :global(.community-markdown-content .markdown-preview-surface) {
     min-height: 0;
-    gap: 0.55rem;
+    gap: var(--store-paragraph-spacing, 0.55rem);
     background: transparent;
   }
 
@@ -125,7 +125,7 @@
   }
 
   :global(.community-markdown-content :is(p, ul, ol, blockquote, pre, table)) {
-    margin-block: 0.45rem;
+    margin-block: var(--store-paragraph-spacing, 0.45rem);
   }
 
   :global(.community-markdown-content :first-child) {

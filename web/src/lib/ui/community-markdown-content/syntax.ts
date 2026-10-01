@@ -18,6 +18,7 @@ import CommunityEntityReference from "./CommunityEntityReference.svelte";
 
 import CommunityMemberReference from "./CommunityMemberReference.svelte";
 
+import CommunityLinkCard from "./CommunityLinkCard.svelte";
 import CommunitySpoiler from "./CommunitySpoiler.svelte";
 import { remarkNativeEntityLinks } from "./syntax-entity.js";
 
@@ -54,6 +55,7 @@ export function createCommunityMarkdownExtension(
       communityemoji: CommunityEmojiReference,
       communityentity: CommunityEntityReference,
       communitymember: CommunityMemberReference,
+      communitylinkcard: CommunityLinkCard,
       communityspoiler: CommunitySpoiler,
     },
     rehypePlugins: [rehypeCommunitySyntax],

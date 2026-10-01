@@ -6,7 +6,10 @@
     LayoutScrollButton,
     MessageList,
   } from "@lapismd/design-core/ai/chat";
-  import { untrack } from "svelte";
+  import { useAppearance } from "../../appearance/store.svelte.js";
+  import { useDrafts } from "../../appearance/drafts.svelte.js";
+  const appearance = useAppearance();
+  const drafts = useDrafts();
   import { projectThreadTree } from "./thread-tree-layout.js";
   import CommunityThreadTreeRow from "./CommunityThreadTreeRow.svelte";
   import CommunityChatComposer from "../community-chat-composer/CommunityChatComposer.svelte";
@@ -17,36 +20,26 @@
   const tree = $derived(
     projectThreadTree(panel.thread.messages, panel.thread.rootMessageId),
   );
-  let value = $state("");
-  let editing = $state<string>();
-  let replying = $state<string>();
-  $effect(() => {
-    panel.thread.rootMessageId;
-    untrack(() => {
-      value = "";
-      editing = undefined;
-      replying = undefined;
-    });
-  });
+  const draft = $derived(drafts.get(`replies:${panel.thread.rootMessageId}`));
   function startEditing(id: string) {
-    editing = id;
-    value = panel.thread.messages.find((m) => m.id === id)?.content ?? "";
+    draft.editing = id;
+    draft.value = panel.thread.messages.find((m) => m.id === id)?.content ?? "";
   }
   const target = $derived(
     panel.thread.messages.find(
-      (m) => m.id === (replying ?? panel.thread.rootMessageId),
+      (m) => m.id === (draft.replying ?? panel.thread.rootMessageId),
     ),
   );
   async function submit(content: string) {
-    if (editing && panel.onSaveMessageEdit) {
-      await panel.onSaveMessageEdit(editing, content);
-      editing = undefined;
+    if (draft.editing && panel.onSaveMessageEdit) {
+      await panel.onSaveMessageEdit(draft.editing, content);
+      draft.editing = undefined;
     } else {
       await panel.onSendReply?.(
-        replying ?? panel.thread.rootMessageId,
+        draft.replying ?? panel.thread.rootMessageId,
         content,
       );
-      replying = undefined;
+      draft.replying = undefined;
     }
   }
   const rowPanel = $derived({
@@ -55,8 +48,8 @@
       panel.disabled || !panel.onSendReply
         ? undefined
         : (id: string) => {
-            replying = id;
-            editing = undefined;
+            draft.replying = id;
+            draft.editing = undefined;
           },
   });
 </script>
@@ -66,7 +59,7 @@
   use:focusNativeMessage={panel.focusMessageId}
 >
   <Layout
-    density="compact"
+    density={appearance?.density ?? "compact"}
     scrollMode="history"
     conversationKey={panel.thread.rootMessageId}
     aria-label="Message thread"
@@ -83,7 +76,7 @@
       />{/snippet}
     {#snippet composer()}
       <CommunityChatComposer
-        bind:value
+        bind:value={draft.value}
         members={panel.members}
         rooms={panel.rooms ?? []}
         communityEmojis={panel.communityEmojis ?? []}
@@ -91,8 +84,8 @@
         disabledReason={panel.disabledReason}
         composerStatus={panel.composerStatus}
         placeholder="Reply…"
-        context={editing
-          ? { kind: "edit", id: editing, label: "Editing reply" }
+        context={draft.editing
+          ? { kind: "edit", id: draft.editing, label: "Editing reply" }
           : target
             ? {
                 kind: "reply",
@@ -107,15 +100,15 @@
               }
             : undefined}
         onCancelContext={() => {
-          editing = undefined;
-          replying = undefined;
-          value = "";
+          draft.editing = undefined;
+          draft.replying = undefined;
+          draft.value = "";
         }}
         onSubmit={(s) => submit(s.content)}
       />
     {/snippet}
     <MessageList
-      density="compact"
+      density={appearance?.density ?? "compact"}
       aria-label="Thread replies"
       conversationKey={panel.thread.rootMessageId}
       latestMessageId={tree.messages.at(-1)?.id ?? ""}

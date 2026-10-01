@@ -7,7 +7,7 @@
   width: calc(100% + 1rem);
   margin-inline: -0.5rem;
   border-radius: var(--radius);
-  padding: 0.375rem 0.5rem;
+  padding: var(--store-message-padding, 0.375rem) 0.5rem;
   transition: background-color 120ms ease;
 }
 
@@ -18,7 +18,7 @@
 }
 
 :is(.community-message[data-continuation]) {
-  padding-block: 0.25rem 0.125rem;
+  padding-block: var(--store-continuation-padding, 0.25rem);
 }
 
 :is(.community-message[data-highlighted]) {
@@ -71,5 +71,5 @@
 :is(.community-message__content) {
   margin: 0;
   color: var(--foreground);
-  line-height: 1.55;
+  line-height: var(--store-message-leading, 1.55);
 }

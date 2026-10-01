@@ -24,6 +24,13 @@ authentication. M8a hardens that local release. A new embedded runtime or
 topology invalidates old storage qualification until contract tests rerun.
 Read-only proof results do not constitute deployment or publication approval.
 
+The Appearance slice pins Buzz ef2aa1ae, Shiki themes 4.0.2 and Inter Variable
+5.2.8 with Apache-2.0, MIT and OFL attribution. Source Design Core typography
+and native-overlay acceptance is distinct from registry-only release
+qualification; portable manifest/lock ranges remain unchanged by the temporary
+source validation hook. Native formats and transport compatibility are
+unaffected.
+
 ## Requirements
 
 | ID             | Requirement                                                                                                                                                                                                                                                                  |

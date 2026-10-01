@@ -190,7 +190,6 @@
                 message={workMessage(comment)}
                 author={workMember(comment.actor.created_by)}
                 {members}
-                density="compact"
               >
                 {#snippet supplement()}
                   {#if comment.reply_to && !view.comments.some((c) => c.id === comment.reply_to)}<p

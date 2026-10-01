@@ -16,7 +16,8 @@
   } from "./store-navigation.js";
   import StoreProjectsBreadcrumb from "../store-work/StoreProjectsBreadcrumb.svelte";
   import { isRepositoryProjects } from "../../controller/projects-view-cache.js";
-  import { createThreadPanel } from "../store-threads/thread-panel.svelte.js";
+  import StoreThreadFocus from "../store-threads/StoreThreadFocus.svelte";
+  import { createApplicationThreadPanel as ownThreadPanel } from "../store-threads/thread-panel.svelte.js";
   import StoreRepositoryTabs from "./StoreRepositoryTabs.svelte";
   import { repositorySections } from "./repository-sections.js";
   import { onDestroy, setContext, untrack, type Snippet } from "svelte";
@@ -58,6 +59,11 @@
     layoutStorage?: Storage;
     children?: Snippet<[StorePage, string]>;
   } = $props();
+  import { ownApplicationAppearance as ownAppearance } from "../../appearance/runtime.svelte.js";
+  const appearance = ownAppearance(
+    () => controller.state.route.repository,
+    untrack(() => layoutStorage),
+  );
   const storage = untrack(() => resolveLayoutStorage(layoutStorage));
   const navigationLayout = untrack(() => loadNavigationLayout(storage));
   let sectionOpen = $state(navigationLayout.sections);
@@ -71,15 +77,7 @@
   );
   onDestroy(() => void shell.dispose());
   const detailsRail = shell.getPanel(repositoryDetailsPanelId)!;
-  const threadPanel = createThreadPanel(
-    () => shell.right.open(),
-    () => shell.right.close(),
-  );
-  $effect(() => {
-    const route = controller.state.route;
-    if (route.page === "threads" && route.replyId)
-      untrack(() => threadPanel.open("replies"));
-  });
+  const threadPanel = ownThreadPanel(() => controller, shell, appearance);
   const workspaceGuard = $state({ editing: false });
   setContext(workspaceNavigationKey, workspaceGuard);
   let conflictOpen = $state(false);
@@ -234,9 +232,7 @@
           {#if current.page === "projects" && controller.projects && !isRepositoryProjects(current)}<StoreProjectsBreadcrumb
               {controller}
             />{/if}
-          <div
-            style="margin-inline-start: auto; display: flex; flex: 0 0 auto;"
-          >
+          <div class="store-application__details-toggle">
             <AppShell.Sidebar.Toggle
               side="right"
               sidebarController={detailsRail}
@@ -284,6 +280,10 @@
       {controller}
       {shell}
       onSelectPage={selectPage}
+      threadFocused={threadPanel.focused}
+    />{/if}
+  {#if !settingsOpen && threadPanel.focused}<StoreThreadFocus
+      {controller}
     />{/if}
   <StoreConflictEditor
     {controller}

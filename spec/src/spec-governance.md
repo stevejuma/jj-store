@@ -405,8 +405,11 @@ Community dependency. A renamed copy outside recognized families must carry an
 `@community-copy` source marker so the audit can enforce its provenance. Static
 analysis does not claim to identify arbitrarily renamed unmarked copies. The
 historical M9.5 package consumption is superseded by this owned-source boundary.
-Catalog interactions and accessibility remain blocking; visual baselines remain
-separately approved.
+Buzz-derived Appearance provenance lives in
+`docs/reference/appearance-provenance.md`; generated palette, Shiki and Inter
+redistribution licenses are retained under `docs/licenses` alongside the
+Community ownership manifest. Catalog interactions and accessibility remain
+blocking; visual baselines remain separately approved.
 
 M4.8 review acceptance covers populated and filtered branch dividers, the
 absence of duplicate history-page titles, shared column header styling, and

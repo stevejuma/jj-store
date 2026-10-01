@@ -205,7 +205,7 @@
     align-items: center;
     gap: 0;
     padding-inline-end: 0.75rem;
-    background: var(--sidebar, var(--muted));
+    background: var(--store-theme-chrome, var(--sidebar, var(--muted)));
   }
 
   .community-app-shell__header-start {

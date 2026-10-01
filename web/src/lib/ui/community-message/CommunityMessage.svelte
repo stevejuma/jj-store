@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { useAppearance } from "../../appearance/store.svelte.js";
+  const appearance = useAppearance();
   import { Message, MessageBubble } from "@lapismd/design-core/ai/chat";
   import CommunityReactions from "../community-reactions/CommunityReactions.svelte";
   import { ConfirmDialog } from "@lapismd/design-core/forms/dialog";
@@ -39,7 +41,7 @@
     replyParticipants = [],
     communityEmojis = [],
     reactionOptions,
-    density = "compact",
+    density = appearance?.density ?? "compact",
     onReply,
     onOpenThread,
     onToggleReaction,

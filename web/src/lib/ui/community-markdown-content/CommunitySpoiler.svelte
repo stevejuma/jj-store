@@ -128,7 +128,12 @@
     const themeObserver = new MutationObserver(rebuild);
     themeObserver.observe(target.ownerDocument.documentElement, {
       attributes: true,
-      attributeFilter: ["class", "style"],
+      attributeFilter: [
+        "class",
+        "style",
+        "data-store-theme",
+        "data-store-accent",
+      ],
     });
 
     const handleMotionChange = (): void => {

@@ -1,3 +1,4 @@
+import { localLink } from "../../appearance/local-link.js";
 import type { CommunityCustomEmoji } from "../../community/contracts.js";
 
 import type {
@@ -55,6 +56,20 @@ function transformChildren(
     if (mentionLink) {
       nextChildren.push(segmentToHast(mentionLink));
       continue;
+    }
+    if (!skipText && child.tagName === "a") {
+      const text = (node: CommunityMarkdownHastNode): string =>
+        node.value ?? (node.children ?? []).map(text).join("");
+      const link = localLink(child.properties?.href, text(child));
+      if (link) {
+        nextChildren.push({
+          type: "element",
+          tagName: "communitylinkcard",
+          properties: { href: link.href, label: link.label },
+          children: [],
+        });
+        continue;
+      }
     }
     if (child.type === "text" && typeof child.value === "string" && !skipText) {
       nextChildren.push(

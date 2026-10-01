@@ -202,3 +202,9 @@
 .store-application__placeholder {
   padding: 1rem;
 }
+
+.store-application__details-toggle {
+  margin-inline-start: auto;
+  display: flex;
+  flex: 0 0 auto;
+}
