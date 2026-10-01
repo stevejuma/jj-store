@@ -31,6 +31,17 @@
       await expect(Number.parseFloat(inset)).toBeGreaterThanOrEqual(12);
     }
     await expect(body.scrollWidth).toBeLessThanOrEqual(body.clientWidth);
+    for (const selector of [
+      ".store-application__tabs",
+      ".store-application__section-header",
+      ".store-application__body-breadcrumb",
+    ]) {
+      const header = canvasElement.querySelector<HTMLElement>(selector)!;
+      await expect(
+        header.firstElementChild!.getBoundingClientRect().left -
+          header.getBoundingClientRect().left,
+      ).toBeLessThanOrEqual(8);
+    }
   }
 </script>
 

@@ -36,6 +36,16 @@
     await userEvent.click(
       canvas.getByRole("button", { name: "Open task Browser work" }),
     );
+    const task = canvasElement.querySelector<HTMLElement>(
+      ".community-projects__task-detail",
+    )!;
+    const taskHeader = task.querySelector<HTMLElement>(
+      ".community-projects__task-detail-header",
+    )!;
+    await expect(
+      taskHeader.firstElementChild!.getBoundingClientRect().left -
+        task.getBoundingClientRect().left,
+    ).toBeLessThanOrEqual(8);
     await userEvent.click(canvas.getByRole("button", { name: "Activity" }));
     await expect(
       canvas.getByText("Threaded reply", { exact: true }),

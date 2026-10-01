@@ -131,6 +131,9 @@ test("Search tabs preserve drafts and separate Save from Apply", async ({
   await expect(page.getByText(/Matches saved settings/)).toBeVisible();
   expect(applies).toBe(1);
   await page.setViewportSize({ width: 390, height: 844 });
+  await expect(
+    page.locator('[data-ui-component="app-shell"][data-ui-part="root"]'),
+  ).toHaveAttribute("data-display-mode", "mobile");
   const mobileTabsTop = (await tabs.boundingBox())!.y;
   const scroller = page
     .getByRole("region", { name: "Settings content" })

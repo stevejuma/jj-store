@@ -40,6 +40,7 @@
     const back = view
       .getByRole("button", { name: "Back to reviews" })
       .getBoundingClientRect();
+    await expect(back.left - heading.left).toBeLessThanOrEqual(8);
     await expect(
       Math.abs(back.top + back.height / 2 - heading.top - heading.height / 2),
     ).toBeLessThanOrEqual(1);

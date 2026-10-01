@@ -88,6 +88,14 @@
       canvas.queryByRole("button", { name: "Toggle details" }),
     ).not.toBeInTheDocument();
     await userEvent.click(canvas.getByRole("button", { name: "Repository" }));
+    const navigation = canvas.getByRole("navigation", {
+      name: "Settings page navigation",
+    });
+    await expect(
+      canvas
+        .getByRole("button", { name: "Back to app" })
+        .getBoundingClientRect().left - navigation.getBoundingClientRect().left,
+    ).toBeLessThanOrEqual(8);
     const tablist = canvas.getByRole("tablist");
     const heading = within(
       canvas.getByRole("navigation", {

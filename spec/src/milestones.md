@@ -37,7 +37,7 @@ shared-package release qualification does not alter those original Git gates.
 | M4.4        | Done        | Bootstrap               | JST-UI-001                                                                                                                                                               | Isolated catalog types, interaction/a11y and static build                                                                      | Implement shell stories                                                        | E-UI-001                                                                                                                                                                                                                                                                                                                                                       |
 | M4.5        | Done        | M4.4                    | JST-UI-002                                                                                                                                                               | Community shell mechanics and navigation acceptance                                                                            | Implement repository fixture views                                             | E-UI-002                                                                                                                                                                                                                                                                                                                                                       |
 | M4.6        | Done        | M4.5                    | JST-UI-003                                                                                                                                                               | Native fixture graph/file/diff drill-down and accessibility                                                                    | Visual review; live UI remains deferred                                        | E-UI-003                                                                                                                                                                                                                                                                                                                                                       |
-| M4.7        | Done        | M4.6                    | JST-UI-004                                                                                                                                                               | Complete in-memory application, snapshot file browser and profile footer                                                       | Retain fixture acceptance; live UI remains deferred                            | E-UI-004,E-UI-029,E-UI-044,E-UI-048                                                                                                                                                                                                                                                                                                                            |
+| M4.7        | Done        | M4.6                    | JST-UI-004                                                                                                                                                               | Complete in-memory application, snapshot file browser and profile footer                                                       | Retain fixture acceptance; live UI remains deferred                            | E-UI-004,E-UI-029,E-UI-044,E-UI-048,E-UI-049                                                                                                                                                                                                                                                                                                                   |
 | M4.8        | Done        | M4.7                    | JST-UI-002,JST-UI-003,JST-UI-004                                                                                                                                         | Reviewed shell/card/header styling and directory navigation pass interaction, accessibility and cold catalog checks            | Visual review pending; live UI remains deferred                                | E-UI-005,E-UI-006,E-UI-009,E-UI-010,E-UI-022,E-UI-025,E-UI-026,E-UI-028                                                                                                                                                                                                                                                                                        |
 | M4.9        | Done        | M4.8                    | JST-ARCH-004,JST-UI-005                                                                                                                                                  | Shared production components/controller and no-growth architecture checks                                                      | Retain source ownership and proceed to bounded APIs                            | E-UI-007,E-UI-008                                                                                                                                                                                                                                                                                                                                              |
 | M4.10       | Done        | M4.9                    | JST-API-001,JST-API-002,JST-API-006                                                                                                                                      | Bounded bookmark, directory metadata and operation-change contracts                                                            | Implement M4.11 authenticated browser data/controller                          | E-M4-018                                                                                                                                                                                                                                                                                                                                                       |
@@ -50,7 +50,7 @@ shared-package release qualification does not alter those original Git gates.
 | M4.17       | Done        | M4.16,M5.3              | JST-UI-009                                                                                                                                                               | Native conflict descriptors, uploads and atomic multi-path resolution are editable without flattening                          | Retain conflict-editor and real-repository acceptance                          | E-UI-019                                                                                                                                                                                                                                                                                                                                                       |
 | M4.18       | Done        | M4.15,M8a.4             | JST-UI-012                                                                                                                                                               | Transient Community-styled settings reports existing local, repository and search state and prepares an exact index            | Retain regression coverage; visual review remains separate                     | E-UI-030,E-UI-031                                                                                                                                                                                                                                                                                                                                              |
 | M4.19       | Done        | M4.9,M4.10              | JST-UI-013,JST-API-002,JST-UI-005                                                                                                                                        | Exact workspace identities, pinned routes, focused interaction/a11y and cold browser acceptance                                | Retain workspace regressions; visual review remains separate                   | E-UI-032                                                                                                                                                                                                                                                                                                                                                       |
-| M4.20       | Done        | M4.19                   | JST-UI-014,JST-UI-002,JST-UI-003,JST-UI-005                                                                                                                              | Right-rail destinations, ordered pill tabs, responsive overflow, focused interaction/a11y and cold browser acceptance          | Retain navigation and workspace regressions; visual review remains separate    | E-UI-033,E-UI-048                                                                                                                                                                                                                                                                                                                                              |
+| M4.20       | Done        | M4.19                   | JST-UI-014,JST-UI-002,JST-UI-003,JST-UI-005                                                                                                                              | Right-rail destinations, ordered pill tabs, responsive overflow, focused interaction/a11y and cold browser acceptance          | Retain navigation and workspace regressions; visual review remains separate    | E-UI-033,E-UI-048,E-UI-049                                                                                                                                                                                                                                                                                                                                     |
 | M4.21       | Done        | M4.20                   | JST-UI-003,JST-UI-005,JST-API-002                                                                                                                                        | Compact workspace-row comparison picker, native Op Log cards, independent copy and focused interaction/a11y/browser acceptance | Retain exact-parent and workspace regressions; visual review remains separate  | E-UI-034                                                                                                                                                                                                                                                                                                                                                       |
 | M4.22       | Done        | M4.21                   | JST-UI-014,JST-UI-003,JST-UI-008,JST-API-005                                                                                                                             | Restore selection-aware rail actions with focused interaction, accessibility and browser evidence                              | Retain selection and capability regressions; visual review remains separate    | E-UI-035                                                                                                                                                                                                                                                                                                                                                       |
 | M4.23       | Done        | M4.22                   | JST-UI-008,JST-UI-014,JST-API-005                                                                                                                                        | Centered commit-selector content, oval ID chips and zero section margin; focused interaction/accessibility acceptance          | Retain picker/navigation regressions; visual review stays separate             | E-UI-036                                                                                                                                                                                                                                                                                                                                                       |
@@ -59,8 +59,8 @@ shared-package release qualification does not alter those original Git gates.
 | M4.26       | Done        | M4.24                   | JST-UI-002,JST-UI-009,JST-API-005                                                                                                                                        | Full-height conflict file browser and header actions; focused and cold browser acceptance                                      | Retain conflict layout/draft regressions; visual review stays separate         | E-UI-039                                                                                                                                                                                                                                                                                                                                                       |
 | M4.27       | Done        | M4.25                   | JST-UI-008,JST-API-005                                                                                                                                                   | Commit selector time/chips beneath title and stacked Git/JJ column; focused interaction/accessibility acceptance               | Retain picker regressions; visual review stays separate                        | E-UI-040                                                                                                                                                                                                                                                                                                                                                       |
 | M4.28       | Done        | M4.27                   | JST-UI-003,JST-UI-005,JST-UI-009,JST-UI-014,JST-API-002                                                                                                                  | Native Evo Log column, independent pinned anchor/history and chrome alignment; focused and cold browser acceptance             | Retain evolution and chrome regressions; visual review remains separate        | E-UI-041                                                                                                                                                                                                                                                                                                                                                       |
-| M4.29       | Done        | M4.28                   | JST-UI-008,JST-API-005                                                                                                                                                   | File editor and prose composers remove native focus ring under served asset policy; focused and cold browser acceptance        | Retain editor/composer focus regressions; visual review remains separate       | E-UI-042,E-UI-048                                                                                                                                                                                                                                                                                                                                              |
-| M4.30       | Done        | M4.29                   | JST-UI-008,JST-API-005                                                                                                                                                   | Root navigation clears file edit presentation and workspace guard; focused and cold browser acceptance                         | Retain file navigation/edit regressions; visual review remains separate        | E-UI-043,E-M11-006,E-UI-048                                                                                                                                                                                                                                                                                                                                    |
+| M4.29       | Done        | M4.28                   | JST-UI-008,JST-API-005                                                                                                                                                   | File editor and prose composers remove native focus ring under served asset policy; focused and cold browser acceptance        | Retain editor/composer focus regressions; visual review remains separate       | E-UI-042,E-UI-048,E-UI-049                                                                                                                                                                                                                                                                                                                                     |
+| M4.30       | Done        | M4.29                   | JST-UI-008,JST-API-005                                                                                                                                                   | Root navigation clears file edit presentation and workspace guard; focused and cold browser acceptance                         | Retain file navigation/edit regressions; visual review remains separate        | E-UI-043,E-M11-006,E-UI-048,E-UI-049                                                                                                                                                                                                                                                                                                                           |
 | M5          | Done        | M4.1                    | JST-MUT-001,JST-MUT-002,JST-MUT-005                                                                                                                                      | Authenticated typed commands and shared RPC policy                                                                             | Retain mutation conformance; proceed to M6                                     | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-M5-005,E-M5-006,E-M5-007,E-M5-008,E-UI-028                                                                                                                                                                                                                                                                   |
 | M5.1        | Done        | M4.1                    | JST-MUT-001,JST-MUT-002,JST-MUT-005                                                                                                                                      | Basic changes/refs/reconcile; preview receipt and semantic policy                                                              | Retain basic mutation acceptance                                               | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-UI-028                                                                                                                                                                                                                                                                                                       |
 | M5.2        | Done        | M5.1                    | JST-MUT-003                                                                                                                                                              | Full abandon descendant bookmark workspace/evolution parity                                                                    | Retain abandon acceptance                                                      | E-M5-005                                                                                                                                                                                                                                                                                                                                                       |
@@ -85,7 +85,7 @@ shared-package release qualification does not alter those original Git gates.
 | M9.2        | Done        | M9.1                    | JST-COLLAB-001,JST-COLLAB-002,JST-COLLAB-006                                                                                                                             | AgentStore model, immutable snapshots/catalogs, sanitized evidence and Codex/Cursor/OpenCode normalizers                       | Implement M9.4 LocalTrusted APIs                                               | E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009,E-M9-015,E-M9-016,E-M9-017,E-M9-018,E-M9-019,E-M9-020,E-M9-021,E-M9-022,E-M9-023,E-M9-034                                                                                                                                                                                              |
 | M9.3        | Done        | M9.2                    | JST-COLLAB-001,JST-COLLAB-003,JST-PUB-009                                                                                                                                | ReviewStore exact anchors, stale-safe thread workflow, direct catalogs and conservative placement                              | Implement M9.4 LocalTrusted APIs                                               | E-M9-010,E-M9-011,E-M9-012,E-M9-013,E-M9-014,E-M9-023                                                                                                                                                                                                                                                                                                          |
 | M9.4        | Done        | M9.2,M9.3               | JST-COLLAB-004                                                                                                                                                           | LocalTrusted bounded CLI/HTTP APIs, pagination, receipts and live collaboration hints                                          | Implement M9.5 shared application presentation                                 | E-M9-024,E-M9-025,E-M9-026,E-M9-027,E-M9-028,E-M9-029,E-M9-030,E-M9-031,E-M9-035                                                                                                                                                                                                                                                                               |
-| M9.5        | Done        | M9.4                    | JST-COLLAB-005                                                                                                                                                           | Community-owned thread/agent widgets and Design Core exact diff selection integrated into the application                      | Retain focused application and Storybook acceptance                            | E-M9-032,E-M9-034,E-M9-035,E-M9-036,E-M9-037,E-M9-038,E-M9-039,E-UI-045,E-UI-048                                                                                                                                                                                                                                                                               |
+| M9.5        | Done        | M9.4                    | JST-COLLAB-005                                                                                                                                                           | Community-owned thread/agent widgets and Design Core exact diff selection integrated into the application                      | Retain focused application and Storybook acceptance                            | E-M9-032,E-M9-034,E-M9-035,E-M9-036,E-M9-037,E-M9-038,E-M9-039,E-UI-045,E-UI-048,E-UI-049                                                                                                                                                                                                                                                                      |
 | M9.6        | Done        | M9.5                    | JST-COLLAB-002,JST-COLLAB-006,JST-COLLAB-007                                                                                                                             | Three harness qualification, cold recovery, three-root native copy and bounded fault/security/browser acceptance               | Retain exact-version and native-copy regression gates                          | E-M9-033                                                                                                                                                                                                                                                                                                                                                       |
 | M10         | In progress | M9.6                    | JST-REPL-001,JST-REPL-002,JST-REPL-003,JST-REPL-004,JST-REPL-005,JST-REPL-006,JST-REPL-007,JST-REPL-008,JST-REPL-009,JST-REPL-010,JST-REPL-011,JST-REPL-012,JST-REPL-013 | Retain the active local-first replication and existing-workspace migration profile                                             | Expanded qualification remains deferred to M10.8                               | E-M10-001,E-M10-002,E-M10-003,E-M10-004,E-M10-005,E-M10-006,E-M10-007,E-M10-008,E-M10-009,E-M10-010,E-M10-011,E-M10-012,E-M10-013,E-M10-014                                                                                                                                                                                                                    |
 | M10.1       | Done        | M9.6                    | JST-REPL-001,JST-REPL-002,JST-REPL-013                                                                                                                                   | Audit source pins and isolate every foreground storage path from upstream capability                                           | Retain zero-upstream foreground regressions                                    | E-M10-001,E-M10-010,E-M10-013                                                                                                                                                                                                                                                                                                                                  |
@@ -100,7 +100,7 @@ shared-package release qualification does not alter those original Git gates.
 | M11.1       | Done        | M9.6                    | JST-WORK-001,JST-WORK-002,JST-WORK-003,JST-WORK-004,JST-WORK-005,JST-WORK-007                                                                                            | Native model, publication, receipts, recovery and copy                                                                         | Retain native and real RustFS gates                                            | E-M11-001,E-M11-003                                                                                                                                                                                                                                                                                                                                            |
 | M11.2       | Done        | M11.1                   | JST-WORK-005,JST-WORK-006,JST-WORK-008                                                                                                                                   | Authorized service, API, RPC and CLI                                                                                           | Retain local transport/CLI gates                                               | E-M11-002                                                                                                                                                                                                                                                                                                                                                      |
 | M11.3       | Done        | M11.2                   | JST-WORK-008                                                                                                                                                             | Browser projects/tasks/comments and explicit refresh                                                                           | Retain cold browser gates; visual baselines pending                            | E-M11-003,E-M11-004                                                                                                                                                                                                                                                                                                                                            |
-| M11.4       | In progress | M11.3                   | JST-WORK-005,JST-WORK-006,JST-WORK-008,JST-WORK-009,JST-UI-015                                                                                                           | Installation Projects hub, full-root browse and cold browser acceptance                                                        | Shared-package qualification; visual baselines pending                         | E-M11-005,E-M11-006,E-M11-007,E-UI-045,E-UI-046,E-UI-047,E-M11-008,E-UI-048                                                                                                                                                                                                                                                                                    |
+| M11.4       | In progress | M11.3                   | JST-WORK-005,JST-WORK-006,JST-WORK-008,JST-WORK-009,JST-UI-015                                                                                                           | Installation Projects hub, full-root browse and cold browser acceptance                                                        | Shared-package qualification; visual baselines pending                         | E-M11-005,E-M11-006,E-M11-007,E-UI-045,E-UI-046,E-UI-047,E-M11-008,E-UI-048,E-UI-049                                                                                                                                                                                                                                                                           |
 | M12         | Done        | M11.1,M11.2,M11.3       | JST-GIT-001,JST-GIT-002,JST-GIT-003,JST-GIT-004,JST-GIT-005,JST-GIT-006,JST-GIT-007,JST-GIT-008                                                                          | Native fetch/edit/push/external-merge cycle with cache-loss and fault qualification                                            | Maintain qualified bookmark bridge                                             | E-M12-001,E-M12-002,E-M12-003,E-M12-004,E-M12-005,E-M12-006,E-M12-007,E-M12-008,E-M12-009,E-M12-010                                                                                                                                                                                                                                                            |
 | M12.1       | Done        | M11.1,M11.2,M11.3       | JST-GIT-001                                                                                                                                                              | GB0: Parsed backend-aware dispatch and ordinary path regression                                                                | Complete staged bridge gate                                                    | E-M12-001                                                                                                                                                                                                                                                                                                                                                      |
 | M12.2       | Done        | M12.1                   | JST-GIT-002,JST-GIT-003                                                                                                                                                  | GB1: Exact conversion and native retained cache-loss identity                                                                  | Complete staged bridge gate                                                    | E-M12-002                                                                                                                                                                                                                                                                                                                                                      |
@@ -117,7 +117,7 @@ shared-package release qualification does not alter those original Git gates.
 | M13.5       | Planned     | M13.4                   | JST-LOCAL-006                                                                                                                                                            | Independent local/native conversion with complete collaboration history                                                        | Implement bounded history/evidence conversion, mappings and source safety      | -                                                                                                                                                                                                                                                                                                                                                              |
 | M13.6       | Planned     | M13.5                   | JST-LOCAL-001,JST-LOCAL-002,JST-LOCAL-003,JST-LOCAL-004,JST-LOCAL-005,JST-LOCAL-006                                                                                      | Cold end-to-end and retained native regression qualification                                                                   | Qualify completed local flow cold and retain native regressions                | -                                                                                                                                                                                                                                                                                                                                                              |
 | M14         | In progress | M4.18                   | JST-UI-012,JST-UI-016                                                                                                                                                    | Local settings, profile-aware device links and safe maintenance                                                                | Implement M14.3 agent setup and automatic recovery                             | E-M14-001,E-M14-002,E-M14-003,E-M14-004,E-M14-005,E-M14-006,E-M14-007,E-M14-010,E-M14-011,E-M14-012                                                                                                                                                                                                                                                            |
-| M14.1       | Done        | M4.18                   | JST-UI-012                                                                                                                                                               | Graph preparation independent of text-search health                                                                            | Retain independent graph/search regressions; proceed to M14.2                  | E-M14-001,E-M14-011,E-M14-012                                                                                                                                                                                                                                                                                                                                  |
+| M14.1       | Done        | M4.18                   | JST-UI-012                                                                                                                                                               | Graph preparation independent of text-search health                                                                            | Retain independent graph/search regressions; proceed to M14.2                  | E-M14-001,E-M14-011,E-M14-012,E-UI-049                                                                                                                                                                                                                                                                                                                         |
 | M14.2       | Done        | M14.1                   | JST-UI-016,JST-SEC-005,JST-SEC-006                                                                                                                                       | Typed local management and profile-aware workspace links                                                                       | Retain folder-link regressions and proceed to M14.3                            | E-M14-002,E-M14-003,E-M14-005,E-M14-006,E-M14-007,E-M14-010,E-M14-011,E-M14-012                                                                                                                                                                                                                                                                                |
 | M14.3       | In progress | M14.2                   | JST-UI-016,JST-COLLAB-002,JST-COLLAB-006                                                                                                                                 | Agent setup, queue inspection and automatic recovery                                                                           | Add agent management and worker lifecycle on the shared drain foundation       | E-M14-004,E-M14-005                                                                                                                                                                                                                                                                                                                                            |
 | M14.4       | Done        | M14.2                   | JST-UI-016,JST-ADAPT-003,JST-ADAPT-004                                                                                                                                   | Editable Search and isolated worker replacement                                                                                | Add desired/effective configuration and safe text-search rebuild               | E-M14-009,E-M14-010,E-M14-011,E-M14-012                                                                                                                                                                                                                                                                                                                        |
@@ -31605,6 +31605,270 @@ and named tests are checked by the progress gate.
       "Visual baselines remain visual-pending; shared-package release and other milestone gates unchanged."
     ],
     "artifacts": "Ignored .scratch/repository-*.log, .scratch/repository-editor-review.jpg, .scratch/repository-review-copy.jpg and web/test-results."
+  },
+  {
+    "id": "E-UI-049",
+    "tasks": ["M4.7", "M4.20", "M4.29", "M4.30", "M9.5", "M11.4", "M14.1"],
+    "date": "2026-10-01",
+    "kind": "compact-application-header-insets-and-language-aware-safe-source-highlighting",
+    "files": [
+      ".storybook/preview.css",
+      "catalog/components/store-application/NativeReviewDetail.stories.svelte",
+      "catalog/components/store-application/RepositoryLayout.stories.svelte",
+      "catalog/components/store-application/StoreApplication.stories.svelte",
+      "catalog/components/store-application/StoreFileEditor.stories.svelte",
+      "catalog/components/store-application/StoreRepositoryApplication.stories.svelte",
+      "catalog/components/store-application/column-canvas-story-assertions.ts",
+      "catalog/components/store-application/source-highlight-assertions.ts",
+      "catalog/components/store-work/ProjectsFilters.stories.svelte",
+      "catalog/components/store-work/StoreWork.stories.svelte",
+      "spec/src/api.md",
+      "spec/src/milestones.md",
+      "spec/src/ui.md",
+      "web/src/lib/ui/community-app-shell/CommunityAppShell.svelte",
+      "web/src/lib/ui/community-navigation/CommunityNavigation.css",
+      "web/src/lib/ui/community-projects/CommunityProjectsRepositoryFilePanel.svelte",
+      "web/src/lib/ui/community-projects/StoreFileEditor.svelte",
+      "web/src/lib/ui/community-projects/repository-files.css",
+      "web/src/lib/ui/community-projects/repository-log-diff.css",
+      "web/src/lib/ui/store-application/store-application.css",
+      "web/src/lib/ui/store-collaboration/community-native-review.css",
+      "web/src/lib/ui/store-collaboration/store-collaboration.css",
+      "web/src/lib/ui/store-conflicts/store-conflicts.css",
+      "web/src/lib/ui/store-settings/StoreSettings.css",
+      "web/src/lib/ui/store-work/community-work-layout.css",
+      "web/src/lib/ui/store-work/community-work-tasks.css",
+      "web/src/style.css",
+      "web/tests/browser/editor-focus.spec.ts",
+      "web/tests/browser/local-search-settings.spec.ts",
+      "web/tests/browser/local-workspaces.spec.ts"
+    ],
+    "tests": [],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/RepositoryLayout.stories.svelte catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte catalog/components/store-application/StoreFileEditor.stories.svelte catalog/components/store-work/ProjectsFilters.stories.svelte catalog/components/store-work/StoreWork.stories.svelte",
+        "result": "fail",
+        "failures": 9,
+        "note": "Baseline: 9 fail, 22 pass; missing compact header insets and Markdown token colors. .scratch/header-source-before.log."
+      },
+      {
+        "command": "pnpm exec playwright test --config web/playwright.config.ts web/tests/browser/editor-focus.spec.ts -g 'draft Source'",
+        "result": "fail",
+        "failures": 1,
+        "note": "Strict production CSP baseline: no keyword token in draft Source. .scratch/source-csp-before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/RepositoryLayout.stories.svelte catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte catalog/components/store-application/StoreFileEditor.stories.svelte catalog/components/store-work/ProjectsFilters.stories.svelte catalog/components/store-work/StoreWork.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "30 pass; initial CodeMirror measurement differs by 11.1875px before layout settles. Wait for the existing <=1px assertion, retaining its tolerance. .scratch/header-source-after.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/RepositoryLayout.stories.svelte catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte catalog/components/store-application/StoreFileEditor.stories.svelte catalog/components/store-work/ProjectsFilters.stories.svelte catalog/components/store-work/StoreWork.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "31 pass in fresh Storybook runner. .scratch/header-source-final.log."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "fail",
+        "failures": 1,
+        "note": "StoreRepositoryApplication story exceeds its 400-line budget at 405 counted lines. .scratch/header-source-architecture.log."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "fail",
+        "failures": 1,
+        "note": "Initial cleanup leaves 401 counted lines. Extract the two reusable source-highlight assertions. .scratch/header-source-architecture-final.log."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "446 modules; shared source-highlight assertion helper keeps story within its budget. .scratch/header-source-architecture-repaired.log; repeated after dependency refresh in header-source-architecture-static.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/RepositoryReview.stories.svelte catalog/components/store-application/NativeAgentMenus.stories.svelte catalog/components/store-application/StoreRepositoryBranchContext.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-mutations/StoreConflictEditor.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte catalog/components/store-application/StoreFileEditor.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "27 pass; Column Canvas header remains 12px in catalog because preview.css owns its parallel host theme rule. Set the same public padding token there. .scratch/header-source-consumers.log."
+      },
+      {
+        "command": "pnpm exec playwright test --config web/playwright.config.ts web/tests/browser/editor-focus.spec.ts web/tests/browser/file-editor-navigation.spec.ts web/tests/browser/repository-navigation.spec.ts web/tests/browser/local-workspaces.spec.ts web/tests/browser/local-search-settings.spec.ts web/tests/browser/local-sync.spec.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "10 pass; draft Source token text exists but color equals foreground under strict CSP. Source Design Core injects its token CSS even for spans; fix in the owning package. .scratch/header-source-browser.log."
+      },
+      {
+        "command": "pnpm dev:restart",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial app build/restart completes before the strict-policy color regression exposes the shared source defect. .scratch/header-source-dev-restart.log."
+      },
+      {
+        "command": "pnpm install --lockfile=false",
+        "result": "pass",
+        "failures": 0,
+        "note": "Refresh the installed Design Core file package through the existing governed local-package hook. Published manifest range and tracked registry lockfile unchanged. .scratch/header-source-package-refresh.log."
+      },
+      {
+        "command": "pnpm dev:restart",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rebuild bundled Design Core highlighting CSS; owned LocalTrusted demo ready at port 7460, search ready, native repo/installation identity and RustFS volume retained. .scratch/header-source-dev-restart-static.log. Native compilation here is startup evidence, not Rust qualification."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/RepositoryLayout.stories.svelte catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte catalog/components/store-application/StoreFileEditor.stories.svelte catalog/components/store-work/ProjectsFilters.stories.svelte catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-application/RepositoryReview.stories.svelte catalog/components/store-application/NativeAgentMenus.stories.svelte catalog/components/store-application/StoreRepositoryBranchContext.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-mutations/StoreConflictEditor.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final complete direct impact surface: 51 interactions/accessibility stories in 12 families pass with refreshed public source package. .scratch/header-source-stories-static.log."
+      },
+      {
+        "command": "pnpm exec playwright test --config web/playwright.config.ts web/tests/browser/editor-focus.spec.ts web/tests/browser/file-editor-navigation.spec.ts web/tests/browser/repository-navigation.spec.ts web/tests/browser/local-workspaces.spec.ts web/tests/browser/local-search-settings.spec.ts web/tests/browser/local-sync.spec.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "10 pass including strict-CSP draft token colors and safe literal script bytes; mobile Search sticky-header comparison measures before shell mode settles, producing an exact 1px difference. .scratch/header-source-browser-static.log."
+      },
+      {
+        "command": "pnpm exec playwright test --config web/playwright.config.ts web/tests/browser/local-search-settings.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Wait for public app-shell data-display-mode=mobile before measuring. The unchanged <1px sticky assertion now passes in a cold fresh browser; together with the preceding ten successes all 11 scenarios are covered. .scratch/header-source-search-mobile-final.log."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero errors/warnings before and after source package refresh. .scratch/header-source-web-check.log and header-source-web-static.log."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero errors/warnings; 112 catalog modules. Initial, final-helper and refreshed-package runs pass. .scratch/header-source-catalog-check.log, header-source-catalog-final.log and header-source-catalog-static.log."
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "15 packages. .scratch/header-source-boundaries.log."
+      },
+      {
+        "command": "pnpm exec prettier --write catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-application/RepositoryLayout.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/StoreFileEditor.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte catalog/components/store-application/source-highlight-assertions.ts catalog/components/store-work/ProjectsFilters.stories.svelte catalog/components/store-work/StoreWork.stories.svelte spec/src/api.md spec/src/ui.md web/src/lib/ui/community-app-shell/CommunityAppShell.svelte web/src/lib/ui/community-navigation/CommunityNavigation.css web/src/lib/ui/community-projects/CommunityProjectsRepositoryFilePanel.svelte web/src/lib/ui/community-projects/StoreFileEditor.svelte web/src/lib/ui/community-projects/repository-files.css web/src/lib/ui/community-projects/repository-log-diff.css web/src/lib/ui/store-application/store-application.css web/src/lib/ui/store-collaboration/community-native-review.css web/src/lib/ui/store-collaboration/store-collaboration.css web/src/lib/ui/store-conflicts/store-conflicts.css web/src/lib/ui/store-settings/StoreSettings.css web/src/lib/ui/store-work/community-work-layout.css web/src/lib/ui/store-work/community-work-tasks.css web/src/style.css web/tests/browser/editor-focus.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial changed-file formatting. Subsequent source-helper, story, catalog theme and mobile test edits were individually formatted before tests."
+      },
+      {
+        "command": "cua_repl: cold rebuilt demo reload; recorded README Source; Edit/draft/Source/Cancel; header geometry and Settings navigation",
+        "result": "pass",
+        "failures": 0,
+        "note": "Recorded and draft Markdown headings rgb(91,33,182), distinct from foreground lab(2.65138 5.82402 -12.6171), with zero injected CodeBlock styles after the source fix. Test draft cancelled without publication. Repository tabs, section header and breadcrumb use 8px leading padding; Settings Back inset 8px and title remains on the right. Ignored source-highlight-final.jpg, source-highlight-draft-final.jpg and settings-spacing-final.jpg."
+      },
+      {
+        "command": "pnpm exec prettier --write .storybook/preview.css catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-application/RepositoryLayout.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/StoreFileEditor.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte catalog/components/store-application/column-canvas-story-assertions.ts catalog/components/store-application/source-highlight-assertions.ts catalog/components/store-work/ProjectsFilters.stories.svelte catalog/components/store-work/StoreWork.stories.svelte spec/src/api.md spec/src/milestones.md spec/src/ui.md web/src/lib/ui/community-app-shell/CommunityAppShell.svelte web/src/lib/ui/community-navigation/CommunityNavigation.css web/src/lib/ui/community-projects/CommunityProjectsRepositoryFilePanel.svelte web/src/lib/ui/community-projects/StoreFileEditor.svelte web/src/lib/ui/community-projects/repository-files.css web/src/lib/ui/community-projects/repository-log-diff.css web/src/lib/ui/store-application/store-application.css web/src/lib/ui/store-collaboration/community-native-review.css web/src/lib/ui/store-collaboration/store-collaboration.css web/src/lib/ui/store-conflicts/store-conflicts.css web/src/lib/ui/store-settings/StoreSettings.css web/src/lib/ui/store-work/community-work-layout.css web/src/lib/ui/store-work/community-work-tasks.css web/src/style.css web/tests/browser/editor-focus.spec.ts web/tests/browser/local-search-settings.spec.ts web/tests/browser/local-workspaces.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "All final changed files and evidence formatted."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "27 protected files and 3 canonical chapters pass."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "4 validators, 21 chapters, 132 requirements pass."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "111 tasks; evidence bookkeeping passes. Milestone status unchanged."
+      },
+      {
+        "command": "pnpm exec vitest run --project storybook src/shared/shadcn/code-block/CodeBlock.stories.svelte",
+        "cwd": "../design-core",
+        "result": "fail",
+        "failures": 1,
+        "note": "Owning-source baseline: 8 pass, 1 fail after injected styles are disabled."
+      },
+      {
+        "command": "pnpm exec vitest run --project storybook src/shared/shadcn/code-block/CodeBlock.stories.svelte src/shared/diff/file-diff/FileDiff.stories.svelte src/shared/diff/merge-editor/MergeEditor.stories.svelte",
+        "cwd": "../design-core",
+        "result": "pass",
+        "failures": 0,
+        "note": "Source static CSS fix: all 32 direct stories pass."
+      },
+      {
+        "command": "pnpm checks",
+        "cwd": "../design-core",
+        "result": "fail",
+        "failures": 3,
+        "note": "Initial source gate stops at three existing DC-AI-004 prose diagnostics; condense those two bullets without changing behavior."
+      },
+      {
+        "command": "pnpm checks",
+        "cwd": "../design-core",
+        "result": "fail",
+        "failures": 1,
+        "note": "Second source run: governance and 715 units pass, existing verification-table formatting stops the aggregate. Update its evidence row and format table."
+      },
+      {
+        "command": "pnpm checks",
+        "cwd": "../design-core",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final source-required checks pass: governance/format/types, 715 units, 3 Turbo tests, static Storybook build and metadata audit, 639 stories, 14 Workspace/11 Shell/3 AI/35 shadcn browser tests; one existing shadcn skip. Durable source evidence records artifacts."
+      },
+      {
+        "command": "pnpm spec:check",
+        "cwd": "../design-core",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final source canonical gate passes all three lanes."
+      },
+      {
+        "command": "STORYBOOK_PORT=9040 pnpm test:visual:affected",
+        "cwd": "../design-core",
+        "result": "fail",
+        "failures": 1,
+        "note": "Isolated Docker build passes, then cache publication fails with EACCES under /visual-delta/canonical-build-cache/entries before image comparison. A dirty sibling Visual Delta global input selects full-suite fallback; preserve that work. Visual comparison is non-blocking under parent guidance, no baseline changed and no pixel acceptance claimed."
+      },
+      {
+        "command": "pnpm exec prettier --check .storybook/preview.css catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-application/RepositoryLayout.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/StoreFileEditor.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte catalog/components/store-application/column-canvas-story-assertions.ts catalog/components/store-application/source-highlight-assertions.ts catalog/components/store-work/ProjectsFilters.stories.svelte catalog/components/store-work/StoreWork.stories.svelte spec/src/api.md spec/src/milestones.md spec/src/ui.md web/src/lib/ui/community-app-shell/CommunityAppShell.svelte web/src/lib/ui/community-navigation/CommunityNavigation.css web/src/lib/ui/community-projects/CommunityProjectsRepositoryFilePanel.svelte web/src/lib/ui/community-projects/StoreFileEditor.svelte web/src/lib/ui/community-projects/repository-files.css web/src/lib/ui/community-projects/repository-log-diff.css web/src/lib/ui/store-application/store-application.css web/src/lib/ui/store-collaboration/community-native-review.css web/src/lib/ui/store-collaboration/store-collaboration.css web/src/lib/ui/store-conflicts/store-conflicts.css web/src/lib/ui/store-settings/StoreSettings.css web/src/lib/ui/store-work/community-work-layout.css web/src/lib/ui/store-work/community-work-tasks.css web/src/style.css web/tests/browser/editor-focus.spec.ts web/tests/browser/local-search-settings.spec.ts web/tests/browser/local-workspaces.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final complete changed-file formatting passes."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final passing evidence: 27 protected files, 3 canonical chapters."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final passing evidence: 111 tasks, no milestone status change."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "UI-only header spacing, recorded/draft source presentation and their complete direct consumers. Source Design Core owns the static CSS fix and its separate required verification; no public prop/schema, Rust, WAL, native authority or persistence change. jj-store root aggregates, unrelated UI and Rust qualification are out of scope under the targeted policy. No milestone status changes.",
+    "before": "Headers retain 12-16px leading padding/margins. Repository Source supplies the Rust-only tokenizer for every language, suppressing built-in highlighting. Span styles still depend on runtime injection blocked by strict production CSP.",
+    "formats": "Existing public CodeBlock tokenizer/highlightMode and Column Canvas padding tokens. Filename language detection and source/draft bytes unchanged; unknown languages stay plain text. No security-policy relaxation. Revision is enclosing Jujutsu change omyyllum; source dependency fix is enclosing Design Core change ummolzql. Verified source dependency committed as c433fa75 (Design Core change ummolzql).",
+    "versions": "JJ 0.45.1; pnpm 10.32.1; Design Core source package 0.1.2 via documented local-package hook, released range and registry lockfile unchanged; locked Svelte/Lucide/Storybook/Vitest/Playwright.",
+    "next": "Review compact headers and highlighted recorded Source in the owned local demo.",
+    "deferred": [
+      "Visual baseline approval remains visual-pending. Registry publication, source package release and unrelated milestone gates remain separate.",
+      "Source visual comparison remains pending because the isolated comparison cache denied access; functional gates pass. No global cache, permission or baseline changes were made."
+    ],
+    "artifacts": "Ignored .scratch/header-source-*.log, source-csp-before.log, Source/Settings review screenshots and web/test-results; source package runs /tmp/design-core-code-highlight-*.log, with durable source evidence in Design Core spec/records/code-block-static-highlighting.md."
   }
 ]
 ```

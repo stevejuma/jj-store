@@ -61,3 +61,34 @@ test("prose composer content has no focus frame under the production asset polic
   await dialog.getByRole("button", { name: "Cancel", exact: true }).click();
   await expect(dialog).not.toBeVisible();
 });
+
+test("draft Source highlights Markdown under the production asset policy", async ({
+  page,
+}) => {
+  await page.goto(
+    `/#/repos/${repo}/files?at_op=${operation}&bookmark=main&commit=${commit}&file=bin`,
+  );
+  await page.getByRole("button", { name: "Edit", exact: true }).click();
+  await page.getByLabel("File name").fill("README.md");
+  const contents =
+    "# Highlighted source\n\n`inline code`\n<script>window.sourceExecuted=true</script>";
+  await page
+    .getByRole("textbox", { name: "Editing README.md file contents" })
+    .fill(contents);
+  await page.getByRole("button", { name: "Source", exact: true }).click();
+  const block = page.locator(
+    '[data-ui-component="code-block"][data-language="markdown"]',
+  );
+  const heading = block.locator(".ui-code-token-keyword");
+  await expect(heading).toHaveText("# Highlighted source");
+  expect(await heading.evaluate((el) => getComputedStyle(el).color)).not.toBe(
+    await block.locator("code").evaluate((el) => getComputedStyle(el).color),
+  );
+  await expect(block).toContainText(
+    "<script>window.sourceExecuted=true</script>",
+  );
+  await expect(block.locator("script")).toHaveCount(0);
+  expect(
+    await page.evaluate(() => Reflect.get(window, "sourceExecuted")),
+  ).toBeUndefined();
+});

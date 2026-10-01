@@ -24,6 +24,7 @@
   min-width: 0;
   flex: 1;
   margin: 0.5rem 0.75rem;
+  margin-inline-start: 0.5rem;
   justify-content: flex-start;
   border-radius: 0.85rem;
   color: var(--muted-foreground);

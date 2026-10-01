@@ -114,6 +114,7 @@ test("local folder settings preserve drafts and link without changing repository
   const back = navigation.getByRole("button", { name: "Back to app" });
   await expect(back).toHaveText("");
   const backBounds = (await back.boundingBox())!;
+  expect(backBounds.x - navigationBounds.x).toBeLessThanOrEqual(8);
   expect(backBounds.width).toBe(backBounds.height);
   expect(
     await back.evaluate((button) =>

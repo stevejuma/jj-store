@@ -28,6 +28,19 @@
       await expect(
         trigger.closest(".community-projects__surface-header"),
       ).not.toBeNull();
+      const header = trigger.closest<HTMLElement>(
+        ".community-projects__surface-header",
+      )!;
+      await expect(
+        header.firstElementChild!.getBoundingClientRect().left -
+          header.getBoundingClientRect().left,
+      ).toBeLessThanOrEqual(8);
+      const tabs = canvasElement.querySelector<HTMLElement>(
+        ".community-projects__tabs",
+      )!;
+      await expect(
+        Number.parseFloat(getComputedStyle(tabs).paddingInlineStart),
+      ).toBeLessThanOrEqual(8);
       await expect(trigger.querySelector("svg")).not.toBeNull();
       await expect(trigger.textContent?.trim()).toBe("");
       await expect(

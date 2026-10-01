@@ -167,8 +167,8 @@
       hasLineNumbers
       width="100%"
       container="section"
-      tokenizer={tokenizeRepositorySource}
-      highlightMode={language === "rust" ? "spans" : "auto"}
+      tokenizer={language === "rust" ? tokenizeRepositorySource : undefined}
+      highlightMode="spans"
     />
   {/if}
 

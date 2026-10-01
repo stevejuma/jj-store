@@ -53,6 +53,7 @@
   gap: 0.45rem;
   margin-inline: -0.5rem;
   padding: 0.2rem 0.5rem 0.2rem 1rem;
+  padding-inline-start: 0.5rem;
   border-bottom: 1px solid var(--border);
 }
 
@@ -121,6 +122,7 @@
   justify-content: space-between;
   gap: 1rem;
   padding: 0.5rem 0.8rem;
+  padding-inline-start: 0.5rem;
   border-bottom: 1px solid var(--border);
   background: color-mix(in srgb, var(--muted) 32%, transparent);
 }
@@ -281,6 +283,7 @@
   align-items: center;
   gap: 0.55rem;
   padding: 0.75rem 0.85rem;
+  padding-inline-start: 0.5rem;
   border: 1px solid var(--border);
   border-radius: var(--ui-column-canvas-radius, var(--radius));
   background: var(--background);
@@ -350,6 +353,7 @@
   justify-content: space-between;
   gap: 0.75rem;
   padding: 0.25rem 0.75rem;
+  padding-inline-start: 0.5rem;
   border-bottom: 1px solid var(--border);
   background: var(--jj-store-row-background);
   color: var(--foreground);

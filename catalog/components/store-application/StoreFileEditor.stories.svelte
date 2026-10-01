@@ -2,6 +2,7 @@
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import StoreRepositoryApplication from "../../fixtures/StoreRepositoryApplicationFixture.svelte";
+  import { expectSourceHighlight } from "./source-highlight-assertions.js";
 
   const { Story } = defineMeta({
     title: "JJ Store/Repository/File editor",
@@ -115,12 +116,14 @@
       scroller.clientWidth,
     );
     await expect(getComputedStyle(scroller).display).toBe("flex");
-    await expect(
-      Math.abs(
-        firstLineNumber.getBoundingClientRect().top -
-          firstLine.getBoundingClientRect().top,
-      ),
-    ).toBeLessThanOrEqual(1);
+    await waitFor(() =>
+      expect(
+        Math.abs(
+          firstLineNumber.getBoundingClientRect().top -
+            firstLine.getBoundingClientRect().top,
+        ),
+      ).toBeLessThanOrEqual(1),
+    );
     await expect(getComputedStyle(gutters).backgroundColor).toBe(
       getComputedStyle(editorShell).backgroundColor,
     );
@@ -172,6 +175,10 @@
         name: "Edited Markdown preview for NOTES.md",
       }),
     ).toHaveTextContent("Saved from the repository browser.");
+    await userEvent.click(
+      within(fileDisplay).getByRole("button", { name: "Source" }),
+    );
+    await expectSourceHighlight(canvasElement, "markdown", "# Edited notes");
     await userEvent.click(
       within(fileDisplay).getByRole("button", { name: "Edit" }),
     );

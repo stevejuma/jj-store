@@ -168,6 +168,7 @@
   display: grid;
   gap: 0.5rem;
   padding: 0.75rem;
+  padding-inline-start: 0.5rem;
   background: var(--jj-store-info-row-background);
   border-bottom: 1px solid var(--border);
 }

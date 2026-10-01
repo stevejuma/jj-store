@@ -10,6 +10,13 @@ export async function expectColumnCanvasFillsBody(canvasElement: HTMLElement) {
     0,
   );
   await expect(getComputedStyle(body).overflow).toBe("hidden");
+  for (const header of root.querySelectorAll<HTMLElement>(
+    '[data-ui-part="column-header"]',
+  )) {
+    await expect(
+      Number.parseFloat(getComputedStyle(header).paddingInlineStart),
+    ).toBeLessThanOrEqual(8);
+  }
   await expect(
     body
       .closest('[data-ui-part="body"]')

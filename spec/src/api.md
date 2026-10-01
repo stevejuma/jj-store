@@ -86,7 +86,11 @@ performs a new read, navigation or persisted-route write. Overview insets,
 full-width file editor tokens, a stationary review header and native record Copy
 submenus are presentation-only. Clipboard values, read sessions, routes,
 capabilities and publication callbacks retain their existing contracts; these
-layouts add no request or generated schema.
+layouts add no request or generated schema. Compact header insets and Source
+syntax highlighting remain presentation-only; recorded and draft bytes, safe
+Markdown previews and edit publication are unchanged. Highlighting uses detected
+filename languages and static token styles under the existing production asset
+policy.
 
 ## Read-session foundation
 

@@ -138,6 +138,8 @@
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: start;
   gap: 0.5rem;
+  /* Bring the Back control closer while retaining the detail body's inset. */
+  margin-inline-start: -0.35rem;
 }
 
 .community-projects__detail-back[data-ui-component="button"] {

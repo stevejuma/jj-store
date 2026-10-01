@@ -34,6 +34,7 @@ body,
 }
 
 [data-ui-component="column-canvas"][data-ui-part="column-header"] {
+  --ui-column-canvas-padding: 0.5rem;
   border-bottom: 1px solid var(--border);
   background: var(--jj-store-row-background);
 }

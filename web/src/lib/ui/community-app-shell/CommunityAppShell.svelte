@@ -266,6 +266,7 @@
 
   :global(.community-app-shell__surface [data-ui-part="toolbar"]) {
     padding-inline: 1rem;
+    padding-inline-start: 0.5rem;
     border-block-end: 0;
   }
 
@@ -281,6 +282,7 @@
     align-items: center;
     gap: 0.5rem;
     padding-inline: 0.75rem;
+    padding-inline-start: 0.5rem;
     border-block-end: 0;
   }
 

@@ -340,6 +340,10 @@ is rooted at the current repository and retains directory and selected-file
 navigation. Branches, Commits, Op Log, Agents and Reviews do not render it.
 Overview's file-body region has a compact inset around the file tree and content
 surface. This padding belongs only to Overview and does not change other pages.
+App navigation, Settings and Projects tab strips, repository section headers,
+breadcrumbs and detail Back controls use a compact leading inset of at most
+0.5rem. Section-header outer margins use the same inset; header spacing does not
+change body padding, tab/title order or control hit areas.
 
 The repository file tree is a shell body-left sidebar with a full-height
 divider, small inner padding, keyboard-resizable width and the shared file
@@ -408,7 +412,12 @@ open in safe preview mode, and draft preview/source modes retain unsaved
 content. Source mode uses the public Design Core CodeBlock with the
 filename/source body on the theme background. Rust source previews use
 CodeBlock's public custom-tokenizer extension point so `.rs` files highlight in
-the catalog while retaining the shared code component.
+the catalog while retaining the shared code component. Both recorded and unsaved
+Source views enable syntax highlighting for the detected filename language.
+Built-in languages use the shared tokenizer; only Rust receives the repository's
+custom extension. Token spans use the packaged theme stylesheet so highlighting
+works under the served content-security policy without injected styles. Unknown
+languages remain plain text, and source is never executed as markup.
 
 An authenticated single-target bookmark exposes Edit for an existing bounded
 UTF-8 ordinary file. The editor keeps filename and content independently

@@ -5,6 +5,7 @@
   import StoreRepositoryApplication from "../../fixtures/StoreRepositoryApplicationFixture.svelte";
   import LayoutPersistenceFixture from "../../fixtures/LayoutPersistenceFixture.svelte";
   import { IDS } from "../../fixtures/repository.js";
+  import { expectSourceHighlight } from "./source-highlight-assertions.js";
   const { Story } = defineMeta({
     title: "JJ Store/Connected application",
     component: StoreRepositoryApplication,
@@ -186,6 +187,7 @@
       canvas.getByRole("button", { name: "Preview" }),
     ).toHaveAttribute("aria-pressed", "true");
     await userEvent.click(canvas.getByRole("button", { name: "Source" }));
+    await expectSourceHighlight(canvasElement, "markdown", "# jj-store");
     await waitFor(() =>
       expect(
         canvasElement.querySelector('[data-ui-component="code-block"]'),
@@ -230,9 +232,7 @@
         canvas.getByRole("region", { name: "Source preview for src/lib.rs" }),
       ).getByText("src/lib.rs", { exact: true }),
     ).toBeVisible();
-    await expect(
-      rustSourceBlock.querySelector(".ui-code-token-keyword"),
-    ).toHaveTextContent(/pub|fn/);
+    await expectSourceHighlight(canvasElement, "rust", /pub|fn/);
     await expect(
       canvas.getByRole("region", { name: "Selected file metadata" }),
     ).toBeVisible();
