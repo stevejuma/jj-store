@@ -533,6 +533,9 @@ language do not add file-content fields. Static application focus styling
 suppresses the native editable-content outline in file editors and Community
 comment, reply and mutation composers under the served asset policy. It does not
 require admitting injected editor styles or alter edit/submission semantics.
+Directory and root navigation clears the file edit presentation and its
+workspace guard; an empty selected file path does not initiate editing or
+publish a mutation.
 
 ## Browser read client
 

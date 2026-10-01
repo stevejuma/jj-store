@@ -126,7 +126,7 @@
     if (path === selectedFilePath) return;
     selectedFilePath = path;
     editFilename = path;
-    editing = requestedEditPath === path;
+    editing = path !== "" && requestedEditPath === path;
     if (editing) requestedEditPath = "";
   });
   function editLandingDocument(path: string) {

@@ -1,0 +1,38 @@
+import { expect, test } from "@playwright/test";
+import { api, commit, operation, repo } from "./native-browser-fixture.js";
+
+for (const navigation of ["breadcrumb", "history"] as const) {
+  test(`returning to root through ${navigation} clears file editing`, async ({
+    page,
+  }) => {
+    const requests = await api(page, {
+      access: "local_trusted",
+      editFile: true,
+    });
+    await page.goto(
+      `/#/repos/${repo}/files?at_op=${operation}&bookmark=main&commit=${commit}`,
+    );
+    for (const edit of [false, true]) {
+      await page.getByRole("button", { name: "Open file bin" }).click();
+      if (edit) {
+        await page.getByRole("button", { name: "Edit", exact: true }).click();
+        await expect(page.getByLabel("File name")).toHaveValue("bin");
+        await expect(
+          page.getByRole("combobox", { name: "Repository workspace" }),
+        ).toBeDisabled();
+      } else await expect(page.getByLabel("File name")).toHaveCount(0);
+      if (navigation === "breadcrumb")
+        await page.getByRole("link", { name: "Files", exact: true }).click();
+      else await page.goBack();
+      await expect(
+        page.getByRole("table", { name: "Repository files" }),
+      ).toBeVisible();
+      await expect(page.getByLabel("File name")).toHaveCount(0);
+      await expect(
+        page.getByRole("combobox", { name: "Repository workspace" }),
+      ).toBeEnabled();
+      expect(new URL(page.url()).hash).not.toContain("file=");
+    }
+    expect(requests.some((path) => path.startsWith("mutations"))).toBe(false);
+  });
+}

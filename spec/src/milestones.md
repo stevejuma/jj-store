@@ -55,6 +55,7 @@ adds evidence here in its enclosing Jujutsu change.
 | M4.27       | Done        | M4.25       | JST-UI-008,JST-API-005                                                                                                                                                   | Commit selector time/chips beneath title and stacked Git/JJ column; focused interaction/accessibility acceptance               | Retain picker regressions; visual review stays separate                       | E-UI-040                                                                                                                                                                                                                                                                                                                                                       |
 | M4.28       | Done        | M4.27       | JST-UI-003,JST-UI-005,JST-UI-009,JST-UI-014,JST-API-002                                                                                                                  | Native Evo Log column, independent pinned anchor/history and chrome alignment; focused and cold browser acceptance             | Retain evolution and chrome regressions; visual review remains separate       | E-UI-041                                                                                                                                                                                                                                                                                                                                                       |
 | M4.29       | Done        | M4.28       | JST-UI-008,JST-API-005                                                                                                                                                   | File editor and prose composers remove native focus ring under served asset policy; focused and cold browser acceptance        | Retain editor/composer focus regressions; visual review remains separate      | E-UI-042                                                                                                                                                                                                                                                                                                                                                       |
+| M4.30       | Done        | M4.29       | JST-UI-008,JST-API-005                                                                                                                                                   | Root navigation clears file edit presentation and workspace guard; focused and cold browser acceptance                         | Retain file navigation/edit regressions; visual review remains separate       | E-UI-043                                                                                                                                                                                                                                                                                                                                                       |
 | M5          | Done        | M4.1        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                                                                                                                      | Authenticated typed commands and shared RPC policy                                                                             | Retain mutation conformance; proceed to M6                                    | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-M5-005,E-M5-006,E-M5-007,E-M5-008,E-UI-028                                                                                                                                                                                                                                                                   |
 | M5.1        | Done        | M4.1        | JST-MUT-001,JST-MUT-002,JST-MUT-005                                                                                                                                      | Basic changes/refs/reconcile; preview receipt and semantic policy                                                              | Retain basic mutation acceptance                                              | E-M5-001,E-SCOPE-001,E-M5-002,E-M5-003,E-M5-004,E-UI-028                                                                                                                                                                                                                                                                                                       |
 | M5.2        | Done        | M5.1        | JST-MUT-003                                                                                                                                                              | Full abandon descendant bookmark workspace/evolution parity                                                                    | Retain abandon acceptance                                                     | E-M5-005                                                                                                                                                                                                                                                                                                                                                       |
@@ -24073,6 +24074,173 @@ and named tests are checked by the progress gate.
     "result": "pass",
     "remaining": [],
     "next": "GB0-GB6 accepted on macOS ARM64 with pinned JJ/Git and SHA-1 bookmark profile. Maintain exact conversion, native fault/replay and cold browser/RustFS regressions. Tag publication, signing/conflict export, native Git import/export, server-free storage, Linux/Windows and external forge deployment qualification remain unsupported or deferred; WorkStore replication remains frozen. Root aggregate, full Rust workspace and unrelated UI suites were out of scope under targeted policy. No installation, service restart, publication, migration or visual baseline approval."
+  },
+  {
+    "id": "E-UI-043",
+    "tasks": ["M4.30"],
+    "date": "2026-10-01",
+    "kind": "file-navigation-clears-editor-presentation",
+    "revision": "Enclosing Jujutsu change psszmplx.",
+    "before": "Clean working copy after d5918d3a. Current live repository root shows a blank File name breadcrumb input and disabled workspace picker after file navigation. Exact Return to root clears file editor story fails because the input survives returning to root; existing edit-and-rename story passes. Empty selected path and empty requested-edit path incorrectly compare equal.",
+    "files": [
+      "catalog/components/store-application/StoreFileEditor.stories.svelte",
+      "spec/src/api.md",
+      "spec/src/milestones.md",
+      "spec/src/ui.md",
+      "spec/src/verification.md",
+      "web/src/lib/ui/community-projects/CommunityProjectsRepositoryFiles.svelte",
+      "web/tests/browser/file-editor-navigation.spec.ts"
+    ],
+    "tests": [],
+    "runs": [
+      {
+        "command": "pnpm exec prettier --write catalog/components/store-application/StoreFileEditor.stories.svelte web/tests/browser/file-editor-navigation.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Focused navigation story and production browser regression formatted."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreFileEditor.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before: new return-to-root regression fails on surviving File name input; existing edit-and-rename story passes. Log .scratch/file-editor-navigation-before.log."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/ui/community-projects/CommunityProjectsRepositoryFiles.svelte spec/src/ui.md spec/src/api.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Nonempty selected-file guard and canonical navigation contract formatted."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreFileEditor.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "After: both stories pass. Regression covers ordinary file browsing, explicit landing-document editing, manual editing, root input cleanup, workspace guard release and reopening without editing. Existing edit/rename preview/apply behavior still passes. Fresh Vitest/Storybook process. Log .scratch/file-editor-navigation-after.log."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero errors and warnings. Log .scratch/file-editor-navigation-web-check.log."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "fail",
+        "failures": 2,
+        "note": "New story used Playwright-specific exact options with Testing Library locators; 2 TypeScript diagnostics. Replaced with equivalent anchored accessible-name regular expressions. Log .scratch/file-editor-navigation-catalog-check.log."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "312-module production/catalog boundary and source-size audit passes. Log .scratch/file-editor-navigation-architecture.log."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Fresh production UI builds with existing nonfatal CSS minification and bundle-size warnings. No Rust build. Log .scratch/file-editor-navigation-build.log."
+      },
+      {
+        "command": "pnpm exec playwright test --config .scratch/workspace-browser.config.mts web/tests/browser/file-editor-navigation.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "2 cold fresh-preview browser cases pass: breadcrumb and browser-history returns to root, each with ordinary viewing and explicit editing; root table remains visible, filename input disappears, workspace selection is enabled and no mutation request is made. Log .scratch/file-editor-navigation-browser.log."
+      },
+      {
+        "command": "pnpm exec prettier --write catalog/components/store-application/StoreFileEditor.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Typed story locator correction formatted without changing assertions."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Zero diagnostics; 81-module catalog boundary check passes after locator correction. Log .scratch/file-editor-navigation-catalog-check-final.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreFileEditor.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final exact rerun passes both interaction/accessibility stories after typed locator correction. Log .scratch/file-editor-navigation-stories-final.log. Changed stories remain visual-pending."
+      },
+      {
+        "command": "node .scratch/restart-workspace-ui.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Owned live demo ready at 127.0.0.1:7460, PID 81051. Existing explicit development binaries and repository data preserved; no reseed or unrelated service restart. Log .scratch/file-editor-navigation-live-restart.log."
+      },
+      {
+        "command": "CUA live built-UI verification",
+        "result": "pass",
+        "failures": 0,
+        "note": "Reloaded the user tab after build, opened LAYOUT.md and returned through Files breadcrumb. Root file table and document preview are visible; File name input count is 0 and workspace picker is enabled. Screenshot .scratch/file-editor-navigation-final.png; before screenshot .scratch/file-editor-navigation-before.png. User tab left at original root route. No live mutation preview/apply."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md spec/src/verification.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final task, evidence ledger and verification matrix formatted."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "4 validators, 20 chapters and 123 requirements pass. Log .scratch/file-editor-navigation-spec-validate.log."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "3 protected files and 3 canonical chapters pass same-change gate. Final evidence rerun also passes. Logs .scratch/file-editor-navigation-spec-first.log and .scratch/file-editor-navigation-spec-first-final.log."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "95 tasks pass evidence bookkeeping audit. Final evidence rerun also passes. Logs .scratch/file-editor-navigation-progress.log and .scratch/file-editor-navigation-progress-final.log."
+      },
+      {
+        "command": "pnpm spec:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Canonical mdBook HTML builds. Log .scratch/file-editor-navigation-spec-build.log."
+      },
+      {
+        "command": "pnpm exec prettier --check catalog/components/store-application/StoreFileEditor.stories.svelte spec/src/api.md spec/src/milestones.md spec/src/ui.md spec/src/verification.md web/src/lib/ui/community-projects/CommunityProjectsRepositoryFiles.svelte web/tests/browser/file-editor-navigation.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 7 changed production, catalog, regression and canonical files pass formatting."
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/milestones.md spec/src/verification.md",
+        "result": "fail",
+        "failures": 1,
+        "note": "Appending final evidence requires normalizing the new JSON entry indentation to the Markdown formatter output; milestones formatting check fails. No product code changed."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final JSON evidence indentation normalized."
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/milestones.md spec/src/verification.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final canonical ledger and matrix formatting passes after normalization."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "deferred": [
+      "Changed stories remain visual-pending; visual baseline approval is separate.",
+      "Root aggregate pnpm spec:check, pnpm check, pnpm test and pnpm build; unrelated UI suites; Rust builds/tests, contract generation, real-RustFS and shared release qualification are out of scope under the targeted UI-only policy."
+    ],
+    "versions": "jj 0.45.1; Node 24.10.0; pnpm 10.32.1; Svelte 5.57.1; Storybook 10.5.7; Vitest 4.1.11; Vite 8.3.1. Existing dependency setup unchanged; no sibling or package manifest edits.",
+    "formats": "File presentation requires a nonempty selected native path before honoring a requested edit path. Directory/root transitions end edit presentation and release the existing workspace navigation guard. Explicit landing-document editing and typed edit/rename submission retain existing behavior. No controller, read DTO, native identity, object, manifest, WAL, receipt or credential format changes.",
+    "next": "Retain exact root-navigation, workspace-guard and explicit-edit regressions; visual approval remains separate."
   }
 ]
 ```

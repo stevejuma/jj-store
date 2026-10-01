@@ -13,6 +13,41 @@
 </script>
 
 <Story
+  name="Return to root clears file editor"
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const workspace = canvas.getByRole("combobox", {
+      name: "Repository workspace",
+    });
+    const returnToRoot = async () => {
+      await userEvent.click(canvas.getByRole("link", { name: /^Files$/ }));
+      await waitFor(() =>
+        expect(canvas.queryByLabelText("File name")).not.toBeInTheDocument(),
+      );
+      await expect(workspace).toBeEnabled();
+      await expect(
+        canvas.getByRole("region", { name: "Repository document preview" }),
+      ).toBeVisible();
+    };
+    await userEvent.click(canvas.getByRole("button", { name: "README.md" }));
+    await returnToRoot();
+    await userEvent.click(canvas.getByRole("button", { name: "Edit README" }));
+    await expect(await canvas.findByLabelText("File name")).toHaveValue(
+      "README.md",
+    );
+    await expect(workspace).toBeDisabled();
+    await returnToRoot();
+    await userEvent.click(canvas.getByRole("button", { name: "README.md" }));
+    await expect(canvas.queryByLabelText("File name")).not.toBeInTheDocument();
+    await userEvent.click(canvas.getByRole("button", { name: /^Edit$/ }));
+    await expect(canvas.getByLabelText("File name")).toHaveValue("README.md");
+    await returnToRoot();
+    await userEvent.click(canvas.getByRole("button", { name: "README.md" }));
+    await expect(canvas.queryByLabelText("File name")).not.toBeInTheDocument();
+  }}
+/>
+
+<Story
   name="Edit and rename"
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement),
