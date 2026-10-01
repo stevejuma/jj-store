@@ -56,6 +56,14 @@ impl<'de> Deserialize<'de> for GitOid {
             .map_err(serde::de::Error::custom)
     }
 }
+impl schemars::JsonSchema for GitOid {
+    fn schema_name() -> std::borrow::Cow<'static, str> {
+        "GitSha1Id".into()
+    }
+    fn json_schema(_: &mut schemars::SchemaGenerator) -> schemars::Schema {
+        schemars::json_schema!({"type":"string","pattern":"^[0-9a-f]{40}$","minLength":40,"maxLength":40})
+    }
+}
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]

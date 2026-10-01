@@ -115,7 +115,7 @@ pub enum TaskCommand {
         #[arg(long)]
         body: String,
     },
-    /// Tombstone a comment while retaining native immutable history
+    /// Tombstone a comment while retaining immutable history
     TombstoneComment {
         id: WorkCommentId,
         #[arg(long)]
@@ -137,8 +137,7 @@ pub async fn run_task(
     let Some(command) = args.command else {
         return presentation::help(ui, helper, &["task".into()]);
     };
-    let connection = Connection::read(helper.workspace_loader()?.repo_path()).map_err(error)?;
-    let client = connection.connect().await.map_err(error)?;
+    let client = client::Client::open(helper).await?;
     let (id, command) = match command {
         TaskCommand::List {
             project,
@@ -156,8 +155,7 @@ pub async fn run_task(
                         cursor,
                         ..Default::default()
                     })
-                    .await
-                    .map_err(error)?,
+                    .await?,
             );
         }
         TaskCommand::Show { id, limit, cursor } => {
@@ -172,8 +170,7 @@ pub async fn run_task(
                         cursor,
                         ..Default::default()
                     })
-                    .await
-                    .map_err(error)?,
+                    .await?,
             );
         }
         TaskCommand::Status { request_id } => {
@@ -181,10 +178,7 @@ pub async fn run_task(
                 ui,
                 helper,
                 args.format,
-                &client
-                    .work_command_status(request_id)
-                    .await
-                    .map_err(error)?,
+                &client.work_command_status(request_id).await?,
             );
         }
         TaskCommand::Create {
@@ -199,9 +193,7 @@ pub async fn run_task(
         } => (
             request_id,
             WorkCommandV1::CreateTask {
-                id: id.unwrap_or_else(|| {
-                    TaskId::new(entity_id(connection.repository, request_id, b"task"))
-                }),
+                id: id.unwrap_or_else(|| TaskId::new(client.entity_id(request_id, b"task"))),
                 project,
                 expected_project_version,
                 title,
@@ -240,7 +232,7 @@ pub async fn run_task(
             request_id,
             WorkCommandV1::AddComment {
                 id: id.unwrap_or_else(|| {
-                    WorkCommentId::new(entity_id(connection.repository, request_id, b"comment"))
+                    WorkCommentId::new(client.entity_id(request_id, b"comment"))
                 }),
                 task,
                 expected_task_version,

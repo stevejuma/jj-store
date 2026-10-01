@@ -7,6 +7,7 @@ pub use commands::*;
 use jj_store_wal as wal;
 pub use models::*;
 pub use reads::WorkPager;
+pub(crate) use reads::{overhead, take_page};
 pub use wal::publication::{
     ProjectId, ProjectV1, TaskId, TaskStateV1, TaskV1, WorkCommandResultV1, WorkCommandV1,
     WorkCommentId, WorkCommentV1,

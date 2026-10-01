@@ -124,7 +124,7 @@ pub(crate) enum StoreCommand {
     /// Check binding, authentication and remote access
     #[command(long_about = include_str!("../../../docs/cli/doctor.md"))]
     Doctor,
-    /// Report native command qualification
+    /// Report command qualification for this repository profile
     #[command(long_about = include_str!("../../../docs/cli/capabilities.md"))]
     Capabilities,
     /// Verify and save a token to the OS credential facility

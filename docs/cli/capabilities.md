@@ -1,4 +1,11 @@
-Report native backend capabilities and their current verification scope.
+Report repository capabilities and their current verification scope.
+
+Inside a Git-backed JJ repository, status, doctor and capabilities return the
+version-2 local profile. Projects, tasks and comments run directly against the
+companion metadata store without a native connection or server. Reading does not
+initialize repository metadata or a local actor. Agent and review support is
+reported separately as it is qualified. The native version-1 matrix remains
+available in native repositories and outside a repository.
 
 `jj store capabilities --format json` returns a versioned command matrix. Native
 commit, operation and evolution histories are separate. Git transport commands

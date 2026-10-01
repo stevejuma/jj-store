@@ -536,7 +536,12 @@ installed service, controller dispatch or credential persistence.
 Native jj project and jj task commands read and mutate WorkStore through the
 local repository connection. Task/project commands require exact request IDs and
 entity/project versions; they are independent of optional upstream connectivity.
-No server-free or Git-ref fallback is introduced.
+For an ordinary Git-backed JJ repository, M13 dispatches the same project/task
+commands directly to the LocalRepository service without a server connection.
+Reads do not snapshot the checkout, reconcile operation heads or initialize
+metadata. Local writes use stable request-derived entity IDs and shared domain
+validation; their version-2 receipts/pages identify the Git metadata root.
+Native commands retain their existing version-1 transport and output contracts.
 
 Disposable development/browser qualification may explicitly reuse a separately
 built pinned RustFS binary through `JJ_STORE_DEV_RUSTFS_RUNTIME`. The server

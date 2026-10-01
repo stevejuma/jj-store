@@ -19,6 +19,12 @@ home may contain several projects and may also contain ordinary code.
 
 ## Initial profile
 
+The native profile below remains manifest/WAL backed. M13's separate local
+Git-backed profile uses the same `WorkStateV1` reducer, semantic validation and
+limits through the owned LocalRepository service. It stores an explicitly
+versioned canonical local WorkStore snapshot and durable receipts through the
+companion Git adapter. Native records and digests are not reinterpreted.
+
 First publication non-destructively upgrades a collaboration-enabled format-2
 home to format 3, preserving code heads, code version, sibling roots, settings,
 receipts and history. Existing format-1 and format-2 bytes remain readable.

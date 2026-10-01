@@ -8,7 +8,9 @@ Crates are added as milestones begin, not as empty placeholders. Native codecs
 initially live with JJ integration. The server uses in-process stores rather
 than calling its own RPC. Local indexes are derived and rebuildable. The source
 repo is colocated for development. Native product storage has no Git carrier;
-the separate local Git-backed companion profile is governed by local-jj.md.
+the separate local Git-backed companion profile is governed by local-jj.md. Its
+WorkStore facade uses existing service/domain dependencies; disposable
+filesystem qualification uses a test-only temporary-directory dependency.
 
 ## Requirements
 

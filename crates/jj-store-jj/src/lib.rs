@@ -8,6 +8,7 @@ pub mod dependencies;
 pub mod factories;
 pub mod git_bridge;
 pub mod local_metadata;
+pub mod local_repository;
 pub mod native_dto;
 pub mod objects;
 pub mod operation_stores;

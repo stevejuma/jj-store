@@ -1,16 +1,15 @@
 use super::*;
+use crate::commands::error;
 
 pub(super) fn page(
     ui: &Ui,
     helper: &CommandHelper,
     format: Format,
-    page: &WorkPage,
+    page: &client::Page,
 ) -> Result<(), CommandError> {
-    let mut text = format!(
-        "WorkStore {} version {} (publication {})\n",
-        page.snapshot.repo_id, page.snapshot.work_state_version, page.snapshot.published_seq.0
-    );
-    for project in &page.projects {
+    let mut text = page.summary();
+    let (projects, tasks, comments, cursor) = page.rows();
+    for project in projects {
         text.push_str(&format!(
             "Project {} v{}  {}\n{}\n",
             project.id, project.version, project.title, project.body
@@ -22,7 +21,7 @@ pub(super) fn page(
             ));
         }
     }
-    for task in &page.tasks {
+    for task in tasks {
         text.push_str(&format!(
             "Task {} v{}  {:?}  {}\n{}\n",
             task.id, task.version, task.state, task.title, task.body
@@ -34,7 +33,7 @@ pub(super) fn page(
             text.push_str(&format!("  Parent {parent}\n"));
         }
     }
-    for comment in &page.comments {
+    for comment in comments {
         text.push_str(&format!(
             "Comment {} v{} reply={:?}\n{}\n",
             comment.id,
@@ -43,7 +42,7 @@ pub(super) fn page(
             comment.body.as_deref().unwrap_or("[deleted]")
         ));
     }
-    if let Some(cursor) = &page.next_cursor {
+    if let Some(cursor) = cursor {
         text.push_str(&format!("Next cursor: {cursor}\n"));
     }
     presentation::result(

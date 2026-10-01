@@ -1,5 +1,12 @@
 # Typed mutations
 
+M13 adds an in-process LocalRepository facade for admitted local Git-backed JJ
+folders. WorkStore commands use the same neutral domain reducer and exact entity
+preconditions. Local actor identity is established atomically in
+repository-local device state on first write; reads never create it. Receipts
+identify the Git metadata profile explicitly rather than fabricating a native
+WAL snapshot.
+
 An authorized read can produce a credential-free, immutable selected-view commit
 set for search filtering. Only the service constructs this value after native
 traversal and a final authorization check. It is informational, cannot publish,

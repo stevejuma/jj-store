@@ -2,6 +2,9 @@
 
 The local Git-backed companion profile is governed by local-jj.md. Its Git
 object/ref adapter stays in this crate and does not replace native publication.
+The local repository resolver loads only the pinned GitBackend to obtain its
+object database; it does not load or reconcile operation heads or snapshot
+files.
 
 Search visibility uses the same bounded native commit-parent traversal as
 operation differences. It starts at the explicitly selected operation's view

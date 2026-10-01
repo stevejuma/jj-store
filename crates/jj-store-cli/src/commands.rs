@@ -220,6 +220,9 @@ pub async fn run(
         }
 
         StoreCommand::Status | StoreCommand::Doctor => {
+            if let Some((value, text)) = crate::local_diagnostics::report(helper)? {
+                return presentation::result(ui, helper, args.format, &value, &text);
+            }
             let path = helper.workspace_loader()?.repo_path();
             let connection = Connection::read(path).map_err(error)?;
             let client = connection.connect().await.map_err(error)?;
@@ -308,13 +311,20 @@ pub async fn run(
                 text,
             )
         }
-        StoreCommand::Capabilities => presentation::result(
-            ui,
-            helper,
-            args.format,
-            &capabilities(),
-            "Native history: commit, operation and evolution graphs.\nUse --format json for command qualification and limits.\nExplicit Git bridge support is reported per command; destructive GC is unsupported.\n",
-        ),
+        StoreCommand::Capabilities => {
+            if helper.workspace_loader().is_ok()
+                && let Some((value, text)) = crate::local_diagnostics::report(helper)?
+            {
+                return presentation::result(ui, helper, args.format, &value, &text);
+            }
+            presentation::result(
+                ui,
+                helper,
+                args.format,
+                &capabilities(),
+                "Native history: commit, operation and evolution graphs.\nUse --format json for command qualification and limits.\nExplicit Git bridge support is reported per command; destructive GC is unsupported.\n",
+            )
+        }
         StoreCommand::Version => {
             let result = json!({"client":{"name":"jj-store custom jj","version":env!("CARGO_PKG_VERSION"),"upstream_jj":"0.45.1","source_revision":env!("JJ_STORE_REVISION"),"build_target":env!("JJ_STORE_TARGET"),"build_profile":env!("JJ_STORE_PROFILE")}});
             let text = format!(

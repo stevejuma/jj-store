@@ -31,4 +31,5 @@ pub mod sync_commands;
 pub mod token_commands;
 mod token_journal;
 
+mod local_diagnostics;
 pub mod work_commands;

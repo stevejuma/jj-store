@@ -40,6 +40,14 @@ provenance after conversion.
 
 ## Delivery gates
 
+Local WorkStore pagination reuses the native record and four-MiB page limits.
+Continuations bind an immutable selected metadata commit, filters, page size and
+offset. A continuation can only name selected history, never a staged candidate;
+it remains usable across CLI processes while that bounded history is retained.
+Actor identities are device state under the shared JJ repository, so physical
+workspaces and the local UI use the same actor. They carry no access grants and
+are excluded from portable transfer.
+
 M13.1 proves versioned publication, receipt replay, initialization races and Git
 reachability before dependent implementation. M13.2 adds WorkStore and direct
 CLI access. M13.3 adds portable AgentStore/ReviewStore evidence. M13.4 adds
