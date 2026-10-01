@@ -5,6 +5,7 @@
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { ScrollArea } from "@lapismd/design-core/shadcn/scroll-area";
   import StoreWorkLayoutControls from "./StoreWorkLayoutControls.svelte";
+  import StoreProjectsFilterControls from "./StoreProjectsFilterControls.svelte";
   import StoreWorkOwnershipGroups from "./StoreWorkOwnershipGroups.svelte";
   import StoreProjectsReviews from "./StoreProjectsReviews.svelte";
   import StoreProjectsActivity from "./StoreProjectsActivity.svelte";
@@ -95,6 +96,9 @@
 {#snippet actions()}
   <div class="community-projects__surface-actions">
     {#if tab !== "activity"}<StoreWorkLayoutControls bind:value={layout} />{/if}
+    {#key `${project?.id ?? "hub"}:${tab}`}
+      <StoreProjectsFilterControls {controller} {project} />
+    {/key}
     <Button
       variant="ghost"
       size="icon-sm"

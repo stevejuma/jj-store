@@ -24,7 +24,7 @@ supply interchangeable sources. Deterministic fixtures remain catalog-only.
 | JST-UI-012 | The profile menu MUST open a transient Settings destination with Local service, Repository and Search sections; replace repository navigation/content/actions/details while open; preserve the unchanged repository route and snapshot on return; keep its destination and selected section out of URL, browser history and storage; render accessible icon-only settings navigation when the desktop sidebar is collapsed; refresh advertised search health explicitly; and expose native graph preparation in Repository independently from text-search health, using only a graph-reported or explicitly selected operation.                                                                                                                                                                      |
 | JST-UI-013 | Repository pages MUST expose a Community-style section header after the body tabs with a searchable workspace Command View; workspace context MUST use the exact native name, survive URL/history restoration at a pinned operation, preserve shared commit identities and keep operation/collaboration history repository-wide.                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | JST-UI-014 | Repository view navigation MUST live in the Community-styled right rail beneath its page heading and create action, with selection-aware, capability-gated commands beneath Details and no duplicate metadata panels; body tabs MUST present Overview first, followed by Branches, Commits, Op Log, Agents and Reviews, retain their pill styling, and move trailing tabs into an accessible dropdown when width is limited without changing route or workspace context.                                                                                                                                                                                                                                                                                                                             |
-| JST-UI-015 | The installation Projects hub MUST expose authorized homes, repository and task directories, a shared native commit and agent Activity timeline with Activity-first tabs and recorded-agent filters, a repository-linked Projects list, shared safe Markdown previews, searchable project/task views, native identity routes, permission-gated dialogs and threaded Markdown discussion; use Community card/list layout controls and Mine/Other groups, searchable repository Command View selectors, Settings-style form rows and filters in the far-right rail, a centered top-header breadcrumb, and an original-message preview above the edit composer; keep independent bounded snapshot continuations and retained navigation state; and advance displayed metadata only on explicit refresh. |
+| JST-UI-015 | The installation Projects hub MUST expose authorized homes, repository and task directories, a shared native commit and agent Activity timeline with Activity-first tabs and recorded-agent filters, a repository-linked Projects list, shared safe Markdown previews, searchable project/task views, native identity routes, permission-gated dialogs and threaded Markdown discussion; use Community card/list layout controls and Mine/Other groups, searchable repository Command View selectors, Settings-style form rows and icon-only page-header filters, a centered top-header breadcrumb, and an original-message preview above the edit composer; keep independent bounded snapshot continuations and retained navigation state; and advance displayed metadata only on explicit refresh. |
 | JST-UI-016 | Local management MUST expose explicitly linked device workspaces, qualified capture setup and queue recovery, editable Search with isolated worker replacement, non-destructive storage verification/checkpoints and configured sync controls through typed capability-gated interfaces; unsupported profiles and deferred operations MUST remain explicit.                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 
 The production controller completes bootstrap before rendering connection
@@ -889,17 +889,23 @@ Document selection uses a three-pixel indicator while preserving tab overflow
 and keyboard navigation.
 
 Project and installation Activity filters use Community's searchable Command
-View in a shadcn popover, placed in the far-right filter rail. Supported choices
-are all commits, commits with recorded agent context and commits without
-recorded agent context. Search and repository filters compose with those
-choices; URLs, Back/Forward and reload retain the choice. Selecting an agent
-category discovers only bounded association metadata with two concurrent
-readers, keeping code and AgentStore captures pinned. Session bodies still load
-on disclosure. Unknown or failed context is excluded from both categories and
-reported as incomplete, never classified as absent. Filter loading is explicit;
-empty filtered pages retain accessible continuation controls. Returning to all
-commits restores the ordinary mounted-row lazy behavior. No task/review event
-history is synthesized.
+View in a shadcn popover, triggered by an icon-only control in the page header.
+Projects, Tasks, Reviews, Repositories and Activity headers also expose an
+icon-only Filters control beside their layout and refresh controls. It opens the
+applicable search, home, repository and task-state fields in an accessible
+popover, including when the details rail is closed. Active filters remain
+visible through the trigger state; closing the popover preserves its search
+draft and Escape returns focus to the trigger. The far-right rail contains
+project details without a Filters section. Supported activity choices are all
+commits, commits with recorded agent context and commits without recorded agent
+context. Search and repository filters compose with those choices; URLs,
+Back/Forward and reload retain the choice. Selecting an agent category discovers
+only bounded association metadata with two concurrent readers, keeping code and
+AgentStore captures pinned. Session bodies still load on disclosure. Unknown or
+failed context is excluded from both categories and reported as incomplete,
+never classified as absent. Filter loading is explicit; empty filtered pages
+retain accessible continuation controls. Returning to all commits restores the
+ordinary mounted-row lazy behavior. No task/review event history is synthesized.
 
 Sync settings group Overview and Progress in keyboard-accessible tabs. Overview
 provides explicit Refresh, Pause/Resume and Retry for a configured worker, with

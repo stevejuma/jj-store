@@ -63,15 +63,20 @@
     await expect(
       c.getByRole("log", { name: "Agent conversation activity" }),
     ).toHaveTextContent("Updated the parser");
-    const toggle = c.getByRole("button", { name: "Toggle details" });
-    if (toggle.getAttribute("aria-expanded") === "false")
-      await userEvent.click(toggle);
-    const rail = within(c.getByRole("region", { name: "Project filters" }));
+    await userEvent.click(
+      c.getByRole("button", { name: "Filters for activity" }),
+    );
+    const filters = within(
+      within(document.body).getByRole("dialog", { name: "Activity filters" }),
+    );
     await userEvent.type(
-      rail.getByRole("textbox", { name: "Search activity" }),
+      filters.getByRole("textbox", { name: "Search activity" }),
       "no matching revision",
     );
-    await userEvent.click(rail.getByRole("button", { name: /^Search$/ }));
+    await userEvent.click(filters.getByRole("button", { name: /^Search$/ }));
+    await userEvent.click(
+      filters.getByRole("button", { name: "Close filters" }),
+    );
     await expect(await c.findByText("No matching activity")).toBeVisible();
   }}
 />

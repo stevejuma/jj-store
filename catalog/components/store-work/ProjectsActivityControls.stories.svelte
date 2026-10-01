@@ -18,12 +18,9 @@
         "true",
       ),
     );
-    const toggle = c.getByRole("button", { name: "Toggle details" });
-    if (toggle.getAttribute("aria-expanded") === "false")
-      await userEvent.click(toggle);
     const filter = await c.findByRole("button", { name: "Filter activity" });
     await expect(
-      filter.closest('[aria-label="Project filters"]'),
+      filter.closest(".community-projects__surface-header"),
     ).not.toBeNull();
     await userEvent.click(filter);
     await userEvent.type(

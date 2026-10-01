@@ -1,5 +1,4 @@
 <script lang="ts">
-  import StoreActivityFilter from "./StoreActivityFilter.svelte";
   import StoreRepositoryPicker from "../store-application/StoreRepositoryPicker.svelte";
   import StoreWorkStateFilter from "./StoreWorkStateFilter.svelte";
   import * as Field from "@lapismd/design-core/shadcn/field";
@@ -11,16 +10,16 @@
   let {
     controller,
     project,
-  }: { controller: StoreController; project?: Model<"ProjectV1"> | null } =
-    $props();
+    search = $bindable(""),
+  }: {
+    controller: StoreController;
+    project?: Model<"ProjectV1"> | null;
+    search?: string;
+  } = $props();
   const hub = $derived(controller.projects!),
     route = $derived(hub.route),
     tab = $derived(route.workTab ?? (project ? "tasks" : "projects")),
     fieldId = $props.id();
-  let search = $state("");
-  $effect(() => {
-    search = route.workQuery ?? "";
-  });
 </script>
 
 <form
@@ -72,12 +71,6 @@
           onChange={(value) => void hub.filter({ workHome: value })}
         />
       </StoreWorkField>{/if}
-    {#if tab === "activity"}<StoreWorkField label="Activity type" compact
-        ><StoreActivityFilter
-          value={route.workActivity ?? "all"}
-          onChange={(workActivity) => void hub.filter({ workActivity })}
-        /></StoreWorkField
-      >{/if}
     {#if tab === "tasks"}<StoreWorkField
         label="Task state"
         id={`${fieldId}-state`}

@@ -940,12 +940,16 @@ after expiry or serving restart. The browser keeps code pins separate and
 refreshes task metadata explicitly.
 
 WorkStore browser reads use an independent pinned root per paged collection. The
-Projects destination does not require a selected code operation. Stable
-project/task route selections reload on explicit refresh. A saved receipt marks
-freshness; ambiguous outcomes keep the complete request, including exact version
-preconditions and entity IDs. Status and retry share that identity, even after
-refresh. Linked repository navigation uses the normal target session and token
-checks, never the home metadata grant.
+page-header filter controls reuse the existing Projects controller filter action
+and native route values. Moving their presentation from the details rail adds no
+requests or contracts; search submission and field selection retain the existing
+bounded snapshot reads and explicit refresh semantics. The Projects destination
+does not require a selected code operation. Stable project/task route selections
+reload on explicit refresh. A saved receipt marks freshness; ambiguous outcomes
+keep the complete request, including exact version preconditions and entity IDs.
+Status and retry share that identity, even after refresh. Linked repository
+navigation uses the normal target session and token checks, never the home
+metadata grant.
 
 The development seed exercises these same commands for linked sample projects,
 all task states, subtasks and threaded comments. Its cold browser gate reads the

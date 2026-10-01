@@ -96,11 +96,11 @@ shared-package release qualification does not alter those original Git gates.
 | M10.6       | Done        | M10.5                   | JST-REPL-004,JST-REPL-010,JST-REPL-011                                                                                                                                   | Complete snapshot-plus-tail bootstrap, format-2 seed upgrade and non-destructive existing-workspace migration                  | Retain bootstrap, migration and zero-upstream regressions                      | E-M10-008,E-M10-010,E-M10-013                                                                                                                                                                                                                                                                                                                                  |
 | M10.7       | Done        | M10.6                   | JST-REPL-001,JST-REPL-006,JST-REPL-011,JST-REPL-012                                                                                                                      | Server-owned worker, one upstream, local outage readiness, controls, finite waits and SSE/search integration                   | Retain active profile; expanded hardening stays deferred to M10.8.             | E-M10-009,E-M10-010,E-M10-013,E-M10-014                                                                                                                                                                                                                                                                                                                        |
 | M10.8       | Deferred    | M10.7                   | JST-REPL-011,JST-REPL-012                                                                                                                                                | Expanded pressure/fault soak, browser UI, cold two-instance RustFS, archive/export and topology qualification                  | Future replication hardening                                                   | -                                                                                                                                                                                                                                                                                                                                                              |
-| M11         | In progress | M9.6                    | JST-WORK-001,JST-WORK-002,JST-WORK-003,JST-WORK-004,JST-WORK-005,JST-WORK-006,JST-WORK-007,JST-WORK-008                                                                  | Native project home, linked repositories, tasks and discussion                                                                 | Complete M11.4 package qualification and visual review                         | E-M11-001,E-M11-002,E-M11-003,E-M11-004,E-M11-006,E-M11-007                                                                                                                                                                                                                                                                                                    |
+| M11         | In progress | M9.6                    | JST-WORK-001,JST-WORK-002,JST-WORK-003,JST-WORK-004,JST-WORK-005,JST-WORK-006,JST-WORK-007,JST-WORK-008                                                                  | Native project home, linked repositories, tasks and discussion                                                                 | Complete M11.4 package qualification and visual review                         | E-M11-001,E-M11-002,E-M11-003,E-M11-004,E-M11-006,E-M11-007,E-M11-008                                                                                                                                                                                                                                                                                          |
 | M11.1       | Done        | M9.6                    | JST-WORK-001,JST-WORK-002,JST-WORK-003,JST-WORK-004,JST-WORK-005,JST-WORK-007                                                                                            | Native model, publication, receipts, recovery and copy                                                                         | Retain native and real RustFS gates                                            | E-M11-001,E-M11-003                                                                                                                                                                                                                                                                                                                                            |
 | M11.2       | Done        | M11.1                   | JST-WORK-005,JST-WORK-006,JST-WORK-008                                                                                                                                   | Authorized service, API, RPC and CLI                                                                                           | Retain local transport/CLI gates                                               | E-M11-002                                                                                                                                                                                                                                                                                                                                                      |
 | M11.3       | Done        | M11.2                   | JST-WORK-008                                                                                                                                                             | Browser projects/tasks/comments and explicit refresh                                                                           | Retain cold browser gates; visual baselines pending                            | E-M11-003,E-M11-004                                                                                                                                                                                                                                                                                                                                            |
-| M11.4       | In progress | M11.3                   | JST-WORK-005,JST-WORK-006,JST-WORK-008,JST-WORK-009,JST-UI-015                                                                                                           | Installation Projects hub, full-root browse and cold browser acceptance                                                        | Shared-package qualification; visual baselines pending                         | E-M11-005,E-M11-006,E-M11-007,E-UI-045,E-UI-046,E-UI-047                                                                                                                                                                                                                                                                                                       |
+| M11.4       | In progress | M11.3                   | JST-WORK-005,JST-WORK-006,JST-WORK-008,JST-WORK-009,JST-UI-015                                                                                                           | Installation Projects hub, full-root browse and cold browser acceptance                                                        | Shared-package qualification; visual baselines pending                         | E-M11-005,E-M11-006,E-M11-007,E-UI-045,E-UI-046,E-UI-047,E-M11-008                                                                                                                                                                                                                                                                                             |
 | M12         | Done        | M11.1,M11.2,M11.3       | JST-GIT-001,JST-GIT-002,JST-GIT-003,JST-GIT-004,JST-GIT-005,JST-GIT-006,JST-GIT-007,JST-GIT-008                                                                          | Native fetch/edit/push/external-merge cycle with cache-loss and fault qualification                                            | Maintain qualified bookmark bridge                                             | E-M12-001,E-M12-002,E-M12-003,E-M12-004,E-M12-005,E-M12-006,E-M12-007,E-M12-008,E-M12-009,E-M12-010                                                                                                                                                                                                                                                            |
 | M12.1       | Done        | M11.1,M11.2,M11.3       | JST-GIT-001                                                                                                                                                              | GB0: Parsed backend-aware dispatch and ordinary path regression                                                                | Complete staged bridge gate                                                    | E-M12-001                                                                                                                                                                                                                                                                                                                                                      |
 | M12.2       | Done        | M12.1                   | JST-GIT-002,JST-GIT-003                                                                                                                                                  | GB1: Exact conversion and native retained cache-loss identity                                                                  | Complete staged bridge gate                                                    | E-M12-002                                                                                                                                                                                                                                                                                                                                                      |
@@ -31119,6 +31119,130 @@ and named tests are checked by the progress gate.
       "Visual baselines remain visual-pending; no milestone-wide qualification claim."
     ],
     "artifacts": "Ignored .scratch/settings-copy-*.log, .scratch/settings-final-*.log, .scratch/settings-back-*.log, .scratch/settings-scoped-*.log, .scratch/settings-header-*.log and web/test-results. Disposable previews shut down; owned main demo remains available."
+  },
+  {
+    "id": "E-M11-008",
+    "tasks": ["M11", "M11.4"],
+    "date": "2026-10-01",
+    "kind": "projects-page-header-filters",
+    "files": [
+      "catalog/components/store-work/ProjectsActivity.stories.svelte",
+      "catalog/components/store-work/ProjectsActivityControls.stories.svelte",
+      "catalog/components/store-work/ProjectsFilters.stories.svelte",
+      "catalog/components/store-work/ProjectsHub.stories.svelte",
+      "catalog/components/store-work/projects-layout-play.ts",
+      "spec/src/api.md",
+      "spec/src/milestones.md",
+      "spec/src/ui.md",
+      "web/src/lib/ui/store-work/StoreProjects.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsFilterControls.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsFilters.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsRail.svelte"
+    ],
+    "tests": [],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsFilters.stories.svelte",
+        "result": "fail",
+        "failures": 2,
+        "note": "Before implementation, desktop and mobile stories cannot find page-header filter triggers; filters live in the details rail."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsFilters.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "First implementation run hit one suite import failure during Vite optimization of the new SlidersHorizontal icon; no tests executed. The log retains the optimizer-triggered reload; rerun from a fresh runner."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial header integration passes with zero errors/warnings; 109 catalog modules."
+      },
+      {
+        "command": "pnpm check:architecture && pnpm check:boundaries",
+        "result": "fail",
+        "failures": 2,
+        "note": "New assertions grew ProjectsHub story to 409 counted lines over 400 and StoreProjects to 302 over 300. Extracted the complete layout play function and grouped activity/general filter controls in their owning component; no budget changes."
+      },
+      {
+        "command": "pnpm check:architecture && pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "After extraction: 443 modules and 15 package boundaries."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsFilters.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Fresh rerun executed both stories: mobile passed, desktop observed a closed popover still present during its exit transition. Wait for eventual unmount after Escape while retaining the focus and draft assertions; no product relaxation."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsFilters.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both exact desktop/mobile scenarios pass across all five headers: icon-only triggers, no filter rail, search draft retention, Escape and focus restoration."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final extracted controls and stories pass with zero errors/warnings; 110 catalog modules."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsFilters.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-work/ProjectsActivity.stories.svelte catalog/components/store-work/ProjectsActivityControls.stories.svelte catalog/components/store-work/ProjectsDirectory.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 19 directly affected interaction/accessibility stories pass from a fresh runner. Existing search, task-state, repository-review, Activity category filters, project-detail scope, layout, navigation and read-only scenarios retained."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Fresh production bundle built; existing dependency CSS and bundle-size warnings remain in ignored log."
+      },
+      {
+        "command": "pnpm spec:first && pnpm spec:validate && pnpm check:progress",
+        "result": "fail",
+        "failures": 1,
+        "note": "Spec-first required the mapped api.md chapter as well as ui.md for the protected application presentation. Added explicit existing controller-action/route/read boundary; later commands did not run."
+      },
+      {
+        "command": "pnpm dev:restart",
+        "result": "pass",
+        "failures": 0,
+        "note": "Owned demo on 7460 rebuilt/restarted with retained repo, identity and RustFS volume; Search ready. Development helper builds binaries, without a Rust test lane."
+      },
+      {
+        "command": "cua_repl: cold demo reload; Tasks filters; 390x844 viewport; Activity header; reset viewport",
+        "result": "pass",
+        "failures": 0,
+        "note": "Live Tasks shows icon-only Filters beside grid/list and no right-rail Filters section. Existing fields render in popover; 390px phone view has document width 390px and all fields visible. Activity has its category and general filter icons in header. Viewport reset; no filter values or native data changed. Screenshots saved in ignored .scratch."
+      },
+      {
+        "command": "pnpm spec:first && pnpm spec:validate && pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final canonical gates pass: 9 protected files, 3 changed canonical chapters, 132 requirements and 111 tracked tasks."
+      },
+      {
+        "command": "pnpm exec prettier --write <changed Svelte/TypeScript/Markdown files>; pnpm exec prettier --check <all changed files>",
+        "result": "pass",
+        "failures": 0,
+        "note": "All changed presentation, stories, play helper and canonical documentation formatted; final check passes."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "UI-only Projects header/filter presentation and its five directly affected fixture story families. Fresh Storybook runners, web/catalog checks and cold rebuilt owned demo review. No controller, wire or persistence change; Rust tests, root aggregates and unrelated stories are out of scope. Live demo reloaded the new built assets after restart; desktop and 390x844 mobile geometry verified.",
+    "before": "Project search, home/repository/task-state fields and activity filter occupied the far-right rail, requiring the details sidebar to use them.",
+    "formats": "Retains native route filter values, snapshots, paging and search semantics. Public Design Core Popover/Button controls; search draft stays in the header owner across popover close. Enclosing Jujutsu change onpwpvqt is revision reference.",
+    "versions": "JJ 0.45.1; pnpm 10.32.1; installed Design Core 0.1.2; locked Svelte, Lucide, Storybook and Vitest.",
+    "next": "Review Projects header filters in the owned local demo.",
+    "deferred": [
+      "Visual baselines remain visual-pending; M11 shared-package qualification remains separately tracked."
+    ],
+    "artifacts": "Ignored .scratch/projects-header-*.log and review screenshots."
   }
 ]
 ```

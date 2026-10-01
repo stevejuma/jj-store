@@ -1,6 +1,5 @@
 <script lang="ts">
   // CommunityProjectsTaskDetails and CommunityApplication overview rows (Apache-2.0).
-  import StoreProjectsFilters from "./StoreProjectsFilters.svelte";
   import type { Component } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import CircleDotIcon from "@lucide/svelte/icons/circle-dot";
@@ -128,10 +127,6 @@
       )}{/each}
   {/if}
 </nav>
-{#if !task}<section class="store-projects__rail" aria-label="Project filters">
-    <p>Filters</p>
-    <StoreProjectsFilters {controller} {project} />
-  </section>{/if}
 
 <style>
   :global(
