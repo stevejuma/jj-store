@@ -142,3 +142,33 @@ network synchronization is outside this profile.
 | M13.4     | Recoverable local code mutations                                                                                     | Durably journal the exact unpublished JJ operation before publishing heads; prove stable unknown/retry outcomes, concurrent sibling preservation, undo/abandon safety and protection of dirty unsnapshotted checkout files.                                                                                                         |
 | M13.5     | Bounded durable local/native conversion and identity mapping reports                                                 | Create an independent destination with a fresh operation log, selected code state/ancestry, complete collaboration history and exact evidence archives. Reject unsupported active representations in preflight, verify bounded closures, publish native manifests last, export only to a new folder and leave the source untouched. |
 | M13.6     | Cold full-flow qualification and retained native regressions                                                         | Exercise the completed local CLI, filesystem server/UI, recovery and conversion in fresh processes; retain native identity, publication, collaboration and browser regression evidence. Focused provider tests alone do not satisfy this gate.                                                                                      |
+
+## Local browser delivery slice
+
+M13.4 is delivered in independently verified stages. Folder registration,
+filesystem-only serving, code browsing, WorkStore editing and qualified
+AgentStore reads reuse the M13.1/M13.2 foundation and recorded M13.3 provider
+proofs. They do not advertise unqualified ReviewStore anchors or code mutations.
+Indexed search, recoverable code commands and the remaining review gates remain
+explicitly pending; this slice cannot complete M13.4 or M13.
+
+Folder inspection and all GETs are non-publishing. Explicit Add may initialize
+companion identity using the existing agent initialization command; it never
+installs capture hooks, creates a project or snapshots checkout files. A durable
+installation-owned request precedes initialization and binds canonical folder,
+shared JJ metadata path and original intent. Replay recovers the selected
+receipt before making the folder discoverable. Folder removal affects only
+device discovery. Each read revalidates identity and binding generation.
+
+Local code APIs are separate from native DTOs and preserve Git SHA-1 IDs and
+explicit JJ operations. Collaboration pins a separate committed metadata
+selection; staged commits and unrelated cursor histories are unavailable. Local
+providers expose only bounded owned queries and existing collaboration commands.
+Installation-level registration is LocalTrusted administration, and local
+folders are never exposed through authenticated shared deployments.
+
+Mixed and filesystem-only startup use the same device registry and browser. The
+filesystem mode requires no object-store runtime or native RPC. Local freshness
+notifications announce changed operation heads or companion refs; only explicit
+refresh advances displayed snapshots. An unavailable folder, changed identity or
+unsupported capability is distinguished from denied access.

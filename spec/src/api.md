@@ -1049,3 +1049,16 @@ operations continue after HTTP disconnect and remain queryable through status.
 Sidebar disclosure persistence is presentation state only: versioned boolean
 maps for Projects/Repositories sections and individual projects. It cannot
 restore authorization, credentials, repository snapshots or capability claims.
+
+## Filesystem local repository API
+
+LocalTrusted administrative installation endpoints under
+`/v1/local/repositories` inspect, register, remove and recover device-local
+Git-backed JJ bindings. The OS picker is available before repository selection.
+Registration retains its request identity through companion initialization and
+discovery persistence. `/v1/local/repos/{repo}/...` serves profile-aware code
+snapshots, bounded code queries and existing local WorkStore/AgentStore
+semantics. Native repository endpoints and native identities retain their
+contracts. Discovery includes profile and availability without filesystem paths.
+All local routes reuse the existing origin, protocol, media-type and
+literal-loopback admission checks.

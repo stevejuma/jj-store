@@ -5,6 +5,7 @@ pub mod administration;
 pub mod auth;
 pub mod events;
 pub mod guard;
+pub mod local_browser;
 pub mod local_repository;
 pub mod native;
 mod native_agent;

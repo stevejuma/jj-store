@@ -601,3 +601,12 @@ Local Search configuration and operation reports use owned service types. These
 settings affect rebuildable adapters only and cannot publish repository state.
 The server owns file revisions, persistence, worker draining and activation;
 transport admission independently verifies local administrative access.
+
+## Local browser composition
+
+Device folder registration is an explicit LocalTrusted administrative write. Its
+request journal precedes companion initialization, retains the same original
+request through unknown outcomes and adopts the existing selected identity.
+Removal affects only installation bindings. Local WorkStore browser commands
+reuse existing receipt-first provider semantics; code mutations remain
+unavailable in this slice.

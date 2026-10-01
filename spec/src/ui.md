@@ -951,3 +951,15 @@ expansion persist in versioned browser local storage. Explicit collapsed choices
 win over automatic expansion of an active child, including after Settings closes
 or the application reloads. Storage contains disclosure flags only; unavailable
 or malformed storage falls back to normal navigation.
+
+## Registered local JJ folders
+
+The repository directory offers Add local repository with the existing joined
+path/Browse field and DialogFrame. Inspection is read-only; explicit Add may
+initialize missing companion metadata. Existing code, dirty files and project
+homes remain unchanged. Registered local repositories reuse repository browsing,
+Projects and Agents presentation with profile-aware identities and separately
+pinned collaboration state. Settings expose binding recovery and removal.
+Capabilities hide unavailable code editing, indexed search, reviews, native
+maintenance and synchronization. Browser navigation preferences retain their
+existing device-local format.

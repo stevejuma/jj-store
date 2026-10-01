@@ -3,6 +3,7 @@
 pub mod config;
 pub mod installation;
 mod listener;
+pub mod local_repositories;
 pub mod policy;
 pub mod process;
 pub mod registry;

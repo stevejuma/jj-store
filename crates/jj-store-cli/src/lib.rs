@@ -22,6 +22,7 @@ mod folder_picker;
 pub mod git_bridge;
 pub mod initialization;
 pub mod local_agent_publication;
+pub mod local_browser;
 pub mod migration;
 pub mod presentation;
 pub mod remote;

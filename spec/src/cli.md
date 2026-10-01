@@ -725,3 +725,12 @@ destination is a symlink. Installation does not start services or alter PATH.
 The representative agent seed binds every setup, capture and remove subprocess
 to its fixture working directory. The explicit `-R` argument alone cannot select
 the installation target. Source checkout configuration remains untouched.
+
+## Local browser composition
+
+Explicit local-folder registration is composed through a read-only JJ verifier.
+It supports canonical colocated and linked Git-backed JJ workspaces, never reads
+executable repository settings and never snapshots checkout files. Server-owned
+private request journals retain initialization receipts before discovery. The
+filesystem-only serving mode and local browser endpoints are separately
+qualified under M13.4.
