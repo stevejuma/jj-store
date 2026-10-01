@@ -7,6 +7,7 @@
   import MessageCircleIcon from "@lucide/svelte/icons/message-circle";
   import GitBranchIcon from "@lucide/svelte/icons/git-branch";
   import FolderKanbanIcon from "@lucide/svelte/icons/folder-kanban";
+  import HistoryIcon from "@lucide/svelte/icons/history";
   import ListTodoIcon from "@lucide/svelte/icons/list-todo";
   import LinkIcon from "@lucide/svelte/icons/link";
   import type { StoreController } from "../../controller/contracts.js";
@@ -100,6 +101,12 @@
       () => void hub.openHub("projects"),
     )}
     {@render item(ListTodoIcon, "Tasks", "", () => void hub.openHub("tasks"))}
+    {@render item(
+      HistoryIcon,
+      "Activity",
+      "",
+      () => void hub.openHub("activity"),
+    )}
     {@render item(
       MessageCircleIcon,
       "Reviews",

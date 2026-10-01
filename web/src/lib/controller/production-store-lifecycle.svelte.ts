@@ -79,8 +79,8 @@ export function followProductionExternalRoutes(options: {
       return;
     }
     const source = options.source();
-    if (result.kind !== "route" || !source) return;
-    if (result.route.repository === source.repository) {
+    if (result.kind !== "route") return;
+    if (source && result.route.repository === source.repository) {
       void options.restore();
       return;
     }

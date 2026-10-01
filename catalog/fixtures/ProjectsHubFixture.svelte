@@ -21,12 +21,14 @@
     readonly = false,
     mobile = false,
     sharedRepository = false,
+    loading = false,
   }: {
     detail?: boolean;
     failedHome?: boolean;
     readonly?: boolean;
     mobile?: boolean;
     sharedRepository?: boolean;
+    loading?: boolean;
   } = $props();
   const base = untrack(() => createInMemoryStoreController("projects"));
   let route = $state<StoreRoute>({
@@ -48,7 +50,18 @@
     repositories: () => repositories,
     route: () => route,
     push: (next) => (route = next),
-    source: (home) => fixtureTransport(home, failedHome, sharedRepository),
+    source: (home) => {
+      const source = fixtureTransport(home, failedHome, sharedRepository);
+      if (!loading) return source;
+      const pending = () => new Promise<never>(() => {});
+      return {
+        ...source,
+        browse: pending,
+        directory: pending,
+        reviews: pending,
+        activity: pending,
+      };
+    },
     changed: () => {},
   });
   const controller: StoreController = {

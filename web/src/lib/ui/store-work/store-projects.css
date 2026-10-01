@@ -2,12 +2,16 @@
   width: 100%;
   height: 100%;
   min-height: 0;
-  overflow: auto;
+  overflow: hidden;
   box-sizing: border-box;
   color: var(--foreground);
   min-width: 0;
   max-width: 100%;
   font-size: var(--community-text-body);
+}
+.store-projects__scroll {
+  height: 100%;
+  min-height: 0;
 }
 .store-projects__filters {
   margin: 0;
@@ -56,6 +60,22 @@
 .store-projects__home {
   margin-block: 0.5rem;
   min-width: 0;
+}
+.store-projects__loading {
+  box-sizing: border-box;
+  padding: 1rem 1.5rem;
+  min-width: 0;
+}
+.store-projects__activity-scope,
+.store-projects__activity-notice {
+  margin: 0;
+  padding: 0.5rem 1.5rem;
+  color: var(--muted-foreground);
+  font-size: var(--community-text-secondary);
+}
+.community-projects__task-detail .community-projects__activity,
+.community-projects__task-detail .store-projects__activity-scope {
+  padding-inline: 0;
 }
 .store-projects__rail {
   display: grid;

@@ -158,16 +158,16 @@
           onOpenRepository={onOpenRepository ?? (() => {})}
         />
       {:else if view.task && view.project}
-        <StoreWorkTaskDetail
-          {work}
-          {repositories}
-          {writable}
-          onEdit={() => (dialog = "editTask")}
-          onClose={() => void work.select(view.project!.id)}
-          onSelectTask={(id) => void work.select(view.project!.id, id)}
-          onRefresh={() => work.refresh()}
-          {onOpenRepository}
-        />
+        {#key view.task.id}<StoreWorkTaskDetail
+            {work}
+            {repositories}
+            {writable}
+            onEdit={() => (dialog = "editTask")}
+            onClose={() => void work.select(view.project!.id)}
+            onSelectTask={(id) => void work.select(view.project!.id, id)}
+            onRefresh={() => work.refresh()}
+            {onOpenRepository}
+          />{/key}
       {:else if view.project}
         <StoreWorkOwnershipGroups
           rows={view.tasks}

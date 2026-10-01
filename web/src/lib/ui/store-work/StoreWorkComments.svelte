@@ -2,6 +2,7 @@
   import StoreWorkEmpty from "./StoreWorkEmpty.svelte";
   import StoreWorkMessageActions from "./StoreWorkMessageActions.svelte";
   import { untrack } from "svelte";
+  import type { Snippet } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as AlertDialog from "@lapismd/design-core/shadcn/alert-dialog";
   import { CommunityChatComposer } from "@lapismd/lapis-community/components/community-chat-composer";
@@ -22,7 +23,13 @@
     work,
     writable,
     busy = false,
-  }: { work: WorkController; writable: boolean; busy?: boolean } = $props();
+    activity,
+  }: {
+    work: WorkController;
+    writable: boolean;
+    busy?: boolean;
+    activity?: Snippet;
+  } = $props();
   const view = $derived(work.state),
     disabled = $derived(
       !writable || busy || view.loading || view.writing || !!view.pending,
@@ -31,7 +38,7 @@
     untrack(() => workDraft(work, `comments:${view.task?.id ?? ""}`)),
   );
   let removing = $state<string | null>(null);
-  let activityOpen = $state(true);
+  let activityOpen = $state(false);
   const rows = $derived(workCommentRows(view.comments));
   const members = $derived([
     ...new Map(
@@ -133,6 +140,7 @@
         />{/if}
     </Collapsible.Trigger>
     <Collapsible.Content>
+      {@render activity?.()}
       <div
         class="community-projects__task-timeline"
         role="list"

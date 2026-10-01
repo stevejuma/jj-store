@@ -31,6 +31,7 @@
     onOpenRepository,
     onRefresh,
     subtasks,
+    activity,
   }: {
     work: WorkController;
     repositories: readonly StoreRepositorySummary[];
@@ -43,6 +44,7 @@
     onOpenRepository?: (id: string) => void | Promise<void>;
     onRefresh?: () => void | Promise<void>;
     subtasks?: Snippet;
+    activity?: Snippet;
   } = $props();
   const task = $derived(work.state.task);
   const disabled = $derived(
@@ -153,5 +155,10 @@
         >
       </Collapsible.Root>{/if}
     {@render subtasks?.()}
-    {#key task.id}<StoreWorkComments {work} {writable} {busy} />{/key}
+    {#key task.id}<StoreWorkComments
+        {work}
+        {writable}
+        {busy}
+        {activity}
+      />{/key}
   </article>{/if}

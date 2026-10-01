@@ -85,7 +85,7 @@ shared-package release qualification does not alter those original Git gates.
 | M9.2        | Done        | M9.1              | JST-COLLAB-001,JST-COLLAB-002,JST-COLLAB-006                                                                                                                             | AgentStore model, immutable snapshots/catalogs, sanitized evidence and Codex/Cursor/OpenCode normalizers                       | Implement M9.4 LocalTrusted APIs                                               | E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009,E-M9-015,E-M9-016,E-M9-017,E-M9-018,E-M9-019,E-M9-020,E-M9-021,E-M9-022,E-M9-023,E-M9-034                                                                                                                                                                                              |
 | M9.3        | Done        | M9.2              | JST-COLLAB-001,JST-COLLAB-003,JST-PUB-009                                                                                                                                | ReviewStore exact anchors, stale-safe thread workflow, direct catalogs and conservative placement                              | Implement M9.4 LocalTrusted APIs                                               | E-M9-010,E-M9-011,E-M9-012,E-M9-013,E-M9-014,E-M9-023                                                                                                                                                                                                                                                                                                          |
 | M9.4        | Done        | M9.2,M9.3         | JST-COLLAB-004                                                                                                                                                           | LocalTrusted bounded CLI/HTTP APIs, pagination, receipts and live collaboration hints                                          | Implement M9.5 shared application presentation                                 | E-M9-024,E-M9-025,E-M9-026,E-M9-027,E-M9-028,E-M9-029,E-M9-030,E-M9-031,E-M9-035                                                                                                                                                                                                                                                                               |
-| M9.5        | Done        | M9.4              | JST-COLLAB-005                                                                                                                                                           | Community-owned thread/agent widgets and Design Core exact diff selection integrated into the application                      | Retain focused application and Storybook acceptance                            | E-M9-032,E-M9-034,E-M9-035,E-M9-036,E-M9-037,E-M9-038,E-M9-039                                                                                                                                                                                                                                                                                                 |
+| M9.5        | Done        | M9.4              | JST-COLLAB-005                                                                                                                                                           | Community-owned thread/agent widgets and Design Core exact diff selection integrated into the application                      | Retain focused application and Storybook acceptance                            | E-M9-032,E-M9-034,E-M9-035,E-M9-036,E-M9-037,E-M9-038,E-M9-039,E-UI-045                                                                                                                                                                                                                                                                                        |
 | M9.6        | Done        | M9.5              | JST-COLLAB-002,JST-COLLAB-006,JST-COLLAB-007                                                                                                                             | Three harness qualification, cold recovery, three-root native copy and bounded fault/security/browser acceptance               | Retain exact-version and native-copy regression gates                          | E-M9-033                                                                                                                                                                                                                                                                                                                                                       |
 | M10         | In progress | M9.6              | JST-REPL-001,JST-REPL-002,JST-REPL-003,JST-REPL-004,JST-REPL-005,JST-REPL-006,JST-REPL-007,JST-REPL-008,JST-REPL-009,JST-REPL-010,JST-REPL-011,JST-REPL-012,JST-REPL-013 | Retain the active local-first replication and existing-workspace migration profile                                             | Expanded qualification remains deferred to M10.8                               | E-M10-001,E-M10-002,E-M10-003,E-M10-004,E-M10-005,E-M10-006,E-M10-007,E-M10-008,E-M10-009,E-M10-010,E-M10-011,E-M10-012,E-M10-013,E-M10-014                                                                                                                                                                                                                    |
 | M10.1       | Done        | M9.6              | JST-REPL-001,JST-REPL-002,JST-REPL-013                                                                                                                                   | Audit source pins and isolate every foreground storage path from upstream capability                                           | Retain zero-upstream foreground regressions                                    | E-M10-001,E-M10-010,E-M10-013                                                                                                                                                                                                                                                                                                                                  |
@@ -100,7 +100,7 @@ shared-package release qualification does not alter those original Git gates.
 | M11.1       | Done        | M9.6              | JST-WORK-001,JST-WORK-002,JST-WORK-003,JST-WORK-004,JST-WORK-005,JST-WORK-007                                                                                            | Native model, publication, receipts, recovery and copy                                                                         | Retain native and real RustFS gates                                            | E-M11-001,E-M11-003                                                                                                                                                                                                                                                                                                                                            |
 | M11.2       | Done        | M11.1             | JST-WORK-005,JST-WORK-006,JST-WORK-008                                                                                                                                   | Authorized service, API, RPC and CLI                                                                                           | Retain local transport/CLI gates                                               | E-M11-002                                                                                                                                                                                                                                                                                                                                                      |
 | M11.3       | Done        | M11.2             | JST-WORK-008                                                                                                                                                             | Browser projects/tasks/comments and explicit refresh                                                                           | Retain cold browser gates; visual baselines pending                            | E-M11-003,E-M11-004                                                                                                                                                                                                                                                                                                                                            |
-| M11.4       | In progress | M11.3             | JST-WORK-005,JST-WORK-006,JST-WORK-008,JST-WORK-009,JST-UI-015                                                                                                           | Installation Projects hub, full-root browse and cold browser acceptance                                                        | Shared-package qualification; visual baselines pending                         | E-M11-005,E-M11-006,E-M11-007                                                                                                                                                                                                                                                                                                                                  |
+| M11.4       | In progress | M11.3             | JST-WORK-005,JST-WORK-006,JST-WORK-008,JST-WORK-009,JST-UI-015                                                                                                           | Installation Projects hub, full-root browse and cold browser acceptance                                                        | Shared-package qualification; visual baselines pending                         | E-M11-005,E-M11-006,E-M11-007,E-UI-045                                                                                                                                                                                                                                                                                                                         |
 | M12         | Done        | M11.1,M11.2,M11.3 | JST-GIT-001,JST-GIT-002,JST-GIT-003,JST-GIT-004,JST-GIT-005,JST-GIT-006,JST-GIT-007,JST-GIT-008                                                                          | Native fetch/edit/push/external-merge cycle with cache-loss and fault qualification                                            | Maintain qualified bookmark bridge                                             | E-M12-001,E-M12-002,E-M12-003,E-M12-004,E-M12-005,E-M12-006,E-M12-007,E-M12-008,E-M12-009,E-M12-010                                                                                                                                                                                                                                                            |
 | M12.1       | Done        | M11.1,M11.2,M11.3 | JST-GIT-001                                                                                                                                                              | GB0: Parsed backend-aware dispatch and ordinary path regression                                                                | Complete staged bridge gate                                                    | E-M12-001                                                                                                                                                                                                                                                                                                                                                      |
 | M12.2       | Done        | M12.1             | JST-GIT-002,JST-GIT-003                                                                                                                                                  | GB1: Exact conversion and native retained cache-loss identity                                                                  | Complete staged bridge gate                                                    | E-M12-002                                                                                                                                                                                                                                                                                                                                                      |
@@ -25379,7 +25379,7 @@ and named tests are checked by the progress gate.
         "command": "pnpm test:governance",
         "result": "pass",
         "failures": 0,
-        "note": "jsh-directory-governance1.log: \u2714 rejects_unchanged_ledger_for_code (0.628042ms); \u2714 allows_documentation_without_execution_ledger (0.079ms); \u2139 pass 34"
+        "note": "jsh-directory-governance1.log: ✔ rejects_unchanged_ledger_for_code (0.628042ms); ✔ allows_documentation_without_execution_ledger (0.079ms); ℹ pass 34"
       },
       {
         "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7468 JJ_STORE_REAL_REPOSITORY=5ae8240e6d77fe8d0f6dd0b13f3d3874 JJ_STORE_REAL_RUNTIME=/tmp/jsh-cold-ijPU4c JJ_STORE_REAL_ROOT=/Users/stevejuma/code/lapismd/jj-store-projects-hub pnpm exec playwright test --config web/playwright.real.config.ts work-store.spec.ts",
@@ -28647,6 +28647,451 @@ and named tests are checked by the progress gate.
       "Visual baseline approval is not part of this change."
     ],
     "artifacts": "Focused/cold artifacts: /Users/stevejuma/code/lapismd/jj-store-dev-annotations/.scratch and web/test-results-real. Main restart/state verification: /Users/stevejuma/code/lapismd/jj-store/.scratch."
+  },
+  {
+    "id": "E-UI-045",
+    "tasks": ["M9.5", "M11.4"],
+    "date": "2026-10-01",
+    "kind": "community-native-review-and-shared-project-activity",
+    "revision": "Enclosing Jujutsu change nqpoyvww.",
+    "before": "Main clean at 541edf40. Native Reviews used the two-column discussion canvas, Projects had four tabs and no shared commit/agent feed, task triggers had 0.75rem leading padding and Subtasks/Activity opened by default. Initial display-name test filters skipped all tests and are not regression evidence. Exact new review story then fails once for absent Review details; ProjectsHub has two failures for the missing Activity tab and newly required collapsed defaults. No milestone or visual-baseline status changes. Final live visual inspection also finds absent line counts because the path-only native response intentionally omits diff content. Read counts from the exact pinned file diff and change the regression path fixture to not_requested so path-index zeroes cannot satisfy it. Subsequent Activity regression proves ordinary hash links cleared app Back history (one failing test); append encountered destinations while preserving known route restoration. Intermediate fixtures assumed a noncanonical state=active hash and eager context reads; align expectations with route serialization and deferred disclosure reads. User first requested distinct page/column review modes, then superseded that scope with a full-width Community review list and no sidebar view buttons. The final list story caught a 17.6px shrinking ScrollArea host; declare the consumer flex width and import the existing Community row styles. Do not change the shared component or weaken the width assertion.",
+    "files": [
+      "catalog/components/store-application/NativeReviewDetail.stories.svelte",
+      "catalog/components/store-application/StoreCollaboration.stories.svelte",
+      "catalog/components/store-work/NativeActivity.stories.svelte",
+      "catalog/components/store-work/ProjectsActivity.stories.svelte",
+      "catalog/components/store-work/ProjectsHub.stories.svelte",
+      "catalog/components/store-work/StoreWork.stories.svelte",
+      "catalog/controller/in-memory-store-collaboration.svelte.ts",
+      "catalog/fixtures/NativeActivityFixture.svelte",
+      "catalog/fixtures/ProjectsHubFixture.svelte",
+      "catalog/fixtures/native-activity.ts",
+      "catalog/fixtures/projects-hub-fixture.ts",
+      "catalog/fixtures/projects-hub-layout.ts",
+      "spec/src/api.md",
+      "spec/src/collaboration.md",
+      "spec/src/milestones.md",
+      "spec/src/ui.md",
+      "spec/src/verification.md",
+      "web/src/lib/controller/contracts.ts",
+      "web/src/lib/controller/http-store-data-source.ts",
+      "web/src/lib/controller/http-work-data-source.ts",
+      "web/src/lib/controller/native-activity-reader.ts",
+      "web/src/lib/controller/native-activity-types.ts",
+      "web/src/lib/controller/native-agent-context.ts",
+      "web/src/lib/controller/native-review-context.ts",
+      "web/src/lib/controller/production-projects-hub.svelte.ts",
+      "web/src/lib/controller/production-store-collaboration.svelte.ts",
+      "web/src/lib/controller/production-store-lifecycle.svelte.ts",
+      "web/src/lib/controller/production-store-state.svelte.ts",
+      "web/src/lib/controller/production-store-view.ts",
+      "web/src/lib/controller/projects-activity-scope.ts",
+      "web/src/lib/controller/projects-activity.svelte.ts",
+      "web/src/lib/controller/projects-hub-types.ts",
+      "web/src/lib/controller/projects-route-actions.ts",
+      "web/src/lib/controller/projects-route-codec.ts",
+      "web/src/lib/controller/store-route-codec.ts",
+      "web/src/lib/controller/store-route-history.svelte.ts",
+      "web/src/lib/ui/store-application/StoreApplication.svelte",
+      "web/src/lib/ui/store-application/StoreWorkspaceSectionHeader.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentToolReview.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentTranscript.svelte",
+      "web/src/lib/ui/store-collaboration/StoreNativeAgentContext.svelte",
+      "web/src/lib/ui/store-collaboration/StoreRepositoryActivity.svelte",
+      "web/src/lib/ui/store-collaboration/StoreReviewCommits.svelte",
+      "web/src/lib/ui/store-collaboration/StoreReviewDetail.svelte",
+      "web/src/lib/ui/store-collaboration/StoreReviewFiles.svelte",
+      "web/src/lib/ui/store-collaboration/StoreReviewThreads.svelte",
+      "web/src/lib/ui/store-collaboration/community-native-activity.css",
+      "web/src/lib/ui/store-collaboration/community-native-diff.css",
+      "web/src/lib/ui/store-collaboration/community-native-review.css",
+      "web/src/lib/ui/store-work/StoreProjects.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsActivity.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsDirectory.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsRail.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsRepositories.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsReviews.svelte",
+      "web/src/lib/ui/store-work/StoreWork.svelte",
+      "web/src/lib/ui/store-work/StoreWorkComments.svelte",
+      "web/src/lib/ui/store-work/StoreWorkEmpty.svelte",
+      "web/src/lib/ui/store-work/StoreWorkReviewRow.svelte",
+      "web/src/lib/ui/store-work/StoreWorkSubtasks.svelte",
+      "web/src/lib/ui/store-work/StoreWorkTaskDetail.svelte",
+      "web/src/lib/ui/store-work/community-work-disclosures.css",
+      "web/src/lib/ui/store-work/store-projects.css",
+      "web/tests/real/projects-activity.spec.ts",
+      "web/tests/real/work-seed.spec.ts",
+      "web/tests/real/work-store.spec.ts",
+      "web/tests/vite/native-activity.test.ts",
+      "web/tests/vite/projects-code-navigation.test.ts",
+      "web/tests/vite/store-route-history.test.ts"
+    ],
+    "tests": [
+      "web/tests/vite/native-activity.test.ts#revision review files and commit activity retain the exact anchor comparison",
+      "web/tests/vite/native-activity.test.ts#anchored agent activity never substitutes a newer session snapshot",
+      "web/tests/vite/native-activity.test.ts#activity continuation rejects another snapshot and preserves displayed rows",
+      "web/tests/vite/native-activity.test.ts#an explicit home operation replaces a cached activity capture",
+      "web/tests/vite/projects-code-navigation.test.ts#native activity links authorize a code connection when Projects has no active source",
+      "web/tests/real/projects-activity.spec.ts#native project task and review pages share pinned commit activity",
+      "web/tests/vite/store-route-history.test.ts#ordinary activity commit links retain the exact Projects Back and Forward destinations",
+      "web/tests/vite/store-route-history.test.ts#retired review column links restore the Community list or selected detail"
+    ],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/NativeReviewDetail.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before implementation: missing Review details; .scratch/review-detail-before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsHub.stories.svelte",
+        "result": "fail",
+        "failures": 2,
+        "note": "Before acceptance updates: missing Activity tab and old visible-Subtasks expectation; 8 other cases pass. .scratch/projects-activity-before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/NativeReviewDetail.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Intermediate suite-import failure from virtual CSS/Tailwind parsing while source formatting overlapped transforms; no tests executed. Stable cold reruns import and pass. .scratch/review-detail-after.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-work/ProjectsActivity.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte",
+        "result": "fail",
+        "failures": 2,
+        "note": "Intermediate 10 pass; two fixtures incorrectly queried the agent message list as list instead of its public log role. Corrected role; .scratch/review-activity-focused-stories.log."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "Initial new fixture imported API client types across the catalog transport boundary. Replace with production presentation-state types; the boundary remains enforced."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "fail",
+        "failures": 1,
+        "note": "Initial hub exceeded the 300 counted-line production bound. Extract project route actions; no limit changes."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-work/ProjectsActivity.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-work/ProjectsDirectory.stories.svelte catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte",
+        "result": "fail",
+        "failures": 3,
+        "note": "Intermediate 25 pass. Timeline article had an invalid listitem role; use a valid div. Scope the description/comment duplicate to Review comments. Final same six files pass 28/28; .scratch/review-activity-stories.log is the passing rerun."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/native-activity.test.ts web/tests/vite/production-store-collaboration.test.ts web/tests/vite/projects-hub.test.ts web/tests/vite/projects-code-navigation.test.ts web/tests/vite/projects-repositories.test.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "Intermediate 41 pass. Continuation drift fixture changed an informational code version instead of selected manifest identity; use manifest_revision drift. Final focused unit cases pass."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final 0 errors/warnings; .scratch/review-activity-web-check.log."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "Expanded search story supplied Playwright exact in a Testing Library role query; use anchored regex. Final catalog check passes 0 errors/warnings and all 90 boundary modules."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final type/boundary pass; .scratch/review-activity-catalog-check.log."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "399 production/catalog/script modules satisfy existing boundaries and file-size rules."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/native-activity.test.ts web/tests/vite/production-store-collaboration.test.ts web/tests/vite/projects-hub.test.ts web/tests/vite/projects-code-navigation.test.ts web/tests/vite/projects-repositories.test.ts web/tests/vite/production-store-bootstrap.test.ts web/tests/vite/store-route-history.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "54/54 across seven direct controller consumers, including no-source native-link navigation; .scratch/review-activity-unit.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-work/ProjectsActivity.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-work/ProjectsDirectory.stories.svelte catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "28/28 Chromium interaction/accessibility tests; .scratch/review-activity-stories.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-work/ProjectsActivity.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final expanded direct acceptance 3/3, including exact copied file-sidebar toggle and icon empty state after Activity search. .scratch/review-activity-final-stories.log."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Built browser manifest/assets; existing large-chunk warning retained. .scratch/review-activity-build.log. Owned restart rebuilds final source once more."
+      },
+      {
+        "command": "node .scratch/review-activity-main-state.mjs before",
+        "result": "pass",
+        "failures": 0,
+        "note": "Captures exact WorkStore records for all three sample projects, code snapshot and fixture/server-config SHA-256 before owned main restart."
+      },
+      {
+        "command": "JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs pnpm dev:restart",
+        "result": "pass",
+        "failures": 0,
+        "note": "Owned-demo rebuild/restarts reuse the same installation and RustFS volume. Latest restart 2583 ms, 172576 KiB resident; .scratch/review-activity-final-restart.log. No reset/reseed or unrelated service restart."
+      },
+      {
+        "command": "node .scratch/review-activity-main-state.mjs after",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact native WorkStore/code snapshots and fixture/server-config fingerprints unchanged after every owned restart."
+      },
+      {
+        "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7460/ JJ_STORE_REAL_REPOSITORY=1bdb89c409c1b891ac7f180c01a265d5 JJ_STORE_REAL_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/.local/dev-demo JJ_STORE_REAL_ROOT=/Users/stevejuma/code/lapismd/jj-store pnpm exec playwright test --config web/playwright.real.config.ts projects-activity.spec.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "First cold read-only browser attempt omitted the repository code pin after a Projects-only bootstrap. Add the captured pin. Project/task Activity and reload/default checks already passed."
+      },
+      {
+        "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7460/ JJ_STORE_REAL_REPOSITORY=1bdb89c409c1b891ac7f180c01a265d5 JJ_STORE_REAL_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/.local/dev-demo JJ_STORE_REAL_ROOT=/Users/stevejuma/code/lapismd/jj-store pnpm exec playwright test --config web/playwright.real.config.ts projects-activity.spec.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "Second attempt exposes the native external-route handler ignoring all repository routes without an active source, even with discovered access. Fix authorization/connection and add focused no-source regression; Activity commit links and Back now exercised."
+      },
+      {
+        "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7460/ JJ_STORE_REAL_REPOSITORY=1bdb89c409c1b891ac7f180c01a265d5 JJ_STORE_REAL_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/.local/dev-demo JJ_STORE_REAL_ROOT=/Users/stevejuma/code/lapismd/jj-store pnpm exec playwright test --config web/playwright.real.config.ts projects-activity.spec.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "Third attempt passes navigation, native review files/commits and layout. Fixture incorrectly required an agent association for the seeded browser revision, which has none. Test actual associated commits plus an original anchored agent review; do not synthesize an association."
+      },
+      {
+        "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7460/ JJ_STORE_REAL_REPOSITORY=1bdb89c409c1b891ac7f180c01a265d5 JJ_STORE_REAL_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/.local/dev-demo JJ_STORE_REAL_ROOT=/Users/stevejuma/code/lapismd/jj-store pnpm exec playwright test --config web/playwright.real.config.ts projects-activity.spec.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "A fourth fixture expectation assumed the seeded Activity feed had code associations. Live AgentStore confirms every captured session has zero code associations; the exact original anchored agent capture is available with three tools. Require no fabricated inline context for this seed, and verify the anchored agent review. Shared associated-commit context remains covered by native readers and Storybook."
+      },
+      {
+        "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7460/ JJ_STORE_REAL_REPOSITORY=1bdb89c409c1b891ac7f180c01a265d5 JJ_STORE_REAL_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/.local/dev-demo JJ_STORE_REAL_ROOT=/Users/stevejuma/code/lapismd/jj-store pnpm exec playwright test --config web/playwright.real.config.ts projects-activity.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Read-only cold built-browser native acceptance passes 1/1 in 12.4 s: all five landing tabs, project/task feeds, exact native commit links from Projects without an active code source, Back, Description-only defaults after reload, actual review files/commits/workflow/discussion, original anchored agent activity and tool calls, review accessibility and mobile overflow. The seed intentionally records no code-agent associations; no inferred context is inserted. Final artifact screenshot scroll is reset to the review header and a final icon build is checked in the final same test rerun."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "4 validators, 21 chapters, 131 requirements."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "56 protected files, 4 canonical chapters."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "103 tasks; existing parent evidence preserved."
+      },
+      {
+        "command": "pnpm exec prettier --write (changed TS/Svelte/CSS/Markdown paths from jj diff --name-only)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Production/catalog/spec files formatted in stable source intervals. No source formatting overlapped the final passing Storybook transform."
+      },
+      {
+        "command": "jj --no-pager diff --check",
+        "result": "fail",
+        "failures": 1,
+        "note": "Optional CLI diff check flag is unsupported by installed JJ. No state changed. Changed-source Prettier checking and JJ status provide the format/conflict checks."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/native-activity.test.ts web/tests/vite/production-store-collaboration.test.ts web/tests/vite/projects-hub.test.ts web/tests/vite/projects-code-navigation.test.ts web/tests/vite/projects-repositories.test.ts web/tests/vite/production-store-bootstrap.test.ts web/tests/vite/store-route-history.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final 54/54 includes exact file counts when the path index omits diff content. .scratch/review-activity-unit.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/store-route-history.test.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before Activity history repair: 7/8 pass; ordinary commit link cannot return to Projects. .scratch/activity-history-before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/native-activity.test.ts web/tests/vite/production-store-collaboration.test.ts web/tests/vite/store-route-history.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Deferred discovery/details, reader budget, continuation roots and Activity Back/Forward: 30/30. .scratch/activity-lazy-unit.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-work/ProjectsActivity.stories.svelte catalog/components/store-work/NativeActivity.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial lazy activity stories 4/4; .scratch/activity-lazy-stories.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-work/ProjectsActivity.stories.svelte catalog/components/store-work/NativeActivity.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-work/ProjectsDirectory.stories.svelte catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte",
+        "result": "fail",
+        "failures": 2,
+        "note": "Intermediate expansion encountered a transient virtual-CSS import and a fixture querying radio layout controls as buttons. Stable sequential rerun passes 30/30. The layout controls are subsequently removed by the user request; no dependency edits."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "fail",
+        "failures": 1,
+        "note": "StoreApplication grew to 323 counted lines against its existing 320 limit. Extract unchanged workspace heading into StoreWorkspaceSectionHeader; retain the limit."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreWorkspaces.stories.svelte catalog/components/store-application/NativeReviewDetail.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Workspace header extraction plus review detail: 7/7. .scratch/activity-review-workspace-stories.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/NativeReviewDetail.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Back control vertically centered, including wrapped heading: 2/2. .scratch/activity-review-centered-stories.log."
+      },
+      {
+        "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7460/ JJ_STORE_REAL_REPOSITORY=1bdb89c409c1b891ac7f180c01a265d5 JJ_STORE_REAL_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/.local/dev-demo JJ_STORE_REAL_ROOT=/Users/stevejuma/code/lapismd/jj-store pnpm exec playwright test --config web/playwright.real.config.ts projects-activity.spec.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "Activity Back/Forward and scroll, task defaults, native review files/commits, axe and mobile checks pass. Column selector lookup after mobile resize times out because the rail is closed. The user then replaces column modes with list/detail; remove the superseded mode assertions. .scratch/activity-review-native-browser.log."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "Final list estimate passed nullable review excerpt into a string-only estimator. Normalize null to undefined. .scratch/activity-review-list-web-check.log."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "Same nullable excerpt diagnostic; .scratch/activity-review-list-catalog-check.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-work/ProjectsActivity.stories.svelte catalog/components/store-work/NativeActivity.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-work/ProjectsDirectory.stories.svelte catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "29/30 pass; full-width list regression detects consumer ScrollArea host shrinking to 17.6px. Set consumer width/min-width/flex and import existing collection styling; keep the >600px assertion. .scratch/activity-review-list-stories.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/NativeReviewDetail.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact repaired Community review list/detail cases 2/2. .scratch/activity-review-list-exact-stories.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/native-activity.test.ts web/tests/vite/production-store-collaboration.test.ts web/tests/vite/projects-hub.test.ts web/tests/vite/projects-code-navigation.test.ts web/tests/vite/projects-repositories.test.ts web/tests/vite/production-store-bootstrap.test.ts web/tests/vite/store-route-history.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final seven direct controller consumers 59/59, including retired column hash normalization and exact Activity Back/Forward. .scratch/activity-review-list-unit.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-work/ProjectsActivity.stories.svelte catalog/components/store-work/NativeActivity.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-work/ProjectsDirectory.stories.svelte catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final seven direct interaction/accessibility files 30/30 in a fresh runner. Bounded 120-row activity rendering, lazy transcript reads, measured expansion, memoized remount and cursor-edge continuation to 160 rows inside shadcn ScrollArea. Reviews list/detail, centered Back and absent sidebar controls verified. .scratch/activity-review-list-final-stories.log."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final 0 errors/0 warnings. .scratch/activity-review-list-final-web-check.log."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final 0 errors/0 warnings and 92 catalog transport-boundary modules. .scratch/activity-review-list-final-catalog-check.log."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final 402 modules pass existing boundaries and line budgets. .scratch/activity-review-list-final-architecture.log."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/ui/store-collaboration/StoreReviewThreads.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final consumer width/nullable estimate fix formatted before test transforms."
+      },
+      {
+        "command": "node .scratch/review-activity-main-state.mjs before",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final rebuild capture includes three project records, exact task snapshots, code snapshot and fixture/config hashes."
+      },
+      {
+        "command": "JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs pnpm dev:restart",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final list/detail source rebuilt and owned loopback demo restarted. .scratch/activity-review-list-restart.log. No reset or reseed."
+      },
+      {
+        "command": "node .scratch/review-activity-main-state.mjs after",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final persisted WorkStore/code captures and config hashes exactly unchanged."
+      },
+      {
+        "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7460/ JJ_STORE_REAL_REPOSITORY=1bdb89c409c1b891ac7f180c01a265d5 JJ_STORE_REAL_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/.local/dev-demo JJ_STORE_REAL_ROOT=/Users/stevejuma/code/lapismd/jj-store pnpm exec playwright test --config web/playwright.real.config.ts projects-activity.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final cold built-browser 1/1 passes in 13.2s. App Back/Forward restore exact Activity route and scroll. Task defaults/reload, list-to-review navigation, no workspace picker or detail tabs, Files/Commits/Activity, native diff stats, axe, mobile overflow, retired column link, absent column canvas/sidebar controls and original anchored agent tools pass. Screenshots manually inspected. .scratch/activity-review-list-native.log."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final 4 validators, 21 chapters, 131 requirements; .scratch/activity-review-list-spec.log."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final 64 protected paths, 4 canonical chapters; .scratch/activity-review-list-spec-first.log."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final 103 tasks; same-change evidence coverage and all parent evidence retained. .scratch/activity-review-list-progress.log."
+      },
+      {
+        "command": "pnpm exec prettier --check (all changed TS/Svelte/CSS/Markdown paths from jj diff --name-only)",
+        "result": "pass",
+        "failures": 0,
+        "note": "All changed paths use Prettier style; checked after source transforms completed."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final enclosing-change evidence block formatted; milestone statuses unchanged."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "One UI presentation/controller behavior with direct consumers. Exact controller, seven direct Storybook files and a cold built-browser read-only owned-demo test. Reviews now use Community full-width list/detail; no sidebar mode controls. Retired column links normalize without losing native identities. Activity uses copied Community measured virtualization and public shadcn ScrollArea with lazy association discovery and deferred session detail. Root aggregates, unrelated Rust, full Storybook and shared release qualification remain out of scope. Adapted work-store/work-seed fixtures are not rerun; the new cold read-only browser test covers the changed flow on existing persisted samples.",
+    "formats": "No persistence, public API or server format changes. Projects hash tab adds activity. Reads remain separate native code/AgentStore/ReviewStore captures. Default graph pages 20 commits, at most 1000 merged rows, at most 4096 association rows and 16 related sessions; related session details are bounded sanitized captures and disclose truncation. Review comparisons use exact anchored commits/operations and explicit pairs; files are limited to 100 inline patches. Missing original agent snapshots and unsupported code comparison bounds remain explicit. Review additions/deletions come from native text-diff hunks, not path-summary placeholder zeroes. No Review view-mode persistence added; retired review_view=columns is accepted only on Reviews, dropped from canonical routes, and duplicates/invalid values are rejected. Deferred AgentStore discovery is memoized across virtual mounts with at most two readers per captured page.",
+    "versions": "macOS ARM64; JJ 0.45.1; Rust 1.98.1; Node 24.10.0; pnpm 10.32.1; existing pinned Svelte/Design Core/Community/Chromium and embedded RustFS runtimes.",
+    "next": "Retain focused list/detail, Activity virtualization and history regressions; shared-package release qualification and visual baselines remain separate M11.4 work.",
+    "deferred": [
+      "Visual baseline approval remains pending.",
+      "Shared release qualification and independent M11.4 deployment gates remain deferred."
+    ],
+    "artifacts": "Ignored .scratch/activity-review-*.log, .scratch/activity-history-before.log, .scratch/activity-lazy-*.log and native state captures; web/test-results-real/projects-activity-native-p-693ed-hare-pinned-commit-activity/{project-activity,native-review-list,native-review-detail,anchored-agent-review}.png. Final full-width review list and inset/centered detail screenshots inspected; visual baselines remain pending.",
+    "live_data": "All three current seeded agent sessions have empty code-association pages (relations=[] and next_cursor=null); the Codex session also has code=[]. Their tools were captured without intervening code changes. Commit-inline context follows only genuine recorded relations and is proven in fixtures, while the live original anchored agent review displays its recorded tools. No timestamp-based or fabricated association, seed or repository mutation added."
   }
 ]
 ```

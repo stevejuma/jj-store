@@ -1,5 +1,6 @@
 <script lang="ts">
   import * as Empty from "@lapismd/design-core/shadcn/empty";
+  import History from "@lucide/svelte/icons/history";
   import FolderKanban from "@lucide/svelte/icons/folder-kanban";
   import FolderGit from "@lucide/svelte/icons/folder-git-2";
   import ListTodo from "@lucide/svelte/icons/list-todo";
@@ -9,18 +10,26 @@
     title,
     description,
   }: {
-    kind?: "projects" | "repositories" | "tasks" | "reviews" | "comments";
+    kind?:
+      | "projects"
+      | "repositories"
+      | "tasks"
+      | "reviews"
+      | "comments"
+      | "activity";
     title: string;
     description: string;
   } = $props();
   const Icon = $derived(
-    kind === "repositories"
-      ? FolderGit
-      : kind === "tasks"
-        ? ListTodo
-        : kind === "reviews" || kind === "comments"
-          ? MessageSquare
-          : FolderKanban,
+    kind === "activity"
+      ? History
+      : kind === "repositories"
+        ? FolderGit
+        : kind === "tasks"
+          ? ListTodo
+          : kind === "reviews" || kind === "comments"
+            ? MessageSquare
+            : FolderKanban,
   );
 </script>
 

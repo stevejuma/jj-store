@@ -9,7 +9,7 @@
   import * as Collapsible from "@lapismd/design-core/shadcn/collapsible";
   import ChevronDownIcon from "@lucide/svelte/icons/chevron-down";
   import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
-  let open = $state(true);
+  let open = $state(false);
   let {
     hub,
     home,

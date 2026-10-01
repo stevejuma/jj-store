@@ -92,10 +92,12 @@
         <Button variant="outline" onclick={() => hub.refresh()}
           >Retry home</Button
         >{/if}
-      {#if home.loading && !home.snapshot}<CommunitySkeleton
-          layout="timeline"
-          label={`Loading ${home.repository.name} projects and tasks`}
-        />{/if}
+      {#if home.loading && !home.snapshot}<div class="store-projects__loading">
+          <CommunitySkeleton
+            layout="timeline"
+            label={`Loading ${home.repository.name} projects and tasks`}
+          />
+        </div>{/if}
       {#if home.cursor}<Button
           variant="outline"
           disabled={home.loading}

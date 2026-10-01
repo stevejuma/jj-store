@@ -183,6 +183,7 @@ export interface StoreControllerState {
   readonly agentTranscript: readonly Model<"AgentTranscriptChunk">[];
   readonly reviewThreads: readonly Model<"ReviewThreadSummary">[];
   readonly reviewThread: Model<"ReviewThreadDetail"> | undefined;
+  readonly reviewContext?: import("./native-activity-types.js").NativeReviewContext;
   readonly reviewPatch:
     import("./review-anchor-patch.js").ReviewInlinePatch | undefined;
   readonly reviewActionMessage: string;

@@ -40,10 +40,11 @@
           <Button variant="outline" onclick={() => hub.refresh()}
             >Retry reviews</Button
           >{/if}
-        {#if home.loading && !home.snapshot}<CommunitySkeleton
-            layout="timeline"
-            label="Loading reviews"
-          />
+        {#if home.loading && !home.snapshot}<div
+            class="store-projects__loading"
+          >
+            <CommunitySkeleton layout="timeline" label="Loading reviews" />
+          </div>
         {:else if !home.threads.length && !home.error}<StoreWorkEmpty
             kind="reviews"
             title="No reviews yet"

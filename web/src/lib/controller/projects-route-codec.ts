@@ -1,6 +1,6 @@
 import type { StoreRoute } from "./contracts.js";
 const id = /^[0-9a-f]{32}$/u;
-const tabs = ["projects", "tasks", "reviews", "repositories"];
+const tabs = ["projects", "tasks", "reviews", "repositories", "activity"];
 const states = ["active", "all", "open", "in_progress", "blocked", "done"];
 const fields = [
   "home",

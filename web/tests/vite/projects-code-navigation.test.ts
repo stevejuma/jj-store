@@ -1,3 +1,4 @@
+import { followProductionExternalRoutes } from "../../src/lib/controller/production-store-lifecycle.svelte.js";
 import { restoreProductionStoreRoute } from "../../src/lib/controller/production-route-restorer.js";
 import { expect, test } from "vitest";
 import { createProductionStoreActions } from "../../src/lib/controller/production-store-actions.js";
@@ -120,4 +121,50 @@ test("review navigation uses the target code operation rather than a home code p
     snapshotOperationId: "44".repeat(64),
     reviewThreadId: thread,
   });
+});
+
+test("native activity links authorize a code connection when Projects has no active source", async () => {
+  const data = createProductionStoreState();
+  data.repositories = [{ id: code, name: "Linked code", permission: "read" }];
+  const connected: string[] = [],
+    denied: string[] = [];
+  let external!: Parameters<
+    ReturnType<typeof createStoreRouteHistory>["onExternalRoute"]
+  >[0];
+  followProductionExternalRoutes({
+    data,
+    history: {
+      onExternalRoute: (listener: typeof external) => {
+        external = listener;
+      },
+    } as ReturnType<typeof createStoreRouteHistory>,
+    source: () => null,
+    connect: async (repository, token) => {
+      expect(token).toBeNull();
+      connected.push(repository);
+    },
+    disconnect: (message) => {
+      denied.push(message!);
+    },
+    restore: async () => {
+      throw new Error("No active code source to restore");
+    },
+  });
+  external({
+    kind: "route",
+    route: {
+      ...initialStoreRoute(),
+      repository: code,
+      page: "log",
+      snapshotOperationId: "44".repeat(64),
+      commitId: "55".repeat(64),
+    },
+  });
+  expect(connected).toEqual([code]);
+  external({
+    kind: "route",
+    route: { ...initialStoreRoute(), repository: home, page: "reviews" },
+  });
+  expect(connected).toEqual([code]);
+  expect(denied).toEqual(["Reconnect to open the requested repository."]);
 });

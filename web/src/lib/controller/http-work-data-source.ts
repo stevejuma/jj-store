@@ -1,8 +1,21 @@
 import { Client, fullId, pretty, type Model } from "../api/client.js";
 import type { WorkQuery, WorkRequest, WorkTransport } from "./work-types.js";
 import { readRepositoryDirectory } from "./http-repository-directory.js";
+import { readNativeActivityPage } from "./native-activity-reader.js";
+import type { StoreDataSource } from "./native-data-source.js";
+import type { NativeActivityQuery } from "./native-activity-types.js";
 export class HttpWorkDataSource implements WorkTransport {
-  constructor(private client: Client) {}
+  constructor(
+    private client: Client,
+    private native?: StoreDataSource,
+  ) {}
+  activity = async (query: NativeActivityQuery, signal?: AbortSignal) => {
+    signal?.throwIfAborted();
+    if (!this.native) throw new Error("Repository activity unavailable");
+    const page = await readNativeActivityPage(this.native, query);
+    signal?.throwIfAborted();
+    return page;
+  };
   directory = (signal?: AbortSignal) =>
     readRepositoryDirectory(this.client, this, signal);
   page(query: WorkQuery, signal?: AbortSignal) {

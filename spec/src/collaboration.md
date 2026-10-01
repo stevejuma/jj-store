@@ -272,6 +272,24 @@ public listener or controller dispatch.
 
 ## Application presentation
 
+The repository Reviews page opens the Community review detail composition with
+Description, Files changed, Commits and Activity. Its shared native activity
+timeline is also used by Projects and Tasks: native commit rows contain inline
+Agent context disclosures using recorded associations, sanitized messages and
+tool-call primitives. Code and agent roots remain independent. An anchored agent
+snapshot that differs from the available selected session is explicitly
+unavailable; the UI does not represent the latest session as the original
+artifact. Review comments, resolve/reopen, durable unknown requests and inline
+diff/tool threads retain their existing service contracts.
+
+The shared Activity timeline and sanitized transcript use Community's measured
+virtual rows in shadcn ScrollArea viewports. Agent association metadata is read
+for mounted commit rows only, under the captured AgentStore root and a bounded
+reader budget. Session detail reads and transcript rendering are deferred until
+the disclosure opens. A changed root is reported as unavailable until explicit
+refresh, rather than substituting newer context. Samples without recorded code
+associations cannot imply that a session produced a commit.
+
 The LocalTrusted application exposes Agent activity and Reviews as first-class
 repository pages. Their stable hash routes retain the selected operation plus
 either the complete stable session or thread identity. Reload and browser

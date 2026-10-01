@@ -6,6 +6,7 @@
   import type { Model } from "../../api/client.js";
   import type { StoreController } from "../../controller/contracts.js";
   import StoreAgentToolReview from "./StoreAgentToolReview.svelte";
+  import CommunityProjectsVirtualRows from "../community-projects/CommunityProjectsVirtualRows.svelte";
 
   let {
     activity,
@@ -13,12 +14,14 @@
     member,
     patches = {},
     controller,
+    interactive = true,
   }: {
     activity: readonly Model<"AgentActivity">[];
     agent: CommunityMemberModel;
     member: CommunityMemberModel;
     patches?: Readonly<Record<string, string>>;
     controller: StoreController;
+    interactive?: boolean;
   } = $props();
 
   const members = $derived([agent, member]);
@@ -50,26 +53,37 @@
   isEmpty={activity.length === 0}
   aria-label="Agent conversation activity"
 >
-  {#each activity as entry (`${entry.type}:${entry.sequence}`)}
-    {#if entry.type === "message"}
-      {@const author =
-        entry.role === "assistant" || entry.role === "tool" ? agent : member}
-      <CommunityMessage
-        message={message(entry)}
-        {author}
-        {members}
-        highlighted={entry.role === "user"}
-      />
-    {:else if entry.type === "tool"}
-      <StoreAgentToolReview tool={entry.tool} {patches} {controller} />
-    {:else if entry.type === "capture_gap"}
-      <Chat.SystemMessage>
-        Capture gap from {entry.missing_from} to {entry.missing_to}
-      </Chat.SystemMessage>
-    {:else if entry.type === "permission" && entry.state !== "not_observed"}
-      <Chat.SystemMessage>Tool permission {entry.state}</Chat.SystemMessage>
-    {/if}
-  {/each}
+  <CommunityProjectsVirtualRows
+    rows={activity}
+    getKey={(entry) => `${entry.type}:${entry.sequence}`}
+    estimateSize={(entry) => (entry?.type === "tool" ? 180 : 118)}
+  >
+    {#snippet row(entry)}
+      {#if entry.type === "message"}
+        {@const author =
+          entry.role === "assistant" || entry.role === "tool" ? agent : member}
+        <CommunityMessage
+          message={message(entry)}
+          {author}
+          {members}
+          highlighted={entry.role === "user"}
+        />
+      {:else if entry.type === "tool"}
+        <StoreAgentToolReview
+          tool={entry.tool}
+          {patches}
+          {controller}
+          {interactive}
+        />
+      {:else if entry.type === "capture_gap"}
+        <Chat.SystemMessage>
+          Capture gap from {entry.missing_from} to {entry.missing_to}
+        </Chat.SystemMessage>
+      {:else if entry.type === "permission" && entry.state !== "not_observed"}
+        <Chat.SystemMessage>Tool permission {entry.state}</Chat.SystemMessage>
+      {/if}
+    {/snippet}
+  </CommunityProjectsVirtualRows>
 </Chat.MessageList>
 
 <style>

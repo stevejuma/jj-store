@@ -32,6 +32,7 @@ const queryKeys = new Set([
   "directory",
   "session",
   "thread",
+  "review_view",
   "project",
   "task",
 ]);
@@ -135,9 +136,11 @@ export function storeRouteFromHash(hash: string): StoreRouteHashResult {
   const directory = one(query, "directory");
   const agentSessionId = one(query, "session");
   const reviewThreadId = one(query, "thread");
+  const reviewView = one(query, "review_view");
   const projectId = one(query, "project");
   const taskId = one(query, "task");
   const valid =
+    (reviewView === null || (page === "reviews" && reviewView === "columns")) &&
     validOptional(projectId, stableId) &&
     validOptional(taskId, stableId) &&
     validOptional(snapshotOperationId, objectId) &&

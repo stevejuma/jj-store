@@ -10,12 +10,16 @@
   import { anchorLabel } from "../../collaboration/presentation.js";
   import type { Model } from "../../api/client.js";
   import { workMember } from "./work-presentation.js";
+  import type { CommunityMemberModel } from "../community-workspace/model.js";
+  import CommunityMemberAvatar from "../community-member-avatar/CommunityMemberAvatar.svelte";
   let {
     thread,
     onOpen,
+    agent,
   }: {
     thread: Model<"ReviewThreadSummary">;
     onOpen?: (id: string) => void | Promise<void>;
+    agent?: CommunityMemberModel;
   } = $props();
   const title = $derived(
     thread.presentation?.excerpt || anchorLabel(thread.anchor),
@@ -56,8 +60,11 @@
     >#{thread.thread_id.slice(0, 8)}</button
   >
   <span class="community-projects__review-row-branch" title={artifact}
-    ><span aria-hidden="true">›</span><GitBranchIcon aria-hidden="true" /><span
-      >{artifact}</span
+    ><span aria-hidden="true">›</span>{#if agent}<CommunityMemberAvatar
+        member={agent}
+        size="small"
+        decorative
+      />{:else}<GitBranchIcon aria-hidden="true" />{/if}<span>{artifact}</span
     ></span
   >
   <span

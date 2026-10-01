@@ -18,10 +18,12 @@
     tool,
     patches = {},
     controller,
+    interactive = true,
   }: {
     tool: Model<"AgentToolActivity">;
     patches?: Readonly<Record<string, string>>;
     controller: StoreController;
+    interactive?: boolean;
   } = $props();
 
   let draftOpen = $state(false);
@@ -121,34 +123,35 @@
       },
     ]}
   />
-  <div
-    class="store-agent-tool-review__actions"
-    role="group"
-    aria-label={`Actions for ${tool.native_name} tool call`}
-    data-visible={actionsVisible ? "" : undefined}
-  >
-    {#if review}
-      <span
-        class="store-agent-tool-review__count"
-        aria-label={`${review.comment_count} comments`}
-        title={`${review.comment_count} comments`}
-      >
-        <MessageSquareIcon aria-hidden="true" />
-        {review.comment_count}
-      </span>
-    {/if}
-    <Button
-      type="button"
-      variant="ghost"
-      size="icon-sm"
-      aria-label={`Reply to ${tool.native_name} tool call`}
-      title="Reply to tool call"
-      onclick={() => void beginReply()}
+  {#if interactive}<div
+      class="store-agent-tool-review__actions"
+      role="group"
+      aria-label={`Actions for ${tool.native_name} tool call`}
+      data-visible={actionsVisible ? "" : undefined}
     >
-      <MessageSquareReplyIcon aria-hidden="true" />
-    </Button>
-  </div>
-  {#if selected}
+      {#if review}
+        <span
+          class="store-agent-tool-review__count"
+          aria-label={`${review.comment_count} comments`}
+          title={`${review.comment_count} comments`}
+        >
+          <MessageSquareIcon aria-hidden="true" />
+          {review.comment_count}
+        </span>
+      {/if}
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon-sm"
+        aria-label={`Reply to ${tool.native_name} tool call`}
+        title="Reply to tool call"
+        onclick={() => void beginReply()}
+      >
+        <MessageSquareReplyIcon aria-hidden="true" />
+      </Button>
+    </div>
+  {/if}
+  {#if interactive && selected}
     <div class="store-agent-tool-review__thread">
       <StoreReviewConversation
         {controller}

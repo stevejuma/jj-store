@@ -38,7 +38,7 @@ export class HttpStoreDataSource implements StoreDataSource {
   ) {
     this.#client = new Client(repository, token, denied, fetcher);
     this.#scope = { repository, session };
-    this.work = new HttpWorkDataSource(this.#client);
+    this.work = new HttpWorkDataSource(this.#client, this);
     this.#writes = new HttpStoreWriteDataSource(this.#client);
     this.#collaboration = new HttpCollaborationDataSource(
       this.#client,

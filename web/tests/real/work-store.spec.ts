@@ -109,6 +109,7 @@ test("native projects tasks and discussion persist on RustFS and refresh explici
     "Tasks",
     "Reviews",
     "Repositories",
+    "Activity",
   ]);
   await createProject(title, home);
   await createProject(`Second home ${run}`, second);
@@ -200,6 +201,18 @@ test("native projects tasks and discussion persist on RustFS and refresh explici
   );
   await view
     .getByRole("button", { name: "Open task Child task", exact: true })
+    .click();
+  const taskDetail = view.getByRole("article", { name: "Task details" });
+  await expect(
+    taskDetail.getByRole("button", { name: "Description", exact: true }),
+  ).toHaveAttribute("aria-expanded", "true");
+  for (const name of ["Subtasks", "Activity"]) {
+    await expect(
+      taskDetail.getByRole("button", { name, exact: true }),
+    ).toHaveAttribute("aria-expanded", "false");
+  }
+  await taskDetail
+    .getByRole("button", { name: "Activity", exact: true })
     .click();
   await view.getByRole("button", { name: "Edit task", exact: true }).click();
   const editTask = page.getByRole("dialog", { name: "Edit task" });
@@ -324,6 +337,7 @@ test("native projects tasks and discussion persist on RustFS and refresh explici
   await view
     .getByRole("button", { name: "Open task Child task", exact: true })
     .click();
+  await view.getByRole("button", { name: "Activity", exact: true }).click();
   await expect(editor("Comment")).toHaveText("Unknown outcome comment");
   await view.getByRole("button", { name: "Check task command" }).click();
   await expect(status()).toContainText("Saved");
@@ -340,6 +354,7 @@ test("native projects tasks and discussion persist on RustFS and refresh explici
   await refresh();
   const path = new URL(page.url()).hash;
   await page.reload();
+  await view.getByRole("button", { name: "Activity", exact: true }).click();
   await expect(view.getByText("Threaded reply", { exact: true })).toBeVisible();
   expect(new URL(page.url()).hash).toBe(path);
   expect(path).toBe(taskPath);

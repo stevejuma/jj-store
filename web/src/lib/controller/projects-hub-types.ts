@@ -1,7 +1,8 @@
 import type { Model } from "../api/client.js";
 import type { StoreRepositorySummary, StoreRoute } from "./contracts.js";
 import type { WorkController, WorkTransport } from "./work-types.js";
-export type ProjectsTab = "projects" | "tasks" | "reviews" | "repositories";
+export type ProjectsTab =
+  "projects" | "tasks" | "reviews" | "repositories" | "activity";
 export type WorkBrowseQuery = {
   kind?: "projects" | "tasks";
   project?: string;
@@ -13,6 +14,10 @@ export type WorkBrowseQuery = {
   limit?: number;
 };
 export interface WorkBrowseTransport extends WorkTransport {
+  activity?(
+    query: import("./native-activity-types.js").NativeActivityQuery,
+    signal?: AbortSignal,
+  ): Promise<import("./native-activity-types.js").NativeActivityPage>;
   directory?(
     signal?: AbortSignal,
   ): Promise<
@@ -38,6 +43,9 @@ export interface ProjectHome {
   error: string;
 }
 export interface ProjectsHubController {
+  readonly activity: ReturnType<
+    typeof import("./projects-activity.svelte.js").createProjectsActivity
+  >;
   readonly repositories: ReturnType<
     typeof import("./projects-repositories.svelte.js").createProjectsRepositories
   >;

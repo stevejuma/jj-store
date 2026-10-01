@@ -1,4 +1,5 @@
 import { reviewThreads } from "./collaboration-review.js";
+import { activityCommit } from "./native-activity.js";
 import type { WorkBrowseTransport } from "../../web/src/lib/controller/projects-hub-types.js";
 export const homeA = "41".repeat(16),
   homeB = "42".repeat(16),
@@ -55,6 +56,24 @@ export function fixtureTransport(
     work_state_version: 1,
   };
   return {
+    async activity() {
+      const commit = activityCommit(home);
+      return {
+        snapshot: {
+          version: 1,
+          repo_id: home,
+          epoch: snapshot.epoch,
+          published_seq: 1,
+          manifest_revision: 1,
+          code_state_version: 1,
+          heads: [commit.operation],
+          operation_id: commit.operation,
+        },
+        atTimeMillis: Date.now(),
+        commits: home === homeA ? [commit] : [],
+        cursor: null,
+      };
+    },
     async directory() {
       const transport = fixtureTransport(home, fail, sharedRepository);
       const tasks = await transport.browse({ kind: "tasks" });

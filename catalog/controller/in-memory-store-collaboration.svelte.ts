@@ -19,6 +19,7 @@ import {
   reviewThreads,
 } from "../fixtures/collaboration.js";
 import { createFixtureLineReview } from "./in-memory-inline-review.js";
+import { nativeReviewContext } from "../fixtures/native-activity.js";
 
 export function createInMemoryStoreCollaboration(options: {
   route(): StoreRoute;
@@ -214,6 +215,9 @@ export function createInMemoryStoreCollaboration(options: {
         agentTranscript: route.agentSessionId ? agentTranscript : [],
         reviewThreads: knownReviewThreads,
         reviewThread: route.reviewThreadId ? selectedReview : undefined,
+        reviewContext: route.reviewThreadId
+          ? nativeReviewContext(selectedReview.anchor.value)
+          : undefined,
         reviewPatch:
           route.reviewThreadId &&
           (selectedReview.anchor.value.target.target === "code_text" ||

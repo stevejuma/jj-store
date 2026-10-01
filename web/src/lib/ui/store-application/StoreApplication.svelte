@@ -19,9 +19,7 @@
   import { onDestroy, setContext, untrack, type Snippet } from "svelte";
   import "./store-application.css";
   import { workspaceNavigationKey } from "./workspace-navigation.js";
-  import StoreWorkspacePicker from "./StoreWorkspacePicker.svelte";
-  import StoreComparisonParentPicker from "./StoreComparisonParentPicker.svelte";
-  import PanelsTopLeftIcon from "@lucide/svelte/icons/panels-top-left";
+  import StoreWorkspaceSectionHeader from "./StoreWorkspaceSectionHeader.svelte";
   import CommunityAppShell from "../community-app-shell/CommunityAppShell.svelte";
   import CommunityNavigation from "../community-navigation/CommunityNavigation.svelte";
   import CommunityApplicationMobileNavigation from "../community-application/CommunityApplicationMobileNavigation.svelte";
@@ -243,36 +241,15 @@
           : undefined}
       >
         <div class="store-application__body-frame">
-          {#if !(current.page === "projects" && controller.projects)}<StoreRepositoryTabs
-              page={current.page}
-              onSelect={selectPage}
-            />
-            <header
-              class="store-application__section-header"
-              aria-label="Workspace section header"
-            >
-              <div>
-                <PanelsTopLeftIcon aria-hidden="true" />
-                <h1 class="store-application__title">Workspace</h1>
-              </div>
-              <div class="store-application__section-controls">
-                {#if controller.state.comparisonParents.length}
-                  <StoreComparisonParentPicker
-                    parents={controller.state.comparisonParents}
-                    revisions={controller.state.graph.revisions}
-                    devices={controller.state.graph.devices}
-                    now={controller.state.now}
-                    disabled={workspaceBlocked}
-                    onSelect={(id) =>
-                      void controller.actions.selectComparisonParent(id)}
-                  />
-                {/if}
-                <StoreWorkspacePicker
-                  {controller}
-                  disabled={workspaceBlocked}
-                />
-              </div>
-            </header>
+          {#if !(current.page === "projects" && controller.projects)}
+            {#if !(current.page === "reviews" && current.reviewThreadId)}<StoreRepositoryTabs
+                page={current.page}
+                onSelect={selectPage}
+              />{/if}
+            {#if current.page !== "reviews"}<StoreWorkspaceSectionHeader
+                {controller}
+                disabled={workspaceBlocked}
+              />{/if}
             <StoreRepositoryNotices {controller} />{/if}
           <div class="store-application__body-regions">
             {#key current.repository + current.page}

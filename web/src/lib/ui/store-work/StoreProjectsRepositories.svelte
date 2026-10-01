@@ -5,6 +5,7 @@
   import StoreWorkEmpty from "./StoreWorkEmpty.svelte";
   import StoreRepositoryDirectoryRow from "./StoreRepositoryDirectoryRow.svelte";
   import ListTodoIcon from "@lucide/svelte/icons/list-todo";
+  import { CommunitySkeleton } from "@lapismd/lapis-community/components";
   import type { StoreController } from "../../controller/contracts.js";
   import "./community-work-rows.css";
   let {
@@ -19,6 +20,12 @@
     ),
   );
 </script>
+
+{#if controller.projects!.loading && !controller.projects!.repositories.entries.some((entry) => entry.summary)}<div
+    class="store-projects__loading"
+  >
+    <CommunitySkeleton layout="timeline" label="Loading repositories" />
+  </div>{/if}
 
 <div class="community-projects__collection-groups">
   {#each [true, false] as mine}

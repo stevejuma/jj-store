@@ -11,6 +11,7 @@ import {
   readReviewContext,
 } from "./production-collaboration-context.js";
 import { readReviewAnchorPatch } from "./review-anchor-patch.js";
+import { readNativeReviewContext } from "./native-review-context.js";
 import { createProductionReviewActions } from "./production-review-actions.js";
 import { createProductionInlineReviewActions } from "./production-inline-review-actions.js";
 
@@ -26,6 +27,7 @@ interface Context {
 
 export function createProductionStoreCollaboration(context: Context) {
   const { data, history } = context;
+  let reviewGeneration = 0;
   async function loadAgents(more = false) {
     const source = context.source(),
       ticket = context.version();
@@ -116,24 +118,36 @@ export function createProductionStoreCollaboration(context: Context) {
 
   async function loadReview(id: string) {
     const source = context.source(),
-      ticket = context.version();
+      ticket = context.version(),
+      selection = ++reviewGeneration;
+    const current = () =>
+      selection === reviewGeneration && context.current(ticket, source);
     data.status.reviewAction = "loading";
     data.reviewPatch = undefined;
+    data.reviewContext = undefined;
     try {
       const thread = await source.reviewThread(id);
-      if (!context.current(ticket, source)) return;
+      if (!current()) return;
       data.reviewThread = thread;
+      if (history.route.page === "reviews") {
+        const reviewContext = await readNativeReviewContext(
+          source,
+          thread.anchor.value,
+        );
+        if (!current()) return;
+        data.reviewContext = reviewContext;
+      }
       try {
         const patch = await readReviewAnchorPatch(source, thread.anchor.value);
-        if (!context.current(ticket, source)) return;
+        if (!current()) return;
         data.reviewPatch = patch;
       } catch {
-        if (!context.current(ticket, source)) return;
+        if (!current()) return;
         data.reviewPatch = undefined;
       }
       data.status.reviewAction = "ready";
     } catch (cause) {
-      if (!context.current(ticket, source)) return;
+      if (!current()) return;
       data.status.reviewAction = "failed";
       context.report(cause);
     }
@@ -243,8 +257,10 @@ export function createProductionStoreCollaboration(context: Context) {
   }
 
   async function selectReviewThread(id: string | null) {
+    reviewGeneration++;
     history.push({ ...history.route, reviewThreadId: id });
     data.reviewThread = undefined;
+    data.reviewContext = undefined;
     if (id) await loadReview(id);
   }
 

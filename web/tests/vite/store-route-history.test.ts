@@ -4,6 +4,7 @@ import {
   type StoreRouteBrowser,
 } from "../../src/lib/controller/store-route-history.svelte.js";
 import { storeRouteToHash } from "../../src/lib/controller/store-route-codec.js";
+import { storeRouteFromHash } from "../../src/lib/controller/store-route-codec.js";
 
 const repository = "ab".repeat(16);
 const operation = "12".repeat(64);
@@ -212,5 +213,39 @@ test("connecting code from the installation Projects hub preserves one Back dest
   expect(navigation.replaced).toHaveLength(0);
   navigation.visit("#/projects?tab=reviews");
   expect(history.route).toMatchObject({ page: "projects", workTab: "reviews" });
+  history.destroy();
+});
+
+test("ordinary activity commit links retain the exact Projects Back and Forward destinations", () => {
+  const origin = `#/projects?home=${repository}&project=${"78".repeat(16)}&tab=activity&q=parser&state=active&at_op=${operation}`;
+  const navigation = fakeBrowser(origin);
+  const history = createStoreRouteHistory(navigation.browser);
+  const destination = `#/repos/${repository}/log?at_op=${operation}&commit=${"9a".repeat(64)}`;
+  navigation.visit(destination);
+  expect(history.canBack).toBe(true);
+  history.navigate(-1);
+  expect(navigation.moved).toEqual([-1]);
+  navigation.visit(origin);
+  expect(storeRouteToHash(history.route)).toBe(origin);
+  expect(history.canForward).toBe(true);
+  history.navigate(1);
+  navigation.visit(destination);
+  expect(history.route.page).toBe("log");
+  expect(history.canBack).toBe(true);
+  history.destroy();
+});
+
+test("retired review column links restore the Community list or selected detail", () => {
+  const initial = `#/repos/${repository}/reviews?at_op=${operation}&thread=${thread}`;
+  const legacy = `${initial}&review_view=columns`;
+  const history = createStoreRouteHistory(fakeBrowser(legacy).browser);
+  expect(history.route.reviewThreadId).toBe(thread);
+  expect(storeRouteToHash(history.route)).toBe(initial);
+  expect(storeRouteFromHash(legacy.replace("reviews?", "agents?")).kind).toBe(
+    "invalid",
+  );
+  expect(storeRouteFromHash(legacy.replace("columns", "unknown")).kind).toBe(
+    "invalid",
+  );
   history.destroy();
 });

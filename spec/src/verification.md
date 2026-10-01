@@ -147,3 +147,30 @@ permission removal; hub tests require synchronous refresh busy state and
 fail-closed project review scope. Story interactions cover all four tabs and
 nested linked repositories; cold browser acceptance opens native reviews and
 restores the landing with Back. Visual baselines remain pending.
+
+E-UI-045 covers the fifth Projects Activity tab, exact native review
+comparisons, Community review sections, shared commit/agent context in
+project/task/review pages, Description-only task defaults and padded main-tab
+skeletons. Focused controller tests cover association pagination/root drift,
+original agent capture identity, explicit operation/time continuations,
+linked-repository authorization, access loss and late reads. Direct Storybook
+interactions and accessibility use the same production components; a cold
+built-browser read checks the live native project, task and review surfaces. The
+implementation ledger records actual runs and keeps visual baseline approval
+pending.
+
+The Native activity story verifies a 120-row feed with bounded mounted rows,
+deferred association/session reads, measured expanding context, memoized reads
+after virtual remount and automatic continuation to 160 rows in shadcn
+ScrollArea. Controller regressions cover the two-reader budget and captured
+AgentStore root. Cold browser acceptance uses the app's Back and Forward
+controls to return to the exact Activity route, and confirms the repository-wide
+Reviews heading replaces the workspace picker row. Existing sample sessions have
+no recorded code associations; read-only live acceptance keeps that absence
+explicit while fixture acceptance exercises genuine relation contracts.
+
+Native review detail stories also exercise full-width Community list rows,
+list-to-detail navigation, header return behavior, hidden tabs in detail,
+responsive body inset and vertically centered Back control. Route regressions
+qualify retired column links and reject invalid legacy mode fields. The reviews
+page exposes no column styling or sidebar layout controls.

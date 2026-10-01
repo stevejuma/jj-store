@@ -6,13 +6,20 @@ export async function expectCommunityDisclosures(detail: HTMLElement) {
     const label = trigger.querySelector("span")!;
     const chevron = trigger.querySelector("svg")!;
     await expect(getComputedStyle(trigger).fontWeight).toBe("500");
-    await expect(getComputedStyle(trigger).paddingInlineStart).toBe("24px");
+    await expect(getComputedStyle(trigger).paddingInlineStart).toBe("0px");
+    await expect(trigger).toHaveAttribute(
+      "aria-expanded",
+      name === "Description" ? "true" : "false",
+    );
     await expect(
       chevron.getBoundingClientRect().left -
         label.getBoundingClientRect().right,
     ).toBeLessThan(12);
     await userEvent.click(trigger);
-    await expect(trigger).toHaveAttribute("aria-expanded", "false");
+    await expect(trigger).toHaveAttribute(
+      "aria-expanded",
+      name === "Description" ? "false" : "true",
+    );
     await userEvent.click(trigger);
   }
 }

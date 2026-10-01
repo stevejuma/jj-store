@@ -89,8 +89,8 @@ export function createStoreRouteHistory(
     const known = entries.findIndex((entry) => same(entry, result.route));
     if (known >= 0) index = known;
     else {
-      entries = [result.route];
-      index = 0;
+      entries = [...entries.slice(0, index + 1), result.route];
+      index += 1;
     }
     external?.(result);
   });

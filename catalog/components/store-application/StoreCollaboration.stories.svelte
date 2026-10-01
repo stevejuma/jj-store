@@ -293,8 +293,11 @@
     const agentReviewSelection = canvas.getByRole("button", {
       name: /Open Agent session open review with 2 comments/u,
     });
-    const agentReviewCard =
-      await expectSelectionSurfaceCoversRow(agentReviewSelection);
+    const agentReviewCard = agentReviewSelection.closest<HTMLElement>(
+      "article.community-projects__review-row",
+    );
+    if (!agentReviewCard)
+      throw new Error("Community review row was not rendered");
     await expect(agentReviewCard.querySelector("img")).toHaveAttribute(
       "src",
       "/agent-icons/codex.svg",
@@ -304,21 +307,26 @@
     ).toBeVisible();
     await userEvent.click(agentReviewSelection);
     await expect(
-      canvasElement.querySelector(
-        ".store-review-discussion .store-collaboration__detail-header img",
-      ),
+      canvasElement.querySelector(".community-projects__review-meta img"),
     ).toBeVisible();
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Back to reviews" }),
+    );
     const reviewSelection = canvas.getAllByRole("button", {
       name: /Revision open/u,
     })[0]!;
-    const reviewCard = await expectSelectionSurfaceCoversRow(reviewSelection);
+    await expect(
+      reviewSelection.closest("article.community-projects__review-row"),
+    ).not.toBeNull();
     await userEvent.click(reviewSelection);
-    await expect(reviewCard).toHaveAttribute("data-selected", "true");
+    await expect(
+      canvas.getByRole("article", { name: "Review details" }),
+    ).toBeVisible();
     await expect(
       canvas.getByRole("list", { name: "Review comments" }),
     ).toBeVisible();
     await expect(
-      canvas.getByText(
+      within(canvas.getByRole("list", { name: "Review comments" })).getByText(
         "Can we preserve the exact operation when this retry races?",
       ),
     ).toBeVisible();
@@ -343,14 +351,11 @@
     await expect(
       commentRows[2]!.querySelector('[data-ui-part="review-reply-connector"]'),
     ).not.toBeNull();
-    const resize = canvas.getByRole("separator", {
-      name: "Resize Review threads and Discussion columns",
-    });
-    const width = resize.getAttribute("aria-valuenow");
-    await fireEvent.keyDown(resize, { key: "ArrowRight" });
-    await waitFor(() =>
-      expect(resize).not.toHaveAttribute("aria-valuenow", width),
-    );
+    await expect(
+      canvas.queryByRole("separator", {
+        name: "Resize Review threads and Discussion columns",
+      }),
+    ).toBeNull();
     const editor = canvas.getByRole("textbox", {
       name: "Markdown editor",
     });

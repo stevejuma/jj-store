@@ -89,6 +89,7 @@
     await expect(
       c.getByRole("article", { name: "Task details" }),
     ).toHaveTextContent("Browser work");
+    await userEvent.click(c.getByRole("button", { name: "Activity" }));
     await expect(
       c.getByRole("region", { name: "Task discussion" }),
     ).toHaveTextContent("First discussion");
@@ -127,6 +128,9 @@
       c.getByRole("button", { name: "Parent: Storage work" }),
     );
     const subtasks = c.getByRole("region", { name: "Subtasks" });
+    await userEvent.click(
+      within(subtasks).getByRole("button", { name: "Subtasks" }),
+    );
     await waitFor(() =>
       expect(
         within(subtasks).getByRole("button", {
@@ -224,7 +228,7 @@
     const view = within(c.getByRole("region", { name: "Projects and tasks" }));
     await expect(
       view.getAllByRole("tab").map((tab) => tab.textContent?.trim()),
-    ).toEqual(["Projects", "Tasks", "Reviews", "Repositories"]);
+    ).toEqual(["Projects", "Tasks", "Reviews", "Repositories", "Activity"]);
     const expandProject = c.getByRole("button", {
       name: "Expand Native release",
     });

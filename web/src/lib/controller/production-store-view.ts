@@ -92,6 +92,7 @@ export function productionStoreView(
     reviewThreads: data.reviewThreads,
     reviewThread: data.reviewThread,
     reviewPatch: data.reviewPatch,
+    reviewContext: data.reviewContext,
     reviewActionMessage: data.reviewActionMessage,
     reviewActionRequestId: data.reviewActionRequestId,
     authenticated:

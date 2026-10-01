@@ -631,6 +631,17 @@ column clears only that route identity.
 
 ## Browsing UI execution
 
+Review detail and Projects Activity consume the existing authorized native read
+routes without adding repository authority. Exact review anchors determine code
+comparisons; related agent context comes only from root-pinned associations and
+sanitized session details. Project/task activity reads independently authorized
+linked repositories at explicit code operations, preserves bounded continuation
+snapshots, and treats missing capture or read failures as unavailable context.
+Activity tab routes survive hash/history restoration. Native commit links from
+Projects authorize a code connection even when no code source is active, retain
+the exact operation and restore the Projects scope with Back. Task sections
+initially expand only Description and main-tab skeletons use a page inset.
+
 A selected JJ Log or Branches change exposes a read-only Evo Log action in the
 right-rail Actions section. Its separate resizable column reads the existing
 native evolution graph at the displayed operation, preserves server predecessor

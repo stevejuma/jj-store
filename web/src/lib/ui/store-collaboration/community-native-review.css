@@ -1,0 +1,225 @@
+/* Adapted from CommunityProjects.css review details (Apache-2.0). */
+.community-projects__review-detail {
+  --community-project-tabs-height: 0rem;
+  --community-project-review-section-height: 2.5rem;
+  --community-project-review-toolbar-height: 3.35rem;
+  width: min(100%, 74rem);
+  box-sizing: border-box;
+  margin-inline: auto;
+  padding-bottom: 2.5rem;
+}
+
+.community-projects__review-header {
+  position: relative;
+  display: grid;
+  width: 100%;
+  box-sizing: border-box;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  padding: 1.2rem 1.5rem 0.7rem 3rem;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in srgb, var(--background) 96%, transparent);
+  backdrop-filter: blur(12px);
+}
+
+.community-projects__review-back[data-ui-component="button"] {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 0.55rem;
+  margin: 0;
+  border-radius: 999px;
+}
+
+.community-projects__review-header h2 {
+  font-size: var(--community-text-section);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.community-projects__review-header h2 span {
+  color: var(--muted-foreground);
+  font-weight: 400;
+}
+
+.community-projects__review-header p {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.15rem;
+  font-size: var(--community-text-secondary);
+}
+
+.community-projects__review-meta {
+  display: grid;
+  gap: 0.2rem;
+  margin: 0.65rem 1.5rem 0.8rem;
+  border-radius: 0.65rem;
+  padding: 0.45rem 0.75rem;
+  background: color-mix(in srgb, var(--muted) 30%, transparent);
+  font-size: var(--community-text-secondary);
+}
+
+.community-projects__review-meta > div {
+  display: grid;
+  min-height: 1.65rem;
+  grid-template-columns: 6rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.community-projects__review-meta dt,
+.community-projects__review-meta dd,
+.community-projects__review-branch,
+.community-projects__review-reviewers {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.community-projects__review-meta dt {
+  color: color-mix(in srgb, var(--foreground) 68%, var(--muted-foreground));
+}
+
+.community-projects__review-meta dt svg {
+  width: 0.9rem;
+  height: 0.9rem;
+  flex: none;
+}
+
+.community-projects__review-meta dd {
+  margin: 0;
+  font-weight: 500;
+}
+
+.community-projects__review-branch
+  > span:not(.community-projects__review-stats) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.community-projects__review-stats {
+  display: flex;
+  margin-inline-start: auto;
+  gap: 0.35rem;
+  font-size: var(--community-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.community-projects__review-stats span:first-child {
+  color: color-mix(in srgb, #16a34a 68%, var(--foreground));
+}
+
+.community-projects__review-stats span:last-child {
+  color: var(--destructive);
+}
+
+.community-projects__review-branch code {
+  color: var(--muted-foreground);
+  font-family: var(--font-mono, monospace);
+  font-size: var(--community-text-secondary);
+  font-weight: 400;
+}
+
+.community-projects__review-reviewers
+  > span:not([data-ui-component="community-member-avatar"]) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.community-projects__muted {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: var(--community-text-secondary);
+  font-weight: 400;
+}
+
+.community-projects__review-section {
+  margin-top: 0.1rem;
+}
+
+.community-projects__review-section--files {
+  margin-top: 0;
+}
+
+.community-projects__review-section-trigger {
+  display: flex;
+  width: 100%;
+  min-height: 2.5rem;
+  align-items: center;
+  gap: 0.4rem;
+  border: 0;
+  padding: 0.5rem 1.5rem;
+  color: var(--foreground);
+  background: transparent;
+  font: inherit;
+  font-size: var(--community-text-secondary);
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+}
+
+.community-projects__review-section-trigger:hover {
+  background: color-mix(in srgb, var(--muted) 18%, transparent);
+}
+
+.community-projects__review-section-trigger--files {
+  position: sticky;
+  z-index: 4;
+  top: var(--community-project-tabs-height);
+  min-height: var(--community-project-review-section-height);
+  box-sizing: border-box;
+  border-top: 1px solid var(--border);
+  border-bottom: 0;
+  background: var(--background);
+}
+
+.community-projects__review-section-trigger--files:hover {
+  background: color-mix(in srgb, var(--background) 92%, var(--muted));
+}
+
+.community-projects__review-section-trigger svg {
+  width: 0.88rem;
+  height: 0.88rem;
+  color: var(--muted-foreground);
+}
+
+.community-projects__review-section-count {
+  color: var(--muted-foreground);
+  font-size: var(--community-text-secondary);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.community-projects__review-section-content {
+  padding: 0.1rem 1.5rem 1rem;
+}
+
+.community-projects__review-files-content {
+  overflow: visible;
+  padding: 0 0.5rem 1rem;
+}
+
+.community-projects__review-header h2,
+.community-projects__review-header p {
+  margin: 0;
+}
+.community-projects__review-meta dd {
+  flex-wrap: wrap;
+  overflow-wrap: anywhere;
+}
+.community-projects__review-detail {
+  overflow: visible;
+}
+.community-projects__review-body {
+  padding-inline: 1rem;
+}
+@media (max-width: 640px) {
+  .community-projects__review-body {
+    padding-inline: 0.5rem;
+  }
+}

@@ -95,6 +95,7 @@ test("development work samples survive cold startup and additive reseeding", asy
   expect(
     new URLSearchParams(new URL(page.url()).hash.split("?")[1]).get("task"),
   ).toBe(browsingTaskId);
+  await view.getByRole("button", { name: "Activity", exact: true }).click();
   await expect(
     view.getByText("The list and card layouts are ready for a visual pass.", {
       exact: false,

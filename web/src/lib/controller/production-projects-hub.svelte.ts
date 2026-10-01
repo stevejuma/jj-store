@@ -3,12 +3,13 @@ import { readProjectHome } from "./projects-home-read.js";
 import { createProjectsReviews } from "./projects-reviews.svelte.js";
 import { createProjectsNavigation } from "./projects-navigation.svelte.js";
 import { createProjectsRepositories } from "./projects-repositories.svelte.js";
+import { createProjectsActivity } from "./projects-activity.svelte.js";
+import { projectsActivityScope } from "./projects-activity-scope.js";
 import {
   createProjectsViewCache,
   projectsBrowseQuery,
-  validWorkSearch,
 } from "./projects-view-cache.js";
-import { initialStoreRoute } from "./store-route-history.svelte.js";
+import { projectsRouteActions } from "./projects-route-actions.js";
 import type {
   ProjectHome,
   ProjectsHubController,
@@ -46,6 +47,7 @@ export function createProjectsHub(
     },
   });
   const repositoryDirectory = createProjectsRepositories({ source: transport });
+  const activity = createProjectsActivity({ source: transport });
   function read(
     home: ProjectHome,
     query: WorkBrowseQuery,
@@ -119,6 +121,29 @@ export function createProjectsHub(
       }
       if (ticket !== generation) return;
       context.activate?.(route.projectId ? route.repository : null);
+      if (route.workTab === "activity" || route.taskId) {
+        const detail = route.projectId ? work(route.repository).state : null;
+        try {
+          await activity.load(
+            projectsActivityScope(
+              context.repositories(),
+              route,
+              detail?.project,
+              detail?.task,
+            ),
+            refresh,
+            route.snapshotOperationId
+              ? { [route.repository]: route.snapshotOperationId }
+              : {},
+          );
+        } catch (cause) {
+          activity.reset();
+          error =
+            cause instanceof Error ? cause.message : "Activity unavailable";
+          return;
+        }
+        if (ticket !== generation || route.workTab === "activity") return;
+      }
       if (route.workTab === "repositories") {
         const project = route.projectId
           ? work(route.repository).state.project
@@ -168,6 +193,7 @@ export function createProjectsHub(
     }
   }
   return {
+    activity,
     navigation,
     reviews,
     repositories: repositoryDirectory,
@@ -230,51 +256,9 @@ export function createProjectsHub(
         await read(home, query, generation, true);
       views.save(context.route(), homes);
     },
-    async openHub(tab = "projects") {
-      context.push({
-        ...initialStoreRoute(),
-        page: "projects",
-        projectsHub: true,
-        workTab: tab,
-      });
-      await restore();
-    },
-    async openProject(home, project, task = null) {
-      context.push({
-        ...(context.route().repository === home &&
-        context.route().projectId === project
-          ? context.route()
-          : initialStoreRoute()),
-        page: "projects",
-        repository: home,
-        snapshotOperationId:
-          context.route().repository === home
-            ? context.route().snapshotOperationId
-            : null,
-        projectId: project,
-        taskId: task,
-        projectsHub: true,
-        workTab: "tasks",
-      });
-      await restore();
-    },
-    async filter(fields) {
-      if (!validWorkSearch(fields.workQuery)) {
-        error = "Search is limited to 512 UTF-8 bytes.";
-        return;
-      }
-      context.push({
-        ...context.route(),
-        ...fields,
-        ...(fields.workTab ||
-        fields.workState ||
-        fields.workQuery !== undefined ||
-        fields.workRepository !== undefined
-          ? { taskId: null }
-          : {}),
-      });
-      await restore();
-    },
+    ...projectsRouteActions(context, restore, (message) => {
+      error = message;
+    }),
     reset() {
       generation++;
       refreshGeneration++;
@@ -287,6 +271,7 @@ export function createProjectsHub(
       navigation.reset();
       reviews.reset();
       repositoryDirectory.reset();
+      activity.reset();
       sources.clear();
       works.clear();
       selections.clear();
