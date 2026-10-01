@@ -143,6 +143,22 @@ native evidence carrier stay separately gated. Native and local providers share
 identical typed command/result domain tags without changing local receipt
 encodings.
 
+Native service commands derive the actor and publication identity from the
+currently authenticated caller. Status decodes canonical typed receipts and
+never discloses another actor's request. Credential-free read pins capture all
+source roots together, enforce object/byte/time budgets, and reauthorize the
+same repository, viewer and epoch before every response. Repository actor policy
+filters slots before counts, conflicts, viewer state or actor pages are
+produced. Conflicted actors contribute no ordinary selected value. Earlier
+revisions remain separate exact queries. A Thread history page follows only the
+selected Thread's event chain, validates continuation membership, and carries
+canonical message/link references without copying captured transcript bodies.
+Absent Thread/Reaction domains remain absent during reads. Transport cursor
+capacity, expiry and query binding are separate acceptance gates. Native service
+command acceptance currently covers WorkStore homes with the frozen origin
+ledger and explicit code-repository rejection; replicated code writes require
+the separately qualified reducer 3.
+
 The public namespace is /v1/repos/{repo}/threads with list/detail/timeline and
 commands plus command status, /reactions/query and commands/status,
 /reaction-emojis and /reaction-assets. CLI lives under jj agent thread and jj

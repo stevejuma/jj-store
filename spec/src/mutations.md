@@ -55,6 +55,16 @@ rebase/squash/undo are deferred; client capability evidence is separate.
 | JST-MUT-005 | Client-computed RPC publications MUST pass the same semantic protected-history checks as application mutations; no arbitrary shell or CLI argument endpoint MAY be exposed.                                                                                        |
 | JST-MUT-006 | EditFile MUST create one child change from the exact single-target bookmark, replace or rename one existing bounded UTF-8 file, preserve native file mode/copy identity, move that bookmark atomically, and retain durable preview/apply/status receipt semantics. |
 
+Native collaboration command requests have no actor or publication-ID input. The
+service derives both from current Write admission, reauthorizes receipt
+responses, preserves accepted/unknown status, and emits freshness only for a
+selected publication. Read pins retain immutable source roots without sessions
+or credentials and reject a different repository, viewer or epoch on reuse.
+Actor visibility is an injected trusted repository policy evaluated before
+reaction aggregates and identity pages; default repository-scoped admission has
+no private actor subresource grants. Transport registries must independently
+bound pin capacity, expiry and exact query continuations.
+
 Local collaboration command/result aliases consume the shared jj-collab domain
 contract. Provider requests and receipts retain their existing local encodings;
 this extraction does not transfer actor admission or publication authority to
