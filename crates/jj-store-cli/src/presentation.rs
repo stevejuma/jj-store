@@ -142,6 +142,9 @@ pub async fn dispatch(
             return help(ui, helper, &path[1..]);
         }
     }
+    if let Some(operation) = crate::git_bridge::native_operation(helper)? {
+        return Err(crate::git_bridge::unavailable(&operation));
+    }
     inner.call(ui, helper).await
 }
 /// Clap emits help before dispatch hooks. Preflight renders only explicit

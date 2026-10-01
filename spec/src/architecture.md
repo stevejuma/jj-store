@@ -409,3 +409,10 @@ origins; protocol negotiation, feed, offer, closure, import and seed routes
 reject the unsupported profile explicitly. The local WAL and native copy retain
 complete WorkStore authority. Existing configured replication becomes
 unavailable for a WorkStore home; WorkStore does not claim remote convergence.
+
+## Git bridge ownership
+
+[Explicit Git interoperability](git-interop.md) adds CLI-side transport and a
+native durable evidence domain. Core storage and publication consume owned
+records only. No persistent writable mirror or additional transport daemon is
+introduced. WorkStore origin replication retains its separately deferred gate.

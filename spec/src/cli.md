@@ -552,3 +552,12 @@ construction and representative sanitizer/review work are recorded as
 512-MiB resident-memory gates and reports actual measurements on rejection.
 Search cache-loss rebuild timing remains a separate storage/search
 qualification.
+
+## Explicit native Git bridge
+
+The existing CliRunner dispatch hook is the integration seam for the staged
+[Git interoperability](git-interop.md) capability. Backend discovery opens the
+workspace through JJ's loader without snapshotting or reconciling operations.
+Ordinary Git repositories and creation commands retain upstream dispatch. Native
+import/export remains unsupported; implemented stages alone appear in the
+capability matrix. Aliases and global arguments are parsed upstream.

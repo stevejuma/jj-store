@@ -48,6 +48,11 @@ export default defineConfig(tableRequirements(), {
       ],
       rules: [
         {
+          pattern:
+            "^crates/jj-store-(?:cli|jj|wal|service|rpc)/(?:src|tests)/.*git[_-](?:bridge|interop)",
+          chapters: ["spec/src/git-interop.md"],
+        },
+        {
           pattern: "^(?:catalog/|\\.storybook/|docs/catalog\\.md$)",
           chapters: ["spec/src/ui.md"],
         },

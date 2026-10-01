@@ -16,6 +16,7 @@ pub mod attachment;
 pub mod binding;
 pub mod commands;
 pub mod credentials;
+pub mod git_bridge;
 pub mod initialization;
 pub mod migration;
 pub mod presentation;

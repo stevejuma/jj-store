@@ -1057,6 +1057,52 @@ async fn native_cli_semantic_git_transport_and_gc_fail_without_publication() {
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn native_git_dispatch_honors_alias_repository_and_no_snapshot() {
+    let f = Fixture::new().await;
+    f.attach("git-routing");
+    let root = f.root.path().join("git-routing");
+    fs::write(root.join("unsnapshotted.txt"), "preserve local edits\n").unwrap();
+    fs::write(
+        f.root.path().join("jj.toml"),
+        "[user]\nname='Native Test'\nemail='native@example.invalid'\n[aliases]\ngb=['git','fetch']\n",
+    ).unwrap();
+    let before = f.snapshot().await;
+    for args in [
+        vec!["git", "fetch", "--remote", "origin"],
+        vec!["gb", "--remote", "origin"],
+        vec!["git", "push", "--bookmark", "feature", "--dry-run"],
+        vec![
+            "git",
+            "remote",
+            "add",
+            "origin",
+            "https://example.invalid/code.git",
+        ],
+        vec!["git", "import"],
+        vec!["git", "export"],
+    ] {
+        let output = f
+            .command(
+                f.root.path(),
+                &[vec!["-R", root.to_str().unwrap()], args.clone()].concat(),
+            )
+            .output()
+            .unwrap();
+        assert!(!output.status.success(), "{args:?}");
+        assert!(
+            String::from_utf8_lossy(&output.stderr).contains("NATIVE_GIT_CAPABILITY"),
+            "{args:?}: {output:?}"
+        );
+        assert_eq!(f.snapshot().await, before, "routing published {args:?}");
+    }
+    assert_eq!(
+        fs::read_to_string(root.join("unsnapshotted.txt")).unwrap(),
+        "preserve local edits\n"
+    );
+    assert!(!root.join(".git").exists());
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
 async fn executable_workstore_creates_tasks_comments_and_recovers_without_an_upstream() {
     let mut f = Fixture::new().await;
     f.attach("workstore");

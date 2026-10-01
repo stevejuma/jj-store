@@ -10,6 +10,7 @@
 - [Native projects and tasks](projects.md)
 - [Native JJ integration](jj-integration.md)
 - [CLI and server commands](cli.md)
+- [Explicit Git interoperability](git-interop.md)
 - [Read APIs and browser](api.md)
 - [Typed mutations](mutations.md)
 - [Security and deployment](security.md)

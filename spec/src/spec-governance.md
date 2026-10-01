@@ -45,6 +45,11 @@ repository suites remain outside the default verification scope.
 | `^(?:crates/jj-store-testkit/\|runtime/\|fixtures/\|schemas/\|proto/\|docs/upstream-lock\|docs/embedded-rustfs-qualification\|docs/codec\|docs/compatibility\|docs/licenses/\|docs/evidence/\|scripts/.*(?:rustfs\|spike\|upstream)\|deploy/)` | `compatibility.md`   |
 | `^(?:scripts/\|AGENTS\.md$\|spec-validator\.config\.mjs$\|spec/book\.toml$\|\.gitignore$\|\.pnpmfile\.cjs$\|\.prettier)`                                                                                                                       | `spec-governance.md` |
 | `^(?:Cargo\.(?:toml\|lock)$\|rust-toolchain\.toml$\|package\.json$\|pnpm-lock\.yaml$\|README\.md$\|LICENSE\.md$\|docs/implementation-plan\.md$\|docs/reference/)`                                                                              | `architecture.md`    |
+| `^crates/jj-store-(?:cli\|jj\|wal\|service\|rpc)/(?:src\|tests)/.*git[_-](?:bridge\|interop)`                                                                                                                                                  | `git-interop.md`     |
+
+Git interoperability additionally protects
+`^crates/jj-store-(?:cli|jj|wal|service|rpc)/(?:src|tests)/.*git[_-](?:bridge|interop)`
+and requires `git-interop.md`.
 
 ## Verification scope
 
@@ -420,3 +425,10 @@ storage restart through server/search readiness. Complete initial preparation is
 measured separately; resource limits remain unchanged. This proves opening
 persisted sample state, while search cache-loss rebuild qualification remains a
 separate gate.
+
+## Git bridge governance
+
+Git bridge production modules and their direct tests additionally map to
+`git-interop.md`, alongside their existing owning layer chapters. M12 tracks GB0
+through GB6; every slice retains exact targeted evidence and explicit
+unimplemented gates. Attached sketches never satisfy product acceptance.

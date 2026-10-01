@@ -94,6 +94,14 @@ adds evidence here in its enclosing Jujutsu change.
 | M11.1       | Done        | M9.6        | JST-WORK-001,JST-WORK-002,JST-WORK-003,JST-WORK-004,JST-WORK-005,JST-WORK-007                                                                                            | Native model, publication, receipts, recovery and copy                                                                         | Retain native and real RustFS gates                                           | E-M11-001,E-M11-003                                                                                                                                                                                                                                                                                                                                            |
 | M11.2       | Done        | M11.1       | JST-WORK-005,JST-WORK-006,JST-WORK-008                                                                                                                                   | Authorized service, API, RPC and CLI                                                                                           | Retain local transport/CLI gates                                              | E-M11-002                                                                                                                                                                                                                                                                                                                                                      |
 | M11.3       | Done        | M11.2       | JST-WORK-008                                                                                                                                                             | Browser projects/tasks/comments and explicit refresh                                                                           | Retain cold browser gates; visual baselines pending                           | E-M11-003,E-M11-004                                                                                                                                                                                                                                                                                                                                            |
+| M12         | In progress | M11         | JST-GIT-001,JST-GIT-002,JST-GIT-003,JST-GIT-004,JST-GIT-005,JST-GIT-006,JST-GIT-007,JST-GIT-008                                                                          | Native fetch/edit/push/external-merge cycle with cache-loss and fault qualification                                            | Complete staged GB0 through GB6                                               | E-M12-001                                                                                                                                                                                                                                                                                                                                                      |
+| M12.1       | Done        | M11         | JST-GIT-001                                                                                                                                                              | GB0: Parsed backend-aware dispatch and ordinary path regression                                                                | Complete staged bridge gate                                                   | E-M12-001                                                                                                                                                                                                                                                                                                                                                      |
+| M12.2       | Planned     | M12.1       | JST-GIT-002,JST-GIT-003                                                                                                                                                  | GB1: Exact conversion and native retained cache-loss identity                                                                  | Complete staged bridge gate                                                   | -                                                                                                                                                                                                                                                                                                                                                              |
+| M12.3       | Planned     | M12.2       | JST-GIT-004,JST-GIT-008                                                                                                                                                  | GB2: Bounded fetch with native tracking and concurrent ref merge                                                               | Complete staged bridge gate                                                   | -                                                                                                                                                                                                                                                                                                                                                              |
+| M12.4       | Planned     | M12.3       | JST-GIT-005,JST-GIT-006                                                                                                                                                  | GB3: Selected single-ref push with leases and durable recovery                                                                 | Complete staged bridge gate                                                   | -                                                                                                                                                                                                                                                                                                                                                              |
+| M12.5       | Planned     | M12.4       | JST-GIT-007                                                                                                                                                              | GB4: Fault/concurrency and qualified data-only native replication                                                              | Complete staged bridge gate                                                   | -                                                                                                                                                                                                                                                                                                                                                              |
+| M12.6       | Planned     | M12.5       | JST-GIT-001,JST-GIT-005                                                                                                                                                  | GB5: Bookmark selectors safe remote lifecycle and atomic multi-ref parity                                                      | Complete staged bridge gate                                                   | -                                                                                                                                                                                                                                                                                                                                                              |
+| M12.7       | Planned     | M12.6       | JST-GIT-002,JST-GIT-007,JST-GIT-008                                                                                                                                      | GB6: Cold real-RustFS external merge credentials resources and UI freshness                                                    | Complete staged bridge gate                                                   | -                                                                                                                                                                                                                                                                                                                                                              |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -23271,6 +23279,131 @@ and named tests are checked by the progress gate.
     "result": "pass",
     "remaining": [],
     "next": "Retain verified main-workspace WorkStore/evolution/history and cold merge-sheet gates. Source workspace remains available; visual baselines, WorkStore origin replication, Git refs, server-free CLI, assignments and dispatch remain deferred."
+  },
+  {
+    "id": "E-M12-001",
+    "tasks": [
+      "M12",
+      "M12.1"
+    ],
+    "date": "2026-10-01",
+    "kind": "native-git-dispatch",
+    "revision": "Enclosing Jujutsu change tunulptm.",
+    "before": "Clean native WorkStore main at 90390af4. Exact existing native unsupported transport regression passed 1/1 before implementation. JJ 0.45.1 already exposes parsed dispatch hooks; native backend is jj-store. No Git converter, cache or materializer exists in production.",
+    "versions": "jj-cli/jj-lib 0.45.1; gix 0.87.1; Git 2.55.0; Rust 1.98.1",
+    "formats": "Native profile jj-native-0.45.1-v1 unchanged; bridge format-4 is planned only.",
+    "files": [
+      "crates/jj-store-cli/src/git_bridge.rs",
+      "crates/jj-store-cli/src/lib.rs",
+      "crates/jj-store-cli/src/presentation.rs",
+      "crates/jj-store-cli/src/commands.rs",
+      "crates/jj-store-cli/tests/executable_native.rs",
+      "spec/src/git-interop.md",
+      "spec/src/SUMMARY.md",
+      "spec/src/cli.md",
+      "spec/src/architecture.md",
+      "spec/src/spec-governance.md",
+      "spec/src/verification.md",
+      "spec-validator.config.mjs"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-cli --locked --test executable_native native_cli_semantic_git_transport_and_gc_fail_without_publication -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "Before state 1/1; memory-backed native stack, not real RustFS qualification."
+      },
+      {
+        "command": "cargo fmt -p jj-store-cli",
+        "result": "pass",
+        "failures": 0
+      },
+      {
+        "command": "cargo test -p jj-store-cli --locked --test executable_native native_git_dispatch_honors_alias_repository_and_no_snapshot -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "1/1 native alias/-R/dry-run/remote/import/export routing; unsnapshotted files and native manifest unchanged. Shared dispatch and governance map affect direct consumers: run complete governance tests and focused ordinary dispatch acceptance."
+      },
+      {
+        "command": "node --test scripts/governance.test.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "24/24 complete governance regressions; wider lane justified by shared canonical mapping."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/git-interop.md spec/src/SUMMARY.md spec/src/cli.md spec/src/architecture.md spec/src/spec-governance.md spec/src/milestones.md spec/src/verification.md spec-validator.config.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Canonical formatting."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --locked --test executable_native custom_help_completion_build_info_and_ordinary_git_commands -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "1/1 ordinary upstream Git repository creation/describe/log plus custom help/completion."
+      },
+      {
+        "command": "cargo clippy -p jj-store-cli --all-targets --locked -- -D warnings",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected CLI package and direct dependency compilation; no unrelated UI lane."
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "15 owned packages."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "fail",
+        "failures": 8,
+        "note": "Initial appended verification rows lacked a Markdown table header; moved rows into the canonical table."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "fail",
+        "failures": 1,
+        "note": "Initial M12 rows were outside the task table; moved into existing canonical task table."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md spec/src/verification.md spec/src/spec-governance.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Reformatted repaired canonical tables."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "20 chapters, 123 unique requirements."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "94 tasks, retained all existing evidence."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "6 protected files mapped to 5 changed owning chapters."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --locked --test executable_native native_cli_semantic_git_transport_and_gc_fail_without_publication -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "After state 1/1; unsupported import/export and destructive GC remain non-publishing."
+      }
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/executable_native.rs#native_git_dispatch_honors_alias_repository_and_no_snapshot",
+      "crates/jj-store-cli/tests/executable_native.rs#native_cli_semantic_git_transport_and_gc_fail_without_publication"
+    ],
+    "result": "pass",
+    "remaining": [],
+    "next": "GB1 exact conversion, native Git evidence, cache and retained-closure qualification. GB2-GB6 remain planned. Root aggregate and UI lanes out of scope for GB0."
   }
 ]
 ```
