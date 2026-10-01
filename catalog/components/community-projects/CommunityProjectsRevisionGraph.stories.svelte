@@ -1,8 +1,22 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
-  import { expect, waitFor, within } from "storybook/test";
+  import { expect, fn, userEvent, waitFor, within } from "storybook/test";
   import CommunityProjectsRevisionGraph from "../../../web/src/lib/ui/community-projects/CommunityProjectsRevisionGraph.svelte";
   import { fixtureGraph, NOW, operations } from "../../fixtures/repository.js";
+  const gitCommit = "87e1cd5db3c0a551cd4a4feedde962ca63368fb9";
+  const describedCommit = "20d6c008366360bd7c1c97ac99be03a8348cef7c";
+  const gitOperations = {
+    ...operations,
+    revisions: operations.revisions.map((revision, index) => ({
+      ...revision,
+      message:
+        index === 0
+          ? `create bookmark main pointing to commit ${gitCommit}`
+          : index === 1
+            ? `describe commit ${describedCommit}`
+            : revision.message,
+    })),
+  };
   const linear = Array.from({ length: 160 }, (_, index) => ({
     ...fixtureGraph().revisions[0]!,
     eventId: (index + 1).toString(16).padStart(128, "0"),
@@ -99,6 +113,59 @@
       <CommunityProjectsRevisionGraph {...args} />
     </div>{/snippet}
 </Story>
+
+<Story
+  name="Git-backed operation message copies"
+  args={{
+    ...gitOperations,
+    commitLabel: "operation ID",
+    graphLabel: "Operation graph",
+    onSelect: fn(),
+  }}
+  play={async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const descriptor = Object.getOwnPropertyDescriptor(navigator, "clipboard");
+    const write = fn(async (_value: string) => {});
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: { writeText: write },
+    });
+    try {
+      for (const commit of [gitCommit, describedCommit]) {
+        const button = canvas.getByRole("button", {
+          name: `Copy full commit ID: ${commit}`,
+        });
+        await expect(
+          within(button).getByText(`${commit.slice(0, 8)}…${commit.slice(-4)}`),
+        ).toBeVisible();
+        await userEvent.click(button);
+        await expect(write).toHaveBeenLastCalledWith(commit);
+        await expect(button).toHaveAttribute("data-copied", "true");
+        await expect(args.onSelect).not.toHaveBeenCalled();
+      }
+      const button = canvas.getByRole("button", {
+        name: `Copy full commit ID: ${gitCommit}`,
+      });
+      button.focus();
+      await userEvent.keyboard("{Enter}");
+      await expect(write).toHaveBeenLastCalledWith(gitCommit);
+      await expect(write).toHaveBeenCalledTimes(3);
+      await expect(args.onSelect).not.toHaveBeenCalled();
+      await userEvent.click(
+        canvas.getByRole("button", {
+          name: "create bookmark main pointing to commit",
+        }),
+      );
+      await expect(args.onSelect).toHaveBeenCalledTimes(1);
+      await expect(args.onSelect).toHaveBeenLastCalledWith(
+        gitOperations.revisions[0],
+      );
+    } finally {
+      if (descriptor) Object.defineProperty(navigator, "clipboard", descriptor);
+      else Reflect.deleteProperty(navigator, "clipboard");
+    }
+  }}
+/>
 
 <style>
   .graph-scroll {

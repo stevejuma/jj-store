@@ -50,8 +50,11 @@ for one another.
 Use tonic/protobuf for native RPC and Axum JSON/SSE for browser/agent APIs.
 Generate OpenAPI and client types. Full IDs are authoritative; shortened IDs are
 presentation. Historical loading requires no physical server working copy. Graph
-rendering does not decide ancestry. The route inventory in the archived
-attachment section 10 is implemented under /v1/repos/{repo}.
+rendering does not decide ancestry. Message presentation recognizes both native
+commit widths and Git SHA-1 commit widths without remapping either identity.
+Compact inline controls copy full IDs; message prose retains its existing
+operation-selection behavior. The route inventory in the archived attachment
+section 10 is implemented under /v1/repos/{repo}.
 
 ## Requirements
 

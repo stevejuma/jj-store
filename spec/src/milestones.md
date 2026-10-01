@@ -113,7 +113,7 @@ shared-package release qualification does not alter those original Git gates.
 | M13.1       | Done        | M12                     | JST-LOCAL-001,JST-LOCAL-002                                                                                                                                              | Qualified metadata CAS/receipt/GC and stock JJ primitive compatibility                                                         | Retain CAS, receipt, retention and stock-JJ regression gates                                   | E-M13-001                                                                                                                                                                                                                                                                                                                                                      |
 | M13.2       | Done        | M13.1                   | JST-LOCAL-003                                                                                                                                                            | Shared WorkStore semantics and server-free CLI                                                                                 | Retain WorkStore/CLI parity while completing M13.3                                             | E-M13-002,E-UI-050                                                                                                                                                                                                                                                                                                                                             |
 | M13.3       | In progress | M13.2                   | JST-LOCAL-002,JST-LOCAL-003                                                                                                                                              | Portable agent/review anchors and exact retained evidence                                                                      | Qualify portable review anchors/CLI, hook causality and native capsule carrier                 | E-M13-003,E-M13-004,E-M13-005,E-M13-006,E-M13-007,E-M13-008,E-M13-009,E-M13-010,E-M13-011,E-M13-012                                                                                                                                                                                                                                                            |
-| M13.4       | In progress | M13.2                   | JST-LOCAL-004,JST-LOCAL-005                                                                                                                                              | Filesystem-only server, local UI and recoverable code commands                                                                 | Implement indexed search and recoverable code commands; browsing/collaboration stage qualified | E-M13-013,E-M13-014,E-M13-015,E-M13-016,E-M13-017,E-M13-018,E-M13-019,E-M13-020                                                                                                                                                                                                                                                                                |
+| M13.4       | In progress | M13.2                   | JST-LOCAL-004,JST-LOCAL-005                                                                                                                                              | Filesystem-only server, local UI and recoverable code commands                                                                 | Implement indexed search and recoverable code commands; browsing/collaboration stage qualified | E-M13-013,E-M13-014,E-M13-015,E-M13-016,E-M13-017,E-M13-018,E-M13-019,E-M13-020,E-M13-021                                                                                                                                                                                                                                                                      |
 | M13.5       | Planned     | M13.4                   | JST-LOCAL-006                                                                                                                                                            | Independent local/native conversion with complete collaboration history                                                        | Implement bounded history/evidence conversion, mappings and source safety                      | -                                                                                                                                                                                                                                                                                                                                                              |
 | M13.6       | Planned     | M13.5                   | JST-LOCAL-001,JST-LOCAL-002,JST-LOCAL-003,JST-LOCAL-004,JST-LOCAL-005,JST-LOCAL-006                                                                                      | Cold end-to-end and retained native regression qualification                                                                   | Qualify completed local flow cold and retain native regressions                                | -                                                                                                                                                                                                                                                                                                                                                              |
 | M14         | In progress | M4.18                   | JST-UI-012,JST-UI-016                                                                                                                                                    | Local settings, profile-aware device links and safe maintenance                                                                | Implement M14.3 agent setup and automatic recovery                                             | E-M14-001,E-M14-002,E-M14-003,E-M14-004,E-M14-005,E-M14-006,E-M14-007,E-M14-010,E-M14-011,E-M14-012                                                                                                                                                                                                                                                            |
@@ -37237,6 +37237,131 @@ and named tests are checked by the progress gate.
       "No change to M13/M15 incomplete milestones; local search, code mutations, full reviews, conversion/sync and unqualified local Thread/reaction UI remain gated.",
       "Default development server on port 7460 remains its existing process; source merge does not restart it."
     ]
+  },
+  {
+    "id": "E-M13-021",
+    "date": "2026-10-01",
+    "tasks": ["M13.4"],
+    "requirements": [
+      "JST-LOCAL-004",
+      "JST-UI-003",
+      "JST-UI-005",
+      "JST-GOV-002",
+      "JST-GOV-003",
+      "JST-GOV-005"
+    ],
+    "kind": "ui-regression",
+    "files": [
+      "web/src/lib/projects/repository-log-message.ts",
+      "catalog/projects/native-presentation.test.ts",
+      "catalog/components/community-projects/CommunityProjectsRevisionGraph.stories.svelte",
+      "spec/src/ui.md",
+      "spec/src/api.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "catalog/projects/native-presentation.test.ts#git_sha1_ids_remain_complete_in_operation_messages",
+      "catalog/projects/native-presentation.test.ts#native_ids_remain_complete_in_messages",
+      "catalog/projects/native-presentation.test.ts#partial_or_embedded_ids_remain_plain_text"
+    ],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit catalog/projects/native-presentation.test.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "Exact before: Git SHA-1 operation message remained one text segment; 4 existing/native/boundary tests passed. .scratch/oplog-git-unit-before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit catalog/projects/native-presentation.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact after: all 5 tests pass; Git/native/change IDs retain full values, and partial/embedded tokens remain plain text. .scratch/oplog-git-unit-after.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-projects/CommunityProjectsRevisionGraph.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "All 4 graph stories pass interaction and blocking accessibility checks, including compact Git message IDs, exact clipboard values, keyboard copying, copy/row separation and normal operation selection. .scratch/oplog-git-stories.log."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "0 errors and warnings. .scratch/oplog-git-web-check.log."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "fail",
+        "failures": 2,
+        "note": "New story used an unsupported getByRole exact option and matcher declaration. Removed the redundant option and asserted one call plus its complete argument using supported matchers; assertions retained. .scratch/oplog-git-catalog-check.log."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "0 errors and warnings; 119 catalog boundary modules pass. .scratch/oplog-git-catalog-check-final.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-projects/CommunityProjectsRevisionGraph.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final fresh-process run: all 4 interaction/accessibility cases pass after story type repairs. .scratch/oplog-git-stories-final.log."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "UI bundle and asset manifest rebuilt; inherited dependency CSS and chunk warnings retained. .scratch/oplog-git-build.log."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/projects/repository-log-message.ts catalog/projects/native-presentation.test.ts catalog/components/community-projects/CommunityProjectsRevisionGraph.stories.svelte spec/src/ui.md spec/src/api.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed formatter, regression, graph story and canonical chapters formatted."
+      },
+      {
+        "command": "JJ_STORE_DEV_PORT=7460 JJ_STORE_DEV_ROOT=/Users/stevejuma/code/lapismd/jj-store/.local/dev-demo JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs node .scratch/local-browser-merge-prebuilt.mjs restart",
+        "result": "pass",
+        "failures": 0,
+        "note": "Owned dev server restarted with rebuilt UI and previously qualified unchanged Rust binaries; existing three repository identities and demo contents retained. No Rust builds for this UI slice. .scratch/oplog-git-ui-restart.log."
+      },
+      {
+        "command": "CUA createBrowserTab(iab, reported local Op Log URL, visible=false); preview.getAXState()",
+        "result": "pass",
+        "failures": 0,
+        "note": "Fresh served app on 7460 displays 87e1cd5d…8fb9 and 20d6c008…ef7c as separately labelled Copy full commit ID controls with the complete 40-character values; reported snapshot and all 5 operation rows retained."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "119 tasks; integration evidence and canonical bookkeeping pass."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "3 protected files and 3 canonical chapters pass the same-change gate."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "4 validators, 21 chapters, 141 requirements pass."
+      },
+      {
+        "command": "pnpm exec prettier --check web/src/lib/projects/repository-log-message.ts catalog/projects/native-presentation.test.ts catalog/components/community-projects/CommunityProjectsRevisionGraph.stories.svelte spec/src/ui.md spec/src/api.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "All changed source, test, story and canonical files pass formatting."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "versions": "Git SHA-1 and native JJ identity presentation; Vitest 4.1.11, Chromium Storybook and live macOS in-app browser.",
+    "formats": "Recognizes complete 40- and 128-character hexadecimal commit IDs and 32-character change IDs. Uses existing inline copy component, clipboard behavior and lower-case ID canonicalization. No API, storage, route, service or public component contract changes. Enclosing Jujutsu change nzsoyuom.",
+    "scope": "UI-only tokenizer regression. Inspected Community parser (already recognizes SHA-1) and existing Design Core copy consumers; defect belongs to jj-store native-width adaptation, so no dependency or component replacement. Exact presentation tests, owning graph story interaction/accessibility family, web/catalog type checks and built/live served UI verification cover the direct consumers. Rust, root aggregates, unrelated browser suites and release qualification are out of scope; stories remain visual-pending.",
+    "next": "Retain compact inline ID regressions. M13.4 indexed search and recoverable code commands remain pending; visual baselines remain separately unapproved."
   }
 ]
 ```

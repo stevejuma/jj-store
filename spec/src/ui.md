@@ -313,8 +313,14 @@ identifiers, 9px chips and a roughly 121px total width at the standard 16px root
 scale. Each half retains 5px inline padding, including at the trailing edge
 during hover and feedback. Graph rows wrap the ID control below metadata before
 bookmark chips can overlap it. Clipboard live announcements remain scoped to the
-split control; operation IDs retain their separately labelled legacy control. JJ
-Log and Op Log rows open their changed files inline, and selecting a changed
+split control; operation IDs retain their separately labelled legacy control.
+
+Operation-message text recognizes complete Git SHA-1 commit IDs (40 hexadecimal
+characters), native commit IDs (128) and change IDs (32), rendering them through
+the existing compact inline copy control. Abbreviation affects only display;
+copy retains the entire identifier, and copying does not select the operation.
+Prefixes, unsupported widths and IDs embedded in larger words remain plain text.
+JJ Log and Op Log rows open their changed files inline, and selecting a changed
 file opens the diff column. Op Log operation details and the selected file diff
 render as equal-width stacked cards in the same Column Canvas column: the
 operation card owns its title, collapse control, metadata and close action,
