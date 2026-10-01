@@ -1,5 +1,5 @@
 use super::{
-    cursors::{Pin, Registry},
+    cursors::{Pin, Registry, WorkCursorQuery},
     *,
 };
 use crate::{
@@ -12,8 +12,8 @@ use std::sync::Arc;
 use tokio::sync::Semaphore;
 
 pub struct WorkPager {
-    registry: Registry,
-    permits: Semaphore,
+    pub(super) registry: Registry<WorkCursorQuery>,
+    pub(super) permits: Semaphore,
 }
 impl WorkPager {
     pub fn new(clock: Arc<dyn Clock>) -> Self {
@@ -34,28 +34,10 @@ impl WorkPager {
     async fn page_inner(&self, session: Arc<NativeSession>, query: WorkQuery) -> Result<WorkPage> {
         session.principal(Permission::Read).await?;
         let (pin, offset) = if query.cursor.is_some() {
-            self.registry.lookup(session.repository, &query)?
+            self.registry
+                .lookup(session.repository, &WorkCursorQuery::Page(query.clone()))?
         } else {
-            let current = session.snapshot().await?;
-            let manifest = current.manifest();
-            let state = match manifest.work_root {
-                Some(root) => session.coordinator.work_store(root).await?.state().clone(),
-                None => WorkStateV1::default(),
-            };
-            (
-                Arc::new(Pin {
-                    snapshot: WorkReadSnapshot {
-                        repo_id: session.repository,
-                        epoch: manifest.epoch,
-                        published_seq: manifest.published,
-                        manifest_revision: manifest.revision,
-                        work_root: manifest.work_root.map(|r| r.digest),
-                        work_state_version: manifest.work_state_version,
-                    },
-                    state,
-                }),
-                0,
-            )
+            (capture_pin(&session).await?, 0)
         };
         authorize_pin(&session, &pin).await?;
         let state = &pin.state;
@@ -110,14 +92,14 @@ impl WorkPager {
         if more {
             page.next_cursor = Some(self.registry.retain(
                 pin,
-                query,
+                WorkCursorQuery::Page(query),
                 offset.checked_add(count).ok_or(Error::Limit)?,
             )?);
         }
         Ok(page)
     }
 }
-async fn authorize_pin(session: &NativeSession, pin: &Pin) -> Result<()> {
+pub(super) async fn authorize_pin(session: &NativeSession, pin: &Pin) -> Result<()> {
     session.principal(Permission::Read).await?;
     if session.snapshot().await?.manifest().epoch != pin.snapshot.epoch {
         return Err(Error::CursorReset);
@@ -131,7 +113,7 @@ fn overhead(projects: &[ProjectV1], tasks: &[TaskV1]) -> Result<usize> {
         .len()
         + 1024)
 }
-fn take_page<'a, T: Serialize + Clone + 'a>(
+pub(super) fn take_page<'a, T: Serialize + Clone + 'a>(
     values: impl Iterator<Item = &'a T>,
     offset: usize,
     limit: usize,
@@ -151,4 +133,25 @@ fn take_page<'a, T: Serialize + Clone + 'a>(
         count += 1;
     }
     Ok((count, false))
+}
+
+pub(super) async fn capture_pin(session: &NativeSession) -> Result<Arc<Pin>> {
+    session.principal(Permission::Read).await?;
+    let current = session.snapshot().await?;
+    let manifest = current.manifest();
+    let state = match manifest.work_root {
+        Some(root) => session.coordinator.work_store(root).await?.state().clone(),
+        None => WorkStateV1::default(),
+    };
+    Ok(Arc::new(Pin {
+        snapshot: WorkReadSnapshot {
+            repo_id: session.repository,
+            epoch: manifest.epoch,
+            published_seq: manifest.published,
+            manifest_revision: manifest.revision,
+            work_root: manifest.work_root.map(|r| r.digest),
+            work_state_version: manifest.work_state_version,
+        },
+        state,
+    }))
 }

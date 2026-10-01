@@ -125,8 +125,17 @@ export function createStoreRouteHistory(
               repository,
               snapshotOperationId: operation,
             };
-      if (route.repository && route.repository !== repository)
-        push({ ...next, page: "files" });
+      if (
+        route.page === "projects" ||
+        (route.repository && route.repository !== repository)
+      )
+        push({
+          ...next,
+          page: "files",
+          projectsHub: false,
+          projectId: null,
+          taskId: null,
+        });
       else {
         entries[index] = next;
         sync(next, "replace");
@@ -163,6 +172,7 @@ export function createStoreRouteHistory(
       push({
         ...route,
         page,
+        projectsHub: false,
         bookmark: "",
         inspectedOperationId: null,
         commitId: null,

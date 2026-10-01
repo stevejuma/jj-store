@@ -155,6 +155,9 @@ async fn review_threads_are_root_pinned_and_details_resolve_selected_objects() {
     assert_eq!(page.threads.len(), 1);
     assert_eq!(page.threads[0].anchor.repository_id, REPOSITORY);
     assert_eq!(page.threads[0].anchor.target, ArtifactTargetV1::Repository);
+    let wire = serde_json::to_value(&page.threads[0]).unwrap();
+    assert_eq!(wire["presentation"]["created_by"], PRINCIPAL.to_string());
+    assert!(wire["presentation"]["excerpt"].as_str().is_some());
     let cursor = page.next_cursor.clone().unwrap();
     let initial_snapshot = page.snapshot.clone();
 
@@ -248,6 +251,104 @@ async fn review_thread_detail_limits_combined_visible_body_bytes() {
             .await
             .unwrap_err(),
         Error::Limit
+    );
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn review_summary_excerpt_tracks_selected_comment_and_keeps_resumed_roots() {
+    let mut fixture = Fixture::new().await;
+    let first = fixture.create("Original root").await;
+    let second = fixture.create("Other root").await;
+    let pager =
+        ReviewThreadPager::new(pagination::Limits::default(), Arc::new(SystemClock)).unwrap();
+    let before = pager.begin(fixture.session.clone(), 1).await.unwrap();
+    let target = if before.threads[0].thread_id == first.thread_id {
+        &second
+    } else {
+        &first
+    };
+    let edited = fixture
+        .publish(ReviewCommandV1::EditComment {
+            comment_id: target.comment_id.unwrap(),
+            expected_revision_id: jj_review::CommentRevisionId::new(
+                *target.comment_revision.unwrap().id.as_bytes(),
+            ),
+            replacement_body: body(&"😀".repeat(300)),
+        })
+        .await;
+    let resumed = pager
+        .resume(
+            fixture.session.clone(),
+            before.next_cursor.as_ref().unwrap(),
+            1,
+        )
+        .await
+        .unwrap();
+    assert_eq!(resumed.snapshot, before.snapshot);
+    assert!(
+        !resumed.threads[0]
+            .presentation
+            .as_ref()
+            .unwrap()
+            .excerpt
+            .as_ref()
+            .unwrap()
+            .starts_with('😀')
+    );
+    let fresh = pager.begin(fixture.session.clone(), 256).await.unwrap();
+    let selected = fresh
+        .threads
+        .iter()
+        .find(|thread| thread.thread_id == target.thread_id)
+        .unwrap()
+        .presentation
+        .as_ref()
+        .unwrap();
+    assert_eq!(selected.created_by, PRINCIPAL);
+    assert_eq!(selected.excerpt.as_ref().unwrap().chars().count(), 240);
+    assert!(selected.updated_at_millis >= selected.created_at_millis);
+    fixture
+        .publish(ReviewCommandV1::TombstoneComment {
+            comment_id: target.comment_id.unwrap(),
+            expected_revision_id: jj_review::CommentRevisionId::new(
+                *edited.comment_revision.unwrap().id.as_bytes(),
+            ),
+            reason: None,
+        })
+        .await;
+    let fresh = pager.begin(fixture.session.clone(), 256).await.unwrap();
+    assert!(
+        fresh
+            .threads
+            .iter()
+            .find(|thread| thread.thread_id == target.thread_id)
+            .unwrap()
+            .presentation
+            .as_ref()
+            .unwrap()
+            .excerpt
+            .is_none()
+    );
+    let hidden = if target.thread_id == first.thread_id {
+        &second
+    } else {
+        &first
+    };
+    fixture
+        .publish(ReviewCommandV1::HideComment {
+            comment_id: hidden.comment_id.unwrap(),
+            expected_revision_id: jj_review::CommentRevisionId::new(
+                *hidden.comment_revision.unwrap().id.as_bytes(),
+            ),
+            moderation_reason: "Fixture moderation".into(),
+        })
+        .await;
+    let fresh = pager.begin(fixture.session.clone(), 256).await.unwrap();
+    assert!(
+        fresh
+            .threads
+            .iter()
+            .all(|thread| thread.presentation.as_ref().unwrap().excerpt.is_none())
     );
 }
 

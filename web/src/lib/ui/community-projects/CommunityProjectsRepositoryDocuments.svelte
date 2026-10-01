@@ -97,12 +97,17 @@
 
   async function fitTabs() {
     if (measuring || !documentHeader || !documentTabList) return;
+    const header = documentHeader;
+    const tabs = documentTabList;
     measuring = true;
     visibleDocumentCount = landingDocuments.length;
     await tick();
     while (
+      documentHeader === header &&
+      documentTabList === tabs &&
+      tabs.isConnected &&
       visibleDocumentCount > 1 &&
-      documentTabList.scrollWidth > documentTabList.clientWidth + 1
+      tabs.scrollWidth > tabs.clientWidth + 1
     ) {
       visibleDocumentCount -= 1;
       await tick();

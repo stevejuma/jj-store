@@ -19,16 +19,16 @@ attachment section 10 is implemented under /v1/repos/{repo}.
 
 ## Requirements
 
-| ID          | Requirement                                                                                                                                                                                                                                               |
-| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| JST-API-001 | Read APIs MUST expose versioned DTOs for capabilities, snapshots, native objects, commit/operation/evolution graphs, trees, files, diffs, and conflicts without parsing CLI output.                                                                       |
-| JST-API-002 | Pagination MUST bind an explicit operation, query, repository, and epoch; ambiguous heads and workspace-dependent expressions MUST require explicit resolution.                                                                                           |
-| JST-API-003 | SSE MUST resume from committed positions and detect writes from other serving processes; slow consumers MUST NOT block repository publication.                                                                                                            |
-| JST-API-004 | Queries MUST enforce authorization and resource budgets, safely render untrusted source content, and expose incomplete history or rebuild tasks explicitly.                                                                                               |
-| JST-API-005 | The Svelte UI MUST show repository selection, snapshot state, three graph views, object/diff inspection, context-aware right-rail metadata/actions, Community-composer mutation prose, conflict editing, mutation previews/results, and search freshness. |
-| JST-API-006 | HTTP routes and owned DTOs MUST generate OpenAPI and TypeScript contracts; normal and specification checks MUST reject drift and validate representative actual responses.                                                                                |
-| JST-API-007 | Versioned bootstrap MUST expose LocalTrusted access mode, public capabilities, embedded-storage readiness and installation-owned repository discovery without exposing internal credentials or treating discovery metadata as repository authority.       |
-| JST-API-008 | `GET /v1/repositories` MUST provide bounded cursor-paged installation discovery: all registered repositories in LocalTrusted mode and only currently reauthorized token candidates in authenticated mode; bootstrap MUST NOT embed repository entries.    |
+| ID          | Requirement                                                                                                                                                                                                                                                                                                                                                             |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| JST-API-001 | Read APIs MUST expose versioned DTOs for capabilities, snapshots, native objects, commit/operation/evolution graphs, trees, files, diffs, and conflicts without parsing CLI output.                                                                                                                                                                                     |
+| JST-API-002 | Pagination MUST bind an explicit operation, query, repository, and epoch; ambiguous heads and workspace-dependent expressions MUST require explicit resolution.                                                                                                                                                                                                         |
+| JST-API-003 | SSE MUST resume from committed positions and detect writes from other serving processes; slow consumers MUST NOT block repository publication.                                                                                                                                                                                                                          |
+| JST-API-004 | Queries MUST enforce authorization and resource budgets, safely render untrusted source content, and expose incomplete history or rebuild tasks explicitly.                                                                                                                                                                                                             |
+| JST-API-005 | The Svelte UI MUST show repository selection, snapshot state, three graph views, object/diff inspection, context-aware right-rail metadata/actions, Community-composer mutation prose, conflict editing, mutation previews/results, and search freshness.                                                                                                               |
+| JST-API-006 | HTTP routes and owned DTOs MUST generate OpenAPI and TypeScript contracts; normal and specification checks MUST reject drift and validate representative actual responses.                                                                                                                                                                                              |
+| JST-API-007 | Versioned bootstrap MUST expose LocalTrusted access mode, public capabilities, embedded-storage readiness and installation-owned repository discovery without exposing internal credentials or treating discovery metadata as repository authority.                                                                                                                     |
+| JST-API-008 | `GET /v1/repositories` MUST provide bounded cursor-paged installation discovery: all registered repositories in LocalTrusted mode and only currently reauthorized token candidates in authenticated mode; each entry MUST expose its current authenticated principal and effective permission without credential material; bootstrap MUST NOT embed repository entries. |
 
 ## Bootstrap and browser admission
 
@@ -50,6 +50,13 @@ Bearer header and binds the installation HTTP principal. Authenticated discovery
 and repository requests require the same manual bearer credential; browser
 credentials remain memory-only. OpenAPI declares deployment-dependent access
 rather than promising an unauthenticated public listener.
+
+Review thread summaries include optional root-pinned presentation with creation
+actor/time, last accepted event time and a nullable current-comment excerpt.
+Repository directory presentation composes existing snapshot, log, WorkStore
+browse and ReviewStore page contracts with separate authorization and bounded
+pages; it never adds persisted discovery ownership or reconciles operation
+heads.
 
 The transient Settings presentation composes only existing bootstrap, repository
 discovery, capabilities, snapshot, search-status and index-task contracts. The
@@ -916,3 +923,13 @@ and an external merge imported by the custom CLI. SSE announces new history; the
 displayed graph and operation route remain pinned until explicit refresh. The
 refreshed graph exposes the imported merge without synthetic agent history. The
 same cold fixture verifies the native search adapter catches up to that import.
+
+## WorkStore browse summaries
+
+`GET /v1/repos/{repo}/work/browse` exposes typed project/task summary pages.
+Optional project, repository, parent, state and title/body substring filters are
+applied over the complete selected root before paging. Query text is bounded to
+512 UTF-8 bytes; limits remain 1-256 records and four MiB per response. Exact
+query, home, epoch and root binding, reauthorization, five-minute expiry and
+resource admission match existing WorkStore reads. Existing detail and mutation
+contracts retain their meaning.

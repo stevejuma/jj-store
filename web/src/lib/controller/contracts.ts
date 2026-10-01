@@ -60,6 +60,12 @@ export interface StoreSearchState {
   readonly truncated: boolean;
 }
 export interface StoreRoute {
+  projectsHub?: boolean;
+  workTab?: import("./projects-hub-types.js").ProjectsTab;
+  workQuery?: string;
+  workState?: "active" | "all" | "open" | "in_progress" | "blocked" | "done";
+  workRepository?: string;
+  workHome?: string;
   page: StorePage;
   repository: string;
   bookmark: string;
@@ -119,6 +125,7 @@ export interface StoreRepositorySummary {
   readonly id: string;
   readonly name: string;
   readonly permission: Model<"EffectivePermission"> | null;
+  readonly principal?: string;
 }
 export interface StoreSettingsState {
   readonly capabilities: Model<"Capabilities"> | null;
@@ -131,6 +138,7 @@ export interface StoreSettingsState {
   readonly indexOperation: string | null;
 }
 export interface StoreControllerState {
+  readonly installationReady?: boolean;
   readonly accessMode: "bootstrapping" | "authenticated" | "local_trusted";
   readonly storageReady: boolean;
   readonly backups: readonly Model<"BackupStatus">[];
@@ -185,6 +193,7 @@ export interface StoreControllerState {
 }
 /** Community's state/actions contract shape, scoped to local JJ presentation. */
 export interface StoreController {
+  readonly projects?: import("./projects-hub-types.js").ProjectsHubController;
   readonly work?: import("./work-types.js").WorkController;
   readonly state: StoreControllerState;
   readonly actions: {
@@ -222,6 +231,7 @@ export interface StoreController {
     ): Promise<StoreConflictUpload>;
     setFileViewMode(mode: FileListingViewMode): void | Promise<void>;
     toggleDirectory(path: string): void | Promise<void>;
+    openReview?(repository: string, thread: string): Promise<void>;
     openRepository(id: string): void | Promise<void>;
     selectPage(page: StorePage): void | Promise<void>;
     navigate(delta: -1 | 1): void | Promise<void>;

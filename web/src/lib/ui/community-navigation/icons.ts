@@ -10,6 +10,8 @@ import type { CommunityNavigationItemModel } from "./model.js";
 export function navigationItemIcon(
   item: CommunityNavigationItemModel,
 ): Component {
+  if (item.kind === "projects" || item.kind === "project")
+    return FolderGit2Icon;
   if (item.kind === "branches") return GitBranchIcon;
   if (item.kind === "log") return GitCommitIcon;
   if (item.kind === "oplog") return HistoryIcon;
@@ -18,4 +20,5 @@ export function navigationItemIcon(
   return FolderGit2Icon;
 }
 
-export const navigationSectionIcon = (): Component => FolderGit2Icon;
+export const navigationSectionIcon = (_section?: string): Component =>
+  FolderGit2Icon;

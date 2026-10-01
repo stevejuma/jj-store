@@ -35,6 +35,16 @@ pub struct ReviewThreadSummary {
     pub comment_count: usize,
     pub comment_conflict_count: usize,
     pub last_event_sequence: u64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub presentation: Option<ReviewSummaryPresentation>,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+pub struct ReviewSummaryPresentation {
+    pub created_by: m::PrincipalId,
+    pub created_at_millis: i64,
+    pub updated_at_millis: i64,
+    pub excerpt: Option<String>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
@@ -173,6 +183,7 @@ pub(super) fn summary(
         comment_count: value.comments.len(),
         comment_conflict_count: 0,
         last_event_sequence: value.last_event_sequence,
+        presentation: None,
     }
 }
 
@@ -197,6 +208,7 @@ pub(super) fn merged_summary(
         comment_count: value.comments.len(),
         comment_conflict_count,
         last_event_sequence: value.thread_version,
+        presentation: None,
     }
 }
 

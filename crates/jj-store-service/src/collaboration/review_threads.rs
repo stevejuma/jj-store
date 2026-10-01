@@ -29,7 +29,7 @@ impl ReviewThreadPager {
         let pin = self.pin(&session).await?;
         let snapshot = pin.snapshot.clone();
         let page = pin.store.list_threads(None, limit).await.map_err(map_wal)?;
-        let threads = resolve_threads(&pin.store, pin.snapshot.repo_id, page.selections).await?;
+        let threads = resolve_threads(&pin, page.selections).await?;
         authorize_epoch(&session, snapshot.epoch).await?;
         let next_cursor = page
             .next_after
@@ -72,7 +72,7 @@ impl ReviewThreadPager {
             .list_threads(Some(claims.after), limit)
             .await
             .map_err(map_wal)?;
-        let threads = resolve_threads(&pin.store, pin.snapshot.repo_id, page.selections).await?;
+        let threads = resolve_threads(&pin, page.selections).await?;
         authorize_epoch(&session, pin.snapshot.epoch).await?;
         let next_cursor = self.cursors.next(&claims, page.next_after)?;
         Ok(ReviewThreadPage {
@@ -115,12 +115,17 @@ impl ReviewThreadPager {
                         return Err(Error::Corrupt);
                     }
                     let anchor = load_anchor(&pin, value.original_anchor).await?;
-                    let thread = review_models::summary(reference, &value, anchor.value.clone());
+                    let mut thread =
+                        review_models::summary(reference, &value, anchor.value.clone());
                     let comments = load_comments(&pin, thread_id, &value.comments).await?;
                     let events = load_events(&pin, thread_id, value.event_page_root).await?;
                     if events.len() as u64 != value.last_event_sequence {
                         return Err(Error::Corrupt);
                     }
+                    thread.presentation = Some(
+                        super::review_presentation::load(&pin, &thread, &value.comments, &events)
+                            .await?,
+                    );
                     (thread, anchor, comments, Vec::new(), events, 1)
                 }
                 ReviewObjectV1::ThreadMerge(value) => {
@@ -130,7 +135,7 @@ impl ReviewThreadPager {
                     let anchor = load_anchor(&pin, value.original_anchor).await?;
                     let (comments, conflicts) =
                         load_merged_comments(&pin, thread_id, &value.comments).await?;
-                    let thread = review_models::merged_summary(
+                    let mut thread = review_models::merged_summary(
                         reference,
                         &value,
                         anchor.value.clone(),
@@ -140,6 +145,10 @@ impl ReviewThreadPager {
                     if events.len() as u64 != value.thread_version {
                         return Err(Error::Corrupt);
                     }
+                    thread.presentation = Some(
+                        super::review_presentation::load(&pin, &thread, &value.comments, &events)
+                            .await?,
+                    );
                     (thread, anchor, comments, conflicts, events, 2)
                 }
                 _ => return Err(Error::Corrupt),
@@ -184,28 +193,46 @@ impl ReviewThreadPager {
 }
 
 async fn resolve_threads(
-    store: &wal::publication::ReviewStoreSnapshot,
-    repository: m::RepositoryId,
+    pin: &ReviewPin,
     selections: Vec<(ReviewCatalogKey, ReviewObjectRef)>,
 ) -> Result<Vec<ReviewThreadSummary>> {
     let mut rows = Vec::with_capacity(selections.len());
     for (key, reference) in selections {
-        match store.read_object(reference).await.map_err(map_wal)? {
+        match pin.store.read_object(reference).await.map_err(map_wal)? {
             ReviewObjectV1::ThreadSnapshot(value) => {
                 verify_thread_key(key, value.thread_id)?;
-                let anchor = load_store_anchor(store, value.original_anchor, repository).await?;
-                rows.push(review_models::summary(reference, &value, anchor));
+                let anchor =
+                    load_store_anchor(&pin.store, value.original_anchor, pin.snapshot.repo_id)
+                        .await?;
+                let mut thread = review_models::summary(reference, &value, anchor);
+                let events = load_events(pin, value.thread_id, value.event_page_root).await?;
+                if events.len() as u64 != value.last_event_sequence {
+                    return Err(Error::Corrupt);
+                }
+                thread.presentation = Some(
+                    super::review_presentation::load(pin, &thread, &value.comments, &events)
+                        .await?,
+                );
+                rows.push(thread);
             }
             ReviewObjectV1::ThreadMerge(value) => {
                 verify_thread_key(key, value.thread_id)?;
-                let anchor = load_store_anchor(store, value.original_anchor, repository).await?;
-                let conflict_count = count_comment_conflicts(store, &value.comments).await?;
-                rows.push(review_models::merged_summary(
-                    reference,
-                    &value,
-                    anchor,
-                    conflict_count,
-                ));
+                let anchor =
+                    load_store_anchor(&pin.store, value.original_anchor, pin.snapshot.repo_id)
+                        .await?;
+                let conflict_count = count_comment_conflicts(&pin.store, &value.comments).await?;
+                let mut thread =
+                    review_models::merged_summary(reference, &value, anchor, conflict_count);
+                let events =
+                    load_graph_events(pin, value.thread_id, value.event_graph_root).await?;
+                if events.len() as u64 != value.thread_version {
+                    return Err(Error::Corrupt);
+                }
+                thread.presentation = Some(
+                    super::review_presentation::load(pin, &thread, &value.comments, &events)
+                        .await?,
+                );
+                rows.push(thread);
             }
             _ => return Err(Error::Corrupt),
         }

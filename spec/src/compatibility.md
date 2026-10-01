@@ -449,3 +449,9 @@ fresh server and storage restart. The measured restart must open all persisted
 sample data and its existing projection within the unchanged resource gates.
 Initial preparation is reported separately; this browser gate does not claim
 search cache-loss rebuild performance.
+
+Projects hub browse summaries are additive HTTP contract V1 responses. They do
+not change manifest, WAL, native WorkStore objects or CLI/RPC command formats.
+Collection and browse continuations share the same resource budget and cannot be
+exchanged across query kinds. Browser production builds use Community's public
+Vite integration and ES module workers for its existing WASM runtime.

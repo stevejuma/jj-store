@@ -445,3 +445,17 @@ gated; WorkStore replication remains frozen. Reducer negotiation is versioned
 independently of legacy origin serialization; protected transfer and receiver
 changes include publication, replication, JJ integration, CLI and mutation
 contracts with focused regression evidence in the same change.
+
+The Projects hub browse capture extends the existing registered WorkStore HTTP
+contract fixture. Projects UI evidence includes focused controller/history,
+production story interaction/accessibility and cold native-browser lanes.
+Production bundling composes Community's public `build/vite` helper in the main
+and ES module worker pipelines. This consumer configuration is qualified by the
+production build and all existing real native-browser scenarios; no dependency
+source or generated package installation is patched.
+
+The browser asset-manifest generator traverses the compiler's application entry,
+static imports, dynamic imports, styles and assets, rejecting missing or unsafe
+references. It excludes unrelated emitted worker entries. Its regression retains
+lazy preview chunks and fonts and fails closed on invalid references; cold
+native-browser acceptance verifies the server's unchanged asset limits.

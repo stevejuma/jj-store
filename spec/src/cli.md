@@ -618,3 +618,9 @@ RustFS, actual Git refs and a freshly built served browser. It retains a native
 review anchor and AgentStore receipt through cache deletion, server restart, Git
 publication and external merge import. Git hosting outages leave ordinary local
 new/describe usable; no Git checkout or background mirror is installed.
+
+The Projects hub is browser presentation over the existing local-service
+WorkStore model. The registered HTTP capture housed in the CLI lifecycle suite
+also verifies browse summaries and generated response contracts. Native task
+creation still requires the local service and does not require an upstream.
+Server-free storage remains deferred.

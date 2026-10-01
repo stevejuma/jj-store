@@ -6,6 +6,13 @@
     createLocalStorageAppShellLayoutPersistence,
     type AppShellDisplayMode,
   } from "@lapismd/design-core/shell";
+  import {
+    projectsSidebarModel,
+    projectSidebarId,
+  } from "../store-work/projects-sidebar-model.js";
+  import { selectStoreNavigation } from "./store-navigation.js";
+  import StoreProjectsBreadcrumb from "../store-work/StoreProjectsBreadcrumb.svelte";
+  import StoreProjectsRail from "../store-work/StoreProjectsRail.svelte";
   import StoreRepositoryTabs from "./StoreRepositoryTabs.svelte";
   import StoreRepositoryNavigation from "./StoreRepositoryNavigation.svelte";
   import { repositorySections } from "./repository-sections.js";
@@ -21,7 +28,6 @@
   import type {
     StorePage,
     CommunityNavigationItemModel,
-    CommunityNavigationModel,
   } from "../community-navigation/model.js";
   import type { StoreController } from "../../controller/contracts.js";
   import CommunityProfileMenu from "../community-profile-menu/CommunityProfileMenu.svelte";
@@ -106,20 +112,20 @@
       shell.left.collapsed &&
       !shell.left.previewed,
   );
-  const navigation: CommunityNavigationModel = $derived({
-    primaryItems: [],
-    sections: [
-      {
-        id: "repositories",
-        label: "Repositories",
-        items: controller.state.repositories.map((repository) => ({
-          id: repository.id,
-          label: repository.name,
-          kind: "repository" as const,
-        })),
-      },
-    ],
-  });
+  const navigation = $derived(
+    projectsSidebarModel(
+      controller.projects?.navigation.homes ?? [],
+      controller.state.repositories,
+      !!controller.projects,
+    ),
+  );
+  const activeNavigationItem = $derived(
+    current.page === "projects"
+      ? current.projectId
+        ? projectSidebarId(current.repository, current.projectId)
+        : "projects"
+      : current.repository,
+  );
   const title = $derived(
     repositorySections.find((section) => section.page === current.page)
       ?.label ?? "Repository",
@@ -131,8 +137,7 @@
   }
   function select(item: CommunityNavigationItemModel) {
     if (conflictOpen) return;
-    if (item.kind === "repository") controller.actions.openRepository(item.id);
-    else controller.actions.selectPage(item.kind);
+    selectStoreNavigation(controller, item);
     if (shell.mobile.resolvedMode === "mobile") shell.mobile.showMain();
   }
   function navigate(delta: -1 | 1) {
@@ -164,6 +169,9 @@
   onNavigateBack={() => navigate(-1)}
   onNavigateForward={() => navigate(1)}
 >
+  {#snippet headerCenter()}{#if !settingsOpen && current.page === "projects" && controller.projects}<StoreProjectsBreadcrumb
+        {controller}
+      />{/if}{/snippet}
   {#snippet headerEnd()}{#if !settingsOpen}<StoreApplicationHeaderActions
         {controller}
         disabled={conflictOpen}
@@ -188,7 +196,7 @@
         onClose={closeSettings}
       />{:else}<CommunityNavigation
         model={navigation}
-        activeItemId={current.repository}
+        activeItemId={activeNavigationItem}
         {compact}
         onSelect={select}
         onSearch={() => (searchOpen = true)}
@@ -216,13 +224,13 @@
     {:else}
       {#if shell.mobile.resolvedMode === "mobile"}
         <AppShell.Toolbar>
-          {#if shell.mobile.resolvedMode === "mobile"}<CommunityApplicationMobileNavigation
-              model={{ canNavigateBack, canNavigateForward, navigate }}
+          <CommunityApplicationMobileNavigation
+            model={{ canNavigateBack, canNavigateForward, navigate }}
+          />
+          {#if current.page === "projects" && controller.projects}<StoreProjectsBreadcrumb
+              {controller}
             />{/if}
-          {#if shell.mobile.resolvedMode === "mobile"}<AppShell.Sidebar.Toggle
-              side="right"
-              sidebarName="details"
-            />{/if}
+          <AppShell.Sidebar.Toggle side="right" sidebarName="details" />
         </AppShell.Toolbar>
       {/if}
       <AppShell.Body
@@ -235,31 +243,37 @@
           : undefined}
       >
         <div class="store-application__body-frame">
-          <StoreRepositoryTabs page={current.page} onSelect={selectPage} />
-          <header
-            class="store-application__section-header"
-            aria-label="Workspace section header"
-          >
-            <div>
-              <PanelsTopLeftIcon aria-hidden="true" />
-              <h1 class="store-application__title">Workspace</h1>
-            </div>
-            <div class="store-application__section-controls">
-              {#if controller.state.comparisonParents.length}
-                <StoreComparisonParentPicker
-                  parents={controller.state.comparisonParents}
-                  revisions={controller.state.graph.revisions}
-                  devices={controller.state.graph.devices}
-                  now={controller.state.now}
+          {#if !(current.page === "projects" && controller.projects)}<StoreRepositoryTabs
+              page={current.page}
+              onSelect={selectPage}
+            />
+            <header
+              class="store-application__section-header"
+              aria-label="Workspace section header"
+            >
+              <div>
+                <PanelsTopLeftIcon aria-hidden="true" />
+                <h1 class="store-application__title">Workspace</h1>
+              </div>
+              <div class="store-application__section-controls">
+                {#if controller.state.comparisonParents.length}
+                  <StoreComparisonParentPicker
+                    parents={controller.state.comparisonParents}
+                    revisions={controller.state.graph.revisions}
+                    devices={controller.state.graph.devices}
+                    now={controller.state.now}
+                    disabled={workspaceBlocked}
+                    onSelect={(id) =>
+                      void controller.actions.selectComparisonParent(id)}
+                  />
+                {/if}
+                <StoreWorkspacePicker
+                  {controller}
                   disabled={workspaceBlocked}
-                  onSelect={(id) =>
-                    void controller.actions.selectComparisonParent(id)}
                 />
-              {/if}
-              <StoreWorkspacePicker {controller} disabled={workspaceBlocked} />
-            </div>
-          </header>
-          <StoreRepositoryNotices {controller} />
+              </div>
+            </header>
+            <StoreRepositoryNotices {controller} />{/if}
           <div class="store-application__body-regions">
             {#key current.repository + current.page}
               {#if children}{@render children(
@@ -283,9 +297,14 @@
       closeable
     >
       <AppShell.Sidebar.Body>
-        <StoreRepositoryDetails {controller} />
-        <StoreRepositoryNavigation page={current.page} onSelect={selectPage} />
-        <StoreRepositoryContextActions {controller} />
+        {#if current.page === "projects" && controller.projects}<StoreProjectsRail
+            {controller}
+          />{:else}<StoreRepositoryDetails {controller} />
+          <StoreRepositoryNavigation
+            page={current.page}
+            onSelect={selectPage}
+          />
+          <StoreRepositoryContextActions {controller} />{/if}
       </AppShell.Sidebar.Body>
     </AppShell.Sidebar>{/if}
   <StoreConflictEditor

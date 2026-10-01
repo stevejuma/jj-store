@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { untrack } from "svelte";
   import StoreWork from "../../web/src/lib/ui/store-work/StoreWork.svelte";
   import {
     emptyWorkState,
@@ -8,7 +9,16 @@
   let {
     writable = true,
     unknown = false,
-  }: { writable?: boolean; unknown?: boolean } = $props();
+    initialTab = "tasks",
+    selectTask = true,
+    threadFragments = false,
+  }: {
+    writable?: boolean;
+    unknown?: boolean;
+    initialTab?: string;
+    selectTask?: boolean;
+    threadFragments?: boolean;
+  } = $props();
   const view = $state(emptyWorkState());
   const actor = {
     created_by: "01".repeat(16),
@@ -49,7 +59,7 @@
   view.projects = [project];
   view.project = project;
   view.tasks = [parent, child];
-  view.task = child;
+  view.task = untrack(() => selectTask) ? child : null;
   view.comments = [
     {
       schema_version: 1,
@@ -70,6 +80,28 @@
       actor,
     },
   ];
+  if (untrack(() => threadFragments))
+    view.comments.push(
+      {
+        ...view.comments[0]!,
+        id: "33".repeat(16),
+        reply_to: "32".repeat(16),
+        body: null,
+        version: 2,
+      },
+      {
+        ...view.comments[0]!,
+        id: "34".repeat(16),
+        reply_to: "33".repeat(16),
+        body: "Reply survives removal",
+      },
+      {
+        ...view.comments[0]!,
+        id: "35".repeat(16),
+        reply_to: "39".repeat(16),
+        body: "Reply from another page",
+      },
+    );
   let pending: WorkRequest | null = null;
   const work: WorkController = {
     state: view,
@@ -101,6 +133,8 @@
 <StoreWork
   {work}
   {writable}
+  {initialTab}
+  principal={"01".repeat(16)}
   repositories={[
     { id: "41".repeat(16), name: "Parser repository", permission: "write" },
   ]}

@@ -97,15 +97,59 @@ export function createProductionStoreActions(options: {
     uploadConflict: options.conflicts.upload,
     setFileViewMode: options.reader.setFileViewMode,
     toggleDirectory: options.reader.toggleDirectory,
+    async openReview(repository, thread) {
+      if (!options.data.repositories.some((repo) => repo.id === repository))
+        return;
+      const switched = repository !== options.activeRepository();
+      if (switched) {
+        await options.connectRepository(repository, null);
+        if (
+          options.history.route.repository !== repository ||
+          options.history.route.page === "projects"
+        )
+          return;
+      }
+      const next = {
+        ...options.history.route,
+        repository,
+        snapshotOperationId:
+          (options.history.route.repository === repository
+            ? options.history.route.snapshotOperationId
+            : null) ??
+          (options.data.heads.length === 1 ? options.data.heads[0]! : null),
+        page: "reviews" as const,
+        reviewThreadId: thread,
+        projectsHub: false,
+        projectId: null,
+        taskId: null,
+      };
+      switched ? options.history.replace(next) : options.history.push(next);
+      await options.restoreRoute();
+    },
     async openRepository(id) {
       if (id !== options.activeRepository()) {
         if (
           options.data.repositories.some((repository) => repository.id === id)
-        )
+        ) {
           await options.connectRepository(id, null);
+          if (
+            options.history.route.repository !== id ||
+            options.history.route.page === "projects"
+          )
+            return;
+          if (options.history.route.page !== "files") {
+            options.history.page("files");
+            await options.restoreRoute();
+          }
+        }
         return;
       }
-      options.history.page("files");
+      if (options.history.route.page === "projects") {
+        options.history.connect(
+          id,
+          options.data.heads.length === 1 ? options.data.heads[0]! : null,
+        );
+      } else options.history.page("files");
       await options.restoreRoute();
     },
     async selectPage(page) {

@@ -133,6 +133,19 @@ async fn http_workstore_pages_commands_permissions_and_contract_capture() {
     let (_, project_page) = json(&router, &format!("work?project={project}"), None).await;
     let (_, task_page) = json(&router, &format!("work?task={task}"), None).await;
     assert_eq!(task_page["comments"][0]["body"], "Comment body");
+    let (status, browse_projects) =
+        json(&router, "work/browse?kind=projects&q=release", None).await;
+    assert_eq!(status, StatusCode::OK, "{browse_projects}");
+    assert_eq!(browse_projects["total_matches"], 1);
+    assert_eq!(browse_projects["projects"][0]["task_counts"]["total"], 1);
+    let (status, browse_tasks) =
+        json(&router, "work/browse?kind=tasks&state=active&q=body", None).await;
+    assert_eq!(status, StatusCode::OK);
+    assert_eq!(browse_tasks["tasks"][0]["comment_count"], 1);
+    assert_eq!(
+        json(&router, "work/browse?limit=0", None).await.0,
+        StatusCode::BAD_REQUEST
+    );
     let fresh = api(&fixture, cache.path(), Permission::Admin);
     let (_, durable) = json(
         &fresh,
@@ -168,6 +181,8 @@ async fn http_workstore_pages_commands_permissions_and_contract_capture() {
     assert_eq!(fixture.session.snapshot().await.unwrap().digest(), before);
     if let Some(path) = std::env::var_os("JJ_STORE_WORK_CONTRACT_CAPTURE") {
         let samples = [
+            ("/v1/repos/{repo}/work/browse", "get", browse_projects),
+            ("/v1/repos/{repo}/work/browse", "get", browse_tasks),
             ("/v1/repos/{repo}/work", "get", first_page),
             ("/v1/repos/{repo}/work", "get", second_page),
             ("/v1/repos/{repo}/work", "get", project_page),

@@ -59,10 +59,17 @@ pub(crate) async fn list(
     let mut scanned = None;
     for entry in snapshot.repositories.iter().skip(start) {
         scanned = Some(entry.id);
-        let permission = match (&state.config.access, &token) {
-            (Access::LocalTrusted { permission, .. }, None) => {
-                EffectivePermission::try_from(*permission).map_err(|_| Error::denied())?
-            }
+        let (permission, principal) = match (&state.config.access, &token) {
+            (
+                Access::LocalTrusted {
+                    permission,
+                    principal,
+                },
+                None,
+            ) => (
+                EffectivePermission::try_from(*permission).map_err(|_| Error::denied())?,
+                *principal,
+            ),
             (Access::Authenticated, Some(token)) => {
                 let endpoint = state
                     .host
@@ -77,8 +84,11 @@ pub(crate) async fn list(
                 let Ok(principal) = session.principal(Permission::Read).await else {
                     continue;
                 };
-                EffectivePermission::try_from(principal.permission())
-                    .map_err(|_| Error::denied())?
+                (
+                    EffectivePermission::try_from(principal.permission())
+                        .map_err(|_| Error::denied())?,
+                    principal.id(),
+                )
             }
             _ => return Err(Error::denied()),
         };
@@ -86,6 +96,7 @@ pub(crate) async fn list(
             id: entry.id,
             name: entry.name.clone(),
             permission,
+            principal,
         });
         if repositories.len() == limit {
             break;

@@ -60,3 +60,16 @@ pub(super) async fn page(
     let query = routes::input(args)?;
     state.json(&state.work.page(context.session, query).await?)
 }
+
+pub(super) async fn browse(
+    ExtractState(state): ExtractState<Arc<State>>,
+    context: Context,
+    args: routes::Input<service::WorkBrowseQuery>,
+) -> Result<Response> {
+    state.json(
+        &state
+            .work
+            .browse(context.session, routes::input(args)?)
+            .await?,
+    )
+}

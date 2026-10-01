@@ -530,3 +530,7 @@ Receiver reduction uses the owned JJ conversion and frozen-view verifier. New
 normal origin intents prove source admission from accepted code publications; a
 first seed preserves receipt-selected baseline facts without reviving old code
 heads. WorkStore publication still freezes its origin ledger.
+
+WorkStore browse reads are an owned read-only service surface. They derive
+summary counts and labels from selected native state, share permission and
+resource admission with existing WorkStore reads and never publish empty roots.
