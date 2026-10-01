@@ -89,7 +89,7 @@ test("settings skip unavailable search and prepare the selected operation", asyn
   expect(prepareIndex).toHaveBeenCalledWith(operation);
   expect(indexTask).toHaveBeenCalledWith("task-1");
   expect(restore).toHaveBeenCalledOnce();
-  expect(searchStatus).toHaveBeenCalledWith(true);
+  expect(searchStatus).not.toHaveBeenCalled();
   expect(data.indexPreparation).toBe("ready");
 });
 
@@ -131,6 +131,57 @@ test("settings do not prepare an index without an exact operation", async () => 
     source: () => source,
     operation: () => null,
     version: () => 4,
+    current: () => true,
+    restore: async () => {},
+  });
+
+  await settings.prepareIndex();
+  expect(prepareIndex).not.toHaveBeenCalled();
+  expect(data.indexPreparation).toBe("idle");
+});
+
+test("graph preparation works without text search and preserves search health", async () => {
+  const data = createProductionStoreState();
+  data.capabilities = capabilities(false);
+  const prepareIndex = vi.fn(async (selected: string) =>
+    task(selected, "ready"),
+  );
+  const searchStatus = vi.fn(async () => status());
+  const restore = vi.fn(async () => {});
+  const source = { prepareIndex, searchStatus } as unknown as StoreDataSource;
+  const settings = createProductionStoreSettings({
+    data,
+    source: () => source,
+    operation: () => operation,
+    version: () => 5,
+    current: () => true,
+    restore,
+  });
+
+  await settings.prepareIndex();
+  expect(prepareIndex).toHaveBeenCalledWith(operation);
+  expect(restore).toHaveBeenCalledOnce();
+  expect(data.indexPreparation).toBe("ready");
+  expect(searchStatus).not.toHaveBeenCalled();
+
+  data.capabilities = capabilities(true);
+  data.searchStatus = { ...status(), is_stale: true, degraded: true };
+  data.searchStatusState = "ready";
+  await settings.prepareIndex();
+  expect(searchStatus).not.toHaveBeenCalled();
+  expect(data.searchStatus).toMatchObject({ is_stale: true, degraded: true });
+});
+
+test("graph preparation requires the native index-task capability", async () => {
+  const data = createProductionStoreState();
+  data.capabilities = { ...capabilities(true), index_tasks: false };
+  const prepareIndex = vi.fn();
+  const source = { prepareIndex } as unknown as StoreDataSource;
+  const settings = createProductionStoreSettings({
+    data,
+    source: () => source,
+    operation: () => operation,
+    version: () => 6,
     current: () => true,
     restore: async () => {},
   });

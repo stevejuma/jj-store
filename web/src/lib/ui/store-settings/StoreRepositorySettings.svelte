@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Model } from "../../api/client.js";
   import type { StoreController } from "../../controller/contracts.js";
+  import StoreGraphIndexSettings from "./StoreGraphIndexSettings.svelte";
   let { controller }: { controller: StoreController } = $props();
   const state = $derived(controller.state);
   const settings = $derived(state.settings);
@@ -77,6 +78,8 @@
     </div>
   </dl>
 </section>
+
+<StoreGraphIndexSettings {controller} />
 
 {#if capabilities}
   <section

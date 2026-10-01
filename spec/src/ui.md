@@ -21,10 +21,11 @@ supply interchangeable sources. Deterministic fixtures remain catalog-only.
 | JST-UI-009 | Conflict editing MUST use the AppShell structural sheet with a dominant syntax-highlighted merge editor, use its built-in accept-all controls for text sides, retain exact native paths, ordered terms and fingerprints in bound state without extra metadata cards, stage bounded uploads separately, preview the atomic selection, and retain server-advertised unsupported or stale states explicitly.                                                                                                                                                                                                                                                                                                                                                                                            |
 | JST-UI-010 | The application MUST bootstrap before repository UI, auto-open the sole LocalTrusted repository or show its installation Projects hub, and label unverified loopback identity as Local; operational backup/restore status UI remains deferred.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | JST-UI-011 | Authenticated connection MUST request one manual token, keep it only in memory, discover all currently authorized repositories, restore an ID-based deep link or show the Projects hub, and cancel requests, SSE and protected caches when the token is replaced, revoked or disconnected.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| JST-UI-012 | The profile menu MUST open a transient Settings destination with Local service, Repository and Search sections; replace repository navigation/content/actions/details while open; preserve the unchanged repository route and snapshot on return; keep its destination and selected section out of URL, browser history and storage; render accessible icon-only settings navigation when the desktop sidebar is collapsed; refresh advertised search health explicitly; and prepare only a lag-reported or explicitly selected operation.                                                                                                                                                                                                                                                           |
+| JST-UI-012 | The profile menu MUST open a transient Settings destination with Local service, Repository and Search sections; replace repository navigation/content/actions/details while open; preserve the unchanged repository route and snapshot on return; keep its destination and selected section out of URL, browser history and storage; render accessible icon-only settings navigation when the desktop sidebar is collapsed; refresh advertised search health explicitly; and expose native graph preparation in Repository independently from text-search health, using only a graph-reported or explicitly selected operation.                                                                                                                                                                      |
 | JST-UI-013 | Repository pages MUST expose a Community-style section header after the body tabs with a searchable workspace Command View; workspace context MUST use the exact native name, survive URL/history restoration at a pinned operation, preserve shared commit identities and keep operation/collaboration history repository-wide.                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | JST-UI-014 | Repository view navigation MUST live in the Community-styled right rail beneath its page heading and create action, with selection-aware, capability-gated commands beneath Details and no duplicate metadata panels; body tabs MUST present Overview first, followed by Branches, Commits, Op Log, Agents and Reviews, retain their pill styling, and move trailing tabs into an accessible dropdown when width is limited without changing route or workspace context.                                                                                                                                                                                                                                                                                                                             |
 | JST-UI-015 | The installation Projects hub MUST expose authorized homes, repository and task directories, a shared native commit and agent Activity timeline with Activity-first tabs and recorded-agent filters, a repository-linked Projects list, shared safe Markdown previews, searchable project/task views, native identity routes, permission-gated dialogs and threaded Markdown discussion; use Community card/list layout controls and Mine/Other groups, searchable repository Command View selectors, Settings-style form rows and filters in the far-right rail, a centered top-header breadcrumb, and an original-message preview above the edit composer; keep independent bounded snapshot continuations and retained navigation state; and advance displayed metadata only on explicit refresh. |
+| JST-UI-016 | Local management MUST expose explicitly linked device workspaces, qualified capture setup and queue recovery, editable Search with isolated worker replacement, non-destructive storage verification/checkpoints and configured sync controls through typed capability-gated interfaces; unsupported profiles and deferred operations MUST remain explicit.                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 
 The production controller completes bootstrap before rendering connection
 choices. One ready LocalTrusted catalog entry opens without a token, several
@@ -62,17 +63,84 @@ permission, repository and operation identities, conflicts, captured authority,
 native profile, authentication, advertised APIs/actions and bounded request,
 upload, read and event limits. Search loads status only when the repository
 advertises search, confines load failures to its section and changes displayed
-positions only after explicit refresh. Index preparation uses an operation from
-the existing lag response before the explicitly selected snapshot operation and
-is unavailable without search/index-task support or an exact operation. Long
-identities, capability lists and numeric limits wrap without horizontal
-overflow; status meaning is always present as text as well as color.
+positions only after explicit refresh. Repository settings expose native graph
+index preparation separately from text-search projection health. Graph
+preparation uses an operation from an existing graph rebuild-required response
+before the explicitly selected snapshot operation and requires index-task
+support and an exact operation, independently of text-search support. Completing
+it does not refresh or repair the text-search projection. Long identities,
+capability lists and numeric limits wrap without horizontal overflow; status
+meaning is always present as text as well as color.
 
 The catalog uses Storybook 10.5.7, Svelte CSF 5.1.2, Vitest browser 4.1.11 and
 Design Core ^0.2.0 with the existing Svelte 5/Vite 8 toolchain. Direct
 adaptations retain provenance and Apache-2.0 attribution. Shared primitives
 remain public Design Core imports. Stories are visual-pending until human
 review.
+
+## Local management delivery
+
+This staged extension keeps the transient Settings shell and explicit snapshot
+refresh contract. It adds Local service, Repository, Agents, Search, Storage and
+Sync sections as their operations become available. The milestone ledger is the
+single source of delivery status; this section defines the accepted scope.
+
+Local management uses versioned owned capabilities, profile-aware workspace
+links, settings revisions and bounded operation reports. Service interfaces
+carry owned types; server composition owns configuration and workers; CLI
+integration owns physical workspace discovery and qualified agent setup. A
+local-management capability cannot be obtained through a remote bearer session.
+Existing exact authority/origin/protocol checks apply. GETs must not initialize
+metadata, install hooks, probe executables or rewrite configuration. Explicit
+setup previews name affected files; mutation requests carry typed intent, not
+shell commands or arbitrary configuration paths.
+
+Users may explicitly link an existing local folder after canonical path,
+repository, backend and installation validation. Linking does not initialize
+companion metadata, migrate files or snapshot the working copy. Links remain
+device-local, outside checkout content, and are revalidated before each action.
+The native profile uses its verified local-service binding. The Git-backed
+profile reuses M13 discovery and companion authority; its browser management
+capability stays unavailable until the owning M13.4 serving gate is qualified.
+The profiles must not reinterpret one another's identities or prepared captures.
+
+Agents show detection/version support, desired enablement, installation drift
+and queue health for the selected physical workspace. Enable/setup and removal
+reuse the existing ownership records and sanitizer. Removal preserves queued
+captures. Automatic recovery runs with the service and shares the existing
+`jj agent drain` implementation, stable request identities and backend dispatch;
+a second retry command is unnecessary. A single drain lease prevents concurrent
+publishers, but brief spool mutation locks must allow enqueue while publication
+waits. Native recovery retains the hook's admitted principal. Unknown outcomes
+remain pending, and queues cannot be silently discarded by unlinking a folder.
+No agent execution or historical transcript backfill is introduced.
+
+Search exposes enablement, metadata-only or explicit bookmark/workspace file
+scopes, include/exclude prefixes and index budget. Save uses revision-checked
+atomic updates of the startup-selected configuration, preserving unrelated
+settings. Desired/effective states are distinct. Apply drains only the affected
+worker, verifies a replacement generation before activation and preserves pinned
+readers; repository access and RustFS remain available. Retry follows normal
+recovery, whereas Rebuild constructs a new text-search projection from selected
+committed data. Native graph preparation remains a separate action.
+
+Storage offers current readiness, checkpoint coverage, bounded integrity checks
+and non-destructive checkpoint publication through the running owner. Reports
+identify the captured position and any incomplete check; uncertain publication
+retains its original target and resolves through selected authority. Sync uses
+existing controls for configured upstreams, local-only status, pause/resume,
+finite frontier waits and the existing reconciliation preview/apply workflow.
+WorkStore replication remains unavailable. Settings opened from the Projects hub
+preserve that route; repository actions require explicit repository context.
+
+Forms preserve drafts until Save/Cancel. Operation status remains queryable when
+Settings reopens, errors stay in their owning section, and teardown or
+repository switching cannot apply a stale response. Use Community composition
+and public Design Core controls, with keyboard/mobile and cold browser
+acceptance. No new backup/restore, destructive GC, global cache deletion,
+service installation, upstream credential editing, Git transport management or
+remote administration is included. Qualification and visual baseline approval
+remain separate.
 
 ## Shell composition
 

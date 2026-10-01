@@ -478,9 +478,9 @@ test("index_preparation_retries_the_original_query_after_context_edits", async (
   await connect(page);
   await page.getByRole("button", { name: "Toggle details" }).click();
   await expect(
-    page.getByRole("button", { name: "Prepare index" }),
+    page.getByRole("button", { name: "Prepare graph index" }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "Prepare index" }).click();
+  await page.getByRole("button", { name: "Prepare graph index" }).click();
   await expect(
     page.getByRole("option", { name: "main", exact: true }),
   ).toBeVisible();

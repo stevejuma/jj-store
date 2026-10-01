@@ -110,7 +110,7 @@ export function createInMemoryStoreSettings(options: {
         mode === "failed" ? "Search status could not be loaded." : "";
     },
     async prepareIndex() {
-      if (!options.operation() || mode === "unavailable") return;
+      if (!options.operation()) return;
       indexPreparation = "loading";
       await Promise.resolve();
       indexPreparation = "ready";

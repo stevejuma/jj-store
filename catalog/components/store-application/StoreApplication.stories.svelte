@@ -160,8 +160,17 @@
     await userEvent.click(canvas.getByRole("button", { name: "Search" }));
     await expect(canvas.getByText("Degraded")).toBeVisible();
     await expect(
-      canvas.getByRole("button", { name: "Prepare index" }),
-    ).toBeEnabled();
+      canvas.queryByRole("button", { name: "Prepare graph index" }),
+    ).not.toBeInTheDocument();
+    await userEvent.click(canvas.getByRole("button", { name: "Repository" }));
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Prepare graph index" }),
+    );
+    await expect(
+      canvas.getByText("Graph index preparation completed."),
+    ).toBeVisible();
+    await userEvent.click(canvas.getByRole("button", { name: "Search" }));
+    await expect(canvas.getByText("Degraded")).toBeVisible();
   }}
 />
 <Story
@@ -183,8 +192,15 @@
       canvas.getByText("Search is not configured for this repository."),
     ).toBeVisible();
     await expect(
-      canvas.queryByRole("button", { name: "Prepare index" }),
+      canvas.queryByRole("button", { name: "Prepare graph index" }),
     ).not.toBeInTheDocument();
+    await userEvent.click(canvas.getByRole("button", { name: "Repository" }));
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Prepare graph index" }),
+    );
+    await expect(
+      canvas.getByText("Graph index preparation completed."),
+    ).toBeVisible();
   }}
 />
 <Story

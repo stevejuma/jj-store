@@ -12,7 +12,7 @@ test("local trusted bootstrap auto-opens the sole repository without credentials
   page,
 }) => {
   await api(page, { access: "local_trusted" });
-  let indexPrepared = false;
+  let searchCaughtUp = false;
   let preparedOperation: string | null = null;
   let taskPolls = 0;
   let statusRequests = 0;
@@ -41,16 +41,15 @@ test("local trusted bootstrap auto-opens the sole repository without credentials
         epoch: sample("snapshot").epoch,
         repository_position: position,
         durable_position: position,
-        indexed_position: indexPrepared ? position : position - 1,
+        indexed_position: searchCaughtUp ? position : position - 1,
         index_generation: "aa".repeat(32),
-        is_stale: !indexPrepared,
+        is_stale: !searchCaughtUp,
         degraded: false,
       },
     });
   });
   await page.route("**/index/tasks", async (route) => {
     preparedOperation = route.request().postDataJSON().operation;
-    indexPrepared = true;
     const running = samples.find(
       (entry: any) =>
         entry.path === "/v1/repos/{repo}/index/tasks" &&
@@ -97,13 +96,33 @@ test("local trusted bootstrap auto-opens the sole repository without credentials
     page.getByText(sample("capabilities").native_profile, { exact: true }),
   ).toBeVisible();
 
-  await page.getByRole("button", { name: "Search", exact: true }).click();
+  await Promise.all([
+    page.waitForResponse("**/search/status"),
+    page.getByRole("button", { name: "Search", exact: true }).click(),
+  ]);
   await expect(page.getByText("Stale", { exact: true })).toBeVisible();
-  await page.getByRole("button", { name: "Prepare index" }).click();
+  await expect(
+    page.getByRole("button", { name: "Prepare graph index" }),
+  ).toHaveCount(0);
+  const beforePreparation = statusRequests;
+  await page.getByRole("button", { name: "Repository", exact: true }).click();
+  await page.getByRole("button", { name: "Prepare graph index" }).click();
+  await expect(
+    page.getByText("Graph index preparation completed."),
+  ).toBeVisible();
+  expect(statusRequests).toBe(beforePreparation);
+  await Promise.all([
+    page.waitForResponse("**/search/status"),
+    page.getByRole("button", { name: "Search", exact: true }).click(),
+  ]);
+  await expect(page.getByText("Stale", { exact: true })).toBeVisible();
+  expect(statusRequests).toBe(beforePreparation + 1);
+  searchCaughtUp = true;
+  await page.getByRole("button", { name: "Refresh status" }).click();
   await expect(page.getByText("Fresh", { exact: true })).toBeVisible();
   expect(preparedOperation).toBe(operation);
   expect(taskPolls).toBe(1);
-  expect(statusRequests).toBeGreaterThanOrEqual(2);
+  expect(statusRequests).toBe(beforePreparation + 2);
 
   const whileOpen = await page.evaluate(() => ({
     hash: window.location.hash,

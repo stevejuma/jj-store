@@ -21,7 +21,7 @@
         {#if error.includes("index rebuild required")}<Button
             variant="outline"
             onclick={() => controller.actions.prepareIndex()}
-            >Prepare index</Button
+            >Prepare graph index</Button
           >{/if}
       </Alert.Root>{/if}
   </section>

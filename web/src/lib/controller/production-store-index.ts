@@ -50,8 +50,7 @@ export function createProductionStoreSettings(options: {
     const operation = data.neededIndex?.operation_id ?? options.operation();
     if (
       !operation ||
-      !data.capabilities?.search ||
-      !data.capabilities.index_tasks ||
+      !data.capabilities?.index_tasks ||
       data.indexPreparation === "loading"
     )
       return;
@@ -73,15 +72,14 @@ export function createProductionStoreSettings(options: {
         data.indexPreparation = "failed";
         data.indexPreparationError =
           task.status === "canceled"
-            ? "Index preparation was canceled."
-            : "Index preparation failed.";
+            ? "Graph index preparation was canceled."
+            : "Graph index preparation failed.";
         return;
       }
       data.neededIndex = null;
       data.status.error = "";
       data.indexPreparation = "ready";
       await options.restore();
-      await refresh();
     } catch (cause) {
       if (!options.current(ticket, source)) return;
       data.indexPreparation = "failed";

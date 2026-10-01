@@ -23,8 +23,8 @@
     section === "service"
       ? "Connection and storage state for this jj-store installation."
       : section === "repository"
-        ? "Identity, snapshot, capabilities and limits for the selected repository."
-        : "Search projection health and existing index preparation controls.",
+        ? "Identity, snapshot, graph preparation and capabilities for the selected repository."
+        : "Text-search projection health for the selected repository.",
   );
 </script>
 

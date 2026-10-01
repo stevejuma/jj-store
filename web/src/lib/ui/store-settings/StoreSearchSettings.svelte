@@ -6,20 +6,6 @@
   const settings = $derived(controller.state.settings);
   const capabilities = $derived(settings.capabilities);
   const search = $derived(settings.searchStatus);
-  const needsIndex = $derived(
-    Boolean(
-      search &&
-      (search.is_stale || search.degraded || search.indexed_position === null),
-    ),
-  );
-  const canPrepareIndex = $derived(
-    Boolean(
-      capabilities?.search &&
-      capabilities.index_tasks &&
-      settings.indexOperation &&
-      settings.indexPreparation !== "loading",
-    ),
-  );
   const number = (value: number | bigint | null | undefined) =>
     value === null || value === undefined
       ? "Not available"
@@ -29,7 +15,7 @@
 <section class="store-settings__section" aria-labelledby="search-health">
   <header class="store-settings__section-heading">
     <div>
-      <h2 id="search-health">Projection health</h2>
+      <h2 id="search-health">Text-search health</h2>
       <p>Positions update only when status is explicitly refreshed.</p>
     </div>
     {#if capabilities?.search}
@@ -97,30 +83,5 @@
       <Alert.Title>Search status unavailable</Alert.Title>
       <Alert.Description>{settings.searchStatusError}</Alert.Description>
     </Alert.Root>
-  {/if}
-  {#if settings.indexPreparationError}
-    <Alert.Root variant="destructive">
-      <Alert.Title>Index preparation failed</Alert.Title>
-      <Alert.Description>{settings.indexPreparationError}</Alert.Description>
-    </Alert.Root>
-  {/if}
-  {#if needsIndex || settings.indexPreparation === "loading"}
-    <div class="store-settings__action-row">
-      <div>
-        <strong>Prepare search index</strong>
-        <p>
-          {settings.indexOperation
-            ? "Prepare the selected immutable operation for search."
-            : "Choose one operation head before preparing the index."}
-        </p>
-      </div>
-      <Button
-        disabled={!canPrepareIndex}
-        onclick={() => void controller.actions.prepareIndex()}
-        >{settings.indexPreparation === "loading"
-          ? "Preparing…"
-          : "Prepare index"}</Button
-      >
-    </div>
   {/if}
 </section>
