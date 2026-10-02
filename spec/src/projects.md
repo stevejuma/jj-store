@@ -164,18 +164,27 @@ secondary text at weight 500, an adjacent chevron, 1.5rem horizontal trigger
 inset, 2.5rem row height and 0.1rem section spacing, while content retains its
 existing alignment. Project filters live in the far-right rail; breadcrumbs use
 the centered top shell header and the mobile toolbar. Forms reuse Settings-style
-bordered field groups with divided rows. Projects and tasks belong to Mine only
-when their creation actor matches the current principal reauthorized for their
-home. Repositories belong to Mine when the current session can administer them;
-this is an access grouping and does not introduce repository ownership. Unknown
-principals leave authored items in Other. Selection controls use one searchable
-repository Command View with full native IDs as values, distinct duplicate
-names, retained inaccessible selections, permission-scoped choices, and optional
-project-only/all choices. Repository picker search sits in the first row beside
-the trailing close control; its accessible title is visually hidden because the
-placeholder already identifies the search surface. Editing a comment previews
-the displayed original body independently from its mutable draft, with a single
-truncated line and full-text title.
+bordered field groups with divided rows. On a selected project, one Add menu
+offers permission-gated task creation and, on Repositories in LocalTrusted mode,
+local repository registration, with task-add and Git-add icons. The Link
+repository header icon opens a separate Settings-style dialog; its picker and
+manual full-ID option are absent from the page itself. Cancel and failed or
+unknown requests retain the link draft. Successful linking closes the dialog
+after the accepted metadata refresh; status/retry preserves the exact command.
+Local folder dialogs use matching divided Folder, Name and Inspection rows and
+retain registration state after the Add menu closes. Menu-to-dialog navigation
+supports keyboard focus and narrow screens. Projects and tasks belong to Mine
+only when their creation actor matches the current principal reauthorized for
+their home. Repositories belong to Mine when the current session can administer
+them; this is an access grouping and does not introduce repository ownership.
+Unknown principals leave authored items in Other. Selection controls use one
+searchable repository Command View with full native IDs as values, distinct
+duplicate names, retained inaccessible selections, permission-scoped choices,
+and optional project-only/all choices. Repository picker search sits in the
+first row beside the trailing close control; its accessible title is visually
+hidden because the placeholder already identifies the search surface. Editing a
+comment previews the displayed original body independently from its mutable
+draft, with a single truncated line and full-text title.
 
 Task selectors use the same Command View composition with title, state,
 repository context and shortened identity, retaining the full native value.

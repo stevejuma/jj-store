@@ -110,12 +110,15 @@ test("local_repository_opens_files_history_agents_and_accessible_folder_controls
     .click();
   await page.goto("/#/projects?tab=repositories");
   const add = page.getByRole("button", {
-    name: "Add local repository",
+    name: "Add",
     exact: true,
   });
   await expect(add).toBeEnabled();
   await add.focus();
   await add.press("Enter");
+  await page
+    .getByRole("menuitem", { name: "Add local repository", exact: true })
+    .click();
   await expect(
     page.getByRole("dialog", { name: "Add local JJ folder" }),
   ).toBeVisible();
@@ -163,7 +166,8 @@ test("local_projects_tasks_comments_match_cli_and_recover_unknown_outcomes", asy
   const project = new URLSearchParams(
     new URL(page.url()).hash.split("?")[1],
   ).get("project")!;
-  await view.getByRole("button", { name: "New task", exact: true }).click();
+  await view.getByRole("button", { name: "Add", exact: true }).click();
+  await page.getByRole("menuitem", { name: "Add task", exact: true }).click();
   const taskDialog = page.getByRole("dialog", { name: "Create task" });
   await taskDialog.getByLabel("Task title", { exact: true }).fill("Local task");
   await taskDialog

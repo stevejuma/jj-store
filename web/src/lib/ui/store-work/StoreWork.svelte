@@ -11,6 +11,7 @@
   import RefreshIcon from "@lucide/svelte/icons/refresh-cw";
   import PlusIcon from "@lucide/svelte/icons/plus";
   import PencilIcon from "@lucide/svelte/icons/pencil";
+  import LinkIcon from "@lucide/svelte/icons/link";
   import StoreWorkLayoutControls from "./StoreWorkLayoutControls.svelte";
   import StoreWorkOwnershipGroups from "./StoreWorkOwnershipGroups.svelte";
   import StoreWorkEmpty from "./StoreWorkEmpty.svelte";
@@ -47,6 +48,12 @@
   );
   let layout = $state<"grid" | "list">("list");
   let tab = $state(untrack(() => initialTab));
+  let linkOpen = $state(false);
+  $effect(() => {
+    tab;
+    view.project?.id;
+    linkOpen = false;
+  });
   let dialog = $state<
     "createProject" | "editProject" | "createTask" | "editTask" | null
   >(null);
@@ -108,6 +115,16 @@
                 onclick={() => (dialog = "editProject")}
                 ><PencilIcon aria-hidden="true" /></Button
               >{/if}
+            {#if tab === "repositories" && view.project}<Button
+                variant="ghost"
+                size="icon-sm"
+                aria-label="Link repository"
+                title="Link repository"
+                {disabled}
+                onclick={() => (linkOpen = true)}
+              >
+                <LinkIcon aria-hidden="true" />
+              </Button>{/if}
             <Button
               variant="ghost"
               size="icon-sm"
@@ -149,15 +166,18 @@
             onclick={() => work.more("projects")}>More projects</Button
           >{/if}
       {:else if tab === "repositories" && view.project}
-        <StoreWorkRepositories
-          project={view.project}
-          {work}
-          {repositories}
-          {layout}
-          {writable}
-          initialManual
-          onOpenRepository={onOpenRepository ?? (() => {})}
-        />
+        {#key view.project.id}
+          <StoreWorkRepositories
+            bind:open={linkOpen}
+            project={view.project}
+            {work}
+            {repositories}
+            {layout}
+            {writable}
+            initialManual
+            onOpenRepository={onOpenRepository ?? (() => {})}
+          />
+        {/key}
       {:else if view.task && view.project}
         {#key view.task.id}<StoreWorkTaskDetail
             {principal}

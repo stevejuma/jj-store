@@ -5,7 +5,6 @@
   import XIcon from "@lucide/svelte/icons/x";
   import StoreProjectsFilters from "./StoreProjectsFilters.svelte";
   import StoreActivityFilter from "./StoreActivityFilter.svelte";
-  import StoreLocalFolders from "../store-settings/StoreLocalFolders.svelte";
   import type { StoreController } from "../../controller/contracts.js";
   import type { Model } from "../../api/client.js";
   let {
@@ -36,10 +35,6 @@
     search = route.workQuery ?? "";
   });
 </script>
-
-{#if tab === "repositories" && controller.state.accessMode === "local_trusted"}
-  <StoreLocalFolders {controller} mode="add" />
-{/if}
 
 {#if tab === "activity"}<StoreActivityFilter
     value={route.workActivity ?? "all"}

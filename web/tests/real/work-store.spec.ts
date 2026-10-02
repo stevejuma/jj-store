@@ -134,8 +134,15 @@ test("native projects tasks and discussion persist on RustFS and refresh automat
   await view.getByRole("tab", { name: "Repositories", exact: true }).click();
   const links = view.getByRole("region", { name: "Linked repositories" });
   for (const id of [a, b]) {
-    await chooseRepository(links, "Repository", id);
-    await links
+    await view
+      .getByRole("button", { name: "Link repository", exact: true })
+      .click();
+    const linkDialog = page.getByRole("dialog", {
+      name: "Link repository",
+      exact: true,
+    });
+    await chooseRepository(linkDialog, "Repository", id);
+    await linkDialog
       .getByRole("button", { name: "Link repository", exact: true })
       .click();
     await expect(
@@ -162,7 +169,8 @@ test("native projects tasks and discussion persist on RustFS and refresh automat
   ).toHaveCount(2);
   await view.getByRole("tab", { name: "Tasks", exact: true }).click();
   async function createTask(name: string, repository: string, parent?: string) {
-    await view.getByRole("button", { name: "New task", exact: true }).click();
+    await view.getByRole("button", { name: "Add", exact: true }).click();
+    await page.getByRole("menuitem", { name: "Add task", exact: true }).click();
     const dialog = page.getByRole("dialog", { name: "Create task" });
     await dialog.getByLabel("Task title", { exact: true }).fill(name);
     await editor("Task description", dialog).fill(`${name} body`);

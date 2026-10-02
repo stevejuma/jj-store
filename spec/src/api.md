@@ -213,6 +213,15 @@ present, otherwise the explicitly selected snapshot operation; concurrent
 unselected heads cannot start a task. Repository switching, disconnection and
 revocation close the source session, abort outstanding requests and clear this
 settings projection. This UI adds no server route, schema or generated contract.
+
+Projects header Add-menu dispatch and repository dialogs reuse the existing
+local-folder registration and WorkStore set_repository contracts. The local
+registration manager remains alive outside the transient menu. Moving link
+selection into a dialog retains picker/manual full-ID selection, permission and
+version gates, pending request identity and receipt recovery; accepted metadata
+refresh closes a successfully linked dialog. Settings-style form composition
+changes presentation only and adds no request or persistence format.
+
 The transient destination consumes the shell's existing compact state so a
 collapsed desktop rail exposes Back and each settings section as labelled icon
 controls while keeping section selection and repository authority unchanged.

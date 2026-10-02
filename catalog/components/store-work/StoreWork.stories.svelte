@@ -15,11 +15,43 @@
   args={{ initialTab: "repositories" }}
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const input = canvas.getByLabelText("Repository ID", { exact: true });
-    await userEvent.type(input, "43".repeat(16));
+    const body = within(document.body);
+    await expect(
+      canvas.queryByLabelText("Repository ID", { exact: true }),
+    ).toBeNull();
     await userEvent.click(
       canvas.getByRole("button", { name: "Link repository" }),
     );
+    let dialog = await body.findByRole("dialog", {
+      name: "Link repository",
+    });
+    const input = within(dialog).getByLabelText("Repository ID", {});
+    await userEvent.type(input, "43".repeat(16));
+    await userEvent.click(
+      within(dialog).getByRole("button", { name: "Cancel" }),
+    );
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Link repository" }),
+    );
+    dialog = await body.findByRole("dialog", {
+      name: "Link repository",
+    });
+    await expect(
+      within(dialog).getByLabelText("Repository ID", { exact: true }),
+    ).toHaveValue("43".repeat(16));
+    await userEvent.click(
+      within(dialog).getByRole("button", {
+        name: "Link repository",
+      }),
+    );
+    await waitFor(() =>
+      expect(
+        body.queryByRole("dialog", { name: "Link repository" }),
+      ).toBeNull(),
+    );
+    await expect(
+      canvas.getAllByRole("button", { name: "Retire link" }),
+    ).toHaveLength(2);
     await expect(
       canvas.queryByRole("status", { name: "Work command status" }),
     ).toBeNull();
@@ -105,6 +137,40 @@
       "title",
       "21".repeat(16),
     );
+  }}
+/>
+<Story
+  name="Unknown repository link retains draft and receipt recovery"
+  args={{ initialTab: "repositories", unknown: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement),
+      body = within(document.body);
+    await userEvent.click(c.getByRole("button", { name: "Link repository" }));
+    const dialog = within(
+      await body.findByRole("dialog", { name: "Link repository" }),
+    );
+    const input = dialog.getByLabelText("Repository ID", { exact: true });
+    await userEvent.type(input, "43".repeat(16));
+    await userEvent.click(
+      dialog.getByRole("button", { name: "Link repository" }),
+    );
+    await expect(
+      dialog.getByRole("status", { name: "Work command status" }),
+    ).toHaveTextContent("Outcome unknown");
+    await expect(input).toHaveValue("43".repeat(16));
+    await expect(input).toBeDisabled();
+    await userEvent.click(dialog.getByRole("button", { name: "Cancel" }));
+    await userEvent.click(
+      c.getByRole("button", { name: "Check task command" }),
+    );
+    await expect(
+      c.getAllByRole("button", { name: "Retire link" }),
+    ).toHaveLength(2);
+    await userEvent.click(c.getByRole("button", { name: "Link repository" }));
+    await expect(
+      body.getByLabelText("Repository ID", { exact: true }),
+    ).toHaveValue("");
+    await userEvent.keyboard("{Escape}");
   }}
 />
 <Story

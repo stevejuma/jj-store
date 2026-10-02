@@ -236,6 +236,16 @@ management use the public shadcn Empty composition with a suitable icon,
 explicit availability text and no unavailable controls. Loading and recoverable
 errors retain their status/alert presentation.
 
+Local JJ registration and reconnect dialogs use the same Settings-style divided
+rows, with descriptions left and path/name/inspection controls right. Folder
+Browse remains explicit and Inspection precedes Add. The Projects Repositories
+header consolidates add actions into one menu with task and Git icons and opens
+Link repository through a labelled link-icon control. Link selection and manual
+native-ID entry live only in a matching dialog. Menu closure preserves the
+registration manager and pending identity; form errors and unknown requests
+retain drafts, as does Cancel in the link dialog. Keyboard navigation opens and
+closes dialogs without leaving page interaction blocked.
+
 The catalog uses Storybook 10.5.7, Svelte CSF 5.1.2, Vitest browser 4.1.11 and
 Design Core ^0.2.0 with the existing Svelte 5/Vite 8 toolchain. Direct
 adaptations retain provenance and Apache-2.0 attribution. Shared primitives

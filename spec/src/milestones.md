@@ -43128,6 +43128,154 @@ and named tests are checked by the progress gate.
         "note": "Final spacing source and corrected mapped chapters:0 errors/warnings;4 protected files/4 canonical chapters;5 validators/21 chapters/147 requirements;120 tasks;all8 changed files formatted. /tmp/jj-empty-task-actions-web-final.log and /tmp/jj-empty-task-actions-{spec-first,spec-validate,progress,format-check}.log. Evidence formatting and consuming governance checks repeated before commit."
       }
     ]
+  },
+  {
+    "id": "E-UI-070",
+    "tasks": ["M11.4", "M15.5"],
+    "date": "2026-10-02",
+    "kind": "focused project add menu and Settings-style repository dialogs",
+    "revision": "Enclosing Jujutsu change xztvslzk",
+    "requirements": [
+      "JST-UI-015",
+      "JST-WORK-008",
+      "JST-API-005",
+      "JST-ARCH-004",
+      "JST-GOV-007"
+    ],
+    "result": "pending",
+    "remaining": [
+      "Visual baseline approval and existing released-registry qualification remain separate. Native full-flow write tests have updated selectors but were not run against the persistent fixture."
+    ],
+    "scope": "UI-only existing web surface. Community repository/project dialogs inspected first, public Design Core DialogFrame/DropdownMenu/Field/Button second. One Add menu dispatches task creation and local registration using ClipboardPlus/GitBranchPlus icons. A link-icon control opens repository linking in a Settings-style dialog, retaining picker, manual native ID, draft, permission/version/pending gates and exact set_repository semantics. Local Add/Reconnect share divided Folder/Name/Inspection rows; the registration manager remains mounted outside menu content. Committed metadata refresh closes linking and registration dialogs; unknown outcomes preserve intent and support recovery. Toolbar and dialog extracted to respect300-line architecture limit. Relevant web/catalog checks, all direct Projects/StoreWork/navigation stories, mocked registration/picker browser tests and live read-only previews cover this slice. Rust, root aggregates, unrelated stories, built-asset qualification, baseline updates, fixture reset/reseed, backend restart, main landing and publication are out of scope.",
+    "versions": "Node26.9.0;pnpm10.32.1;JJ0.45.1;existing Svelte5.57.1,Storybook10.5.7,Vitest4.1.11 and Design Core public components retained.",
+    "formats": "No schema, API, native identity, request/receipt, permission or persistence format change.",
+    "next": "Review through preserved HMR7460/backend7462. Continue the user-requested layout/search/focus-sheet/project-column/agent-row follow-ups as separate verified slices.",
+    "artifacts": "/tmp/jj-project-repository-*.log; /tmp/jj-project-repository-{menu,folder,link}-live.png; desktop/mobile mocked folder screenshots. Temporary CUA tab18 closed; user tab and persistent fixture retained.",
+    "files": [
+      "web/src/lib/ui/store-settings/StoreLocalFolders.svelte",
+      "web/src/lib/ui/store-settings/StoreLocalFolderDialog.svelte",
+      "web/src/lib/ui/store-work/StoreProjects.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsActions.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsAddMenu.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsFilterControls.svelte",
+      "web/src/lib/ui/store-work/StoreWork.svelte",
+      "web/src/lib/ui/store-work/StoreWorkRepositories.svelte",
+      "catalog/components/store-work/ProjectsRepositoryActions.stories.svelte",
+      "catalog/components/store-work/StoreWork.stories.svelte",
+      "catalog/fixtures/StoreWorkFixture.svelte",
+      "web/tests/real/project-repository-actions.spec.ts",
+      "web/tests/real/local-browser.spec.ts",
+      "web/tests/real/work-store.spec.ts",
+      "spec/src/api.md",
+      "spec/src/projects.md",
+      "spec/src/ui.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte -t Repository links",
+        "result": "pass",
+        "failures": 0,
+        "note": "Name filter skipped8 stories; not acceptance. Retried the exact family without filter."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before:1 expected modal regression fails,7 pass. Inline Repository ID present before dialog opens. /tmp/jj-project-repository-dialog-before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-work/ProjectsRepositoryActions.stories.svelte",
+        "result": "fail",
+        "failures": 3,
+        "note": "Initial new tests:wrong expected fixture ID in2 stories and stale dialog node after reopen in1. Corrected fixtures/selectors without changing assertions. /tmp/jj-project-repository-stories.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-work/ProjectsRepositoryActions.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "12/12 focused stories including unknown link recovery/read-only access pass in a fresh Vitest browser/Vite process with blocking accessibility. /tmp/jj-project-repository-stories-retry.log."
+      },
+      {
+        "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7460 JJ_STORE_REAL_REPOSITORY=1bdb89c409c1b891ac7f180c01a265d5 JJ_STORE_REAL_PROJECT=38d1c167c245c42fd7d1818086a89ed1 pnpm exec playwright test --config web/playwright.real.config.ts web/tests/real/project-repository-actions.spec.ts",
+        "result": "fail",
+        "failures": 2,
+        "note": "Initial desktop/mobile tests clicked Add while project details were still loading, so only repository item was available. Added a settled project readiness assertion. /tmp/jj-project-repository-browser.log."
+      },
+      {
+        "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7460 JJ_STORE_REAL_REPOSITORY=1bdb89c409c1b891ac7f180c01a265d5 JJ_STORE_REAL_PROJECT=38d1c167c245c42fd7d1818086a89ed1 pnpm exec playwright test --config web/playwright.real.config.ts web/tests/real/project-repository-actions.spec.ts",
+        "result": "fail",
+        "failures": 2,
+        "note": "Desktop contrast audit sampled enabled Buttons during their disabled-opacity transition; mobile used an ambiguous status locator. Waited for public component animations to settle, retained the contrast rule and selected the unknown-registration status. /tmp/jj-project-repository-browser-retry.log."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "fail",
+        "failures": 31,
+        "note": "New story byRole exact option is unsupported by Testing Library typings; fixture version is number|bigint. Removed unsupported options without widening matching, incremented native version as bigint. /tmp/jj-project-repository-catalog.log."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "fail",
+        "failures": 2,
+        "note": "LocalFolders320 and StoreProjects321 counted lines exceeded300. Extracted owned toolbar and folder-dialog presentation. /tmp/jj-project-repository-architecture.log."
+      },
+      {
+        "command": "python3 UI component extraction",
+        "result": "fail",
+        "failures": 1,
+        "note": "First scripted extraction stopped on an indentation-sensitive substring after the parent rewrite; restored the dialog through the new component and completed extraction before any acceptance. No unrelated files affected."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-work/ProjectsRepositoryActions.stories.svelte catalog/components/store-work/ProjectsDirectory.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-work/ProjectsFilters.stories.svelte catalog/components/store-work/ProjectsActivityControls.stories.svelte catalog/components/store-work/ProjectsActivity.stories.svelte catalog/components/store-work/TaskScroll.stories.svelte catalog/components/store-work/ProjectsReviewDetail.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "46/46 in9 direct-consumer families with blocking accessibility. Final extraction/navigation rerun follows. /tmp/jj-project-repository-direct-stories.log."
+      },
+      {
+        "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7460 JJ_STORE_REAL_REPOSITORY=1bdb89c409c1b891ac7f180c01a265d5 JJ_STORE_REAL_PROJECT=38d1c167c245c42fd7d1818086a89ed1 pnpm exec playwright test --config web/playwright.real.config.ts web/tests/real/project-repository-actions.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "2/2 final desktop/mobile mock registration tests then3/3 including Settings Add/Reconnect rows. Normal axe rules, no overflow, keyboard focus return and identical request retry pass. All registration/picker writes intercepted; persistent fixture unchanged. /tmp/jj-project-repository-browser-{final,settings}.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:ui-ownership; pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Relevant checks run separately. Final extracted source:0 web errors/warnings;0 catalog errors/warnings and132 catalog modules;1 ownership validator;748 architecture modules. /tmp/jj-project-repository-{web-extracted,catalog-final,ownership,architecture-final}.log. Initial and final web checks also passed."
+      },
+      {
+        "command": "pnpm exec prettier --write changed source, stories, fixtures, browser tests and canonical chapters",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formatting passes recorded in /tmp/jj-project-repository-{format,story-format,story-fix-format,browser-format,browser-fix-format,extract-format,settled-format,settings-format}.log. Final changed-file check follows."
+      },
+      {
+        "command": "cua_repl: temporary project tab18; open Add menu, local folder and Link repository dialogs; inspect geometry/focus; save screenshots; close tab",
+        "result": "pass",
+        "failures": 0,
+        "note": "Live Settings rows have no horizontal overflow. Menu includes both dedicated icons; local-folder and linking dialogs open and restore focus on Cancel. No persistent requests submitted. User tab preserved."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-work/ProjectsRepositoryActions.stories.svelte catalog/components/store-work/ProjectsDirectory.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-work/ProjectsFilters.stories.svelte catalog/components/store-work/ProjectsActivityControls.stories.svelte catalog/components/store-work/ProjectsActivity.stories.svelte catalog/components/store-work/TaskScroll.stories.svelte catalog/components/store-work/ProjectsReviewDetail.stories.svelte catalog/components/store-work/NavigationPersistence.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "47/47 in10 direct-consumer families after final extraction, fresh Vitest browser/Vite process with blocking accessibility. /tmp/jj-project-repository-direct-stories-final.log."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "fail",
+        "failures": 3,
+        "note": "Ledger tests entries initially used plain paths instead of path#literal_test_name; moved story/dynamic browser evidence to runs as in existing UI entries. /tmp/jj-project-repository-progress.log."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress; pnpm exec prettier --check all18 changed files",
+        "result": "pass",
+        "failures": 0,
+        "note": "Consuming governance/format lanes completed before commit:14 protected files/4 chapters;5 validators/21 chapters/147 requirements;120 tasks;all changed files formatted. Evidence bookkeeping rerun after correction. /tmp/jj-project-repository-{spec-first,spec-validate,progress-final,format-check}.log."
+      }
+    ]
   }
 ]
 ```

@@ -4,8 +4,6 @@
   import * as Tabs from "@lapismd/design-core/shadcn/tabs";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import StoreProjectsViewport from "./StoreProjectsViewport.svelte";
-  import StoreWorkLayoutControls from "./StoreWorkLayoutControls.svelte";
-  import StoreProjectsFilterControls from "./StoreProjectsFilterControls.svelte";
   import StoreWorkOwnershipGroups from "./StoreWorkOwnershipGroups.svelte";
   import StoreProjectsReviews from "./StoreProjectsReviews.svelte";
   import StoreProjectsActivity from "./StoreProjectsActivity.svelte";
@@ -29,9 +27,7 @@
   import "./community-work-rows.css";
   import "./community-work-layout.css";
   import HistoryIcon from "@lucide/svelte/icons/history";
-  import RefreshIcon from "@lucide/svelte/icons/refresh-cw";
-  import PlusIcon from "@lucide/svelte/icons/plus";
-  import PencilIcon from "@lucide/svelte/icons/pencil";
+  import StoreProjectsActions from "./StoreProjectsActions.svelte";
   import StoreWorkDialog from "./StoreWorkDialog.svelte";
   import StoreWorkStatus from "./StoreWorkStatus.svelte";
   import "./store-work.css";
@@ -83,6 +79,14 @@
       "createProject" | "editProject" | "createTask" | "editTask" | null
     >(null),
     initialParent = $state("");
+  let linkOpen = $state(false);
+  $effect(() => {
+    // A dialog and its draft belong to the selected project and tab.
+    route.repository;
+    route.projectId;
+    route.workTab;
+    linkOpen = false;
+  });
   const tabs = $derived<ProjectsTab[]>(
     project
       ? ["activity", "tasks", "reviews", "repositories"]
@@ -99,56 +103,6 @@
     void hub.filter({ workTab: value });
   }
 </script>
-
-{#snippet actions()}
-  <div class="community-projects__surface-actions">
-    {#if tab !== "activity"}<StoreWorkLayoutControls bind:value={layout} />{/if}
-    {#key `${project?.id ?? "hub"}:${tab}`}
-      <StoreProjectsFilterControls {controller} {project} />
-    {/key}
-    <Button
-      variant="ghost"
-      size="icon-sm"
-      aria-label="Refresh projects"
-      title="Refresh projects"
-      disabled={busy}
-      onclick={() => controller.actions.refresh()}
-      ><RefreshIcon aria-hidden="true" /></Button
-    >
-    {#if canCreate && !project && (tab === "projects" || tab === "tasks")}<Button
-        variant="ghost"
-        size="icon-sm"
-        aria-label={tab === "tasks" ? "New task" : "New project"}
-        title={tab === "tasks" ? "New task" : "New project"}
-        disabled={busy}
-        onclick={() => open(tab === "tasks" ? "createTask" : "createProject")}
-        ><PlusIcon aria-hidden="true" /></Button
-      >{/if}
-    {#if project && writable}<Button
-        variant="ghost"
-        size="icon-sm"
-        aria-label="Edit project"
-        title="Edit project"
-        disabled={busy ||
-          work?.state.loading ||
-          work?.state.writing ||
-          !!work?.state.pending}
-        onclick={() => open("editProject")}
-        ><PencilIcon aria-hidden="true" /></Button
-      ><Button
-        variant="ghost"
-        size="icon-sm"
-        aria-label="New task"
-        title="New task"
-        disabled={busy ||
-          work?.state.loading ||
-          work?.state.writing ||
-          !!work?.state.pending}
-        onclick={() => open("createTask")}
-        ><PlusIcon aria-hidden="true" /></Button
-      >{/if}
-  </div>
-{/snippet}
 
 <section
   class="store-projects community-projects"
@@ -196,7 +150,18 @@
               />{:else}<FolderKanban aria-hidden="true" />{/if}
             <h1>{tab[0]!.toUpperCase() + tab.slice(1)}</h1>
           </div>
-          {@render actions()}
+          <StoreProjectsActions
+            {controller}
+            {project}
+            {work}
+            {writable}
+            {canCreate}
+            {busy}
+            {tab}
+            bind:layout
+            bind:linkOpen
+            onOpen={open}
+          />
         </header>{/if}
       <Tabs.Content value={tab} aria-label={`${tab} view`}>
         {#if projectsInitialLoading(controller)}<StoreProjectsLoading
@@ -209,18 +174,19 @@
             {layout}
           />
         {:else if project && work}
-          {#if tab === "repositories"}<StoreWorkRepositories
-              {project}
-              entries={hub.repositories.entries}
-              home={route.repository}
-              query={route.workQuery ?? ""}
-              {layout}
-              {work}
-              repositories={controller.state.repositories}
-              {writable}
-              busy={hub.loading}
-              onOpenRepository={controller.actions.openRepository}
-            />
+          {#if tab === "repositories"}{#key project.id}<StoreWorkRepositories
+                bind:open={linkOpen}
+                {project}
+                entries={hub.repositories.entries}
+                home={route.repository}
+                query={route.workQuery ?? ""}
+                {layout}
+                {work}
+                repositories={controller.state.repositories}
+                {writable}
+                busy={hub.loading}
+                onOpenRepository={controller.actions.openRepository}
+              />{/key}
           {:else if task}{#key task.id}<StoreWorkTaskDetail
                 bind:viewportRef={element}
                 {work}

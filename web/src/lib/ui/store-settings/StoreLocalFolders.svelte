@@ -1,17 +1,14 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import * as Dialog from "@lapismd/design-core/shadcn/dialog";
-  import * as ButtonGroup from "@lapismd/design-core/shadcn/button-group";
+  import { onMount, type Snippet } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import { Input } from "@lapismd/design-core/shadcn/input";
-  import { DialogFrame } from "@lapismd/design-core/forms/dialog";
+  import StoreLocalFolderDialog from "./StoreLocalFolderDialog.svelte";
   import StoreSettingsEmpty from "./StoreSettingsEmpty.svelte";
   import FolderGitIcon from "@lucide/svelte/icons/folder-git-2";
   import GitBranchIcon from "@lucide/svelte/icons/git-branch";
+  import GitBranchPlusIcon from "@lucide/svelte/icons/git-branch-plus";
   import PlusIcon from "@lucide/svelte/icons/plus";
   import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
   import UnlinkIcon from "@lucide/svelte/icons/unlink";
-  import XIcon from "@lucide/svelte/icons/x";
   import type { Model } from "../../api/client.js";
   import type { StoreController } from "../../controller/contracts.js";
   import { LocalFolderManager } from "../../controller/local-folder-manager.js";
@@ -20,10 +17,12 @@
     controller,
     repository,
     mode = "settings",
+    trigger,
   }: {
     controller: StoreController;
     repository?: string;
     mode?: "settings" | "add";
+    trigger?: Snippet<[add: () => void, disabled: boolean]>;
   } = $props();
   let manager = $state<LocalFolderManager>();
   let bindings = $state<Model<"LocalBinding">[]>([]);
@@ -119,14 +118,18 @@
 </script>
 
 {#if mode === "add"}
-  <Button
-    variant="ghost"
-    size="icon-sm"
-    aria-label="Add local repository"
-    title="Add local repository"
-    disabled={busy || !manager}
-    onclick={() => edit(null)}><PlusIcon aria-hidden="true" /></Button
-  >
+  {#if trigger}{@render trigger(
+      () => edit(null),
+      busy || !manager,
+    )}{:else}<Button
+      variant="ghost"
+      size="icon-sm"
+      aria-label="Add local repository"
+      title="Add local repository"
+      disabled={busy || !manager}
+      onclick={() => edit(null)}
+      ><GitBranchPlusIcon aria-hidden="true" /></Button
+    >{/if}
 {:else}
   <section
     class="store-settings__section"
@@ -215,71 +218,27 @@
     {#if message}<p role="status">{message}</p>{/if}
   </section>
 {/if}
-<Dialog.Root bind:open>
-  <DialogFrame
-    {busy}
-    title={reconnect ? "Reconnect local folder" : "Add local JJ folder"}
-    description={reconnect
-      ? "Select the original repository at its new location."
-      : "Inspect an existing folder, then explicitly add it to this installation."}
-  >
-    <label for="local-jj-path">Folder</label>
-    <ButtonGroup.Root class="store-settings__folder-picker">
-      <Input
-        id="local-jj-path"
-        value={path}
-        disabled={busy || pending}
-        oninput={(e) => {
-          path = e.currentTarget.value;
-          inspected = null;
-        }}
-      />
-      <Button
-        variant="outline"
-        disabled={busy || pending}
-        onclick={() =>
-          run(async () => {
-            const value = await manager!.pick();
-            if (value.path) {
-              path = value.path;
-              inspected = null;
-            }
-          })}><GitBranchIcon aria-hidden="true" />Browse</Button
-      >
-    </ButtonGroup.Root>
-    {#if !reconnect}<label for="local-jj-name">Name</label><Input
-        id="local-jj-name"
-        bind:value={name}
-        disabled={busy || pending}
-      />{/if}
-    <Button
-      variant="outline"
-      disabled={busy || pending || !path}
-      onclick={() =>
-        run(async () => {
-          inspected = await manager!.inspect(path);
-        })}>Inspect folder</Button
-    >
-    {#if inspected}<p role="status">
-        Supported Git-backed JJ folder. {inspected.repository
-          ? `Repository ${inspected.repository}`
-          : "Companion metadata will be initialized on Add."}
-      </p>{/if}
-    {#if message}<p role="status">{message}</p>{/if}
-    {#snippet footer()}<Button
-        variant="outline"
-        disabled={busy}
-        onclick={() => (open = false)}
-        ><XIcon aria-hidden="true" />Cancel</Button
-      ><Button
-        disabled={busy ||
-          (!pending && (!inspected || (!reconnect && !name.trim())))}
-        onclick={() => run(save)}
-        ><PlusIcon aria-hidden="true" />{pending
-          ? "Retry Add"
-          : reconnect
-            ? "Reconnect"
-            : "Add folder"}</Button
-      >{/snippet}
-  </DialogFrame>
-</Dialog.Root>
+<StoreLocalFolderDialog
+  bind:open
+  bind:path
+  bind:name
+  {busy}
+  {pending}
+  {inspected}
+  {message}
+  reconnect={!!reconnect}
+  onPathChange={() => (inspected = null)}
+  onBrowse={() =>
+    run(async () => {
+      const value = await manager!.pick();
+      if (value.path) {
+        path = value.path;
+        inspected = null;
+      }
+    })}
+  onInspect={() =>
+    run(async () => {
+      inspected = await manager!.inspect(path);
+    })}
+  onSave={() => run(save)}
+/>

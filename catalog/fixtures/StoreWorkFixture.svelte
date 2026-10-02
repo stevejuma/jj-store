@@ -133,8 +133,29 @@
       view.message = unknown
         ? "Outcome unknown. Check status or retry this request."
         : "";
+      if (!unknown && command.command === "set_repository") {
+        view.project = {
+          ...view.project!,
+          version: BigInt(view.project!.version) + 1n,
+          repositories: {
+            ...view.project!.repositories,
+            [command.repository]: command.active,
+          },
+        };
+      }
     },
     async check() {
+      if (pending?.command.command === "set_repository") {
+        const command = pending.command;
+        view.project = {
+          ...view.project!,
+          version: BigInt(view.project!.version) + 1n,
+          repositories: {
+            ...view.project!.repositories,
+            [command.repository]: command.active,
+          },
+        };
+      }
       view.pending = null;
       view.message = "";
     },
