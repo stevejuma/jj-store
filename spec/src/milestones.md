@@ -100,7 +100,7 @@ shared-package release qualification does not alter those original Git gates.
 | M11.1       | Done        | M9.6                    | JST-WORK-001,JST-WORK-002,JST-WORK-003,JST-WORK-004,JST-WORK-005,JST-WORK-007                                                                                                           | Native model, publication, receipts, recovery and copy                                                                         | Retain native and real RustFS gates                                                            | E-M11-001,E-M11-003                                                                                                                                                                                                                                                                                                                                            |
 | M11.2       | Done        | M11.1                   | JST-WORK-005,JST-WORK-006,JST-WORK-008                                                                                                                                                  | Authorized service, API, RPC and CLI                                                                                           | Retain local transport/CLI gates                                                               | E-M11-002                                                                                                                                                                                                                                                                                                                                                      |
 | M11.3       | Done        | M11.2                   | JST-WORK-008                                                                                                                                                                            | Browser projects/tasks/comments and explicit refresh                                                                           | Retain cold browser gates; visual baselines pending                                            | E-M11-003,E-M11-004                                                                                                                                                                                                                                                                                                                                            |
-| M11.4       | In progress | M11.3                   | JST-WORK-005,JST-WORK-006,JST-WORK-008,JST-WORK-009,JST-UI-015                                                                                                                          | Installation Projects hub, full-root browse and cold browser acceptance                                                        | Shared-package qualification; visual baselines pending                                         | E-M11-005,E-M11-006,E-M11-007,E-UI-045,E-UI-046,E-UI-047,E-M11-008,E-UI-048,E-UI-049,E-UI-050,E-UI-051,E-UI-062,E-UI-063,E-UI-064,E-UI-065,E-UI-066,E-UI-067,E-UI-068                                                                                                                                                                                          |
+| M11.4       | In progress | M11.3                   | JST-WORK-005,JST-WORK-006,JST-WORK-008,JST-WORK-009,JST-UI-015                                                                                                                          | Installation Projects hub, full-root browse and cold browser acceptance                                                        | Shared-package qualification; visual baselines pending                                         | E-M11-005,E-M11-006,E-M11-007,E-UI-045,E-UI-046,E-UI-047,E-M11-008,E-UI-048,E-UI-049,E-UI-050,E-UI-051,E-UI-062,E-UI-063,E-UI-064,E-UI-065,E-UI-066,E-UI-067,E-UI-068,E-UI-069                                                                                                                                                                                 |
 | M12         | Done        | M11.1,M11.2,M11.3       | JST-GIT-001,JST-GIT-002,JST-GIT-003,JST-GIT-004,JST-GIT-005,JST-GIT-006,JST-GIT-007,JST-GIT-008                                                                                         | Native fetch/edit/push/external-merge cycle with cache-loss and fault qualification                                            | Maintain qualified bookmark bridge                                                             | E-M12-001,E-M12-002,E-M12-003,E-M12-004,E-M12-005,E-M12-006,E-M12-007,E-M12-008,E-M12-009,E-M12-010                                                                                                                                                                                                                                                            |
 | M12.1       | Done        | M11.1,M11.2,M11.3       | JST-GIT-001                                                                                                                                                                             | GB0: Parsed backend-aware dispatch and ordinary path regression                                                                | Complete staged bridge gate                                                                    | E-M12-001                                                                                                                                                                                                                                                                                                                                                      |
 | M12.2       | Done        | M12.1                   | JST-GIT-002,JST-GIT-003                                                                                                                                                                 | GB1: Exact conversion and native retained cache-loss identity                                                                  | Complete staged bridge gate                                                                    | E-M12-002                                                                                                                                                                                                                                                                                                                                                      |
@@ -129,7 +129,7 @@ shared-package release qualification does not alter those original Git gates.
 | M15.2       | In progress | M15.1                   | JST-COLLAB-013                                                                                                                                                                          | Native format 5, local version 2, atomic roots, receipts, recovery and copy                                                    | Qualify native commands/capture and cold full flow                                             | E-M15-002,E-M15-004,E-M15-005,E-M15-012,E-M15-014,E-M15-016                                                                                                                                                                                                                                                                                                    |
 | M15.3       | In progress | M15.2                   | JST-COLLAB-014                                                                                                                                                                          | Bounded authorized services, HTTP/RPC, CLI and capture binding                                                                 | Complete native/public command boundaries                                                      | E-M15-004,E-M15-005,E-M15-006,E-M15-007,E-M15-008,E-M15-009,E-M15-010,E-M15-011,E-M15-012,E-M15-013,E-M15-014,E-M15-015,E-M15-016,E-M15-022,E-UI-064                                                                                                                                                                                                           |
 | M15.4       | Planned     | M15.2                   | JST-COLLAB-015                                                                                                                                                                          | Reducer 3 data-only convergence and complete closure transfer                                                                  | Qualify reordered and duplicate origin sets                                                    | -                                                                                                                                                                                                                                                                                                                                                              |
-| M15.5       | In progress | M15.3                   | JST-COLLAB-016,JST-GOV-008,JST-UI-017                                                                                                                                                   | Owned Community channel/forum templates, Threads navigation and native workspace search                                        | Retain interaction/cold UI and qualify remaining full flow                                     | E-M15-011,E-M15-015,E-M15-016,E-M15-017,E-M15-018,E-M15-019,E-M15-021,E-M15-022,E-M15-025,E-M15-030,E-M15-031,E-UI-063,E-UI-064                                                                                                                                                                                                                                |
+| M15.5       | In progress | M15.3                   | JST-COLLAB-016,JST-GOV-008,JST-UI-017                                                                                                                                                   | Owned Community channel/forum templates, Threads navigation and native workspace search                                        | Retain interaction/cold UI and qualify remaining full flow                                     | E-M15-011,E-M15-015,E-M15-016,E-M15-017,E-M15-018,E-M15-019,E-M15-021,E-M15-022,E-M15-025,E-M15-030,E-M15-031,E-UI-063,E-UI-064,E-UI-069                                                                                                                                                                                                                       |
 | M15.6       | In progress | M15.3                   | JST-COLLAB-009,JST-COLLAB-010,JST-API-009,JST-ADAPT-007                                                                                                                                 | Derived canonical-source timeline/search and review integration                                                                | Qualify authorized joins                                                                       | E-M15-006,E-M15-020,E-M15-021,E-M15-022,E-M15-025                                                                                                                                                                                                                                                                                                              |
 | M15.7       | Planned     | M15.4,M15.5,M15.6       | JST-COLLAB-007,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                                                                                              | Cold real-RustFS/local full flow and runner qualification                                                                      | Retain native/local/cold evidence                                                              | -                                                                                                                                                                                                                                                                                                                                                              |
 | M16         | Partial     | M15.5                   | JST-UI-018,JST-GOV-009                                                                                                                                                                  | Complete device Appearance and cold consumer qualification                                                                     | Complete source release and registry-only consumer qualification                               | E-UI-052,E-UI-053,E-UI-054,E-UI-055,E-UI-056,E-UI-057,E-UI-058,E-UI-059,E-UI-061,E-UI-062,E-UI-063                                                                                                                                                                                                                                                             |
@@ -43005,6 +43005,127 @@ and named tests are checked by the progress gate.
         "result": "pass",
         "failures": 0,
         "note": "Resolve at rest is secondary with visible theme-token background and decorative check-circle icon; final xs label is12px, neither hovered nor focused. /tmp/jj-review-page-final.png updated after compact sizing. Temporary tab12 closed, user tab7 preserved. No comments/reactions/status commands submitted; network latency remains restored. HMR7460/backend7462 continue unchanged."
+      }
+    ]
+  },
+  {
+    "id": "E-UI-069",
+    "tasks": ["M11.4", "M15.5"],
+    "date": "2026-10-02",
+    "kind": "focused empty Threads alignment and task action presentation",
+    "revision": "Enclosing Jujutsu change qkppqmpx",
+    "requirements": [
+      "JST-UI-017",
+      "JST-UI-015",
+      "JST-WORK-008",
+      "JST-ARCH-004",
+      "JST-GOV-007",
+      "JST-API-005"
+    ],
+    "result": "pending",
+    "remaining": [
+      "Functional checks pass. Visual baseline approval and existing released-registry qualification remain separate."
+    ],
+    "scope": "UI-only changes in the existing web package. Inspected Community forum empty layout and task presentation first, Design Core Empty/Button and ScrollArea second. Empty Threads now fills the content viewport and uses the public Empty centering below the new-post control; populated forum rows remain unchanged. Task Open target repository/Edit task/Add subtask use public secondary buttons and decorative leading icons. Permissions, callbacks, disabled behavior, drafts and native IDs are retained. Existing focused Threads and task direct-consumer stories plus live HMR geometry checks cover the change. No new mirror tests for this reversible styling slice. Rust builds/tests, aggregate root lanes, unrelated Storybook families, release/built-asset qualification, visual baseline updates, fixture reset/reseed, backend restart, main landing and publication are out of scope under the targeted UI policy. Final user steering adds0.5rem inline-end margin to the repository action before its name.",
+    "versions": "Node26.9.0; pnpm10.32.1; JJ0.45.1; existing Svelte5.57.1, Storybook10.5.7, Vitest4.1.11 and Design Core public Empty/Button/ScrollArea retained.",
+    "formats": "No API, native identity, command, permission or persistence format changes. Empty-only layout modifier; public secondary sm buttons with aria-hidden icons and data-icon inline-start.",
+    "next": "Review the committed slice through the preserved Vite HMR7460 workspace; visual baseline approval and released-registry qualification remain separate.",
+    "artifacts": "/tmp/jj-empty-task-actions-*.log; /tmp/jj-empty-threads-centered.png; /tmp/jj-task-actions-filled.png. Existing HMR7460, backend7462 and persistent fixture preserved.",
+    "files": [
+      "spec/src/api.md",
+      "spec/src/milestones.md",
+      "spec/src/ui.md",
+      "spec/src/projects.md",
+      "web/src/lib/ui/forum-topic-list/ForumTopicList.svelte",
+      "web/src/lib/ui/forum-topic-list/forum-topic-list.css",
+      "web/src/lib/ui/store-work/StoreWorkTaskDetail.svelte",
+      "web/src/lib/ui/store-work/task-detail-layout.css"
+    ],
+    "tests": [],
+    "runs": [
+      {
+        "command": "pnpm exec prettier --write web/src/lib/ui/forum-topic-list/ForumTopicList.svelte web/src/lib/ui/forum-topic-list/forum-topic-list.css web/src/lib/ui/store-work/StoreWorkTaskDetail.svelte spec/src/ui.md spec/src/projects.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "/tmp/jj-empty-task-actions-format.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm check:ui-ownership; pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "0 errors/warnings;1 ownership validator/21 chapters/147 requirements;744 architecture modules. /tmp/jj-empty-task-actions-{web,ownership,architecture}.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-threads/StoreThreads.stories.svelte catalog/components/store-work/TaskScroll.stories.svelte catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-work/ProjectsActivity.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "30 task tests passed in4 families; Threads suite failed before collecting tests when Vite/Tailwind loaded virtual Design Core CSS as Svelte source (Invalid declaration). /tmp/jj-empty-task-actions-stories.log. No product/assertion changes were made for this import failure."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-threads/StoreThreads.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact failed family retry on fresh Vitest browser/Vite process:7/7 pass with blocking accessibility. /tmp/jj-empty-task-actions-threads-retry.log. Final combined direct-consumer round follows."
+      },
+      {
+        "command": "cua_repl: open temporary empty Threads/task detail tabs, measure Empty header centering, inspect task action background/icons, capture screenshots",
+        "result": "pass",
+        "failures": 0,
+        "note": "Before:empty width576 vs viewport1028, left-aligned in a355.98px list within623px viewport. After:header center differs by0.004px horizontally and0px vertically from the remaining Empty area; list fills891px viewport at818px width, no scroll overflow. Task buttons use secondary theme fill with repository/edit/subtask icons, aria-hidden, enabled and unhovered. No writes submitted. /tmp/jj-empty-threads-centered.png; /tmp/jj-task-actions-filled.png."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-threads/StoreThreads.stories.svelte catalog/components/store-work/TaskScroll.stories.svelte catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-work/ProjectsActivity.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final37/37 in5 direct-consumer families, fresh Vitest browser/Vite process with blocking accessibility. Thread creation/navigation/replies/reactions and task actions/desktop/narrow/read-only scrolling/drafts pass. /tmp/jj-empty-task-actions-stories-final.log. Initial virtual stylesheet import failure does not recur."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "fail",
+        "failures": 1,
+        "note": "Initial gate identified missing mapped spec/src/api.md chapter for protected UI changes. Added explicit retained callback/access/list/create-contract wording; no API implementation change. /tmp/jj-empty-task-actions-spec-first-initial.log."
+      },
+      {
+        "command": "pnpm spec:validate; pnpm check:progress; pnpm exec prettier --check web/src/lib/ui/forum-topic-list/ForumTopicList.svelte web/src/lib/ui/forum-topic-list/forum-topic-list.css web/src/lib/ui/store-work/StoreWorkTaskDetail.svelte spec/src/ui.md spec/src/projects.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial5 validators/21 chapters/147 requirements;120 tasks;6 changed files formatted. /tmp/jj-empty-task-actions-{spec-validate,progress,format-check}.log. Final gate repeats after mapped API wording and evidence update."
+      },
+      {
+        "command": "cua_repl: close temporary tabs14 and15",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both verification tabs closed; original user tab preserved. HMR/backend/fixture remain unchanged."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/ui/store-work/StoreWorkTaskDetail.svelte web/src/lib/ui/store-work/task-detail-layout.css spec/src/projects.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "/tmp/jj-empty-task-actions-gap-format.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/TaskScroll.stories.svelte catalog/components/store-work/StoreWork.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "12/12 after repository action spacing, fresh Vitest browser/Vite with blocking accessibility. /tmp/jj-empty-task-actions-gap-stories.log."
+      },
+      {
+        "command": "cua_repl: open temporary task tab; inspect repository button margin and adjacent text gap; capture screenshot; close tab",
+        "result": "pass",
+        "failures": 0,
+        "note": "Actual margin-inline-end and adjacent name gap both8px; secondary background and repository icon retained. /tmp/jj-task-actions-filled.png updated. Temporary tab17 closed, user tab preserved."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md; pnpm exec prettier --write spec/src/api.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Ledger/evidence and mapped API wording formatted. /tmp/jj-empty-task-actions-ledger-format.log; /tmp/jj-empty-task-actions-ledger-final-format.log."
+      },
+      {
+        "command": "pnpm web:check; pnpm spec:first; pnpm spec:validate; pnpm check:progress; pnpm exec prettier --check web/src/lib/ui/forum-topic-list/ForumTopicList.svelte web/src/lib/ui/forum-topic-list/forum-topic-list.css web/src/lib/ui/store-work/StoreWorkTaskDetail.svelte web/src/lib/ui/store-work/task-detail-layout.css spec/src/ui.md spec/src/projects.md spec/src/api.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final spacing source and corrected mapped chapters:0 errors/warnings;4 protected files/4 canonical chapters;5 validators/21 chapters/147 requirements;120 tasks;all8 changed files formatted. /tmp/jj-empty-task-actions-web-final.log and /tmp/jj-empty-task-actions-{spec-first,spec-validate,progress,format-check}.log. Evidence formatting and consuming governance checks repeated before commit."
       }
     ]
   }

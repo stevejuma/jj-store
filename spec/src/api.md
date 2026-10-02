@@ -102,9 +102,11 @@ Native comment focus opens the disclosure; the composer and retained drafts
 remain below it in the same page. Collapsing Activity does not unmount the
 composer. There is no task discussion side panel or Open task discussion action;
 existing WorkStore commands, snapshots and pending identities remain unchanged.
-Settings content navigation begins with one section title and leaves return
-navigation to the existing sidebar, preserving the repository route and
-snapshot.
+The themed repository/edit/subtask buttons retain those callbacks and access
+checks. Centering an empty Threads listing changes no list read, native identity
+or create capability. Settings content navigation begins with one section title
+and leaves return navigation to the existing sidebar, preserving the repository
+route and snapshot.
 
 Local Settings present registration, Search configuration and Sync information
 in bordered rows with labels/descriptions before controls. Unsupported

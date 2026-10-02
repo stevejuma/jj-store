@@ -120,9 +120,11 @@ Visible task comments use the shared reaction picker and count bar, scoped to
 the metadata home and exact comment version. Read-only users can inspect counts;
 writes require home permission. Reaction feedback retains unknown request
 identity and status recovery after comment edits or removal, and reloads
-automatically with other task data. Task Edit and Add subtask actions use the
-filled outline Button surface and its semantic hover state so both actions
-remain visible at rest across themes. Cold RustFS qualification covers separate
+automatically with other task data. Task Open target repository, Edit task and
+Add subtask actions use the public secondary Button surface with leading
+repository, edit and subtask icons and its semantic hover state so the actions
+remain visible at rest across themes. The repository action keeps a small inline
+gap before the repository name. Cold RustFS qualification covers separate
 source/destination stores, historical WorkStore closures after checkpointing,
 retained origin ledger, local readiness and durable service receipts after both
 stores restart.

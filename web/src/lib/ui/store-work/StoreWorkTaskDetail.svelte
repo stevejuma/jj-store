@@ -12,6 +12,9 @@
   import GitBranchIcon from "@lucide/svelte/icons/git-branch";
   import ListTodoIcon from "@lucide/svelte/icons/list-todo";
   import RefreshIcon from "@lucide/svelte/icons/refresh-cw";
+  import FolderGit2Icon from "@lucide/svelte/icons/folder-git-2";
+  import PencilIcon from "@lucide/svelte/icons/pencil";
+  import ListPlusIcon from "@lucide/svelte/icons/list-plus";
   import type { StoreRepositorySummary } from "../../controller/contracts.js";
   import type { WorkController } from "../../controller/work-types.js";
   import StoreWorkComments from "./StoreWorkComments.svelte";
@@ -108,10 +111,14 @@
                   <dt><GitBranchIcon aria-hidden="true" />Repository</dt>
                   <dd>
                     {#if task.repository && target && onOpenRepository}<Button
-                        variant="ghost"
+                        variant="secondary"
                         size="sm"
+                        class="community-projects__task-target"
                         onclick={() => onOpenRepository?.(task.repository!)}
-                        >Open target repository</Button
+                        ><FolderGit2Icon
+                          data-icon="inline-start"
+                          aria-hidden="true"
+                        />Open target repository</Button
                       ><span>{target.name}</span>
                     {:else if task.repository}<span title={task.repository}
                         >Separate access required for the target repository.</span
@@ -136,15 +143,23 @@
                     <dt><ListTodoIcon aria-hidden="true" />Actions</dt>
                     <dd class="community-projects__task-assignees">
                       <Button
-                        variant="outline"
+                        variant="secondary"
                         size="sm"
                         {disabled}
-                        onclick={onEdit}>Edit task</Button
+                        onclick={onEdit}
+                        ><PencilIcon
+                          data-icon="inline-start"
+                          aria-hidden="true"
+                        />Edit task</Button
                       >{#if onSubtask}<Button
-                          variant="outline"
+                          variant="secondary"
                           size="sm"
                           {disabled}
-                          onclick={onSubtask}>Add subtask</Button
+                          onclick={onSubtask}
+                          ><ListPlusIcon
+                            data-icon="inline-start"
+                            aria-hidden="true"
+                          />Add subtask</Button
                         >{/if}
                     </dd>
                   </div>{/if}

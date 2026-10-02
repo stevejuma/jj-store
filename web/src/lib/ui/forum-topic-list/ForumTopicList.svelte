@@ -37,7 +37,11 @@
   } = $props();
 </script>
 
-<section class="forum-topic-list" aria-label={`${title} listing`}>
+<section
+  class="forum-topic-list"
+  class:forum-topic-list--empty={!topics.length}
+  aria-label={`${title} listing`}
+>
   {#if onCreateTopic}<CommunityTopicComposer
       forumName={title}
       {members}

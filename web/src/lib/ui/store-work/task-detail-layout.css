@@ -34,6 +34,9 @@
 .community-projects__task-body .community-projects__task-meta {
   margin-top: 0;
 }
+.community-projects__task-target {
+  margin-inline-end: 0.5rem;
+}
 .community-projects__task-footer {
   min-width: 0;
   padding: 0.75rem 1.25rem 1rem 0.85rem;

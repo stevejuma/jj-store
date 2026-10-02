@@ -78,9 +78,12 @@ restores pointer interaction under the served strict asset policy.
 
 Threads use the forum's full-width inline post composer above
 Topic/Replies/Activity rows, preserving post content in native messages. The
-channel toolbar ends with its kebab settings button, which opens settings
-directly. Settings retain metadata, rename and icon-led lifecycle controls using
-Community management rows; Remove uses its separate destructive-colour group and
+empty Threads listing fills its available viewport and centers the public shadcn
+Empty icon and copy below the new-post control, including read-only and narrow
+layouts. Populated topic rows retain their directory layout. The channel toolbar
+ends with its kebab settings button, which opens settings directly. Settings
+retain metadata, rename and icon-led lifecycle controls using Community
+management rows; Remove uses its separate destructive-colour group and
 confirmation dialog. Reaction chips use Community's Design Core shadcn tooltip
 on hover or keyboard focus, showing reaction counts, value and loaded authorized
 actors. Click retains exact-value toggling; hover never opens a modal popover.
