@@ -56,6 +56,13 @@ interaction evidence, not by dependency exclusion. Existing Community package
 qualification is historical evidence; new slices copy the necessary source
 closure locally.
 
+Shared repository card surface tokens are maintained locally with their original
+Community graph source and license in the provenance manifest. Pointer hover,
+the Command View keyboard cursor and the selected native bookmark are separate
+presentation states. Browser evidence checks their surfaces against Op Log
+across the complete theme catalog; focused menu/card stories retain blocking
+interaction, accessibility and runtime diagnostics.
+
 ## Change map
 
 `docs/ui-provenance.json` requires both `spec-governance.md` and `ui.md`.

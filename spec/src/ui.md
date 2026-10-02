@@ -355,15 +355,19 @@ every target and a deleted bookmark produces an empty graph. Route restoration
 loads references before resolving this scope, so reload and Back/Forward cannot
 briefly substitute the repository-wide default log.
 
-Working-copy cards use the same title size as bookmark cards. Unselected
-working-copy and bookmark cards use the same neutral grey hover and keyboard
-focus treatment as JJ Log rows; selected cards retain their accent background. A
-native empty working-copy description is presented as
-`(empty) (no description set)` while the workspace chip supplies its identity.
-Bookmark cards and their final visible item remain square with a bottom divider.
-Empty Workspace and Conflicted filter results use the shared Design Core shadcn
-Empty composition with icon media and filter-specific guidance; changing a
-filter clears any command selection that is no longer rendered.
+Working-copy cards use the same title size as bookmark cards. Working-copy,
+bookmark, JJ Log and Op Log cards share the column card surface and hover and
+selected tokens derived from the foreground; their headers retain the shared
+repository header token. Bookmark pointer hover ends when the pointer leaves the
+card and does not change the Command View keyboard cursor. The keyboard cursor
+is visibly highlighted only while the search input has visible focus; Enter and
+pointer activation retain exact bookmark selection. A native empty working-copy
+description is presented as `(empty) (no description set)` while the workspace
+chip supplies its identity. Bookmark cards and their final visible item remain
+square with a bottom divider. Empty Workspace and Conflicted filter results use
+the shared Design Core shadcn Empty composition with icon media and
+filter-specific guidance; changing a filter clears any command selection that is
+no longer rendered.
 
 JJ Log rows render local bookmarks as accent chips, remote bookmarks as neutral
 `name@remote` chips, working-copy associations as success chips, divergence as a
@@ -448,8 +452,9 @@ Actions section beneath Details using the existing capability-gated commands.
 Changing or clearing the selection updates or removes that section; unavailable
 commands stay disabled, and operation selection omits change-editing commands.
 Repository/source/snapshot summaries and selected metadata remain in the body.
-The header Repository actions menu remains available. Comparison-parent choices
-and request errors appear in the main body.
+The header Repository actions menu remains available in a 16rem-wide popup
+bounded by the viewport so command labels fit on one line. Comparison-parent
+choices and request errors appear in the main body.
 
 Repository pages place Community-styled `Overview`, `Branches`, `Commits`,
 `Op Log`, `Agents` and `Reviews` tabs at the top of the body. They route to the

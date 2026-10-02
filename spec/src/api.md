@@ -92,6 +92,12 @@ only. Theme, composer and modal changes retain the current route, captured
 snapshot, conversation draft and native request identities; selecting a theme
 sends no repository mutation and adds no HTTP/RPC contract fields.
 
+Repository cards resolve their resting, hover and selected surfaces against the
+same palette in Branches, JJ Log and Op Log. Pointer hover leaves the bookmark
+selection and captured operation intact. Keyboard Enter and repository menu
+commands continue to use the controller's exact native identities and advertised
+capabilities.
+
 Use tonic/protobuf for native RPC and Axum JSON/SSE for browser/agent APIs.
 Generate OpenAPI and client types. Full IDs are authoritative; shortened IDs are
 presentation. Historical loading requires no physical server working copy. Graph

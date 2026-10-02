@@ -1,4 +1,5 @@
 <script lang="ts">
+  import "../community-projects/repository-row-tokens.css";
   import * as CommandView from "@lapismd/design-core/shadcn/command-view";
   import GitBranchIcon from "@lucide/svelte/icons/git-branch";
   import CommunityWorkingCopyCard from "./CommunityWorkingCopyCard.svelte";
@@ -105,6 +106,7 @@
   label="Bookmarks"
   class="community-bookmark-cards"
   shouldFilter={false}
+  disablePointerSelection
 >
   {#each workingCopies as workingCopy (workingCopy.workspace)}
     <CommunityWorkingCopyCard
@@ -152,13 +154,13 @@
 
 <style>
   :global(.community-bookmark-cards) {
+    --ui-command-view-background: var(--jj-store-repository-row-background);
+    --ui-command-view-foreground: var(--foreground);
     --ui-command-view-list-max-height: max(12rem, calc(100dvh - 16rem));
     --ui-command-view-list-padding: 0;
     --ui-command-view-item-radius: 0px;
-    --ui-command-view-item-selected-background: color-mix(
-      in srgb,
-      var(--foreground) 7%,
-      var(--background)
+    --ui-command-view-item-selected-background: var(
+      --jj-store-repository-row-hover-background
     );
     --ui-command-view-radius: 0px;
   }
@@ -174,7 +176,10 @@
     background: var(--jj-store-row-background);
     border-bottom: 1px solid var(--border);
   }
-  :global(.community-bookmark-card[data-ui-part="item"]) {
+  :global(
+    .community-bookmark-cards
+      [data-ui-component="command-view"][data-ui-part="item"].community-bookmark-card
+  ) {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -184,19 +189,23 @@
     border-radius: 0;
     border-bottom: 1px solid var(--border);
     white-space: normal;
+    background: var(--jj-store-repository-row-background);
   }
   :global(
     [data-ui-component="command-view"][data-ui-part="item"].community-bookmark-card[data-current="true"]
   ) {
-    background: var(--accent);
+    background: var(--jj-store-repository-row-selected-background);
   }
   :global(
-    [data-ui-component="command-view"][data-ui-part="item"].community-bookmark-card[data-current="true"]:is(
+    .community-bookmark-cards
+      [data-ui-component="command-view"][data-ui-part="item"].community-bookmark-card:is(
         :hover,
         :focus-visible
-      )
+      ),
+    .community-bookmark-cards:has(input:focus-visible)
+      [data-ui-component="command-view"][data-ui-part="item"].community-bookmark-card[data-selected]
   ) {
-    background: var(--accent);
+    background: var(--jj-store-repository-row-hover-background);
   }
   :global(
     [data-ui-component="command-view"][data-ui-part="item"].community-bookmark-card[data-current="true"]

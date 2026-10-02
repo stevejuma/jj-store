@@ -40,18 +40,21 @@
     ).toBe("0px");
     await expect(getComputedStyle(root).borderBottomLeftRadius).toBe("0px");
     await expect(getComputedStyle(root).borderBottomRightRadius).toBe("0px");
-    const hoverProbe = document.createElement("div");
-    hoverProbe.style.background =
-      "color-mix(in srgb, var(--foreground) 7%, var(--background))";
-    root.append(hoverProbe);
-    const expectedHover = getComputedStyle(hoverProbe).backgroundColor;
-    hoverProbe.remove();
-    const unselectedBranch = canvas.getByRole("option", { name: "main" });
+    const unselectedBranch = canvas.getByRole("option", {
+      name: "feature/native-objects",
+    });
+    const restingBackground =
+      getComputedStyle(unselectedBranch).backgroundColor;
+    const keyboardSelection = unselectedBranch.getAttribute("aria-selected");
+    // Synthetic pointer events verify command state; native hover is checked in the browser.
     await userEvent.hover(unselectedBranch);
-    await expect(getComputedStyle(unselectedBranch).backgroundColor).toBe(
-      expectedHover,
+    await expect(unselectedBranch.getAttribute("aria-selected")).toBe(
+      keyboardSelection,
     );
     await userEvent.unhover(unselectedBranch);
+    await expect(getComputedStyle(unselectedBranch).backgroundColor).toBe(
+      restingBackground,
+    );
     const selectedBranch = canvas.getByRole("option", {
       name: "feature/publication",
     });
@@ -61,6 +64,11 @@
       selectedBackground,
     );
     await userEvent.unhover(selectedBranch);
+    await userEvent.click(canvas.getByPlaceholderText("Search branches"));
+    await userEvent.keyboard("{ArrowDown}{Enter}");
+    await expect(args.onSelect).toHaveBeenLastCalledWith(
+      "feature/native-objects",
+    );
     const workingCopyTitle = workingCopy.querySelector("strong")!;
     const branchTitle = canvas
       .getByRole("option", { name: "main" })

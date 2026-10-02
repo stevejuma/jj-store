@@ -35,6 +35,39 @@
 </script>
 
 <Story
+  name="Menu layout"
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Repository actions" }),
+    );
+    const menu = page.getByRole("menu", { name: "Repository actions" });
+    await expect(menu.getBoundingClientRect().width).toBe(256);
+    for (const name of [
+      "Create change",
+      "Edit description",
+      "Abandon change",
+      "Resolve conflicts",
+      "Create bookmark",
+      "Move bookmark",
+      "Delete bookmark",
+    ]) {
+      await expect(within(menu).getByRole("menuitem", { name })).toBeVisible();
+    }
+    await userEvent.keyboard("{Escape}");
+    await waitFor(() =>
+      expect(
+        page.queryByRole("menu", { name: "Repository actions" }),
+      ).toBeNull(),
+    );
+    await waitUntilInteractive(canvasElement.ownerDocument);
+  }}
+>
+  {#snippet template()}<StoreRepositoryActionsFixture />{/snippet}
+</Story>
+
+<Story
   name="Preview and apply"
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);

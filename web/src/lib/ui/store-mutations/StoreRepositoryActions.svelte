@@ -101,6 +101,7 @@
         >{/snippet}
     </DropdownMenu.Trigger>
     <DropdownMenu.Content
+      class="store-repository-actions-menu"
       align="end"
       sideOffset={4}
       preventScroll={false}
@@ -204,3 +205,10 @@
 <Dialog.Root bind:open={dialogOpen}>
   <StoreMutationDialog {controller} {action} open={dialogOpen} />
 </Dialog.Root>
+
+<style>
+  :global(.store-repository-actions-menu) {
+    width: 16rem;
+    max-width: calc(100vw - 2rem);
+  }
+</style>

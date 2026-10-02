@@ -132,7 +132,7 @@ shared-package release qualification does not alter those original Git gates.
 | M15.5       | In progress | M15.3                   | JST-COLLAB-016,JST-GOV-008,JST-UI-017                                                                                                                                                   | Owned Community channel/forum templates, Threads navigation and native workspace search                                        | Retain interaction/cold UI and qualify remaining full flow                                     | E-M15-011,E-M15-015,E-M15-016,E-M15-017,E-M15-018,E-M15-019,E-M15-021,E-M15-022,E-M15-025,E-M15-030,E-M15-031                                                                                                                                                                                                                                                  |
 | M15.6       | In progress | M15.3                   | JST-COLLAB-009,JST-COLLAB-010,JST-API-009,JST-ADAPT-007                                                                                                                                 | Derived canonical-source timeline/search and review integration                                                                | Qualify authorized joins                                                                       | E-M15-006,E-M15-020,E-M15-021,E-M15-022,E-M15-025                                                                                                                                                                                                                                                                                                              |
 | M15.7       | Planned     | M15.4,M15.5,M15.6       | JST-COLLAB-007,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                                                                                              | Cold real-RustFS/local full flow and runner qualification                                                                      | Retain native/local/cold evidence                                                              | -                                                                                                                                                                                                                                                                                                                                                              |
-| M16         | Partial     | M15.5                   | JST-UI-018,JST-GOV-009                                                                                                                                                                  | Complete device Appearance and cold consumer qualification                                                                     | Complete source release and registry-only consumer qualification                               | E-UI-052,E-UI-053,E-UI-054,E-UI-055,E-UI-056,E-UI-057                                                                                                                                                                                                                                                                                                          |
+| M16         | Partial     | M15.5                   | JST-UI-018,JST-GOV-009                                                                                                                                                                  | Complete device Appearance and cold consumer qualification                                                                     | Complete source release and registry-only consumer qualification                               | E-UI-052,E-UI-053,E-UI-054,E-UI-055,E-UI-056,E-UI-057,E-UI-058                                                                                                                                                                                                                                                                                                 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -40820,6 +40820,122 @@ and named tests are checked by the progress gate.
     "remaining": [],
     "next": "Refresh the existing browser once to load the Vite client; then UI edits update live. Set JJ_STORE_DEV_ROOT=/Users/stevejuma/code/lapismd/jj-store/.local/dev-demo for every Appearance development command. Use dev:backend:build then dev:backend:restart after Rust edits, or dev:restart to rebuild/restart the full stack with built UI.",
     "artifacts": "/tmp/jj-hmr-*.log; private /tmp/jj-hmr-live-{before,ready}.json. Disposable acceptance roots and probe files removed; interactive Vite/backend/storage remain running. No main landing."
+  },
+  {
+    "id": "E-UI-058",
+    "tasks": ["M16"],
+    "date": "2026-10-02",
+    "kind": "repository-card-theme-alignment-and-menu-width",
+    "revision": "enclosing Jujutsu change opznqxqt",
+    "before": "Appearance working copy is clean at opznqxqt/f7dbb1fb above Vite workflow nmxuylws/7d1d8ade. User identifies narrow header Repository actions and mismatched/sticky bookmark card surfaces on Branches. Read-only Chromium baseline on Buzz at 1351x988 measures128px menu, bookmark root rgb235/235/235 from popover versus white log column, and command-active neutral hover background persisting after pointer exit. Three observed presentation defects; no browser runtime errors. Community is inspected before Design Core; Command View intentionally retains a keyboard cursor, so app card interaction is adapted through its public disablePointerSelection option.",
+    "files": [
+      "web/src/lib/ui/community-projects/repository-row-tokens.css",
+      "web/src/lib/ui/community-projects/CommunityProjectsRevisionGraph.svelte",
+      "web/src/lib/ui/community-repository-branch-command/CommunityRepositoryBranchCommand.svelte",
+      "web/src/lib/ui/community-repository-branch-command/CommunityWorkingCopyCard.svelte",
+      "web/src/lib/ui/store-mutations/StoreRepositoryActions.svelte",
+      "catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte",
+      "catalog/components/store-mutations/StoreRepositoryActions.stories.svelte",
+      "docs/ui-provenance.json",
+      "spec/src/ui.md",
+      "spec/src/verification.md",
+      "spec/src/milestones.md",
+      "spec/src/api.md",
+      "spec/src/spec-governance.md"
+    ],
+    "runs": [
+      {
+        "command": "jj --no-pager st; jj describe -m \"Align Branches cards with repository log themes and widen actions menu\"; jj --no-pager diff --stat; jj --no-pager diff (scoped source review)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Reused clean Appearance workspace; main unrelated work is untouched. Owning UI requirements and M16 state reviewed; Community source reference inspected first and Design Core public command/menu/column APIs second."
+      },
+      {
+        "command": "node /tmp/jj-branch-styles-probe.mjs (before and after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Fresh isolated browser context with Buzz preference; read-only pinned native route. Before:128px popup, popover grey list versus white column, retained data-selected shading outside hover. After:256px popup, white matching list/cards, hover returns to white on pointer exit. No runtime errors. Before/after logs/JSON and after.png under /tmp/jj-branch-styles-*; no visual baseline approval."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte catalog/components/store-mutations/StoreRepositoryActions.stories.svelte (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Branch3/3 passes; actions suite fails import after Vite newly optimizes arrow-up and reloads the test. Exact retry clears import failure but exposes separate existing mutation-dialog ScrollArea teardown diagnostics. No optimizer/diagnostic suppression."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte catalog/components/store-mutations/StoreRepositoryActions.stories.svelte (retry)",
+        "result": "fail",
+        "failures": 2,
+        "note": "All7 assertions pass; two blocking derived_inert runtime diagnostics originate in Bits UI ScrollAreaScrollbarYState.onResize after DestructiveConfirmation/UnknownOutcomeRecovery teardown. These dialogs and scrollbar ownership are outside the changed menu/card styling surface. /tmp/jj-branch-styles-stories-final.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/RepositoryReview.stories.svelte -t \"Shell and graph alignment\"",
+        "result": "pass",
+        "failures": 0,
+        "note": "Incorrect human-readable filter skipped3 stories; not claimed as acceptance. Final target uses the generated CamelCase test name and executes the graph alignment story."
+      },
+      {
+        "command": "jj workspace add /private/tmp/jj-store-branch-card-baseline --name branch-card-baseline -r @- -m \"Disposable repository menu diagnostic baseline\"; ln -s /Users/stevejuma/code/lapismd/jj-store-appearance/node_modules /private/tmp/jj-store-branch-card-baseline/node_modules; pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-mutations/StoreRepositoryActions.stories.svelte (baseline and retry)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Unchanged parent source baseline. Both attempts fail before tests because the symlinked addon setup import is outside the temporary Vite filesystem allow roots. Temporary baseline-only config explicitly allows the existing dependency directory; no tracked build configuration or API admission is changed."
+      },
+      {
+        "command": "pnpm exec vitest run --config .scratch/baseline.vitest.config.ts --project storybook catalog/components/store-mutations/StoreRepositoryActions.stories.svelte (unchanged parent baseline)",
+        "result": "fail",
+        "failures": 3,
+        "note": "Parent source nmxuylws/7d1d8ade executes all4 assertions successfully and reproduces3 derived_inert ScrollArea teardown diagnostics, including the same DestructiveConfirmation/UnknownOutcomeRecovery stacks. Confirms the wider dialog failure predates these styles. Existing pinned Bits UI2.18.1/runed0.35.1 behavior remains a separate upstream qualification gap. /tmp/jj-branch-styles-parent-qualified.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte catalog/components/store-mutations/StoreRepositoryActions.stories.svelte catalog/components/store-application/RepositoryReview.stories.svelte -t \"BookmarkCards|EmptyBookmarks|EmptyFilterStates|MenuLayout|ShellAndGraphAlignment\"",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact complete affected style/interaction surface5/5 passes,6 unrelated stories skipped; blocking interaction/accessibility and runtime guard retained. Synthetic pointer events cannot set CSS hover, so branch story verifies unchanged command cursor and no retained shading; real pointer hover is covered by native-browser probe. Menu labels/256px width/Escape close, keyboard exact selection, filter/search/empty states and shared graph/header geometry all pass. /tmp/jj-branch-styles-focused-stories.log."
+      },
+      {
+        "command": "node /tmp/jj-branch-theme-acceptance.mjs (development attempts)",
+        "result": "fail",
+        "failures": 3,
+        "note": "Harness first compared equivalent oklch/oklab foreground serialization; normalized rendered foreground to RGBA. Next compared while shell theme transitions were still running; isolated test disables transition/animation to measure settled token values. Third passes all64 themes and keyboard/desktop menu but wrongly expects desktop Repository actions at390px, where the existing mobile shell omits that control. Narrowed viewport assertion to the requested desktop menu; no product assertion or security policy weakened. /tmp/jj-branch-styles-qualified{,-final,-settled}.log."
+      },
+      {
+        "command": "node /tmp/jj-branch-theme-acceptance.mjs (qualified desktop)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Fresh isolated Chromium pages compare actual native Branches and selected Op Log on all64 themes, including Original light/dark. Column/card/foreground/header/group-heading parity; identical hover/selected surfaces; bookmark and working-copy pointer exit; unchanged keyboard cursor on hover; selected bookmark restores selected shade after hover. Real search ArrowDown/Enter selects exact bookmark;256px menu remains within1351px viewport. Browser runtime errors0. No native writes or changes to the user browser preferences. /tmp/jj-branch-styles-qualified-desktop.log; qualified.json/png."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "Web and catalog0 errors/warnings; catalog129-module boundary and owned Community provenance pass. New shared tokens record their existing Apache-2.0 Community graph source pin. Production imports stay independent of catalog and Community packages. /tmp/jj-branch-styles-{web-check,catalog-check,ownership}.log."
+      },
+      {
+        "command": "pnpm spec:first (first canonical validation)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Source/provenance change map additionally requires api.md and spec-governance.md. Added exact native identity/capability presentation and owned shared-token provenance/state requirements to those owning chapters; final gate passes without map exceptions. /tmp/jj-branch-styles-spec-first-initial.log."
+      },
+      {
+        "command": "pnpm exec prettier --write (changed supported files); pnpm exec prettier --check (same files); pnpm spec:first; pnpm spec:validate; pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Same-change canonical UI, verification mapping and ledger validation. Focused formatting; no milestone completion status or visual baseline change. /tmp/jj-branch-styles-{format,format-check,spec-first,spec-validate,progress}.log."
+      },
+      {
+        "command": "jj workspace forget branch-card-baseline; trash -v /private/tmp/jj-store-branch-card-baseline",
+        "result": "pass",
+        "failures": 0,
+        "note": "Disposable parent diagnostic workspace forgotten before recoverable directory cleanup. Owned interactive Vite/backend remain running; no backend restart or build."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "UI-only repository card/menu presentation and its direct browser/Storybook consumers. Shared row token extraction preserves existing log color recipes and does not alter navigation/controller/native contracts. Exact focused stories, web/catalog type checks, ownership and all-theme native read-only browser comparison are the acceptance surface. Broader dialog stories were tried only for diagnostics and reproduce an upstream ScrollArea lifecycle warning on unchanged parent; they are not a full-suite pass. M16 remains Partial with prior foundation release, registry-only, composer-CSP and visual gates retained. Rust builds/tests, root aggregates, unrelated story suites and production built-CSP qualification are out of scope; Vite HMR applies the UI changes without stack rebuild.",
+    "versions": "Node26.9.0; pnpm10.32.1; Vite8.3.2; Svelte5.57.1; Vitest4.1.11; Storybook10.5.7; existing Bits UI2.18.1/runed0.35.1;64 owned theme styles. Foundational dependencies and lockfiles unchanged.",
+    "formats": "No native/API/preference/storage formats change. Cards use the column card surface, foreground and shared foreground7% hover/12% selected recipes. Headers keep jj-store-row-background. Keyboard command cursor remains distinct from exact route selection and pointer hover; public disablePointerSelection prevents hover from changing the cursor. Menu layout uses16rem with viewport maximum.",
+    "next": "Continue UI iteration on the running Appearance Vite service. Wider mutation-dialog ScrollArea teardown qualification remains separately recorded; no release/full-suite or baseline approval claim.",
+    "artifacts": "/tmp/jj-branch-styles-*.log, before/after/qualified JSON and screenshots; /tmp/jj-branch-theme-acceptance.mjs and styles-probe.mjs. Browser contexts and disposable baseline workspace cleaned up; original interactive fixture remains intact."
   }
 ]
 ```

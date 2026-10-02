@@ -1,4 +1,5 @@
 <script lang="ts">
+  import "./repository-row-tokens.css";
   import type { Snippet } from "svelte";
   import type { CommunityMemberModel } from "../community-workspace/model.js";
   import type { StoreControllerState } from "../../controller/contracts.js";
@@ -235,7 +236,7 @@
   }
 
   .community-revision-graph__item--selected {
-    background: color-mix(in srgb, var(--foreground) 12%, var(--background));
+    background: var(--jj-store-repository-row-selected-background);
   }
 
   .community-revision-graph__row {
@@ -267,7 +268,7 @@
 
   .community-revision-graph__row:hover,
   .community-revision-graph__row:focus-visible {
-    background: color-mix(in srgb, var(--foreground) 7%, var(--background));
+    background: var(--jj-store-repository-row-hover-background);
     outline: none;
   }
 
