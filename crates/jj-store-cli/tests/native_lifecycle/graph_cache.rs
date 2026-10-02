@@ -328,13 +328,13 @@ async fn graph_cache_recovery_rechecks_permission_and_serializes_independent_exe
             assert_eq!(recovered.data, healed.data);
             assert!(!abandoned.exists());
             // A failed native query cannot leave partially updated derived files.
-            assert_eq!(
+            assert!(matches!(
                 admin
                     .graph(&separate, log("@"), page(100))
                     .await
                     .unwrap_err(),
-                q::Error::Invalid
-            );
+                q::Error::InvalidQuery(diagnostic) if diagnostic.kind == "missing_context"
+            ));
             assert_eq!(fs::read_dir(cache_root(root.path())).unwrap().count(), 1);
             assert_eq!(*f.session.snapshot().await.unwrap().manifest(), before);
         })

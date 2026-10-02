@@ -100,6 +100,7 @@ async fn http_contract_capture_matches_registered_routes() {
     for (template, path) in [
         ("capabilities", "capabilities".into()),
         ("snapshot", "snapshot".into()),
+        ("query-info", format!("query-info?at_op={operation}")),
         (
             "log",
             format!("log?at_time_millis=1790000000000&at_op={operation}"),

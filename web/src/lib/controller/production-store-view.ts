@@ -201,6 +201,7 @@ export function productionControllerSurface(
     actions: StoreController["actions"];
     globalSearch?: StoreController["globalSearch"];
     referenceSearch?: StoreController["referenceSearch"];
+    historyQuery?: StoreController["historyQuery"];
   },
 ): StoreController {
   return {
@@ -210,6 +211,7 @@ export function productionControllerSurface(
     projects: options.projects,
     globalSearch: options.globalSearch,
     referenceSearch: options.referenceSearch,
+    historyQuery: options.historyQuery,
     get state() {
       return productionSessionView(
         data,

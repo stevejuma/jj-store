@@ -38,6 +38,7 @@ export class HttpLocalCodeDataSource {
     this.client = new LocalClient(repository, fetcher);
   }
   protected read<T>(path: string, body?: unknown, signal?: AbortSignal) {
+    if (signal) return this.client.request<T>(path, body, signal);
     const encoded = pretty(body);
     const retained = body === undefined ? undefined : decode(encoded);
     return this.#reads.fetchQuery<T>({
@@ -73,6 +74,7 @@ export class HttpLocalCodeDataSource {
     operation: string,
     request: Request & { kind: K },
     cursor?: string,
+    signal?: AbortSignal,
   ): Promise<{
     snapshot: LocalReadSnapshot;
     data: DataByKind[K];
@@ -80,11 +82,15 @@ export class HttpLocalCodeDataSource {
     previous_cursor: string | null;
   }> {
     const head = await this.snapshot();
-    const response = await this.read<Model<"LocalCodeQueryResponse">>("query", {
-      operation: fullId(operation),
-      request,
-      cursor: cursor ?? null,
-    });
+    const response = await this.read<Model<"LocalCodeQueryResponse">>(
+      "query",
+      {
+        operation: fullId(operation),
+        request,
+        cursor: cursor ?? null,
+      },
+      signal,
+    );
     if (
       response.snapshot.profile !== this.profile ||
       response.snapshot.repository !== this.repository ||
@@ -123,6 +129,10 @@ export class HttpLocalCodeDataSource {
       cursor,
     );
   }
+  async queryInfo(operation: string) {
+    return (await this.query<"query_info">(operation, { kind: "query_info" }))
+      .data;
+  }
   graph(kind: "log" | "operations" | "evolution", input: GraphQuery) {
     const graph: Extract<Request, { kind: "graph" }>["query"][0] =
       kind === "log"
@@ -134,7 +144,9 @@ export class HttpLocalCodeDataSource {
             at_time_millis: input.atTimeMillis ?? Date.now(),
           }
         : kind === "operations"
-          ? { graph: "operations" }
+          ? input.operationQuery
+            ? { graph: "operations_filtered", query: input.operationQuery }
+            : { graph: "operations" }
           : {
               graph: "evolution",
               commit: codeId(input.commit ?? "", this.profile),
@@ -146,6 +158,7 @@ export class HttpLocalCodeDataSource {
         query: [graph, { limit: input.limit ?? 50, after: null }],
       },
       input.cursor,
+      input.signal,
     );
   }
   commit(id: string, operation: string) {

@@ -347,3 +347,16 @@ matches the draft, never a JJ receipt. Concurrent browser saves serialize.
 Arbitrary external filesystem writers do not participate in a filesystem CAS;
 final fingerprint checking detects prior changes but cannot guarantee exclusion
 of a writer racing the atomic rename.
+
+## Rich history query delivery
+
+The registered-folder `query_info` request MUST share the existing local
+operation pin and worker admission. Its catalog excludes unqualified content and
+cross-operation predicates. Standard JJ 0.45.1 aliases MUST evaluate against
+server defaults with explicit email/workspace/time context, regardless of
+user/repository aliases. The additive `operations_filtered` graph variant uses
+the same bounded metadata grammar as native repositories and preserves sparse
+pagination, actual operation parents and exact continuation bindings. Reads MUST
+preserve operation-head files, physical dirty files and companion selections.
+Custom aliases and local content/cross-operation predicate qualification remain
+deferred.

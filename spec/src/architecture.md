@@ -1,6 +1,8 @@
 # Architecture
 
 The local service consumes `jj-review` directly for portable source validation.
+The dependency audit permits this owned model boundary while rejecting
+ReviewStore dependencies on publication and core-model dependencies on reviews.
 Its retained-record read port supplies only canonical AgentStore objects from an
 explicit committed companion selection. The model checks exact identities and
 payload bytes; it cannot open folders, admit callers or publish metadata. The
@@ -551,3 +553,13 @@ filesystem operations through rustix. It owns bounded text admission, device
 selection fingerprints and atomic Save; it has no upstream JJ imports and does
 not compose a repository transaction. Local HTTP admission supplies the verified
 folder binding. Native mutation/storage boundaries remain independent.
+
+## Pinned history query ownership
+
+History query metadata, pinned standard aliases and bounded operation-filter
+parsing belong to `jj-store-jj`. Native and filesystem graph readers consume
+these owned interfaces through the existing service admission and read-session
+boundaries. Filtering precedes pagination and charges scanned operations without
+rewriting their parent identities. Query execution never publishes repository
+state. The browser controller owns cancellation, operation/time pinning and
+accepted-query routing; Design Core owns the generic custom-language editor.

@@ -127,7 +127,10 @@ pub(super) fn admit_revset(
         budget.work(1)?;
         match expression {
             E::Filter(F::File(_) | F::DiffLines { .. }) | E::AtOperation { .. } => {
-                return Err(Error::Invalid);
+                return Err(crate::query::language::invalid(
+                    "unsupported_predicate",
+                    "This local repository does not support file predicates or at_operation().",
+                ));
             }
             E::Ancestors { heads, .. } => stack.push(heads),
             E::Descendants { roots, .. } => stack.push(roots),

@@ -106,13 +106,21 @@ export class HttpStoreDataSource
             at_time_millis: input.atTimeMillis ?? Date.now(),
           }
         : {}),
+      ...(kind === "operations" ? { query: input.operationQuery ?? "" } : {}),
       ...(kind === "evolution" ? { commit: fullId(input.commit ?? "") } : {}),
     };
+    if (input.signal)
+      return this.#client.request<Envelope<Graph>>(kind, query, {
+        signal: input.signal,
+      });
     return this.#query<Envelope<Graph>>(
       kind,
       input.operation,
       query,
-      (signal) => this.#client.request(kind, query, { signal }),
+      (signal) =>
+        this.#client.request(kind, query, {
+          signal,
+        }),
     );
   }
   commit(id: string, operation: string) {
@@ -235,9 +243,6 @@ export class HttpStoreDataSource
       query,
       (signal) => this.#client.request("search", query, { signal }),
     );
-  }
-  searchStatus(_fresh = false) {
-    return this.#client.request<Model<"SearchStatus">>("search/status");
   }
   agentSessions(cursor?: string) {
     return this.#collaboration.agentSessions(cursor);

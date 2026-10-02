@@ -265,10 +265,10 @@ async fn graph_query_divergent_operations_bookmarks_and_explicit_workspace() {
                         .iter()
                         .any(|n| n.commit.description == other)
                 );
-                assert_eq!(
+                assert!(matches!(
                     read.graph(&exec, log("@"), page(10)).await.unwrap_err(),
-                    q::Error::Invalid
-                );
+                    q::Error::InvalidQuery(diagnostic) if diagnostic.kind == "missing_context"
+                ));
                 let mut query = log("@");
                 if let q::Request::Log { workspace, .. } = &mut query {
                     *workspace = Some("fixture".into());
@@ -422,12 +422,12 @@ async fn graph_query_rebuild_limits_staged_rejection_and_current_revocation() {
             let m::ObjectKey::Commit(id) = key else {
                 unreachable!()
             };
-            assert_eq!(
+            assert!(matches!(
                 read.graph(&exec, log(&id.to_string()), page(2))
                     .await
                     .unwrap_err(),
-                q::Error::Invalid
-            );
+                q::Error::InvalidQuery(diagnostic) if diagnostic.kind == "unresolved_symbol"
+            ));
             assert_eq!(
                 read.graph(&exec, q::Request::Evolution { commit: id }, page(2))
                     .await
@@ -686,3 +686,6 @@ mod resource_acceptance;
 
 #[path = "index_preparation.rs"]
 mod index_acceptance;
+
+#[path = "history_query.rs"]
+mod history_query_acceptance;

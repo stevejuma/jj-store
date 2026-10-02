@@ -1,5 +1,10 @@
 import { HttpSearchSettings } from "./search-settings.js";
-import type { Client } from "../api/client.js";
+import {
+  fullId,
+  type Envelope,
+  type Client,
+  type Model,
+} from "../api/client.js";
 import { HttpSyncSettings } from "./sync-settings.js";
 import { HttpWorkspaceLinks } from "./http-workspace-links.js";
 
@@ -12,6 +17,17 @@ export class HttpRepositoryTransports {
     this.searchSettings = new HttpSearchSettings(client);
     this.sync = new HttpSyncSettings(client);
     this.localWorkspaces = new HttpWorkspaceLinks(client);
+  }
+  async queryInfo(operation: string) {
+    const value = await this.client.request<
+      Envelope<import("./history-query-types.js").HistoryQueryInfo>
+    >("query-info", { at_op: fullId(operation) });
+    if (value.snapshot.operation_id !== operation)
+      throw new Error("Query metadata snapshot mismatch");
+    return value.data;
+  }
+  searchStatus(_fresh = false) {
+    return this.client.request<Model<"SearchStatus">>("search/status");
   }
   events(
     after: string | undefined,

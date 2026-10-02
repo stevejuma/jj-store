@@ -4,6 +4,7 @@ use jj_store_service::{index_tasks as tasks, pagination as p, transport};
 
 #[derive(Debug)]
 pub struct Error {
+    diagnostic: Option<q::language::Diagnostic>,
     status: StatusCode,
     code: &'static str,
     snapshot: Option<Box<reads::ReadSnapshot>>,
@@ -14,6 +15,7 @@ pub struct Error {
 impl Error {
     pub fn new(status: StatusCode, code: &'static str) -> Self {
         Self {
+            diagnostic: None,
             status,
             code,
             snapshot: None,
@@ -63,6 +65,7 @@ impl IntoResponse for Error {
     fn into_response(self) -> Response {
         let value = crate::dto::ErrorBody {
             version: 1,
+            diagnostic: self.diagnostic,
             code: self.code,
             snapshot: self.snapshot,
             heads: self.heads,
@@ -100,6 +103,10 @@ impl From<q::Error> for Error {
     fn from(e: q::Error) -> Self {
         use q::Error as E;
         match e {
+            E::InvalidQuery(diagnostic) => Self {
+                diagnostic: Some(diagnostic),
+                ..Self::new(StatusCode::BAD_REQUEST, "invalid_query")
+            },
             E::Denied => Self::denied(),
             E::Busy => Self::busy(),
             E::Limit | E::IndexBudget => Self::limit(),

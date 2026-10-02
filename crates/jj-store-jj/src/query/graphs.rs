@@ -16,7 +16,11 @@ pub(super) fn validate(
     budget: &Budget,
 ) -> Result<()> {
     match (request, page.after) {
-        (Request::Operations, Some(m::ObjectKey::Operation(_))) | (_, None) => {}
+        (
+            Request::Operations | Request::OperationsFiltered { .. },
+            Some(m::ObjectKey::Operation(_)),
+        )
+        | (_, None) => {}
         (Request::Log { .. } | Request::Evolution { .. }, Some(m::ObjectKey::Commit(_))) => {}
         _ => return Err(Error::Invalid),
     }
@@ -227,7 +231,7 @@ pub(super) async fn run(
             };
             let extensions = revset::RevsetExtensions::default();
             let context = RevsetParseContext {
-                aliases_map: &revset::RevsetAliasesMap::default(),
+                aliases_map: &crate::query::language::standard_aliases(),
                 local_variables: Default::default(),
                 user_email: &user_email,
                 date_pattern_context: chrono::DateTime::from_timestamp_millis(at_time_millis)
@@ -242,15 +246,25 @@ pub(super) async fn run(
                     workspace_name: name,
                 }),
             };
+            crate::query::language::require_context(
+                &expression,
+                workspace.as_ref().map(|w| w.as_str()),
+                &user_email,
+            )?;
             let parsed = revset::parse(&mut Default::default(), &expression, &context)
-                .map_err(|_| Error::Invalid)?;
+                .map_err(|error| crate::query::language::invalid("syntax", error.to_string()))?;
             super::predicates::preflight(repo, &parsed, access, budget).await?;
             let resolved = parsed
                 .resolve_user_expression(
                     repo,
                     &revset::SymbolResolver::new(repo, extensions.symbol_resolvers()),
                 )
-                .map_err(|_| Error::Invalid)?;
+                .map_err(|_| {
+                    crate::query::language::invalid(
+                        "unresolved_symbol",
+                        "A revision, bookmark or operation could not be resolved in this snapshot.",
+                    )
+                })?;
             budget.check()?;
             let set = resolved.evaluate(repo).map_err(|_| Error::Unavailable)?;
             let mut stream = set.stream_graph();
@@ -288,13 +302,21 @@ pub(super) async fn run(
             }
             Nodes::Log(nodes)
         }
-        Request::Operations => {
-            let heads = [repo.operation().clone()];
+        Request::Operations | Request::OperationsFiltered { .. } => {
+            let filter = crate::query::language::operations::Filter::parse(match &request {
+                Request::OperationsFiltered { query } => query,
+                _ => "",
+            })?;
+            let heads = [filter.start(repo, || budget.work(1)).await?];
             let stream = jj_lib::op_walk::walk_ancestors(&heads);
             let mut stream = std::pin::pin!(stream);
             let mut nodes = vec![];
             while let Some(operation) = stream.try_next().await.map_err(|_| Error::Unavailable)? {
                 budget.authorize(access.as_ref()).await?;
+                budget.work(1)?;
+                if !filter.matches(&operation) {
+                    continue;
+                }
                 let id = oid(operation.id())?;
                 match position.visit(m::ObjectKey::Operation(id)) {
                     Action::Skip => continue,

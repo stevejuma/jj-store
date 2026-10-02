@@ -88,7 +88,7 @@ export function createProductionStoreReader(context: ReaderContext) {
               : undefined;
     data.status.graph = more ? "refreshing" : "loading";
     try {
-      data.graphAtTimeMillis ??= Date.now();
+      data.graphAtTimeMillis ??= history.route.historyTime ?? Date.now();
       const value = await readGraph(
         source,
         operation,
@@ -99,6 +99,7 @@ export function createProductionStoreReader(context: ReaderContext) {
         more ? (data.graphPageSnapshot ?? undefined) : undefined,
         branchTargets,
         history.route.workspace ?? undefined,
+        { text: history.route.historyQuery ?? "", email: data.historyEmail },
       );
       if (!context.current(ticket, source)) return;
       data.graph = more

@@ -25,6 +25,8 @@ export interface GraphQuery {
   cursor?: string;
   limit?: number;
   revset?: string;
+  operationQuery?: string;
+  signal?: AbortSignal;
   workspace?: string;
   userEmail?: string;
   atTimeMillis?: number;
@@ -59,6 +61,9 @@ export interface StoreDataSource {
   readonly sync?: import("./sync-settings.js").SyncTransport;
   readonly localWorkspaces?: import("./workspace-link-types.js").WorkspaceLinkTransport;
   readonly work?: import("./projects-hub-types.js").WorkBrowseTransport;
+  queryInfo?(
+    operation: string,
+  ): Promise<import("./history-query-types.js").HistoryQueryInfo>;
   capabilities(): Promise<RepositoryCapabilities>;
   snapshot(fresh?: boolean): Promise<RepositoryHead>;
   references(

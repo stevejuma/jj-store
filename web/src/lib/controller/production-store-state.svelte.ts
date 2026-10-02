@@ -76,6 +76,7 @@ export interface ProductionStoreState extends WorkspaceLinkSettings {
   refsCursor: string | null;
   graphCursor: string | null;
   graphAtTimeMillis: number | null;
+  historyEmail: string;
   fileViewMode: FileListingViewMode;
   pathPages: Map<string, StoredPathPage>;
   knownDirectories: Set<string>;
@@ -173,6 +174,7 @@ export function createProductionStoreState(): ProductionStoreState {
     refsCursor: null,
     graphCursor: null,
     graphAtTimeMillis: null,
+    historyEmail: "",
     fileViewMode: "tree",
     pathPages: new Map(),
     knownDirectories: new Set(),
@@ -230,6 +232,7 @@ export function clearProductionStoreView(state: ProductionStoreState) {
   state.refsCursor = null;
   state.graphCursor = null;
   state.graphAtTimeMillis = null;
+  state.historyEmail = "";
   state.fileViewMode = "tree";
   state.pathPages = new Map();
   state.knownDirectories = new Set();

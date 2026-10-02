@@ -1,3 +1,4 @@
+import { createHistoryQuery } from "./history-query.svelte.js";
 import { connectRepositorySource } from "./production-repository-connect.js";
 import { createEntitySearch } from "./production-entity-search.js";
 import { createProductionRefresh } from "./production-store-refresh.js";
@@ -23,6 +24,7 @@ import {
   createProductionRevisionSelector,
   reportProductionStoreError,
   resetConnectionView,
+  destroyProductionStoreLifecycle,
   startProductionStoreLifecycle,
 } from "./production-store-lifecycle.svelte.js";
 import { createProductionBranchActions } from "./production-branch-actions.js";
@@ -55,6 +57,14 @@ export function createProductionStoreController(
     version: () => version,
     current,
     report: (cause) => reportProductionStoreError(data, cause),
+  });
+  const historyQuery = createHistoryQuery({
+    data,
+    history,
+    source: activeSource,
+    version: () => version,
+    begin: () => ++version,
+    current,
   });
   if (history.error)
     Object.assign(data.status, { navigation: "failed", error: history.error });
@@ -132,6 +142,7 @@ export function createProductionStoreController(
     settings.clear();
     mutations.configure([]);
     mutations.reset();
+    historyQuery.dispose();
     search.clear();
     globalSearch.clear();
     referenceSearch.clear();
@@ -257,11 +268,8 @@ export function createProductionStoreController(
     connect: ({ repository, token }) => connect(repository, token),
     connectRepository,
     disconnect: () => disconnect(),
-    destroy: () => {
-      lifecycle.abort();
-      disconnect();
-      history.destroy();
-    },
+    destroy: () =>
+      destroyProductionStoreLifecycle(lifecycle, disconnect, history),
     refresh,
     selectOperation,
     restoreRoute,
@@ -289,6 +297,7 @@ export function createProductionStoreController(
     () => source,
     () => sessionToken,
     {
+      historyQuery,
       threads: threadsIntegration,
       projects,
       now: options.now,

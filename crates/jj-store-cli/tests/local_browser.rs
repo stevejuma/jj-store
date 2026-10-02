@@ -1337,6 +1337,21 @@ async fn filesystem_runtime_registers_and_reads_without_native_storage() {
         )
         .await,
     );
+    let query_info: Value = post(
+        &format!("/local/repos/{id}/query"),
+        json!({"operation":operation,"request":{"kind":"query_info"},"cursor":null}),
+    )
+    .send()
+    .await
+    .unwrap()
+    .error_for_status()
+    .unwrap()
+    .json()
+    .await
+    .unwrap();
+    assert_eq!(query_info["data"]["data"]["jj_version"], "0.45.1");
+    let filtered_operations: Value = post(&format!("/local/repos/{id}/query"), json!({"operation":operation,"request":{"kind":"graph","query":[{"graph":"operations_filtered","query":"from:@ snapshot:false"},{"limit":1,"after":null}]},"cursor":null})).send().await.unwrap().error_for_status().unwrap().json().await.unwrap();
+    assert_eq!(filtered_operations["data"]["kind"], "graph");
     if let Ok(path) = std::env::var("JJ_STORE_LOCAL_BROWSER_CONTRACT_CAPTURE") {
         let sample = |path: &str, method: &str, data: Value| json!({"path":path,"method":method,"status":200,"media":"application/json","data":data});
         fs::write(
@@ -1349,6 +1364,8 @@ async fn filesystem_runtime_registers_and_reads_without_native_storage() {
                 sample("/v1/local/repositories/{repo}/reconnect", "post", reconnected),
                 sample("/v1/local/repos/{repo}/snapshot", "get", snapshot),
                 sample("/v1/local/repos/{repo}/query", "post", page),
+                sample("/v1/local/repos/{repo}/query", "post", query_info),
+                sample("/v1/local/repos/{repo}/query", "post", filtered_operations),
                 sample("/v1/local/repos/{repo}/agents/sessions", "post", agents),
                 sample("/v1/local/repos/{repo}/agents/session", "post", detail),
                 sample("/v1/local/repos/{repo}/agents/transcript", "post", transcript),
@@ -1371,3 +1388,6 @@ async fn filesystem_runtime_registers_and_reads_without_native_storage() {
     stop.send(()).unwrap();
     server.await.unwrap().unwrap();
 }
+
+#[path = "local_browser/history_query.rs"]
+mod history_query_acceptance;

@@ -75,6 +75,7 @@ export async function readGraph(
   expected?: Snapshot,
   targets?: readonly string[],
   workspace?: string,
+  query?: { text: string; email: string; signal?: AbortSignal },
 ): Promise<{
   graph: RepositoryLogGraph;
   cursor: string | null;
@@ -85,17 +86,22 @@ export async function readGraph(
     cursor,
     atTimeMillis,
     workspace: kind === "log" ? workspace : undefined,
+    userEmail: query?.email,
+    signal: query?.signal,
+    operationQuery: kind === "operations" ? query?.text : undefined,
     revset:
-      kind === "log" && targets
-        ? targets.length
-          ? targets
-              .map(
-                (id) =>
-                  `::${fullId(id, source.profile === "git_sha1_jj045" ? 40 : 128)}`,
-              )
-              .join(" | ")
-          : "none()"
-        : undefined,
+      query?.text && kind === "log"
+        ? query.text
+        : kind === "log" && targets
+          ? targets.length
+            ? targets
+                .map(
+                  (id) =>
+                    `::${fullId(id, source.profile === "git_sha1_jj045" ? 40 : 128)}`,
+                )
+                .join(" | ")
+            : "none()"
+          : undefined,
   });
   assertPinned(value.snapshot, source, operation);
   assertSameSnapshot(value.snapshot, expected);

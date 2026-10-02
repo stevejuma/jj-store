@@ -609,3 +609,25 @@ derived JJ indexes but cannot publish heads, refs or checkout snapshots.
 The local query transport serializes the same owned request variants and output
 records used by the qualified reader. Server composition shares query workers
 with native reads; transport continuations cannot supply unchecked raw anchors.
+
+## Rich history query delivery
+
+Operation-pinned history reads MUST expose the pinned JJ 0.45.1 callable catalog
+and standard aliases without loading device or server user configuration. Commit
+revsets use explicit workspace, author email and frozen time context; `mine()`
+requires email and `@` requires a workspace. Native content and cross-operation
+predicates retain their existing admission and publication restrictions.
+
+Operation metadata queries MUST filter the full bounded selected ancestry before
+pagination, bind exact query text into continuations, charge work for every
+scanned operation and retain actual parent IDs and native ordering. Spaces and
+explicit AND combine `description:`, `user:`, `host:`, `workspace:`, `id:`,
+`after:`, `before:`, `snapshot:` and one `from:` selector; bare text matches
+descriptions. Quoted text supports escaped quotes and backslashes. Text matches
+case-insensitive substrings, IDs match hexadecimal prefixes, dates use UTC
+`YYYY-MM-DD` against end time with inclusive after and exclusive before, and
+snapshot accepts true/false. `from:` accepts JJ operation selectors only within
+the displayed snapshot's ancestry. OR, NOT, commit revsets, missing values and
+malformed selectors fail explicitly. Queries are bounded to 4096 bytes and 64
+terms. Diagnostics are bounded and expose no storage or credential details;
+these reads never reconcile heads or publish state.

@@ -1127,3 +1127,17 @@ request a change description or silently Snapshot. Stale/error feedback retains
 the draft; readback reports whether the physical text matches it.
 Navigation/session changes suppress late results. Physical editing cannot rename
 or create files in this initial qualification.
+
+## Rich history query delivery
+
+JJ Log and Op Log MUST use Design Core `SearchFilterInput` in custom-language
+mode, with jj-store-owned revset and operation grammars, static-class
+highlighting and catalog-driven keyboard completion. Query execution is
+debounced and uses the displayed operation, explicit workspace, session-only
+author email and frozen time context. Only successful text/time is stored in the
+URL; page switches clear incompatible syntax. Invalid drafts retain the last
+successful graph and its cursor, superseded requests are canceled, and
+navigation/disconnection suppress late results. Clearing restores the normal
+graph scope; queries and pagination must never fabricate edges across
+filtered-out rows. Cold browser acceptance MUST retain strict CSP. Visual
+baselines remain pending.

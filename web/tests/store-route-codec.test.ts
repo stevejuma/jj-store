@@ -282,3 +282,38 @@ test("activity filters round trip and reject invalid or repeated classifications
     );
   }
 });
+
+test("applied history queries retain frozen time and reject unpinned or incompatible URLs", () => {
+  const applied = {
+    ...route,
+    historyQuery: 'from:@-- description:"rebase branch"',
+    historyTime: 12345,
+  };
+  assert.deepEqual(storeRouteFromHash(storeRouteToHash(applied)!), {
+    kind: "route",
+    route: applied,
+  });
+  for (const suffix of [
+    "history_query=x&history_query=y",
+    "history_time=NaN",
+    "history_query=%00",
+    `history_query=${encodeURIComponent("é".repeat(2049))}`,
+  ]) {
+    assert.equal(
+      storeRouteFromHash(
+        `#/repos/${repository}/log?at_op=${operation}&${suffix}`,
+      ).kind,
+      "invalid",
+    );
+  }
+  assert.equal(
+    storeRouteFromHash(
+      `#/repos/${repository}/files?at_op=${operation}&history_query=all()`,
+    ).kind,
+    "invalid",
+  );
+  assert.equal(
+    storeRouteFromHash(`#/repos/${repository}/log?history_query=all()`).kind,
+    "invalid",
+  );
+});

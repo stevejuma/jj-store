@@ -50,6 +50,8 @@ export interface RepositoryChoice {
   targets: readonly string[];
 }
 export interface StoreRoute {
+  historyQuery?: string;
+  historyTime?: number;
   commentId?: string | null;
   threadId?: string | null;
   replyId?: string | null;
@@ -195,6 +197,7 @@ export interface StoreControllerState {
 }
 /** Community's state/actions contract shape, scoped to local JJ presentation. */
 export interface StoreController {
+  readonly historyQuery?: import("./history-query-types.js").HistoryQueryController;
   readonly referenceSearch?: import("./global-search-types.js").GlobalSearchController;
   readonly globalSearch?: import("./global-search-types.js").GlobalSearchController;
   readonly threads?: import("./thread-types.js").ThreadsController;
