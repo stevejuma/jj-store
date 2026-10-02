@@ -2,7 +2,6 @@
   // @community-copy CommunityProjects.svelte task Activity (Apache-2.0), native comments.
   import { focusNativeMessage } from "../focus-message.js";
   import StoreWorkEmpty from "./StoreWorkEmpty.svelte";
-  import StoreMessageActions from "../store-collaboration/StoreMessageActions.svelte";
   import { untrack } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as Collapsible from "@lapismd/design-core/shadcn/collapsible";
@@ -10,12 +9,8 @@
   import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
   import StoreWorkRemoveComment from "./StoreWorkRemoveComment.svelte";
   import CommunityChatComposer from "../community-chat-composer/CommunityChatComposer.svelte";
-  import CommunityMessage from "../community-message/CommunityMessage.svelte";
-  import {
-    workCommentRows,
-    workMember,
-    workMessage,
-  } from "./work-presentation.js";
+  import StoreWorkComment from "./StoreWorkComment.svelte";
+  import { workCommentRows, workMember } from "./work-presentation.js";
   import "./community-work-thread.css";
   import "./community-work-tasks.css";
   import { workDraft } from "./work-drafts.js";
@@ -182,66 +177,37 @@
                   aria-hidden="true"
                 ></span>{/if}
               <div class="community-thread-tree-row__content">
-                <CommunityMessage
-                  message={workMessage(comment)}
-                  author={workMember(comment.actor.created_by)}
+                <StoreWorkComment
+                  {work}
+                  {comment}
                   {members}
-                >
-                  {#snippet supplement()}
-                    {#if comment.reply_to && !view.comments.some((c) => c.id === comment.reply_to)}<p
-                        class="store-work__meta"
-                        title={comment.reply_to}
-                      >
-                        Reply to {comment.reply_to.slice(0, 8)} (earlier page)
-                      </p>{/if}
-                    {#if comment.version > 1}<span
-                        class="sr-only"
-                        title={comment.actor.updated_by}
-                        >Last edited by {comment.actor.updated_by}</span
-                      >{/if}
-                    <StoreMessageActions
-                      {disabled}
-                      authorName={workMember(comment.actor.created_by).name}
-                      items={[
-                        { label: "Copy message", value: comment.body },
-                        { label: "Copy comment ID", value: comment.id },
-                        {
-                          label: "Copy author ID",
-                          value: comment.actor.created_by,
-                        },
-                        { label: "Copy task ID", value: comment.task },
-                        {
-                          label: "Copy parent comment ID",
-                          value: comment.reply_to,
-                        },
-                      ]}
-                      onReply={writable
-                        ? () => {
-                            draft.reply = comment.id;
-                            draft.edit = null;
-                            draft.editContext = undefined;
-                          }
-                        : undefined}
-                      onEdit={writable &&
-                      comment.body !== null &&
-                      comment.actor.created_by === principal
-                        ? () => {
-                            draft.edit = comment.id;
-                            draft.reply = null;
-                            draft.body = comment.body!;
-                            draft.editContext = {
-                              body: comment.body!,
-                              commentVersion: comment.version,
-                              taskVersion: view.task!.version,
-                            };
-                          }
-                        : undefined}
-                      onRemove={writable && comment.body !== null
-                        ? () => (removing = comment.id)
-                        : undefined}
-                    />
-                  {/snippet}
-                </CommunityMessage>
+                  {writable}
+                  {disabled}
+                  onReply={writable
+                    ? () => {
+                        draft.reply = comment.id;
+                        draft.edit = null;
+                        draft.editContext = undefined;
+                      }
+                    : undefined}
+                  onEdit={writable &&
+                  comment.body !== null &&
+                  comment.actor.created_by === principal
+                    ? () => {
+                        draft.edit = comment.id;
+                        draft.reply = null;
+                        draft.body = comment.body!;
+                        draft.editContext = {
+                          body: comment.body!,
+                          commentVersion: comment.version,
+                          taskVersion: view.task!.version,
+                        };
+                      }
+                    : undefined}
+                  onRemove={writable && comment.body !== null
+                    ? () => (removing = comment.id)
+                    : undefined}
+                />
               </div>
             </div>
           {/each}

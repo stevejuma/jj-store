@@ -1,5 +1,22 @@
 # Storybook presentation catalog
 
+Message action toolbars retain pointer hover when a focused reaction chip is
+removed, and hide after both pointer and focus leave the message.
+
+Task comment reactions remain selectable during automatic background WorkStore
+reads; the server validates the exact selected comment version and reactions
+retain their own busy and unknown-request guards.
+
+Task comment actions compose the owned Community reaction picker beside Reply
+and the native record menu, with selected counts under each visible comment.
+Reactions use the metadata home's transport and exact comment version; automatic
+reads preserve unknown request identities. Status recovery stays attached to the
+original request after comment edits or removal. Read-only access retains counts
+and tombstones have no picker or counts. Task Edit and Add subtask actions use
+the shared outline Button surface and semantic hover tokens. Leading Copy
+submenu icons align through the Design Core primitive, without consumer CSS
+overrides.
+
 The Threads surface composes Community channel navigation, workspace
 header/conversation, reply panel, member details and rich reactions. Its
 adapters retain exact message revisions and authorized actors; page changes and

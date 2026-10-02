@@ -4,6 +4,7 @@ use jj_agent::{
     ToolCallId,
 };
 use jj_review::{CommentId, ReviewObjectKind, ReviewObjectRef, ReviewThreadId};
+use jj_work::{TaskId, WorkCommentId};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeSet;
 
@@ -47,6 +48,11 @@ pub enum ReactionTargetV1 {
         comment_id: CommentId,
         revision: ReviewObjectRef,
     },
+    WorkComment {
+        task_id: TaskId,
+        comment_id: WorkCommentId,
+        version: u64,
+    },
     AgentCheckpoint {
         session_id: AgentSessionId,
         checkpoint_id: AgentCheckpointId,
@@ -56,6 +62,9 @@ pub enum ReactionTargetV1 {
 impl ReactionTargetV1 {
     pub fn validate(&self) -> Result<()> {
         match self {
+            Self::WorkComment { version: 0, .. } => {
+                return Err(Error::Invalid("work comment target version"));
+            }
             Self::HumanMessage { revision, .. } => {
                 expect(*revision, CollabObjectKind::HumanMessageRevision)?
             }

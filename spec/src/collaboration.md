@@ -156,8 +156,17 @@ dependency. Human messages outside sessions have immutable versioned first-party
 records.
 
 Reaction targets distinguish logical Thread/review identities from exact human
-message, agent message, tool invocation/output, review comment/reply and
-checkpoint versions. Agent message targets include validated event/batch and
+message, agent message, tool invocation/output, review comment/reply, WorkStore
+comment and checkpoint versions. WorkStore comment targets are scoped to the
+metadata home and name the task, stable comment identity and exact nonzero
+comment version. The resolver admits only a visible comment at that version in
+the captured WorkStore root, with matching task membership. Edits do not
+transfer reactions to the new version; tombstones, missing membership and stale
+versions are unavailable. Reaction commands keep the existing actor admission,
+observed records, durable receipts and independent Reaction root. They do not
+change task versions or grant access to linked code. Native and local providers
+capture Work and Reaction selections together; existing target variants retain
+their canonical bytes. Agent message targets include validated event/batch and
 content witnesses; outputs use the existing content object identity, never an
 invented ToolResultId. A central resolver validates membership and visibility
 against captured roots. Aggregation does not silently transfer feedback across
@@ -166,17 +175,17 @@ authorized. Hidden targets or actors produce no count, search or identity
 disclosure.
 
 The shared target resolver consumes one authorized, repository-bound selection
-of Thread, Agent and Review roots. Its reader never exposes staged objects. Its
-provider verifies existing repository-bound Agent/Review identities; the domain
-resolver verifies collaboration content IDs and typed entity membership without
-replacing the owning stores' identity codecs. Human and review revisions must be
-reachable from the selected logical message/comment; checkpoint versions must be
-in the selected checkpoint's supersession chain. Tool snapshots require the
-selected session/tool and retained snapshot membership; output content must
-match that exact snapshot. Message event witnesses must belong to the selected
-session's event batches and match the exact message and content IDs. Resolution
-returns only an exact key and a current/earlier distinction, never a target body
-or reaction count.
+of Thread, Agent, Review and Work roots. Its reader never exposes staged
+objects. Its provider verifies existing repository-bound Agent/Review
+identities; the domain resolver verifies collaboration content IDs and typed
+entity membership without replacing the owning stores' identity codecs. Human
+and review revisions must be reachable from the selected logical
+message/comment; checkpoint versions must be in the selected checkpoint's
+supersession chain. Tool snapshots require the selected session/tool and
+retained snapshot membership; output content must match that exact snapshot.
+Message event witnesses must belong to the selected session's event batches and
+match the exact message and content IDs. Resolution returns only an exact key
+and a current/earlier distinction, never a target body or reaction count.
 
 Current tombstones and hidden or conflicted review comment selections suppress
 all earlier-revision reaction disclosure. Absent and inaccessible targets have

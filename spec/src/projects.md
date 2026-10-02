@@ -97,9 +97,16 @@ Activity and focuses that comment. Tasks do not use a separate discussion panel
 or an Open task discussion action. Projects restoration forwards the exact
 project, task and comment selection into the bounded WorkStore reader; an
 unavailable comment stays explicit and a route without a comment clears focus.
-Cold RustFS qualification covers separate source/destination stores, historical
-WorkStore closures after checkpointing, retained origin ledger, local readiness
-and durable service receipts after both stores restart.
+Visible task comments use the shared reaction picker and count bar, scoped to
+the metadata home and exact comment version. Read-only users can inspect counts;
+writes require home permission. Reaction feedback retains unknown request
+identity and status recovery after comment edits or removal, and reloads
+automatically with other task data. Task Edit and Add subtask actions use the
+filled outline Button surface and its semantic hover state so both actions
+remain visible at rest across themes. Cold RustFS qualification covers separate
+source/destination stores, historical WorkStore closures after checkpointing,
+retained origin ledger, local readiness and durable service receipts after both
+stores restart.
 
 ## Projects hub browse reads
 

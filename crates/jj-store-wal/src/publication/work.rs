@@ -71,6 +71,9 @@ impl WorkStoreSnapshot {
     pub fn state(&self) -> &WorkStateV1 {
         &self.state
     }
+    pub fn object_count(&self) -> usize {
+        self.records.len()
+    }
 }
 impl Coordinator {
     pub async fn work_store(&self, reference: RecordRef) -> Result<WorkStoreSnapshot> {

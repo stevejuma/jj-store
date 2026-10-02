@@ -2068,6 +2068,14 @@ export interface components {
           type: "review_comment";
         }
       | {
+          task_id: components["schemas"]["TaskId"];
+          comment_id: components["schemas"]["WorkCommentId"];
+          /** Format: uint64 */
+          version: number;
+          /** @constant */
+          type: "work_comment";
+        }
+      | {
           session_id: components["schemas"]["AgentSessionId"];
           checkpoint_id: components["schemas"]["AgentCheckpointId"];
           version: components["schemas"]["AgentObjectRef"];
@@ -2137,6 +2145,8 @@ export interface components {
       | "relation_page"
       | "status_page";
     ReviewObjectId: string;
+    TaskId: string;
+    WorkCommentId: string;
     AgentCheckpointId: string;
     TurnId: string;
     /** @enum {string} */
@@ -2776,6 +2786,7 @@ export interface components {
       reaction_state_version: number;
       agent_root: components["schemas"]["RecordDigest"] | null;
       review_root: components["schemas"]["RecordDigest"] | null;
+      work_root?: components["schemas"]["RecordDigest"] | null;
     };
     CollabPageItems:
       | {
@@ -3134,8 +3145,6 @@ export interface components {
     /** @enum {string} */
     ContentKind: "thread" | "message" | "project" | "task" | "comment";
     ProjectId: string;
-    TaskId: string;
-    WorkCommentId: string;
     WorkBrowsePage: {
       /** Format: uint32 */
       version: number;
@@ -12604,6 +12613,14 @@ export interface operations {
                 type: "review_comment";
               }
             | {
+                task_id: string;
+                comment_id: string;
+                /** Format: uint64 */
+                version: number;
+                /** @constant */
+                type: "work_comment";
+              }
+            | {
                 session_id: string;
                 checkpoint_id: string;
                 version: {
@@ -12973,6 +12990,14 @@ export interface operations {
                       type: "review_comment";
                     }
                   | {
+                      task_id: string;
+                      comment_id: string;
+                      /** Format: uint64 */
+                      version: number;
+                      /** @constant */
+                      type: "work_comment";
+                    }
+                  | {
                       session_id: string;
                       checkpoint_id: string;
                       version: {
@@ -13248,6 +13273,14 @@ export interface operations {
                       type: "review_comment";
                     }
                   | {
+                      task_id: string;
+                      comment_id: string;
+                      /** Format: uint64 */
+                      version: number;
+                      /** @constant */
+                      type: "work_comment";
+                    }
+                  | {
                       session_id: string;
                       checkpoint_id: string;
                       version: {
@@ -13487,6 +13520,14 @@ export interface operations {
                       };
                       /** @constant */
                       type: "review_comment";
+                    }
+                  | {
+                      task_id: string;
+                      comment_id: string;
+                      /** Format: uint64 */
+                      version: number;
+                      /** @constant */
+                      type: "work_comment";
                     }
                   | {
                       session_id: string;

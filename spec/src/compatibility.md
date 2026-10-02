@@ -1,5 +1,11 @@
 # Compatibility and release
 
+WorkStore comment reactions add one typed target containing task identity,
+comment identity and exact nonzero version. Existing target tags and canonical
+bytes remain unchanged, as do native manifest/WAL and companion formats. The
+collaboration read DTO adds an optional captured Work root; absent roots retain
+older response framing. Generated OpenAPI and TypeScript qualify the addition.
+
 The additive application content-search endpoint exposes V1 results with full
 native source identities, current revisions, bounded excerpts and opaque
 expiring cursors. Generated OpenAPI/TypeScript and actual HTTP response captures

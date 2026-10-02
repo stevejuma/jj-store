@@ -34,6 +34,9 @@ export function createProjectsWorkRegistry(
     let controller = works.get(home);
     if (!controller) {
       controller = createWorkController({
+        repository: () => home,
+        principal: () =>
+          context.repositories().find((r) => r.id === home)?.principal ?? "",
         source: () => transport(home),
         route: () => selections.get(home) ?? {},
         select: (projectId, taskId) => {

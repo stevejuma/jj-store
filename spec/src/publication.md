@@ -1,5 +1,12 @@
 # Publication and recovery
 
+Task comment reaction publication reads the Work root from the same captured
+manifest base as ReactionStore and selects only the existing Reaction
+transition. The shared authorized target reader validates Work state and
+repository scope before resolving exact comment membership and visibility.
+Root-keyed read reuse accounts for Work object and byte bounds; it cannot
+introduce credentials, staged data or new publication authority.
+
 Validated Agent and Review read selections may be detached from a coordinator as
 immutable repository-bound root and membership data. Shared read caches and
 collaboration pins retain these data-only selections, never a request guard or

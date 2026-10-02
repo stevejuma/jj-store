@@ -1,12 +1,17 @@
 <script lang="ts">
-  // CommunityMessageActions (Apache-2.0), native comment callbacks.
+  // @community-copy CommunityMessageActions (Apache-2.0), native comment callbacks.
   import { Button } from "@lapismd/design-core/shadcn/button";
   import MessageSquareReplyIcon from "@lucide/svelte/icons/message-square-reply";
+  import CommunityEmojiPicker from "../community-emoji-picker/CommunityEmojiPicker.svelte";
+  import type { CommunityCustomEmoji } from "../../community/contracts.js";
   import StoreRecordMenu from "./StoreRecordMenu.svelte";
   let {
     disabled = false,
     authorName,
     items,
+    onReact,
+    communityEmojis = [],
+    reactionDisabled = disabled,
     onReply,
     onEdit,
     onRemove,
@@ -14,11 +19,16 @@
     disabled?: boolean;
     authorName: string;
     items: readonly { label: string; value: string | null | undefined }[];
+    onReact?:
+      ((emoji: string, custom?: CommunityCustomEmoji) => void) | undefined;
+    communityEmojis?: readonly CommunityCustomEmoji[];
+    reactionDisabled?: boolean;
     onReply?: (() => void) | undefined;
     onEdit?: (() => void) | undefined;
     onRemove?: (() => void) | undefined;
   } = $props();
   let menuOpen = $state(false);
+  let reactionOpen = $state(false);
 </script>
 
 <div
@@ -26,8 +36,15 @@
   role="group"
   aria-label={`Actions for ${authorName}'s message`}
   data-ui-part="message-actions"
-  data-menu-open={menuOpen || undefined}
+  data-menu-open={menuOpen || reactionOpen || undefined}
 >
+  {#if onReact}<CommunityEmojiPicker
+      bind:open={reactionOpen}
+      label="Add reaction"
+      disabled={reactionDisabled}
+      {communityEmojis}
+      onSelect={onReact}
+    />{/if}
   {#if onReply}<Button
       type="button"
       variant="ghost"

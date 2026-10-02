@@ -196,12 +196,19 @@ impl Coordinator {
                                 .ok_or(Error::Corrupt("review source root"))?,
                         )
                         .await?;
-                    let reader = CollabTargetReaderV1::new(
+                    let work = match base.manifest.work_root {
+                        Some(root) => Some(self.work_store(root).await?),
+                        None => None,
+                    };
+                    let mut reader = CollabTargetReaderV1::new(
                         self.records.repository,
                         Some((threads.state.root, &threads.graph)),
                         Some(&agents),
                         Some(&reviews),
                     )?;
+                    if let Some(work) = &work {
+                        reader = reader.with_work(self.records.repository, work.state())?;
+                    }
                     resolve_reaction_target(&reader, command.target()).await?;
                     let mut reactions = self.native_reaction_store(expected.root).await?;
                     for reference in threads

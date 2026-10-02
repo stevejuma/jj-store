@@ -120,10 +120,10 @@
       {#if writable}<div>
           <dt><ListTodoIcon aria-hidden="true" />Actions</dt>
           <dd class="community-projects__task-assignees">
-            <Button variant="ghost" size="sm" {disabled} onclick={onEdit}
+            <Button variant="outline" size="sm" {disabled} onclick={onEdit}
               >Edit task</Button
             >{#if onSubtask}<Button
-                variant="ghost"
+                variant="outline"
                 size="sm"
                 {disabled}
                 onclick={onSubtask}>Add subtask</Button

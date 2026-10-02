@@ -64,12 +64,14 @@ impl LocalRepository {
                     )
                 }
                 LocalCollabCommand::Reaction { intent: command } => {
+                    let work = self.work_state(pin.as_ref())?;
                     let reader = CollabTargetReaderV1::new(
                         repository,
                         Some((threads.state.root.clone(), &threads.graph)),
                         Some(&agents),
                         Some(&reviews),
-                    )?;
+                    )?
+                    .with_work(repository, &work)?;
                     resolve_reaction_target(&reader, command.target()).await?;
                     for reference in threads
                         .graph

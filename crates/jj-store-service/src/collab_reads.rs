@@ -69,6 +69,8 @@ pub struct CollabReadSnapshotV1 {
     pub reaction_state_version: u64,
     pub agent_root: Option<m::RecordDigest>,
     pub review_root: Option<m::RecordDigest>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub work_root: Option<m::RecordDigest>,
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 pub struct ThreadDirectoryMetadata {
@@ -165,6 +167,7 @@ pub struct PinnedCollabRead {
     reaction: Arc<ReactionData>,
     agents: Option<Arc<AgentStoreSelection>>,
     reviews: Option<Arc<ReviewStoreSelection>>,
+    work: Option<Arc<materialization::WorkData>>,
     actors: Arc<dyn ReactionActorVisibility>,
 }
 impl PinnedCollabRead {
@@ -198,6 +201,7 @@ impl PinnedCollabRead {
                 reaction_state_version: manifest.reaction_state_version,
                 agent_root: manifest.agent_root.map(|r| r.digest),
                 review_root: manifest.review_root.map(|r| r.digest),
+                work_root: manifest.work_root.map(|r| r.digest),
             };
             let domains = scope.domains();
             let roots = [
@@ -205,6 +209,7 @@ impl PinnedCollabRead {
                 manifest.reaction_root,
                 manifest.agent_root,
                 manifest.review_root,
+                manifest.work_root,
             ];
             let session_ref = session.as_ref();
             let epoch = manifest.epoch;
@@ -217,8 +222,8 @@ impl PinnedCollabRead {
                     None => Ok(None),
                 }
             };
-            let (threads, reactions, agents, reviews) =
-                tokio::try_join!(read(0), read(1), read(2), read(3))?;
+            let (threads, reactions, agents, reviews, work) =
+                tokio::try_join!(read(0), read(1), read(2), read(3), read(4))?;
             let thread = match threads.as_deref() {
                 Some(Data::Thread(d)) => d.clone(),
                 None => Arc::new(ThreadData::empty()),
@@ -246,6 +251,11 @@ impl PinnedCollabRead {
                 reaction,
                 agents,
                 reviews,
+                work: match work.as_deref() {
+                    Some(Data::Work(d)) => Some(d.clone()),
+                    None => None,
+                    _ => return Err(Error::Corrupt),
+                },
                 actors,
             };
             if result.object_count() > session.limits.inventory_nodes {
@@ -261,6 +271,7 @@ impl PinnedCollabRead {
             + self.reaction.graph.objects.len()
             + self.agents.as_ref().map_or(0, |s| s.object_count())
             + self.reviews.as_ref().map_or(0, |s| s.object_count())
+            + self.work.as_ref().map_or(0, |s| s.objects)
     }
     /// Encoded owned collaboration graphs retained in memory. Agent/Review pins
     /// retain membership references and load bodies through their owned reader.
@@ -268,6 +279,7 @@ impl PinnedCollabRead {
         self.thread
             .bytes
             .checked_add(self.reaction.bytes)
+            .and_then(|n| n.checked_add(self.work.as_ref().map_or(0, |s| s.bytes)))
             .ok_or(Error::Limit)
     }
 
@@ -467,7 +479,7 @@ impl PinnedCollabRead {
             .as_ref()
             .map(|s| session.coordinator.selected_review_reader(s))
             .transpose()?;
-        let reader = CollabTargetReaderV1::new(
+        let mut reader = CollabTargetReaderV1::new(
             self.snapshot.repo_id,
             Some((self.thread.state.root.clone(), &self.thread.graph)),
             agents
@@ -477,6 +489,9 @@ impl PinnedCollabRead {
                 .as_ref()
                 .map(|s| s as &dyn wal::publication::ReviewSnapshotRead),
         )?;
+        if let Some(work) = &self.work {
+            reader = reader.with_work(self.snapshot.repo_id, &work.state)?;
+        }
         resolve_reaction_target(&reader, target)
             .await
             .map_err(model)

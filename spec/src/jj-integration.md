@@ -1,5 +1,11 @@
 # Native JJ integration
 
+WorkStore comment reactions use the existing native RPC collaboration command
+and read envelopes with an additive typed target. Exact WorkStore selection is
+captured alongside ReactionStore; no code-operation mutation, upstream JJ import
+or new protobuf framing is introduced. Local companion providers apply the same
+resolver independently from native RPC.
+
 Native collaboration RPC pages and direct Thread/message/image reads share the
 bounded scoped materialization service with HTTP. Current admission and epoch
 are rechecked for each response; cache reuse never changes wire DTOs, signed

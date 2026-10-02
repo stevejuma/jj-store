@@ -1,5 +1,12 @@
 # Local Git-backed JJ collaboration
 
+Local task comment reactions resolve only visible exact comment versions in the
+same committed companion selection as ReactionStore, with matching task
+membership. Reaction writes retain other domain selections and task versions;
+edits and tombstones reject old targets. Cold reopen, Git GC, receipt replay and
+exact observed clear use the shared typed domain without synthetic Threads. The
+local browser's existing collaboration capability gate remains separate.
+
 The companion retains exact human reply parent revisions in the owned Git
 closure; absent reply fields preserve existing canonical message and intent
 bytes.

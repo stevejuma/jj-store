@@ -10,6 +10,10 @@ export function createWorkReader(
   restoreCode: () => Promise<void>,
 ) {
   const work = createWorkController({
+    repository: () => source().repository,
+    principal: () =>
+      data.repositories.find((r) => r.id === source().repository)?.principal ??
+      "",
     source: () => {
       const transport = source().work;
       if (!transport) throw new ApiError("work_unavailable");

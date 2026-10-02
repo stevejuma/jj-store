@@ -9,6 +9,9 @@ export class HttpWorkDataSource implements WorkTransport {
     private client: Client,
     private native?: StoreDataSource,
   ) {}
+  get reactions() {
+    return this.native?.threads;
+  }
   activity = async (query: NativeActivityQuery, signal?: AbortSignal) => {
     signal?.throwIfAborted();
     if (!this.native) throw new Error("Repository activity unavailable");

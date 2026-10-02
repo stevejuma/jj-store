@@ -100,7 +100,7 @@ shared-package release qualification does not alter those original Git gates.
 | M11.1       | Done        | M9.6                    | JST-WORK-001,JST-WORK-002,JST-WORK-003,JST-WORK-004,JST-WORK-005,JST-WORK-007                                                                                                           | Native model, publication, receipts, recovery and copy                                                                         | Retain native and real RustFS gates                                                            | E-M11-001,E-M11-003                                                                                                                                                                                                                                                                                                                                            |
 | M11.2       | Done        | M11.1                   | JST-WORK-005,JST-WORK-006,JST-WORK-008                                                                                                                                                  | Authorized service, API, RPC and CLI                                                                                           | Retain local transport/CLI gates                                                               | E-M11-002                                                                                                                                                                                                                                                                                                                                                      |
 | M11.3       | Done        | M11.2                   | JST-WORK-008                                                                                                                                                                            | Browser projects/tasks/comments and explicit refresh                                                                           | Retain cold browser gates; visual baselines pending                                            | E-M11-003,E-M11-004                                                                                                                                                                                                                                                                                                                                            |
-| M11.4       | In progress | M11.3                   | JST-WORK-005,JST-WORK-006,JST-WORK-008,JST-WORK-009,JST-UI-015                                                                                                                          | Installation Projects hub, full-root browse and cold browser acceptance                                                        | Shared-package qualification; visual baselines pending                                         | E-M11-005,E-M11-006,E-M11-007,E-UI-045,E-UI-046,E-UI-047,E-M11-008,E-UI-048,E-UI-049,E-UI-050,E-UI-051,E-UI-062,E-UI-063                                                                                                                                                                                                                                       |
+| M11.4       | In progress | M11.3                   | JST-WORK-005,JST-WORK-006,JST-WORK-008,JST-WORK-009,JST-UI-015                                                                                                                          | Installation Projects hub, full-root browse and cold browser acceptance                                                        | Shared-package qualification; visual baselines pending                                         | E-M11-005,E-M11-006,E-M11-007,E-UI-045,E-UI-046,E-UI-047,E-M11-008,E-UI-048,E-UI-049,E-UI-050,E-UI-051,E-UI-062,E-UI-063,E-UI-064                                                                                                                                                                                                                              |
 | M12         | Done        | M11.1,M11.2,M11.3       | JST-GIT-001,JST-GIT-002,JST-GIT-003,JST-GIT-004,JST-GIT-005,JST-GIT-006,JST-GIT-007,JST-GIT-008                                                                                         | Native fetch/edit/push/external-merge cycle with cache-loss and fault qualification                                            | Maintain qualified bookmark bridge                                                             | E-M12-001,E-M12-002,E-M12-003,E-M12-004,E-M12-005,E-M12-006,E-M12-007,E-M12-008,E-M12-009,E-M12-010                                                                                                                                                                                                                                                            |
 | M12.1       | Done        | M11.1,M11.2,M11.3       | JST-GIT-001                                                                                                                                                                             | GB0: Parsed backend-aware dispatch and ordinary path regression                                                                | Complete staged bridge gate                                                                    | E-M12-001                                                                                                                                                                                                                                                                                                                                                      |
 | M12.2       | Done        | M12.1                   | JST-GIT-002,JST-GIT-003                                                                                                                                                                 | GB1: Exact conversion and native retained cache-loss identity                                                                  | Complete staged bridge gate                                                                    | E-M12-002                                                                                                                                                                                                                                                                                                                                                      |
@@ -127,9 +127,9 @@ shared-package release qualification does not alter those original Git gates.
 | M15         | In progress | M13.1                   | JST-COLLAB-008,JST-COLLAB-009,JST-COLLAB-010,JST-COLLAB-011,JST-COLLAB-012,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016,JST-GOV-008,JST-UI-017,JST-API-009,JST-ADAPT-007 | Persistent Threads and rich Reactions                                                                                          | Qualify native/local publication                                                               | E-M15-001,E-M15-005,E-M15-006,E-M15-007,E-M15-008,E-M15-009,E-M15-010,E-M15-011,E-M15-012,E-M15-013,E-M15-014,E-M15-015,E-M15-016,E-M15-017,E-M15-018,E-M15-019,E-M15-020,E-M15-021,E-M15-022,E-M15-025,E-M15-030,E-M15-031                                                                                                                                    |
 | M15.1       | In progress | M13.1                   | JST-COLLAB-008,JST-COLLAB-009,JST-COLLAB-010,JST-COLLAB-011,JST-COLLAB-012                                                                                                              | Canonical domain, lifecycle, exact targets, conflict semantics and retained images                                             | Qualify command/provider membership                                                            | E-M15-001,E-M15-005,E-M15-016                                                                                                                                                                                                                                                                                                                                  |
 | M15.2       | In progress | M15.1                   | JST-COLLAB-013                                                                                                                                                                          | Native format 5, local version 2, atomic roots, receipts, recovery and copy                                                    | Qualify native commands/capture and cold full flow                                             | E-M15-002,E-M15-004,E-M15-005,E-M15-012,E-M15-014,E-M15-016                                                                                                                                                                                                                                                                                                    |
-| M15.3       | In progress | M15.2                   | JST-COLLAB-014                                                                                                                                                                          | Bounded authorized services, HTTP/RPC, CLI and capture binding                                                                 | Complete native/public command boundaries                                                      | E-M15-004,E-M15-005,E-M15-006,E-M15-007,E-M15-008,E-M15-009,E-M15-010,E-M15-011,E-M15-012,E-M15-013,E-M15-014,E-M15-015,E-M15-016,E-M15-022                                                                                                                                                                                                                    |
+| M15.3       | In progress | M15.2                   | JST-COLLAB-014                                                                                                                                                                          | Bounded authorized services, HTTP/RPC, CLI and capture binding                                                                 | Complete native/public command boundaries                                                      | E-M15-004,E-M15-005,E-M15-006,E-M15-007,E-M15-008,E-M15-009,E-M15-010,E-M15-011,E-M15-012,E-M15-013,E-M15-014,E-M15-015,E-M15-016,E-M15-022,E-UI-064                                                                                                                                                                                                           |
 | M15.4       | Planned     | M15.2                   | JST-COLLAB-015                                                                                                                                                                          | Reducer 3 data-only convergence and complete closure transfer                                                                  | Qualify reordered and duplicate origin sets                                                    | -                                                                                                                                                                                                                                                                                                                                                              |
-| M15.5       | In progress | M15.3                   | JST-COLLAB-016,JST-GOV-008,JST-UI-017                                                                                                                                                   | Owned Community channel/forum templates, Threads navigation and native workspace search                                        | Retain interaction/cold UI and qualify remaining full flow                                     | E-M15-011,E-M15-015,E-M15-016,E-M15-017,E-M15-018,E-M15-019,E-M15-021,E-M15-022,E-M15-025,E-M15-030,E-M15-031,E-UI-063                                                                                                                                                                                                                                         |
+| M15.5       | In progress | M15.3                   | JST-COLLAB-016,JST-GOV-008,JST-UI-017                                                                                                                                                   | Owned Community channel/forum templates, Threads navigation and native workspace search                                        | Retain interaction/cold UI and qualify remaining full flow                                     | E-M15-011,E-M15-015,E-M15-016,E-M15-017,E-M15-018,E-M15-019,E-M15-021,E-M15-022,E-M15-025,E-M15-030,E-M15-031,E-UI-063,E-UI-064                                                                                                                                                                                                                                |
 | M15.6       | In progress | M15.3                   | JST-COLLAB-009,JST-COLLAB-010,JST-API-009,JST-ADAPT-007                                                                                                                                 | Derived canonical-source timeline/search and review integration                                                                | Qualify authorized joins                                                                       | E-M15-006,E-M15-020,E-M15-021,E-M15-022,E-M15-025                                                                                                                                                                                                                                                                                                              |
 | M15.7       | Planned     | M15.4,M15.5,M15.6       | JST-COLLAB-007,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                                                                                              | Cold real-RustFS/local full flow and runner qualification                                                                      | Retain native/local/cold evidence                                                              | -                                                                                                                                                                                                                                                                                                                                                              |
 | M16         | Partial     | M15.5                   | JST-UI-018,JST-GOV-009                                                                                                                                                                  | Complete device Appearance and cold consumer qualification                                                                     | Complete source release and registry-only consumer qualification                               | E-UI-052,E-UI-053,E-UI-054,E-UI-055,E-UI-056,E-UI-057,E-UI-058,E-UI-059,E-UI-061,E-UI-062,E-UI-063                                                                                                                                                                                                                                                             |
@@ -41674,6 +41674,595 @@ and named tests are checked by the progress gate.
       "web/tests/vite/production-store-events.test.ts#collaboration publication events announce freshness without mixing snapshots",
       "web/tests/real/work-store.spec.ts#native projects tasks and discussion persist on RustFS and refresh explicitly",
       "web/tests/real/git-bridge.spec.ts#Git import waits for refresh"
+    ]
+  },
+  {
+    "id": "E-UI-064",
+    "tasks": ["M11.4", "M15.3", "M15.5"],
+    "date": "2026-10-02",
+    "kind": "cross-layer task reaction and menu acceptance",
+    "revision": "Enclosing Jujutsu change lwxwqzum; Design Core source change kupxxqyt (b3eb19e7)",
+    "requirements": [
+      "JST-WORK-008",
+      "JST-COLLAB-010",
+      "JST-COLLAB-013",
+      "JST-COLLAB-014",
+      "JST-COLLAB-016",
+      "JST-API-006",
+      "JST-UI-015",
+      "JST-ARCH-002",
+      "JST-GOV-007"
+    ],
+    "result": "pending",
+    "remaining": [
+      "Functional native task reaction, UI and direct provider acceptance passed. Inherited broad Rust lint failures, released-registry Design Core qualification, local browser collaboration transport and visual baselines remain separate pending gates; canonical visual comparison blocked by published tool cache EACCES. Unsharded Storybook browser lifetime failures are recorded; all 53 families pass in the same suite split into three sequential shards."
+    ],
+    "scope": "Metadata-home task comment reactions, leading Copy submenu alignment and visible task Edit/Add subtask surfaces. Cross-layer escalation: additive jj-collab target, native/local pinned provider, read materialization, generated HTTP/RPC contract and browser consumers. Direct service, resolver, WAL, RPC and UI regressions; Design Core guide separately requires full source checks. No root aggregate app pnpm check/test/build/spec:check. Native storage formats and installed CLI unchanged. Local provider support does not qualify the still-gated local browser collaboration transport. Source validation uses the existing private dependency hook; tracked manifests/lock remain registry-only. Publication, main landing and visual baseline updates are out of scope. Shared hover-helper escalation: focus loss after removing a focused reaction chip must preserve a toolbar under the pointer; conversation, thread, review and agent consumers require the full Storybook lane. Boundary-policy escalation: admit only the owned jj-collab to jj-work model edge, with positive and reverse/publication/upstream negative tests; full owning governance test file and actual 16-package metadata check selected, not unrelated Rust suites.",
+    "versions": "Rust1.98.1; jj-lib0.45.1; Git2.55.0; Node26.9.0; pnpm10.32.1; BitsUI2.19.4; DesignCore source0.1.2, tracked registry range^0.2.0; Svelte5.57.1; Vite8.3.2; Vitest4.1.11; Playwright1.63.0. Source Design Core Storybook10.5.2 and Playwright1.61.1.",
+    "formats": "Additive work_comment target: task_id, comment_id, exact nonzero u64 version, scoped by repository request. Existing target canonical bytes preserved. Optional Work root in CollabReadSnapshotV1; absent roots omitted. Existing native manifest/WAL, companionv2, durable receipts, actor/slot preconditions and work versions unchanged. No synthetic Threads or new credentials. Original pending WorkComment target remains recoverable in the same comment metadata after version changes and tombstones; counts/pickers use only the current visible target. Background WorkStore read refresh never disables or silently drops a reaction selection; exact target validation remains server-owned.",
+    "next": "Review the verified native task-comment slice in the current development workspace. Qualify a compatible Design Core registry release and visual comparison/baselines separately; local-browser collaboration transport and inherited broad lint remain outside this slice.",
+    "artifacts": "/tmp/jj-task-*.log; /tmp/jj-task-actions.jpg. Vite7460 PID88268; backend7462 PID91193, persistent main fixture preserved without reset. Cold test uses a separate disposable root/port7484.",
+    "files": [
+      "Cargo.lock",
+      "catalog/components/store-work/StoreWork.stories.svelte",
+      "catalog/fixtures/StoreWorkFixture.svelte",
+      "crates/jj-collab/Cargo.toml",
+      "crates/jj-collab/src/resolver.rs",
+      "crates/jj-collab/src/targets.rs",
+      "crates/jj-collab/tests/target_resolution.rs",
+      "crates/jj-store-rpc/src/collab/codec_tests.rs",
+      "crates/jj-store-service/src/collab_reads/materialization.rs",
+      "crates/jj-store-service/src/collab_reads.rs",
+      "crates/jj-store-service/src/local_repository/collab_commands.rs",
+      "crates/jj-store-service/src/local_repository/collab_store.rs",
+      "crates/jj-store-service/tests/local_collab.rs",
+      "crates/jj-store-service/tests/native_collab.rs",
+      "crates/jj-store-wal/src/publication/collab_commands.rs",
+      "crates/jj-store-wal/src/publication/collab_targets.rs",
+      "crates/jj-store-wal/src/publication/work.rs",
+      "docs/ui-provenance.json",
+      "schemas/openapi.json",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/collaboration.md",
+      "spec/src/compatibility.md",
+      "spec/src/jj-integration.md",
+      "spec/src/local-jj.md",
+      "spec/src/mutations.md",
+      "spec/src/projects.md",
+      "spec/src/publication.md",
+      "spec/src/spec-governance.md",
+      "spec/src/ui.md",
+      "spec/src/verification.md",
+      "web/src/lib/api/generated.ts",
+      "web/src/lib/controller/http-work-data-source.ts",
+      "web/src/lib/controller/production-work-integration.ts",
+      "web/src/lib/controller/production-work.svelte.ts",
+      "web/src/lib/controller/projects-work-registry.svelte.ts",
+      "web/src/lib/controller/thread-types.ts",
+      "web/src/lib/controller/work-reactions.svelte.ts",
+      "web/src/lib/controller/work-types.ts",
+      "web/src/lib/ui/store-collaboration/StoreMessageActions.svelte",
+      "web/src/lib/ui/store-threads/StoreMessageReactions.svelte",
+      "web/src/lib/ui/store-work/StoreWorkComment.svelte",
+      "web/src/lib/ui/store-work/StoreWorkComments.svelte",
+      "web/src/lib/ui/store-work/StoreWorkTaskDetail.svelte",
+      "web/tests/real/task-reactions.spec.ts",
+      "web/tests/vite/work-reactions.test.ts",
+      "spec/src/milestones.md",
+      "web/src/lib/ui/community-message-actions/message-action-hover.svelte.ts",
+      "scripts/check-boundaries.mjs",
+      "scripts/governance.test.mjs"
+    ],
+    "tests": [
+      "crates/jj-collab/tests/target_resolution.rs#work_comment_requires_exact_visible_identity_task_and_version",
+      "crates/jj-store-service/tests/native_collab.rs#native_work_comment_reactions_pin_versions_authorize_and_survive_cold_sessions",
+      "crates/jj-store-service/tests/local_collab.rs#local_work_comment_reactions_share_companion_pin_and_survive_gc_and_reopen",
+      "web/tests/vite/work-reactions.test.ts#Work comment reactions use each home's source, exact versions and observed slots",
+      "web/tests/vite/work-reactions.test.ts#automatic invalidation preserves the original unknown reaction and confirmed retry",
+      "web/tests/vite/work-reactions.test.ts#late reaction reads cannot repopulate a cleared home session",
+      "web/tests/real/task-reactions.spec.ts#task reaction picker persists exact comments and refreshes a second client",
+      "scripts/governance.test.mjs#collaboration_targets_use_owned_work_types_without_reverse_or_runtime_edges"
+    ],
+    "runs": [
+      {
+        "command": "cargo check -p jj-store-service -p jj-collab -p jj-store-rpc",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial affected Rust check; source/domain changes compile."
+      },
+      {
+        "command": "cargo test -p jj-collab --test target_resolution --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "10/10, exact target versions/identity/task/tombstone and existing Thread JSON."
+      },
+      {
+        "command": "cargo test -p jj-store-service --test native_collab --test local_collab --test collab_pagination --locked",
+        "result": "fail",
+        "failures": 3,
+        "note": "New test fixture used private error path and wrong receipt field; corrected to the public mutation Error and actor. No production workaround."
+      },
+      {
+        "command": "cargo test -p jj-store-service --test native_collab --test local_collab --test collab_pagination --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "35/35: native10, local10, pagination15. Includes Work versions, visibility, pinning, home write admission, receipt replay, cold reopen/GitGC and clear without changing Work selection."
+      },
+      {
+        "command": "pnpm contracts:generate",
+        "result": "pass",
+        "failures": 0,
+        "note": "OpenAPI and TypeScript generated; no handwritten type shim."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "fail",
+        "failures": 4,
+        "note": "Started before generated contract completed; work_comment type absent in old DTO."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "After generated contracts: 0 errors/warnings."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/work-reactions.test.ts web/tests/vite/reaction-feedback.test.ts web/tests/vite/production-work.test.ts web/tests/vite/automatic-work-refresh.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "15/15. Extended direct lifecycle consumer run with production-automatic-refresh.test.ts passed18/18 after lazy disconnected transport construction."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "fail",
+        "failures": 2,
+        "note": "New story used Testing Library unsupported exact option; replaced with exact name regex."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "0 errors/warnings, catalog129 modules."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "fail",
+        "failures": 1,
+        "note": "Task Activity exceeded300 counted lines; extracted native per-comment adapter, preserving callbacks/drafts."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "737 modules after extraction."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "Extracted leaf imported Model from work-types; fixed to public API type import."
+      },
+      {
+        "command": "pnpm dev:backend:build; JJ_STORE_DEV_ROOT=/Users/stevejuma/code/lapismd/jj-store/.local/dev-demo pnpm dev:backend:restart",
+        "result": "pass",
+        "failures": 0,
+        "note": "Explicit development binaries; existing fixture preserved, Vite remains running."
+      },
+      {
+        "command": "pnpm install --no-frozen-lockfile; node /tmp/jj-auto-refresh-restart-ui.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Existing temporary private source validation. Restored tracked registry lock exactly; UI oldPID52247/newPID88268, backend36217 initially preserved before authorized backend rebuild/restart."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Cold built bundle prepared; normal chunk-size advisory only."
+      },
+      {
+        "command": "cargo clippy -p jj-collab -p jj-store-wal -p jj-store-service -p jj-store-rpc --all-targets --locked -- -D warnings",
+        "result": "fail",
+        "failures": 1,
+        "note": "Inherited redundant local in jj-store-jj/local_browser/operations.rs:202. No change there."
+      },
+      {
+        "command": "cargo clippy -p jj-collab -p jj-store-wal -p jj-store-service -p jj-store-rpc --all-targets --no-deps --locked -- -D warnings",
+        "result": "fail",
+        "failures": 5,
+        "note": "Inherited collapsible_if in unchanged materialization cache eviction and content_search/extract.rs, and items_after_test_module in content_search/cursors.rs. Production/new test compile and focused service tests pass; full lint lane remains unresolved."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "fail",
+        "failures": 5,
+        "note": "Mapped canonical compatibility, JJ/RPC, mutations, publication and provenance chapters missing; added precise additive target and unchanged authority requirements."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "34 protected files,11 canonical chapters before final ledger insertion."
+      },
+      {
+        "command": "pnpm spec:validate; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "5 validators,21 chapters,147 requirements; local Community source/license provenance."
+      },
+      {
+        "command": "pnpm exec prettier --write (changed supported source, story and canonical files); cargo fmt --all",
+        "result": "pass",
+        "failures": 0,
+        "note": "Focused format commands in /tmp/jj-task-*-format*.log; no baseline writes."
+      },
+      {
+        "command": "Design Core: pnpm exec vitest run --project storybook src/shared/shadcn/dropdown-menu/DropdownMenuConsumer.stories.svelte -t SubmenuLeadingIconAlignment",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before selector fix: leading Copy offset54.84375px."
+      },
+      {
+        "command": "Design Core: pnpm exec vitest run --project storybook src/shared/shadcn/dropdown-menu/DropdownMenuConsumer.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "After selector fix2/2, leading icons align and trailing chevron stays right."
+      },
+      {
+        "command": "Design Core: pnpm spec:first; pnpm spec:validate",
+        "result": "fail",
+        "failures": 2,
+        "note": "Source acceptance exceeded4 bullets and new bullet combined sentences; corrected without relaxing governance."
+      },
+      {
+        "command": "Design Core: pnpm checks",
+        "result": "fail",
+        "failures": 1,
+        "note": "New story TypeScript used unsupported exact role option; fixed to /^Copy$/."
+      },
+      {
+        "command": "Design Core: pnpm checks",
+        "result": "fail",
+        "failures": 1,
+        "note": "Types,unit715/715,Storybook642/642,static build and audit passed. Workspace pointer13/14 with one timeout under concurrent build load."
+      },
+      {
+        "command": "Design Core: pnpm test:workspace:pointer --grep bottom panel height resizes from its top rail",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact retry1/1, no code/test changes. Full source checks resumed to finish remaining browser lanes."
+      },
+      {
+        "command": "pnpm contracts:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Generated contracts match;138 actual HTTP/SSE captures conform;7 contract unit tests and TypeScript contracts pass."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --test collab_commands --test collab_persistence --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "21/21: commands8, persistence13."
+      },
+      {
+        "command": "cargo test -p jj-store-rpc --lib --locked collab",
+        "result": "pass",
+        "failures": 0,
+        "note": "1/1 exact binary identity/metadata carrier test."
+      },
+      {
+        "command": "cargo clippy -p jj-collab -p jj-store-wal --all-targets --no-deps --locked -- -D warnings",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected domain and WAL lint clean; wider service lint remains blocked by inherited issues recorded above."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final checks after extracted leaf and feedback reload changes:0 errors/warnings, catalog129 modules."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/work-reactions.test.ts web/tests/vite/reaction-feedback.test.ts web/tests/vite/production-work.test.ts web/tests/vite/automatic-work-refresh.test.ts web/tests/vite/production-automatic-refresh.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final direct lifecycle run18/18."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "fail",
+        "failures": 1,
+        "note": "New evidence linked Planned reducer task with -,E-UI-064; removed erroneous reducer task link. Reducer remains unchanged/unqualified."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "120 tasks; evidence bookkeeping only."
+      },
+      {
+        "command": "pnpm exec prettier --write web/tests/real/task-reactions.spec.ts spec/src/milestones.md; cargo fmt --all --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formatting and Rust format checks pass."
+      },
+      {
+        "command": "Design Core: pnpm checks",
+        "result": "fail",
+        "failures": 2,
+        "note": "Final full source run passed14 workspace pointers and shell lane;2 AI story readiness timeouts. Exact AI lane retry follows, no production/test changes."
+      },
+      {
+        "command": "Design Core: pnpm test:ai-chat-browser",
+        "result": "pass",
+        "failures": 0,
+        "note": "3/3 after cold restart; previous2 readiness failures resolved without code/test changes."
+      },
+      {
+        "command": "Design Core: pnpm test:shadcn:pointer",
+        "result": "pass",
+        "failures": 0,
+        "note": "35 passed,1 existing skipped; remaining full source browser lane completed."
+      },
+      {
+        "command": "Design Core: pnpm exec prettier --write spec/src/verification.md; pnpm spec:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Canonical verification row names leading-icon story; validate/mdbook/spec-first3 lanes pass."
+      },
+      {
+        "command": "Design Core: pnpm visual-delta test --help",
+        "result": "fail",
+        "failures": 1,
+        "note": "CLI requires exactly one affected/all/story-id selector; targeted visual test used instead, no baseline writes."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-work/ProjectsActivity.stories.svelte catalog/components/store-work/ProjectsActivityControls.stories.svelte catalog/components/store-threads/StoreThreads.stories.svelte catalog/components/store-threads/StoreCapturedReactions.stories.svelte catalog/components/store-threads/StoreThreadAlignment.stories.svelte catalog/components/store-application/NativeReviewDetail.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "25 passed; new task story clicked the delayed hover toolbar before interactive. Added the existing visible-state wait."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte -t TaskCommentReactionsAndActionSurfaces",
+        "result": "fail",
+        "failures": 1,
+        "note": "Toolbar alignment/reactions passed; synthetic userEvent.hover does not set native CSS :hover. Preserved both real hover assertions in the cold Playwright target."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte -t TaskCommentReactionsAndActionSurfaces",
+        "result": "fail",
+        "failures": 1,
+        "note": "Legacy StoreWork catalog host only supplies Edit; ProjectsHub supplies Add subtask. Kept both button assertions in the actual page cold test."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte -t TaskCommentReactionsAndActionSurfaces",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact final retry1/1, other6 excluded."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-work/ProjectsActivity.stories.svelte catalog/components/store-work/ProjectsActivityControls.stories.svelte catalog/components/store-threads/StoreThreads.stories.svelte catalog/components/store-threads/StoreCapturedReactions.stories.svelte catalog/components/store-threads/StoreThreadAlignment.stories.svelte catalog/components/store-application/NativeReviewDetail.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final affected interaction/accessibility families26/26 in7 files; task emoji set/clear, tombstone and readonly controls, leading Copy alignment and visible Edit rest background."
+      },
+      {
+        "command": "Design Core: pnpm visual-delta test --story-id shadcn-overlays-dropdown-menu--open-menu --story-id shadcn-overlays-dropdown-menu--submenu-leading-icon-alignment --baseline-path-mode nested-import --fresh",
+        "result": "fail",
+        "failures": 1,
+        "note": "Canonical Linux/ARM64 container static build passed (5m44); capture stopped at EACCES copying storybook-static into mounted canonical-build-cache. No comparison or baseline writes; visual-pending."
+      },
+      {
+        "command": "Design Core: pnpm exec prettier --write spec/src/verification.md; pnpm spec:check; jj commit -m Keep dropdown submenu leading icons aligned with menu items",
+        "result": "pass",
+        "failures": 0,
+        "note": "3 spec lanes passed. Source committed as b3eb19e7/kupxxqyt with a fresh empty change; no package publication."
+      },
+      {
+        "command": "CUA: inspect task page, open comment menu, save screenshot and Escape",
+        "result": "pass",
+        "failures": 0,
+        "note": "Live7460 shows themed outline task actions, aligned Copy and reaction picker. Read-only inspection, no comment/reaction writes. /tmp/jj-task-actions.jpg."
+      },
+      {
+        "command": "pnpm exec prettier --write (changed supported files); pnpm spec:first; pnpm spec:validate; pnpm check:progress; pnpm check:architecture; pnpm check:ui-ownership; pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Focused final governance before retained-status refinement:34 protected files/12 chapters;5 validators/21 chapters/147 requirements;120 tasks;737 architecture modules;129 catalog modules;0 type errors/warnings. No app root aggregate lanes."
+      },
+      {
+        "command": "pnpm web:check; pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte; pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "Retained original status target after comment edit/removal:0 errors/warnings,7/7 task stories and spec-first pass. Picker/counts remain absent on tombstones; only original pending request recovery stays visible."
+      },
+      {
+        "command": "JJ_STORE_DEV_PORT=7484 JJ_STORE_REAL_TEST=task-reactions.spec.ts pnpm web:test:real",
+        "result": "fail",
+        "failures": 1,
+        "note": "Setup intentionally stopped while rebuilding unchanged RustFS; no browser tests ran. Retried using the existing explicit development runtime executable. No persistent user fixture touched."
+      },
+      {
+        "command": "JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs JJ_STORE_DEV_PORT=7484 JJ_STORE_REAL_TEST=task-reactions.spec.ts pnpm web:test:real",
+        "result": "fail",
+        "failures": 1,
+        "note": "Cold stack:1091ms startup,882ms restart,177504KiB resident,405325ms fixture preparation. Real saving/reload persistence, two-client updates, count clear, both button backgrounds/hover and Copy alignment passed. Test then clicked an opacity-hidden hover toolbar after clear and timed out at first lost-acknowledgement setup. Added the same data-actions-visible wait used by existing real WorkStore test; no force click or assertion relaxation. Isolated stack/root cleaned. Exact fresh retry follows."
+      },
+      {
+        "command": "pnpm exec prettier --write web/tests/real/task-reactions.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Native hover helper waits for visible toolbar state; per-action timeout15s, total test120s. Lost committed responses now cover both external edit and tombstone before status recovery."
+      },
+      {
+        "command": "JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs JJ_STORE_DEV_PORT=7484 JJ_STORE_REAL_TEST=task-reactions.spec.ts JJ_STORE_REAL_KEEP=1 pnpm web:test:real",
+        "result": "fail",
+        "failures": 1,
+        "note": "Fresh isolated fixture: 1035 ms startup, 870 ms restart, 178368 KiB resident, 423992 ms preparation. Reproduced real hover bug after removing focused reaction chip: focusout hid toolbar while pointer remained over the message. Fixed owned shared hover helper; fixture preserved for exact retries."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "After shared hover fix: both 0 errors/warnings; catalog 129 modules. Logs jj-task-reactions-hover-*-check.log."
+      },
+      {
+        "command": "pnpm test:storybook",
+        "result": "fail",
+        "failures": 1,
+        "note": "Shared helper consumer escalation. 37/53 files and 158 tests passed, then StoreConnection browser WebSocket/birpc connection closed. No assertion failure; remaining families did not execute. Exact StoreConnection retry and sequential full lane follow."
+      },
+      {
+        "command": "JJ_STORE_DEV_ROOT=/var/folders/_3/k1jv9rtn47s_0k5bm6qn_lk80000gn/T/jj-store-real-browser-hZnlr0 JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs JJ_STORE_DEV_PORT=7484 pnpm dev:restart",
+        "result": "pass",
+        "failures": 0,
+        "note": "Rebuilt final UI/development binaries and restarted isolated server with preserved fixture: 4013 ms restart, 165360 KiB RSS. User 7460/7462 stack untouched."
+      },
+      {
+        "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7484 JJ_STORE_REAL_REPOSITORY=24a50486d238649e99b7de7d4411eae3 JJ_STORE_REAL_RUNTIME=/var/folders/_3/k1jv9rtn47s_0k5bm6qn_lk80000gn/T/jj-store-real-browser-hZnlr0 JJ_STORE_REAL_ROOT=/Users/stevejuma/code/lapismd/jj-store-appearance pnpm exec playwright test --config web/playwright.real.config.ts task-reactions.spec.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "cold-final.log: second-client count missed the 5 second expectation under simultaneous full Storybook load. Exact retry without production/assertion changes follows; suites thereafter sequential."
+      },
+      {
+        "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7484 JJ_STORE_REAL_REPOSITORY=24a50486d238649e99b7de7d4411eae3 JJ_STORE_REAL_RUNTIME=/var/folders/_3/k1jv9rtn47s_0k5bm6qn_lk80000gn/T/jj-store-real-browser-hZnlr0 JJ_STORE_REAL_ROOT=/Users/stevejuma/code/lapismd/jj-store-appearance pnpm exec playwright test --config web/playwright.real.config.ts task-reactions.spec.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "cold-final2.log: status locator ambiguous between clipboard sr-only status and reaction status. Scoped status/check controls to Message reactions group; no product change."
+      },
+      {
+        "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7484 JJ_STORE_REAL_REPOSITORY=24a50486d238649e99b7de7d4411eae3 JJ_STORE_REAL_RUNTIME=/var/folders/_3/k1jv9rtn47s_0k5bm6qn_lk80000gn/T/jj-store-real-browser-hZnlr0 JJ_STORE_REAL_ROOT=/Users/stevejuma/code/lapismd/jj-store-appearance pnpm exec playwright test --config web/playwright.real.config.ts task-reactions.spec.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "cold-final3.log: lost-response fixture raced external comment edit before intercepted write committed; status lookup correctly retained unknown request. Network trace proved intercepted write was 404 and receipt unknown. Added explicit successful committed response assertion before abort/edit/removal, and wait for pending status to disappear on recovery. This strengthens lost-committed-response proof."
+      },
+      {
+        "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7484 JJ_STORE_REAL_REPOSITORY=24a50486d238649e99b7de7d4411eae3 JJ_STORE_REAL_RUNTIME=/var/folders/_3/k1jv9rtn47s_0k5bm6qn_lk80000gn/T/jj-store-real-browser-hZnlr0 JJ_STORE_REAL_ROOT=/Users/stevejuma/code/lapismd/jj-store-appearance pnpm exec playwright test --config web/playwright.real.config.ts task-reactions.spec.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "cold-final4.log: committed lost-response recovery after external edit passed. Second picker selection was silently suppressed when automatic WorkStore refresh set loading between opening and selecting. Decoupled reactions from background read disable state while retaining writable, own busy/pending and exact server validation guards. Added deterministic Task reactions during background reads story."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/ui/store-collaboration/StoreMessageActions.svelte web/src/lib/ui/store-work/StoreWorkComment.svelte catalog/fixtures/StoreWorkFixture.svelte catalog/components/store-work/StoreWork.stories.svelte spec/src/ui.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Focused formatting after background-read fix."
+      },
+      {
+        "command": "JJ_STORE_DEV_ROOT=/var/folders/_3/k1jv9rtn47s_0k5bm6qn_lk80000gn/T/jj-store-real-browser-hZnlr0 JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs JJ_STORE_DEV_PORT=7484 pnpm dev:restart",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final background-read fix in built UI; preserved isolated fixture and explicit binaries; 4768 ms restart, 162592 KiB RSS. User HMR stack unchanged."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-application/StoreConnection.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact previously interrupted connection family plus final task family: 14/14 in 2 files, including background-read picker acceptance."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm spec:first; pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "After final production edits: both type checks 0 errors/warnings, catalog 129 modules; 35 protected files/12 canonical chapters; architecture 737 modules."
+      },
+      {
+        "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7484 JJ_STORE_REAL_REPOSITORY=24a50486d238649e99b7de7d4411eae3 JJ_STORE_REAL_RUNTIME=/var/folders/_3/k1jv9rtn47s_0k5bm6qn_lk80000gn/T/jj-store-real-browser-hZnlr0 JJ_STORE_REAL_ROOT=/Users/stevejuma/code/lapismd/jj-store-appearance pnpm exec playwright test --config web/playwright.real.config.ts task-reactions.spec.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "cold-final5.log: final built-stack regression 1/1 in 15.2 seconds. Native persisted emoji picker/counts, reload, second-client automatic set/clear, exact Work root query, actual committed response loss, original receipt status after external edit/tombstone, no tombstone picker, leading Copy alignment, both task buttons rest/real hover, zero targeted Axe violations and zero page errors. Final built server cold-restarted with preserved isolated fixture before retry."
+      },
+      {
+        "command": "pnpm check:ui-ownership; cargo fmt --all -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final production ownership validator and affected Rust formatting pass."
+      },
+      {
+        "command": "JJ_STORE_DEV_ROOT=/var/folders/_3/k1jv9rtn47s_0k5bm6qn_lk80000gn/T/jj-store-real-browser-hZnlr0 JJ_STORE_DEV_PORT=7484 pnpm dev:stop; python3 disposable-fixture cleanup; curl --max-time 10 http://127.0.0.1:7460/",
+        "result": "pass",
+        "failures": 0,
+        "note": "Stopped only isolated acceptance stack, verified port closed and exact fixture identity, removed temporary root. User Vite returned 200; persistent development data and 7460/7462 processes preserved."
+      },
+      {
+        "command": "pnpm test:storybook",
+        "result": "fail",
+        "failures": 1,
+        "note": "Final unsharded run: 40/53 files and 172 tests passed; NavigationPersistence browser WebSocket/birpc connection closed at 171.34 seconds. No assertion failures. Exact interrupted-family retry, then same full suite split into 3 sequential fresh-session shards; no tests skipped or changed for this infrastructure interruption."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md; pnpm exec prettier --check (all changed supported paths from jj diff --name-only)",
+        "result": "pass",
+        "failures": 0,
+        "note": "All matched changed source, generated contracts, story and canonical document files formatted."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final canonical spec and provenance validation passed; no app root aggregate commands."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/NavigationPersistence.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Interrupted family exact retry 1/1 in 10.76 seconds, no production/story changes."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook --shard=1/3",
+        "result": "pass",
+        "failures": 0,
+        "note": "Same full suite, first fresh-session shard: 18/18 files, 65/65 tests, 45.45 seconds. No exclusions or baseline writes."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook --shard=2/3",
+        "result": "pass",
+        "failures": 0,
+        "note": "Same full suite, second fresh-session shard: 18/18 files, 69/69 tests, 68.07 seconds. No exclusions or baseline writes."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook --shard=3/3",
+        "result": "pass",
+        "failures": 0,
+        "note": "Same full suite, final fresh-session shard: 17/17 files, 65/65 tests, 74.00 seconds. Combined sequential shards cover every 53/53 files and 199/199 tests; no exclusions, skipped tests or baseline writes. Unsharded lifetime interruptions remain recorded above."
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "fail",
+        "failures": 1,
+        "note": "Actual workspace metadata detected missing allowlist edge jj-collab to jj-work. Canonical architecture already permits owned WorkStore model types; updated precise boundary rule and negative coverage."
+      },
+      {
+        "command": "node --test --test-name-pattern collaboration_targets_use_owned_work_types_without_reverse_or_runtime_edges scripts/governance.test.mjs",
+        "result": "fail",
+        "failures": 1,
+        "note": "Before narrow edge update: 1 exact regression failed on invalid layer dependency jj-work."
+      },
+      {
+        "command": "pnpm exec prettier --write scripts/check-boundaries.mjs scripts/governance.test.mjs spec/src/spec-governance.md; node --test scripts/governance.test.mjs; pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "Owning governance file 25/25; actual Cargo metadata 16 packages passes. Reverse jj-work to jj-collab and jj-collab publication/upstream JJ imports still rejected. No UI/Rust implementation change after final passing browser run."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md; pnpm spec:first; pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final boundary/ledger changes: 37 protected files, 12 canonical chapters; 5 validators, 21 chapters, 147 requirements."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "fail",
+        "failures": 1,
+        "note": "Ledger tests array only recognizes fn/def/test definitions; new Story name cannot use that named-test field. Story remains recorded in changed files and executed Storybook runs. Removed unsupported Story fragment without changing the validator or product tests."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md; pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final corrected ledger: 120 tasks; named Rust/Node/browser regressions resolve. Story evidence retained in files and actual run results. Functional acceptance complete; separate gaps preserved and milestone statuses unchanged."
+      }
     ]
   }
 ]

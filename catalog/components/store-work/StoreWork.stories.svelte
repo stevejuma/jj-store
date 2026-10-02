@@ -198,3 +198,100 @@
     ).toBeNull();
   }}
 />
+
+<Story
+  name="Task comment reactions and action surfaces"
+  args={{ threadFragments: true }}
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement),
+      body = within(document.body);
+    const root = canvas.getByRole("listitem", { name: /^Comment 3131/ });
+    await userEvent.hover(root.querySelector(".community-message")!);
+    await waitFor(() =>
+      expect(root.querySelector(".community-message")).toHaveAttribute(
+        "data-actions-visible",
+      ),
+    );
+    await userEvent.click(
+      within(root).getByRole("button", { name: "Add reaction" }),
+    );
+    await userEvent.click(await body.findByRole("button", { name: ":lapis:" }));
+    const reaction = await within(root).findByRole("button", {
+      name: /1 reaction with Lapis/,
+    });
+    await expect(reaction).toBeVisible();
+    await userEvent.click(reaction);
+    await waitFor(() =>
+      expect(
+        within(root).queryByRole("button", { name: /1 reaction with Lapis/ }),
+      ).toBeNull(),
+    );
+    const removed = canvas.getByRole("listitem", { name: /^Comment 3333/ });
+    await expect(
+      within(removed).queryByRole("button", { name: "Add reaction" }),
+    ).toBeNull();
+    await userEvent.hover(root.querySelector(".community-message")!);
+    await waitFor(() =>
+      expect(root.querySelector(".community-message")).toHaveAttribute(
+        "data-actions-visible",
+      ),
+    );
+    await userEvent.click(
+      within(root).getByRole("button", { name: "More message actions" }),
+    );
+    const edit = await body.findByRole("menuitem", { name: "Edit comment" });
+    const copy = body.getByRole("menuitem", { name: /^Copy$/ });
+    await expect(
+      Math.abs(
+        copy.querySelector("svg")!.getBoundingClientRect().left -
+          edit.querySelector("svg")!.getBoundingClientRect().left,
+      ),
+    ).toBeLessThanOrEqual(1);
+    await userEvent.keyboard("{Escape}");
+    const editTask = canvas.getByRole("button", { name: /^Edit task$/ });
+    await expect(getComputedStyle(editTask).backgroundColor).not.toBe(
+      "rgba(0, 0, 0, 0)",
+    );
+    // The projects page supplies Add subtask; both buttons and native CSS :hover
+    // are asserted with real pointer input in task-reactions.spec.ts.
+  }}
+/>
+<Story
+  name="Task reactions during background reads"
+  args={{ backgroundRead: true }}
+  play={async ({ canvasElement }) => {
+    const root = within(canvasElement).getByRole("listitem", {
+      name: /^Comment 3131/,
+    });
+    await userEvent.hover(root.querySelector(".community-message")!);
+    await waitFor(() =>
+      expect(root.querySelector(".community-message")).toHaveAttribute(
+        "data-actions-visible",
+      ),
+    );
+    const picker = within(root).getByRole("button", { name: "Add reaction" });
+    await expect(picker).toBeEnabled();
+    await userEvent.click(picker);
+    await userEvent.click(
+      await within(document.body).findByRole("button", { name: ":lapis:" }),
+    );
+    await expect(
+      await within(root).findByRole("button", {
+        name: /1 reaction with Lapis/,
+      }),
+    ).toBeVisible();
+  }}
+/>
+<Story
+  name="Read only task reactions"
+  args={{ writable: false }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    const root = c.getByRole("listitem", { name: /^Comment 3131/ });
+    await userEvent.hover(root.querySelector(".community-message")!);
+    await expect(
+      within(root).queryByRole("button", { name: "Add reaction" }),
+    ).toBeNull();
+    await expect(c.queryByRole("button", { name: /^Edit task$/ })).toBeNull();
+  }}
+/>

@@ -131,12 +131,14 @@ impl LocalRepository {
         let reactions = self.reaction_store_at(pin.as_ref(), repository).await?;
         let agents = self.agent_store_at(pin.as_ref(), repository).await?;
         let reviews = self.review_store_at(pin.as_ref(), repository).await?;
+        let work = self.work_state(pin.as_ref())?;
         let reader = jj_store_wal::publication::CollabTargetReaderV1::new(
             repository,
             Some((threads.state.root, &threads.graph)),
             Some(&agents),
             Some(&reviews),
-        )?;
+        )?
+        .with_work(repository, &work)?;
         let resolved = resolve_reaction_target(&reader, target).await?;
         let mut matching = std::collections::BTreeMap::new();
         for reference in reactions.state.slots.values() {

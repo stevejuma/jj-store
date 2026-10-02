@@ -21,6 +21,7 @@ export type WorkOutcome =
   Model<"WorkCommandOutcome"> | Model<"LocalWorkOutcome">;
 export type WorkStatus = Model<"WorkCommandStatus"> | Model<"LocalWorkOutcome">;
 export interface WorkTransport {
+  readonly reactions?: import("./thread-types.js").ThreadTransport | undefined;
   refresh?(): Promise<void>;
   page(query: WorkQuery, signal?: AbortSignal): Promise<WorkPage>;
   apply(request: WorkRequest): Promise<WorkOutcome>;
@@ -45,6 +46,8 @@ export interface WorkState {
   writing: boolean;
 }
 export interface WorkController {
+  readonly reactions?:
+    import("./thread-types.js").ReactionsController | undefined;
   readonly state: WorkState;
   restore(refresh?: boolean): Promise<void>;
   refresh(): Promise<void>;

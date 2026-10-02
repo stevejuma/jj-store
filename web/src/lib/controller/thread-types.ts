@@ -38,3 +38,18 @@ export interface ThreadTransport {
 export type ThreadsController = ReturnType<
   typeof import("./production-threads.svelte.js").createThreadsController
 >;
+export type ReactionsController = Pick<
+  ThreadsController,
+  | "busy"
+  | "pending"
+  | "emojis"
+  | "reactionError"
+  | "getReaction"
+  | "reactionModels"
+  | "loadEmojis"
+  | "loadReactions"
+  | "toggle"
+  | "checkPending"
+  | "retryPending"
+  | "reactionRevision"
+>;

@@ -1,5 +1,12 @@
 # Specification governance
 
+Task comment reaction adapters remain repository-owned Community presentation
+with source/license provenance. Extracting each comment's action and reaction
+composition keeps the task Activity orchestrator below the production source
+budget. The new typed target requires domain, pinned native/local service and
+generated contract evidence alongside UI interaction and cold browser checks;
+source menu qualification remains separate from consumer release qualification.
+
 Parent-workspace integration preserves the local-settings M14 tasks and
 evidence. Persistent Threads and Reactions use M15 after rebasing to avoid
 colliding task and evidence IDs. Renumbering does not change their requirements
@@ -593,11 +600,14 @@ native memory-store, local filesystem, direct-consumer compilation and real
 RustFS/cold acceptance as distinct evidence. Shared authority infrastructure
 justifies the full relevant WAL suite; it does not justify unrelated UI lanes.
 The boundary checker permits the local service's direct jj-collab dependency for
-shared pure command and target policy. A local descriptor/provider slice runs
-its exact filesystem regressions, shared domain tests, direct local Agent/Review
-consumer tests and crate checks. Public transport generation is required when
-HTTP/RPC schemas change, separately from these Rust provider types. Root
-aggregate and unrelated presentation lanes remain out of scope.
+shared pure command and target policy. Exact WorkComment reaction targets permit
+the model-only jj-collab to jj-work dependency; the reverse edge and
+dependencies on publication or upstream JJ remain forbidden and have boundary
+regressions. A local descriptor/provider slice runs its exact filesystem
+regressions, shared domain tests, direct local Agent/Review consumer tests and
+crate checks. Public transport generation is required when HTTP/RPC schemas
+change, separately from these Rust provider types. Root aggregate and unrelated
+presentation lanes remain out of scope.
 
 Contract qualification includes actual filesystem-browser responses from the
 isolated runtime fixture alongside the retained native fixtures. Generated

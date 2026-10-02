@@ -13,7 +13,10 @@ import {
   type WorkTransport,
 } from "./work-types.js";
 import type { Model } from "../api/client.js";
+import { workReactionSession } from "./work-reactions.svelte.js";
 export function createWorkController(context: {
+  repository?(): string;
+  principal?(): string;
   source(): WorkTransport;
   route(): {
     projectId?: string | null;
@@ -24,6 +27,7 @@ export function createWorkController(context: {
   changed(): void;
 }): WorkController {
   const state = $state(emptyWorkState());
+  const reactions = workReactionSession(context);
   let version = 0,
     session = 0;
   let reads = new AbortController();
@@ -133,6 +137,7 @@ export function createWorkController(context: {
     }
   }
   function reset() {
+    reactions.clear();
     version++;
     session++;
     reads.abort();
@@ -142,6 +147,7 @@ export function createWorkController(context: {
     Object.assign(state, emptyWorkState());
   }
   function invalidate() {
+    reactions.invalidate();
     cached.clear();
     stale = true;
   }
@@ -208,6 +214,9 @@ export function createWorkController(context: {
     }
   }
   return {
+    get reactions() {
+      return reactions.current;
+    },
     state,
     restore,
     refresh,
