@@ -8,4 +8,7 @@ pub mod runtime;
 #[cfg(feature = "native")]
 pub mod native;
 
+#[cfg(feature = "native")]
+mod native_window;
+
 pub type Result<T> = std::result::Result<T, String>;

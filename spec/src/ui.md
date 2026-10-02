@@ -1516,3 +1516,11 @@ the displayed operation cancels superseded query requests; a changed accepted
 query or repository, page or workspace selection resets the editor context. The
 route type and shared reader/query construction remain owned controller modules
 behind the existing public contracts.
+
+The macOS desktop host can explicitly request an integrated native header. This
+presentation reserves fixed pixel clearance for the native traffic lights and
+marks header background as a drag region, excluding interactive controls. It
+retains a header in narrow layouts. Ordinary browser and catalog presentation
+keep their existing spacing unless the desktop profile is explicitly selected.
+The presentation marker grants no repository access; the host separately limits
+native window permissions to its managed main window and exact origin.

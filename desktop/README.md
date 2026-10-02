@@ -28,8 +28,12 @@ resources; installed `jj` is never replaced. State-path overrides apply only to
 debug builds. Retain the default port after initialization; another listener on
 that port is an explicit error rather than an implicit service connection.
 
-Native privileged controls, custom chrome, first-render handshake, dirty-edit
-Quit protection, signed distribution and automatic updates remain pending in the
-single canonical progress ledger. The initial icon is a development placeholder.
-No Buzz source is copied in this slice; its Tauri lifecycle is a source-pinned
-design reference.
+The macOS window overlays native traffic lights on the application header and
+hides the separate titlebar title. Its header reserves control space and
+supports dragging; ordinary browser presentation keeps its existing spacing.
+
+Native folder controls, first-render handshake, dirty-edit Quit protection,
+signed distribution and automatic updates remain pending in the single canonical
+progress ledger. The initial icon is a development placeholder. No Buzz source
+is copied in this slice; its Tauri lifecycle is a source-pinned design
+reference.

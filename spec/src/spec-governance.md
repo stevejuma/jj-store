@@ -703,3 +703,10 @@ Desktop host source, its independent lockfile and packaging configuration are
 protected by desktop.md. The same slice records launch-interface changes in
 cli.md and package-boundary changes in architecture.md. Desktop qualification
 keeps process, real-RustFS, browser and actual WKWebView evidence distinct.
+
+Integrated desktop chrome remains an owned presentation adaptation. Extracting
+already-global Community header hover styles into an owned CSS file preserves
+their selectors and records the original Community source and license in
+ui-provenance.json. Native titlebar configuration and narrowly scoped window
+permissions live in the host; the renderer's versioned marker remains a
+presentation hint and cannot authorize repository operations.

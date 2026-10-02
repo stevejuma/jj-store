@@ -12,11 +12,13 @@
     initiallyCollapsed = true,
     displayMode = "auto",
     settingsSearch = "fresh",
+    desktopChrome = false,
   }: {
     initialPage?: StorePage;
     initiallyCollapsed?: boolean;
     displayMode?: AppShellDisplayMode;
     settingsSearch?: CatalogSearchSettings;
+    desktopChrome?: boolean;
   } = $props();
 
   const controller = untrack(() =>
@@ -30,4 +32,5 @@
   {initiallyCollapsed}
   {displayMode}
   {layoutStorage}
+  {desktopChrome}
 />

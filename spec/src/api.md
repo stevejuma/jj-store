@@ -1457,3 +1457,13 @@ fields and profile restrictions. `GET /operations` accepts optional metadata
 queries return HTTP 400 `invalid_query` with a bounded optional `diagnostic`
 carrying kind and message; existing non-query error codes and HTTP envelopes
 remain unchanged. There is no separate validation request or query publication.
+
+## Desktop presentation metadata
+
+The native host's version-1 macOS marker is an immutable window-local
+presentation hint consumed before shell construction. It selects native control
+clearance and drag-region markup. It is neither an HTTP capability nor an
+authorization claim, and browser clients cannot obtain additional repository or
+filesystem access by setting it. The host's window-only permissions remain
+restricted to the managed main window and exact LocalTrusted origin; bootstrap,
+HTTP admission and browser CSP retain their existing contracts.

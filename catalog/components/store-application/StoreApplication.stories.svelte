@@ -24,6 +24,15 @@
   name="Default"
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    const header = canvas.getByRole("navigation", {
+      name: "Application navigation",
+    });
+    await expect(header).not.toHaveAttribute("data-tauri-drag-region");
+    await expect(
+      canvas
+        .getByRole("button", { name: "Expand left sidebar" })
+        .getBoundingClientRect().left - header.getBoundingClientRect().left,
+    ).toBeLessThan(16);
     const bodyTitle = canvasElement.querySelector<HTMLElement>(
       ".store-application__title",
     )!;

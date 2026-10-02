@@ -1,6 +1,7 @@
 <script lang="ts">
   import "../community-overlays.css";
   import "./right-sidebar.css";
+  import "./header-hover.css";
 
   import { Button } from "@lapismd/design-core/shadcn/button";
   import {
@@ -21,6 +22,7 @@
     displayMode = "auto",
     mobileBreakpoint = 1024,
     desktopMinMainWidth,
+    desktopChrome = false,
     canNavigateBack = false,
     canNavigateForward = false,
     onNavigateBack,
@@ -35,6 +37,7 @@
     displayMode?: AppShellDisplayMode;
     mobileBreakpoint?: number;
     desktopMinMainWidth?: number;
+    desktopChrome?: boolean;
     canNavigateBack?: boolean;
     canNavigateForward?: boolean;
     onNavigateBack?: () => void;
@@ -96,11 +99,13 @@
   class={["community-app-shell", className].filter(Boolean).join(" ")}
   data-ui-component="community-app-shell"
   data-display-mode={controller.mobile.resolvedMode}
+  data-desktop-chrome={desktopChrome ? "macos" : undefined}
 >
-  {#if !mobileMode}
+  {#if !mobileMode || desktopChrome}
     <nav
       class="community-app-shell__header"
       aria-label="Application navigation"
+      data-tauri-drag-region={desktopChrome ? "deep" : undefined}
       style={`--community-app-shell-header-main-start: ${headerMainStart}px; --community-app-shell-header-main-width: ${headerMainWidth}px`}
     >
       <div class="community-app-shell__header-start">
@@ -199,6 +204,16 @@
 
   .community-app-shell[data-display-mode="mobile"] {
     grid-template-rows: minmax(0, 1fr);
+  }
+
+  /* Native traffic lights use fixed logical pixels, independently of text zoom. */
+  .community-app-shell[data-desktop-chrome="macos"] {
+    grid-template-rows: max(40px, 2.5rem) minmax(0, 1fr);
+  }
+
+  .community-app-shell[data-desktop-chrome="macos"]
+    .community-app-shell__header-start {
+    padding-inline-start: 80px;
   }
 
   .community-app-shell__header {
@@ -302,26 +317,5 @@
     .community-app-shell__surface [data-ui-part="sidebar-header"] > strong
   ) {
     font-size: var(--community-text-body);
-  }
-
-  :global(
-    .community-app-shell__header
-      [data-ui-component="button"]:not(:disabled):is(
-        :focus-visible,
-        [aria-haspopup="menu"][data-state="open"]
-      )
-  ) {
-    color: var(--foreground);
-    background: color-mix(in srgb, var(--foreground) 7%, transparent);
-  }
-
-  @media (hover: hover) {
-    :global(
-      .community-app-shell__header
-        [data-ui-component="button"]:not(:disabled):hover
-    ) {
-      color: var(--foreground);
-      background: color-mix(in srgb, var(--foreground) 7%, transparent);
-    }
   }
 </style>

@@ -172,6 +172,16 @@
       ]
     },
     {
+      "local": "web/src/lib/ui/community-app-shell/header-hover.css",
+      "sources": [
+        {
+          "path": "src/components/community-app-shell/CommunityAppShell.svelte",
+          "revision": "d859f33a484a9238bb11f974f4ead8e9be729ec6",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
       "local": "web/src/lib/ui/community-app-shell/CommunitySidebarToggleIcon.svelte",
       "sources": [
         {

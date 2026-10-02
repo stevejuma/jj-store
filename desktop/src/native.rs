@@ -1,13 +1,12 @@
 //! Native window and menu lifecycle; no renderer invoke handlers are installed.
-use crate::{installation::Resources, readiness, runtime::ManagedService};
+use crate::{installation::Resources, native_window, runtime::ManagedService};
 use std::sync::Mutex;
 use tauri::{
-    Manager, RunEvent, WebviewUrl, WebviewWindowBuilder, WindowEvent,
+    Manager, RunEvent, WindowEvent,
     menu::{Menu, MenuItem},
     tray::TrayIconBuilder,
 };
 use tauri_plugin_dialog::DialogExt;
-use tauri_plugin_opener::OpenerExt;
 use tauri_plugin_window_state::StateFlags;
 
 struct RuntimeState(Mutex<Option<ManagedService>>);
@@ -44,16 +43,7 @@ pub fn run() {
                     Ok(service) => {
                         let origin = service.origin.clone();
                         if let Ok(mut owner) = handle.state::<RuntimeState>().0.lock() { *owner = Some(service); } else { handle.exit(1); return; }
-                        let links = handle.clone();
-                        let window = WebviewWindowBuilder::new(&handle, "main", WebviewUrl::External(origin.clone()))
-                            .title("jj-store").inner_size(1200.0, 800.0).min_inner_size(900.0, 650.0).visible(false)
-                            .on_navigation(move |target| {
-                                if readiness::navigation_allowed(&origin, target) { return true; }
-                                if matches!(target.scheme(), "https" | "http") && target.username().is_empty() && target.password().is_none() { let _ = links.opener().open_url(target.as_str(), None::<&str>); }
-                                false
-                            })
-                            .on_page_load(|window, payload| { if payload.event() == tauri::webview::PageLoadEvent::Finished { eprintln!("jj-store desktop: managed page loaded"); let _ = window.show(); let _ = window.set_focus(); } })
-                            .build();
+                        let window = native_window::build(&handle, origin);
                         if let Err(error) = window { handle.dialog().message(format!("Cannot open jj-store: {error}")).blocking_show(); handle.exit(1); return; }
                         loop {
                             std::thread::sleep(std::time::Duration::from_millis(500));

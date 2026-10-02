@@ -19,9 +19,9 @@ ef2aa1ae38fadcc0bc22b8bf6ed96b35933146be is an architectural reference.
 
 The first slice establishes supervised launch and the native window without
 adding privileged JavaScript APIs or relaxing the ordinary browser CSP. Native
-folder-dialog integration, first-render handshake, custom titlebar, zoom and
-dirty-edit Quit protection remain subsequent gates. The existing server-owned
-folder picker remains available through its authorized HTTP route.
+folder-dialog integration, first-render handshake, zoom and dirty-edit Quit
+protection remain subsequent gates. The existing server-owned folder picker
+remains available through its authorized HTTP route.
 
 `jj-store run --desktop-supervised` requires LocalTrusted literal-loopback mode
 and a pipe on standard input. Optional desktop bind, web-root and RustFS-runtime
@@ -40,3 +40,20 @@ Local development and qualification use explicit separate state paths. Public
 signing, notarization, updates, login startup, additional platforms, terminals
 and agent execution remain deferred. Screenshots are visual-pending and cannot
 qualify process lifetime, publication, storage or accessibility.
+
+## macOS integrated header
+
+The main window uses `TitleBarStyle::Overlay` and a hidden native title while
+retaining native close, minimize and fullscreen controls. Traffic lights use the
+Buzz reference position of 16,25 logical pixels. The application header reserves
+80 CSS pixels at its leading edge and at least 40 CSS pixels in height; native
+controls do not scale with application text. Narrow layouts retain this header.
+
+The host supplies a presentation-only macOS marker before application startup.
+Ordinary browser clients do not reserve native-control space or enable window
+drag regions. The managed main window's exact loopback origin receives only
+window dragging and Tauri's internal double-click zoom permissions. No wildcard
+origin, filesystem, shell, dialog or generic core permission is granted. Window
+controls and links inside the header retain their ordinary click behavior. This
+slice uses Tauri's standard double-click zoom; matching the macOS custom
+double-click preference remains a separate refinement.

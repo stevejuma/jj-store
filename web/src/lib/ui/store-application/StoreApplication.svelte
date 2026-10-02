@@ -23,6 +23,7 @@
   import StoreRepositoryTabs from "./StoreRepositoryTabs.svelte";
   import { repositorySections } from "./repository-sections.js";
   import { onDestroy, setContext, untrack, type Snippet } from "svelte";
+  import { isMacDesktopWindow } from "../../desktop-chrome.js";
   import "./store-application.css";
   import { workspaceNavigationKey } from "./workspace-navigation.js";
   import StoreWorkspaceSectionHeader from "./StoreWorkspaceSectionHeader.svelte";
@@ -55,12 +56,14 @@
     initiallyCollapsed = true,
     displayMode = "auto",
     layoutStorage,
+    desktopChrome = untrack(isMacDesktopWindow),
     children,
   }: {
     controller: StoreController;
     initiallyCollapsed?: boolean;
     displayMode?: AppShellDisplayMode;
     layoutStorage?: Storage;
+    desktopChrome?: boolean;
     children?: Snippet<[StorePage, string]>;
   } = $props();
   import { ownApplicationAppearance as ownAppearance } from "../../appearance/runtime.svelte.js";
@@ -178,6 +181,7 @@
 <CommunityAppShell
   controller={shell}
   {displayMode}
+  {desktopChrome}
   canNavigateBack={canNavigateBack && !conflictOpen}
   canNavigateForward={canNavigateForward && !conflictOpen}
   onNavigateBack={() => navigate(-1)}

@@ -133,10 +133,10 @@ shared-package release qualification does not alter those original Git gates.
 | M15.6       | In progress | M15.3                   | JST-COLLAB-009,JST-COLLAB-010,JST-API-009,JST-ADAPT-007                                                                                                                                 | Derived canonical-source timeline/search and review integration                                                                | Qualify authorized joins                                                                       | E-M15-006,E-M15-020,E-M15-021,E-M15-022,E-M15-025                                                                                                                                                                                                                                                                                                              |
 | M15.7       | Planned     | M15.4,M15.5,M15.6       | JST-COLLAB-007,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                                                                                              | Cold real-RustFS/local full flow and runner qualification                                                                      | Retain native/local/cold evidence                                                              | -                                                                                                                                                                                                                                                                                                                                                              |
 | M16         | Partial     | M15.5                   | JST-UI-018,JST-GOV-009                                                                                                                                                                  | Complete device Appearance and cold consumer qualification                                                                     | Complete source release and registry-only consumer qualification                               | E-UI-052,E-UI-053,E-UI-054,E-UI-055,E-UI-056,E-UI-057,E-UI-058,E-UI-059,E-UI-061,E-UI-062,E-UI-063,E-UI-085,E-UI-086,E-UI-087,E-UI-088,E-UI-089                                                                                                                                                                                                                |
-| M17         | In progress | M8a.4                   | JST-DESK-001,JST-DESK-002,JST-DESK-003,JST-DESK-004,JST-DESK-005                                                                                                                        | Managed macOS ARM64 desktop application                                                                                        | Qualify native host, controls and package                                                      | E-DESK-001                                                                                                                                                                                                                                                                                                                                                     |
+| M17         | In progress | M8a.4                   | JST-DESK-001,JST-DESK-002,JST-DESK-003,JST-DESK-004,JST-DESK-005                                                                                                                        | Managed macOS ARM64 desktop application                                                                                        | Qualify native host, controls and package                                                      | E-DESK-001,E-DESK-002                                                                                                                                                                                                                                                                                                                                          |
 | M17.1       | In progress | M8a.4                   | JST-DESK-003                                                                                                                                                                            | Opt-in bounded parent-pipe service supervision                                                                                 | Retain real RustFS and ordinary process evidence                                               | E-DESK-001                                                                                                                                                                                                                                                                                                                                                     |
-| M17.2       | In progress | M17.1                   | JST-DESK-001,JST-DESK-002,JST-DESK-004                                                                                                                                                  | Native host and isolated production UI startup                                                                                 | Qualify actual WKWebView and recovery                                                          | E-DESK-001                                                                                                                                                                                                                                                                                                                                                     |
-| M17.3       | Planned     | M17.2                   | JST-DESK-004,JST-DESK-005                                                                                                                                                               | Native folder dialogs, chrome, first-render handshake and dirty-edit protection                                                | Implement restricted desktop bridge                                                            | -                                                                                                                                                                                                                                                                                                                                                              |
+| M17.2       | In progress | M17.1                   | JST-DESK-001,JST-DESK-002,JST-DESK-004                                                                                                                                                  | Native host and isolated production UI startup                                                                                 | Qualify actual WKWebView and recovery                                                          | E-DESK-001,E-DESK-002                                                                                                                                                                                                                                                                                                                                          |
+| M17.3       | In progress | M17.2                   | JST-DESK-004,JST-DESK-005                                                                                                                                                               | Native folder dialogs, chrome, first-render handshake and dirty-edit protection                                                | Qualify remaining native controls and render/dirty-edit gates                                  | E-DESK-002                                                                                                                                                                                                                                                                                                                                                     |
 | M17.4       | Planned     | M17.3                   | JST-DESK-005                                                                                                                                                                            | Cold ARM64 app and DMG persistence and relocation                                                                              | Package and qualify local distribution                                                         | -                                                                                                                                                                                                                                                                                                                                                              |
 
 The user reopened production browsing integration on 27 September 2026 after
@@ -48282,11 +48282,7 @@ and named tests are checked by the progress gate.
   },
   {
     "id": "E-DESK-001",
-    "tasks": [
-      "M17",
-      "M17.1",
-      "M17.2"
-    ],
+    "tasks": ["M17", "M17.1", "M17.2"],
     "date": "2026-10-02",
     "kind": "desktop-foundation",
     "revision": "ykmzsnwm (enclosing change)",
@@ -48664,6 +48660,224 @@ and named tests are checked by the progress gate.
     ],
     "scope": "Root aggregate pnpm spec:check/check/test/build, full Rust workspace and unrelated UI suites not run under the targeted policy. Full regular server_executable target is the direct consumer of extracted shared foreground startup, signal handling and readiness. Shared governance scanner/mapping changes require the complete42-test governance lane. Native process, real storage, host-runtime, actual WebView and package evidence remain distinct; no visual baseline approval.",
     "next": "Qualify M17.3 controls, dirty-edit guard and M17.4 local release identity/DMG/relocation with cold repository flows in the desktop workspace."
+  },
+  {
+    "id": "E-DESK-002",
+    "tasks": ["M17", "M17.2", "M17.3"],
+    "date": "2026-10-02",
+    "kind": "macos-integrated-header",
+    "revision": "kyulvzln (enclosing change)",
+    "versions": "macOS ARM64; Rust1.98.1; Tauri2.11.5 with independent locked graph; Buzz ef2aa1ae38fadcc0bc22b8bf6ed96b35933146be. Existing ignored Design Core development source hook retained; not registry-only qualification.",
+    "formats": "Presentation-only version1 macOS marker and exact-origin/main-window ACL limited to start-dragging and internal double-click zoom. Browser CSP, HTTP schemas, installation and all repository authority formats unchanged.",
+    "files": [
+      "catalog/components/store-application/DesktopChrome.stories.svelte",
+      "catalog/components/store-application/StoreApplication.stories.svelte",
+      "catalog/fixtures/StoreApplicationFixture.svelte",
+      "desktop/README.md",
+      "desktop/src/lib.rs",
+      "desktop/src/native.rs",
+      "desktop/src/native_window.rs",
+      "docs/ui-provenance.json",
+      "spec/src/api.md",
+      "spec/src/desktop.md",
+      "spec/src/milestones.md",
+      "spec/src/spec-governance.md",
+      "spec/src/ui.md",
+      "web/src/lib/desktop-chrome.ts",
+      "web/src/lib/ui/community-app-shell/CommunityAppShell.svelte",
+      "web/src/lib/ui/community-app-shell/header-hover.css",
+      "web/src/lib/ui/store-application/StoreApplication.svelte"
+    ],
+    "tests": [],
+    "runs": [
+      {
+        "command": "CUA bundled app AX/screenshot before; inspect Buzz tauri.conf.json at ef2aa1ae38fadcc0bc22b8bf6ed96b35933146be",
+        "result": "fail",
+        "failures": 1,
+        "note": "One visible extra native titlebar/title. Buzz uses Overlay, hiddenTitle and trafficLightPosition16,25; ours retained defaults."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreApplication.stories.svelte -t MacDesktopHeader (symlinked dependency tree)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Suite failed to import external addon-vitest setup before running assertions. Replaced only this workspace node_modules symlink with an independent installation; parent dependencies untouched."
+      },
+      {
+        "command": "pnpm install --offline --frozen-lockfile --ignore-scripts",
+        "result": "fail",
+        "failures": 1,
+        "note": "Existing ignored local pnpm hook checksum mismatched the canonical lock."
+      },
+      {
+        "command": "pnpm install --offline --no-frozen-lockfile --ignore-scripts; jj restore --from @- pnpm-lock.yaml",
+        "result": "pass",
+        "failures": 0,
+        "note": "Independent development tree installed with existing ignored Design Core source hook. Canonical lock restored exactly; no dependency or loader change committed. Not registry-only qualification."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreApplication.stories.svelte -t MacDesktopHeader (unchanged @- shell and application)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Exact before regression:1 failed,12 skipped, missing drag-region attribute. Original component bytes temporarily loaded from JJ and edited bytes restored in finally."
+      },
+      {
+        "command": "cargo fmt --manifest-path desktop/Cargo.toml; cargo check --manifest-path desktop/Cargo.toml --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Native Tauri host and two-command dynamic ACL compile. /tmp/jj-store-desktop-chrome-native-check.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreApplication.stories.svelte -t 'MacDesktopHeader|Default|Settings' (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "9 assertion tests passed,5 skipped;1 Bits UI derived_inert teardown diagnostic. Retained this unsuccessful attempt rather than suppressing the diagnostic guard."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "0 errors and0 warnings. /tmp/jj-store-desktop-chrome-web-check.log."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final0 errors/0 warnings;130 modules. /tmp/jj-store-desktop-chrome-catalog-check.log."
+      },
+      {
+        "command": "pnpm check:architecture (before module extraction)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Story443/400 counted lines; component309/300. Extracted desktop story family and already-global header hover rules without raising budgets."
+      },
+      {
+        "command": "pnpm check:architecture (partial extraction)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Component303/300; completed hover extraction rather than compressing source or raising budget."
+      },
+      {
+        "command": "pnpm check:architecture (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "733 modules satisfy the existing architecture budgets."
+      },
+      {
+        "command": "pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "Owned presentation/provenance remains valid. Community inspected first, Design Core shell second. Copied hover declarations preserve selectors and their original license/source attribution."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/DesktopChrome.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte -t 'MacDesktopHeader|^Default$|^Settings$'",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final4 passed/10 skipped, no runtime diagnostics. Earlier intermediate extraction also returned0 but emitted a ResizeObserver console error; retained as incomplete intermediate evidence. Final scoped native CSS and exact40-pixel header check pass. /tmp/jj-store-desktop-chrome-story-final.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreApplication.stories.svelte -t '^SettingsMobile$' (unchanged @- shell/application)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1 passed/11 skipped; isolated before state did not reproduce earlier teardown diagnostic. Edited source restored."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreApplication.stories.svelte -t 'MacDesktopHeader|Default|Settings' (unchanged @- shell/application)",
+        "result": "pass",
+        "failures": 0,
+        "note": "7 passed/5 skipped; broader before state also did not reproduce diagnostic. No claim of a confirmed inherited failure; edited source restored."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/DesktopChrome.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte -t 'MacDesktopHeader|Default|Settings' (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "9 passed/5 skipped, no runtime diagnostics. Covers native/narrow header, ordinary browser spacing/clicks and direct settings consumers. /tmp/jj-store-desktop-chrome-story-settings-final.log. Earlier diagnostic not reproduced on final relevant lane."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Fresh production bundle succeeds; inherited Design Core :global minifier and large-chunk warnings retained. /tmp/jj-store-desktop-chrome-web-build.log."
+      },
+      {
+        "command": "node scripts/desktop.mjs stage --server-dir /Users/stevejuma/code/lapismd/jj-store/target/debug --rustfs-runtime /Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs; pnpm desktop:bundle",
+        "result": "pass",
+        "failures": 0,
+        "note": "212 assets and explicit paired binaries staged; native debug app rebuilt. /tmp/jj-store-desktop-chrome-app-build.log. Existing installed tools and unrelated demo retained."
+      },
+      {
+        "command": "CUA cold launch rebuilt bundled app; AX and screenshot",
+        "result": "pass",
+        "failures": 0,
+        "note": "Existing Projects UI retained same57653 origin. Separate titlebar/title text gone; native close/minimize/fullscreen controls present and header-leading space retained. No visual baseline approval."
+      },
+      {
+        "command": "CUA sidebar/drag attempts after fresh snapshots and bundle-ID selection",
+        "result": "fail",
+        "failures": 3,
+        "note": "Two stale-state guards and one noWindowsAvailable response prevented reliable native gesture verification. Refreshed AX shows active sidebar controls and same Projects route; no native drag movement claim."
+      },
+      {
+        "command": "ps -axo pid=,ppid=,comm= (after native view)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Owned app60321/service60346/RustFS60348 remain running for user review. Appearance demo42374 remains separately running. No unrelated daemon restart or installation."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "5 validators,22 chapters,151 requirements."
+      },
+      {
+        "command": "pnpm spec:first (before mapped chapter completion)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Default web helper and provenance mappings additionally required api.md and spec-governance.md. Added their owning marker/attribution contracts."
+      },
+      {
+        "command": "pnpm check:progress (before Storybook reference correction)",
+        "result": "fail",
+        "failures": 4,
+        "note": "Ledger scanner recognizes named executable tests rather than Svelte Story name attributes. Story files retained as test references; exact story names and filters remain in recorded commands/results."
+      },
+      {
+        "command": "cargo fmt --manifest-path desktop/Cargo.toml -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Affected native Rust formatting passes."
+      },
+      {
+        "command": "pnpm exec prettier --write catalog/components/store-application/DesktopChrome.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte catalog/fixtures/StoreApplicationFixture.svelte desktop/README.md docs/ui-provenance.json spec/src/api.md spec/src/desktop.md spec/src/milestones.md spec/src/spec-governance.md spec/src/ui.md web/src/lib/desktop-chrome.ts web/src/lib/ui/community-app-shell/CommunityAppShell.svelte web/src/lib/ui/community-app-shell/header-hover.css web/src/lib/ui/store-application/StoreApplication.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed supported source/prose/JSON files formatted. Native Rust checked separately."
+      },
+      {
+        "command": "pnpm check:progress (Storybook file-only references)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Scanner requires fn/def/test declarations for this optional field. Storybook-only acceptance remains named explicitly in actual run commands and results rather than substituting unrelated executable tests."
+      },
+      {
+        "command": "pnpm spec:first (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "12 protected files and5 owning chapters pass after mapped API/provenance chapter completion."
+      },
+      {
+        "command": "pnpm check:progress (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "125 tasks; M17 and M17.3 remain In progress with explicit unqualified native gesture and later release/control gates."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Actual native header drag/double-click gestures remain unqualified after CUA stale-state/noWindowsAvailable errors. Native chrome rendering and production controls have cold smoke evidence.",
+      "Visual baseline approval, full native accessibility, macOS double-click preference parity, folder controls, first-render handshake and dirty-edit protection remain separate M17 gates."
+    ],
+    "scope": "Native window presentation and its production-header consumers only. Exact regression and9 final directly relevant Storybook interactions pass; no diagnostic guard weakened. Cold production WebView/package evidence is distinct from browser harness evidence. Root aggregates, full Rust workspace, storage suites, unrelated UI suites, public signing and DMG qualification are out of scope. No Buzz implementation copied; existing owned Community hover styles only extracted with provenance.",
+    "next": "Manually qualify native drag and double-click, then continue the remaining M17.3 native controls/render/dirty-edit and M17.4 distribution gates."
   }
 ]
 ```
