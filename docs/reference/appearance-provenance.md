@@ -75,3 +75,10 @@ The composer passes the existing foundation send-button part to preserve its
 circular geometry. The Mira bridge captures palette roles on the composer
 ancestor before Mira defines reverse aliases. Standalone file/code editor
 surfaces and palette generation remain independent of these app bindings.
+
+The app shell paints the Buzz gradient once across its viewport. Header and
+left-navigation chrome reveal the same image, with glass opacity/blur applied
+above it when enabled. Compact navigation section pickers bind public Popover
+and Command View background tokens to the app background, following the user's
+requested white light-Buzz surface; the generated popover palette and other
+menus retain their existing roles. These are app-owned presentation adaptations.

@@ -121,7 +121,7 @@ html[data-store-density="spacious"] {
 }
 html[data-store-theme="buzz"],
 html[data-store-theme="buzz-dark"] {
-  --store-theme-chrome: var(--store-theme-gradient);
+  --store-theme-chrome: transparent;
 }
 html[data-store-glass="true"] {
   --store-theme-chrome: color-mix(
@@ -130,7 +130,13 @@ html[data-store-glass="true"] {
     transparent
   );
 }
-html[data-store-glass="true"] .community-app-shell {
+/* One viewport-height image avoids restarting the Buzz gradient in the header. */
+html:is(
+    [data-store-theme="buzz"],
+    [data-store-theme="buzz-dark"],
+    [data-store-glass="true"]
+  )
+  .community-app-shell {
   background: var(--store-theme-gradient);
 }
 html[data-store-glass="true"] .community-app-shell__header,

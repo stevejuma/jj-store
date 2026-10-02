@@ -320,6 +320,8 @@
 }
 
 .lc-community-navigation__section-picker {
+  --ui-popover-background: var(--background);
+  --ui-command-view-background: var(--background);
   --ui-popover-gap: 0;
   --ui-popover-padding: 0;
   --ui-popover-width: min(22rem, calc(100vw - 5rem));

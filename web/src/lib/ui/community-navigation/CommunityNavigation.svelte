@@ -205,7 +205,7 @@
               <Popover.Content
                 side="right"
                 align="start"
-                sideOffset={8}
+                sideOffset={16}
                 collisionPadding={8}
                 class="lc-community-navigation__section-picker"
               >

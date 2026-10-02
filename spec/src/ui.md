@@ -195,6 +195,16 @@ authority are unaffected. Browser glass reveals the application background, not
 the operating system desktop. Palette, font and preview assets are local under
 the existing strict CSP.
 
+Buzz light and dark draw their gradient once across the full application shell.
+The header and left navigation reveal that same image instead of restarting the
+gradient within each region. Glass retains its selected opacity and blur above
+the shared backdrop; other themes retain their existing chrome surfaces.
+Collapsed left-navigation section pickers leave an 8px gap from the rail edge
+and retain 8px viewport collision clearance. Both the portalled Popover and its
+Command View bind their public background tokens to the resolved app background
+(white in light Buzz), keeping the picker opaque even when browser glass is on.
+Search, keyboard selection, Escape and trigger focus restoration are unchanged.
+
 Accent swatches keep circular selected rings centered inside their circular
 buttons, including after changing accents, on hover and at mobile widths in
 either color mode. Keyboard focus remains visible independently of selection.

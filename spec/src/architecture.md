@@ -547,8 +547,13 @@ The picker also includes the pre-Appearance Design Core semantic palette as the
 static Original light/dark pair. Its historical snapshot remains independent of
 Shiki generation; the generated import index includes both sources. Public
 foundation dialog tokens and the app-owned prose composer's Mira bridge bind
-surface and text roles to the resolved palette. Menus keep popover surfaces, and
-standalone code/file editors retain their own editor surfaces.
+surface and text roles to the resolved palette. Compact navigation section
+pickers bind both public Popover and Command View background tokens to the app
+surface; other menus keep popover surfaces. Buzz chrome reveals one
+viewport-height shell gradient, while glass keeps its selected tint and blur.
+Standalone code/file editors retain their own editor surfaces. These bindings
+stay in owned presentation CSS and require no palette regeneration or foundation
+dependency change.
 
 Local Appearance acceptance in main uses the existing ignored foundational
 package hook against landed Design Core source. Its chat typography and native
