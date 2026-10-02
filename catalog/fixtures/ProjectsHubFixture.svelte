@@ -24,6 +24,7 @@
     failedHome = false,
     localReviews = false,
     failedReviews = false,
+    agents = false,
     readonly = false,
     mobile = false,
     sharedRepository = false,
@@ -42,6 +43,7 @@
     failedHome?: boolean;
     localReviews?: boolean;
     failedReviews?: boolean;
+    agents?: boolean;
     readonly?: boolean;
     mobile?: boolean;
     sharedRepository?: boolean;
@@ -81,6 +83,30 @@
     },
   ]);
   const hub = createProjectsHub({
+    agentResponse: (home) => {
+      const response = createInMemoryStoreController("agents");
+      return {
+        controller: {
+          ...response,
+          get state() {
+            return {
+              ...response.state,
+              repository: {
+                ...response.state.repository,
+                ...repositories.find((r) => r.id === home),
+                id: home,
+              },
+            };
+          },
+        },
+        async load(id) {
+          response.actions.selectAgentSession(id);
+        },
+        reset() {
+          response.actions.selectAgentSession(null);
+        },
+      };
+    },
     repositories: () => repositories,
     route: () => route,
     push: (next) => (route = next),
@@ -176,6 +202,7 @@
         browse: pending,
         directory: pending,
         reviews: pending,
+        agents: pending,
         activity: pending,
         ...(detail || projectDetail ? { page: pending } : {}),
       };
@@ -231,7 +258,7 @@
             ? hub.openProject(homeA, projectId, childId)
             : projectDetail
               ? hub.openProject(homeA, projectId)
-              : hub.openHub(),
+              : hub.openHub(agents ? "agents" : "projects"),
     );
   });
   onDestroy(() => hub.reset());

@@ -9,6 +9,8 @@ import type { StoreDataSource } from "./native-data-source.js";
 import { createStoreQueryClient } from "./store-query-client.js";
 import { createProjectsHub } from "./production-projects-hub.svelte.js";
 import type { ProductionStoreState } from "./production-store-state.svelte.js";
+import type { StoreController } from "./contracts.js";
+import { createProjectAgentResponse } from "./project-agent-response.svelte.js";
 export function createProductionProjects(
   data: ProductionStoreState,
   history: ReturnType<
@@ -19,6 +21,7 @@ export function createProductionProjects(
   pauseCodeEvents: () => void,
   fetcher?: typeof fetch,
   changed: () => void = () => {},
+  base?: () => StoreController,
 ) {
   const context = {
     data,
@@ -35,6 +38,14 @@ export function createProductionProjects(
   let feed = new AbortController(),
     discovery = new AbortController();
   const projects = createProjectsHub({
+    agentResponse: (home) => {
+      projects.transport(home);
+      if (!base) throw new Error("Agent response unavailable");
+      return createProjectAgentResponse(() => {
+        projects.transport(home);
+        return sources.get(home)!;
+      }, base);
+    },
     repositories: () => context.data.repositories,
     discover: async () => {
       discovery.abort();

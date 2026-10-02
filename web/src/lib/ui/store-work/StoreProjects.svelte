@@ -6,6 +6,8 @@
   import StoreProjectsViewport from "./StoreProjectsViewport.svelte";
   import StoreWorkOwnershipGroups from "./StoreWorkOwnershipGroups.svelte";
   import StoreProjectsReviews from "./StoreProjectsReviews.svelte";
+  import StoreProjectsAgents from "./StoreProjectsAgents.svelte";
+  import BotIcon from "@lucide/svelte/icons/bot";
   import StoreProjectsActivity from "./StoreProjectsActivity.svelte";
   import StoreWorkEmpty from "./StoreWorkEmpty.svelte";
   import FolderKanban from "@lucide/svelte/icons/folder-kanban";
@@ -89,8 +91,8 @@
   });
   const tabs = $derived<ProjectsTab[]>(
     project
-      ? ["activity", "tasks", "reviews", "repositories"]
-      : ["activity", "projects", "tasks", "reviews", "repositories"],
+      ? ["activity", "tasks", "reviews", "agents", "repositories"]
+      : ["activity", "projects", "tasks", "reviews", "agents", "repositories"],
   );
   const tab = $derived(
     route.workTab ?? (route.projectId ? "tasks" : "projects"),
@@ -109,8 +111,13 @@
   aria-label="Projects and tasks"
   aria-busy={busy}
   data-task-detail={task ? "" : undefined}
+  data-agents-view={tab === "agents" ? "" : undefined}
 >
-  <StoreProjectsViewport taskDetail={!!task} bind:viewportRef={element}>
+  <StoreProjectsViewport
+    taskDetail={!!task}
+    bounded={tab === "agents"}
+    bind:viewportRef={element}
+  >
     {#if hub.error}<p role="alert">{hub.error}</p>{/if}
     {#if work}<StoreWorkStatus {work} />{/if}
     {#each hub.commands.filter((command) => command.work !== work) as command (command.home)}
@@ -145,6 +152,8 @@
                 aria-hidden="true"
               />{:else if tab === "repositories"}<FolderGit
                 aria-hidden="true"
+              />{:else if tab === "agents"}<BotIcon
+                aria-hidden="true"
               />{:else if tab === "activity"}<HistoryIcon
                 aria-hidden="true"
               />{:else}<FolderKanban aria-hidden="true" />{/if}
@@ -169,6 +178,7 @@
             {layout}
           />
         {:else if tab === "activity"}<StoreProjectsActivity {controller} />
+        {:else if tab === "agents"}<StoreProjectsAgents {controller} />
         {:else if tab === "reviews"}<StoreProjectsReviews
             {controller}
             {layout}

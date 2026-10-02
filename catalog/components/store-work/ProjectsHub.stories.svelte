@@ -251,7 +251,14 @@
     const view = within(c.getByRole("region", { name: "Projects and tasks" }));
     await expect(
       view.getAllByRole("tab").map((tab) => tab.textContent?.trim()),
-    ).toEqual(["Activity", "Projects", "Tasks", "Reviews", "Repositories"]);
+    ).toEqual([
+      "Activity",
+      "Projects",
+      "Tasks",
+      "Reviews",
+      "Agents",
+      "Repositories",
+    ]);
     const expandProject = c.getByRole("button", {
       name: "Expand Native release",
     });

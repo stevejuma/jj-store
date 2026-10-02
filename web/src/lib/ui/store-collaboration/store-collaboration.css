@@ -316,6 +316,15 @@
 .store-collaboration__row[data-kind="agent"] {
   grid-template-columns: auto minmax(0, 1fr);
 }
+.store-collaboration__row[data-collection] {
+  padding-inline: 0.65rem;
+  border-bottom: 0;
+  border-radius: 0.45rem;
+}
+.store-collaboration__row[data-kind="agent"][data-collection]
+  .store-collaboration__row-actions {
+  inset-inline-end: 0.65rem;
+}
 .store-collaboration__row[data-kind="agent"] .store-collaboration__row-actions {
   position: absolute;
   inset-block-start: 0.7rem;

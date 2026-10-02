@@ -215,3 +215,43 @@
     ).toBeVisible();
   }}
 />
+
+<Story
+  name="Repository descriptions align across directory and project rows"
+  args={{ longRepositoryDescriptions: true, readonly: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await c.findByRole("button", { name: "Open project Native release" });
+    async function checkRows(label: string) {
+      await userEvent.click(c.getByRole("radio", { name: "List layout" }));
+      const list = c.getByRole("list", { name: label });
+      await expect(list).toHaveAttribute("data-layout", "list");
+      for (const width of [980, 620, 300]) {
+        list.style.width = `${width}px`;
+        await waitFor(() => {
+          const rows = [...list.querySelectorAll<HTMLElement>("article")];
+          expect(rows.length).toBeGreaterThan(1);
+          const lefts = rows.map(
+            (row) =>
+              row
+                .querySelector(".store-projects__repository-description")!
+                .getBoundingClientRect().left,
+          );
+          expect(Math.max(...lefts) - Math.min(...lefts)).toBeLessThan(1);
+          for (const row of rows)
+            expect(row.scrollWidth).toBeLessThanOrEqual(row.clientWidth + 1);
+        });
+      }
+      list.style.width = "";
+    }
+    await userEvent.click(c.getByRole("tab", { name: "Repositories" }));
+    await c.findByText(/Native parsing and storage services with/);
+    await checkRows("Other repositories");
+    await userEvent.click(c.getByRole("tab", { name: "Projects" }));
+    await userEvent.click(
+      await c.findByRole("button", { name: "Open project Native release" }),
+    );
+    await userEvent.click(c.getByRole("tab", { name: "Repositories" }));
+    await checkRows("Repository links");
+  }}
+/>

@@ -140,12 +140,13 @@ Filters and continuations bind the exact query and retained root. The hub keeps
 independent home snapshots and visibly reports partial discovery, failed homes
 and remaining pages. Linked repository metadata never grants code access.
 
-The installation directory includes Projects, Tasks, Reviews and Repositories.
-The sidebar reads unfiltered projects independently from main-view queries and
-nests active linked repositories. Reviews remain owned by ReviewStore and are
-read with separate target authorization and independent pinned pagination.
-Missing project metadata never broadens project review scope. Repository
-permission changes clear protected retained results on automatic rediscovery.
+The installation directory includes Projects, Tasks, Reviews, Agents and
+Repositories. The sidebar reads unfiltered projects independently from main-view
+queries and nests active linked repositories. Reviews remain owned by
+ReviewStore and are read with separate target authorization and independent
+pinned pagination. Missing project metadata never broadens project review scope.
+Repository permission changes clear protected retained results on automatic
+rediscovery.
 
 Projects navigation uses Community's FolderGit2 icon, restores the section gap
 above collapsible groups, and places each project expand/collapse control at the
@@ -219,3 +220,18 @@ Local browser WorkStore uses the CLI device actor and existing typed commands.
 Metadata-home access remains independent of linked-code availability. Local
 project homes participate in Projects, Tasks, repository directory and Activity;
 unsupported reviews remain visibly unavailable without issuing review requests.
+
+### Project agent-session directories
+
+A selected project's Agents tab reads AgentStore sessions only in independently
+authorized linked repositories. The main landing Agents tab discovers all
+accessible project links through unfiltered, independently pinned WorkStore
+pages, deduplicates repositories and reads their independent AgentStore pages.
+No project access grant authorizes a code or agent repository. Failed project
+selection cannot broaden the scope; inaccessible links, failed homes and bounded
+scope continuations remain explicit. Agent pagination validates the exact
+repository snapshot and never mixes captures. Refresh preserves loaded windows,
+while access loss and teardown clear protected rows. Selecting a row uses the
+full native repository and session IDs and opens the shared agent response in a
+body right pane without replacing or reloading the scoped list. Closing restores
+the full list; navigation and reload retain an admitted response selection.

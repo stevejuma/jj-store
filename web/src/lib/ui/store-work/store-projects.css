@@ -104,3 +104,16 @@
   gap: 0;
   min-width: 0;
 }
+.store-projects[data-agents-view],
+.store-projects[data-agents-view] > .store-projects__tab-root,
+.store-projects[data-agents-view] [data-ui-part="tabs-content"] {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.store-projects[data-agents-view] .community-projects__tabs,
+.store-projects[data-agents-view] .community-projects__surface-header {
+  flex-shrink: 0;
+}

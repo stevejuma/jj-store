@@ -52,7 +52,8 @@ export function createProjectsNavigation(context: {
       if (ticket === generation) home.loading = false;
     }
   }
-  async function load(refresh = false) {
+  let pendingLoad: Promise<void> | null = null;
+  async function loadPages(refresh = false) {
     if (!refresh && (loaded || loading)) return;
     reads.abort();
     reads = new AbortController();
@@ -90,6 +91,17 @@ export function createProjectsNavigation(context: {
       if (ticket === generation) loading = false;
     }
   }
+  function load(refresh = false) {
+    if (!refresh && pendingLoad) return pendingLoad;
+    const request = loadPages(refresh);
+    pendingLoad = request;
+    void request
+      .finally(() => {
+        if (pendingLoad === request) pendingLoad = null;
+      })
+      .catch(() => {});
+    return request;
+  }
   return {
     get homes() {
       return homes;
@@ -106,6 +118,7 @@ export function createProjectsNavigation(context: {
       generation++;
       reads.abort();
       homes = [];
+      pendingLoad = null;
       loaded = false;
       loading = false;
     },

@@ -9,6 +9,13 @@ export class HttpWorkDataSource implements WorkTransport {
     private client: Client,
     private native?: StoreDataSource,
   ) {}
+  agents = async (cursor?: string, signal?: AbortSignal) => {
+    signal?.throwIfAborted();
+    if (!this.native) throw new Error("Agent sessions unavailable");
+    const page = await this.native.agentSessions(cursor);
+    signal?.throwIfAborted();
+    return page;
+  };
   get reactions() {
     return this.native?.threads;
   }

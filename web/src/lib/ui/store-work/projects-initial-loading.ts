@@ -24,6 +24,10 @@ export function projectsInitialLoading(controller: StoreController): boolean {
   switch (hub.route.workTab) {
     case "activity":
       return !hub.activity.homes.some((home) => home.page || home.error);
+    case "agents":
+      return !hub.agents.homes.some(
+        (home) => home.snapshot || home.error || home.unsupported,
+      );
     case "reviews":
       return !hub.reviews.homes.some(
         (home) => home.snapshot || home.error || home.unsupported,

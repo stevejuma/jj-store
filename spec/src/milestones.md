@@ -43366,6 +43366,289 @@ and named tests are checked by the progress gate.
         "note": "Final mapped gate10 protected files/5 chapters;5 validators/21 chapters/147 requirements;120 tasks;changed source/stories/spec formatted. All reads/checks and exact focused results recorded; broader lanes are out of scope."
       }
     ]
+  },
+  {
+    "id": "E-UI-072",
+    "tasks": ["M11.4", "M9.5"],
+    "date": "2026-10-02",
+    "kind": "scoped Projects Agents directories and inline authorized responses",
+    "revision": "Enclosing Jujutsu change rqpmklxo",
+    "requirements": [
+      "JST-UI-005",
+      "JST-UI-015",
+      "JST-COLLAB-005",
+      "JST-WORK-008",
+      "JST-API-005",
+      "JST-ARCH-004"
+    ],
+    "result": "pending",
+    "remaining": [
+      "Visual approval remains separate. Root aggregate, Rust, unrelated UI lanes and persistent fixture writes are out of scope."
+    ],
+    "scope": "Existing browser/controller surface only. Selected-project Agents covers independently authorized linked repositories, including retained retired links; landing Agents drains unfiltered project links with two readers and at most 80 continuations per home/action, deduplicates scope and reports inaccessible links and incomplete/failed scope. Independent AgentStore snapshot paging, bounded refresh windows and generation guards remain. Selection opens the shared response in the body right pane without directory reload or global connection change; close, Back/Forward and cold hash restoration retain the scoped directory. Cached responses obtain the current authorized source after rediscovery. Shared owned row uses collection inset and no separators. No backend build/restart, native encoding/API changes, persistent fixture writes, main landing, publication or baseline update.",
+    "versions": "Node26.9.0;pnpm10.32.1;JJ0.45.1;Svelte5.57.1;Vitest4.1.11;Storybook10.5.7;existing Design Core public components.",
+    "formats": "Projects hash accepts tab=agents and paired full agent_repository/session IDs only on Agents. Repository routes, AgentStore captures and native/local identities remain unchanged.",
+    "next": "Continue authorized top-row search and Community structural Focus sheet.",
+    "artifacts": "/tmp/jj-project-agents-*.log; /tmp/jj-agents-*.log; /tmp/jj-project-agents-inline.png; live read-only temporary tab19.",
+    "files": [
+      "catalog/components/store-work/ProjectsAgents.stories.svelte",
+      "catalog/components/store-work/ProjectsHub.stories.svelte",
+      "catalog/fixtures/ProjectsHubFixture.svelte",
+      "catalog/fixtures/projects-hub-fixture.ts",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/collaboration.md",
+      "spec/src/milestones.md",
+      "spec/src/projects.md",
+      "spec/src/ui.md",
+      "web/src/lib/controller/contracts.ts",
+      "web/src/lib/controller/http-local-work-data-source.ts",
+      "web/src/lib/controller/http-work-data-source.ts",
+      "web/src/lib/controller/production-projects-hub.svelte.ts",
+      "web/src/lib/controller/production-projects-integration.ts",
+      "web/src/lib/controller/production-store-controller.svelte.ts",
+      "web/src/lib/controller/project-agent-response.svelte.ts",
+      "web/src/lib/controller/projects-agent-scope.ts",
+      "web/src/lib/controller/projects-agent-selection.svelte.ts",
+      "web/src/lib/controller/projects-agents.svelte.ts",
+      "web/src/lib/controller/projects-hub-homes.ts",
+      "web/src/lib/controller/projects-hub-types.ts",
+      "web/src/lib/controller/projects-navigation.svelte.ts",
+      "web/src/lib/controller/projects-related-views.ts",
+      "web/src/lib/controller/projects-route-actions.ts",
+      "web/src/lib/controller/projects-route-codec.ts",
+      "web/src/lib/ui/store-collaboration/StoreAgentSessionRow.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentSessions.svelte",
+      "web/src/lib/ui/store-collaboration/store-collaboration.css",
+      "web/src/lib/ui/store-work/StoreProjects.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsActions.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsAgentDirectory.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsAgentResponse.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsAgents.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsViewport.svelte",
+      "web/src/lib/ui/store-work/projects-initial-loading.ts",
+      "web/src/lib/ui/store-work/store-projects.css",
+      "web/tests/vite/projects-agent-response.test.ts",
+      "web/tests/vite/projects-agents.test.ts"
+    ],
+    "tests": [
+      "web/tests/vite/projects-agents.test.ts#Agents reads only deduplicated project repositories and retains pinned continuations",
+      "web/tests/vite/projects-agents.test.ts#Selected project scope never falls back to all repositories",
+      "web/tests/vite/projects-agents.test.ts#Denied reads and rediscovery clear retained agent sessions",
+      "web/tests/vite/projects-agents.test.ts#Agent scope includes repositories linked on later project pages",
+      "web/tests/vite/projects-agents.test.ts#Agent pane selection retains the scoped directory and exact route identities",
+      "web/tests/vite/projects-agent-response.test.ts#Agent response rejects late selection and clears protected data on revocation",
+      "web/tests/vite/projects-agent-response.test.ts#Agent response verifies session identity and reports denied reads",
+      "web/tests/vite/projects-agent-response.test.ts#Cached agent response uses the current source after access is restored"
+    ],
+    "runs": [
+      {
+        "command": "pnpm check:progress",
+        "result": "fail",
+        "failures": 1,
+        "note": "Ledger pass conflicts with explicitly deferred visual approval. Evidence remains pending with passing functional runs; no milestone status changed."
+      },
+      {
+        "command": "pnpm exec prettier --write changed files; pnpm web:check; pnpm catalog:check; pnpm spec:first; pnpm spec:validate; pnpm check:architecture; pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final collection inset: web/catalog zero errors/warnings;25 protected files/6 chapters;5 validators/21 chapters/147 requirements;756 architecture modules. Corrected ledger then repeated its formatter/checker before commit."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsAgents.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "User follow-up before state: row separator and full-width row fail collection geometry assertion;2/3 stories pass."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsAgents.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/NativeAgentMenus.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "12/12 stories including exact no-separator and heading-aligned row geometry; collection presentation uses heading inset while repository rows retain their composition."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/projects-agents.test.ts",
+        "result": "fail",
+        "failures": 3,
+        "note": "Before:3/3 regressions fail because Agents collection and scope are absent. Initial implementation1 failure corrected by invalidating the fixture project view before injecting its new links."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/projects-agents.test.ts web/tests/vite/projects-code-navigation.test.ts web/tests/vite/projects-hub.test.ts web/tests/vite/projects-directories.test.ts web/tests/vite/projects-repositories.test.ts",
+        "result": "fail",
+        "failures": 2,
+        "note": "Historical intermediate redirect implementation, superseded by inline response follow-up. New mismatch test expected raw code instead of readable API message. Collection helper awaited an unrelated empty dispatch and delayed browse start; narrowed dispatch to relevant tabs. Source behavior preserved."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/projects-agents.test.ts web/tests/vite/projects-code-navigation.test.ts web/tests/vite/projects-hub.test.ts web/tests/vite/projects-directories.test.ts web/tests/vite/projects-repositories.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Historical intermediate redirect implementation, superseded by inline response follow-up. 31/31 exact/direct controller tests after corrections; repeated after final extraction/navigation changes. Includes scope pagination, snapshot mismatch, denial, refresh window, history and late connection."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsAgents.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "3/3 new landing, selected-project and loading-skeleton stories with blocking accessibility."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work catalog/components/store-application/NativeAgentMenus.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/AppearanceDiscussions.stories.svelte catalog/components/store-application/RepositoryProjects.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "62/63 pass; existing landing-tab assertion still expected5 tabs. Updated exact expected list to include Agents; rerun14/14 focused Hub/Agents passes. Final direct lane63/63 passed."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsHub.stories.svelte catalog/components/store-work/ProjectsAgents.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "14/14 final Hub and Agents stories pass with blocking accessibility."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture; pnpm spec:first; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final web/catalog0 errors/warnings;756 production modules;134 catalog modules;24 protected files/5 chapters;UI ownership passes. Initial nullable association and hub line limit repaired via typed nullable prop and owned helper extraction."
+      },
+      {
+        "command": "CUA live read-only Agents landing/project/navigation check on HMR7460",
+        "result": "pass",
+        "failures": 0,
+        "note": "Historical intermediate redirect implementation, superseded by inline response follow-up. Captured landing/project scopes with actual native sessions and local empty state. Initial session action connection retained the hub; fixed route-first connection and verified exact native Agents URL/transcript. Stable live Back restores the originating Projects Agents route. No fixture writes or service changes."
+      },
+      {
+        "command": "pnpm catalog:test web/tests/vite/projects-agent-response.test.ts",
+        "result": "fail",
+        "failures": 1,
+        "note": "New current-source regression: 1 failed, 2 passed before accessor implementation."
+      },
+      {
+        "command": "pnpm catalog:test web/tests/vite/projects-agent-response.test.ts web/tests/vite/projects-agents.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "8/8 source lifecycle, late selection, denial and scoped directory tests."
+      },
+      {
+        "command": "pnpm catalog:test web/tests/vite/projects-agent-response.test.ts web/tests/vite/projects-agents.test.ts web/tests/vite/projects-code-navigation.test.ts web/tests/vite/projects-hub.test.ts web/tests/vite/projects-directories.test.ts web/tests/vite/projects-repositories.test.ts web/tests/vite/production-store-collaboration.test.ts web/tests/vite/store-route-history.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "61/61 directly affected controller/history/collaboration tests; root aggregates remain out of scope."
+      },
+      {
+        "command": "pnpm exec prettier --write changed files using rg-filtered command substitution",
+        "result": "fail",
+        "failures": 1,
+        "note": "Local rg configuration added numeric prefixes to filenames. Repaired command uses Python subprocess paths directly; no source formatting occurred in failed invocation."
+      },
+      {
+        "command": "Python subprocess pnpm exec prettier --write all changed ts/svelte/css/md files",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed files formatted without shell interpolation."
+      },
+      {
+        "command": "pnpm web:check; pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Web zero errors/warnings; 760 production modules."
+      },
+      {
+        "command": "CUA read-only live inline Agents on HMR 7460",
+        "result": "pass",
+        "failures": 0,
+        "note": "Landing session switch, cold reload restoring exact paired IDs, close/opener focus and Back/Forward pass. Selected-project response stays beside the scoped list. Screenshot /tmp/jj-project-agents-inline.png. Locator incorrectly requested region for transcript log and was corrected from DOM evidence; no fixture mutation."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work catalog/components/store-application/NativeAgentMenus.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/AppearanceDiscussions.stories.svelte catalog/components/store-application/RepositoryProjects.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "64/64 directly affected stories pass, including all project tabs, inline response, layout alignment, discussions and native agent menus, with blocking accessibility."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture; pnpm spec:first; pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final web/catalog zero errors/warnings;134 catalog/760 production modules;35 protected files/6 chapters;5 validators/21 chapters/147 requirements. Repository Agents also verified live retains original response column beside session list."
+      },
+      {
+        "command": "pnpm check:progress; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final corrected ledger and repository-owned presentation pass. Visual baseline approval remains separate."
+      }
+    ]
+  },
+  {
+    "id": "E-UI-073",
+    "tasks": ["M11.4"],
+    "date": "2026-10-02",
+    "kind": "aligned repository directory description columns",
+    "revision": "Enclosing Jujutsu change rqpmklxo",
+    "requirements": ["JST-UI-015", "JST-WORK-008"],
+    "result": "pending",
+    "remaining": [
+      "Visual approval remains separate. Root aggregates and Rust lanes are out of scope for owned UI layout."
+    ],
+    "scope": "Shared repository list rows in landing and selected-project directories reserve a consistent name column and remaining description width. Narrow list rows stack copy and metadata without overflow; equal-height card layout and full-width descriptions remain. Community source inspected first and Design Core public Button second; no upstream dependency defect or new copied source.",
+    "files": [
+      "web/src/lib/ui/store-work/community-work-directory.css",
+      "catalog/components/store-work/ProjectsDirectory.stories.svelte",
+      "spec/src/ui.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [],
+    "versions": "Svelte5.57.1;Vitest4.1.11;Storybook10.5.7;existing Design Core registry primitives.",
+    "formats": "CSS layout only; no routes, object/receipt encodings or storage contracts changed.",
+    "next": "Continue authorized top-row search and Community structural Focus sheets.",
+    "artifacts": "/tmp/jj-repository-description-*.log; /tmp/jj-repository-description-aligned.png.",
+    "runs": [
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsDirectory.stories.svelte -t Repository descriptions align",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial spaced title filter skipped all 6 stories; not acceptance evidence."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsDirectory.stories.svelte",
+        "result": "fail",
+        "failures": 1,
+        "note": "Two preliminary harness failures: incorrect list label Repositories and readonly New project trigger. Corrected against existing source; other 5 stories pass."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsDirectory.stories.svelte -t RepositoryDescriptionsAlign",
+        "result": "fail",
+        "failures": 1,
+        "note": "Final before regression: narrow row overflow 283px in269px. Mandatory List selection and exact alignment assertions preserved."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-work/ProjectsDirectory.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "6/6 after including directory/project alignment at980/620/300px, overflow, equal-height cards and retained metadata."
+      },
+      {
+        "command": "pnpm catalog:check",
+        "result": "fail",
+        "failures": 1,
+        "note": "Unsupported Testing Library getByRole exact option removed; name strings already match exactly. No product error."
+      },
+      {
+        "command": "CUA live read-only repository directory geometry",
+        "result": "pass",
+        "failures": 0,
+        "note": "All three description left positions equal517.7578125px. Screenshot /tmp/jj-repository-description-aligned.png."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "fail",
+        "failures": 1,
+        "note": "Invalid run result pending for the skipped preliminary filter command. Corrected to pass with explicit skipped/nonacceptance note; evidence overall remains pending for separate visual approval."
+      },
+      {
+        "command": "pnpm check:progress; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final corrected ledger and repository-owned presentation pass. Visual baseline approval remains separate."
+      }
+    ]
   }
 ]
 ```

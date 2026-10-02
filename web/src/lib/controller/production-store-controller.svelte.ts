@@ -72,6 +72,7 @@ export function createProductionStoreController(
     () => feed.abort(),
     options.fetcher,
     () => automatic.request(),
+    () => controller,
   );
   const threadsIntegration = createThreadsIntegration({
     source: () => source,
@@ -290,7 +291,7 @@ export function createProductionStoreController(
     signal: lifecycle.signal,
   });
 
-  return productionControllerSurface(
+  const controller: StoreController = productionControllerSurface(
     data,
     history,
     () => source,
@@ -305,4 +306,5 @@ export function createProductionStoreController(
     },
     automatic.pause,
   );
+  return controller;
 }

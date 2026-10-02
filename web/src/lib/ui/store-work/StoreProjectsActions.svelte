@@ -37,7 +37,9 @@
 </script>
 
 <div class="community-projects__surface-actions">
-  {#if tab !== "activity"}<StoreWorkLayoutControls bind:value={layout} />{/if}
+  {#if tab !== "activity" && tab !== "agents"}<StoreWorkLayoutControls
+      bind:value={layout}
+    />{/if}
   {#key `${project?.id ?? "hub"}:${tab}`}
     <StoreProjectsFilterControls {controller} {project} />
   {/key}

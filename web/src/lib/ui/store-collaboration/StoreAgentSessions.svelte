@@ -3,27 +3,17 @@
   import * as Empty from "@lapismd/design-core/shadcn/empty";
   import { onDestroy, untrack } from "svelte";
   import BotIcon from "@lucide/svelte/icons/bot";
-  import MessagesSquareIcon from "@lucide/svelte/icons/messages-square";
-  import WrenchIcon from "@lucide/svelte/icons/wrench";
   import type { StoreController } from "../../controller/contracts.js";
   import {
     COLLABORATION_COMPACT_BREAKPOINT,
     createCollaborationCanvas,
   } from "../../collaboration/collaboration-canvas.js";
-  import {
-    agentMember,
-    agentSessionTiming,
-  } from "../../collaboration/presentation.js";
   import { resolveLayoutStorage } from "../layout-storage.js";
-  import CommunityChip from "../community-chip/CommunityChip.svelte";
-  import CommunityMemberAvatar from "../community-member-avatar/CommunityMemberAvatar.svelte";
   import CommunityProjectsColumnAlert from "../community-projects/CommunityProjectsColumnAlert.svelte";
   import CommunityProjectsVirtualRows from "../community-projects/CommunityProjectsVirtualRows.svelte";
-  import CommunityRelativeTime from "../community-relative-time/CommunityRelativeTime.svelte";
   import StoreCollaborationSkeleton from "./StoreCollaborationSkeleton.svelte";
+  import StoreAgentSessionRow from "./StoreAgentSessionRow.svelte";
   import StoreAgentContext from "./StoreAgentContext.svelte";
-  import StoreRecordMenu from "./StoreRecordMenu.svelte";
-  import CommunityProjectsRevisionGraphIds from "../community-projects/CommunityProjectsRevisionGraphIds.svelte";
   import "./store-collaboration.css";
 
   let {
@@ -91,8 +81,6 @@
               onLoadMore={() => void controller.actions.loadMore("agents")}
             >
               {#snippet row(session)}
-                {@const agent = agentMember(session)}
-                {@const timing = agentSessionTiming(session)}
                 {@const association =
                   state.agentSession?.session.session_id === session.session_id
                     ? state.agentSession.code[0]
@@ -100,103 +88,12 @@
                         (row) =>
                           row.association?.session_id === session.session_id,
                       )?.association}
-                <div role="listitem">
-                  <div
-                    class="store-collaboration__row"
-                    data-kind="agent"
-                    data-selected={state.route.agentSessionId ===
-                    session.session_id
-                      ? "true"
-                      : undefined}
-                  >
-                    <button
-                      type="button"
-                      class="store-collaboration__row-select"
-                      aria-label={`Open ${agent.name} ${session.state} agent session`}
-                      aria-pressed={state.route.agentSessionId ===
-                        session.session_id}
-                      onclick={() =>
-                        controller.actions.selectAgentSession(
-                          session.session_id,
-                        )}
-                    ></button>
-                    <span class="store-collaboration__row-leading">
-                      <CommunityMemberAvatar
-                        member={agent}
-                        size="small"
-                        showPresence
-                        decorative
-                      />
-                    </span>
-                    <span class="store-collaboration__row-main">
-                      <span class="store-collaboration__row-title"
-                        >{agent.name}</span
-                      >
-                      <span class="store-collaboration__row-meta"
-                        ><CommunityChip
-                          size="compact"
-                          tone={session.state === "active"
-                            ? "success"
-                            : "neutral"}>{session.state}</CommunityChip
-                        >{#if timing}<span
-                            class="store-collaboration__agent-start"
-                            >Started <CommunityRelativeTime
-                              timestamp={timing.startedAt}
-                            /></span
-                          >{/if}<span class="store-collaboration__agent-metrics"
-                          ><span
-                            class="store-collaboration__metric"
-                            aria-label={`${session.transcript_count} transcripts`}
-                            title={`${session.transcript_count} transcripts`}
-                            ><MessagesSquareIcon
-                              aria-hidden="true"
-                            />{session.transcript_count}</span
-                          ><span
-                            class="store-collaboration__metric"
-                            aria-label={`${session.tool_count} tools`}
-                            title={`${session.tool_count} tools`}
-                            ><WrenchIcon
-                              aria-hidden="true"
-                            />{session.tool_count}</span
-                          >{#if timing}<CommunityChip
-                              class="store-collaboration__agent-duration"
-                              variant="subtle"
-                              size="compact"
-                              ariaLabel={`Session duration ${timing.durationLabel}`}
-                              title={`Session duration ${timing.durationLabel}`}
-                              >{timing.durationLabel}</CommunityChip
-                            >{/if}</span
-                        ></span
-                      >
-                    </span>
-                    <span class="store-collaboration__row-actions">
-                      {#if association}<CommunityProjectsRevisionGraphIds
-                          commitId={association.after_commits[0] ??
-                            association.before_commits[0] ??
-                            ""}
-                          changeId={association.changes[0]}
-                          placement="inline"
-                        />{/if}
-                      <StoreRecordMenu
-                        label="Agent session actions"
-                        items={[
-                          {
-                            label: "Copy session ID",
-                            value: session.session_id,
-                          },
-                          {
-                            label: "Copy snapshot ID",
-                            value: session.snapshot_id,
-                          },
-                          {
-                            label: "Copy parent session ID",
-                            value: session.parent_session_id,
-                          },
-                        ]}
-                      />
-                    </span>
-                  </div>
-                </div>
+                <StoreAgentSessionRow
+                  {session}
+                  {association}
+                  selectedId={state.route.agentSessionId}
+                  onSelect={controller.actions.selectAgentSession}
+                />
               {/snippet}
             </CommunityProjectsVirtualRows>
           </div>

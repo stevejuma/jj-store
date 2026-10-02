@@ -1323,3 +1323,14 @@ The saved accent selects one circular swatch indicator in Appearance. Its ring
 stays centered and circular across color modes, hover and responsive layouts;
 keyboard focus uses its own visible outline. This presentation does not change
 the preference format or native API.
+
+Projects Agents tabs compose existing agent session reads from independently
+authorized native/local transports. Main scope derives from unfiltered project
+links with bounded project continuations, never installation membership alone.
+Session pages validate their repository identity and exact retained AgentStore
+snapshot. No server API or canonical record changes. The Projects route admits
+`tab=agents` for both landing and selected-project views, with paired
+`agent_repository` and `session` native IDs for an inline response. These keys
+are valid only on Agents and retain scope through navigation history. The
+response composes existing separately authorized session/transcript reads and
+reaction/tool-review commands without switching the global code connection.

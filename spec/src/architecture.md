@@ -554,3 +554,15 @@ Local Appearance acceptance in main uses the existing ignored foundational
 package hook against landed Design Core source. Its chat typography and native
 scrolling extensions are absent from registry 0.2.0; portable manifest/lockfile
 ranges remain registry-based and registry-only qualification stays separate.
+
+The Projects hub delegates Agents scope and collection reads to owned
+UI-controller modules. Scope discovery joins unfiltered project links; sessions
+retain separate repository admission and native/local snapshots. The shared
+agent-session row is owned under web/src/lib and reused by repository and
+project directories. Scoped response controllers reuse the owned repository
+collaboration readers, reactions and tool review actions while keeping their
+data and local response route separate from the global connection and Projects
+scope. Response selection cannot reload its collection, late selections cannot
+replace newer results, and revoked target access clears protected responses.
+Related review/repository collection dispatch remains a separate hub helper;
+production never imports catalog fixtures.

@@ -60,6 +60,7 @@ export interface StoreRoute {
   workState?: "active" | "all" | "open" | "in_progress" | "blocked" | "done";
   workRepository?: string;
   workHome?: string;
+  workAgentRepository?: string | null;
   page: StorePage;
   repository: string;
   bookmark: string;
