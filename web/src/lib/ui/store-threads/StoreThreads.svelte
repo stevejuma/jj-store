@@ -20,6 +20,12 @@
   import { principalMember } from "../../collaboration/presentation.js";
   import { storeRouteToHash } from "../../controller/store-route-codec.js";
   let { controller }: { controller: StoreController } = $props();
+  let query = $state("");
+  const searchRepository = $derived(controller.state.route.repository);
+  $effect(() => {
+    searchRepository;
+    query = "";
+  });
   const threads = $derived(controller.threads);
   const panel = useThreadPanel();
   const members = $derived(threadMembers(controller));
@@ -75,6 +81,13 @@
       ),
     ).values(),
   ]);
+  const visibleTopics = $derived(
+    topics.filter((topic) =>
+      `${topic.title}\n${topic.excerpt}`
+        .toLocaleLowerCase()
+        .includes(query.trim().toLocaleLowerCase()),
+    ),
+  );
   $effect(() => {
     const id = room.id;
     untrack(() => {
@@ -88,7 +101,7 @@
 </script>
 
 {#if threads}<section class="store-threads" aria-label="Threads">
-    <StoreThreadHeader {controller} />
+    <StoreThreadHeader {controller} bind:query />
     {#if threads.error}<Alert.Root variant="destructive"
         ><Alert.Title>Thread action needs attention</Alert.Title
         ><Alert.Description>{threads.error}</Alert.Description>
@@ -162,7 +175,8 @@
         class="store-threads__directory"
       >
         <ForumTopicList
-          {topics}
+          topics={visibleTopics}
+          filtered={!!query.trim()}
           members={directoryMembers}
           viewport={forumViewport}
           disabled={threads.busy || !!threads.pending}

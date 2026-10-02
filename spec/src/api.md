@@ -1359,6 +1359,11 @@ retaining the open input in its current scope. The 512 UTF-8 byte bound,
 independent home/repository admission and unsupported Review text-search
 capability remain unchanged; displaying search controls grants no extra access.
 
+The Threads directory shares that toolbar control while filtering its already
+authorized, bounded ThreadSummary titles and directory excerpts. It retains the
+existing continuation action and exact native thread selection, without a new
+query parameter, indexed-search dependency, API contract or persisted query.
+
 Focus/Split reply presentation preserves the existing native conversation, reply
 and tool-call target IDs. Agent tool discussion remains in a full-width inline
 row under the exact call, with independently read existing comments and retained

@@ -81,10 +81,10 @@
         c.queryByRole("button", { name: "Clear search" }),
       ).toBeNull();
       const searchGlyph = close.querySelector(
-        ".store-projects-search__search-icon",
+        ".store-toolbar-search__search-icon",
       )!;
       const closeGlyph = close.querySelector(
-        ".store-projects-search__close-icon",
+        ".store-toolbar-search__close-icon",
       )!;
       await userEvent.unhover(close);
       await expect(searchGlyph).toBeVisible();

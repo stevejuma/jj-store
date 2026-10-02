@@ -1407,3 +1407,15 @@ icon; Activity combines repository/home scope and native activity categories in
 one filter popover rather than exposing duplicate filter buttons. The section
 heading has no search/settings trigger. Reviews retain only the supported
 repository filter, and Repositories need no empty filter popover.
+
+The repository Threads directory reuses the Projects toolbar search control. The
+Threads toolbar has no bottom border. Its leading circular Search button keeps
+its position and size when expanded; the borderless input replaces the directory
+heading, with the same hover Close, conditional smaller Clear, Escape and focus
+restoration. Enter filters the loaded thread titles and preview text
+case-insensitively. More threads remains available for subsequent bounded pages
+and those rows join the active filter. An empty result says No matching threads
+rather than No threads yet. Thread selection retains the repository-scoped
+filter for returning to the directory; switching repositories clears it. The
+thread conversation actions and posting permissions remain unchanged, and query
+text stays in memory.

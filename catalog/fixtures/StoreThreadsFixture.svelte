@@ -19,6 +19,8 @@
     otherRepository = false,
     initiallyCollapsed = false,
     displayMode = "auto",
+    searchable = false,
+    pagedSearch = false,
   }: {
     unknownFirst?: boolean;
     selected?: boolean;
@@ -29,10 +31,40 @@
     otherRepository?: boolean;
     initiallyCollapsed?: boolean;
     displayMode?: "auto" | "desktop" | "mobile";
+    searchable?: boolean;
+    pagedSearch?: boolean;
   } = $props();
   const transport = untrack(() => createThreadTransport({ unknownFirst }));
   const replyId = "77".repeat(16);
   untrack(() => {
+    if (searchable) {
+      const summary = transport.threads.get(THREAD_IDS.thread)!;
+      const id = "88".repeat(16);
+      transport.threads.set(id, {
+        ...summary,
+        value: { ...summary.value, thread_id: id, title: "planning" },
+        directory: {
+          message_count: 1,
+          excerpt: "Release checklist for October",
+          reply_count: 0,
+          participants: [],
+          last_activity_at_millis: 1,
+        },
+      });
+      transport.history.set(id, []);
+      transport.addMessage(id, "89".repeat(16), "Release planning discussion");
+      if (pagedSearch)
+        transport.transport.list = async (cursor) =>
+          transport.page(
+            {
+              type: "threads",
+              threads: [
+                transport.threads.get(cursor ? id : THREAD_IDS.thread)!,
+              ],
+            },
+            cursor ? null : "next-thread-page",
+          );
+    }
     if (rejectReaction) {
       const command = transport.transport.command;
       transport.transport.command = async (kind, request) => {
