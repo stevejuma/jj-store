@@ -98,10 +98,11 @@
           >{/if}
         {#if home.loading && !home.snapshot}<StoreCollaborationSkeleton
             label="Loading agent sessions"
+            agents
           />
         {:else if home.snapshot}
           <div
-            class="store-projects-agents__list"
+            class="store-agent-session-list"
             role="list"
             aria-label={`Agent sessions in ${home.repository.name}`}
           >
@@ -151,10 +152,3 @@
     </section>
   {/each}
 </section>
-
-<style>
-  .store-projects-agents__list {
-    margin-inline: 1rem;
-    padding-block: 0.45rem;
-  }
-</style>

@@ -31,7 +31,7 @@
           tone="destructive"
         />{/if}
       {#if (state.status.connection === "connecting" || state.status.navigation === "loading" || state.status.agents === "loading") && state.agentSessions.length === 0}
-        <StoreCollaborationSkeleton label="Loading agent sessions" />
+        <StoreCollaborationSkeleton label="Loading agent sessions" agents />
       {:else if state.agentSessions.length === 0}
         <Empty.Root class="store-collaboration__empty">
           <Empty.Header
@@ -43,7 +43,11 @@
           >
         </Empty.Root>
       {:else}
-        <div role="list" aria-label="Agent sessions">
+        <div
+          class="store-agent-session-list"
+          role="list"
+          aria-label="Agent sessions"
+        >
           <CommunityProjectsVirtualRows
             rows={state.agentSessions}
             getKey={(session) => session.session_id}
@@ -65,6 +69,7 @@
               <StoreAgentSessionRow
                 {session}
                 {association}
+                collection
                 selectedId={state.route.agentSessionId}
                 onSelect={controller.actions.selectAgentSession}
               />

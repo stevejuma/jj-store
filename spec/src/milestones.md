@@ -85,7 +85,7 @@ shared-package release qualification does not alter those original Git gates.
 | M9.2        | Done        | M9.1                    | JST-COLLAB-001,JST-COLLAB-002,JST-COLLAB-006                                                                                                                                            | AgentStore model, immutable snapshots/catalogs, sanitized evidence and Codex/Cursor/OpenCode normalizers                       | Implement M9.4 LocalTrusted APIs                                                               | E-M9-002,E-M9-003,E-M9-004,E-M9-005,E-M9-006,E-M9-007,E-M9-008,E-M9-009,E-M9-015,E-M9-016,E-M9-017,E-M9-018,E-M9-019,E-M9-020,E-M9-021,E-M9-022,E-M9-023,E-M9-034                                                                                                                                                                                              |
 | M9.3        | Done        | M9.2                    | JST-COLLAB-001,JST-COLLAB-003,JST-PUB-009                                                                                                                                               | ReviewStore exact anchors, stale-safe thread workflow, direct catalogs and conservative placement                              | Implement M9.4 LocalTrusted APIs                                                               | E-M9-010,E-M9-011,E-M9-012,E-M9-013,E-M9-014,E-M9-023                                                                                                                                                                                                                                                                                                          |
 | M9.4        | Done        | M9.2,M9.3               | JST-COLLAB-004                                                                                                                                                                          | LocalTrusted bounded CLI/HTTP APIs, pagination, receipts and live collaboration hints                                          | Implement M9.5 shared application presentation                                                 | E-M9-024,E-M9-025,E-M9-026,E-M9-027,E-M9-028,E-M9-029,E-M9-030,E-M9-031,E-M9-035                                                                                                                                                                                                                                                                               |
-| M9.5        | Done        | M9.4                    | JST-COLLAB-005                                                                                                                                                                          | Community-owned thread/agent widgets and Design Core exact diff selection integrated into the application                      | Retain focused application and Storybook acceptance                                            | E-M9-032,E-M9-034,E-M9-035,E-M9-036,E-M9-037,E-M9-038,E-M9-039,E-UI-045,E-UI-048,E-UI-049,E-UI-068,E-UI-080                                                                                                                                                                                                                                                    |
+| M9.5        | Done        | M9.4                    | JST-COLLAB-005                                                                                                                                                                          | Community-owned thread/agent widgets and Design Core exact diff selection integrated into the application                      | Retain focused application and Storybook acceptance                                            | E-M9-032,E-M9-034,E-M9-035,E-M9-036,E-M9-037,E-M9-038,E-M9-039,E-UI-045,E-UI-048,E-UI-049,E-UI-068,E-UI-080,E-UI-082                                                                                                                                                                                                                                           |
 | M9.6        | Done        | M9.5                    | JST-COLLAB-002,JST-COLLAB-006,JST-COLLAB-007                                                                                                                                            | Three harness qualification, cold recovery, three-root native copy and bounded fault/security/browser acceptance               | Retain exact-version and native-copy regression gates                                          | E-M9-033                                                                                                                                                                                                                                                                                                                                                       |
 | M10         | In progress | M9.6                    | JST-REPL-001,JST-REPL-002,JST-REPL-003,JST-REPL-004,JST-REPL-005,JST-REPL-006,JST-REPL-007,JST-REPL-008,JST-REPL-009,JST-REPL-010,JST-REPL-011,JST-REPL-012,JST-REPL-013                | Retain the active local-first replication and existing-workspace migration profile                                             | Expanded qualification remains deferred to M10.8                                               | E-M10-001,E-M10-002,E-M10-003,E-M10-004,E-M10-005,E-M10-006,E-M10-007,E-M10-008,E-M10-009,E-M10-010,E-M10-011,E-M10-012,E-M10-013,E-M10-014                                                                                                                                                                                                                    |
 | M10.1       | Done        | M9.6                    | JST-REPL-001,JST-REPL-002,JST-REPL-013                                                                                                                                                  | Audit source pins and isolate every foreground storage path from upstream capability                                           | Retain zero-upstream foreground regressions                                                    | E-M10-001,E-M10-010,E-M10-013                                                                                                                                                                                                                                                                                                                                  |
@@ -100,7 +100,7 @@ shared-package release qualification does not alter those original Git gates.
 | M11.1       | Done        | M9.6                    | JST-WORK-001,JST-WORK-002,JST-WORK-003,JST-WORK-004,JST-WORK-005,JST-WORK-007                                                                                                           | Native model, publication, receipts, recovery and copy                                                                         | Retain native and real RustFS gates                                                            | E-M11-001,E-M11-003                                                                                                                                                                                                                                                                                                                                            |
 | M11.2       | Done        | M11.1                   | JST-WORK-005,JST-WORK-006,JST-WORK-008                                                                                                                                                  | Authorized service, API, RPC and CLI                                                                                           | Retain local transport/CLI gates                                                               | E-M11-002                                                                                                                                                                                                                                                                                                                                                      |
 | M11.3       | Done        | M11.2                   | JST-WORK-008                                                                                                                                                                            | Browser projects/tasks/comments and explicit refresh                                                                           | Retain cold browser gates; visual baselines pending                                            | E-M11-003,E-M11-004                                                                                                                                                                                                                                                                                                                                            |
-| M11.4       | In progress | M11.3                   | JST-WORK-005,JST-WORK-006,JST-WORK-008,JST-WORK-009,JST-UI-015                                                                                                                          | Installation Projects hub, full-root browse and cold browser acceptance                                                        | Shared-package qualification; visual baselines pending                                         | E-M11-005,E-M11-006,E-M11-007,E-UI-045,E-UI-046,E-UI-047,E-M11-008,E-UI-048,E-UI-049,E-UI-050,E-UI-051,E-UI-062,E-UI-063,E-UI-064,E-UI-065,E-UI-066,E-UI-067,E-UI-068,E-UI-069,E-UI-080                                                                                                                                                                        |
+| M11.4       | In progress | M11.3                   | JST-WORK-005,JST-WORK-006,JST-WORK-008,JST-WORK-009,JST-UI-015                                                                                                                          | Installation Projects hub, full-root browse and cold browser acceptance                                                        | Shared-package qualification; visual baselines pending                                         | E-M11-005,E-M11-006,E-M11-007,E-UI-045,E-UI-046,E-UI-047,E-M11-008,E-UI-048,E-UI-049,E-UI-050,E-UI-051,E-UI-062,E-UI-063,E-UI-064,E-UI-065,E-UI-066,E-UI-067,E-UI-068,E-UI-069,E-UI-080,E-UI-082                                                                                                                                                               |
 | M12         | Done        | M11.1,M11.2,M11.3       | JST-GIT-001,JST-GIT-002,JST-GIT-003,JST-GIT-004,JST-GIT-005,JST-GIT-006,JST-GIT-007,JST-GIT-008                                                                                         | Native fetch/edit/push/external-merge cycle with cache-loss and fault qualification                                            | Maintain qualified bookmark bridge                                                             | E-M12-001,E-M12-002,E-M12-003,E-M12-004,E-M12-005,E-M12-006,E-M12-007,E-M12-008,E-M12-009,E-M12-010                                                                                                                                                                                                                                                            |
 | M12.1       | Done        | M11.1,M11.2,M11.3       | JST-GIT-001                                                                                                                                                                             | GB0: Parsed backend-aware dispatch and ordinary path regression                                                                | Complete staged bridge gate                                                                    | E-M12-001                                                                                                                                                                                                                                                                                                                                                      |
 | M12.2       | Done        | M12.1                   | JST-GIT-002,JST-GIT-003                                                                                                                                                                 | GB1: Exact conversion and native retained cache-loss identity                                                                  | Complete staged bridge gate                                                                    | E-M12-002                                                                                                                                                                                                                                                                                                                                                      |
@@ -45107,6 +45107,114 @@ and named tests are checked by the progress gate.
         "result": "pass",
         "failures": 0,
         "note": "Final web/catalog0errors0warnings;146catalog modules; ownership1validator; spec-first26protected files/4chapters; spec validation5validators/21chapters/147requirements; progress120tasks; all changed files formatted. Logs web-qualified/catalog-qualified/ownership/spec-first-qualified/spec-validate/progress/format. Final evidence insertion is formatted and rechecked before committing."
+      }
+    ]
+  },
+  {
+    "id": "E-UI-082",
+    "tasks": ["M9.5", "M11.4"],
+    "date": "2026-10-02",
+    "kind": "Aligned agent session rows and loading insets",
+    "revision": "Enclosing Jujutsu change mkopqqvt",
+    "requirements": [
+      "JST-UI-005",
+      "JST-UI-006",
+      "JST-UI-015",
+      "JST-API-006",
+      "JST-GOV-002",
+      "JST-GOV-003",
+      "JST-GOV-007"
+    ],
+    "result": "pending",
+    "remaining": [
+      "Visual baselines remain visual-pending. No milestone status promotion. Rust, root aggregate lanes, production bundle builds, backend rebuild/reset/restart, main landing and publication are out of scope for this UI-only row and skeleton slice."
+    ],
+    "scope": "Reuse the clean appearance workspace and existing Vite HMR. Community avatar/layout source inspected first, Design Core button/skeleton second. Repository and Projects agent lists share heading-relative horizontal inset and borderless collection rows. Initial Projects and per-repository skeletons share that inset, row gap and horizontal padding; the agent-specific variant preserves other collaboration skeletons. Agent avatars align to row center. Actions and optional code association controls participate in the title row with their full existing button target and independent pointer interaction, leaving duration below. Existing directly affected stories gain geometry and menu assertions; no new test family or foundational dependency change.",
+    "files": [
+      "catalog/components/store-application/AgentLayout.stories.svelte",
+      "catalog/components/store-application/StoreCollaboration.stories.svelte",
+      "catalog/components/store-work/ProjectsAgents.stories.svelte",
+      "spec/src/api.md",
+      "spec/src/milestones.md",
+      "spec/src/ui.md",
+      "web/src/lib/ui/store-collaboration/StoreAgentSessionRow.svelte",
+      "web/src/lib/ui/store-collaboration/StoreAgentSessions.svelte",
+      "web/src/lib/ui/store-collaboration/StoreCollaborationSkeleton.svelte",
+      "web/src/lib/ui/store-collaboration/store-collaboration.css",
+      "web/src/lib/ui/store-work/StoreProjectsAgentDirectory.svelte",
+      "web/src/lib/ui/store-work/StoreProjectsLoading.svelte"
+    ],
+    "tests": [],
+    "versions": "Node26.9.0; pnpm10.32.1; Svelte5.57.1; Vitest4.1.11; Storybook10.5.7; existing Design Core ^0.2.0 and owned Community provenance retained. No dependency changes.",
+    "formats": "AgentStore summaries, pagination, native session/snapshot IDs, route/hash, HTTP/OpenAPI, local object/manifest/WAL/receipt formats unchanged. New skeleton prop and CSS inset are presentation only.",
+    "artifacts": "/tmp/jj-agent-row-*.log; /tmp/jj-agent-row-live.jpg",
+    "next": "Retain visual-pending and the committed workspace for further UI changes.",
+    "runs": [
+      {
+        "command": "Read-only live Projects agent row geometry (before)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Avatar center was7.296875px above row center; actions button bottom258.1796875px overlapped duration top252.7734375px by5.40625px. Exact shared row layout regression."
+      },
+      {
+        "command": "pnpm spec:first (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Mapped api.md missing from the protected change. Added presentation-only session contract statement; no API changes."
+      },
+      {
+        "command": "pnpm exec prettier --write (11 changed production/story/chapter files); pnpm exec prettier --write catalog/components/store-application/AgentLayout.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formatted changed files; format and format-story logs."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "0errors0warnings. /tmp/jj-agent-row-web.log."
+      },
+      {
+        "command": "pnpm catalog:check (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Storybook Testing Library ByRoleOptions rejects exact:true. Replaced with anchored /^Copy$/ accessible name; same runtime matching semantics. /tmp/jj-agent-row-catalog.log."
+      },
+      {
+        "command": "pnpm catalog:check (qualified)",
+        "result": "pass",
+        "failures": 0,
+        "note": "0errors0warnings;146catalog modules. /tmp/jj-agent-row-catalog-final.log."
+      },
+      {
+        "command": "pnpm test:storybook catalog/components/store-application/AgentLayout.stories.svelte catalog/components/store-work/ProjectsAgents.stories.svelte catalog/components/store-application/StoreCollaboration.stories.svelte catalog/components/store-application/RepositoryLoading.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "41passed across4files in fresh Vitest browser process. Projects/selected-project/repository row gap, avatar centers, menu opening and duration clearance, header insets/no separators, initial Projects and repository skeleton geometry, loading/reviews and Focus/Split/mobile direct consumers. /tmp/jj-agent-row-stories.log."
+      },
+      {
+        "command": "pnpm check:architecture; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "788modules within unchanged budgets; ownership1validator/21chapters/147requirements."
+      },
+      {
+        "command": "pnpm spec:first; pnpm spec:validate (qualified)",
+        "result": "pass",
+        "failures": 0,
+        "note": "9protected files/2canonical chapters;5validators/21chapters/147requirements. spec-first/spec-validate logs."
+      },
+      {
+        "command": "Read-only live Projects and repository Agents verification (CUA temporary background tab)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both avatar center offsets0px and action/duration gap5.59375px. Repository row left/right match heading exactly, border0px and inner padding10.4px; row height79.984375px. Projects actions menu opens; repository initial loading observed. Saved and inspected full viewport screenshot. Temporary tab closed; user tab untouched. No data writes or service resets."
+      },
+      {
+        "command": "pnpm check:progress; pnpm spec:first; pnpm spec:validate; pnpm exec prettier --check (12 changed files)",
+        "result": "pass",
+        "failures": 0,
+        "note": "120tasks;9protected files/3canonical chapters;5validators/21chapters/147requirements;all changed files formatted. Final progress/spec-first/spec-validate/format logs. This evidence insertion is formatted and checked before standing JJ commit."
       }
     ]
   }

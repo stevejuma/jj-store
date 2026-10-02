@@ -1,11 +1,16 @@
 <script lang="ts">
   import { Skeleton } from "@lapismd/design-core/shadcn/skeleton";
-  let { label = "Loading collaboration activity" }: { label?: string } =
-    $props();
+  import "./store-collaboration.css";
+  let {
+    label = "Loading collaboration activity",
+    agents = false,
+  }: { label?: string; agents?: boolean } = $props();
 </script>
 
 <div
   class="store-collaboration-skeleton"
+  class:store-agent-session-list={agents}
+  data-kind={agents ? "agent" : undefined}
   role="status"
   aria-label={label}
   aria-busy="true"
@@ -33,6 +38,20 @@
     min-height: 4.5rem;
     padding: 0.75rem;
     border-bottom: 1px solid var(--border);
+  }
+
+  .store-collaboration-skeleton[data-kind="agent"] {
+    gap: 4px;
+  }
+
+  .store-collaboration-skeleton[data-kind="agent"]
+    .store-collaboration-skeleton__row {
+    align-items: center;
+    box-sizing: border-box;
+    gap: 0.35rem;
+    min-height: 5rem;
+    padding: 0.7rem 0.65rem;
+    border-bottom: 0;
   }
 
   :global(.store-collaboration-skeleton__avatar) {

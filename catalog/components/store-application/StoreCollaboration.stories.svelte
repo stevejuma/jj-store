@@ -142,9 +142,34 @@
   args={{ initialPage: "agents", collaborationState: "loading" }}
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    const status = canvas.getByRole("status", {
+      name: "Loading agent sessions",
+    });
+    await expect(status).toBeVisible();
+    const heading = status
+      .closest(".community-projects__collection-group")!
+      .querySelector<HTMLElement>(".community-projects__list-group-heading")!;
+    const row = status.querySelector<HTMLElement>(
+      ".store-collaboration-skeleton__row",
+    )!;
     await expect(
-      canvas.getByRole("status", { name: "Loading agent sessions" }),
-    ).toBeVisible();
+      Math.abs(
+        status.getBoundingClientRect().left -
+          heading.getBoundingClientRect().left,
+      ),
+    ).toBeLessThan(1);
+    await expect(
+      Math.abs(
+        status.getBoundingClientRect().right -
+          heading.getBoundingClientRect().right,
+      ),
+    ).toBeLessThan(1);
+    await expect(
+      row
+        .querySelector("[data-ui-component='skeleton']")!
+        .getBoundingClientRect().left - heading.getBoundingClientRect().left,
+    ).toBeCloseTo(10.4, 0);
+    await expect(getComputedStyle(row).borderBottomWidth).toBe("0px");
   }}
 >
   {#snippet template(args)}<StoreRepositoryApplication {...args} />{/snippet}

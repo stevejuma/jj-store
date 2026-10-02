@@ -1348,6 +1348,9 @@ Selection, Close and layout switching preserve the loaded session directory and
 the same native selected session; no request or route identity changes. The
 response composes existing separately authorized session/transcript reads and
 reaction/tool-review commands without switching the global code connection.
+Session list and skeleton insets, centered avatars and title-row actions are
+presentation only: they preserve pagination, selection identities, independently
+operable code association controls and existing agent read/command contracts.
 
 The Projects tab-row search submits the existing `q` filter explicitly on Enter.
 Close clears that filter through the same route action and restores the tabs.

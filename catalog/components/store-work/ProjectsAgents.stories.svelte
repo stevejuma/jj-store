@@ -118,7 +118,22 @@
   args={{ agents: true, loading: true }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
-    await expect(await c.findByLabelText("Loading agents")).toBeVisible();
+    const status = await c.findByLabelText("Loading agents");
+    await expect(status).toBeVisible();
+    const row = status.querySelector<HTMLElement>(
+      ".store-collaboration-skeleton__row",
+    )!;
+    await expect(row).not.toBeNull();
+    await expect(
+      status.getBoundingClientRect().left -
+        status.parentElement!.getBoundingClientRect().left,
+    ).toBeCloseTo(16, 0);
+    await expect(
+      row
+        .querySelector("[data-ui-component='skeleton']")!
+        .getBoundingClientRect().left - status.getBoundingClientRect().left,
+    ).toBeCloseTo(10.4, 0);
+    await expect(getComputedStyle(row).borderBottomWidth).toBe("0px");
     await expect(c.queryByText("No agent sessions")).toBeNull();
   }}
 />

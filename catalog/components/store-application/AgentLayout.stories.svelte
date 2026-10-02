@@ -25,6 +25,44 @@
     args: { project?: boolean; mobile?: boolean };
   }) {
     const c = await agentRows(canvasElement, args.project);
+    const row = c
+      .getByRole("button", { name: /Open Codex ended/ })
+      .closest<HTMLElement>(".store-collaboration__row")!;
+    const avatar = row.querySelector<HTMLElement>(
+      '[data-ui-component="community-member-avatar"]',
+    )!;
+    const menu = within(row).getByRole("button", {
+      name: "Agent session actions",
+    });
+    const duration = row.querySelector<HTMLElement>(
+      ".store-collaboration__agent-duration",
+    )!;
+    const heading = row
+      .closest("section")!
+      .querySelector<HTMLElement>(".community-projects__list-group-heading")!;
+    await waitFor(() => {
+      const r = row.getBoundingClientRect(),
+        a = avatar.getBoundingClientRect();
+      expect(
+        Math.abs(a.top + a.height / 2 - r.top - r.height / 2),
+      ).toBeLessThan(1);
+      expect(
+        duration.getBoundingClientRect().top -
+          menu.getBoundingClientRect().bottom,
+      ).toBeGreaterThan(4);
+      expect(
+        Math.abs(r.left - heading.getBoundingClientRect().left),
+      ).toBeLessThan(1);
+      expect(
+        Math.abs(r.right - heading.getBoundingClientRect().right),
+      ).toBeLessThan(1);
+      expect(getComputedStyle(row).borderBottomWidth).toBe("0px");
+    });
+    await userEvent.click(menu);
+    await within(document.body).findByRole("menuitem", {
+      name: /^Copy$/,
+    });
+    await userEvent.keyboard("{Escape}");
     await userEvent.click(c.getByRole("button", { name: /Open Codex ended/ }));
     await c.findByRole("complementary", { name: "Agent response" });
     await userEvent.hover(

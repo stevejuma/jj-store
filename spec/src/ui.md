@@ -1364,8 +1364,13 @@ routes bind the full target repository and session identities, with Back/Forward
 and cold route restoration retaining the scope and response. Response reads,
 reactions and tool discussions use separate target authorization and cannot
 borrow the project home's access. Loading uses busy skeletons; unsupported
-profiles use icon Empty states. Project Agents collection rows share their
-collapsible heading's horizontal inset and have no row separators.
+profiles use icon Empty states. Repository and Project Agents collection rows
+and loading skeletons share their collapsible heading's horizontal inset and
+have no row separators. Initial Projects Agents loading uses the same inset
+session skeleton. Agent avatars center vertically within each row; session
+actions participate in the title row's layout so their full hover and focus
+target stays above the bottom-row metrics, including duration. Optional code
+association controls remain independently operable beside the session menu.
 
 Repository list rows reserve a consistent name column, so descriptions begin at
 the same horizontal position across both the installation directory and selected

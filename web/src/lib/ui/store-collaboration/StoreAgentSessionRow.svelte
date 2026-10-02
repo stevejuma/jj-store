@@ -53,7 +53,35 @@
       />
     </span>
     <span class="store-collaboration__row-main">
-      <span class="store-collaboration__row-title">{agent.name}</span>
+      <span class="store-collaboration__row-title-row">
+        <span class="store-collaboration__row-title">{agent.name}</span>
+        <span class="store-collaboration__row-actions">
+          {#if association}<CommunityProjectsRevisionGraphIds
+              commitId={association.after_commits[0] ??
+                association.before_commits[0] ??
+                ""}
+              changeId={association.changes[0]}
+              placement="inline"
+            />{/if}
+          <StoreRecordMenu
+            label="Agent session actions"
+            items={[
+              {
+                label: "Copy session ID",
+                value: session.session_id,
+              },
+              {
+                label: "Copy snapshot ID",
+                value: session.snapshot_id,
+              },
+              {
+                label: "Copy parent session ID",
+                value: session.parent_session_id,
+              },
+            ]}
+          />
+        </span>
+      </span>
       <span class="store-collaboration__row-meta"
         ><CommunityChip
           size="compact"
@@ -86,32 +114,6 @@
             >{/if}</span
         ></span
       >
-    </span>
-    <span class="store-collaboration__row-actions">
-      {#if association}<CommunityProjectsRevisionGraphIds
-          commitId={association.after_commits[0] ??
-            association.before_commits[0] ??
-            ""}
-          changeId={association.changes[0]}
-          placement="inline"
-        />{/if}
-      <StoreRecordMenu
-        label="Agent session actions"
-        items={[
-          {
-            label: "Copy session ID",
-            value: session.session_id,
-          },
-          {
-            label: "Copy snapshot ID",
-            value: session.snapshot_id,
-          },
-          {
-            label: "Copy parent session ID",
-            value: session.parent_session_id,
-          },
-        ]}
-      />
     </span>
   </div>
 </div>
