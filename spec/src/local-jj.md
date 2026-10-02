@@ -155,6 +155,15 @@ prove committed record membership and complete retained Git closures before
 enabling their publication. A model or successful structural check does not
 enable the browser capability.
 
+Local portable agent review inspection pins an explicit committed companion
+selection and admits only exact AgentStore records in its audited root closure.
+It validates session/tool ownership and stored input/output bytes through the
+shared model; staged records and records first selected after the requested pin
+remain unavailable. An optional agent-root context must match that selection,
+and native publication counters are unsupported. Inspection never initializes
+metadata or a device actor and rechecks the admitted history before returning.
+This is source validation, not a selected review or a write authorization.
+
 M13.1 proves versioned publication, receipt replay, initialization races and Git
 reachability before dependent implementation. M13.2 adds WorkStore and direct
 CLI access. M13.3 adds portable AgentStore/ReviewStore evidence. M13.4 adds

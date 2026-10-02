@@ -760,6 +760,13 @@ retention. Portable code evidence must bind the anchor repository, including
 both sides of a diff. Providers continue rejecting portable publication until
 their immutable retention, shared command/audit and receipt gates pass.
 
+The local provider backs portable agent structural inspection with its
+explicitly companion-pinned canonical reader. Only records in that selected
+AgentStore closure are admitted; a staged Git blob or future session version
+does not become visible through an earlier pin. Inspection preserves operation
+heads and selected metadata across restart and ordinary Git GC, and remains
+separate from review publication and complete historical retention.
+
 Canonical JSON encoding rejects unknown fields, alternate byte-offset forms and
 noncanonical round trips. The anchor ID hashes those validated canonical bytes.
 The v1 resolver maps an immutable anchor only against an explicitly identified

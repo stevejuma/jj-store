@@ -6,6 +6,9 @@ use jj_store_wal::publication::*;
 use jj_store_wal::records::{RecordKind, Records};
 use std::{process::Command, sync::Arc};
 
+#[path = "local_agent/portable_review.rs"]
+mod portable_review;
+
 fn fixture() -> (tempfile::TempDir, LocalRepository) {
     let root = tempfile::tempdir().unwrap();
     let path = root.path().join("repo");

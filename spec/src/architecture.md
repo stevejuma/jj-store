@@ -1,5 +1,12 @@
 # Architecture
 
+The local service consumes `jj-review` directly for portable source validation.
+Its retained-record read port supplies only canonical AgentStore objects from an
+explicit committed companion selection. The model checks exact identities and
+payload bytes; it cannot open folders, admit callers or publish metadata. The
+service preserves those provider responsibilities and keeps portable review
+publication gated until retention and shared command qualification pass.
+
 The Tantivy boundary owns credential-free search sessions and generation
 continuations over service-authorized native snapshots. HTTP and server
 composition consume these owned contracts; publication remains independent.

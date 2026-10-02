@@ -1,5 +1,13 @@
 # Typed mutations
 
+Local portable agent review source inspection consumes an explicit committed
+companion pin and exact canonical AgentStore records. It validates the shared
+portable session/tool/content identities and selected byte digest, then rechecks
+admitted history before returning. Staged or future-selected records, a
+replacement repository identity, mismatched optional roots and fabricated native
+publication counters fail closed. The bounded read neither establishes an actor
+nor selects review metadata; write and retention qualification remain separate.
+
 Local repository review HTTP and CLI actions use the already-qualified typed
 projector and original device actor/receipts. No request supplies actor
 identity. Replies bind workflow versions, edits bind selected comment revisions,

@@ -16,6 +16,7 @@ mod collab_store;
 mod collab_types;
 mod errors;
 mod records;
+mod review_agent_evidence;
 mod review_commands;
 mod review_io;
 mod review_store;

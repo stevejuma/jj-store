@@ -8,6 +8,7 @@ publish = false
 
 [dependencies]
 jj-collab.workspace = true
+jj-review.workspace = true
 jj-store-adapters.workspace = true
 schemars.workspace = true
 jj-store-model.workspace = true
@@ -30,5 +31,4 @@ thiserror = "2"
 [dev-dependencies]
 image = {version="0.25",default-features=false,features=["png"]}
 tempfile = "3"
-jj-review.workspace = true
 tokio = { version = "1", features = ["macros", "rt-multi-thread", "sync"] }
