@@ -118,11 +118,11 @@
       view.pending = unknown ? pending : null;
       view.message = unknown
         ? "Outcome unknown. Check status or retry this request."
-        : "Saved. Refresh projects to see changes.";
+        : "";
     },
     async check() {
       view.pending = null;
-      view.message = "Saved. Refresh projects to see changes.";
+      view.message = "";
     },
     async retry() {
       view.pending = pending;

@@ -1,3 +1,4 @@
+import { refreshCollaborationContext } from "./collaboration-refresh.js";
 import type { StoreDataSource } from "./native-data-source.js";
 import type { ProductionStoreState } from "./production-store-state.svelte.js";
 import type { createStoreRouteHistory } from "./store-route-history.svelte.js";
@@ -162,6 +163,7 @@ export function createProductionStoreCollaboration(context: Context) {
   async function loadContext(
     subject: { commit: string } | { operation: string },
     matches: Parameters<typeof readReviewContext>[1],
+    retainSelection = false,
   ) {
     const source = context.source(),
       ticket = context.version();
@@ -180,10 +182,15 @@ export function createProductionStoreCollaboration(context: Context) {
       data.reviewCursor = reviews.cursor;
       data.status.agents = data.agentRelations.length ? "ready" : "empty";
       data.status.reviews = data.reviewThreads.length ? "ready" : "empty";
-      const sessionId = data.agentRelations.find(
-        (relation) => relation.association,
-      )?.association?.session_id;
-      const reviewId = reviews.selected?.thread_id;
+      const sessionId =
+        retainSelection && history.route.agentSessionId
+          ? history.route.agentSessionId
+          : data.agentRelations.find((relation) => relation.association)
+              ?.association?.session_id;
+      const reviewId =
+        retainSelection && history.route.reviewThreadId
+          ? history.route.reviewThreadId
+          : reviews.selected?.thread_id;
       history.replace({
         ...history.route,
         agentSessionId: sessionId ?? null,
@@ -288,6 +295,8 @@ export function createProductionStoreCollaboration(context: Context) {
   });
 
   return {
+    refreshCollaborationContext: () =>
+      refreshCollaborationContext(history.route, loadContext),
     loadAgents,
     loadTranscript,
     loadAgent,

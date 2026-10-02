@@ -21,8 +21,8 @@
       canvas.getByRole("button", { name: "Link repository" }),
     );
     await expect(
-      canvas.getByRole("status", { name: "Work command status" }),
-    ).toHaveTextContent("Saved");
+      canvas.queryByRole("status", { name: "Work command status" }),
+    ).toBeNull();
   }}
 />
 <Story
@@ -92,8 +92,8 @@
     await userEvent.click(activity);
     await userEvent.click(canvas.getByRole("button", { name: "Add comment" }));
     await expect(
-      canvas.getByRole("status", { name: "Work command status" }),
-    ).toHaveTextContent("Saved");
+      canvas.queryByRole("status", { name: "Work command status" }),
+    ).toBeNull();
     await userEvent.click(canvas.getByRole("button", { name: "Edit task" }));
     const dialog = within(document.body).getByRole("dialog", {
       name: "Edit task",
@@ -135,8 +135,8 @@
       canvas.getByRole("button", { name: "Check task command" }),
     );
     await expect(
-      canvas.getByRole("status", { name: "Work command status" }),
-    ).toHaveTextContent("Saved");
+      canvas.queryByRole("status", { name: "Work command status" }),
+    ).toBeNull();
   }}
 />
 <Story
@@ -194,7 +194,7 @@
     ).toHaveTextContent("First discussion");
     await userEvent.click(canvas.getByRole("button", { name: "Save comment" }));
     await expect(
-      canvas.getByRole("status", { name: "Work command status" }),
-    ).toHaveTextContent("Saved");
+      canvas.queryByRole("status", { name: "Work command status" }),
+    ).toBeNull();
   }}
 />

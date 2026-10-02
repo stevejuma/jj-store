@@ -81,6 +81,13 @@
   const workspaceGuard = $state({ editing: false });
   setContext(workspaceNavigationKey, workspaceGuard);
   let conflictOpen = $state(false);
+  $effect(() => {
+    controller.actions.setRefreshPaused?.(
+      "code-editor",
+      conflictOpen || workspaceGuard.editing,
+    );
+    return () => controller.actions.setRefreshPaused?.("code-editor", false);
+  });
   let conflictReturnFocus = $state<HTMLElement | null>(null);
   setContext(conflictEditorKey, () => {
     conflictReturnFocus =
@@ -103,6 +110,10 @@
   const current = $derived(controller.state.route);
   let searchOpen = $state(false);
   let settingsOpen = $state(false);
+  $effect(() => {
+    controller.actions.setRefreshPaused?.("settings", settingsOpen);
+    return () => controller.actions.setRefreshPaused?.("settings", false);
+  });
   let settingsSection = $state<StoreSettingsSection>("service");
   const canNavigateBack = $derived(controller.state.canNavigateBack);
   const canNavigateForward = $derived(controller.state.canNavigateForward);

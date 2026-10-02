@@ -20,7 +20,7 @@
   <header class="store-settings__section-heading">
     <div>
       <h2 id="search-health">Text-search health</h2>
-      <p>Positions update only when status is explicitly refreshed.</p>
+      <p>Positions update automatically while Settings is open.</p>
     </div>
     {#if capabilities?.search}
       <Button

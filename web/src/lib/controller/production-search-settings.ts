@@ -18,8 +18,10 @@ export function createProductionSearchSettings(options: {
 }) {
   const { data } = options;
   let generation = 0;
+  let draftRevision: string | undefined;
   function clear() {
     generation++;
+    draftRevision = undefined;
     data.searchSettings = emptySearchSettings();
   }
   function setSearchDraft(patch: Partial<SearchDraft>) {
@@ -29,6 +31,7 @@ export function createProductionSearchSettings(options: {
       !state.changing &&
       !searchOperating(state.value?.operation)
     ) {
+      if (!state.dirty) draftRevision = state.value?.revision;
       state.draft = { ...state.draft, ...patch };
       state.dirty = true;
     }
@@ -37,6 +40,7 @@ export function createProductionSearchSettings(options: {
     const state = data.searchSettings;
     if (state.value && !state.changing) {
       state.draft = searchDraft(state.value.desired);
+      draftRevision = state.value.revision;
       state.dirty = false;
     }
   }
@@ -77,7 +81,7 @@ export function createProductionSearchSettings(options: {
       let result =
         action === "save"
           ? await source.searchSettings.save(
-              state.value!.revision,
+              draftRevision ?? state.value!.revision,
               configuration!,
             )
           : action
@@ -87,6 +91,7 @@ export function createProductionSearchSettings(options: {
       state.value = result;
       if (action === "save" || !state.dirty) {
         state.draft = searchDraft(result.desired);
+        draftRevision = result.revision;
         state.dirty = false;
       }
       // Explicit action completion is allowed to refresh management state, never the selected repository snapshot.
@@ -103,7 +108,7 @@ export function createProductionSearchSettings(options: {
     } catch (cause) {
       if (!current()) return;
       state.state = "failed";
-      state.error = `${storeErrorMessage(cause)}. Refresh settings before retrying.`;
+      state.error = `${storeErrorMessage(cause)}. Settings will retry automatically.`;
     } finally {
       if (current()) state.changing = false;
     }

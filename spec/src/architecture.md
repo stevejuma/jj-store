@@ -54,6 +54,13 @@ bundles deduplicate Svelte and the released Bits UI overlay runtime shared by
 Mira and Design Core; independent modal managers cannot own the same document
 body lock.
 
+The shared overlay runtime is pinned to released Bits UI 2.19.4. Its deferred
+focus callbacks stop after the owning layer is destroyed, including when a
+successful file save replaces its editor. Runtime diagnostics remain enforced;
+updates to this dependency qualify the complete browser interaction and
+accessibility suites. Automatic data refresh remains a controller concern and
+does not add publication or storage dependencies.
+
 ## Requirements
 
 The local UI development profile separates Vite source serving from the existing
@@ -451,7 +458,9 @@ The local pnpm hook follows the workspace source-first boundary for Design Core.
 When the sibling source exists it resolves the declared dependency from that
 checkout for development validation; otherwise it leaves the semver range
 intact. It never rewrites peer ranges. The publishable manifest retains registry
-ranges while a locally installed lock records the explicit sibling source.
+ranges. Temporary source validation retains registry resolutions in the tracked
+lockfile and records the exact source revision separately. A source-validation
+pass does not qualify a registry release with missing public APIs.
 
 Agent capture uses MongoDB Kingfisher 2.7.0 in-process at source revision
 `63dccba231b6b01990c84319d25f92f49428a431`. The scanner is compiled without

@@ -16,8 +16,8 @@ The browser composes owned CommunityWorkspaceSurface, CommunityThreadPanel,
 CommunityDetails and CommunityReactions contracts. Threads have a channel
 section in the left sidebar, bounded history, exact persisted replies, visible
 actor-derived participants and reactions on existing review comments and
-supported Agent messages. It preserves explicit refresh and durable request
-identities for unknown outcomes.
+supported Agent messages. It preserves automatic browser refresh and durable
+request identities for unknown outcomes.
 
 UI refresh preserves loaded conversation history at one captured Thread root,
 and focused replies load their exact-revision ancestor closure within bounded
@@ -54,7 +54,8 @@ selects Agent plus Thread roots atomically through the existing manifest.
 
 Persistent Threads use Community channels as their presentation template, with
 shared conversation/composer/message/reaction semantics. The browser adapter
-retains jj-store authorization, exact revisions, receipts and explicit refresh.
+retains jj-store authorization, exact revisions, receipts and automatic browser
+refresh.
 
 HTTP exposes typed Thread/reaction command bodies without actor fields, signed
 Thread/event/emoji GET pages and an exact-target Reaction query POST. Exact
@@ -732,8 +733,9 @@ on the application origin and omit cookies.
 Commit, operation and evolution graphs render server-provided edges without
 inferring ancestry. Multiple heads require an explicit choice; revset context
 and pagination retain an exact selected operation and time anchor. Live events
-indicate newer history without replacing the displayed snapshot. Reconnect
-resumes only fully parsed SSE IDs, while reset asks for explicit refresh.
+refresh current-head views while retaining historical selections. Reconnect
+resumes only fully parsed SSE IDs; ready/reset announcements compare against the
+retained head and queue automatic browser refresh.
 
 Branch graph navigation resolves the selected bookmark or working-copy target
 from the captured reference response before issuing the log request. One target
@@ -778,9 +780,10 @@ TypeScript consumer checks operation-diff narrowing across every status.
 
 The snapshot bar identifies the loaded operation independently of editable query
 fields. Query retries and pages retain original inputs; index preparation must
-not reset the time anchor. Explicit refresh after an event reset starts a new
-subscription. Browser graph rendering admits at most 1000 nodes and 4096 edges;
-exceeding the display budget fails explicitly before layout.
+not reset the time anchor. Event resets queue a snapshot recapture
+automatically; manual refresh remains available. Browser graph rendering admits
+at most 1000 nodes and 4096 edges; exceeding the display budget fails explicitly
+before layout.
 
 Collection controllers retain server cursors independently for every bounded
 resource. Directory navigation requests only the selected directory until a tree
@@ -796,9 +799,10 @@ HTTP client. Their keys include the active access-session identity, repository
 and exact stable resource identity; server continuations remain opaque and
 memory-only. A committed review command invalidates the repository-session scope
 before refetching its list and exact thread. A durable unknown outcome retains
-the complete request ID for the status route. Repository SSE changes only set
-the shared freshness flag. Explicit snapshot refresh invalidates the same scope
-before collaboration reads can expose a newer AgentStore or ReviewStore root.
+the complete request ID for the status route. Repository SSE queues automatic
+refresh. Snapshot recapture invalidates the same scope before collaboration
+reads expose a newer AgentStore or ReviewStore root, including for historical
+code selections.
 
 Revision context lookup follows opaque association and review continuations
 until it finds the exact selected commit; path context likewise requires an
@@ -1108,19 +1112,20 @@ WorkStore HTTP exposes bounded project/task/comment pages and typed command
 apply/status under /v1/repos/{repo}/work. Continuations retain one selected
 WorkStore root, repeat the query and page size, reauthorize each page, and reset
 after expiry or serving restart. The browser keeps code pins separate and
-refreshes task metadata explicitly.
+refreshes task metadata automatically after saves and new data.
 
 WorkStore browser reads use an independent pinned root per paged collection. The
 page-header filter controls reuse the existing Projects controller filter action
 and native route values. Moving their presentation from the details rail adds no
 requests or contracts; search submission and field selection retain the existing
-bounded snapshot reads and explicit refresh semantics. The Projects destination
-does not require a selected code operation. Stable project/task route selections
-reload on explicit refresh. A saved receipt marks freshness; ambiguous outcomes
-keep the complete request, including exact version preconditions and entity IDs.
-Status and retry share that identity, even after refresh. Linked repository
-navigation uses the normal target session and token checks, never the home
-metadata grant.
+bounded snapshot reads and automatic browser refresh semantics. The Projects
+destination does not require a selected code operation. Stable project/task
+route selections reload automatically after live events and bounded periodic
+checks. A saved receipt immediately reloads the WorkStore view; ambiguous
+outcomes keep the complete request, including exact version preconditions and
+entity IDs. Status and retry share that identity, even after refresh. Linked
+repository navigation uses the normal target session and token checks, never the
+home metadata grant.
 
 The development seed exercises these same commands for linked sample projects,
 all task states, subtasks and threaded comments. Its cold browser gate reads the
@@ -1133,10 +1138,11 @@ preserving the full code operation pin; Back, Forward and reload restore the
 selected destination without publishing repository state.
 
 Cold Git bridge browser acceptance uses actual LocalTrusted RustFS publication
-and an external merge imported by the custom CLI. SSE announces new history; the
-displayed graph and operation route remain pinned until explicit refresh. The
-refreshed graph exposes the imported merge without synthetic agent history. The
-same cold fixture verifies the native search adapter catches up to that import.
+and an external merge imported by the custom CLI. SSE automatically reloads the
+active current-head graph and operation route while retaining selected commits.
+The refreshed graph exposes the imported merge without synthetic agent history.
+The same cold fixture verifies the native search adapter catches up to that
+import.
 
 ## WorkStore browse summaries
 
@@ -1242,8 +1248,9 @@ Local repository AgentStore POST endpoints `/agents/sessions`,
 `/agents/session`, `/agents/transcript` and `/agents/relations` require an
 independent committed `metadata_commit`. Signed continuations bind the complete
 query, repository and binding generation. GET `/events` announces bounded local
-head/ref freshness with local-profile event DTOs and never advances a display
-pin.
+head/ref freshness with local-profile event DTOs. The browser automatically
+recaptures active collaboration/current-head views while retaining historical
+code pins. GET remains read-only.
 
 POST `/v1/local/repositories/{repo}/reconnect` requires the current device
 registry revision and an inspected folder path with the original companion

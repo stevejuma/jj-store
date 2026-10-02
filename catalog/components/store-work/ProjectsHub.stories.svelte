@@ -4,6 +4,7 @@
   import { playOwnershipLayouts } from "./projects-layout-play.js";
   import ProjectsHubFixture from "../../fixtures/ProjectsHubFixture.svelte";
   import {
+    playReadOnlyTask,
     expectCommunityDisclosures,
     expectReviewRowUsesWidth,
     expectTaskTitleRow,
@@ -168,45 +169,7 @@
 <Story
   name="Read only task"
   args={{ detail: true, readonly: true }}
-  play={async ({ canvasElement }) => {
-    const c = within(canvasElement);
-    await waitFor(() =>
-      expect(c.getByRole("article", { name: "Task details" })).toBeVisible(),
-    );
-    const detail = c.getByRole("article", { name: "Task details" });
-    await expectCommunityDisclosures(detail);
-    await expect(
-      c.queryByRole("complementary", { name: "Task discussion" }),
-    ).toBeNull();
-    await expectTaskTitleRow(detail);
-    await expect(
-      c.getByRole("navigation", { name: "breadcrumb" }),
-    ).toBeVisible();
-    await expect(c.queryByRole("button", { name: "Edit task" })).toBeNull();
-    await expect(c.queryByRole("textbox", { name: "Comment" })).toBeNull();
-    await userEvent.click(
-      c.getByRole("button", { name: "Parent: Storage work" }),
-    );
-    const subtasks = c.getByRole("region", { name: "Subtasks" });
-    await userEvent.click(
-      within(subtasks).getByRole("button", { name: "Subtasks" }),
-    );
-    await waitFor(() =>
-      expect(
-        within(subtasks).getByRole("button", {
-          name: "Open task Browser work",
-        }),
-      ).toBeVisible(),
-    );
-    await expect(
-      within(subtasks).getByRole("list").getBoundingClientRect().left,
-    ).toBeCloseTo(
-      within(subtasks)
-        .getByRole("button", { name: "Subtasks" })
-        .getBoundingClientRect().left,
-      0,
-    );
-  }}
+  play={playReadOnlyTask}
 />
 <Story
   name="Task edit and retained unknown request"

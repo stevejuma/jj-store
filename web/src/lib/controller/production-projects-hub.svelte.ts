@@ -1,5 +1,8 @@
 import { createProjectsWorkRegistry } from "./projects-work-registry.svelte.js";
-import { readProjectHome } from "./projects-home-read.js";
+import {
+  readProjectHome,
+  reloadProjectHomeWindow,
+} from "./projects-home-read.js";
 import { createProjectsReviews } from "./projects-reviews.svelte.js";
 import { createProjectsNavigation } from "./projects-navigation.svelte.js";
 import { createProjectsRepositories } from "./projects-repositories.svelte.js";
@@ -30,7 +33,10 @@ export function createProjectsHub(
   const scroll = new Map<string, number>();
   const views = createProjectsViewCache();
   const { sources, works, selections, transport, work } =
-    createProjectsWorkRegistry(context);
+    createProjectsWorkRegistry(context, () => {
+      views.clear();
+      context.changed();
+    });
   const navigation = createProjectsNavigation({
     repositories: context.repositories,
     transport,
@@ -151,7 +157,7 @@ export function createProjectsHub(
           : null;
         if (route.projectId && !project) {
           repositoryDirectory.reset();
-          error = "Project unavailable. Refresh or return to Projects.";
+          error = "Project unavailable. Return to Projects.";
           return;
         }
         await repositoryDirectory.load(context.repositories(), refresh);
@@ -163,7 +169,7 @@ export function createProjectsHub(
           : null;
         if (route.projectId && !project) {
           reviews.reset();
-          error = "Project unavailable. Refresh or return to Projects.";
+          error = "Project unavailable. Return to Projects.";
           return;
         }
         await reviews.load(
@@ -182,7 +188,12 @@ export function createProjectsHub(
         Array.from({ length: Math.min(2, homes.length) }, async () => {
           while (index < homes.length && ticket === generation) {
             const home = homes[index++]!;
-            await read(home, query, ticket);
+            await reloadProjectHomeWindow(
+              home,
+              (more) => read(home, query, ticket, more),
+              refresh,
+              () => ticket === generation,
+            );
           }
         }),
       );
@@ -232,6 +243,7 @@ export function createProjectsHub(
       try {
         await context.discover?.();
         views.clear();
+        for (const work of works.values()) work.invalidate?.();
         if (ticket !== generation || context.route().page !== "projects")
           return;
         await Promise.allSettled(

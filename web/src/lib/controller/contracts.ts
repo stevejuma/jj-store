@@ -208,6 +208,7 @@ export interface StoreController {
     selectOperation(id: string): Promise<void>;
     selectComparisonParent(id: string): Promise<void>;
     refreshSettings(): Promise<void>;
+    setRefreshPaused?(key: string, paused: boolean): void;
     refreshWorkspaceLinks(): Promise<void>;
     setWorkspacePath(path: string): void;
     linkWorkspace(): Promise<void>;

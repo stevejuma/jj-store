@@ -12,9 +12,10 @@ transports. Native snapshots retain manifest/WAL authority; local snapshots
 retain binding generation, code operation and independent committed companion
 selection. Routes accept complete Git SHA-1 or native commit IDs syntactically
 and validate their width against discovered profile before reads. Cache keys
-include profile, repository and connection session. External freshness only
-offers refresh, including changes missed during disconnection. Unsupported local
-search, code writes, reviews, conversion and synchronization remain gated.
+include profile, repository and connection session. External freshness
+automatically reloads active views, including changes missed during
+disconnection, while retaining explicit historical code selections. Unsupported
+local search, code writes, reviews, conversion and synchronization remain gated.
 
 The reviewed catalog application is the presentation authority for the served
 browser. Production browsing, search, typed mutations and conflict editing share
@@ -82,26 +83,26 @@ the same target-keyed controller cache and deduplicated loads.
 
 ## Requirements
 
-| ID         | Requirement                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| JST-UI-001 | The catalog MUST build and run independently using registry dependencies, deterministic fixtures, isolated story state, runtime diagnostics and blocking interaction/accessibility checks.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| JST-UI-002 | The shell MUST directly adapt Community shell/navigation composition and preserve desktop/mobile, sidebar, header, focus and navigation mechanics using public Design Core exports.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| JST-UI-003 | Branches, JJ Log and Op Log MUST reuse Community graph/row/file/diff compositions, preserve native identities and conflicting targets, support fixture-only drill-down without transport or mutation capabilities, and expose a Community-styled page heading and create action in the right rail while selected native detail remains in the body.                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| JST-UI-004 | The complete catalog application MUST expose a typed state/actions controller with independent in-memory navigation, repository snapshots, file contents and profile actions, using copied Community file-browser and footer compositions without backend access.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| JST-UI-005 | The served browser MUST use the reviewed shell and repository components through an authenticated asynchronous controller with cursor paging, representative page and detail loading skeletons, explicit snapshot refresh and typed hash restoration.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| JST-UI-006 | Large repository collections MUST use bounded virtual rows, all resizable shell/canvas regions MUST persist versioned layout state with independent identities for the standard Thread pane and outer details rail, and catalog stories MUST exercise the production components.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| JST-UI-007 | Repository search MUST use the released Design Core Command View in a Community-adapted overlay, query the selected authenticated operation snapshot, represent readiness and paging states, and navigate results with stable full identities.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| JST-UI-008 | Authenticated repository commands and text-file edits MUST use Community-adapted actions, composer-backed prose fields, shared commit/change identity rows, searchable Design Core commit selectors and form/confirmation controls, preview the exact typed request before apply, preserve its request ID through unknown outcomes, and advance the displayed snapshot only from a committed receipt.                                                                                                                                                                                                                                                                                                                                                                                                |
-| JST-UI-009 | Conflict editing MUST use the AppShell structural sheet with a dominant syntax-highlighted merge editor, use its built-in accept-all controls for text sides, retain exact native paths, ordered terms and fingerprints in bound state without extra metadata cards, stage bounded uploads separately, preview the atomic selection, and retain server-advertised unsupported or stale states explicitly.                                                                                                                                                                                                                                                                                                                                                                                            |
-| JST-UI-010 | The application MUST bootstrap before repository UI, auto-open the sole LocalTrusted repository or show its installation Projects hub, and label unverified loopback identity as Local; operational backup/restore status UI remains deferred.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| JST-UI-011 | Authenticated connection MUST request one manual token, keep it only in memory, discover all currently authorized repositories, restore an ID-based deep link or show the Projects hub, and cancel requests, SSE and protected caches when the token is replaced, revoked or disconnected.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| JST-UI-012 | The profile menu MUST open a transient Settings destination with Local service, Repository and Search sections; replace repository navigation/content/actions/details while open; preserve the unchanged repository route and snapshot on return; keep its destination and selected section out of URL, browser history and storage; render accessible icon-only settings navigation when the desktop sidebar is collapsed; refresh advertised search health explicitly; and expose native graph preparation in Repository independently from text-search health, using only a graph-reported or explicitly selected operation.                                                                                                                                                                      |
-| JST-UI-013 | Repository pages MUST expose a Community-style section header after the body tabs with a searchable workspace Command View; workspace context MUST use the exact native name, survive URL/history restoration at a pinned operation, preserve shared commit identities and keep operation/collaboration history repository-wide.                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| JST-UI-014 | Repository view navigation MUST live in the Community-styled right rail beneath its page heading and create action, with selection-aware, capability-gated commands beneath Details and no duplicate metadata panels; body tabs MUST present Overview first, followed by Branches, Commits, Op Log, Agents and Reviews, retain their pill styling, and move trailing tabs into an accessible dropdown when width is limited without changing route or workspace context.                                                                                                                                                                                                                                                                                                                             |
-| JST-UI-015 | The installation Projects hub MUST expose authorized homes, repository and task directories, a shared native commit and agent Activity timeline with Activity-first tabs and recorded-agent filters, a repository-linked Projects list, shared safe Markdown previews, searchable project/task views, native identity routes, permission-gated dialogs and threaded Markdown discussion; use Community card/list layout controls and Mine/Other groups, searchable repository Command View selectors, Settings-style form rows and icon-only page-header filters, a centered top-header breadcrumb, and an original-message preview above the edit composer; keep independent bounded snapshot continuations and retained navigation state; and advance displayed metadata only on explicit refresh. |
-| JST-UI-016 | Local management MUST expose explicitly linked device workspaces, qualified capture setup and queue recovery, editable Search with isolated worker replacement, non-destructive storage verification/checkpoints and configured sync controls through typed capability-gated interfaces; unsupported profiles and deferred operations MUST remain explicit.                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| JST-UI-017 | Threads MUST use the owned Community channel toolbar with a direct settings action, aligned pane headers, targeted Chat Message Metadata feedback, reaction count tooltips, bordered standard right pane, independently controlled outer details rail, settings, contributor and reply presentation, forum directory rows, native composer entity pickers and message chips; workspace search MUST show recent activity, server-filtered section and entity scopes, native focus links and permission-gated bottom actions without inventing runner controls.                                                                                                                                                                                                                                        |
-| JST-UI-018 | The browser MUST expose the complete Buzz-derived device Appearance page, persist and restore app-wide preferences, apply resolved themes and typography to all owned conversations and overlays, retain native links and drafts, and offer working local link cards and responsive Focus/Split discussions without altering repository authority.                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ID         | Requirement                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| JST-UI-001 | The catalog MUST build and run independently using registry dependencies, deterministic fixtures, isolated story state, runtime diagnostics and blocking interaction/accessibility checks.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| JST-UI-002 | The shell MUST directly adapt Community shell/navigation composition and preserve desktop/mobile, sidebar, header, focus and navigation mechanics using public Design Core exports.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| JST-UI-003 | Branches, JJ Log and Op Log MUST reuse Community graph/row/file/diff compositions, preserve native identities and conflicting targets, support fixture-only drill-down without transport or mutation capabilities, and expose a Community-styled page heading and create action in the right rail while selected native detail remains in the body.                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| JST-UI-004 | The complete catalog application MUST expose a typed state/actions controller with independent in-memory navigation, repository snapshots, file contents and profile actions, using copied Community file-browser and footer compositions without backend access.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| JST-UI-005 | The served browser MUST use the reviewed shell and repository components through an authenticated asynchronous controller with cursor paging, representative page and detail loading skeletons, automatic snapshot refresh and typed hash restoration.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| JST-UI-006 | Large repository collections MUST use bounded virtual rows, all resizable shell/canvas regions MUST persist versioned layout state with independent identities for the standard Thread pane and outer details rail, and catalog stories MUST exercise the production components.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| JST-UI-007 | Repository search MUST use the released Design Core Command View in a Community-adapted overlay, query the selected authenticated operation snapshot, represent readiness and paging states, and navigate results with stable full identities.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| JST-UI-008 | Authenticated repository commands and text-file edits MUST use Community-adapted actions, composer-backed prose fields, shared commit/change identity rows, searchable Design Core commit selectors and form/confirmation controls, preview the exact typed request before apply, preserve its request ID through unknown outcomes, and advance the displayed snapshot only from a committed receipt.                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| JST-UI-009 | Conflict editing MUST use the AppShell structural sheet with a dominant syntax-highlighted merge editor, use its built-in accept-all controls for text sides, retain exact native paths, ordered terms and fingerprints in bound state without extra metadata cards, stage bounded uploads separately, preview the atomic selection, and retain server-advertised unsupported or stale states explicitly.                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| JST-UI-010 | The application MUST bootstrap before repository UI, auto-open the sole LocalTrusted repository or show its installation Projects hub, and label unverified loopback identity as Local; operational backup/restore status UI remains deferred.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| JST-UI-011 | Authenticated connection MUST request one manual token, keep it only in memory, discover all currently authorized repositories, restore an ID-based deep link or show the Projects hub, and cancel requests, SSE and protected caches when the token is replaced, revoked or disconnected.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| JST-UI-012 | The profile menu MUST open a transient Settings destination with Local service, Repository and Search sections; replace repository navigation/content/actions/details while open; retain the repository route and selections on return and resume queued updates; keep its destination and selected section out of URL, browser history and storage; render accessible icon-only settings navigation when the desktop sidebar is collapsed; refresh advertised search health automatically while open; and expose native graph preparation in Repository independently from text-search health, using only a graph-reported or explicitly selected operation.                                                                                                                                                                |
+| JST-UI-013 | Repository pages MUST expose a Community-style section header after the body tabs with a searchable workspace Command View; workspace context MUST use the exact native name, survive URL/history restoration at a pinned operation, preserve shared commit identities and keep operation/collaboration history repository-wide.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| JST-UI-014 | Repository view navigation MUST live in the Community-styled right rail beneath its page heading and create action, with selection-aware, capability-gated commands beneath Details and no duplicate metadata panels; body tabs MUST present Overview first, followed by Branches, Commits, Op Log, Agents and Reviews, retain their pill styling, and move trailing tabs into an accessible dropdown when width is limited without changing route or workspace context.                                                                                                                                                                                                                                                                                                                                                     |
+| JST-UI-015 | The installation Projects hub MUST expose authorized homes, repository and task directories, a shared native commit and agent Activity timeline with Activity-first tabs and recorded-agent filters, a repository-linked Projects list, shared safe Markdown previews, searchable project/task views, native identity routes, permission-gated dialogs and threaded Markdown discussion; use Community card/list layout controls and Mine/Other groups, searchable repository Command View selectors, Settings-style form rows and icon-only page-header filters, a centered top-header breadcrumb, and an original-message preview above the edit composer; keep independent bounded snapshot continuations and retained navigation state; and refresh displayed metadata automatically after committed saves and new data. |
+| JST-UI-016 | Local management MUST expose explicitly linked device workspaces, qualified capture setup and queue recovery, editable Search with isolated worker replacement, non-destructive storage verification/checkpoints and configured sync controls through typed capability-gated interfaces; unsupported profiles and deferred operations MUST remain explicit.                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| JST-UI-017 | Threads MUST use the owned Community channel toolbar with a direct settings action, aligned pane headers, targeted Chat Message Metadata feedback, reaction count tooltips, bordered standard right pane, independently controlled outer details rail, settings, contributor and reply presentation, forum directory rows, native composer entity pickers and message chips; workspace search MUST show recent activity, server-filtered section and entity scopes, native focus links and permission-gated bottom actions without inventing runner controls.                                                                                                                                                                                                                                                                |
+| JST-UI-018 | The browser MUST expose the complete Buzz-derived device Appearance page, persist and restore app-wide preferences, apply resolved themes and typography to all owned conversations and overlays, retain native links and drafts, and offer working local link cards and responsive Focus/Split discussions without altering repository authority.                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 
 The production controller completes bootstrap before rendering connection
 choices. One ready LocalTrusted catalog entry opens without a token, several
@@ -172,28 +173,28 @@ by section tabs when present. It has no return button; Back to jj-store remains
 in the settings sidebar, including the mobile navigation stage. Appearance keeps
 its descriptive introduction without a duplicate page heading. Repository tabs,
 header actions and the details sidebar are absent until Back to jj-store
-restores the same repository route and selected snapshot. Settings never writes
-its destination or section to the hash, browser history or storage. A fresh
-component starts on Local service; section selection lasts only for that
+restores the same repository route and resumes queued updates. Settings never
+writes its destination or section to the hash, browser history or storage. A
+fresh component starts on Local service; section selection lasts only for that
 component lifetime. Mobile selection returns to the content stage and retains a
 control that reopens settings navigation. On desktop, collapsing the settings
 sidebar retains Back, Local service, Repository and Search as labelled icon
 controls without clipped text; expanding it restores their visible labels.
 
 Local service reports access mode, authoritative-storage readiness, HTTP and SSE
-state and refresh availability. Repository reports the retained discovery
+state and automatic update status. Repository reports the retained discovery
 permission, repository and operation identities, conflicts, captured authority,
 native profile, authentication, advertised APIs/actions and bounded request,
 upload, read and event limits. Search loads status only when the repository
 advertises search, confines load failures to its section and changes displayed
-positions only after explicit refresh. Repository settings expose native graph
-index preparation separately from text-search projection health. Graph
-preparation uses an operation from an existing graph rebuild-required response
-before the explicitly selected snapshot operation and requires index-task
-support and an exact operation, independently of text-search support. Completing
-it does not refresh or repair the text-search projection. Long identities,
-capability lists and numeric limits wrap without horizontal overflow; status
-meaning is always present as text as well as color.
+positions automatically while Settings is open. Repository settings expose
+native graph index preparation separately from text-search projection health.
+Graph preparation uses an operation from an existing graph rebuild-required
+response before the explicitly selected snapshot operation and requires
+index-task support and an exact operation, independently of text-search support.
+Completing it does not refresh or repair the text-search projection. Long
+identities, capability lists and numeric limits wrap without horizontal
+overflow; status meaning is always present as text as well as color.
 
 Local service lists Git-backed JJ registrations in the same bordered Settings
 rows as service status, with the name, wrapping path and availability on the
@@ -240,7 +241,7 @@ discard late selections. Unsupported platforms keep the manual form.
 
 ## Local management delivery
 
-This staged extension keeps the transient Settings shell and explicit snapshot
+This staged extension keeps the transient Settings shell and automatic snapshot
 refresh contract. It adds Local service, Repository, Agents, Search, Storage and
 Sync sections as their operations become available. The milestone ledger is the
 single source of delivery status; this section defines the accepted scope.
@@ -609,9 +610,11 @@ Application navigation pushes browser history, while native Back/Forward events
 restore the pinned repository, page, snapshot, bookmark/change/commit, operation
 comparison, directory and selected file. Reload prefills only the repository
 identity; the memory-only token must be entered again before the controller
-restores protected content. SSE announces fresher history without changing the
-displayed snapshot. Explicit Refresh captures current heads and retains the deep
-selection and hash when that selection remains available.
+restores protected content. Live events reload the active view. A view following
+the sole current code head advances automatically; explicit historical
+operations and immutable commit/operation selections remain retained. Optional
+Refresh can still capture current heads. Updates replace the current history
+entry and preserve the deep selection when it remains available.
 
 Every asynchronous browsing surface preserves its final geometry while loading.
 Branches renders bookmark-card placeholders in its initial path column; JJ Log
@@ -682,9 +685,10 @@ message component. Open review threads compose Community's public chat composer
 with exact optimistic-concurrency actions; resolved threads remove the composer
 and expose Reopen. The detail headers distinguish the selected native code
 snapshot from the independent AgentStore or ReviewStore root. An unknown review
-outcome remains an explicit alert with a Check status action. SSE freshness does
-not replace displayed collaboration records; only explicit Refresh captures new
-heads, invalidates the session cache and restores the deep route.
+outcome remains an explicit alert with a Check status action. Live events
+automatically reload collaboration records from committed roots, invalidate the
+session cache and retain the deep route and editor drafts. Unknown requests
+retain their exact identity and preconditions.
 
 M4.15 adapts Community's global search trigger and command dialog to native
 repository search. `Command+K`/`Control+K` and the sidebar open the same
@@ -861,13 +865,14 @@ Community task presentation informs the composition; Design Core provides the
 form controls. Production imports no catalog data.
 
 Each paged list retains its own immutable WorkStore snapshot and validates
-continuation identity. SSE changes the refresh hint. Save receipts and unknown
-outcomes do not silently replace displayed lists. Explicit Refresh projects
-reloads the selected project/task and preserves pending request bytes. Status
-`not_known` does not prove rejection; retry uses the same request ID and intent.
-Session replacement discards late reads/receipts. Narrow screens stack the
-project list, task list and discussion; controls remain keyboard reachable.
-Story interactions and accessibility are separate from visual baseline approval.
+continuation identity. Confirmed saves immediately reload the selected
+project/task. Live events and periodic checks reload active lists automatically,
+preserving drafts and pending request bytes; unknown outcomes never authorize a
+second command or imply publication. Status `not_known` does not prove
+rejection; retry uses the same request ID and intent. Session replacement
+discards late reads/receipts. Narrow screens stack the project list, task list
+and discussion; controls remain keyboard reachable. Story interactions and
+accessibility are separate from visual baseline approval.
 
 Switching between Projects and JJ Log clears the destination-specific task or
 evolution selection while retaining the full code operation pin. Browser Back,
@@ -881,8 +886,8 @@ required.
 The shared cold native browser scenarios use the current repository tabs and the
 Markdown editor textbox in mutation forms. External-publication assertions
 capture the complete route after the initial seeded review association loads;
-the unchanged route must then survive the freshness event until explicit
-refresh.
+the stable entity selections must survive automatic refresh; the current-head
+operation pin advances without a manual action.
 
 Cold atomic-conflict acceptance targets the current named merge-sheet region and
 full native conflict path, selecting the left term through the merge editor's
@@ -924,10 +929,11 @@ query/filter fields. Legacy repository Projects routes remain readable. Back,
 Forward and reload restore stable selections and filters. In-session navigation
 retains bounded loaded views, cursors, scroll positions, drafts and exact
 unknown requests. Reload requires a new discovery/read; credentials and drafts
-are never persisted in browser storage. Explicit refresh rediscovers permissions
-and reads new roots. Revoked access clears protected content. Late responses and
-mismatched continuations cannot replace a newer route. Selected-home SSE only
-announces freshness; receipts never silently refresh the displayed list.
+are never persisted in browser storage. Automatic refresh rediscovers
+permissions and reads new roots. Revoked access clears protected content. Late
+responses and mismatched continuations cannot replace a newer route.
+Selected-home SSE queues automatic refresh; confirmed receipts immediately
+reload their WorkStore view.
 
 Code repository navigation uses a separate authorized connection. Project
 metadata does not grant linked-code access. The main shell hides code operation
@@ -944,7 +950,7 @@ than inferred task causality. Project-only tasks use their project's links.
 Native commits retain their exact code operation and Git/JJ identities, while
 agent activity follows only recorded associations. Paged reads preserve each
 code and AgentStore snapshot, disclose partial/unavailable context, and never
-substitute unrelated sessions. Explicit refresh advances the feed; access loss
+substitute unrelated sessions. Automatic refresh advances the feed; access loss
 and session teardown clear protected activity. Loading placeholders in every
 main tab have a page inset on all sides.
 
@@ -1003,7 +1009,7 @@ without flattening their linked repositories into options; project search,
 pagination/retry controls and focus restoration remain available. Repositories
 are selected from their own Command View, while expanded project rows retain
 linked repository children. Its independently paged, unfiltered home snapshots
-survive main-view filters and advance on explicit refresh. Missing code
+survive main-view filters and advance automatically on new data. Missing code
 permissions remain visible and cannot authorize navigation. Native review
 directories read separate ReviewStore snapshots only in accessible repositories;
 project views scope these to the project's links. Failed project reads cannot
@@ -1063,7 +1069,7 @@ evidence and offer copy actions rather than comment-edit callbacks.
 The repository Projects tab retains the repository route, tabs and
 code-operation pin and lists projects linked to that repository across all
 accessible metadata homes. It uses the same Community project rows, card/list
-control, Mine/Other groups, independent home continuations and explicit-refresh
+control, Mine/Other groups, independent home continuations and automatic-refresh
 rules. Opening a project enters its home-owned detail; Back restores the
 repository list. Caches include the repository scope so different repository
 lists cannot reuse each other's results. The installation hub remains a separate
@@ -1143,3 +1149,44 @@ a local provider clears displayed native Thread state while retaining any exact
 unknown request under its original repository and principal. Route restoration
 reconnects the requested repository before restoring independently pinned Thread
 metadata; a Thread route does not require a code operation selection.
+
+## Automatic application updates
+
+Active Projects, Tasks, Activity, Repositories, Threads, Agents, Reviews and
+current-head code views MUST reload committed data without a manual Refresh.
+Committed WorkStore receipts immediately reload the selected detail. SSE events
+coalesce through one serial refresh queue; ready/reset reconnect announcements
+compare with the retained head. Bounded periodic checks (five seconds while
+visible, at most two concurrent home reads) discover directory changes, other
+homes and missed events. Focus/visibility restoration queues an immediate read.
+The browser never publishes or reconciles heads during these reads.
+
+Updates preserve stable entity selections, unsent/reply/edit drafts, immutable
+code anchors and exact unknown command identities/preconditions. Task/project
+edit forms retain the versions captured when opened so a background update
+cannot turn an older draft into an overwrite of a newer edit. Historical code
+operations stay pinned while their independent collaboration roots advance.
+Current-head Files views follow an unambiguous selected bookmark/change target.
+Concurrent heads remain explicit and require a target choice. Updates replace
+history rather than adding navigation entries. Browser Back and Forward match
+canonical route URLs so internal optional fields cannot discard a known forward
+destination. Refreshed collections use fresh opaque continuations and replay
+bounded loaded windows rather than mixing roots. Expired sessions, newer routes
+and revoked access discard late responses.
+
+Repository file/conflict editing, mutation dialogs, in-flight commands and reads
+may defer a queued update; closing or finishing them resumes it automatically.
+Failures remain visible and retry automatically. Manual Refresh remains
+optional. Routine successful saves and new-data events MUST NOT display a
+refresh-required banner. Settings health, sync/search management and device
+folder lists refresh periodically while visible, preserving dirty forms and
+retained registration intent. Dirty search drafts retain the configuration
+revision from their first edit until accepted Save or Cancel, so periodic reads
+cannot adopt a newer revision for an older draft. Applying saved search
+configuration and replication controls remain explicit commands.
+
+Shared dialog teardown uses released Bits UI 2.19.4. Deferred focus callbacks
+must stop after their layer is destroyed; they cannot read disposed Svelte
+derived state when a successful file save replaces the editor. Runtime
+diagnostics remain enforced. Toolkit dependency updates qualify the complete
+browser UI consumer suites independently from native storage and services.

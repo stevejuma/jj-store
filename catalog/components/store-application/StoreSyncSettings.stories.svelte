@@ -80,14 +80,14 @@
   }}
 />
 <Story
-  name="Failure requires refresh"
+  name="Failure retains status recovery"
   args={{ failed: true }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
     await userEvent.click(c.getByRole("button", { name: "Pause sync" }));
     await expect(c.getByRole("button", { name: "Pause sync" })).toBeDisabled();
     await expect(
-      c.getByText(/Refresh sync status before retrying/),
+      c.getByText(/Sync status will be retried automatically/),
     ).toBeVisible();
     await userEvent.click(c.getByRole("button", { name: "Refresh sync" }));
     await expect(c.getByRole("button", { name: "Pause sync" })).toBeEnabled();

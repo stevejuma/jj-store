@@ -19,7 +19,7 @@ export function createWorkReader(
     select: (projectId, taskId) =>
       history.push({ ...history.route, page: "projects", projectId, taskId }),
     changed: () => {
-      data.status.refreshAvailable = true;
+      data.status.refreshAvailable = false;
     },
   });
   return {

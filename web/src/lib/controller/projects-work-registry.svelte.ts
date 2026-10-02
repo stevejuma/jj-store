@@ -6,7 +6,10 @@ import type {
   WorkBrowseTransport,
 } from "./projects-hub-types.js";
 import type { WorkController } from "./work-types.js";
-export function createProjectsWorkRegistry(context: ProjectsHubContext) {
+export function createProjectsWorkRegistry(
+  context: ProjectsHubContext,
+  changed = context.changed,
+) {
   const sources = new Map<string, WorkBrowseTransport>();
   const works = new SvelteMap<string, WorkController>();
   const selections = new Map<
@@ -44,7 +47,7 @@ export function createProjectsWorkRegistry(context: ProjectsHubContext) {
             projectsHub: true,
           });
         },
-        changed: context.changed,
+        changed,
       });
       works.set(home, controller);
     }

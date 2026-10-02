@@ -123,8 +123,8 @@ importers:
         specifier: ^8.20.0
         version: 8.20.0
       bits-ui:
-        specifier: 2.18.1
-        version: 2.18.1(@internationalized/date@3.12.4)(svelte@5.57.1)
+        specifier: 2.19.4
+        version: 2.19.4(@internationalized/date@3.12.4)(svelte@5.57.1)
       debug:
         specifier: ^4.4.3
         version: 4.4.3(supports-color@10.2.2)
@@ -1517,8 +1517,8 @@ packages:
       '@internationalized/date': ^3.8.1
       svelte: ^5.33.0
 
-  bits-ui@2.19.3:
-    resolution: {integrity: sha512-04COIqqht1h0YRnVTJVHy3+F8NhzS5x0eSM8eqvavaWmK/GLDTgYJW2h1CA//8hh9vSk4rG7rOvJ3QAIpCuYIw==}
+  bits-ui@2.19.4:
+    resolution: {integrity: sha512-HTnJAqqxYq6u30c9jrxMjsV4xZfJsUb/KEzmdiENLgC3LEAaSXdDscpx/EKyk48YKmzO2z1+GQ6r/UO1POA6Wg==}
     engines: {node: '>=20'}
     peerDependencies:
       '@internationalized/date': ^3.8.1
@@ -3513,7 +3513,7 @@ snapshots:
       '@lucide/svelte': 1.48.0(svelte@5.57.1)
       '@tanstack/svelte-virtual': 3.13.39(svelte@5.57.1)
       '@types/luxon': 3.7.5
-      bits-ui: 2.19.3(@internationalized/date@3.12.4)(svelte@5.57.1)
+      bits-ui: 2.19.4(@internationalized/date@3.12.4)(svelte@5.57.1)
       chrono-node: 2.10.1
       clsx: 2.1.1
       codemirror-lang-mermaid: 0.5.0
@@ -4460,7 +4460,7 @@ snapshots:
     transitivePeerDependencies:
       - '@sveltejs/kit'
 
-  bits-ui@2.19.3(@internationalized/date@3.12.4)(svelte@5.57.1):
+  bits-ui@2.19.4(@internationalized/date@3.12.4)(svelte@5.57.1):
     dependencies:
       '@floating-ui/core': 1.8.0
       '@floating-ui/dom': 1.8.0

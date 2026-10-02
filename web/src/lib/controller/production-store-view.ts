@@ -202,6 +202,7 @@ export function productionControllerSurface(
     globalSearch?: StoreController["globalSearch"];
     referenceSearch?: StoreController["referenceSearch"];
   },
+  pause?: StoreController["actions"]["setRefreshPaused"],
 ): StoreController {
   return {
     get threads() {
@@ -219,6 +220,6 @@ export function productionControllerSurface(
         options.now,
       );
     },
-    actions: options.actions,
+    actions: { ...options.actions, setRefreshPaused: pause },
   };
 }

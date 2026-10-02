@@ -49,6 +49,11 @@
     null,
   );
   let dialogOpen = $state(false);
+  const updatePause = `repository-action-${crypto.randomUUID()}`;
+  $effect(() => {
+    controller.actions.setRefreshPaused?.(updatePause, dialogOpen);
+    return () => controller.actions.setRefreshPaused?.(updatePause, false);
+  });
   const openConflictEditor = getContext<OpenConflictEditor | undefined>(
     conflictEditorKey,
   );

@@ -12,9 +12,9 @@ export const appearanceToolDiscussionPlay = async ({
       c.getByRole("button", { name: /Open profile menu for/ }),
     );
     await userEvent.click(body.getByRole("menuitem", { name: "Settings" }));
-    await userEvent.click(c.getByRole("button", { name: "Appearance" }));
+    await userEvent.click(await c.findByRole("button", { name: "Appearance" }));
     await userEvent.click(c.getByRole("radio", { name: layout }));
-    await userEvent.click(c.getByRole("button", { name: "Back to app" }));
+    await userEvent.click(c.getByRole("button", { name: "Back to jj-store" }));
   };
   const openReply = async () => {
     const tool = c.getByRole("group", { name: "apply_patch tool call" });

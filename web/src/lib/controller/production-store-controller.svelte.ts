@@ -1,3 +1,4 @@
+import { createProductionAutomaticRefresh } from "./production-automatic-refresh.js";
 import { connectRepositorySource } from "./production-repository-connect.js";
 import { createEntitySearch } from "./production-entity-search.js";
 import { createProductionRefresh } from "./production-store-refresh.js";
@@ -10,7 +11,6 @@ import { ApiError } from "../api/client.js";
 import type { StoreController } from "./contracts.js";
 
 import type { StoreDataSource } from "./native-data-source.js";
-import { followProductionStoreEvents } from "./production-store-events.js";
 import { createProductionStoreReader } from "./production-store-reader.svelte.js";
 import { createProductionStoreState } from "./production-store-state.svelte.js";
 import { createStoreRouteHistory } from "./store-route-history.svelte.js";
@@ -63,6 +63,7 @@ export function createProductionStoreController(
     projects,
     clear: clearProjects,
     stopEvents: stopProjectEvents,
+    poll: pollProjects,
   } = createProductionProjects(
     data,
     history,
@@ -70,6 +71,7 @@ export function createProductionStoreController(
     () => session,
     () => feed.abort(),
     options.fetcher,
+    () => automatic.request(),
   );
   const threadsIntegration = createThreadsIntegration({
     source: () => source,
@@ -122,6 +124,7 @@ export function createProductionStoreController(
   function disconnect(message = "", denied = false, preserveSession = false) {
     const repositoryStatus = data.status.repositories;
     version += 1;
+    automatic.reset();
     feed.abort();
     stopProjectEvents();
     discovery.abort();
@@ -163,12 +166,7 @@ export function createProductionStoreController(
         configure: mutations.configure,
         follow: (active) => {
           feed = new AbortController();
-          void followProductionStoreEvents(
-            active,
-            () => active === source,
-            data,
-            feed.signal,
-          );
+          automatic.follow(active, feed.signal);
         },
         connected: threadsIntegration.connected,
         projects,
@@ -208,12 +206,7 @@ export function createProductionStoreController(
     },
     follow: (active) => {
       feed = new AbortController();
-      void followProductionStoreEvents(
-        active,
-        () => active === source,
-        data,
-        feed.signal,
-      );
+      automatic.follow(active, feed.signal);
     },
   });
   const mutations = createProductionStoreMutations({
@@ -271,6 +264,21 @@ export function createProductionStoreController(
     },
   });
 
+  const automatic = createProductionAutomaticRefresh({
+    data,
+    projects,
+    threads,
+    pollProjects,
+    route: () => history.route,
+    source: () => source,
+    signal: lifecycle.signal,
+    active: () =>
+      data.storageReady &&
+      (data.accessMode === "local_trusted" || sessionToken !== null),
+    refresh: () => refresh(true),
+    report: (cause) => reportProductionStoreError(data, cause),
+  });
+
   startProductionStoreLifecycle({
     data,
     history,
@@ -295,5 +303,6 @@ export function createProductionStoreController(
       referenceSearch,
       actions: { ...actions, openThreads, openRoute },
     },
+    automatic.pause,
   );
 }

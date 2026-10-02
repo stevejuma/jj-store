@@ -153,9 +153,6 @@
     class="store-projects__scroll"
     bind:viewportRef={element}
   >
-    {#if controller.state.status.refreshAvailable}<p role="status">
-        Updates available. Refresh projects to view them.
-      </p>{/if}
     {#if hub.error}<p role="alert">{hub.error}</p>{/if}
     {#if work}<StoreWorkStatus {work} />{/if}
     {#each hub.commands.filter((command) => command.work !== work) as command (command.home)}

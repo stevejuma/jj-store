@@ -66,7 +66,7 @@ const windowPage = (data: unknown, next_cursor: string | null = null) => ({
   previous_cursor: null,
   next_cursor,
 });
-function referencesPage(
+export function referencesPage(
   next_cursor: string | null = null,
   state: { commit?: string; operation?: string; description?: string } = {},
 ) {

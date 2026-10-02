@@ -57,7 +57,7 @@
         <header class="store-settings__section-heading">
           <div>
             <h2 id="sync-overview">Upstream sync</h2>
-            <p>Status changes only when refreshed or a control completes.</p>
+            <p>Status updates automatically.</p>
           </div>
           <Button
             variant="outline"

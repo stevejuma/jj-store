@@ -1,8 +1,9 @@
 import { ApiError, pretty } from "../api/client.js";
+import { reloadProjectHomeWindow } from "./projects-home-read.js";
 import type { StoreRepositorySummary } from "./contracts.js";
 import type { ProjectHome, WorkBrowseTransport } from "./projects-hub-types.js";
 
-/** The sidebar keeps its own unfiltered, explicitly refreshed home snapshots. */
+/** The sidebar keeps its own unfiltered home snapshots and loaded window. */
 export function createProjectsNavigation(context: {
   repositories(): readonly StoreRepositorySummary[];
   transport(home: string): WorkBrowseTransport;
@@ -74,8 +75,15 @@ export function createProjectsNavigation(context: {
     try {
       await Promise.all(
         Array.from({ length: Math.min(2, homes.length) }, async () => {
-          while (index < homes.length && ticket === generation)
-            await read(homes[index++]!, ticket);
+          while (index < homes.length && ticket === generation) {
+            const home = homes[index++]!;
+            await reloadProjectHomeWindow(
+              home,
+              (more) => read(home, ticket, more),
+              refresh,
+              () => ticket === generation,
+            );
+          }
         }),
       );
     } finally {

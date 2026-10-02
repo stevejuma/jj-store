@@ -100,7 +100,7 @@ test("demo history exposes one native divergent change", async ({ page }) => {
   expect(await labelFor(alpha, "Git")).not.toBe(await labelFor(beta, "Git"));
 });
 
-test("external publication waits for explicit refresh and preserves selection", async ({
+test("external publication refreshes automatically and preserves selection", async ({
   page,
 }) => {
   const eventRequest = page.waitForRequest((request) =>
@@ -120,7 +120,6 @@ test("external publication waits for explicit refresh and preserves selection", 
     .poll(() => routeQuery(page.url()).get("thread"))
     .toMatch(/^[0-9a-f]{32}$/u);
 
-  const selectedHash = new URL(page.url()).hash;
   const selected = routeQuery(page.url());
   expect(selected.get("bookmark")).toBe("main");
   expect(selected.get("commit")).toMatch(/^[0-9a-f]{128}$/u);
@@ -129,13 +128,6 @@ test("external publication waits for explicit refresh and preserves selection", 
   expect(oldOperation).toMatch(/^[0-9a-f]{128}$/u);
 
   publishFromExternalCli();
-  const refresh = page.getByRole("button", {
-    name: "Refresh snapshot (new history available)",
-  });
-  await expect(refresh).toBeVisible();
-  expect(new URL(page.url()).hash).toBe(selectedHash);
-
-  await refresh.click();
   await expect
     .poll(() => routeQuery(page.url()).get("at_op"))
     .not.toBe(oldOperation);

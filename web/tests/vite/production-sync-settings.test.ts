@@ -46,7 +46,9 @@ test("sync controls require advertised configured service and explicit refresh a
   expect(f.control).toHaveBeenCalledWith("pause");
   f.control.mockRejectedValueOnce(new Error("unavailable"));
   await f.settings.controlSync("resume");
-  expect(f.data.syncSettings.error).toContain("Refresh sync status");
+  expect(f.data.syncSettings.error).toContain(
+    "Status will retry automatically",
+  );
   await f.settings.controlSync("resume");
   expect(f.control).toHaveBeenCalledTimes(2);
   await f.settings.refreshSyncSettings();

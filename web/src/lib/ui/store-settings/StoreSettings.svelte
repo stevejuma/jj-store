@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from "svelte";
   import { AppShell } from "@lapismd/design-core/shell";
   import type { StoreController } from "../../controller/contracts.js";
   import StoreAppearance from "../store-appearance/StoreAppearance.svelte";
@@ -16,6 +17,17 @@
     controller: StoreController;
     section: StoreSettingsSection;
   } = $props();
+  onMount(() => {
+    const timer = setInterval(() => {
+      if (
+        !document.hidden &&
+        section !== "appearance" &&
+        controller.state.status.connection === "connected"
+      )
+        void controller.actions.refreshSettings();
+    }, 5000);
+    return () => clearInterval(timer);
+  });
 </script>
 
 <AppShell.Body layout="regions" label="Store settings">

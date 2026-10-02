@@ -79,7 +79,7 @@ export function createProductionWorkspaceLinks(options: {
       data.workspacePath = "";
     } catch (cause) {
       if (!options.current(ticket, source) || request !== generation) return;
-      data.workspaceLinksError = `${(storeErrorMessage(cause) || "Folder link could not be confirmed").replace(/\.$/, "")}. Refresh folders to check the saved state before retrying.`;
+      data.workspaceLinksError = `${(storeErrorMessage(cause) || "Folder link could not be confirmed").replace(/\.$/, "")}. Saved folder state will be checked automatically.`;
     } finally {
       if (options.current(ticket, source) && request === generation)
         data.workspaceLinking = false;

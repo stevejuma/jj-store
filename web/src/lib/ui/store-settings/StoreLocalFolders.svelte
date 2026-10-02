@@ -78,7 +78,20 @@
     } catch (cause) {
       message = storeErrorMessage(cause);
     }
-    return () => manager?.close();
+    const timer = setInterval(() => {
+      if (
+        !document.hidden &&
+        manager &&
+        !busy &&
+        !pending &&
+        (mode === "settings" || open)
+      )
+        void run(list);
+    }, 5000);
+    return () => {
+      clearInterval(timer);
+      manager?.close();
+    };
   });
   function edit(id: string | null) {
     reconnect = id;

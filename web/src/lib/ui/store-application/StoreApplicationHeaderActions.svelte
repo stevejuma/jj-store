@@ -23,11 +23,9 @@
     {disabled}
   />
   <Button
-    variant={controller.state.status.refreshAvailable ? "outline" : "ghost"}
+    variant="ghost"
     size="icon-sm"
-    aria-label={controller.state.status.refreshAvailable
-      ? "Refresh snapshot (new history available)"
-      : "Refresh snapshot"}
+    aria-label="Refresh snapshot"
     title="Refresh snapshot"
     disabled={disabled || controller.state.status.connection !== "connected"}
     onclick={() => controller.actions.refresh()}

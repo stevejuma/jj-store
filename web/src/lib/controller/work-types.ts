@@ -48,6 +48,7 @@ export interface WorkController {
   readonly state: WorkState;
   restore(refresh?: boolean): Promise<void>;
   refresh(): Promise<void>;
+  invalidate?(): void;
   reset(): void;
   select(project: string | null, task?: string | null): Promise<void>;
   more(kind: "projects" | "tasks" | "comments"): Promise<void>;

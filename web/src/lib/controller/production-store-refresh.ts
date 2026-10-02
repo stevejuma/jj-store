@@ -1,4 +1,8 @@
 import {
+  storeLoadedWindows,
+  reloadStoreWindows,
+} from "./store-refresh-pages.js";
+import {
   clearProductionStoreView,
   type ProductionStoreState,
 } from "./production-store-state.svelte.js";
@@ -22,31 +26,80 @@ export function createProductionRefresh(options: {
 }) {
   const { data, history, projects, threads, reader, search } = options;
   return {
-    async refresh() {
+    async refresh(automatic = false) {
       if (await threads.refresh()) return;
       if (history.route.page === "projects") {
         await projects.refresh();
         data.status.refreshAvailable = false;
         return;
       }
-      const active = options.source();
-      options.stopFeed();
+      const active = options.source(),
+        route = history.route;
+      const oldHead = data.head,
+        counts = storeLoadedWindows(data);
+      const followedHead =
+        oldHead?.heads.length === 1 &&
+        route.snapshotOperationId === oldHead.heads[0];
+      if (!automatic) options.stopFeed();
       const captured = await active.snapshot(true);
       try {
-        if (options.source() !== active) return;
+        if (options.source() !== active || history.route !== route) return;
       } catch {
         return;
       }
       data.heads = [...captured.heads];
       data.head = captured;
-      const selected = data.heads.length === 1 ? data.heads[0]! : null;
+      const selected =
+        automatic && !followedHead
+          ? route.snapshotOperationId
+          : data.heads.length === 1
+            ? data.heads[0]!
+            : automatic
+              ? route.snapshotOperationId
+              : null;
+      const followedRef = data.choices.find(
+        (choice) =>
+          (route.bookmark
+            ? choice.kind === "bookmark" && choice.label === route.bookmark
+            : route.changeId
+              ? choice.value === `change:${route.changeId}`
+              : false) &&
+          choice.targets.length === 1 &&
+          choice.targets[0] === route.commitId,
+      );
+      const query = data.searchQuery;
       options.invalidate();
-      clearProductionStoreView(data);
-      search.clear();
+      if (!automatic) {
+        clearProductionStoreView(data);
+        search.clear();
+      } else {
+        data.pathPages.clear();
+        data.knownDirectories.clear();
+        data.fileTerms.clear();
+      }
+      if (automatic && followedHead && followedRef && route.page === "files")
+        history.replace({
+          ...route,
+          commitId: null,
+          changeId: route.bookmark ? null : route.changeId,
+        });
       history.refresh(selected);
       data.status.refreshAvailable = false;
-      options.follow(active);
+      if (!automatic) options.follow(active);
       if (selected) await reader.restorePage();
+      if (automatic && selected) {
+        if (["branches", "log", "oplog"].includes(history.route.page))
+          await reader.refreshCollaborationContext?.();
+        const retainedRoute = history.route;
+        await reloadStoreWindows(
+          data,
+          retainedRoute,
+          counts,
+          reader,
+          () => history.route === retainedRoute && options.source() === active,
+        );
+      }
+      if (automatic && query) await search.run(query);
     },
     async selectOperation(id: string) {
       if (!data.heads.includes(id)) return;

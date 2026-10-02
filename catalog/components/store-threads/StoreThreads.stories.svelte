@@ -343,10 +343,10 @@
       c.getByRole("button", { name: /Open profile menu for/ }),
     );
     await userEvent.click(body.getByRole("menuitem", { name: "Settings" }));
-    await userEvent.click(c.getByRole("button", { name: "Appearance" }));
+    await userEvent.click(await c.findByRole("button", { name: "Appearance" }));
     await userEvent.click(c.getByRole("radio", { name: "Focus" }));
     await userEvent.click(c.getByRole("radio", { name: "Larger" }));
-    await userEvent.click(c.getByRole("button", { name: "Back to app" }));
+    await userEvent.click(c.getByRole("button", { name: "Back to jj-store" }));
     const dialog = await body.findByRole("dialog", { name: "Replies" });
     await expect(within(dialog).getByRole("textbox")).toHaveTextContent(
       "Unsent reply draft",

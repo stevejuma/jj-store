@@ -250,7 +250,7 @@ test("multiple_heads_require_choice_and_events_preserve_the_selected_view", asyn
   ).toBeVisible();
   await expect(
     page.getByRole("button", {
-      name: "Refresh snapshot (new history available)",
+      name: "Refresh snapshot",
     }),
   ).toBeVisible();
   await page.getByRole("button", { name: "Toggle details" }).click();
@@ -489,10 +489,10 @@ test("index_preparation_retries_the_original_query_after_context_edits", async (
   await expect(page.getByRole("alert")).toHaveCount(0);
 });
 
-test("event_reconnect_resumes_and_reset_requires_explicit_refresh", async ({
+test("event_reconnect_resumes_and_reset_refreshes_automatically", async ({
   page,
 }) => {
-  await api(page);
+  const requests = await api(page);
   const resumes: (string | null)[] = [];
   const ready = sample("events");
   const id = `v1:${repo}:${ready.cursor.epoch}:${ready.cursor.position}`;
@@ -511,14 +511,11 @@ test("event_reconnect_resumes_and_reset_requires_explicit_refresh", async ({
   await expect(
     page.getByRole("option", { name: "main", exact: true }),
   ).toBeVisible();
-  await expect(
-    page.getByRole("button", {
-      name: "Refresh snapshot (new history available)",
-    }),
-  ).toBeVisible();
-  expect(resumes).toEqual([null, id]);
-  await page.getByRole("button", { name: /Refresh snapshot/ }).click();
-  await expect.poll(() => resumes.slice(2).includes(null)).toBe(true);
+  await expect.poll(() => resumes.slice(0, 2)).toEqual([null, id]);
+  await expect
+    .poll(() => requests.filter((path) => path === "snapshot").length)
+    .toBeGreaterThan(1);
+  expect(resumes.slice(1).every((cursor) => cursor === id)).toBe(true);
   await expect(
     page.getByRole("option", { name: "main", exact: true }),
   ).toBeVisible();

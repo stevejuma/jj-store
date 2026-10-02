@@ -16,17 +16,17 @@ event date. Tombstoned, hidden and conflicted root comments expose no old body.
 
 ## Requirements
 
-| ID           | Requirement                                                                                                                                                                                                                            |
-| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| JST-WORK-001 | Projects MUST have stable identities and link repositories by stable RepositoryId. Retired links preserve existing task targets; new targets require active membership.                                                                |
-| JST-WORK-002 | Tasks MUST have title, body, optional linked repository, optional same-project parent and open, in_progress, blocked or done state. Parent cycles and cross-project parents MUST be rejected.                                          |
-| JST-WORK-003 | Comments MUST support same-task threaded replies, versioned edits and tombstones with authenticated actors and immutable history.                                                                                                      |
-| JST-WORK-004 | WorkStore MUST use typed repository-bound immutable records, bounded persistent radix catalogs, an independent manifest root/version, manifest CAS, WAL and durable request receipts. Unselected objects MUST remain invisible.        |
-| JST-WORK-005 | Reads MUST pin the selected WorkStore root. Mutations MUST validate exact entity and project versions; identical retries and reconstructed-service status MUST return the original durable receipt.                                    |
-| JST-WORK-006 | Home repository read/write permissions MUST govern metadata; linked-code reads MUST separately authorize the target repository. CLI, RPC and HTTP MUST share owned service semantics.                                                  |
-| JST-WORK-007 | Cold recovery and manifest-last native copy MUST verify every selected and historical WorkStore closure. Unsupported origin replication MUST fail closed for a WorkStore home while retaining its existing origin ledger.              |
-| JST-WORK-008 | CLI and browser MUST expose project links, task state/hierarchy and comments. SSE announces freshness; explicit refresh changes displayed snapshots. Unknown command outcomes retain the request identity.                             |
-| JST-WORK-009 | Browse summaries MUST filter the complete authorized selected root before paging, derive counts and parent labels from that root, bind exact queries to opaque continuations and share the existing bounded WorkStore cursor registry. |
+| ID           | Requirement                                                                                                                                                                                                                                                                 |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| JST-WORK-001 | Projects MUST have stable identities and link repositories by stable RepositoryId. Retired links preserve existing task targets; new targets require active membership.                                                                                                     |
+| JST-WORK-002 | Tasks MUST have title, body, optional linked repository, optional same-project parent and open, in_progress, blocked or done state. Parent cycles and cross-project parents MUST be rejected.                                                                               |
+| JST-WORK-003 | Comments MUST support same-task threaded replies, versioned edits and tombstones with authenticated actors and immutable history.                                                                                                                                           |
+| JST-WORK-004 | WorkStore MUST use typed repository-bound immutable records, bounded persistent radix catalogs, an independent manifest root/version, manifest CAS, WAL and durable request receipts. Unselected objects MUST remain invisible.                                             |
+| JST-WORK-005 | Reads MUST pin the selected WorkStore root. Mutations MUST validate exact entity and project versions; identical retries and reconstructed-service status MUST return the original durable receipt.                                                                         |
+| JST-WORK-006 | Home repository read/write permissions MUST govern metadata; linked-code reads MUST separately authorize the target repository. CLI, RPC and HTTP MUST share owned service semantics.                                                                                       |
+| JST-WORK-007 | Cold recovery and manifest-last native copy MUST verify every selected and historical WorkStore closure. Unsupported origin replication MUST fail closed for a WorkStore home while retaining its existing origin ledger.                                                   |
+| JST-WORK-008 | CLI and browser MUST expose project links, task state/hierarchy and comments. Committed saves, SSE and periodic checks automatically refresh displayed browser snapshots while retaining drafts and pending commands. Unknown command outcomes retain the request identity. |
+| JST-WORK-009 | Browse summaries MUST filter the complete authorized selected root before paging, derive counts and parent labels from that root, bind exact queries to opaque continuations and share the existing bounded WorkStore cursor registry.                                      |
 
 ## Initial profile
 
@@ -72,7 +72,7 @@ checkpointing, recovery and manifest-last copy. Fake storage and real RustFS
 qualification are recorded separately. Transport gates additionally require home
 authorization, target-code authorization, executed HTTP contract capture, CLI
 publication over local RPC and unknown-outcome status. Browser gates cover
-project/task selection, state and hierarchy, comment interactions, explicit
+project/task selection, state and hierarchy, comment interactions, automatic
 refresh, accessibility and a cold startup. Visual baselines remain pending.
 
 ## Paged service reads
@@ -117,7 +117,7 @@ The sidebar reads unfiltered projects independently from main-view queries and
 nests active linked repositories. Reviews remain owned by ReviewStore and are
 read with separate target authorization and independent pinned pagination.
 Missing project metadata never broadens project review scope. Repository
-permission changes clear protected retained results on explicit refresh.
+permission changes clear protected retained results on automatic rediscovery.
 
 Projects navigation uses Community's FolderGit2 icon, restores the section gap
 above collapsible groups, and places each project expand/collapse control at the

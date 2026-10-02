@@ -33,7 +33,8 @@
     onControl={async (action) => {
       if (failed) {
         settings.state = "failed";
-        settings.error = "Unavailable. Refresh sync status before retrying.";
+        settings.error =
+          "Unavailable. Sync status will be retried automatically.";
         return;
       }
       if (settings.value?.worker)

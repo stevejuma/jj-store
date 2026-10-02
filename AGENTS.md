@@ -145,15 +145,16 @@ implements the user's explicit ownership decision and supersedes the parent
 shared-package rule for Community-derived presentation. Design Core and Mira
 remain released foundational dependencies; fix their deficiencies upstream.
 Inspect Community first and Design Core second before changing presentation.
-Credentials stay memory-only; SSE announces freshness and displayed snapshots
-change only on explicit refresh. Stories remain visual-pending; baseline
-approval is separate from interaction and accessibility acceptance. Manual-token
-authenticated repository discovery is implemented. Expanded replication
-pressure/fault qualification, its browser UI, cold two-instance real-RustFS
-qualification, archive/export tooling, additional deployment topologies, shared
-release qualification, controller dispatch, backup/restore, stock-JJ filesystem
-mirroring, continuous Git mirroring, Nostr export, other harnesses and CRDT
-semantics remain deferred.
+Credentials stay memory-only. Active views refresh automatically after committed
+saves, live events, reconnect and bounded periodic checks; explicit historical
+code selections, drafts and exact pending commands remain retained. Stories
+remain visual-pending; baseline approval is separate from interaction and
+accessibility acceptance. Manual-token authenticated repository discovery is
+implemented. Expanded replication pressure/fault qualification, its browser UI,
+cold two-instance real-RustFS qualification, archive/export tooling, additional
+deployment topologies, shared release qualification, controller dispatch,
+backup/restore, stock-JJ filesystem mirroring, continuous Git mirroring, Nostr
+export, other harnesses and CRDT semantics remain deferred.
 
 ## Local execution
 

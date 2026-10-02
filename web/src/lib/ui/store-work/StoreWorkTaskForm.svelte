@@ -31,6 +31,8 @@
     transport?: import("../../controller/projects-hub-types.js").WorkBrowseTransport;
   } = $props();
   const formId = $props.id();
+  const projectVersion = untrack(() => project.version);
+  const taskVersion = untrack(() => task?.version);
   const draft = untrack(() =>
     workDraft(
       work,
@@ -51,14 +53,14 @@
       body: draft.body,
       repository: draft.repository || null,
       parent: draft.parent || null,
-      expected_project_version: project.version,
+      expected_project_version: projectVersion,
     };
     await work.submit(
       task
         ? {
             command: "update_task",
             id: task.id,
-            expected_version: task.version,
+            expected_version: taskVersion!,
             state: draft.status,
             ...fields,
           }

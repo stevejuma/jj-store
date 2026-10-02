@@ -73,7 +73,7 @@ test("search configuration keeps explicit scope identities and validates duplica
     /2048/,
   );
 });
-test("save preserves draft through stale revision failure and refresh before retry", async () => {
+test("save preserves draft and its revision through stale failure and refresh", async () => {
   const f = fixture();
   await f.settings.refreshSearchSettings();
   f.settings.setSearchDraft({ exclude: "private" });
@@ -86,7 +86,7 @@ test("save preserves draft through stale revision failure and refresh before ret
   await f.settings.refreshSearchSettings();
   expect(f.data.searchSettings.draft?.exclude).toBe("private");
   await f.settings.saveSearchSettings();
-  expect(f.save).toHaveBeenLastCalledWith("b", {
+  expect(f.save).toHaveBeenLastCalledWith("a", {
     ...configuration,
     exclude_prefixes: ["private"],
   });
@@ -112,6 +112,34 @@ test("pending edits block apply and late replies cannot affect another repositor
   deliver(f.value);
   await pending;
   expect(f.data.searchSettings.value).toBeNull();
+});
+
+test("automatic status reads retain the revision that started a dirty search draft", async () => {
+  const f = fixture();
+  await f.settings.refreshSearchSettings();
+  f.settings.setSearchDraft({ exclude: "private" });
+  f.status.mockResolvedValueOnce({ ...f.value, revision: "b" });
+  await f.settings.refreshSearchSettings();
+  await f.settings.saveSearchSettings();
+  expect(f.save).toHaveBeenLastCalledWith("a", {
+    ...configuration,
+    exclude_prefixes: ["private"],
+  });
+});
+
+test("cancelling a search draft adopts the refreshed configuration revision", async () => {
+  const f = fixture();
+  await f.settings.refreshSearchSettings();
+  f.settings.setSearchDraft({ exclude: "private" });
+  f.status.mockResolvedValueOnce({ ...f.value, revision: "b" });
+  await f.settings.refreshSearchSettings();
+  f.settings.cancelSearchDraft();
+  f.settings.setSearchDraft({ exclude: "updated" });
+  await f.settings.saveSearchSettings();
+  expect(f.save).toHaveBeenLastCalledWith("b", {
+    ...configuration,
+    exclude_prefixes: ["updated"],
+  });
 });
 test("save and apply use independent revision checked protected requests", async () => {
   const fetcher = vi.fn<typeof fetch>(

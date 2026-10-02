@@ -7,9 +7,9 @@ export async function followProductionStoreEvents(
   isCurrent: () => boolean,
   data: ProductionStoreState,
   signal: AbortSignal,
+  changed: () => void = () => {},
 ) {
-  const awaitHead =
-    active.profile === "git_sha1_jj045" ? await active.snapshot() : null;
+  const awaitHead = await active.snapshot().catch(() => null);
   let after: string | undefined;
   let delay = 500;
   while (!signal.aborted && isCurrent()) {
@@ -19,28 +19,26 @@ export async function followProductionStoreEvents(
         if (signal.aborted || !isCurrent()) return;
         after = id;
         delay = 500;
-        if ("snapshot" in event && "profile" in event.snapshot) {
-          const retained =
-            data.head &&
-            "profile" in data.head &&
-            data.head.repository === active.repository
-              ? data.head
-              : awaitHead;
-          if (
-            retained &&
-            "profile" in retained &&
-            (pretty(retained.heads) !== pretty(event.snapshot.heads) ||
-              retained.metadata_commit !== event.snapshot.metadata_commit ||
-              String(retained.generation) !== String(event.snapshot.generation))
-          )
-            data.status.refreshAvailable = true;
-        } else if (event.type === "ready")
-          data.heads = [...event.snapshot.heads];
-        else data.status.refreshAvailable = true;
+        const retained =
+          data.head &&
+          ("repository" in data.head
+            ? data.head.repository
+            : data.head.repo_id) === active.repository
+            ? data.head
+            : awaitHead;
+        if (
+          event.type === "reset" ||
+          !("snapshot" in event) ||
+          pretty(retained) !== pretty(event.snapshot)
+        ) {
+          data.status.refreshAvailable = true;
+          changed();
+        }
       });
     } catch {
       if (signal.aborted || !isCurrent()) return;
     }
+    if (signal.aborted || !isCurrent()) return;
     data.status.live = "reconnecting";
     await new Promise((resolve) => setTimeout(resolve, delay));
     delay = Math.min(delay * 2, 10_000);

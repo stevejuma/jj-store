@@ -92,6 +92,9 @@ export function createProjectsReviews(context: {
         }));
         return;
       }
+      const counts = new Map(
+        homes.map((home) => [home.repository.id, home.threads.length]),
+      );
       homes = repositories
         .filter(
           (repo) => !route.workRepository || repo.id === route.workRepository,
@@ -108,8 +111,24 @@ export function createProjectsReviews(context: {
       let index = 0;
       await Promise.all(
         Array.from({ length: Math.min(2, homes.length) }, async () => {
-          while (index < homes.length && ticket === generation)
-            await read(homes[index++]!, ticket);
+          while (index < homes.length && ticket === generation) {
+            const home = homes[index++]!;
+            await read(home, ticket);
+            const count = Math.min(counts.get(home.repository.id) ?? 0, 4096),
+              seen = new Set<string>();
+            while (
+              refresh &&
+              home.cursor &&
+              !home.error &&
+              ticket === generation &&
+              home.threads.length < count
+            ) {
+              if (seen.has(home.cursor))
+                throw new Error("Repeated review cursor.");
+              seen.add(home.cursor);
+              await read(home, ticket, true);
+            }
+          }
         }),
       );
       if (ticket === generation) save(route);

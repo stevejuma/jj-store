@@ -625,3 +625,9 @@ Reaction presentation uses the owned Community wrapper and the permitted Design
 Core reaction bar. Removing an owned adapter also removes its provenance entry;
 the remaining Community components retain source attribution and no Community
 package dependency.
+
+Automatic browser refresh is governed by JST-UI-005, JST-UI-012, JST-UI-015,
+JST-WORK-008 and JST-LOCAL-004. It changes client read scheduling, not native
+publication, cursor authority or request identity. Evidence must distinguish
+current-head advancement, historical code pins, independent collaboration roots,
+retained drafts and unknown command intent, reconnect and session cancellation.
