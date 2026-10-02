@@ -157,6 +157,32 @@ semantics remain deferred.
 
 ## Local execution
 
+For UI work, use `pnpm dev:ui`: it reuses the existing native executable and
+complete development fixture, serves the current workspace through Vite HMR at
+`http://127.0.0.1:7460/`, and proxies `/v1` to the backend on port 7462. UI
+edits need no UI, Rust or RustFS rebuild. On a fresh workspace, run
+`pnpm dev:restart` once to build binaries and initialize the fixture; UI-only
+startup fails before stopping services when these prerequisites are missing.
+
+After Rust edits, run `pnpm dev:backend:build` then `pnpm dev:backend:restart`
+to replace only the backend while Vite stays running. `pnpm dev:restart` remains
+the full-stack rebuild/restart command and switches back to the built UI.
+`pnpm dev:stop` stops either mode and preserves state. `pnpm dev:reset` is the
+explicit destructive reset/reseed command. Do not use reset for ordinary UI
+iteration.
+
+The default fixture is the current workspace's ignored `.local/dev-demo`. When
+explicitly reusing another workspace's fixture, set
+`JJ_STORE_DEV_ROOT=/absolute/path/to/.local/dev-demo` for every development
+command. In UI mode, `JJ_STORE_DEV_SERVER` can select an existing backend
+executable; `JJ_STORE_DEV_RUSTFS_RUNTIME` selects an existing embedded-storage
+executable. `JJ_STORE_DEV_PORT` selects the browser port and
+`JJ_STORE_DEV_BACKEND_PORT` selects the HMR backend port (default: browser port
+plus two). Both listeners remain literal loopback. Preserve forwarded Host,
+Origin, Fetch Metadata and protocol headers; do not bypass API admission or add
+CORS. Vite's local HMR CSP is separate from production built-bundle/CSP
+acceptance, which must still use the built UI and its appropriate cold checks.
+
 Use explicit development binary paths. Do not replace the installed `jj`,
 install services, restart unrelated daemons, publish packages, or migrate
 existing repos as part of a development slice. Disposable test services must be

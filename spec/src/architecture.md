@@ -56,6 +56,13 @@ body lock.
 
 ## Requirements
 
+The local UI development profile separates Vite source serving from the existing
+native backend executable. Vite owns the browser loopback port and proxies
+versioned API requests to a separate literal-loopback backend port. The existing
+fixture remains authoritative and no build is required for UI edits. A
+full-stack rebuild/restart remains an explicit development command; production
+continues to serve the built asset manifest through Rust.
+
 The CLI has one collaboration input-admission module for both providers. Native
 reads and mutations consume only the typed RPC client, while filesystem commands
 retain the companion facade. An uncertain RPC command response is reported with

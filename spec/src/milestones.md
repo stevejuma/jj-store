@@ -132,7 +132,7 @@ shared-package release qualification does not alter those original Git gates.
 | M15.5       | In progress | M15.3                   | JST-COLLAB-016,JST-GOV-008,JST-UI-017                                                                                                                                                   | Owned Community channel/forum templates, Threads navigation and native workspace search                                        | Retain interaction/cold UI and qualify remaining full flow                                     | E-M15-011,E-M15-015,E-M15-016,E-M15-017,E-M15-018,E-M15-019,E-M15-021,E-M15-022,E-M15-025,E-M15-030,E-M15-031                                                                                                                                                                                                                                                  |
 | M15.6       | In progress | M15.3                   | JST-COLLAB-009,JST-COLLAB-010,JST-API-009,JST-ADAPT-007                                                                                                                                 | Derived canonical-source timeline/search and review integration                                                                | Qualify authorized joins                                                                       | E-M15-006,E-M15-020,E-M15-021,E-M15-022,E-M15-025                                                                                                                                                                                                                                                                                                              |
 | M15.7       | Planned     | M15.4,M15.5,M15.6       | JST-COLLAB-007,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                                                                                              | Cold real-RustFS/local full flow and runner qualification                                                                      | Retain native/local/cold evidence                                                              | -                                                                                                                                                                                                                                                                                                                                                              |
-| M16         | Partial     | M15.5                   | JST-UI-018                                                                                                                                                                              | Complete device Appearance and cold consumer qualification                                                                     | Complete source release and registry-only consumer qualification                               | E-UI-052,E-UI-053,E-UI-054,E-UI-055                                                                                                                                                                                                                                                                                                                            |
+| M16         | Partial     | M15.5                   | JST-UI-018,JST-GOV-009                                                                                                                                                                  | Complete device Appearance and cold consumer qualification                                                                     | Complete source release and registry-only consumer qualification                               | E-UI-052,E-UI-053,E-UI-054,E-UI-055,E-UI-056,E-UI-057                                                                                                                                                                                                                                                                                                          |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -25396,7 +25396,7 @@ and named tests are checked by the progress gate.
         "command": "pnpm test:governance",
         "result": "pass",
         "failures": 0,
-        "note": "jsh-directory-governance1.log: \u2714 rejects_unchanged_ledger_for_code (0.628042ms); \u2714 allows_documentation_without_execution_ledger (0.079ms); \u2139 pass 34"
+        "note": "jsh-directory-governance1.log: ✔ rejects_unchanged_ledger_for_code (0.628042ms); ✔ allows_documentation_without_execution_ledger (0.079ms); ℹ pass 34"
       },
       {
         "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7468 JJ_STORE_REAL_REPOSITORY=5ae8240e6d77fe8d0f6dd0b13f3d3874 JJ_STORE_REAL_RUNTIME=/tmp/jsh-cold-ijPU4c JJ_STORE_REAL_ROOT=/Users/stevejuma/code/lapismd/jj-store-projects-hub pnpm exec playwright test --config web/playwright.real.config.ts work-store.spec.ts",
@@ -37330,7 +37330,7 @@ and named tests are checked by the progress gate.
         "command": "CUA createBrowserTab(iab, reported local Op Log URL, visible=false); preview.getAXState()",
         "result": "pass",
         "failures": 0,
-        "note": "Fresh served app on 7460 displays 87e1cd5d\u20268fb9 and 20d6c008\u2026ef7c as separately labelled Copy full commit ID controls with the complete 40-character values; reported snapshot and all 5 operation rows retained."
+        "note": "Fresh served app on 7460 displays 87e1cd5d…8fb9 and 20d6c008…ef7c as separately labelled Copy full commit ID controls with the complete 40-character values; reported snapshot and all 5 operation rows retained."
       },
       {
         "command": "pnpm check:progress",
@@ -40697,6 +40697,129 @@ and named tests are checked by the progress gate.
     "formats": "Existing development runtime PID/resource metadata now records Appearance workspaceRoot/webRoot; asset manifest1 rebuilt. Native state, installation identity, fixture format1 and appearance preference jj-store.appearance.v1 unchanged.",
     "next": "Use Appearance workspace and refresh http://127.0.0.1:7460/ for subsequent UI changes. Persistent runtime is still main .local/dev-demo; rebuild Appearance web assets when changing the served UI. Keep unrelated main work separate.",
     "artifacts": "Private /tmp/jj-appearance-workspace-before.json and ready.json; /tmp/jj-appearance-workspace-{build,start}.log; temporary start helper /tmp/jj-appearance-workspace-start.mjs. New Appearance server remains running as requested; previous main server is stopped."
+  },
+  {
+    "id": "E-UI-057",
+    "tasks": ["M16"],
+    "date": "2026-10-02",
+    "kind": "vite-hmr-development-and-owned-stack-lifecycle",
+    "revision": "enclosing Jujutsu change nmxuylws",
+    "before": "Appearance workspace is clean above klylkzvs/86083510 and committed main nxoksqrt/ba74e1ea. Its owned built-UI service runs on 7460 against the retained main .local/dev-demo fixture. Main has unrelated unfinished Thread UI work in wtqyykvt. Existing dev:restart rebuilds the UI and native binaries; web:dev has no native proxy or coordinated lifecycle. The exact new development regression fails once with missing dev-ui-config.mjs before implementation.",
+    "files": [
+      ".gitignore",
+      "AGENTS.md",
+      "README.md",
+      "package.json",
+      "web/vite.config.ts",
+      "scripts/dev-demo-services.mjs",
+      "scripts/dev-demo-processes.mjs",
+      "scripts/dev-demo-processes.test.mjs",
+      "scripts/dev-ui-config.mjs",
+      "scripts/dev-ui-services.mjs",
+      "scripts/dev-ui-vite.mjs",
+      "scripts/dev-ui.mjs",
+      "scripts/dev-ui.test.mjs",
+      "scripts/dev-ui-native-fixture.mjs",
+      "scripts/dev-ui.acceptance.mjs",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/spec-governance.md",
+      "spec/src/verification.md",
+      "spec/src/milestones.md"
+    ],
+    "runs": [
+      {
+        "command": "jj --no-pager st; jj --no-pager diff --stat; jj --no-pager diff (Appearance and main inspection)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Preserved unrelated unfinished main change. Implementation is confined to the reused Appearance workspace; no landing or rebase onto unfinished main work."
+      },
+      {
+        "command": "node --test scripts/dev-ui.test.mjs (before, then exact rerun)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Before: one failing test file, missing new module, /tmp/jj-hmr-before.log. Exact rerun passes4/4 in /tmp/jj-hmr-exact.log; final target now includes occupied-port preservation and passes5/5. No fixture builds or seeding occur in UI startup."
+      },
+      {
+        "command": "node --test scripts/dev-demo*.test.mjs scripts/dev-ui.test.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final28/28. Covers existing demo fixture/profile behavior, proxy/configuration, invalid ports, occupied-port preflight, two-owner validation, stop preservation and backend-only teardown. /tmp/jj-hmr-dev-tests-qualified.log."
+      },
+      {
+        "command": "pnpm web:check (initial and qualified reruns)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Two initial implicit-any diagnostics in the shared JS configuration resolved with JSDoc; final0 errors/warnings. /tmp/jj-hmr-web-check-qualified.log."
+      },
+      {
+        "command": "pnpm web:test; pnpm check:architecture; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "Web70/70; architecture728 modules; ownership boundary passes. Complete direct UI test lane is warranted by shared Vite infrastructure. /tmp/jj-hmr-{web-unit,architecture,ownership}.log."
+      },
+      {
+        "command": "pnpm web:build",
+        "result": "pass",
+        "failures": 0,
+        "note": "Production bundle still builds with source-distributed Design Core rune modules excluded from dependency prebundling and supported Mira nested dependencies included, matching existing catalog configuration. Existing large-chunk advisory remains. No dependency aliases, patches or package changes. /tmp/jj-hmr-production-build.log."
+      },
+      {
+        "command": "pnpm test:dev:ui (initial cold attempts and diagnostics)",
+        "result": "fail",
+        "failures": 4,
+        "note": "Development attempts exposed fixture readiness missing Fetch Metadata headers; fixed fixture and launcher requests. Vite optimizer then crashed on source-distributed Design Core .svelte.ts type syntax, including an ECONNREFUSED retry; fixed supported dependency optimization configuration. Two browser waits incorrectly expected a repository label in a collapsed rail; replaced them with actual Local profile and native commit visibility checks. /tmp/jj-hmr-native-{cold,cold-retry,optimizer-fixed,browser-diagnostic}.log. These were separate harness/startup failures, all cleared by the final cold run."
+      },
+      {
+        "command": "JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs pnpm test:dev:ui",
+        "result": "pass",
+        "failures": 0,
+        "note": "Fresh isolated native fixture and fresh Vite/Chromium. Application bootstrap and repository UI render; browser POST commits native WorkStore project; native SSE ready and repository-changed stream through proxy; Svelte, TypeScript and CSS HMR retain document marker with zero reloads. Wrong Origin and direct-backend Host rejected; ignored .local sentinel returns403; backend restart retains Vite PID, snapshot and installation/fixture identity; stop ends both processes and preserves data. Browser runtime errors0. Only exact optional Gravatar requests are aborted in the fixture, producing expected network console errors. /tmp/jj-hmr-native-final-qualified.log."
+      },
+      {
+        "command": "JJ_STORE_UI_TEST_FULL_RESTART=1 CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store/target JJ_STORE_DEV_RUSTFS_RUNTIME=/Users/stevejuma/code/lapismd/jj-store/runtime/embedded-rustfs/target/debug/jj-store-rustfs pnpm test:dev:ui",
+        "result": "pass",
+        "failures": 0,
+        "note": "Cold native acceptance plus actual pnpm dev:restart transition from active HMR. Uses existing custom JJ copied into ignored Appearance target/debug/jj; package Cargo build and UI build run only for this explicit full-stack qualification. Old Vite/backend PIDs end, served bytes equal built index, native project and installation/fixture identity survive. Disposable services cleaned up. /tmp/jj-hmr-native-full-restart.log."
+      },
+      {
+        "command": "node /tmp/jj-hmr-live-switch.mjs",
+        "result": "pass",
+        "failures": 0,
+        "note": "Authorized interactive switch built->Vite with no UI/Rust/RustFS build or seed. Vite36218/browser7460; backend36217/API7462; storage36219. Appearance sources use persistent main .local/dev-demo. Before/after native snapshots, Thread directory, installation and fixture hashes equal; search ready. /tmp/jj-hmr-live-{before,ready}.json and switch.log. Interactive stack remains running."
+      },
+      {
+        "command": "pnpm exec prettier --write (changed files, initial attempt)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Including .gitignore failed parser inference; formatter rerun omits that non-formatable file. Source/docs formatting subsequently passes. /tmp/jj-hmr-format.log."
+      },
+      {
+        "command": "pnpm check:progress (first ledger validation)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Ledger initially listed unrelated outstanding M16 qualification in this passing slice remaining array. Moved that context to scope and retained M16 Partial; no check suppression or milestone status change. Final focused rerun passes."
+      },
+      {
+        "command": "pnpm exec prettier --write (all changed supported files); pnpm exec prettier --check (same files); pnpm spec:first; pnpm spec:validate; pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Canonical GOV-009, mapped chapters, verification row and enclosing-change ledger validated. Focused changed-file formatting passes. /tmp/jj-hmr-{format-complete,format-check,spec-first,spec-validate,progress}.log."
+      },
+      {
+        "command": "node --input-type=module (read-only final live readiness/state check and owned disposable cleanup)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both ownership markers valid; Vite client and LocalTrusted bootstrap present. Installation/fixture hashes, native snapshots and Thread directory still equal the captured before state after final cold verification. /tmp/jj-hmr-live-final.json. Removed stopped failed initial OS-temporary fixture FH2UYC."
+      }
+    ],
+    "result": "pass",
+    "scope": "Shared development process lifecycle and Vite startup configuration can affect both source-serving and built-UI modes, warranting the complete direct development harness suite, web unit/check/build lane and cold native HMR plus full-stack transition. No production Rust source or public native contract changes. Root aggregate spec:check/check/test/build, Rust tests, unrelated catalog/story suites, publication, installed CLI changes and visual baseline approval are out of scope under targeted verification policy. The explicit retained full-stack smoke invokes its package Rust build, distinct from build-free dev:ui. M16 remains Partial: prior foundation release, registry-only consumer, inherited suite/composer-CSP and visual baseline gates remain separate. This passing development slice is not production CSP or release qualification.",
+    "versions": "macOS ARM64; Node26.9.0; pnpm10.32.1; Vite8.3.2; Svelte5.57.1; JJ0.45.1; Rust1.98.1. Existing embedded RustFS binary and unchanged foundational package/lockfile versions.",
+    "formats": "Development runtime format2 adds mode=vite, apiOrigin, uiPid and uiRunner while retaining selected fixture paths. Separate ignored ui-server.toml removes web_root and uses public browser origin7460 with private backend7462. Vite preserves Host/Origin/Fetch Metadata/protocol headers without CORS/auth bypass and uses development-only HMR/CSS CSP plus private filesystem denials. Production asset manifest/CSP and native/storage/API/appearance formats are unchanged.",
+    "remaining": [],
+    "next": "Refresh the existing browser once to load the Vite client; then UI edits update live. Set JJ_STORE_DEV_ROOT=/Users/stevejuma/code/lapismd/jj-store/.local/dev-demo for every Appearance development command. Use dev:backend:build then dev:backend:restart after Rust edits, or dev:restart to rebuild/restart the full stack with built UI.",
+    "artifacts": "/tmp/jj-hmr-*.log; private /tmp/jj-hmr-live-{before,ready}.json. Disposable acceptance roots and probe files removed; interactive Vite/backend/storage remain running. No main landing."
   }
 ]
 ```

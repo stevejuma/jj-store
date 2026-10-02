@@ -42,6 +42,7 @@ failures and visual approval remain explicit independent gates.
 | JST-GOV-006 | Rust formatting MUST use the pinned toolchain component and tracked rustfmt.toml, and MUST be checked by both normal and specification checks.                                                                                                                                       |
 | JST-GOV-007 | Verification MUST remain within the changed layer and direct consumers by default; full suites require independent cross-layer or multi-consumer impact, shared infrastructure, release qualification, or an explicit user request, with the escalation reason recorded.             |
 | JST-GOV-008 | Community-derived presentation MUST be copied and maintained in this repository with complete source and license provenance; the ui-ownership plugin MUST reject runtime, build, test and type dependencies, external checkout links, substitutions and missing declared provenance. |
+| JST-GOV-009 | Local UI development MUST support source-serving HMR with an existing compiled loopback backend, unchanged API admission and preserved native fixture; owned stop, backend-only restart and full-stack rebuild/restart MUST remain available.                                        |
 
 ## Repository-owned presentation
 
@@ -180,6 +181,17 @@ annotation policy. Generic cold browser acceptance opts out by default; the
 exact annotation-policy browser gate explicitly opts in and proves that inline
 helpers render. Strict asset and deployment rejection regressions remain
 separate. API security policy and repository access guards are unchanged.
+
+UI development additionally provides a Vite HMR mode that reuses an existing
+complete fixture and executable without invoking UI, Rust or RustFS builds or
+seed commands. Missing prerequisites fail before stopping a running service.
+Runtime markers identify both owned processes; stop and full-stack restart
+validate their ownership before signaling either. Backend-only restart retains
+Vite. The existing full-stack rebuild/restart and explicit reset remain
+available. Cold development acceptance covers real API admission, streaming,
+HMR, backend restart and state preservation; built-bundle CSP qualification is
+retained separately. No development workflow publishes a package or replaces the
+installed CLI.
 
 The same fresh fixture includes native WorkStore samples through its authorized
 HTTP commands. The additive `dev:seed:work` command checks the matching owned
