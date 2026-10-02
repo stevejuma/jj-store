@@ -103,7 +103,31 @@
     await expect(
       c.queryByRole("switch", { name: "Prominent active tab" }),
     ).toBeNull();
+    const expectCircularAccent = async (name: string) => {
+      const button = c.getByRole("button", { name: `Use ${name} accent` });
+      await expect(button).toHaveAttribute("aria-pressed", "true");
+      const swatch = button.getBoundingClientRect();
+      const ring = button.querySelector("span")!.getBoundingClientRect();
+      await expect(ring.width).toBeGreaterThan(0);
+      await expect(Math.abs(swatch.width - swatch.height)).toBeLessThan(0.1);
+      await expect(Math.abs(ring.width - ring.height)).toBeLessThan(0.1);
+      await expect(
+        Math.abs(ring.x + ring.width / 2 - swatch.x - swatch.width / 2),
+      ).toBeLessThan(0.1);
+      await expect(
+        Math.abs(ring.y + ring.height / 2 - swatch.y - swatch.height / 2),
+      ).toBeLessThan(0.1);
+    };
+    await expectCircularAccent("Blue");
+    await userEvent.click(
+      c.getByRole("button", { name: "Use Neutral accent" }),
+    );
+    await expectCircularAccent("Neutral");
+    await expect(
+      c.getByRole("button", { name: "Use Blue accent" }),
+    ).toHaveAttribute("aria-pressed", "false");
     await userEvent.click(c.getByRole("button", { name: "Use Green accent" }));
+    await expectCircularAccent("Green");
     await userEvent.click(c.getByRole("switch", { name: "Glass background" }));
     const slider = c.getByRole("slider", { name: "Glass opacity" });
     await userEvent.click(slider);

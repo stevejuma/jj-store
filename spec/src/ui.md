@@ -139,6 +139,10 @@ unaffected. Browser glass reveals the application background, not the operating
 system desktop. Palette, font and preview assets are local under the existing
 strict CSP.
 
+Accent swatches keep circular selected rings centered inside their circular
+buttons, including after changing accents, on hover and at mobile widths in
+either color mode. Keyboard focus remains visible independently of selection.
+
 Prose composers use the resolved app background for their entire input surface
 (white in GitHub Light Default), with Buzz's light rounded border, no resting
 shell shadow, foreground action icons and circular upward-arrow send control.

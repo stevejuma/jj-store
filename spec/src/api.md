@@ -1261,3 +1261,8 @@ admission performs no folder work.
 Device appearance is browser-owned presentation state under JST-UI-018. It is
 independent of server settings revisions, repository operations and receipts.
 Appearance changes make no repository mutation or website metadata requests.
+
+The saved accent selects one circular swatch indicator in Appearance. Its ring
+stays centered and circular across color modes, hover and responsive layouts;
+keyboard focus uses its own visible outline. This presentation does not change
+the preference format or native API.

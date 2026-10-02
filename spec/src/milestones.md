@@ -132,7 +132,7 @@ shared-package release qualification does not alter those original Git gates.
 | M15.5       | In progress | M15.3                   | JST-COLLAB-016,JST-GOV-008,JST-UI-017                                                                                                                                                   | Owned Community channel/forum templates, Threads navigation and native workspace search                                        | Retain interaction/cold UI and qualify remaining full flow                                     | E-M15-011,E-M15-015,E-M15-016,E-M15-017,E-M15-018,E-M15-019,E-M15-021,E-M15-022,E-M15-025,E-M15-030,E-M15-031                                                                                                                                                                                                                                                  |
 | M15.6       | In progress | M15.3                   | JST-COLLAB-009,JST-COLLAB-010,JST-API-009,JST-ADAPT-007                                                                                                                                 | Derived canonical-source timeline/search and review integration                                                                | Qualify authorized joins                                                                       | E-M15-006,E-M15-020,E-M15-021,E-M15-022,E-M15-025                                                                                                                                                                                                                                                                                                              |
 | M15.7       | Planned     | M15.4,M15.5,M15.6       | JST-COLLAB-007,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                                                                                              | Cold real-RustFS/local full flow and runner qualification                                                                      | Retain native/local/cold evidence                                                              | -                                                                                                                                                                                                                                                                                                                                                              |
-| M16         | Partial     | M15.5                   | JST-UI-018,JST-GOV-009                                                                                                                                                                  | Complete device Appearance and cold consumer qualification                                                                     | Complete source release and registry-only consumer qualification                               | E-UI-052,E-UI-053,E-UI-054,E-UI-055,E-UI-056,E-UI-057,E-UI-058,E-UI-059                                                                                                                                                                                                                                                                                        |
+| M16         | Partial     | M15.5                   | JST-UI-018,JST-GOV-009                                                                                                                                                                  | Complete device Appearance and cold consumer qualification                                                                     | Complete source release and registry-only consumer qualification                               | E-UI-052,E-UI-053,E-UI-054,E-UI-055,E-UI-056,E-UI-057,E-UI-058,E-UI-059,E-UI-061                                                                                                                                                                                                                                                                               |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -41137,6 +41137,79 @@ and named tests are checked by the progress gate.
     "formats": "No native/API/storage/preference format changes. Registration names, full wrapping folder paths, readiness and exact Add/Reconnect/Remove callbacks retained. Search desired/effective revisions, dirty drafts, Save/Apply separation and worker controls unchanged. Availability Empty icons are decorative with descriptive text; recoverable errors remain alerts. Responsive rows stack actions below guidance on mobile.",
     "next": "Continue UI iteration on the running Appearance Vite service; landing onto main and visual baseline approval remain separate user actions.",
     "artifacts": "/tmp/jj-settings-rows-*.log/png and service probe; committed web/tests/real/settings-layout.spec.ts. Isolated browsers closed and persistent main fixture preserved."
+  },
+  {
+    "id": "E-UI-061",
+    "tasks": ["M16"],
+    "date": "2026-10-02",
+    "kind": "appearance-circular-accent-selection-ring",
+    "revision": "enclosing Jujutsu change xvyrtsyt",
+    "before": "Clean Appearance workspace xvyrtsyt above svtuyuxl/3e788232; main unrelated work preserved. User reports an oval Neutral selection ring. Live geometry reproduces a 34x24 ring inside its 36x36 button, centered but stretched horizontally. Selected span set height only. Community settings inspected first, then Design Core styling and owned Appearance source/provenance; owning UI/API and M16 reviewed.",
+    "files": [
+      "web/src/lib/ui/store-appearance/appearance.css",
+      "catalog/components/store-appearance/StoreAppearance.stories.svelte",
+      "spec/src/ui.md",
+      "spec/src/api.md",
+      "spec/src/verification.md",
+      "spec/src/milestones.md"
+    ],
+    "runs": [
+      {
+        "command": "jj --no-pager st; jj describe -m \"Keep Appearance accent selection rings circular\"; scoped source/spec/reference inspection; jj --no-pager diff --stat",
+        "result": "pass",
+        "failures": 0,
+        "note": "Reused clean Appearance workspace with live Vite HMR. No foundation or Community source/dependency changes. Exploratory lookups of spec/verification-map.json and scripts/spec-first.mjs were absent; repository package scripts and canonical verification.md supplied the actual gate/ledger mapping."
+      },
+      {
+        "command": "node /tmp/jj-accent-ring-probe.mjs before",
+        "result": "fail",
+        "failures": 1,
+        "note": "Exact live Neutral regression fails: ring34x24, button36x36, center offsets0. No runtime errors. /tmp/jj-accent-ring-before.json/png."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-appearance/StoreAppearance.stories.svelte -t AllControlsAndLocalLinks (before CSS fix)",
+        "result": "fail",
+        "failures": 1,
+        "note": "New rendered geometry regression reproduces10px aspect mismatch.1 failed story,3 unrelated stories skipped. /tmp/jj-accent-ring-story-before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-appearance/StoreAppearance.stories.svelte -t AllControlsAndLocalLinks (after CSS fix)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1 focused story passes with existing interaction/accessibility guards;3 unrelated stories skipped. Blue, Neutral and Green rings are square/centered; selection changes, saved Green accent and all existing controls retained. /tmp/jj-accent-ring-story-after.log."
+      },
+      {
+        "command": "node /tmp/jj-accent-ring-probe.mjs after",
+        "result": "pass",
+        "failures": 0,
+        "note": "All10 accent buttons select exclusively and render centered24x24 rings inside36x36 swatches. Actual hover retains circular geometry and centering; keyboard focus remains visible; light/dark desktop1351x988 and mobile390x844 pass. Settled scoped WCAG axe:0 violations;0 runtime errors. Isolated browser context closed; native fixture and user device preferences unchanged. Desktop/mobile screenshots inspected. /tmp/jj-accent-ring-after.json/png and after-mobile.png."
+      },
+      {
+        "command": "pnpm web:check; pnpm catalog:check; pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "Web/catalog report0 errors and0 warnings;129 catalog modules. Ownership validates21 chapters/147 requirements. /tmp/jj-accent-ring-{web-check,catalog-check,ownership}.log."
+      },
+      {
+        "command": "pnpm spec:first (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "SPEC-FIRST-MISSING mapped api.md chapter. Added browser accent presentation contract without changing API or preference formats; corrected gate is rerun below."
+      },
+      {
+        "command": "pnpm exec prettier --write web/src/lib/ui/store-appearance/appearance.css catalog/components/store-appearance/StoreAppearance.stories.svelte spec/src/ui.md spec/src/api.md spec/src/verification.md spec/src/milestones.md; pnpm exec prettier --check (same files); pnpm spec:first; pnpm spec:validate; pnpm check:progress (including final ledger update)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Focused formatting passes. Corrected spec-first passes2 protected files/3 mapped chapters; canonical validation passes5 validators/21 chapters/147 requirements; progress bookkeeping passes120 tasks. Same-change evidence and verification mapping updated with M16 Partial retained. /tmp/jj-accent-ring-{format,format-check,spec-first,spec-validate,progress}.log."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "UI-only private Appearance accent geometry and its directly affected story/browser presentation. Source-owned buttons use zero padding and centered grid; selected rings set equal width/height. Rust builds/tests, backend restarts, root aggregates, unrelated stories, native writes, fixture resets, publication, production built-CSP qualification and visual baseline approval are out of scope. M16 remains Partial with existing source-release, registry-only, inherited-suite/composer-CSP and visual gates separate. Vite HMR applies this fix without rebuilding the stack.",
+    "versions": "Node26.9.0; pnpm10.32.1; Vitest4.1.11. Existing Svelte, Vite, Storybook, Playwright and foundation dependencies unchanged.",
+    "formats": "No native/API/storage/preference changes. jj-store.appearance.v1 and the10 named accent values are retained. Swatch and ring color tokens, selection callbacks, hover scale and independent focus-visible outline unchanged.",
+    "next": "Continue UI iteration on the running Appearance Vite workspace; main landing and visual baseline approval remain separate user actions.",
+    "artifacts": "/tmp/jj-accent-ring-*.log/json/png and isolated live probe script. Persistent development fixture preserved."
   }
 ]
 ```

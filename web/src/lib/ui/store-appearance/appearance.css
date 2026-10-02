@@ -162,9 +162,13 @@
   background: var(--muted);
 }
 .appearance-accents button {
+  display: grid;
+  place-items: center;
   width: 36px;
   height: 36px;
   flex: none;
+  padding: 0;
+  box-sizing: border-box;
   border: 1px solid var(--border);
   border-radius: 50%;
   background: var(--store-swatch);
@@ -173,6 +177,7 @@
 }
 .appearance-accents button[aria-pressed="true"] span {
   display: block;
+  width: 24px;
   height: 24px;
   border: 3px solid var(--store-swatch-ink, white);
   border-radius: 50%;
