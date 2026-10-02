@@ -540,3 +540,9 @@ The additive local reconnect endpoint changes only device bindings. Registration
 journals bind a proposed companion identity before initialization; all journal
 records and result identities are checked on restart. Existing code and
 companion object formats remain unchanged.
+
+Physical working-file editing initially qualifies regular UTF-8 files on macOS
+ARM64 using descriptor-relative no-follow traversal and atomic private-file
+rename. It preserves executable mode and excludes hard-linked/symlink files and
+metadata paths. Save changes no JJ IDs, bookmarks, operation heads or companion
+refs; recorded-state commands and conversion remain separate gates.

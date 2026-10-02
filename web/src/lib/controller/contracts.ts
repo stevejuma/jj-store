@@ -249,6 +249,13 @@ export interface StoreController {
       fingerprint: string,
       bytes: Uint8Array,
     ): Promise<StoreConflictUpload>;
+    openWorkingFile?(
+      path: string,
+    ): Promise<import("./working-copy-types.js").WorkingFile>;
+    saveWorkingFile?(
+      selection: import("./working-copy-types.js").WorkingFileSelection,
+      contents: string,
+    ): Promise<import("./working-copy-types.js").WorkingFile>;
     setFileViewMode(mode: FileListingViewMode): void | Promise<void>;
     toggleDirectory(path: string): void | Promise<void>;
     openRoute?(route: StoreRoute): Promise<void>;

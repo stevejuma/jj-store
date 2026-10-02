@@ -4160,6 +4160,7 @@ dependencies = [
  "jj-store-model",
  "jj-store-object",
  "jj-store-wal",
+ "rustix",
  "schemars",
  "serde",
  "serde_json",

@@ -245,6 +245,7 @@ export function createProductionStoreController(
 
   const actions = createProductionStoreActions({
     data,
+    source: activeSource,
     history,
     reader,
     search,

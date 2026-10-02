@@ -456,3 +456,45 @@ test("local_review_reads_reject_foreign_companion_snapshots", async () => {
   await assert.rejects(source.reviewThreads(), /snapshot mismatch/);
   source.close();
 });
+
+test("physical_save_preserves_selection_and_never_retries_or_advances_code", async () => {
+  const selection = {
+    version: 1,
+    repository,
+    generation: 1,
+    workspace: "66".repeat(32),
+    path: "README.md",
+    fingerprint: "77".repeat(32),
+  };
+  const calls: { url: string; body: any }[] = [];
+  let physical = "unsnapshotted physical text";
+  const source = new HttpLocalStoreDataSource(repository, async (url, init) => {
+    const body = init?.body ? JSON.parse(String(init.body)) : null;
+    calls.push({ url: String(url), body });
+    if (String(url).endsWith("snapshot")) return json(head);
+    if (String(url).endsWith("working-copy/save")) {
+      physical = body.contents;
+      throw new TypeError("lost response after physical replacement");
+    }
+    return json({ selection, contents: physical });
+  });
+  await source.snapshot();
+  const file = await source.workingCopy.read("README.md");
+  assert.equal(file.contents, physical);
+  await assert.rejects(
+    source.workingCopy.save(file.selection, "saved draft"),
+    /lost response/,
+  );
+  assert.equal(
+    calls.filter((c) => c.url.endsWith("working-copy/save")).length,
+    1,
+  );
+  assert.deepEqual(calls[2].body, { selection, contents: "saved draft" });
+  assert.equal(
+    (await source.workingCopy.read("README.md")).contents,
+    "saved draft",
+  );
+  assert.deepEqual(await source.snapshot(), head);
+  assert.equal(calls.filter((c) => c.url.endsWith("snapshot")).length, 1);
+  source.close();
+});

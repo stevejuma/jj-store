@@ -227,7 +227,7 @@
   >
     <CommunityProjectsRepositoryBreadcrumb
       {controller}
-      {editing}
+      editing={editing && view.repository.profile !== "git_sha1_jj045"}
       bind:filename={editFilename}
     />
     {#if initialLoading}<CommunityProjectsRepositorySkeleton

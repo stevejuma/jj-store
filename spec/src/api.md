@@ -1256,3 +1256,13 @@ admission performs no folder work.
 Device appearance is browser-owned presentation state under JST-UI-018. It is
 independent of server settings revisions, repository operations and receipts.
 Appearance changes make no repository mutation or website metadata requests.
+
+Local POST `/v1/local/repos/{repo}/working-copy/read` takes a relative file
+path. It returns `WorkingFile` with a device selection and bounded physical
+UTF-8 text. POST `/working-copy/save` takes that exact selection and replacement
+text. `working_copy_edit` capability is independent of recorded
+`code_mutations`. Both routes validate current folder identity and generation;
+Save revalidates the selected physical identity before replacement. Stale file
+selections use `stale_working_file`; invalid, unsupported, unavailable and
+oversized files retain separate responses. Physical Save has no native operation
+or companion selection in its result and requires no RustFS runtime.

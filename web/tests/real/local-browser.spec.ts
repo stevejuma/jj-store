@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { execFileSync } from "node:child_process";
-import { readFileSync, renameSync } from "node:fs";
+import { readFileSync, renameSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 const fixture = process.env.JJ_STORE_LOCAL_BROWSER_FIXTURE
   ? JSON.parse(readFileSync(process.env.JJ_STORE_LOCAL_BROWSER_FIXTURE, "utf8"))
@@ -412,5 +412,83 @@ test("local_folder_reconnect_and_removal_preserve_code_and_collaboration", async
   } finally {
     renameSync(moved, original);
     fixture.folder = original;
+  }
+});
+
+test("physical working copy saves retain drafts and leave recorded state unchanged", async ({
+  page,
+}) => {
+  const before = state();
+  const path = fixture.folder + "/README.md";
+  const physical = "# Physical file\n\nUnsnapshotted before browser editing.\n";
+  const draft = "# Physical saved draft\n\nSaved separately from Snapshot.\n";
+  writeFileSync(path, physical);
+  try {
+    await page.goto(
+      `/#/repos/${fixture.repository}/files?at_op=${fixture.operation}&file=README.md`,
+    );
+    await expect(
+      page.getByRole("group", { name: "File display" }),
+    ).toBeVisible();
+    await page
+      .getByRole("button", { name: "Working copy", exact: true })
+      .focus();
+    await page.keyboard.press("Enter");
+    const editor = page.getByRole("region", {
+      name: "Working copy README.md",
+      exact: true,
+    });
+    await expect(editor).toBeVisible();
+    const text = editor.locator(".cm-content");
+    await expect(text).toContainText("Unsnapshotted before browser editing.");
+    await expect(page.getByLabel("File name", { exact: true })).toHaveCount(0);
+    await text.fill(draft);
+    const violations = (
+      await new AxeBuilder({ page }).include(".store-file-editor").analyze()
+    ).violations;
+    expect(violations).toEqual([]);
+    await page.route(
+      "**/working-copy/save",
+      async (route) => {
+        await route.fetch();
+        await route.abort("failed");
+      },
+      { times: 1 },
+    );
+    await editor.getByRole("button", { name: "Save changes" }).click();
+    await expect(editor.getByRole("alert")).toContainText(
+      "Save outcome is unknown",
+    );
+    await expect(text).toContainText("Physical saved draft");
+    await expect(
+      editor.getByRole("button", { name: "Save changes" }),
+    ).toBeDisabled();
+    await editor.getByRole("button", { name: "Check working file" }).click();
+    await expect(editor.getByRole("status")).toContainText(
+      "matches your draft",
+    );
+    expect(readFileSync(path, "utf8")).toBe(draft);
+    const after = state();
+    expect(after.operations).toBe(before.operations);
+    expect(after.bookmarks).toBe(before.bookmarks);
+    expect(after.companion).toBe(before.companion);
+    await text.fill("Keep this stale draft");
+    writeFileSync(path, "External edit must survive");
+    await editor.getByRole("button", { name: "Save changes" }).click();
+    await expect(editor.getByRole("alert")).toContainText(
+      "working file changed",
+    );
+    await expect(text).toContainText("Keep this stale draft");
+    expect(readFileSync(path, "utf8")).toBe("External edit must survive");
+    await editor.getByRole("button", { name: "Cancel", exact: true }).click();
+    await page.getByRole("button", { name: "Source", exact: true }).click();
+    await expect(
+      page.getByText("# Filesystem repository", { exact: true }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("region", { name: "Working copy README.md" }),
+    ).toHaveCount(0);
+  } finally {
+    writeFileSync(path, before.readme);
   }
 });

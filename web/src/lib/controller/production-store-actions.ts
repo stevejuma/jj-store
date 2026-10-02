@@ -14,6 +14,7 @@ type Reader = ReturnType<typeof createProductionStoreReader>;
 
 export function createProductionStoreActions(options: {
   data: ProductionStoreState;
+  source(): import("./native-data-source.js").StoreDataSource;
   history: History;
   reader: Reader;
   search: ReturnType<typeof createProductionStoreSearch>;
@@ -36,6 +37,24 @@ export function createProductionStoreActions(options: {
   invalidate: () => void;
 }): StoreController["actions"] {
   return {
+    async openWorkingFile(path) {
+      const source = options.source();
+      if (!source.workingCopy)
+        throw new Error("Working copy editing is unavailable.");
+      const file = await source.workingCopy.read(path);
+      if (source !== options.source())
+        throw new DOMException("Session changed", "AbortError");
+      return file;
+    },
+    async saveWorkingFile(selection, contents) {
+      const source = options.source();
+      if (!source.workingCopy)
+        throw new Error("Working copy editing is unavailable.");
+      const file = await source.workingCopy.save(selection, contents);
+      if (source !== options.source())
+        throw new DOMException("Session changed", "AbortError");
+      return file;
+    },
     connect: options.connect,
     disconnect: options.disconnect,
     destroy: options.destroy,

@@ -9,6 +9,36 @@ export class HttpLocalStoreDataSource
   extends HttpLocalCodeDataSource
   implements StoreDataSource
 {
+  readonly workingCopy: import("./working-copy-types.js").WorkingCopyTransport =
+    {
+      read: async (path) =>
+        this.validateWorkingFile(
+          await this.read<Model<"WorkingFile">>("working-copy/read", { path }),
+          path,
+        ),
+      save: async (selection, contents) =>
+        this.validateWorkingFile(
+          await this.client.request<Model<"WorkingFile">>("working-copy/save", {
+            selection,
+            contents,
+          }),
+          selection.path,
+        ),
+    };
+  private validateWorkingFile(value: Model<"WorkingFile">, path: string) {
+    const selection = value.selection;
+    if (
+      selection.version !== 1 ||
+      selection.repository !== this.repository ||
+      selection.path !== path ||
+      BigInt(selection.generation) <= 0n ||
+      !/^[0-9a-f]{64}$/.test(selection.workspace) ||
+      !/^[0-9a-f]{64}$/.test(selection.fingerprint) ||
+      new TextEncoder().encode(value.contents).length > 256 * 1024
+    )
+      throw new ApiError("snapshot_mismatch");
+    return value;
+  }
   readonly work: HttpLocalWorkDataSource = new HttpLocalWorkDataSource(
     this.client,
     () => this.metadata(),

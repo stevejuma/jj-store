@@ -4,6 +4,7 @@ mod agents;
 mod events;
 mod reviews;
 mod work;
+mod working_copy;
 use axum::{
     Json,
     extract::{Path, State as ExtractState},
@@ -66,6 +67,7 @@ pub(crate) struct Capabilities {
     pub review_agent_anchors: bool,
     pub search: bool,
     pub code_mutations: bool,
+    pub working_copy_edit: bool,
     pub conversion: bool,
 }
 // One inventory owns executable methods, request bodies and response contracts.
@@ -91,6 +93,7 @@ pub(super) fn router() -> Router<Arc<State>> {
     }
     endpoints!(register)
         .merge(work::router())
+        .merge(working_copy::router())
         .merge(agents::router())
         .merge(reviews::router())
         .merge(events::router())
@@ -354,6 +357,7 @@ async fn capabilities(
         review_agent_anchors: false,
         search: false,
         code_mutations: false,
+        working_copy_edit: true,
         conversion: false,
     })
 }
@@ -553,5 +557,6 @@ pub(crate) fn document(document: &mut crate::contract::Document) {
     work::document(document);
     agents::document(document);
     reviews::document(document);
+    working_copy::document(document);
     events::document(document);
 }

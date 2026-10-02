@@ -275,13 +275,13 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
     ] {
         assert!(paths.contains_key(path), "missing integrated route: {path}");
     }
-    assert_eq!(paths.len(), 89);
+    assert_eq!(paths.len(), 91);
     assert_eq!(
         paths
             .keys()
             .filter(|name| name.starts_with("/v1/local/"))
             .count(),
-        22
+        24
     );
     assert_eq!(
         paths

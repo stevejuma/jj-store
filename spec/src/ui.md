@@ -1118,3 +1118,12 @@ a local provider clears displayed native Thread state while retaining any exact
 unknown request under its original repository and principal. Route restoration
 reconnects the requested repository before restoring independently pinned Thread
 metadata; a Thread route does not require a code operation selection.
+
+For qualified local folders, `Working copy` explicitly loads the physical file
+into the existing code editor. Recorded Source/Preview continues using the
+pinned JJ operation. The physical editor identifies its scope and offers Save
+changes, Cancel and explicit readback after an uncertain response. It does not
+request a change description or silently Snapshot. Stale/error feedback retains
+the draft; readback reports whether the physical text matches it.
+Navigation/session changes suppress late results. Physical editing cannot rename
+or create files in this initial qualification.

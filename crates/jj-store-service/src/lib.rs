@@ -45,3 +45,5 @@ pub mod search_management;
 pub mod content_search;
 
 mod thread_directory;
+
+pub mod working_copy;

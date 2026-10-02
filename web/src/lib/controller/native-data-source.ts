@@ -52,6 +52,7 @@ export type StoreReviewCommandRequest = Exact<
 
 export interface StoreDataSource {
   readonly repository: string;
+  readonly workingCopy?: import("./working-copy-types.js").WorkingCopyTransport;
   readonly threads?: import("./thread-types.js").ThreadTransport;
   readonly profile?: RepositoryProfile;
   readonly searchSettings?: import("./search-settings.js").SearchSettingsTransport;

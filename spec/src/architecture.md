@@ -545,3 +545,9 @@ Local Appearance acceptance in main uses the existing ignored foundational
 package hook against landed Design Core source. Its chat typography and native
 scrolling extensions are absent from registry 0.2.0; portable manifest/lockfile
 ranges remain registry-based and registry-only qualification stays separate.
+
+The service-owned physical working-file facade uses safe descriptor-relative
+filesystem operations through rustix. It owns bounded text admission, device
+selection fingerprints and atomic Save; it has no upstream JJ imports and does
+not compose a repository transaction. Local HTTP admission supplies the verified
+folder binding. Native mutation/storage boundaries remain independent.

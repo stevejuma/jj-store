@@ -829,3 +829,8 @@ Filesystem browser startup admits concurrent snapshot, code and WorkStore reads
 through a bounded worker queue with the configured request deadline. Ordinary
 parallel page loading does not require a native service. Cold isolated CLI/HTTP
 fixtures qualify this startup boundary separately from provider-only tests.
+
+The local browser physical-file Save is independent from CLI code commands. CLI
+`--ignore-working-copy` reads must observe unchanged operations, bookmarks and
+companion selections after Save; later explicit foreground Snapshot remains the
+only way those physical edits enter recorded code state.

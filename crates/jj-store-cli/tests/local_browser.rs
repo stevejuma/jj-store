@@ -1,5 +1,7 @@
 #[path = "local_browser/reviews.rs"]
 mod review_acceptance;
+#[path = "local_browser/working_copy.rs"]
+mod working_copy_acceptance;
 use jj_store_cli::local_browser::LocalFolders;
 use jj_store_service::local_browser::FolderProvider;
 use std::{fs, process::Command};
@@ -1324,14 +1326,17 @@ async fn filesystem_runtime_registers_and_reads_without_native_storage() {
         ready["snapshot"]["metadata_commit"]
     );
     drop(stream);
-    let review_samples = review_acceptance::qualify(
-        &endpoint,
-        id,
-        other["binding"]["repository"].as_str().unwrap(),
-        &folder,
-        snapshot["metadata_commit"].clone(),
-    )
-    .await;
+    let mut review_samples = working_copy_acceptance::qualify(&endpoint, id, &folder).await;
+    review_samples.extend(
+        review_acceptance::qualify(
+            &endpoint,
+            id,
+            other["binding"]["repository"].as_str().unwrap(),
+            &folder,
+            snapshot["metadata_commit"].clone(),
+        )
+        .await,
+    );
     if let Ok(path) = std::env::var("JJ_STORE_LOCAL_BROWSER_CONTRACT_CAPTURE") {
         let sample = |path: &str, method: &str, data: Value| json!({"path":path,"method":method,"status":200,"media":"application/json","data":data});
         fs::write(

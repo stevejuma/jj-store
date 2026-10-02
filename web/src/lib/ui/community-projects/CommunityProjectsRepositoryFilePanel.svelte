@@ -1,4 +1,10 @@
 <script lang="ts">
+  import StoreWorkingFileEditor from "../store-working-copy/StoreWorkingFileEditor.svelte";
+  import { createWorkingFileEdit } from "../store-working-copy/working-copy-editor.svelte.js";
+  import {
+    describeFileStats,
+    fileEditUnavailable,
+  } from "../../projects/repository-file-stats.js";
   import { resolveDiffLanguage } from "@lapismd/design-core/diff";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as ButtonGroup from "@lapismd/design-core/shadcn/button-group";
@@ -47,6 +53,17 @@
     onToggleFileTree: () => void;
   } = $props();
 
+  const working = createWorkingFileEdit(
+    () => controller,
+    () => blob?.path,
+    () => {
+      editing = true;
+      fileView = "edit";
+    },
+  );
+  const localEditing = $derived(
+    controller.state.repository.profile === "git_sha1_jj045",
+  );
   let fileView = $state<"preview" | "source" | "edit">("preview");
   let displayedPath = $state("");
   let editSessionPath = $state("");
@@ -55,33 +72,12 @@
     blob ? (resolveDiffLanguage(blob.path) ?? "plaintext") : "plaintext",
   );
   const fileStats = $derived(blob ? describeFileStats(blob) : null);
-  const selectedBookmark = $derived(
-    controller.state.bookmarks.find(
-      (candidate) => candidate.name === controller.state.route.bookmark,
-    ),
-  );
-  const editUnavailable = $derived.by(() => {
-    const view = controller.state;
-    if (!view.authenticated)
-      return "Connect with repository write access to edit this file.";
-    if (!view.mutation.available.includes("edit_file"))
-      return "This repository server does not support file editing.";
-    if (!view.route.bookmark || !selectedBookmark)
-      return "Choose a local bookmark to edit this file.";
-    if (
-      selectedBookmark.targets.length !== 1 ||
-      view.targets.length !== 1 ||
-      selectedBookmark.targets[0] !== view.targets[0]
-    )
-      return "Choose the bookmark's single current target to edit this file.";
-    if (!blob || blob.binary || blob.too_large || blob.contents === undefined)
-      return "Only bounded UTF-8 text files can be edited.";
-    return "";
-  });
+  const editUnavailable = $derived(fileEditUnavailable(controller.state, blob));
 
   $effect(() => {
     if (selectedPath !== displayedPath) {
       displayedPath = selectedPath;
+      working.clear();
       if (!editing) fileView = isMarkdown ? "preview" : "source";
     }
   });
@@ -115,28 +111,9 @@
     filename = blob?.path ?? selectedPath;
     draftContents = blob?.contents ?? "";
     editSessionPath = "";
+    working.clear();
     editing = false;
     fileView = isMarkdown ? "preview" : "source";
-  }
-
-  function describeFileStats(blob: ProjectForgeBlobResponse): string {
-    if (blob.binary) {
-      return "Binary file · Size unavailable";
-    }
-    const contents = blob.contents ?? "";
-    const normalized = contents.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
-    const contentWithoutTerminalNewline = normalized.endsWith("\n")
-      ? normalized.slice(0, -1)
-      : normalized;
-    const lines = contentWithoutTerminalNewline
-      ? contentWithoutTerminalNewline.split("\n")
-      : [];
-    const lineCount = lines.length;
-    const locCount = lines.filter((line) => line.trim().length > 0).length;
-    const byteCount = new TextEncoder().encode(contents).length;
-    const lineLabel = lineCount === 1 ? "line" : "lines";
-    const byteLabel = byteCount === 1 ? "Byte" : "Bytes";
-    return `${lineCount} ${lineLabel} (${locCount} loc) · ${byteCount} ${byteLabel}`;
   }
 </script>
 
@@ -247,19 +224,35 @@
                   size="sm"
                   data-selected={fileView === "edit"}
                   aria-pressed={fileView === "edit"}
-                  title={editUnavailable || "Edit file"}
-                  disabled={Boolean(editUnavailable)}
+                  title={localEditing
+                    ? "Edit the physical working file"
+                    : editUnavailable || "Edit file"}
+                  disabled={localEditing
+                    ? !working.available() || working.pending
+                    : Boolean(editUnavailable)}
                   onclick={() => {
                     if (editing) fileView = "edit";
+                    else if (localEditing) void working.open();
                     else beginEditing();
                   }}
                 >
                   <PencilIcon data-icon="inline-start" aria-hidden="true" />
-                  Edit
+                  {localEditing ? "Working copy" : "Edit"}
                 </Button>
               </ButtonGroup.Root>
             </header>
-            {#if editing}
+            {#if working.error}<p role="alert">{working.error}</p>{/if}
+            {#if editing && working.file}
+              {#key working.file}
+                <StoreWorkingFileEditor
+                  {controller}
+                  file={working.file}
+                  mode={fileView}
+                  {isMarkdown}
+                  onCancel={cancelEditing}
+                />
+              {/key}
+            {:else if editing}
               <StoreFileEditor
                 {controller}
                 {blob}

@@ -1552,6 +1552,40 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/v1/local/repos/{repo}/working-copy/read": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay. */
+    post: operations["local_working_file_read"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/local/repos/{repo}/working-copy/save": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay. */
+    post: operations["local_working_file_save"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/v1/local/repos/{repo}/events": {
     parameters: {
       query?: never;
@@ -4289,6 +4323,7 @@ export interface components {
       review_agent_anchors: boolean;
       search: boolean;
       code_mutations: boolean;
+      working_copy_edit: boolean;
       conversion: boolean;
     };
     LocalCodeQueryResponse: {
@@ -5117,6 +5152,20 @@ export interface components {
       /** Format: int64 */
       accepted_at_millis: number;
       command: components["schemas"]["ReviewCommandResultV1"] | null;
+    };
+    WorkingFile: {
+      selection: components["schemas"]["WorkingFileSelection"];
+      contents: string;
+    };
+    WorkingFileSelection: {
+      /** Format: uint32 */
+      version: number;
+      repository: components["schemas"]["RepositoryId"];
+      /** Format: uint64 */
+      generation: number;
+      workspace: string;
+      path: string;
+      fingerprint: string;
     };
     LocalFreshnessEvent:
       | {
@@ -26326,6 +26375,288 @@ export interface operations {
           [name: string]: unknown;
         };
         content?: never;
+      };
+    };
+  };
+  local_working_file_read: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        repo: components["schemas"]["RepositoryId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          path: string;
+        };
+      };
+    };
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["WorkingFile"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description stale_work, cursor_reset, intent_conflict or work_replication_unsupported. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  local_working_file_save: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        repo: components["schemas"]["RepositoryId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          selection: {
+            /** Format: uint32 */
+            version: number;
+            repository: string;
+            /** Format: uint64 */
+            generation: number;
+            workspace: string;
+            path: string;
+            fingerprint: string;
+          };
+          contents: string;
+        };
+      };
+    };
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["WorkingFile"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description stale_work, cursor_reset, intent_conflict or work_replication_unsupported. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
       };
     };
   };

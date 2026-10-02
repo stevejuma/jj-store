@@ -724,3 +724,16 @@ hooks, record agents, reconcile heads or advance the displayed selection.
 Local folder reconnect is a revision-checked device-binding update only. First
 Add journals the proposed repository identity before initialization; retries
 cannot initialize another identity after interruption.
+
+## Physical local file saves
+
+The LocalTrusted working-copy facade binds an admitted physical folder and
+device generation. Reads and Save do not call a JJ transaction or initialize
+metadata. Save accepts only a selected existing regular UTF-8 file, bounded to
+256 KiB, and checks its exact fingerprint under serialized browser admission
+before replacing it with a flushed private same-filesystem temporary file under
+`.jj`. Descriptor-relative no-follow traversal rejects metadata paths and
+symlink escape. File mode is retained and the parent is flushed. A stale
+selection retains the original file; a transport loss remains uncertain until
+explicit readback. No code-command journal or repository receipt is fabricated
+for physical Save. Snapshot is independently authorized.
