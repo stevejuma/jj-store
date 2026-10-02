@@ -1382,3 +1382,10 @@ snapshot and stable session, retains the full AgentStore closure, and fails
 closed on mismatched identity. Independent bounded reads for session and tool
 comments do not replace the route or another selected review. Existing request,
 receipt, authorization and unknown-outcome semantics apply unchanged.
+
+Page section disclosure preferences use versioned, bounded device-local layout
+storage with opaque scope/section keys and boolean flags. They restore only
+presentation and do not restore repository access, entity selection, code pins,
+read snapshots, drafts or commands. Rename/filter/operation changes do not reset
+saved sections; native task/review identities isolate detail choices. Shell
+toggle styling retains the existing accessible expansion and action contracts.

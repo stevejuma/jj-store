@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { sectionDisclosure } from "../disclosure-layout.svelte.js";
   // CommunityProjectsPullRequestReview/DetailSurface, adapted native anchors (Apache-2.0).
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { ScrollArea } from "@lapismd/design-core/shadcn/scroll-area";
@@ -51,10 +52,15 @@
     view.repository.permission === "write" ||
       view.repository.permission === "admin",
   );
-  let descriptionOpen = $state(true),
-    filesOpen = $state(false),
-    commitsOpen = $state(false),
-    activityOpen = $state(true);
+  const section = (id: string, fallback = true) =>
+    sectionDisclosure(
+      () => ["review", detail?.thread.thread_id ?? "", id],
+      fallback,
+    );
+  const description = section("description"),
+    files = section("files", false),
+    commits = section("commits", false),
+    activity = section("activity");
 </script>
 
 {#snippet chevron(open: boolean)}{#if open}<ChevronDownIcon
@@ -176,12 +182,12 @@
           >{/if}
         <Collapsible.Root
           class="community-projects__review-section"
-          bind:open={descriptionOpen}
+          bind:open={description.open}
         >
           <Collapsible.Trigger
             class="community-projects__review-section-trigger"
             ><span>Description</span>{@render chevron(
-              descriptionOpen,
+              description.open,
             )}</Collapsible.Trigger
           >
           <Collapsible.Content
@@ -196,13 +202,13 @@
         </Collapsible.Root>
         <Collapsible.Root
           class="community-projects__review-section community-projects__review-section--files"
-          bind:open={filesOpen}
+          bind:open={files.open}
         >
           <Collapsible.Trigger
             class="community-projects__review-section-trigger community-projects__review-section-trigger--files"
             ><span>Files changed</span>{@render chevron(
-              filesOpen,
-            )}{#if filesOpen && context}<span
+              files.open,
+            )}{#if files.open && context}<span
                 class="community-projects__review-section-count"
                 >{context.files.length}</span
               >{/if}</Collapsible.Trigger
@@ -218,12 +224,12 @@
         </Collapsible.Root>
         <Collapsible.Root
           class="community-projects__review-section"
-          bind:open={commitsOpen}
+          bind:open={commits.open}
         >
           <Collapsible.Trigger
             class="community-projects__review-section-trigger"
             ><span>Commits</span>{@render chevron(
-              commitsOpen,
+              commits.open,
             )}</Collapsible.Trigger
           >
           <Collapsible.Content
@@ -234,12 +240,12 @@
         </Collapsible.Root>
         <Collapsible.Root
           class="community-projects__review-section"
-          bind:open={activityOpen}
+          bind:open={activity.open}
         >
           <Collapsible.Trigger
             class="community-projects__review-section-trigger"
             ><span>Activity</span>{@render chevron(
-              activityOpen,
+              activity.open,
             )}</Collapsible.Trigger
           >
           <Collapsible.Content>

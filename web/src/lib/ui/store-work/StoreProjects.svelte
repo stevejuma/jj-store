@@ -221,6 +221,7 @@
               </StoreWorkTaskDetail>{/key}
           {:else}{#each hub.homes as home}<StoreWorkOwnershipGroups
                 rows={home.tasks}
+                home={home.repository.id}
                 isMine={(row) =>
                   Boolean(
                     home.repository.principal &&

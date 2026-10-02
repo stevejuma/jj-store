@@ -44,6 +44,7 @@
   <div class="community-projects__collection-groups">
     {#each [true, false] as mine}
       {#if count(mine)}<StoreWorkCollection
+          id={`${kind}:${mine ? "mine" : "other"}`}
           title={mine ? "Mine" : `Other ${kind}`}
           count={count(mine)}
           Icon={kind === "tasks" ? ListTodoIcon : FolderKanbanIcon}

@@ -111,6 +111,7 @@
   provideStoreEntityContext(
     () => controller,
     () => workspaceBlocked,
+    storage,
   );
   const current = $derived(controller.state.route);
   let searchOpen = $state(false);

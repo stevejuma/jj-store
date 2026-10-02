@@ -714,11 +714,12 @@ relationships in the browser.
 
 M4.13 layout state uses versioned `jj-store/layout/v1` keys. Production uses
 browser localStorage only for shell sidebars, per-page Column Canvas geometry,
-collapse/close state and file-tree width; repository identities, selections,
-credentials, cursors and content never enter that storage. Invalid, unavailable
-or quota-limited storage falls back to defaults without blocking browsing.
-Storybook injects a fresh memory store and a dedicated remount interaction
-proves restoration without sharing state between stories.
+collapse/close state, file-tree width and page-section disclosure flags;
+repository identities, selections, credentials, cursors and content never enter
+that storage. Invalid, unavailable or quota-limited storage falls back to
+defaults without blocking browsing. Storybook injects a fresh memory store and a
+dedicated remount interaction proves restoration without sharing state between
+stories.
 
 Bookmark cards, reference choices, revision and operation graphs, changed-file
 lists, directory tables and the repository file tree use measured virtual rows
@@ -1101,9 +1102,23 @@ invent code changes. Files reuse the public diff composer and changed-file
 listing with line counts from each exact native file diff, commits retain native
 navigation, and Activity composes the shared commit/agent timeline with the
 existing threaded discussion and workflow events. Task disclosure headings have
-no leading padding and align with body content. Only Description opens by
-default; Subtasks and Activity start collapsed and reset for each newly selected
-task.
+no leading padding and align with body content. Description and Activity open by
+default; Subtasks start collapsed for a newly selected task without a saved
+choice. Collection groups on Projects and Repository tabs, and task/review
+Description, Subtasks, Files, Commits, Activity and recorded-agent context
+sections, and the Op Log operation summary, retain explicit open/closed choices
+across tab navigation, remount and reload. Versioned disclosure storage contains
+at most1024 opaque section keys and boolean flags; keys distinguish the page,
+owning scope and stable group/entity section, never display names, filters or
+operation pins. Unavailable, malformed or quota-limited storage falls back to
+the existing defaults and remains interactive. Stories inject isolated storage.
+Opening an explicit task-comment link still reveals Activity and its target; the
+composer remains mounted independently of that disclosure.
+
+The shell header's left-sidebar and details toggles use the released Button
+token API for transparent resting chrome in both expansion states. Their
+accessible expanded attributes, icons, size, pointer hover and keyboard focus
+remain intact.
 
 When a legacy project route carries a home code-operation pin, the hub retains
 that full pin in its optional `at_op` field while WorkStore reads remain

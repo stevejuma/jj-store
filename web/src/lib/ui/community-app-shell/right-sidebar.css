@@ -40,3 +40,10 @@
   > [data-ui-part="sidebar-header"] {
   border-block-end: 1px solid var(--border);
 }
+
+/* Public Button tokens keep sidebar chrome neutral in both expansion states. */
+.community-app-shell__sidebar-action {
+  --ui-button-background: transparent;
+  --ui-button-foreground: var(--sidebar-foreground, var(--foreground));
+  display: inline-flex;
+}

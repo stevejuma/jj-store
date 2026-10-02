@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { sectionDisclosure } from "../disclosure-layout.svelte.js";
   import { untrack } from "svelte";
   import { pretty } from "../../api/client.js";
   import { Button } from "@lapismd/design-core/shadcn/button";
@@ -9,7 +10,7 @@
   import * as Collapsible from "@lapismd/design-core/shadcn/collapsible";
   import ChevronDownIcon from "@lucide/svelte/icons/chevron-down";
   import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
-  let open = $state(false);
+
   let {
     hub,
     home,
@@ -23,6 +24,10 @@
     snapshot: unknown;
     repositoryName: (id: string) => string;
   } = $props();
+  const disclosure = sectionDisclosure(
+    () => ["task", task.id, "subtasks"],
+    false,
+  );
   let rows = $state<Model<"WorkTaskSummary">[]>([]),
     cursor = $state<string | null>(null),
     error = $state(""),
@@ -73,10 +78,13 @@
 </script>
 
 <section aria-label="Subtasks">
-  <Collapsible.Root class="community-projects__task-activity" bind:open>
+  <Collapsible.Root
+    class="community-projects__task-activity"
+    bind:open={disclosure.open}
+  >
     <Collapsible.Trigger class="community-projects__task-section-trigger"
       ><span>Subtasks</span>
-      {#if open}<ChevronDownIcon
+      {#if disclosure.open}<ChevronDownIcon
           class="community-projects__task-section-chevron"
           aria-hidden="true"
         />{:else}<ChevronRightIcon

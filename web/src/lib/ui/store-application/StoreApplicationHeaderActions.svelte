@@ -31,12 +31,14 @@
     onclick={() => controller.actions.refresh()}
     ><RefreshCwIcon aria-hidden="true" /></Button
   >{/if}
-<Button
-  variant="ghost"
-  size="icon-sm"
-  aria-label="Toggle details"
-  {disabled}
-  aria-expanded={detailsOpen}
-  onclick={toggleDetails}
-  ><CommunitySidebarToggleIcon side="right" expanded={detailsOpen} /></Button
->
+<span class="community-app-shell__sidebar-action">
+  <Button
+    variant="default"
+    size="icon-sm"
+    aria-label="Toggle details"
+    {disabled}
+    aria-expanded={detailsOpen}
+    onclick={toggleDetails}
+    ><CommunitySidebarToggleIcon side="right" expanded={detailsOpen} /></Button
+  >
+</span>

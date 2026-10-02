@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { sectionDisclosure } from "../disclosure-layout.svelte.js";
   // @community-copy CommunityProjects.svelte task Activity (Apache-2.0), native comments.
   import { focusNativeMessage } from "../focus-message.js";
   import StoreWorkEmpty from "./StoreWorkEmpty.svelte";
@@ -36,9 +37,13 @@
     untrack(() => workDraft(work, `comments:${view.task?.id ?? ""}`)),
   );
   let removing = $state<string | null>(null);
-  let activityOpen = $state(true);
+  const activityDisclosure = sectionDisclosure(() => [
+    "task",
+    view.task?.id ?? "",
+    "activity",
+  ]);
   $effect(() => {
-    if (view.focusCommentId) activityOpen = true;
+    if (view.focusCommentId) activityDisclosure.open = true;
   });
   const rows = $derived(workCommentRows(view.comments));
   const members = $derived([
@@ -126,11 +131,11 @@
   <section aria-label="Task activity">
     <Collapsible.Root
       class="community-projects__task-activity"
-      bind:open={activityOpen}
+      bind:open={activityDisclosure.open}
     >
       <Collapsible.Trigger class="community-projects__task-section-trigger">
         <span>Activity</span>
-        {#if activityOpen}<ChevronDownIcon
+        {#if activityDisclosure.open}<ChevronDownIcon
             class="community-projects__task-section-chevron"
             aria-hidden="true"
           />{:else}<ChevronRightIcon

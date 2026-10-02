@@ -32,6 +32,7 @@
       aria-busy={home.loading}
     >
       <StoreWorkCollection
+        id={`reviews:${home.repository.id}`}
         title={home.repository.name}
         count={home.threads.length}
         Icon={GitBranchIcon}

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { sectionDisclosure } from "../disclosure-layout.svelte.js";
   // @community-copy CommunityProjects.svelte selectedTask detail (Apache-2.0), native metadata.
   import type { Snippet } from "svelte";
   import { ScrollArea } from "@lapismd/design-core/shadcn/scroll-area";
@@ -55,7 +56,11 @@
   const disabled = $derived(
     busy || work.state.loading || work.state.writing || !!work.state.pending,
   );
-  let descriptionOpen = $state(true);
+  const description = sectionDisclosure(() => [
+    "task",
+    task?.id ?? "",
+    "description",
+  ]);
   const target = $derived(repositories.find((r) => r.id === task?.repository));
 </script>
 
@@ -166,12 +171,12 @@
               </dl>
               {#if task.body}<Collapsible.Root
                   class="community-projects__task-description"
-                  bind:open={descriptionOpen}
+                  bind:open={description.open}
                 >
                   <Collapsible.Trigger
                     class="community-projects__task-section-trigger"
                     ><span>Description</span
-                    >{#if descriptionOpen}<ChevronDownIcon
+                    >{#if description.open}<ChevronDownIcon
                         class="community-projects__task-section-chevron"
                         aria-hidden="true"
                       />{:else}<ChevronRightIcon

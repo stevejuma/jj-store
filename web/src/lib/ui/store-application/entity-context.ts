@@ -1,3 +1,4 @@
+import { provideDisclosureLayout } from "../disclosure-layout.svelte.js";
 import type { StoreController } from "../../controller/contracts.js";
 import { storeRouteToHash } from "../../controller/store-route-codec.js";
 import { emptyRoute } from "../../controller/global-search-presentation.js";
@@ -12,7 +13,9 @@ import type { ComposerSlashKind } from "../community-chat-composer/composer-slas
 export function provideStoreEntityContext(
   controller: () => StoreController,
   blocked: () => boolean,
+  storage?: Storage,
 ) {
+  provideDisclosureLayout(storage, () => controller().state.route);
   provideCommunityEntityNavigation({
     open: (link) => {
       if (!blocked()) void controller().actions.openRoute?.(link.route);

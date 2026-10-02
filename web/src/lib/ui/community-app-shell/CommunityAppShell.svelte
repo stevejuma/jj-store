@@ -104,24 +104,26 @@
       style={`--community-app-shell-header-main-start: ${headerMainStart}px; --community-app-shell-header-main-width: ${headerMainWidth}px`}
     >
       <div class="community-app-shell__header-start">
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-sm"
-          aria-label={controller.left.collapsed
-            ? "Expand left sidebar"
-            : "Collapse left sidebar"}
-          aria-expanded={!controller.left.collapsed}
-          data-ui-part="sidebar-toggle"
-          data-side="left"
-          data-state={controller.left.collapsed ? "collapsed" : "expanded"}
-          title={controller.left.collapsed
-            ? "Expand left sidebar"
-            : "Collapse left sidebar"}
-          onclick={() => controller.left.toggle()}
-        >
-          <CommunitySidebarToggleIcon expanded={!controller.left.collapsed} />
-        </Button>
+        <span class="community-app-shell__sidebar-action">
+          <Button
+            type="button"
+            variant="default"
+            size="icon-sm"
+            aria-label={controller.left.collapsed
+              ? "Expand left sidebar"
+              : "Collapse left sidebar"}
+            aria-expanded={!controller.left.collapsed}
+            data-ui-part="sidebar-toggle"
+            data-side="left"
+            data-state={controller.left.collapsed ? "collapsed" : "expanded"}
+            title={controller.left.collapsed
+              ? "Expand left sidebar"
+              : "Collapse left sidebar"}
+            onclick={() => controller.left.toggle()}
+          >
+            <CommunitySidebarToggleIcon expanded={!controller.left.collapsed} />
+          </Button>
+        </span>
 
         <div
           class="community-app-shell__history"

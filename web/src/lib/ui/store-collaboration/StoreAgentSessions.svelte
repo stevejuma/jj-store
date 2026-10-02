@@ -21,6 +21,7 @@
 >
   <ScrollArea type="hover" class="store-agent-sessions__scroll">
     <StoreWorkCollection
+      id="agents"
       title="Agent sessions"
       count={state.agentSessions.length}
       Icon={BotIcon}

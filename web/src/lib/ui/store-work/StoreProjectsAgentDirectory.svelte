@@ -79,6 +79,7 @@
       aria-busy={home.loading}
     >
       <StoreWorkCollection
+        id={`agents:${home.repository.id}`}
         title={home.repository.name}
         count={home.sessions.length}
         Icon={GitBranchIcon}
