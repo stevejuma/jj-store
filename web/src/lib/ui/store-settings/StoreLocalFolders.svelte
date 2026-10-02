@@ -5,6 +5,8 @@
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { Input } from "@lapismd/design-core/shadcn/input";
   import { DialogFrame } from "@lapismd/design-core/forms/dialog";
+  import StoreSettingsEmpty from "./StoreSettingsEmpty.svelte";
+  import FolderGitIcon from "@lucide/svelte/icons/folder-git-2";
   import GitBranchIcon from "@lucide/svelte/icons/git-branch";
   import PlusIcon from "@lucide/svelte/icons/plus";
   import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
@@ -33,6 +35,11 @@
     pending = $state(false),
     busy = $state(false),
     message = $state("");
+  const visibleBindings = $derived(
+    bindings.filter(
+      (binding) => !repository || binding.repository === repository,
+    ),
+  );
   async function run(action: () => Promise<void>) {
     if (busy) return;
     busy = true;
@@ -113,64 +120,85 @@
     aria-labelledby="local-folders-heading"
   >
     <header><h2 id="local-folders-heading">Git-backed JJ folders</h2></header>
-    <p>
-      Register an existing JJ folder for browsing and projects. Add initializes
-      companion metadata when it is missing. Search, code edits, reviews,
-      conversion and sync are unavailable.
-    </p>
-    <div class="store-settings__actions">
-      <Button
-        variant="outline"
-        disabled={busy || !manager}
-        onclick={() => edit(null)}
-        ><PlusIcon aria-hidden="true" />{pending
-          ? "Resume Add"
-          : "Add folder"}</Button
-      >
-      <Button
-        variant="outline"
-        disabled={busy || !manager}
-        onclick={() => run(list)}
-        ><RefreshCwIcon aria-hidden="true" />Refresh folders</Button
-      >
-      {#if pending}<Button
+    <div class="store-settings__action-row">
+      <div>
+        <strong>Register a folder</strong>
+        <p>
+          Register an existing JJ folder for browsing and projects. Add
+          initializes companion metadata when it is missing. Search, code edits,
+          reviews, conversion and sync are unavailable.
+        </p>
+      </div>
+      <div class="store-settings__actions">
+        <Button
           variant="outline"
-          disabled={busy}
-          onclick={() =>
-            run(async () => {
-              const result = await manager!.status();
-              message = result?.status ?? "No pending registration";
-              if (result?.status === "committed") await changed();
-            })}>Check registration</Button
-        >{/if}
-    </div>
-    {#each bindings.filter((b) => !repository || b.repository === repository) as binding (binding.repository)}
-      <div class="store-settings__section">
-        <strong>{binding.name}</strong>
-        <p>{binding.path}</p>
-        <p>{binding.availability.replaceAll("_", " ")}</p>
-        <div class="store-settings__actions">
-          <Button
+          disabled={busy || !manager}
+          onclick={() => edit(null)}
+          ><PlusIcon aria-hidden="true" />{pending
+            ? "Resume Add"
+            : "Add folder"}</Button
+        >
+        <Button
+          variant="outline"
+          disabled={busy || !manager}
+          onclick={() => run(list)}
+          ><RefreshCwIcon aria-hidden="true" />Refresh folders</Button
+        >
+        {#if pending}<Button
             variant="outline"
-            disabled={busy || pending}
-            onclick={() => edit(binding.repository)}
-            ><GitBranchIcon aria-hidden="true" />Reconnect folder</Button
-          >
-          <Button
-            variant="outline"
-            disabled={busy || pending}
+            disabled={busy}
             onclick={() =>
               run(async () => {
-                await manager!.remove(binding.repository);
-                if (controller.state.repository.id === binding.repository)
-                  controller.actions.disconnect();
-                await changed();
-              })}><UnlinkIcon aria-hidden="true" />Remove registration</Button
-          >
-        </div>
+                const result = await manager!.status();
+                message = result?.status ?? "No pending registration";
+                if (result?.status === "committed") await changed();
+              })}>Check registration</Button
+          >{/if}
       </div>
-    {/each}
-    <p>Removing a registration preserves the folder and project links.</p>
+    </div>
+    {#if visibleBindings.length}<dl
+        class="store-settings__rows store-settings__rows--controls"
+      >
+        {#each visibleBindings as binding (binding.repository)}
+          <div>
+            <dt>
+              <strong>{binding.name}</strong>
+              <p class="store-settings__row-description">{binding.path}</p>
+              <p class="store-settings__row-description">
+                {binding.availability.replaceAll("_", " ")}
+              </p>
+            </dt>
+            <dd class="store-settings__actions">
+              <Button
+                variant="outline"
+                disabled={busy || pending}
+                onclick={() => edit(binding.repository)}
+                ><GitBranchIcon aria-hidden="true" />Reconnect folder</Button
+              >
+              <Button
+                variant="outline"
+                disabled={busy || pending}
+                onclick={() =>
+                  run(async () => {
+                    await manager!.remove(binding.repository);
+                    if (controller.state.repository.id === binding.repository)
+                      controller.actions.disconnect();
+                    await changed();
+                  })}
+                ><UnlinkIcon aria-hidden="true" />Remove registration</Button
+              >
+            </dd>
+          </div>
+        {/each}
+      </dl>
+    {:else if !busy && !message}<StoreSettingsEmpty
+        Icon={FolderGitIcon}
+        title="No Git-backed JJ folders"
+        description="Add an existing JJ folder to browse its code and projects."
+      />{/if}
+    <p class="store-settings__empty">
+      Removing a registration preserves the folder and project links.
+    </p>
     {#if message}<p role="status">{message}</p>{/if}
   </section>
 {/if}

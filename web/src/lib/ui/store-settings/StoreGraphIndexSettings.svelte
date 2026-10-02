@@ -1,5 +1,6 @@
 <script lang="ts">
   import NetworkIcon from "@lucide/svelte/icons/network";
+  import StoreSettingsEmpty from "./StoreSettingsEmpty.svelte";
   import * as Alert from "@lapismd/design-core/shadcn/alert";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import type { StoreController } from "../../controller/contracts.js";
@@ -31,7 +32,11 @@
   </header>
   <p>Text search has a separate index, managed in Search settings.</p>
   {#if !supported}
-    <p class="store-settings__empty">Graph preparation is not available.</p>
+    <StoreSettingsEmpty
+      Icon={NetworkIcon}
+      title="Graph preparation unavailable"
+      description="Graph preparation is not available."
+    />
   {:else if !settings.indexOperation}
     <p class="store-settings__empty">
       Choose one operation head before preparing the graph index.

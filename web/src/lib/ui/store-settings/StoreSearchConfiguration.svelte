@@ -1,4 +1,6 @@
 <script lang="ts">
+  import SearchXIcon from "@lucide/svelte/icons/search-x";
+  import StoreSettingsEmpty from "./StoreSettingsEmpty.svelte";
   import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
   import SaveIcon from "@lucide/svelte/icons/save";
   import XIcon from "@lucide/svelte/icons/x";
@@ -65,30 +67,12 @@
         settings</Button
       >{/if}
   </header>
-  {#if !supported}<p class="store-settings__empty">
-      Search editing is not available for this connection.
-    </p>
+  {#if !supported}<StoreSettingsEmpty
+      Icon={SearchXIcon}
+      title="Search editing unavailable"
+      description="Search editing is not available for this connection."
+    />
   {:else}
-    {#if settings.value}
-      <dl class="store-settings__rows">
-        <div>
-          <dt>Saved</dt>
-          <dd>{settings.value.desired.enabled ? "Enabled" : "Disabled"}</dd>
-        </div>
-        <div>
-          <dt>Currently active</dt>
-          <dd>
-            {settings.value.effective.enabled ? "Enabled" : "Disabled"}{pending
-              ? " · Saved changes need applying"
-              : " · Matches saved settings"}
-          </dd>
-        </div>
-        <div>
-          <dt>Operation</dt>
-          <dd><span role="status">{settings.value.operation}</span></dd>
-        </div>
-      </dl>
-    {/if}
     {#if settings.draft}
       <form
         onsubmit={(event) => {
@@ -97,76 +81,145 @@
         }}
       >
         <Field.Group>
-          {#if section === "configuration"}
-            <Field.Field orientation="horizontal"
-              ><Switch
-                id="search-enabled"
-                checked={settings.draft.enabled}
-                disabled={busy}
-                onCheckedChange={(enabled) => onDraft({ enabled })}
-              /><Field.Label for="search-enabled"
-                >Enable text search</Field.Label
-              ></Field.Field
-            >
-          {:else}
-            <Field.Field orientation="horizontal"
-              ><Switch
-                id="search-source"
-                checked={settings.draft.indexSource}
-                disabled={busy}
-                onCheckedChange={(indexSource) => onDraft({ indexSource })}
-              /><Field.Label for="search-source"
-                >Index file content in selected scopes</Field.Label
-              ></Field.Field
-            >
-            <p class="store-settings__empty">
-              Metadata is indexed when search is enabled. File content requires
-              explicit bookmark or workspace scopes.
-            </p>
-            {#each [{ key: "bookmarks", label: "Bookmark scopes", help: "One per line: scope=bookmark. Example: main=main." }, { key: "workspaces", label: "Workspace scopes", help: "One per line: scope=workspace. Example: local=default." }, { key: "include", label: "Include path prefixes", help: "One repository-relative prefix per line. Empty includes all paths in the selected scopes." }, { key: "exclude", label: "Exclude path prefixes", help: "One repository-relative prefix per line. Exclusions take precedence." }] as field}
-              <Field.Field
-                ><Field.Label for={`search-${field.key}`}
-                  >{field.label}</Field.Label
+          <div class="store-settings__rows">
+            {#if settings.value}
+              <dl class="store-settings__summary-rows">
+                <div>
+                  <dt>Saved</dt>
+                  <dd>
+                    {settings.value.desired.enabled ? "Enabled" : "Disabled"}
+                  </dd>
+                </div>
+                <div>
+                  <dt>Currently active</dt>
+                  <dd>
+                    {settings.value.effective.enabled
+                      ? "Enabled"
+                      : "Disabled"}{pending
+                      ? " · Saved changes need applying"
+                      : " · Matches saved settings"}
+                  </dd>
+                </div>
+                <div>
+                  <dt>Operation</dt>
+                  <dd><span role="status">{settings.value.operation}</span></dd>
+                </div>
+              </dl>
+            {/if}
+            <Field.Group class="store-settings__editable-rows">
+              {#if section === "configuration"}
+                <Field.Field
+                  orientation="horizontal"
+                  class="store-settings__option-row"
                 >
-                <Textarea
-                  id={`search-${field.key}`}
-                  value={settings.draft[
-                    field.key as
-                      "bookmarks" | "workspaces" | "include" | "exclude"
-                  ]}
-                  disabled={busy}
-                  rows={2}
-                  maxlength={16384}
-                  spellcheck={false}
-                  oninput={(event) =>
-                    onDraft({ [field.key]: event.currentTarget.value })}
-                  aria-describedby={`search-${field.key}-help`}
-                />
-                <Field.Description id={`search-${field.key}-help`}
-                  >{field.help}</Field.Description
+                  <Field.Content>
+                    <Field.Label for="search-enabled"
+                      >Enable text search</Field.Label
+                    >
+                    <Field.Description id="search-enabled-help"
+                      >Search repository metadata and any selected file scopes.</Field.Description
+                    >
+                  </Field.Content>
+                  <Switch
+                    id="search-enabled"
+                    aria-describedby="search-enabled-help"
+                    checked={settings.draft.enabled}
+                    disabled={busy}
+                    onCheckedChange={(enabled) => onDraft({ enabled })}
+                  />
+                </Field.Field>
+              {:else}
+                <Field.Field
+                  orientation="horizontal"
+                  class="store-settings__option-row"
                 >
-              </Field.Field>
-            {/each}
-          {/if}
-          {#if section === "configuration"}
-            <Field.Field
-              ><Field.Label for="search-budget">Index budget (MiB)</Field.Label
-              ><Input
-                id="search-budget"
-                type="number"
-                min="0.000001"
-                max="2048"
-                step="any"
-                required
-                disabled={busy}
-                value={settings.draft.budget}
-                oninput={(event) =>
-                  onDraft({ budget: event.currentTarget.value })}
-              /></Field.Field
-            >
-          {/if}
+                  <Field.Content>
+                    <Field.Label for="search-source"
+                      >Index file content in selected scopes</Field.Label
+                    >
+                    <Field.Description id="search-source-help"
+                      >Metadata is indexed when search is enabled. File content
+                      requires explicit bookmark or workspace scopes.</Field.Description
+                    >
+                  </Field.Content>
+                  <Switch
+                    id="search-source"
+                    aria-describedby="search-source-help"
+                    checked={settings.draft.indexSource}
+                    disabled={busy}
+                    onCheckedChange={(indexSource) => onDraft({ indexSource })}
+                  />
+                </Field.Field>
+                {#each [{ key: "bookmarks", label: "Bookmark scopes", help: "One per line: scope=bookmark. Example: main=main." }, { key: "workspaces", label: "Workspace scopes", help: "One per line: scope=workspace. Example: local=default." }, { key: "include", label: "Include path prefixes", help: "One repository-relative prefix per line. Empty includes all paths in the selected scopes." }, { key: "exclude", label: "Exclude path prefixes", help: "One repository-relative prefix per line. Exclusions take precedence." }] as field}
+                  <Field.Field
+                    orientation="responsive"
+                    class="store-settings__option-row"
+                  >
+                    <Field.Content
+                      ><Field.Label for={`search-${field.key}`}
+                        >{field.label}</Field.Label
+                      >
+                      <Field.Description id={`search-${field.key}-help`}
+                        >{field.help}</Field.Description
+                      >
+                    </Field.Content>
+                    <Textarea
+                      class="store-settings__input"
+                      id={`search-${field.key}`}
+                      value={settings.draft[
+                        field.key as
+                          "bookmarks" | "workspaces" | "include" | "exclude"
+                      ]}
+                      disabled={busy}
+                      rows={2}
+                      maxlength={16384}
+                      spellcheck={false}
+                      oninput={(event) =>
+                        onDraft({ [field.key]: event.currentTarget.value })}
+                      aria-describedby={`search-${field.key}-help`}
+                    />
+                  </Field.Field>
+                {/each}
+              {/if}
+              {#if section === "configuration"}
+                <Field.Field
+                  orientation="responsive"
+                  class="store-settings__option-row"
+                >
+                  <Field.Content
+                    ><Field.Label for="search-budget"
+                      >Index budget (MiB)</Field.Label
+                    >
+                    <Field.Description id="search-budget-help"
+                      >Set the text index budget in mebibytes.</Field.Description
+                    >
+                  </Field.Content><Input
+                    class="store-settings__input"
+                    id="search-budget"
+                    aria-describedby="search-budget-help"
+                    type="number"
+                    min="0.000001"
+                    max="2048"
+                    step="any"
+                    required
+                    disabled={busy}
+                    value={settings.draft.budget}
+                    oninput={(event) =>
+                      onDraft({ budget: event.currentTarget.value })}
+                  /></Field.Field
+                >
+              {/if}
+            </Field.Group>
+          </div>
           <div class="store-settings__action-row">
-            <div class="flex flex-wrap gap-2">
+            <div>
+              <strong>Save configuration</strong>
+              <p>
+                Saving preserves the running configuration until Apply or
+                service restart.
+              </p>
+            </div>
+            <div class="store-settings__actions">
               <Button type="submit" disabled={!ready || !settings.dirty}
                 ><SaveIcon data-icon="inline-start" aria-hidden="true" />Save
                 settings</Button
@@ -179,15 +232,18 @@
                 changes</Button
               >
             </div>
-            <p>
-              Saving preserves the running configuration until Apply or service
-              restart.
-            </p>
           </div>
         </Field.Group>
       </form>
       <div class="store-settings__action-row">
-        <div class="flex flex-wrap gap-2">
+        <div>
+          <strong>Index maintenance</strong>
+          <p>
+            Apply verifies a replacement before activation. Rebuild recreates
+            the text index from committed data. Repository work stays available.
+          </p>
+        </div>
+        <div class="store-settings__actions">
           <Button
             variant="outline"
             disabled={!ready || settings.dirty || !pending}
@@ -216,10 +272,6 @@
             text index</Button
           >
         </div>
-        <p>
-          Apply verifies a replacement before activation. Rebuild recreates the
-          text index from committed data. Repository work stays available.
-        </p>
       </div>
     {:else if settings.changing}<p role="status">
         Loading search settings…

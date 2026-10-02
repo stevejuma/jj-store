@@ -220,6 +220,12 @@
       canvas.getByText("Search is not configured for this repository."),
     ).toBeVisible();
     await expect(
+      canvas
+        .getByText("Search is not configured for this repository.")
+        .closest('[data-slot="empty"]')
+        ?.querySelector('[data-ui-part="empty-media"] svg'),
+    ).toBeVisible();
+    await expect(
       canvas.queryByRole("button", { name: "Prepare graph index" }),
     ).not.toBeInTheDocument();
     await userEvent.click(canvas.getByRole("button", { name: "Repository" }));

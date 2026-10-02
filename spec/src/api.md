@@ -100,6 +100,13 @@ focus and retained drafts continue in the separate discussion panel. Settings
 content navigation begins with one section title and leaves return navigation to
 the existing sidebar, preserving the repository route and snapshot.
 
+Local Settings present registration, Search configuration and Sync information
+in bordered rows with labels/descriptions before controls. Unsupported
+capabilities use icon Empty states, while loading and recoverable failures
+retain status and alerts. This presentation does not change advertised
+capabilities, exact folder registration intent, saved/effective Search revisions
+or Sync control semantics.
+
 Repository cards resolve their resting, hover and selected surfaces against the
 same palette in Branches, JJ Log and Op Log. Pointer hover leaves the bookmark
 selection and captured operation intact. Keyboard Enter and repository menu

@@ -191,6 +191,18 @@ it does not refresh or repair the text-search projection. Long identities,
 capability lists and numeric limits wrap without horizontal overflow; status
 meaning is always present as text as well as color.
 
+Local service lists Git-backed JJ registrations in the same bordered Settings
+rows as service status, with the name, wrapping path and availability on the
+left and Reconnect/Remove actions on the right. Registration guidance sits left
+of Add/Refresh actions in a matching settings row. Search status and editable
+enablement/budget or file-scope controls share one bordered group, with labels
+and descriptions left and controls right. Save/Cancel, index maintenance and
+sync controls use that same description-left/action-right composition and stack
+on narrow screens. Unsupported Search, Sync, graph preparation and local-folder
+management use the public shadcn Empty composition with a suitable icon,
+explicit availability text and no unavailable controls. Loading and recoverable
+errors retain their status/alert presentation.
+
 The catalog uses Storybook 10.5.7, Svelte CSF 5.1.2, Vitest browser 4.1.11 and
 Design Core ^0.2.0 with the existing Svelte 5/Vite 8 toolchain. Direct
 adaptations retain provenance and Apache-2.0 attribution. Shared primitives
@@ -1078,10 +1090,11 @@ Sync settings group Overview and Progress in keyboard-accessible tabs. Overview
 provides explicit Refresh, Pause/Resume and Retry for a configured worker, with
 local/offline readiness and reconciliation guidance. Progress keeps local and
 peer frontiers separate, shows pending counts, fault/circuit state and Search
-freshness. No upstream shows local-only guidance without action buttons;
-unsupported services expose no controls. Requests are single flight and late
-replies cannot populate another repository. Pause is process-lifetime state and
-does not persist across restart.
+freshness. No upstream shows local-only guidance in the status table, with
+WorkStore sync availability in an icon Empty state and no worker control
+buttons; unsupported services expose no controls. Requests are single flight and
+late replies cannot populate another repository. Pause is process-lifetime state
+and does not persist across restart.
 
 Search groups enablement, budget and maintenance under Configuration, source
 selection and prefix fields under File scopes, and projection status under

@@ -10,7 +10,12 @@
   let {
     supported = true,
     fail = false,
-  }: { supported?: boolean; fail?: boolean } = $props();
+    section = "scopes",
+  }: {
+    supported?: boolean;
+    fail?: boolean;
+    section?: "configuration" | "scopes";
+  } = $props();
   let value = searchSettingsValue();
   let settings = $state<SearchSettings>({
     value,
@@ -26,7 +31,7 @@
   <StoreSearchConfiguration
     {settings}
     {supported}
-    section="scopes"
+    {section}
     onRefresh={async () => {
       settings.state = "ready";
       settings.error = "";
