@@ -89,10 +89,17 @@ session.
 
 Browser tasks and discussion order loaded parent/reply branches and cap visual
 indentation. Missing parents from another page retain their exact identity and a
-visible fragment rather than inventing another relationship. Cold RustFS
-qualification covers separate source/destination stores, historical WorkStore
-closures after checkpointing, retained origin ledger, local readiness and
-durable service receipts after both stores restart.
+visible fragment rather than inventing another relationship. The task's main
+page shows threaded comments under the initially expanded Activity disclosure
+after Subtasks, with the composer below Activity. Collapsing the disclosure
+retains composer drafts and reply/edit context; a native comment link reopens
+Activity and focuses that comment. Tasks do not use a separate discussion panel
+or an Open task discussion action. Projects restoration forwards the exact
+project, task and comment selection into the bounded WorkStore reader; an
+unavailable comment stays explicit and a route without a comment clears focus.
+Cold RustFS qualification covers separate source/destination stores, historical
+WorkStore closures after checkpointing, retained origin ledger, local readiness
+and durable service receipts after both stores restart.
 
 ## Projects hub browse reads
 

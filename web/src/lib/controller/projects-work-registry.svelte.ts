@@ -11,7 +11,11 @@ export function createProjectsWorkRegistry(context: ProjectsHubContext) {
   const works = new SvelteMap<string, WorkController>();
   const selections = new Map<
     string,
-    { projectId: string | null; taskId: string | null }
+    {
+      projectId: string | null;
+      taskId: string | null;
+      commentId?: string | null;
+    }
   >();
   function transport(home: string) {
     if (!context.repositories().some((r) => r.id === home))

@@ -427,7 +427,11 @@ Community presentation is copied into this repository. The provenance manifest
 covers recognized Community families, explicitly marked copies and extracted
 presentation components; native helpers are separately identified with reasons.
 The ownership plugin rejects missing coverage as well as every external
-Community dependency. A renamed copy outside recognized families must carry an
+Community dependency. The owned StoreWork task detail, Activity/comment
+composition and task stylesheet record the CommunityProjects source revision and
+Apache-2.0 attribution in this manifest. Their adapted layout retains native
+WorkStore commands, identities and drafts without importing Community runtime or
+fixture state. A renamed copy outside recognized families must carry an
 `@community-copy` source marker so the audit can enforce its provenance. Static
 analysis does not claim to identify arbitrarily renamed unmarked copies. The
 historical M9.5 package consumption is superseded by this owned-source boundary.

@@ -95,10 +95,15 @@ sends no repository mutation and adds no HTTP/RPC contract fields.
 Projects review presentation distinguishes unsupported local JJ capability from
 recoverable native review read failures: unsupported repositories perform no
 review read and offer no retry, while native failures retain explicit retry.
-Task repository Activity belongs after Subtasks in the main detail; comment
-focus and retained drafts continue in the separate discussion panel. Settings
-content navigation begins with one section title and leaves return navigation to
-the existing sidebar, preserving the repository route and snapshot.
+Task Activity belongs after Subtasks in the main detail and contains threaded
+comments; repository commit activity remains in the project's Activity tab.
+Native comment focus opens the disclosure; the composer and retained drafts
+remain below it in the same page. Collapsing Activity does not unmount the
+composer. There is no task discussion side panel or Open task discussion action;
+existing WorkStore commands, snapshots and pending identities remain unchanged.
+Settings content navigation begins with one section title and leaves return
+navigation to the existing sidebar, preserving the repository route and
+snapshot.
 
 Local Settings present registration, Search configuration and Sync information
 in bordered rows with labels/descriptions before controls. Unsupported

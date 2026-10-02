@@ -233,10 +233,6 @@
                 onEdit={() => open("editTask")}
                 onSubtask={() => open("createTask", task.id)}
               >
-                {#snippet activity()}<StoreProjectsActivity
-                    {controller}
-                    task
-                  />{/snippet}
                 {#snippet subtasks()}<StoreWorkSubtasks
                     {hub}
                     home={route.repository}

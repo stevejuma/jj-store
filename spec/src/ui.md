@@ -905,14 +905,19 @@ Repositories. Search and task state, linked-repository and home filters apply
 before server pagination. Project rows show linked repositories and active/done
 task counts. Task rows show their project, state, target, parent, current
 comment count and update time. Task details present Markdown, parent navigation,
-independently paged subtasks and threaded discussion. Repository Activity is a
-collapsed disclosure immediately after Subtasks in the main task detail. The
-separate Task discussion panel exposes threaded comments and its composer
-without an Activity disclosure. Project/task prose and comments compose the
-owned Community-derived Markdown editor and renderer; dialogs and tombstone
-confirmation use public Design Core controls. Native state names remain open,
-in_progress, blocked and done. A board, assignments and dispatch remain
-deferred.
+independently paged subtasks and threaded comments. Activity is an initially
+expanded disclosure immediately after Subtasks in the main task detail,
+containing the task's threaded comments. Repository commit activity remains in
+the project's Activity tab. The comment composer follows Activity at the bottom
+of the main task page and remains mounted when Activity is collapsed. Tasks have
+no separate discussion panel or Open task discussion button, and the
+conversation Focus/Split preference does not change this task layout. Native
+comment links open Activity and focus the selected comment; reply/edit drafts
+and exact pending request identities remain retained. Project/task prose and
+comments compose the owned Community-derived Markdown editor and renderer;
+dialogs and tombstone confirmation use public Design Core controls. Native state
+names remain open, in_progress, blocked and done. A board, assignments and
+dispatch remain deferred.
 
 Hub routes use `#/projects` with validated tab, home/project/task identities and
 query/filter fields. Legacy repository Projects routes remain readable. Back,

@@ -141,10 +141,15 @@
     await expect(
       c.getByRole("article", { name: "Task details" }),
     ).toHaveTextContent("Browser work");
-    await userEvent.click(c.getByRole("button", { name: "Activity" }));
     await expect(
-      c.getByRole("region", { name: "Task discussion" }),
+      within(c.getByRole("article", { name: "Task details" })).getByRole(
+        "region",
+        { name: "Task activity" },
+      ),
     ).toHaveTextContent("First discussion");
+    await expect(
+      c.queryByRole("button", { name: "Open task discussion" }),
+    ).toBeNull();
   }}
 />
 <Story
@@ -171,9 +176,7 @@
     const detail = c.getByRole("article", { name: "Task details" });
     await expectCommunityDisclosures(detail);
     await expect(
-      within(
-        c.getByRole("complementary", { name: "Task discussion" }),
-      ).queryByRole("button", { name: "Activity" }),
+      c.queryByRole("complementary", { name: "Task discussion" }),
     ).toBeNull();
     await expectTaskTitleRow(detail);
     await expect(

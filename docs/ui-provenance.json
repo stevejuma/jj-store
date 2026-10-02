@@ -1810,6 +1810,36 @@
           "license": "Apache-2.0"
         }
       ]
+    },
+    {
+      "local": "web/src/lib/ui/store-work/StoreWorkTaskDetail.svelte",
+      "sources": [
+        {
+          "path": "src/components/community-projects/CommunityProjects.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/store-work/StoreWorkComments.svelte",
+      "sources": [
+        {
+          "path": "src/components/community-projects/CommunityProjects.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/store-work/community-work-tasks.css",
+      "sources": [
+        {
+          "path": "src/components/community-projects/CommunityProjects.css",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
     }
   ],
   "owned": [

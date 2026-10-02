@@ -43,6 +43,20 @@
       ".community-projects__task-detail-header",
     )!;
     await expect(
+      canvas.queryByRole("complementary", { name: "Task discussion" }),
+    ).toBeNull();
+    const comments = within(task).getByRole("list", { name: "Task comments" });
+    const activity = within(task).getByRole("button", { name: "Activity" });
+    const composer = within(task).getByRole("group", { name: /^Comment$/ });
+    await expect(activity).toHaveAttribute("aria-expanded", "true");
+    await expect(composer.getBoundingClientRect().top).toBeGreaterThanOrEqual(
+      comments.getBoundingClientRect().bottom,
+    );
+    await userEvent.click(activity);
+    await waitFor(() => expect(comments).not.toBeVisible());
+    await expect(composer).toBeVisible();
+    await userEvent.click(activity);
+    await expect(
       taskHeader.firstElementChild!.getBoundingClientRect().left -
         task.getBoundingClientRect().left,
     ).toBeLessThanOrEqual(8);
@@ -65,6 +79,17 @@
       ),
       "A new reply",
     );
+    const editor = within(composer).getByRole("textbox");
+    await userEvent.click(activity);
+    await waitFor(() =>
+      expect(
+        within(task).queryByRole("list", { name: "Task comments" }),
+      ).toBeNull(),
+    );
+    await expect(editor).toBeVisible();
+    await expect(editor).toHaveTextContent("A new reply");
+    await expect(within(composer).getByRole("textbox")).toBe(editor);
+    await userEvent.click(activity);
     await userEvent.click(canvas.getByRole("button", { name: "Add comment" }));
     await expect(
       canvas.getByRole("status", { name: "Work command status" }),

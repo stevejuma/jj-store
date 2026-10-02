@@ -100,7 +100,7 @@ shared-package release qualification does not alter those original Git gates.
 | M11.1       | Done        | M9.6                    | JST-WORK-001,JST-WORK-002,JST-WORK-003,JST-WORK-004,JST-WORK-005,JST-WORK-007                                                                                                           | Native model, publication, receipts, recovery and copy                                                                         | Retain native and real RustFS gates                                                            | E-M11-001,E-M11-003                                                                                                                                                                                                                                                                                                                                            |
 | M11.2       | Done        | M11.1                   | JST-WORK-005,JST-WORK-006,JST-WORK-008                                                                                                                                                  | Authorized service, API, RPC and CLI                                                                                           | Retain local transport/CLI gates                                                               | E-M11-002                                                                                                                                                                                                                                                                                                                                                      |
 | M11.3       | Done        | M11.2                   | JST-WORK-008                                                                                                                                                                            | Browser projects/tasks/comments and explicit refresh                                                                           | Retain cold browser gates; visual baselines pending                                            | E-M11-003,E-M11-004                                                                                                                                                                                                                                                                                                                                            |
-| M11.4       | In progress | M11.3                   | JST-WORK-005,JST-WORK-006,JST-WORK-008,JST-WORK-009,JST-UI-015                                                                                                                          | Installation Projects hub, full-root browse and cold browser acceptance                                                        | Shared-package qualification; visual baselines pending                                         | E-M11-005,E-M11-006,E-M11-007,E-UI-045,E-UI-046,E-UI-047,E-M11-008,E-UI-048,E-UI-049,E-UI-050,E-UI-051                                                                                                                                                                                                                                                         |
+| M11.4       | In progress | M11.3                   | JST-WORK-005,JST-WORK-006,JST-WORK-008,JST-WORK-009,JST-UI-015                                                                                                                          | Installation Projects hub, full-root browse and cold browser acceptance                                                        | Shared-package qualification; visual baselines pending                                         | E-M11-005,E-M11-006,E-M11-007,E-UI-045,E-UI-046,E-UI-047,E-M11-008,E-UI-048,E-UI-049,E-UI-050,E-UI-051,E-UI-062                                                                                                                                                                                                                                                |
 | M12         | Done        | M11.1,M11.2,M11.3       | JST-GIT-001,JST-GIT-002,JST-GIT-003,JST-GIT-004,JST-GIT-005,JST-GIT-006,JST-GIT-007,JST-GIT-008                                                                                         | Native fetch/edit/push/external-merge cycle with cache-loss and fault qualification                                            | Maintain qualified bookmark bridge                                                             | E-M12-001,E-M12-002,E-M12-003,E-M12-004,E-M12-005,E-M12-006,E-M12-007,E-M12-008,E-M12-009,E-M12-010                                                                                                                                                                                                                                                            |
 | M12.1       | Done        | M11.1,M11.2,M11.3       | JST-GIT-001                                                                                                                                                                             | GB0: Parsed backend-aware dispatch and ordinary path regression                                                                | Complete staged bridge gate                                                                    | E-M12-001                                                                                                                                                                                                                                                                                                                                                      |
 | M12.2       | Done        | M12.1                   | JST-GIT-002,JST-GIT-003                                                                                                                                                                 | GB1: Exact conversion and native retained cache-loss identity                                                                  | Complete staged bridge gate                                                                    | E-M12-002                                                                                                                                                                                                                                                                                                                                                      |
@@ -132,7 +132,7 @@ shared-package release qualification does not alter those original Git gates.
 | M15.5       | In progress | M15.3                   | JST-COLLAB-016,JST-GOV-008,JST-UI-017                                                                                                                                                   | Owned Community channel/forum templates, Threads navigation and native workspace search                                        | Retain interaction/cold UI and qualify remaining full flow                                     | E-M15-011,E-M15-015,E-M15-016,E-M15-017,E-M15-018,E-M15-019,E-M15-021,E-M15-022,E-M15-025,E-M15-030,E-M15-031                                                                                                                                                                                                                                                  |
 | M15.6       | In progress | M15.3                   | JST-COLLAB-009,JST-COLLAB-010,JST-API-009,JST-ADAPT-007                                                                                                                                 | Derived canonical-source timeline/search and review integration                                                                | Qualify authorized joins                                                                       | E-M15-006,E-M15-020,E-M15-021,E-M15-022,E-M15-025                                                                                                                                                                                                                                                                                                              |
 | M15.7       | Planned     | M15.4,M15.5,M15.6       | JST-COLLAB-007,JST-COLLAB-013,JST-COLLAB-014,JST-COLLAB-015,JST-COLLAB-016                                                                                                              | Cold real-RustFS/local full flow and runner qualification                                                                      | Retain native/local/cold evidence                                                              | -                                                                                                                                                                                                                                                                                                                                                              |
-| M16         | Partial     | M15.5                   | JST-UI-018,JST-GOV-009                                                                                                                                                                  | Complete device Appearance and cold consumer qualification                                                                     | Complete source release and registry-only consumer qualification                               | E-UI-052,E-UI-053,E-UI-054,E-UI-055,E-UI-056,E-UI-057,E-UI-058,E-UI-059,E-UI-061                                                                                                                                                                                                                                                                               |
+| M16         | Partial     | M15.5                   | JST-UI-018,JST-GOV-009                                                                                                                                                                  | Complete device Appearance and cold consumer qualification                                                                     | Complete source release and registry-only consumer qualification                               | E-UI-052,E-UI-053,E-UI-054,E-UI-055,E-UI-056,E-UI-057,E-UI-058,E-UI-059,E-UI-061,E-UI-062                                                                                                                                                                                                                                                                      |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -41210,6 +41210,127 @@ and named tests are checked by the progress gate.
     "formats": "No native/API/storage/preference changes. jj-store.appearance.v1 and the10 named accent values are retained. Swatch and ring color tokens, selection callbacks, hover scale and independent focus-visible outline unchanged.",
     "next": "Continue UI iteration on the running Appearance Vite workspace; main landing and visual baseline approval remain separate user actions.",
     "artifacts": "/tmp/jj-accent-ring-*.log/json/png and isolated live probe script. Persistent development fixture preserved."
+  },
+  {
+    "id": "E-UI-062",
+    "tasks": ["M11.4", "M16"],
+    "date": "2026-10-02",
+    "kind": "community-task-activity-comments-and-main-composer",
+    "revision": "enclosing Jujutsu change mqppsqku",
+    "before": "Clean Appearance workspace mqppsqku above xvyrtsyt/7fa3f2a4. Task details use Focus/Split discussion side panel with an Open task discussion button; main Activity shows repository commits. User requests Community task comments under Activity and composer at the bottom of the main page, and explicitly removes the opener. Inspected CommunityProjects selectedTask Activity/comment/composer source at741b8285e2081f1c9af58afe5a9b72f538fad781 first, then Design Core public Collapsible. Owning UI/API/projects/governance and M11.4/M16 reviewed. Exact layout regression records the existing side panel failure.",
+    "files": [
+      "web/src/lib/ui/store-work/StoreWorkTaskDetail.svelte",
+      "web/src/lib/ui/store-work/StoreWorkComments.svelte",
+      "web/src/lib/ui/store-work/StoreProjects.svelte",
+      "web/src/lib/ui/store-work/community-work-tasks.css",
+      "web/src/lib/controller/production-projects-hub.svelte.ts",
+      "web/src/lib/controller/projects-work-registry.svelte.ts",
+      "catalog/components/store-work/StoreWork.stories.svelte",
+      "catalog/components/store-work/ProjectsHub.stories.svelte",
+      "catalog/fixtures/projects-hub-layout.ts",
+      "web/tests/vite/projects-hub.test.ts",
+      "web/tests/real/task-activity-layout.spec.ts",
+      "docs/ui-provenance.json",
+      "spec/src/ui.md",
+      "spec/src/api.md",
+      "spec/src/projects.md",
+      "spec/src/spec-governance.md",
+      "spec/src/verification.md",
+      "spec/src/milestones.md"
+    ],
+    "runs": [
+      {
+        "command": "jj --no-pager st; jj describe -m \"Match Community task comments and composer layout\"; scoped source/spec/reference inspection; jj --no-pager log -r @ --no-graph -T commit_id (Community); jj --no-pager diff --stat/git and final review",
+        "result": "pass",
+        "failures": 0,
+        "note": "Reused Appearance workspace and existing Vite/backend. Main unrelated source work preserved. Native fixture read only; live user writes are independent. Exploratory wrong work/spec/helper paths were corrected from scoped file inventories. First guarded parent rewrite had a missing exact substring and wrote nothing; corrected rewrite succeeds."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte -t HierarchyAndDiscussion (before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "New exact regression finds the Task discussion side panel.1 failed,4 skipped. /tmp/jj-task-activity-before.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte -t HierarchyAndDiscussion (first after)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Layout assertions pass; immediate hidden-content assertion races Collapsible transition. Added waitFor for actual invisibility, preserving collapse/composer assertions. /tmp/jj-task-activity-regression.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte -t HierarchyAndDiscussion (corrected)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1 story passes,4 skipped: comments in main Activity, composer below, no side panel, reply context/editor instance/draft survive collapse. /tmp/jj-task-activity-regression-final.log."
+      },
+      {
+        "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7460 JJ_STORE_REAL_REPOSITORY=1bdb89c409c1b891ac7f180c01a265d5 JJ_STORE_REAL_PROJECT=38d1c167c245c42fd7d1818086a89ed1 JJ_STORE_REAL_TASK=c8a8573c0204be10644dcd77d16df2b8 pnpm exec playwright test --config web/playwright.real.config.ts web/tests/real/task-activity-layout.spec.ts (initial and final through final4)",
+        "result": "fail",
+        "failures": 5,
+        "note": "Each of5 preliminary runs has1 failed browser test. Initial locator assumed a direct Collapsible content child; next used task-activity class shared by Subtasks. Scoped to Task activity region. Third reveals actual dropped commentId in Projects registry; exact unit added and production forwarding fixed. Fourth selected both comment wrapper and nested message; narrowed to role=listitem. Fifth passes functionality/focus but flags color contrast in the initially retained repository ID feed. Final composition matches Community task scope (comments only); repository commit feed remains in project Activity tab. No axe exclusion, ignored rule or token override. /tmp/jj-task-activity-browser{,-final,-final2,-final3,-final4}.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config web/vitest.config.ts web/tests/vite/projects-hub.test.ts -t \"task comment links retain\" (two attempts)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Two startup errors: nonexistent config. Read actual catalog config and reran the named regression under catalog-unit. No tests ran in these attempts. /tmp/jj-task-activity-focus-before{,2}.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/projects-hub.test.ts -t \"task comment links retain\" (before forwarding fix)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Exact regression receives null focusCommentId instead of the bound task comment.1 failed,10 skipped. /tmp/jj-task-activity-focus-before3.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/projects-hub.test.ts -t \"task comment links retain\"; pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/projects-hub.test.ts web/tests/vite/production-work.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact regression passes, then16 direct Projects hub/WorkStore controller units pass. Comment ID forwarding, unavailable identity, clearing focus, snapshots/caches, authorization, receipt/request and draft preservation remain covered. /tmp/jj-task-activity-focus-after.log and units-final.log."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/StoreWork.stories.svelte catalog/components/store-work/ProjectsHub.stories.svelte -t \"HierarchyAndDiscussion|UnknownOutcome|NativeThreadedDiscussion|ProjectsRepositoriesAndTaskNavigation|ReadOnlyTask|TaskEditAndRetainedUnknownRequest|MobileTaskDetail\" --reporter verbose (initial and final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "7 directly affected stories pass with interaction/accessibility/runtime guards;9 unrelated stories skipped. Fresh Vitest Vite/browser provider qualifies cold source mounting. Threaded/tombstoned/missing-parent comments, reply/edit, retained unknown request, hierarchy, read-only access and mobile detail preserved. Final rerun follows comment forwarding and Community Activity scope correction. /tmp/jj-task-activity-stories{,-final}.log."
+      },
+      {
+        "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7460 JJ_STORE_REAL_REPOSITORY=1bdb89c409c1b891ac7f180c01a265d5 JJ_STORE_REAL_PROJECT=38d1c167c245c42fd7d1818086a89ed1 JJ_STORE_REAL_TASK=c8a8573c0204be10644dcd77d16df2b8 pnpm exec playwright test --config web/playwright.real.config.ts web/tests/real/task-activity-layout.spec.ts (final5)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1 live read-only browser test passes in12s:1351x988 light/Focus and390x844 dark/Split; main comments below Activity after Subtasks; no panel/opener; full-width bottom composer; keyboard disclosure collapse preserves draft; comment link reopens and focuses exact identity. Whole-page settled WCAG axe0 violations,0 runtime errors and no horizontal overflow. Desktop/mobile screenshots inspected. No native mutation or fixture reset. /tmp/jj-task-activity-browser-final5.log and desktop/mobile.png."
+      },
+      {
+        "command": "pnpm web:check (initial, final, final2); pnpm catalog:check (initial, final, final2); pnpm check:ui-ownership (initial and after provenance/source markers)",
+        "result": "pass",
+        "failures": 0,
+        "note": "All web/catalog runs report0 errors/warnings;129 catalog modules. Ownership validates21 chapters/147 requirements. Three maintained task adaptations now carry enforced source markers and pinned Apache-2.0 provenance. /tmp/jj-task-activity-{web*,catalog*,ownership*}.log."
+      },
+      {
+        "command": "pnpm spec:first (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Mapped spec-governance.md required for provenance manifest. Added actual task adaptation ownership contract; corrected gate passes. /tmp/jj-task-activity-spec-first.log."
+      },
+      {
+        "command": "pnpm exec prettier --write (changed source/docs files); pnpm spec:first (corrected)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formatting commands pass; final spec-first passes12 protected files/4 mapped chapters. /tmp/jj-task-activity-format{,-final,-scope}.log and spec-first-final.log. Final ledger/document gates recorded after completion."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/milestones.md spec/src/verification.md; pnpm exec prettier --check (all18 changed supported files); pnpm spec:validate; pnpm check:progress (initial and final ledger checks)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formatting passes; canonical validation passes5 validators/21 chapters/147 requirements including UI ownership; progress passes120 tasks. Same-change ledger and verification map preserve M11.4 In progress and M16 Partial. /tmp/jj-task-activity-{format-ledger,format-check,spec-validate,progress}.log."
+      }
+    ],
+    "result": "pass",
+    "remaining": [],
+    "scope": "One UI task presentation and exact comment route handoff surface, including its direct Projects/WorkStore controller consumers. Tasks match Community same-task comment Activity and no longer embed a project repository commit feed; project Activity retains that feed unchanged. All functional/accessibility assertions on the final task surface pass. Initial repository-feed contrast observations belong to the unchanged project/repository feed and are not a qualification claim for that surface. Rust builds/tests, backend restarts, root aggregates, unrelated stories, native writes, fixture resets, public contract generation, package publication, production built-CSP/release qualification and visual baseline approval are out of scope. M11.4 remains In progress and M16 Partial; existing qualification gates remain separate.",
+    "versions": "Node26.9.0; pnpm10.32.1; Vitest4.1.11. Dependencies unchanged; public Design Core Collapsible and owned Community-derived composer/message rendering retained.",
+    "formats": "No native/API/storage/preference formats changed. WorkStore add_comment/reply_to, edit/remove, version guards, bounded pagination, immutable snapshots, retained request identities and memory-only drafts unchanged. Projects registry now forwards existing route.commentId alongside project/task selection; no new URL field or authority. Focus/Split conversation preference no longer creates a task discussion side panel.",
+    "next": "Continue UI iteration in the running Appearance Vite workspace; main landing and visual baseline approval remain separate user actions.",
+    "artifacts": "Committed web/tests/real/task-activity-layout.spec.ts; /tmp/jj-task-activity-*.log/png. Isolated browser contexts closed. Existing development fixture and servers retained."
   }
 ]
 ```

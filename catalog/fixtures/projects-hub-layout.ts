@@ -15,7 +15,7 @@ export async function expectCommunityDisclosures(detail: HTMLElement) {
     await expect(getComputedStyle(trigger).paddingInlineStart).toBe("0px");
     await expect(trigger).toHaveAttribute(
       "aria-expanded",
-      name === "Description" ? "true" : "false",
+      name === "Subtasks" ? "false" : "true",
     );
     await expect(
       chevron.getBoundingClientRect().left -
@@ -24,7 +24,7 @@ export async function expectCommunityDisclosures(detail: HTMLElement) {
     await userEvent.click(trigger);
     await expect(trigger).toHaveAttribute(
       "aria-expanded",
-      name === "Description" ? "false" : "true",
+      name === "Subtasks" ? "true" : "false",
     );
     await userEvent.click(trigger);
   }

@@ -116,6 +116,7 @@ export function createProjectsHub(
         selections.set(route.repository, {
           projectId: route.projectId,
           taskId: route.taskId ?? null,
+          commentId: route.commentId ?? null,
         });
         await work(route.repository).restore(refresh);
       }
