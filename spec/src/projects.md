@@ -17,6 +17,10 @@ unavailable homes remain explicit. Mine continues to mean administer access.
 Review rows and cards use the current root comment excerpt, full bound thread
 identity, exact artifact label, comment count, creation actor and last accepted
 event date. Tombstoned, hidden and conflicted root comments expose no old body.
+Selecting a review from the directory or a project's Reviews tab opens the same
+full main-page detail as the repository Reviews tab, with a fixed header and
+composer and scrolling content between them. Thread Focus/Split settings do not
+alter this top-level review navigation.
 
 ## Requirements
 

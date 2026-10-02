@@ -11,10 +11,12 @@
     controller,
     inline,
     path,
+    page = false,
   }: {
     controller: StoreController;
     inline: boolean;
     path: string | undefined;
+    page?: boolean;
   } = $props();
   const view = $derived(controller.state),
     detail = $derived(view.reviewThread);
@@ -129,11 +131,23 @@
     {context}
     onCancelContext={cancelContext}
     busy={view.status.reviewAction === "refreshing"}
-    ariaLabel={inline
-      ? `Add a comment to ${path ?? "the selected diff"}`
-      : "Reply to review thread"}
-    submitLabel={draft.edit ? "Save comment" : inline ? "Comment" : "Reply"}
-    placeholder={inline ? "Add a review comment" : "Reply with Markdown"}
+    ariaLabel={page && !draft.reply && !draft.edit
+      ? "Review comment"
+      : inline
+        ? `Add a comment to ${path ?? "the selected diff"}`
+        : "Reply to review thread"}
+    submitLabel={draft.edit
+      ? "Save comment"
+      : page && !draft.reply
+        ? "Add comment"
+        : inline
+          ? "Comment"
+          : "Reply"}
+    placeholder={page && !draft.reply && !draft.edit
+      ? "Add a comment…"
+      : inline
+        ? "Add a review comment"
+        : "Reply with Markdown"}
     onSubmit={(submission) => submit(submission.content)}
   />
 </div>

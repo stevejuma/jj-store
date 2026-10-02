@@ -19,11 +19,13 @@
     inline = false,
     showComposer = true,
     showDiff = !inline,
+    composerPlacement = "inline",
   }: {
     controller: StoreController;
     inline?: boolean;
     showComposer?: boolean;
     showDiff?: boolean;
+    composerPlacement?: "inline" | "external";
   } = $props();
   const view = $derived(controller.state);
   const detail = $derived(view.reviewThread);
@@ -85,6 +87,23 @@
         {#snippet row(row)}
           {@const comment = row.comment}
           {@const author = principalMember(comment.author)}
+          {@const reactionTarget = {
+            type: "review_comment" as const,
+            thread_id: detail.thread.thread_id,
+            comment_id: comment.comment_id,
+            revision: {
+              kind: "comment_revision" as const,
+              id: comment.revision_id,
+            },
+          }}
+          {@const canReact =
+            writable &&
+            controller.threads &&
+            comment.content.state === "visible"}
+          {@const reactionDisabled =
+            disabled ||
+            !!controller.threads?.busy ||
+            !!controller.threads?.pending}
           <div
             class="store-collaboration__message"
             data-thread-depth={row.depth}
@@ -111,25 +130,36 @@
               ></span>{/if}
             <div class="store-collaboration__message-content">
               <CommunityMessage
-                message={reviewMessage(comment)}
+                message={{
+                  ...reviewMessage(comment),
+                  reactions:
+                    comment.content.state === "visible"
+                      ? controller.threads?.reactionModels(reactionTarget)
+                      : [],
+                }}
+                onToggleReaction={canReact
+                  ? (_id, emoji, custom) => {
+                      if (!reactionDisabled)
+                        void controller
+                          .threads!.toggle(reactionTarget, emoji, custom, true)
+                          .catch(() => {});
+                    }
+                  : undefined}
                 {author}
                 {members}
               >
-                {#snippet supplement()}{#if controller.threads && detail && comment.content.state === "visible"}<StoreMessageReactions
-                      threads={controller.threads}
-                      showFeedback={false}
-                      target={{
-                        type: "review_comment",
-                        thread_id: detail.thread.thread_id,
-                        comment_id: comment.comment_id,
-                        revision: {
-                          kind: "comment_revision",
-                          id: comment.revision_id,
-                        },
-                      }}
-                      {disabled}
-                    />{/if}<StoreMessageActions
+                {#snippet supplement()}<StoreMessageActions
                     {disabled}
+                    {reactionDisabled}
+                    communityEmojis={controller.threads?.emojis ?? []}
+                    onReact={canReact
+                      ? (emoji, custom) => {
+                          if (!reactionDisabled)
+                            void controller
+                              .threads!.toggle(reactionTarget, emoji, custom)
+                              .catch(() => {});
+                        }
+                      : undefined}
                     authorName={author.name}
                     items={[
                       {
@@ -172,15 +202,7 @@
                   />{/snippet}
                 {#snippet metadataSupplement()}{#if controller.threads && detail && comment.content.state === "visible"}<StoreMessageReactions
                       threads={controller.threads}
-                      target={{
-                        type: "review_comment",
-                        thread_id: detail.thread.thread_id,
-                        comment_id: comment.comment_id,
-                        revision: {
-                          kind: "comment_revision",
-                          id: comment.revision_id,
-                        },
-                      }}
+                      target={reactionTarget}
                       showControls={false}
                     />{/if}{/snippet}
               </CommunityMessage>
@@ -204,7 +226,7 @@
             The exact text diff is unavailable for this anchored file.
           </p>{/if}
       </div>{/if}
-    {#if writable && ((showComposer && detail.thread.status === "open") || draft.reply || draft.edit)}
+    {#if composerPlacement === "inline" && writable && ((showComposer && detail.thread.status === "open") || draft.reply || draft.edit)}
       <StoreReviewComposer {controller} {inline} {path} />
     {/if}
   </div>{/if}

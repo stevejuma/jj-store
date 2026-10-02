@@ -11,8 +11,8 @@
   import StoreWorkReviewRow from "../store-work/StoreWorkReviewRow.svelte";
   import StoreWorkEmpty from "../store-work/StoreWorkEmpty.svelte";
   import StoreCollaborationSkeleton from "./StoreCollaborationSkeleton.svelte";
-  import StoreDiscussionWorkspace from "../store-discussion/StoreDiscussionWorkspace.svelte";
   import StoreReviewDetail from "./StoreReviewDetail.svelte";
+  import StoreReviewDetailSkeleton from "./StoreReviewDetailSkeleton.svelte";
   import "../store-work/community-work-layout.css";
   import "../store-work/community-work-rows.css";
   import "../store-work/community-work-collections.css";
@@ -29,96 +29,90 @@
   aria-label="Repository reviews"
   aria-busy={view.status.reviews === "loading"}
 >
-  <StoreDiscussionWorkspace
-    open={Boolean(view.route.reviewThreadId)}
-    title="Review discussion"
-    onClose={() => controller.actions.selectReviewThread(null)}
-  >
-    {#snippet context()}
-      <ScrollArea class="store-collaboration__review-scroll" type="hover">
-        <div class="store-projects__review-directory">
-          <header class="community-projects__surface-header">
-            <div>
-              <GitPullRequestIcon aria-hidden="true" />
-              <h2>Reviews</h2>
-            </div>
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              aria-label="Refresh reviews"
-              title="Refresh reviews"
-              disabled={view.status.reviews === "loading" ||
-                view.status.reviews === "refreshing"}
-              onclick={() => controller.actions.refresh()}
-              ><RefreshIcon aria-hidden="true" /></Button
+  {#snippet directory()}
+    <ScrollArea class="store-collaboration__review-scroll" type="hover">
+      <div class="store-projects__review-directory">
+        <header class="community-projects__surface-header">
+          <div>
+            <GitPullRequestIcon aria-hidden="true" />
+            <h2>Reviews</h2>
+          </div>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            aria-label="Refresh reviews"
+            title="Refresh reviews"
+            disabled={view.status.reviews === "loading" ||
+              view.status.reviews === "refreshing"}
+            onclick={() => controller.actions.refresh()}
+            ><RefreshIcon aria-hidden="true" /></Button
+          >
+        </header>
+        {#if view.status.error}<CommunityProjectsColumnAlert
+            title="Reviews unavailable"
+            description={view.status.error}
+            tone="destructive"
+          />{/if}
+        {#if (view.status.connection === "connecting" || view.status.navigation === "loading" || view.status.reviews === "loading") && !view.reviewThreads.length}
+          <div class="store-reviews__loading">
+            <StoreCollaborationSkeleton label="Loading review threads" />
+          </div>
+        {:else if !view.reviewThreads.length}<StoreWorkEmpty
+            kind="reviews"
+            title="No review threads"
+            description="Exact repository and code discussions will appear here."
+          />
+        {:else}
+          <div
+            class="community-projects__review-group-list community-projects__list"
+            role="list"
+            aria-label="Review threads"
+          >
+            <CommunityProjectsVirtualRows
+              rows={view.reviewThreads}
+              getKey={(thread) => thread.thread_id}
+              estimateSize={(thread) =>
+                estimateCommunityProjectRow({
+                  kind: "review",
+                  text: thread?.presentation?.excerpt ?? undefined,
+                })}
+              hasMore={view.canLoadMoreReviews}
+              loading={view.status.reviews === "refreshing"}
+              loadingAsListItem
+              loadingLabel="Loading more reviews"
+              onLoadMore={() => void controller.actions.loadMore("reviews")}
             >
-          </header>
-          {#if view.status.error}<CommunityProjectsColumnAlert
-              title="Reviews unavailable"
-              description={view.status.error}
-              tone="destructive"
-            />{/if}
-          {#if (view.status.connection === "connecting" || view.status.navigation === "loading" || view.status.reviews === "loading") && !view.reviewThreads.length}
-            <div class="store-reviews__loading">
-              <StoreCollaborationSkeleton label="Loading review threads" />
-            </div>
-          {:else if !view.reviewThreads.length}<StoreWorkEmpty
-              kind="reviews"
-              title="No review threads"
-              description="Exact repository and code discussions will appear here."
-            />
-          {:else}
-            <div
-              class="community-projects__review-group-list community-projects__list"
-              role="list"
-              aria-label="Review threads"
-            >
-              <CommunityProjectsVirtualRows
-                rows={view.reviewThreads}
-                getKey={(thread) => thread.thread_id}
-                estimateSize={(thread) =>
-                  estimateCommunityProjectRow({
-                    kind: "review",
-                    text: thread?.presentation?.excerpt ?? undefined,
-                  })}
-                hasMore={view.canLoadMoreReviews}
-                loading={view.status.reviews === "refreshing"}
-                loadingAsListItem
-                loadingLabel="Loading more reviews"
-                onLoadMore={() => void controller.actions.loadMore("reviews")}
-              >
-                {#snippet row(thread)}
-                  <div role="listitem">
-                    <StoreWorkReviewRow
-                      {thread}
-                      agent={anchorAgentMember(
-                        thread.anchor,
-                        view.agentSessions,
-                      )}
-                      onOpen={(id) => controller.actions.selectReviewThread(id)}
-                    />
-                  </div>
-                {/snippet}
-              </CommunityProjectsVirtualRows>
-            </div>
-          {/if}
-        </div>
-      </ScrollArea>{/snippet}
-    {#snippet discussion()}
-      {#if (view.status.connection === "connecting" || view.status.navigation === "loading" || view.status.reviews === "loading" || view.status.reviewAction === "loading") && !detail}
-        <div class="store-reviews__loading">
-          <StoreCollaborationSkeleton label="Loading review details" />
-        </div>
-      {:else if detail}{#key detail.thread.thread_id}<StoreReviewDetail
-            {controller}
-          />{/key}
-      {:else}<CommunityProjectsColumnAlert
-          title="Review unavailable"
-          description={view.status.error ||
-            "The selected review could not be loaded."}
-        />{/if}
-    {/snippet}
-  </StoreDiscussionWorkspace>
+              {#snippet row(thread)}
+                <div role="listitem">
+                  <StoreWorkReviewRow
+                    {thread}
+                    agent={anchorAgentMember(thread.anchor, view.agentSessions)}
+                    onOpen={(id) => controller.actions.selectReviewThread(id)}
+                  />
+                </div>
+              {/snippet}
+            </CommunityProjectsVirtualRows>
+          </div>
+        {/if}
+      </div>
+    </ScrollArea>{/snippet}
+  {#if view.route.reviewThreadId}
+    {#if (view.status.connection === "connecting" || view.status.navigation === "loading" || view.status.reviews === "loading" || view.status.reviewAction === "loading") && !detail}
+      <StoreReviewDetailSkeleton
+        writable={view.repository.permission === "write" ||
+          view.repository.permission === "admin"}
+      />
+    {:else if detail}{#key detail.thread.thread_id}<StoreReviewDetail
+          {controller}
+        />{/key}
+    {:else}<CommunityProjectsColumnAlert
+        title="Review unavailable"
+        description={view.status.error ||
+          "The selected review could not be loaded."}
+      />{/if}
+  {:else}
+    {@render directory()}
+  {/if}
 </section>
 
 <style>

@@ -10,13 +10,19 @@
   async function react({ canvasElement }: { canvasElement: HTMLElement }) {
     const c = within(canvasElement),
       body = within(document.body);
-    const groups = await c.findAllByRole("group", {
-      name: "Message reactions",
+    const message = (await c.findAllByRole("article"))[0]!;
+    await userEvent.hover(message);
+    const actions = within(message).getByRole("group", {
+      name: /^Actions for/,
     });
-    const message = groups[0]!.closest("article")!;
-    await userEvent.click(
-      within(groups[0]!).getByRole("button", { name: "Add reaction" }),
+    const add = within(message).getByRole("button", { name: "Add reaction" });
+    await expect(actions.contains(add)).toBe(true);
+    await waitFor(() =>
+      expect(getComputedStyle(actions).pointerEvents).toBe("auto"),
     );
+    await userEvent.click(add);
+    await userEvent.unhover(message);
+    await expect(actions).toHaveAttribute("data-menu-open");
     await userEvent.click(await body.findByRole("button", { name: ":lapis:" }));
     await expect(
       await within(message).findByRole("button", {
@@ -42,6 +48,16 @@
       ).toBeNull(),
     );
   }
+
+  async function readOnly({ canvasElement }: { canvasElement: HTMLElement }) {
+    const c = within(canvasElement);
+    for (const message of await c.findAllByRole("article")) {
+      await userEvent.hover(message);
+      await expect(
+        within(message).queryByRole("button", { name: "Add reaction" }),
+      ).toBeNull();
+    }
+  }
 </script>
 
 <Story
@@ -53,4 +69,14 @@
   name="Exact review comments"
   args={{ surface: "reviews" }}
   play={react}
+/>
+<Story
+  name="Read only captured messages"
+  args={{ surface: "agents", writable: false }}
+  play={readOnly}
+/>
+<Story
+  name="Read only review comments"
+  args={{ surface: "reviews", writable: false }}
+  play={readOnly}
 />

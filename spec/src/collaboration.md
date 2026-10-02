@@ -536,14 +536,19 @@ public listener or controller dispatch.
 ## Application presentation
 
 The repository Reviews page opens the Community review detail composition with
-Description, Files changed, Commits and Activity. Its shared native activity
-timeline is also used by Projects and Tasks: native commit rows contain inline
-Agent context disclosures using recorded associations, sanitized messages and
-tool-call primitives. Code and agent roots remain independent. An anchored agent
-snapshot that differs from the available selected session is explicitly
-unavailable; the UI does not represent the latest session as the original
-artifact. Review comments, resolve/reopen, durable unknown requests and inline
-diff/tool threads retain their existing service contracts.
+Description, Files changed, Commits and Activity. Its detail replaces the list
+in the main page from either repository or Projects review navigation,
+independently of the thread discussion layout preference. The fixed header and
+comment composer surround one scrolling body; comments remain under Activity,
+and page comments select no parent until an explicit reply action.
+Draft/edit/reply state and existing native commands are retained. Its shared
+native activity timeline is also used by Projects and Tasks: native commit rows
+contain inline Agent context disclosures using recorded associations, sanitized
+messages and tool-call primitives. Code and agent roots remain independent. An
+anchored agent snapshot that differs from the available selected session is
+explicitly unavailable; the UI does not represent the latest session as the
+original artifact. Review comments, resolve/reopen, durable unknown requests and
+inline diff/tool threads retain their existing service contracts.
 
 The shared Activity timeline and sanitized transcript use Community's measured
 virtual rows in shadcn ScrollArea viewports. Agent association metadata is read

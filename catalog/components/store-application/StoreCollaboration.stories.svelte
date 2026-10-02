@@ -365,13 +365,16 @@
     await expect(editor).toHaveFocus();
     await expect(getComputedStyle(editor).outlineStyle).toBe("none");
     await userEvent.click(
-      within(
-        canvas.getByRole("group", { name: "Reply to review thread" }),
-      ).getByRole("button", { name: "Reply" }),
+      within(canvas.getByRole("group", { name: "Review comment" })).getByRole(
+        "button",
+        { name: "Add comment" },
+      ),
     );
+    const newComment = canvas.getByText("The pinned root remains exact.");
+    await expect(newComment).toBeVisible();
     await expect(
-      canvas.getByText("The pinned root remains exact."),
-    ).toBeVisible();
+      newComment.closest(".store-collaboration__message"),
+    ).toHaveAttribute("data-thread-depth", "0");
     await userEvent.click(canvas.getByRole("button", { name: "Resolve" }));
     await expect(
       canvas.getAllByText("resolved", { exact: true }).at(-1),

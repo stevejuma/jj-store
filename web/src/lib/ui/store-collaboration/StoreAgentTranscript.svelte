@@ -31,6 +31,13 @@
   } = $props();
 
   const members = $derived([agent, member]);
+  const canReact = $derived(
+    interactive &&
+      ["write", "admin"].includes(controller.state.repository.permission ?? ""),
+  );
+  const reactionDisabled = $derived(
+    !canReact || !!controller.threads?.busy || !!controller.threads?.pending,
+  );
 
   function message(
     entry: Extract<Model<"AgentActivity">, { type: "message" }>,
@@ -50,6 +57,9 @@
       authorId: author.id,
       content,
       timestamp: `#${Number(entry.sequence) + 1}`,
+      reactions: entry.reaction_target
+        ? controller.threads?.reactionModels(entry.reaction_target)
+        : [],
     };
   }
 </script>
@@ -73,15 +83,32 @@
           {author}
           {members}
           highlighted={entry.role === "user"}
-          >{#snippet supplement()}{#if controller.threads && entry.reaction_target}<StoreMessageReactions
-                threads={controller.threads}
-                target={entry.reaction_target}
-                showFeedback={false}
-                disabled={!interactive ||
-                  !["write", "admin"].includes(
-                    controller.state.repository.permission ?? "",
-                  )}
-              />{/if}<StoreMessageActions
+          onToggleReaction={canReact &&
+          controller.threads &&
+          entry.reaction_target
+            ? (_id, emoji, custom) => {
+                if (!reactionDisabled)
+                  void controller
+                    .threads!.toggle(
+                      entry.reaction_target!,
+                      emoji,
+                      custom,
+                      true,
+                    )
+                    .catch(() => {});
+              }
+            : undefined}
+          >{#snippet supplement()}<StoreMessageActions
+              {reactionDisabled}
+              communityEmojis={controller.threads?.emojis ?? []}
+              onReact={canReact && controller.threads && entry.reaction_target
+                ? (emoji, custom) => {
+                    if (!reactionDisabled)
+                      void controller
+                        .threads!.toggle(entry.reaction_target!, emoji, custom)
+                        .catch(() => {});
+                  }
+                : undefined}
               authorName={author.name}
               items={[
                 { label: "Copy message", value: entry.content.content },

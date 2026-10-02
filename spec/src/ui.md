@@ -98,6 +98,14 @@ independently of general message supplements, so copy/action menus and other
 content retain their existing presentation. Reaction controls and feedback share
 the same target-keyed controller cache and deduplicated loads.
 
+Every reaction-capable chat message uses the same placement: Add reaction
+belongs to its hover/focus actions alongside Reply and the message menu;
+accepted reaction counts remain below the body and feedback stays in metadata.
+Review comments, recorded agent messages, task comments, channel messages and
+thread replies do not add a separate picker row. Native target identity,
+read-only permission, pending-action gating and custom emoji toggling remain
+unchanged.
+
 ## Requirements
 
 | ID         | Requirement                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
@@ -649,6 +657,12 @@ controls while skeletonizing only the count and file rows. The states use Design
 Core's public shadcn Skeleton, expose one labelled busy status per region and
 keep decorative placeholders hidden from assistive technology.
 
+Review-detail loading uses the full-page composition: a fixed title and opening
+date row, four metadata rows, Description, Files changed, Commits and Activity
+placeholders in the content scroller, and a fixed composer placeholder for
+writable access. Initial connection, list and selected-detail reads use the same
+geometry, without showing the review list or interactive placeholder controls.
+
 The disposable native demo includes a genuine unresolved multi-parent file
 conflict and two concurrent commits that retain one JJ change identity. These
 fixtures prove conflict and divergence presentation without synthesizing graph
@@ -998,9 +1012,18 @@ Reviews use the same full-width Community review rows as the Projects directory,
 with measured virtual rows and cursor-edge continuation. Selecting a row opens a
 full page with the review header as the primary navigation and no repository
 tabs. Returning from the header opens the list. Reviews do not expose column
-styling or sidebar layout controls. The review title and Back control remain
-outside the scrolling detail body, so metadata, files, commits and activity
-scroll without moving the header. Retired `review_view=columns` links remain
+styling or sidebar layout controls. Repository and Projects review selections
+use this same main-page detail; the thread Focus/Split preference never turns a
+review page into a reply panel or modal. The review title and Back control
+remain outside the scrolling detail body, and the writable comment composer
+stays in a fixed bottom row. Metadata, files, commits and Activity/comments
+scroll between them. The header and composer wrapper have no separating borders,
+matching task detail while retaining the composer's own rounded outline. Resolve
+and Reopen use the public secondary button variant in the compact size with a
+leading status icon, keeping a visible themed background at rest and on hover.
+Collapsing Activity and returning from the list retain the review draft and
+explicit reply/edit context. A new page comment has no implicit parent; only an
+explicit Reply action selects one. Retired `review_view=columns` links remain
 readable and open the list or selected detail with the same native identities.
 Review metadata and disclosure content have an additional responsive body inset
 to distinguish them from the header. The header Back control is vertically

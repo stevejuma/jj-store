@@ -205,7 +205,19 @@
           : {}),
       };
     },
-    actions: { ...base.actions, refresh: () => hub.refresh() },
+    actions: {
+      ...base.actions,
+      refresh: () => hub.refresh(),
+      async openReview(repository, thread) {
+        base.actions.selectPage("reviews");
+        base.actions.selectReviewThread(thread);
+        route = { ...base.state.route, repository, projectsHub: false };
+      },
+      selectReviewThread(id) {
+        base.actions.selectReviewThread(id);
+        route = { ...route, reviewThreadId: id };
+      },
+    },
   };
   $effect(() => {
     if (bootstrapLoading) return;

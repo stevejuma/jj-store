@@ -797,9 +797,14 @@ Agent sessions, selected session detail, transcript chunks, review threads and
 selected review detail use the same repository-session query cache and bounded
 HTTP client. Their keys include the active access-session identity, repository
 and exact stable resource identity; server continuations remain opaque and
-memory-only. A committed review command invalidates the repository-session scope
-before refetching its list and exact thread. A durable unknown outcome retains
-the complete request ID for the status route. Repository SSE queues automatic
+memory-only. Review list selection opens the same main-page detail from
+repositories and Projects. Fixed page composition and default comment labels
+change no root, anchor, permission, command or version precondition; explicit
+Reply actions retain their stable parent comment ID.
+
+A committed review command invalidates the repository-session scope before
+refetching its list and exact thread. A durable unknown outcome retains the
+complete request ID for the status route. Repository SSE queues automatic
 refresh. Snapshot recapture invalidates the same scope before collaboration
 reads expose a newer AgentStore or ReviewStore root, including for historical
 code selections.

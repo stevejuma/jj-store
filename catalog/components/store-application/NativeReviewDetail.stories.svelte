@@ -103,9 +103,16 @@
     );
     viewport.scrollTop = 0;
     const headerTop = header.getBoundingClientRect().top;
+    const composer = view.getByRole("group", { name: "Review comment" });
+    const composerBottom = composer.getBoundingClientRect().bottom;
+    await expect(scrollRoot.contains(composer)).toBe(false);
     viewport.scrollTop = 240;
     await waitFor(() => expect(viewport.scrollTop).toBeGreaterThan(0));
     await expect(header.getBoundingClientRect().top).toBeCloseTo(headerTop, 0);
+    await expect(composer.getBoundingClientRect().bottom).toBeCloseTo(
+      composerBottom,
+      0,
+    );
     await userEvent.click(
       view.getByRole("button", { name: "Back to reviews" }),
     );
@@ -114,7 +121,50 @@
 />
 
 <Story
-  name="Community review list retains context beside split detail"
+  name="Review page ignores discussion layout preference"
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement),
+      body = within(document.body);
+    await userEvent.click(
+      await c.findByRole("button", { name: /Open Revision open/ }),
+    );
+    await userEvent.type(
+      within(c.getByRole("group", { name: "Review comment" })).getByRole(
+        "textbox",
+      ),
+      "Retained page comment",
+    );
+    for (const layout of ["Focus", "Split"]) {
+      await userEvent.click(
+        c.getByRole("button", { name: /Open profile menu for/ }),
+      );
+      await userEvent.click(body.getByRole("menuitem", { name: "Settings" }));
+      await userEvent.click(
+        await c.findByRole("button", { name: "Appearance" }),
+      );
+      await userEvent.click(c.getByRole("radio", { name: layout }));
+      await userEvent.click(
+        c.getByRole("button", { name: "Back to jj-store" }),
+      );
+      const detail = await c.findByRole("article", { name: "Review details" });
+      await expect(detail.closest("aside")).toBeNull();
+      await expect(
+        body.queryByRole("dialog", { name: "Review discussion" }),
+      ).toBeNull();
+      await expect(
+        c.queryByRole("list", { name: "Review threads" }),
+      ).toBeNull();
+      await expect(
+        within(c.getByRole("group", { name: "Review comment" })).getByRole(
+          "textbox",
+        ),
+      ).toHaveTextContent("Retained page comment");
+    }
+  }}
+/>
+
+<Story
+  name="Community review selection replaces the list with a full page"
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
     const list = c.getByRole("list", { name: "Review threads" });
@@ -136,12 +186,43 @@
     await userEvent.click(
       await c.findByRole("button", { name: /Open Revision open/ }),
     );
-    await expect(c.getByRole("list", { name: "Review threads" })).toBeVisible();
+    await expect(c.queryByRole("list", { name: "Review threads" })).toBeNull();
+    await expect(
+      c.queryByRole("complementary", { name: "Review discussion" }),
+    ).toBeNull();
     await expect(c.queryByRole("tab", { name: "Reviews" })).toBeNull();
     await expect(
       c.getByRole("article", { name: "Review details" }),
     ).toBeVisible();
+    const detail = c.getByRole("article", { name: "Review details" });
+    await expect(detail.getBoundingClientRect().width).toBeGreaterThan(
+      canvasElement
+        .querySelector(".store-application__body-regions")!
+        .getBoundingClientRect().width * 0.95,
+    );
+    const composer = within(detail).getByRole("group", {
+      name: "Review comment",
+    });
+    await userEvent.type(
+      within(composer).getByRole("textbox"),
+      "Review page draft",
+    );
+    await userEvent.click(
+      within(detail).getByRole("button", { name: "Activity" }),
+    );
+    await expect(composer).toBeVisible();
+    await expect(within(composer).getByRole("textbox")).toHaveTextContent(
+      "Review page draft",
+    );
     await userEvent.click(c.getByRole("button", { name: "Back to reviews" }));
     await expect(c.getByRole("list", { name: "Review threads" })).toBeVisible();
+    await userEvent.click(
+      await c.findByRole("button", { name: /Open Revision open/ }),
+    );
+    await expect(
+      within(c.getByRole("group", { name: "Review comment" })).getByRole(
+        "textbox",
+      ),
+    ).toHaveTextContent("Review page draft");
   }}
 />

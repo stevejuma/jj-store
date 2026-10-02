@@ -12,6 +12,8 @@
   import GitPullRequestIcon from "@lucide/svelte/icons/git-pull-request";
   import UserIcon from "@lucide/svelte/icons/user";
   import RefreshIcon from "@lucide/svelte/icons/refresh-cw";
+  import CircleCheckIcon from "@lucide/svelte/icons/circle-check";
+  import RotateCcwIcon from "@lucide/svelte/icons/rotate-ccw";
   import type { StoreController } from "../../controller/contracts.js";
   import {
     anchorLabel,
@@ -22,6 +24,8 @@
   import StoreIdentityCopy from "./StoreIdentityCopy.svelte";
   import StoreReviewAnchorIdentity from "./StoreReviewAnchorIdentity.svelte";
   import StoreReviewConversation from "./StoreReviewConversation.svelte";
+  import StoreReviewComposer from "./StoreReviewComposer.svelte";
+  import { reviewDraft } from "./review-drafts.svelte.js";
   import StoreRepositoryActivity from "./StoreRepositoryActivity.svelte";
   import StoreNativeAgentContext from "./StoreNativeAgentContext.svelte";
   import StoreReviewFiles from "./StoreReviewFiles.svelte";
@@ -39,6 +43,13 @@
   const title = $derived(
     detail?.thread.presentation?.excerpt?.split("\n")[0] ||
       (detail ? anchorLabel(detail.anchor.value) : "Review"),
+  );
+  const draft = $derived(
+    reviewDraft(controller, detail?.thread.thread_id ?? ""),
+  );
+  const writable = $derived(
+    view.repository.permission === "write" ||
+      view.repository.permission === "admin",
   );
   let descriptionOpen = $state(true),
     filesOpen = $state(false),
@@ -78,7 +89,12 @@
         </p>
       </div>
     </header>
-    <ScrollArea class="store-collaboration__review-scroll" type="hover">
+    <ScrollArea
+      class="store-collaboration__review-scroll"
+      type="hover"
+      role="region"
+      aria-label="Review content"
+    >
       <div class="community-projects__review-body">
         <dl class="community-projects__review-meta">
           <div>
@@ -112,17 +128,21 @@
             </dt>
             <dd>
               {detail.thread.status}<Button
-                variant="ghost"
-                size="sm"
+                variant="secondary"
+                size="xs"
                 disabled={view.status.reviewAction === "refreshing" ||
                   view.status.reviewAction === "loading"}
                 onclick={() =>
                   controller.actions.setReviewResolved(
                     detail.thread.status === "open",
                   )}
-                >{detail.thread.status === "open"
-                  ? "Resolve"
-                  : "Reopen"}</Button
+                >{#if detail.thread.status === "open"}<CircleCheckIcon
+                    data-icon="inline-start"
+                    aria-hidden="true"
+                  />Resolve{:else}<RotateCcwIcon
+                    data-icon="inline-start"
+                    aria-hidden="true"
+                  />Reopen{/if}</Button
               >
             </dd>
           </div>
@@ -242,10 +262,27 @@
                   timestamp={Number(event.accepted_at_millis) / 1000}
                 /></Chat.SystemMessage
               >{/each}
-            <StoreReviewConversation {controller} showDiff={false} />
+            <StoreReviewConversation
+              {controller}
+              showDiff={false}
+              composerPlacement="external"
+            />
           </Collapsible.Content>
         </Collapsible.Root>
       </div>
     </ScrollArea>
+    {#if writable && (detail.thread.status === "open" || draft.reply || draft.edit)}
+      <footer
+        class="community-projects__review-footer"
+        aria-label="Review comment composer"
+      >
+        <StoreReviewComposer
+          {controller}
+          inline={false}
+          path={undefined}
+          page
+        />
+      </footer>
+    {/if}
   </article>
 {/if}
